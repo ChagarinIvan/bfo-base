@@ -46,13 +46,6 @@ class OBelarusNetRelayWithHeadersParser implements ParserInterface
 
             for ($index = 2; $index < $linesCount; $index++) {
                 $line = trim($lines[$index]);
-                if (preg_match('#\d+\s+(-|\d+|в/к)\s+(-|.{1,4})\s+(-|\d{1,3})#', $line, $match)) {
-                    $commandCounter = 0;
-                    $commandPoints = is_numeric($match[3]) ? (int)$match[3] : null;
-                    $commandPlace = is_numeric($match[1]) ? (int)$match[1] : null;
-                    $commandRank = $match[2] !== '-' ? $match[2] : null;
-                    continue;
-                }
                 if (empty($line)) {
                     break;
                 }
@@ -60,6 +53,13 @@ class OBelarusNetRelayWithHeadersParser implements ParserInterface
                 $preparedLine = preg_replace('#\s+#', ' ', $preparedLine);
                 $lineData = explode(' ', $preparedLine);
                 $fieldsCount = count($lineData);
+                if (($fieldsCount === 4 || $fieldsCount === 3) && is_numeric($lineData[0])) {
+                    $commandCounter = 0;
+                    $commandPoints = is_numeric($lineData[3]) ? (int)$lineData[3] : null;
+                    $commandPlace = is_numeric($lineData[1]) ? (int)$lineData[1] : null;
+                    $commandRank = $lineData[2] !== '-' ? $lineData[2] : null;
+                    continue;
+                }
                 $protocolLine = ['group' => $groupName];
                 $indent = 1;
                 $protocolLine['lastname'] = $lineData[1];
