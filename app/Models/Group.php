@@ -6,10 +6,18 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class ProtocolLine
+ *
  * @package App\Models
  * @property int $id
  * @property int $name
  * @property ProtocolLine[] $lines
+ * @property-read int|null $lines_count
+ * @method static \Illuminate\Database\Eloquent\Builder|Group newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Group newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Group query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Group whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Group whereName($value)
+ * @mixin \Eloquent
  */
 class Group extends Model
 {

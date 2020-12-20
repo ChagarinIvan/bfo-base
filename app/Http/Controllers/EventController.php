@@ -6,8 +6,10 @@ use App\Models\Event;
 use App\Models\Group;
 use App\Models\Parser\ParserFactory;
 use App\Models\ProtocolLine;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Collection;
 use RuntimeException;
 
 class EventController extends Controller
@@ -113,7 +115,7 @@ class EventController extends Controller
         return redirect("/competitions/events/{$event->id}/show");
     }
 
-    public function show(int $eventId)
+    public function show(int $eventId): View
     {
         $event = Event::find($eventId);
         $protocolLines = $event->protocolLines;
@@ -129,7 +131,38 @@ class EventController extends Controller
         $groups = Group::find($protocolLines->keys());
         $groupAnchors = $groups->pluck('name');
 
-        return view('events.show', [
+        if (str_contains(strtolower($event->type), 'relay')) {
+            $protocolLines->transform(function(Collection $lines) {
+                $groupedLine = [];
+                $place = 0;
+                $numberIndex = 0;
+                $index = 0;
+                foreach ($lines as $protocolLine) {
+                    $newPlace = $protocolLine->place;
+                    $length = strlen($protocolLine->serial_number);
+                    $newNumberIndex = substr($protocolLine->serial_number, 1, $length - 1);
+                    if ($newPlace !== $place || $newNumberIndex !== $numberIndex) {
+                        $index++;
+                    }
+
+                    $place = $newPlace;
+                    $numberIndex = $newNumberIndex;
+
+                    $groupedLine[$index][] = $protocolLine;
+                }
+                return $groupedLine;
+            });
+
+            return view('events.show_relay', [
+                'event' => $event,
+                'groupedLines' => $protocolLines,
+                'groups' => $groups,
+                'withPoints' => $withPoints,
+                'groupAnchors' => $groupAnchors,
+            ]);
+        }
+
+        return view('events.show_others', [
             'event' => $event,
             'lines' => $protocolLines,
             'groups' => $groups,
