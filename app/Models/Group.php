@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\Builder;
 
 /**
  * Class ProtocolLine
@@ -12,12 +13,13 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $name
  * @property ProtocolLine[] $lines
  * @property-read int|null $lines_count
- * @method static \Illuminate\Database\Eloquent\Builder|Group newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Group newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Group query()
- * @method static \Illuminate\Database\Eloquent\Builder|Group whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Group whereName($value)
- * @mixin \Eloquent
+ * @method static Builder|Group find(mixed $id)
+ * @method static Builder|Group newModelQuery()
+ * @method static Builder|Group newQuery()
+ * @method static Builder|Group query()
+ * @method static Builder|Group where(...$value)
+ * @method static Builder|Group whereId($value)
+ * @method static Builder|Group whereName($value)
  */
 class Group extends Model
 {
