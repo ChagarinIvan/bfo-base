@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Models\Event;
@@ -7,6 +9,7 @@ use App\Models\Group;
 use App\Models\Parser\ParserFactory;
 use App\Models\ProtocolLine;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Collection;
@@ -14,18 +17,18 @@ use RuntimeException;
 
 class EventController extends Controller
 {
-    public function create(int $competitionId)
+    public function create(int $competitionId): View
     {
         return view('events.create', ['competitionId' => $competitionId]);
     }
 
-    public function edit(int $eventId)
+    public function edit(int $eventId): View
     {
         $event = Event::find($eventId);
         return view('events.edit', ['event' => $event]);
     }
 
-    public function delete(int $eventId)
+    public function delete(int $eventId): RedirectResponse
     {
         $event = Event::find($eventId);
         $competitionId = $event->competition_id;
@@ -33,7 +36,7 @@ class EventController extends Controller
         return redirect("/competitions/{$competitionId}/show");
     }
 
-    public function update(int $eventId, Request $request)
+    public function update(int $eventId, Request $request): RedirectResponse
     {
         $formParams = $request->validate([
             'name' => 'required',
@@ -76,7 +79,7 @@ class EventController extends Controller
         return redirect("/competitions/events/{$event->id}/show");
     }
 
-    public function store(int $competitionId, Request $request)
+    public function store(int $competitionId, Request $request): RedirectResponse
     {
         $formParams = $request->validate([
             'name' => 'required',

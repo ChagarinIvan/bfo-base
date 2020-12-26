@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\Builder;
 
 /**
@@ -121,7 +122,7 @@ class Group extends Model
     public $timestamps = false;
     protected $table = 'groups';
 
-    public function lines()
+    public function lines(): HasMany
     {
         return $this->hasMany(ProtocolLine::class);
     }

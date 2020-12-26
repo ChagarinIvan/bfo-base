@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Carbon;
 
 /**
@@ -23,26 +25,26 @@ use Illuminate\Support\Carbon;
  * @property null|int $points
  * @property int $event_id
  * @property int $group_id
- * @property-read \App\Models\Event|null $event
- * @property-read \App\Models\Group|null $group
- * @method static \Illuminate\Database\Eloquent\Builder|ProtocolLine newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ProtocolLine newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ProtocolLine query()
- * @method static \Illuminate\Database\Eloquent\Builder|ProtocolLine whereClub($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ProtocolLine whereCompleteRank($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ProtocolLine whereEventId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ProtocolLine whereFirstname($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ProtocolLine whereGroupId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ProtocolLine whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ProtocolLine whereLastname($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ProtocolLine wherePlace($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ProtocolLine wherePoints($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ProtocolLine whereRank($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ProtocolLine whereRunnerNumber($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ProtocolLine whereSerialNumber($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ProtocolLine whereTime($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ProtocolLine whereYear($value)
- * @mixin \Eloquent
+ * @property-read Event|null $event
+ * @property-read Group|null $group
+ * @method static Builder|ProtocolLine find(mixed $ids)
+ * @method static Builder|ProtocolLine newModelQuery()
+ * @method static Builder|ProtocolLine newQuery()
+ * @method static Builder|ProtocolLine query()
+ * @method static Builder|ProtocolLine whereClub($value)
+ * @method static Builder|ProtocolLine whereCompleteRank($value)
+ * @method static Builder|ProtocolLine whereEventId($value)
+ * @method static Builder|ProtocolLine whereFirstname($value)
+ * @method static Builder|ProtocolLine whereGroupId($value)
+ * @method static Builder|ProtocolLine whereId($value)
+ * @method static Builder|ProtocolLine whereLastname($value)
+ * @method static Builder|ProtocolLine wherePlace($value)
+ * @method static Builder|ProtocolLine wherePoints($value)
+ * @method static Builder|ProtocolLine whereRank($value)
+ * @method static Builder|ProtocolLine whereRunnerNumber($value)
+ * @method static Builder|ProtocolLine whereSerialNumber($value)
+ * @method static Builder|ProtocolLine whereTime($value)
+ * @method static Builder|ProtocolLine whereYear($value)
  */
 class ProtocolLine extends Model
 {
@@ -50,6 +52,7 @@ class ProtocolLine extends Model
     protected $table = 'protocol_lines';
 
     protected $dates = ['time'];
+
     protected $fillable = [
         'serial_number',
         'lastname',
@@ -63,12 +66,13 @@ class ProtocolLine extends Model
         'complete_rank',
         'points',
     ];
-    public function group()
+
+    public function group(): HasOne
     {
         return $this->hasOne(Group::class, 'id', 'group_id');
     }
 
-    public function event()
+    public function event(): HasOne
     {
         return $this->hasOne(Event::class, 'id', 'event_id');
     }

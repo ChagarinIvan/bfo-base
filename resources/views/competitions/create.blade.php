@@ -3,6 +3,9 @@
 @section('title', 'Создание соревнования')
 
 @section('content')
+    <div class="row">
+        <h1>Добавление соревнивания</h1>
+    </div>
     <form class="pt-5" method="POST" action="/competitions/store">
         @csrf
         <div class="form-group">

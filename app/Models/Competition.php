@@ -4,6 +4,9 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Collection;
 
 /**
  * Class Competition
@@ -14,21 +17,21 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $description
  * @property Carbon $from
  * @property Carbon $to
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Event[] $events
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property-read Collection|Event[] $events
  * @property-read int|null $events_count
- * @method static \Illuminate\Database\Eloquent\Builder|Competition newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Competition newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Competition query()
- * @method static \Illuminate\Database\Eloquent\Builder|Competition whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Competition whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Competition whereFrom($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Competition whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Competition whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Competition whereTo($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Competition whereUpdatedAt($value)
- * @mixin \Eloquent
+ * @method static Builder|Competition find(mixed $ids)
+ * @method static Builder|Competition newModelQuery()
+ * @method static Builder|Competition newQuery()
+ * @method static Builder|Competition query()
+ * @method static Builder|Competition whereCreatedAt($value)
+ * @method static Builder|Competition whereDescription($value)
+ * @method static Builder|Competition whereFrom($value)
+ * @method static Builder|Competition whereId($value)
+ * @method static Builder|Competition whereName($value)
+ * @method static Builder|Competition whereTo($value)
+ * @method static Builder|Competition whereUpdatedAt($value)
  */
 class Competition extends Model
 {
@@ -40,7 +43,7 @@ class Competition extends Model
 
     protected $dates = ['from', 'to'];
 
-    public function events()
+    public function events(): HasMany
     {
         return $this->hasMany(Event::class);
     }
