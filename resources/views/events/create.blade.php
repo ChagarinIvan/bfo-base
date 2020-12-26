@@ -3,6 +3,9 @@
 @section('title', 'Добавление этапа')
 
 @section('content')
+    <div class="row">
+        <h1>Добавление этапа</h1>
+    </div>
     <form class="pt-5" method="POST" action="/competitions/{{ $competitionId }}/events/store" enctype="multipart/form-data">
         @csrf
         <div class="form-group">

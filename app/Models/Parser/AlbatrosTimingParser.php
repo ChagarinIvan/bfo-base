@@ -5,6 +5,7 @@ namespace App\Models\Parser;
 use App\Models\Group;
 use DOMDocument;
 use DOMXPath;
+use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
@@ -37,6 +38,7 @@ class AlbatrosTimingParser implements ParserInterface
             }
             $groupHeader = $lines[2];
             $withPoints = str_contains($groupHeader, 'Oчки');
+            $withComment = str_contains($groupHeader, 'Прим');
             for ($index = 4; $index < $linesCount; $index++) {
                 $line = trim($lines[$index]);
                 if (empty(trim($line, '-'))) {
@@ -47,6 +49,9 @@ class AlbatrosTimingParser implements ParserInterface
                 $fieldsCount = count($lineData);
                 $protocolLine = ['group' => $groupName];
                 $indent = 1;
+                if ($withComment && str_contains($lineData[$fieldsCount - $indent], 'ично')) {
+                    $indent++;
+                }
                 if ($withPoints) {
                     $points = $lineData[$fieldsCount - $indent++];
                     $protocolLine['points'] = is_numeric($points) ? (int)$points : null;
@@ -57,7 +62,7 @@ class AlbatrosTimingParser implements ParserInterface
                 $time = null;
                 try {
                     $time = Carbon::createFromTimeString($lineData[$fieldsCount - $indent++]);
-                } catch (\Exception $e) {
+                } catch (Exception) {
                     $time = null;
                 }
                 $protocolLine['time'] = $time;

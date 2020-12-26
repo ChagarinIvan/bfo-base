@@ -33,7 +33,6 @@ class EventController extends Controller
         return redirect("/competitions/{$competitionId}/show");
     }
 
-
     public function update(int $eventId, Request $request)
     {
         $formParams = $request->validate([
@@ -45,7 +44,7 @@ class EventController extends Controller
 
         $protocol = $request->file('protocol');
         if ($protocol === null) {
-            throw new \RuntimeException('empty file');
+            throw new RuntimeException('empty file');
         }
 
         $parser = ParserFactory::createParser($protocol, $formParams['type'] ?? null);
@@ -88,7 +87,7 @@ class EventController extends Controller
 
         $protocol = $request->file('protocol');
         if ($protocol === null) {
-            throw new \RuntimeException('empty file');
+            throw new RuntimeException('empty file');
         }
 
         $parser = ParserFactory::createParser($protocol, $formParams['type'] ?? null);
