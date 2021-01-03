@@ -3,6 +3,7 @@
 namespace App\Models\Parser;
 
 use App\Models\Group;
+use App\Models\Rank;
 use DOMDocument;
 use DOMXPath;
 use Illuminate\Database\Eloquent\Collection;
@@ -48,10 +49,15 @@ class WinOrientHtmlParser implements ParserInterface
                 $protocolLine['place'] = is_numeric($place) ? (int)$place : null;
 
                 try {
-                    if (!str_contains($lineData[$fieldsCount - $indent++], '+')) {
+                    $time = $lineData[$fieldsCount - $indent];
+                    if (!str_contains($time, '+')) {
                         throw new RuntimeException('wrong time');
+                    } else {
+                        $indent++;
                     }
-                     $time = Carbon::createFromTimeString( $lineData[$fieldsCount - $indent++]);
+                    $time = $lineData[$fieldsCount - $indent];
+                    $time = Carbon::createFromTimeString($time);
+                    $indent++;
                 } catch (\Exception $e) {
                     $time = null;
                 }
@@ -69,7 +75,7 @@ class WinOrientHtmlParser implements ParserInterface
                 }
 
                 $rank = $lineData[$fieldsCount - $indent];
-                if (preg_match('#^[КМСKMIбр\/юЮБРкмсkmc]{1,4}$#', $rank)) {
+                if (preg_match('#^[КМСKMIбр\/юЮБРкмсkmc]{1,4}$#', $rank) || in_array($rank, Rank::RANKS, true)) {
                     $protocolLine['rank'] = $rank;
                     $indent++;
                 }
