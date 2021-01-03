@@ -19,7 +19,7 @@ class WinOrientParserTest extends AbstractParserTest
     protected function getResults(): array
     {
         return [
-            1 => [
+            0 => [
                 'Михалкин',
                 'Игорь',
                 'Эридан',
@@ -36,6 +36,6 @@ class WinOrientParserTest extends AbstractParserTest
 
     protected function geLinesCount(): int
     {
-        return 118;
+        return 219;
     }
 }

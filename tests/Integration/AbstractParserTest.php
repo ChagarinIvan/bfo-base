@@ -36,11 +36,11 @@ abstract class AbstractParserTest extends TestCase
             self::assertEquals($result[1], $line['firstname']);
             self::assertEquals($result[2], $line['club']);
             self::assertEquals($result[3], $line['year']);
-            self::assertEquals($result[4], $line['rank']);
+            self::assertEquals($result[4], $line['rank'] ?? null);
             self::assertEquals($result[5], $line['runner_number']);
             self::assertEquals(Carbon::createFromTimeString($result[6]), $line['time']);
             self::assertEquals($result[7], $line['place']);
-            self::assertEquals($result[8], $line['complete_rank']);
+            self::assertEquals($result[8], $line['complete_rank'] ?? null);
             self::assertEquals($result[9], $line['points']);
         }
     }
