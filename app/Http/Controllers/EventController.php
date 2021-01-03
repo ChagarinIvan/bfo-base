@@ -141,8 +141,9 @@ class EventController extends Controller
                 $index = 0;
                 foreach ($lines as $protocolLine) {
                     $newPlace = $protocolLine->place;
-                    $length = strlen($protocolLine->serial_number);
-                    $newNumberIndex = substr($protocolLine->serial_number, 1, $length - 1);
+                    $number = (string)$protocolLine->serial_number;
+                    $length = strlen($number);
+                    $newNumberIndex = substr($number, 1, $length - 1);
                     if ($newPlace !== $place || $newNumberIndex !== $numberIndex) {
                         $index++;
                     }
