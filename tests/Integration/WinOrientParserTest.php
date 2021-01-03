@@ -55,6 +55,18 @@ class WinOrientParserTest extends AbstractParserTest
                 null,
                 null,
             ],
+            46 => [
+                'Попов',
+                'Дмитрий',
+                'Эридан',
+                1999,
+                'КМС',
+                191,
+                '00:42:12',
+                6,
+                null,
+                null,
+            ],
         ];
     }
 

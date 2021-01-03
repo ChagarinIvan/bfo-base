@@ -11,5 +11,13 @@ class Rank
 {
     public const RANKS = [
         'МСМК',
+        'КМС',
+        'МС',
+        'I',
+        'II',
+        'III',
+        'Iю',
+        'IIю',
+        'IIIю',
     ];
 }
