@@ -76,6 +76,8 @@ class Group extends Model
         'МЖ35',
         'МЖ40',
         'МЖ60',
+        'OPEN1',
+        'OPEN2',
     ];
 
     public const FIXING_MAP = [

@@ -22,7 +22,7 @@ class CreateProtocolLinesTable extends Migration
             $table->integer('year')->nullable(true);
             $table->string('rank')->default('');
             $table->integer('runner_number');
-            $table->time('time');
+            $table->time('time')->nullable(true);
             $table->integer('place')->nullable(true);
             $table->string('complete_rank')->default('');
         });
