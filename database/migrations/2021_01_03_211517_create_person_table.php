@@ -18,7 +18,7 @@ class CreatePersonTable extends Migration
             $table->string('lastname');
             $table->string('firstname');
             $table->string('patronymic')->nullable(true);
-            $table->time('birthday')->nullable(true);
+            $table->date('birthday')->nullable(true);
         });
     }
 
