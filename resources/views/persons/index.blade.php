@@ -21,8 +21,8 @@
             @foreach ($persons as $person)
                 <tr>
                     <td>{{ $person->lastname }}</td>
-                    <td>{{ $person->lastname }}</td>
-                    <td>{{ $person->lastname }}</td>
+                    <td>{{ $person->firstname }}</td>
+                    <td>{{ $person->patronymic }}</td>
                     <td>{{ $person->birtday ? $person->birtday->format('Y-m-d') : '' }}</td>
                 </tr>
             @endforeach
