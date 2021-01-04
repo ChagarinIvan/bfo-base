@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CompetitionController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\PersonController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -27,3 +28,5 @@ Route::get('/competitions/events/{eventId}/show', [EventController::class, 'show
 Route::post('/competitions/{competition}/events/store', [EventController::class, 'store']);
 Route::patch('/competitions/events/{event}/update', [EventController::class, 'update']);
 Route::get('/competitions/events/{event}/delete', [EventController::class, 'delete']);
+//persons
+Route::get('/persons', [PersonController::class, 'index']);
