@@ -23,7 +23,7 @@
                     <td>{{ $person->lastname }}</td>
                     <td>{{ $person->firstname }}</td>
                     <td>{{ $person->patronymic }}</td>
-                    <td>{{ $person->birtday ? $person->birtday->format('Y-m-d') : '' }}</td>
+                    <td>{{ $person->birthday ? $person->birthday->format('Y-m-d') : '' }}</td>
                 </tr>
             @endforeach
             </tbody>
