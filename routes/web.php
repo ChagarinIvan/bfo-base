@@ -3,6 +3,7 @@
 use App\Http\Controllers\CompetitionController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\PersonController;
+use App\Http\Controllers\ProtocolLinesController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -24,9 +25,13 @@ Route::get('/competitions/{competition}/show', [CompetitionController::class, 's
 //event
 Route::get('/competitions/{competition}/events/add', [EventController::class, 'create']);
 Route::get('/competitions/events/{event}/edit', [EventController::class, 'edit']);
-Route::get('/competitions/events/{eventId}/show', [EventController::class, 'show']);
+Route::get('/competitions/events/{event}/show', [EventController::class, 'show']);
 Route::post('/competitions/{competition}/events/store', [EventController::class, 'store']);
 Route::patch('/competitions/events/{event}/update', [EventController::class, 'update']);
 Route::get('/competitions/events/{event}/delete', [EventController::class, 'delete']);
 //persons
 Route::get('/persons', [PersonController::class, 'index']);
+Route::get('/persons/{person}/show', [PersonController::class, 'show']);
+//protocol-line
+Route::get('/protocol-lines/{protocolLine}/edit-person', [ProtocolLinesController::class, 'editPerson']);
+Route::get('/protocol-lines/{protocolLine}/set-person/{person}', [ProtocolLinesController::class, 'setPerson']);

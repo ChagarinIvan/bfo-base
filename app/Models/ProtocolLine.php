@@ -25,8 +25,10 @@ use Illuminate\Support\Carbon;
  * @property null|int $points
  * @property int $event_id
  * @property int $group_id
+ * @property int $person_id
  * @property-read Event|null $event
  * @property-read Group|null $group
+ * @property-read Person|null $person
  * @method static Builder|ProtocolLine find(mixed $ids)
  * @method static Builder|ProtocolLine newModelQuery()
  * @method static Builder|ProtocolLine newQuery()
@@ -75,5 +77,10 @@ class ProtocolLine extends Model
     public function event(): HasOne
     {
         return $this->hasOne(Event::class, 'id', 'event_id');
+    }
+
+    public function person(): HasOne
+    {
+        return $this->hasOne(Person::class, 'id', 'person_id');
     }
 }

@@ -15,4 +15,10 @@ class PersonController extends BaseController
         $persons = Person::all();
         return view('persons.index', ['persons' => $persons]);
     }
+
+    public function show(int $personId): View
+    {
+        $person = Person::find($personId);
+        return view('persons.show', ['person' => $person]);
+    }
 }

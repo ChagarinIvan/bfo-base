@@ -8,7 +8,24 @@
         @foreach($groupedLines->get($group->id) as $linesGroup)
             @foreach($linesGroup as $line)
                 <tr {!! $loop->parent->odd ? 'class="table-secondary"' : '' !!}>
-                    <td>{{ $line->lastname }}</td>
+                    @if($line->person_id === null)
+                        <td>{{ $line->lastname }}&nbsp;
+                            <a href="/protocol-lines/{{ $line->id }}/edit-person">
+                                <span class="badge rounded-pill bg-danger">add</span>
+                            </a>
+                        </td>
+                        <td>{{ $line->firstname }}</td>
+                    @else
+                        @php
+                            $link = "/persons/{$line->person_id}/show";
+                        @endphp
+                        <td><a href="{{ $link }}"><u>{{ $line->lastname }}</u></a>&nbsp;
+                            <a href="/protocol-lines/{{ $line->id }}/edit-person">
+                                <span class="badge rounded-pill bg-warning">edit</span>
+                            </a>
+                        </td>
+                        <td><a href="{{ $link }}"><u>{{ $line->firstname }}</u></a></td>
+                    @endif
                     <td>{{ $line->firstname }}</td>
                     <td>{{ $line->club }}</td>
                     <td>{{ $line->year }}</td>
