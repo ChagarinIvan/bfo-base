@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Models\Group;
 use App\Models\Person;
 use App\Models\ProtocolLine;
 use App\Services\IdentService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Support\Collection;
 
 class ProtocolLinesController extends BaseController
 {
@@ -36,5 +38,24 @@ class ProtocolLinesController extends BaseController
         $protocolLine->person_id = $personId;
         $protocolLine->save();
         return redirect("/competitions/events/{$protocolLine->event_id}/show");
+    }
+
+    public function showNotIdent(): View
+    {
+        /** @var Collection|ProtocolLine[] $lines */
+        $personsGroupIds = Group::where('name', 'NOT LIKE', "%10")
+            ->where('name', 'NOT LIKE', "%12")
+            ->where('name', 'NOT LIKE', "%14")
+            ->where('name', 'NOT LIKE', "%16")
+            ->get('id');
+
+        $lines = ProtocolLine::wherePersonId(null)
+            ->whereNotIn('group_id', $personsGroupIds)
+            ->get();
+
+        $lines = $lines->groupBy(fn(ProtocolLine $line) => $line->lastname.'_'.$line->firstname);
+        $persons = $lines->sortKeys();
+
+        return view('protocol-line.show-not-ident', ['persons' => $persons]);
     }
 }
