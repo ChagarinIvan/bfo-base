@@ -20,6 +20,7 @@
             <th scope="col">Имя</th>
             <th scope="col">Соревнования</th>
             <th scope="col">Этап</th>
+            <th scope="col">Клуб</th>
             <th scope="col">Дата</th>
             <th scope="col">Группа</th>
             <th scope="col">Результат</th>
@@ -40,6 +41,7 @@
                     @endif
                     <td><a href="/competitions/{{ $line->event->competition_id }}/show"><u>{{ Str::limit($line->event->competition->name, 20, '...') }}</u></a></td>
                     <td><a href="/competitions/events/{{ $line->event_id }}/show"><u>{{ Str::limit($line->event->name, 20, '...') }}</u></a></td>
+                    <td>{{ $line->club }}</td>
                     <td>{{ $line->event->date->format('Y-m-d') }}</td>
                     <td>{{ $line->group->name }}</td>
                     <td>{{ $line->time ? $line->time->format('H:i:s') : '-' }}</td>

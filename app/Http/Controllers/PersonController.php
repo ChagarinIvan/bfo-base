@@ -13,6 +13,7 @@ class PersonController extends BaseController
     public function index(): View
     {
         $persons = Person::all();
+        $persons = $persons->sortBy('lastname');
         return view('persons.index', ['persons' => $persons]);
     }
 

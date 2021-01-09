@@ -10,6 +10,7 @@ use App\Models\ProtocolLine;
 use App\Services\IdentService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Collection;
 
@@ -19,14 +20,17 @@ class ProtocolLinesController extends BaseController
     {
         $protocolLine = ProtocolLine::find($protocolLineId);
         $persons = Person::all();
+        $persons = $persons->sortBy('lastname');
+
         return view('protocol-line.edit-person', [
             'protocolLine' => $protocolLine,
             'persons' => $persons,
         ]);
     }
 
-    public function setPerson(int $protocolLineId, int $personId): RedirectResponse
+    public function setPerson(int $protocolLineId, int $personId, Request $request): RedirectResponse
     {
+        $url = $request->get('url');
         $person = Person::find($personId);
         $protocolLine = ProtocolLine::find($protocolLineId);
         $identService = new IdentService();
@@ -37,7 +41,10 @@ class ProtocolLinesController extends BaseController
         }
         $protocolLine->person_id = $personId;
         $protocolLine->save();
-        return redirect("/competitions/events/{$protocolLine->event_id}/show");
+        if ($url === null) {
+            return redirect('/');
+        }
+        return redirect($url);
     }
 
     public function showNotIdent(): View
@@ -50,7 +57,7 @@ class ProtocolLinesController extends BaseController
             ->get('id');
 
         $lines = ProtocolLine::wherePersonId(null)
-            ->whereNotIn('group_id', $personsGroupIds)
+            ->whereIn('group_id', $personsGroupIds)
             ->get();
 
         $lines = $lines->groupBy(fn(ProtocolLine $line) => $line->lastname.'_'.$line->firstname);

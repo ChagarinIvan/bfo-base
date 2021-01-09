@@ -15,6 +15,37 @@ use Illuminate\Support\Collection;
  */
 class IdentService
 {
+    private const EDIT_MAP = [
+        'дмитрий' => ['дима'],
+        'павел' => ['паша'],
+        'мария' => ['маша'],
+        'иван' => ['ваня'],
+        'татьяна' => ['таня'],
+        'анастасия' => ['настя'],
+        'екатерина' => ['катя'],
+        'юрий' => ['юра'],
+        'ольга' => ['оля'],
+        'валентина' => ['валя'],
+        'александр' => ['саша'],
+        'алексей' => ['леша'],
+        'светлана' => ['света'],
+        'владислав' => ['влад'],
+        'наталья' => ['наташа'],
+        'михаил' => ['миша'],
+        'анна' => ['аня'],
+        'елена' => ['лена'],
+    ];
+
+    public const SYMBOL_MAP = [
+        'с' => ['c'],
+        'а' => ['a'],
+        'о' => ['o'],
+        'у' => ['y'],
+        'р' => ['p'],
+        'х' => ['x'],
+        'е' => ['e'],
+    ];
+
     private Collection|array $persons;
 
     public function __construct()
@@ -26,6 +57,7 @@ class IdentService
     {
         $withYear = $protocolLine->year !== null;
         $searchLine = $protocolLine->getIndentLine();
+        $searchLine = $this->prepareLine($searchLine);
         $result = new Collection();
 
         foreach ($this->persons as $person) {
@@ -36,7 +68,9 @@ class IdentService
             if ($withYear && $person->birthday !== null) {
                 $personData[] = $person->birthday->format('Y');
             }
-            $personLine = strtolower(implode('_', $personData));
+            $personLine = mb_strtolower(implode('_', $personData));
+            $personLine = $this->prepareLine($personLine);
+
             $rank = levenshtein($searchLine, $personLine);
             $result->push([
                 'id' => $person->id,
@@ -44,6 +78,7 @@ class IdentService
             ]);
 
             foreach ($person->getPrompts() as $prompt) {
+                $prompt = $this->prepareLine($prompt);
                 $rank = levenshtein($searchLine, $prompt);
                 $result->push([
                     'id' => $person->id,
@@ -62,5 +97,16 @@ class IdentService
             return $result['id'];
         }
         return 0;
+    }
+
+    private function prepareLine(string $line): string
+    {
+        foreach (self::SYMBOL_MAP as $symbol => $analogs) {
+            $line = str_replace($analogs, $symbol, $line);
+        }
+        foreach (self::EDIT_MAP as $name => $analogs) {
+            $line = str_replace($analogs, $name, $line);
+        }
+        return $line;
     }
 }

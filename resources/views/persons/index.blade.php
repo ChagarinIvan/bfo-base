@@ -11,9 +11,7 @@
 
 @section('content')
     <h3>Члены федерации</h3>
-    <table class="table table-bordered  id="table""
-           id="table"
-    >
+    <table class="table table-bordered" id="table">
         <thead>
         <tr class="table-info">
             <th>Фамилия</th>
@@ -25,13 +23,21 @@
         <tbody>
         @foreach ($persons as $person)
             @php
+                $hide = $person->protocolLines->count() === 0;
                 $link = "/persons/{$person->id}/show";
             @endphp
             <tr>
-                <td><a href="{{ $link }}"><u>{{ $person->lastname }}</u></a></td>
-                <td><a href="{{ $link }}"><u>{{ $person->firstname }}</u></a></td>
-                <td><a href="{{ $link }}"><u>{{ $person->patronymic }}</u></a></td>
-                <td><a href="{{ $link }}"><u>{{ $person->birthday ? $person->birthday->format('Y-m-d') : '' }}</u></a></td>
+                @if($hide)
+                    <td>{{ $person->lastname }}</td>
+                    <td>{{ $person->firstname }}</td>
+                    <td>{{ $person->patronymic }}</td>
+                    <td>{{ $person->birthday ? $person->birthday->format('Y-m-d') : '' }}</td>
+                @else
+                    <td><a href="{{ $link }}"><u>{{ $person->lastname }}</u></a></td>
+                    <td><a href="{{ $link }}"><u>{{ $person->firstname }}</u></a></td>
+                    <td><a href="{{ $link }}"><u>{{ $person->patronymic }}</u></a></td>
+                    <td><a href="{{ $link }}"><u>{{ $person->birthday ? $person->birthday->format('Y-m-d') : '' }}</u></a></td>
+                @endif
             </tr>
         @endforeach
         </tbody>

@@ -94,6 +94,6 @@ class ProtocolLine extends Model
         if ($this->year !== null) {
             $data[] = $this->year;
         }
-        return strtolower(implode('_', $data));
+        return mb_strtolower(implode('_', $data));
     }
 }
