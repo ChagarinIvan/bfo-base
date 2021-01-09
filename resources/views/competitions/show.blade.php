@@ -8,7 +8,6 @@
     </div>
     <div class="row pt-5">
         <a class="btn btn-success mr-2" href="/competitions/{{ $competition->id }}/events/add">Добавить этап</a>
-        <a class="btn btn-danger" href="/competitions">Назад</a>
     </div>
     <div class="row pt-3">
         <table class="table">

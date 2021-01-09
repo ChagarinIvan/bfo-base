@@ -1,32 +1,39 @@
+@php
+    use App\Models\Person;
+    /**
+     * @var Person[] $persons;
+     */
+@endphp
+
 @extends('layouts.app')
 
 @section('title', 'Люди')
 
 @section('content')
-    <div class="row pt-3">
-        <table class="table table-bordered table-fixed"
-               id="table"
-               data-toggle="table"
-               data-sticky-header="true"
-        >
-            <thead>
-            <tr class="table-info">
-                <th>Фамилия</th>
-                <th>Имя</th>
-                <th>Отчество</th>
-                <th>Дата рожедния</th>
+    <h3>Члены федерации</h3>
+    <table class="table table-bordered  id="table""
+           id="table"
+    >
+        <thead>
+        <tr class="table-info">
+            <th>Фамилия</th>
+            <th>Имя</th>
+            <th>Отчество</th>
+            <th>Дата рожедния</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach ($persons as $person)
+            @php
+                $link = "/persons/{$person->id}/show";
+            @endphp
+            <tr>
+                <td><a href="{{ $link }}"><u>{{ $person->lastname }}</u></a></td>
+                <td><a href="{{ $link }}"><u>{{ $person->firstname }}</u></a></td>
+                <td><a href="{{ $link }}"><u>{{ $person->patronymic }}</u></a></td>
+                <td><a href="{{ $link }}"><u>{{ $person->birthday ? $person->birthday->format('Y-m-d') : '' }}</u></a></td>
             </tr>
-            </thead>
-            <tbody>
-            @foreach ($persons as $person)
-                <tr>
-                    <td>{{ $person->lastname }}</td>
-                    <td>{{ $person->firstname }}</td>
-                    <td>{{ $person->patronymic }}</td>
-                    <td>{{ $person->birthday ? $person->birthday->format('Y-m-d') : '' }}</td>
-                </tr>
-            @endforeach
-            </tbody>
-        </table>
-    </div>
+        @endforeach
+        </tbody>
+    </table>
 @endsection

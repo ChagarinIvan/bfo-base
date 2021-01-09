@@ -1,3 +1,15 @@
+@php
+    use App\Models\Group;
+    use App\Models\ProtocolLine;
+    use Illuminate\Support\Collection;
+    /**
+     * @var Group[] $groups;
+     * @var Collection $lines;
+     * @var ProtocolLine $line;
+     * @var bool $withPoints;
+     */
+@endphp
+
 @extends('events.show')
 
 @section('groups')
@@ -26,7 +38,6 @@
                         </td>
                         <td><a href="{{ $link }}"><u>{{ $line->firstname }}</u></a></td>
                     @endif
-                    <td>{{ $line->firstname }}</td>
                     <td>{{ $line->club }}</td>
                     <td>{{ $line->year }}</td>
                     <td>{{ $line->rank }}</td>

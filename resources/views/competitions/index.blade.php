@@ -3,9 +3,9 @@
 @section('title', 'Соревнования')
 
 @section('content')
+    <h3>Соревнования</h3>
     <div class="row pt-5">
         <a class="btn btn-success mr-2" href="/competitions/create">Добавить соревнование</a>
-        <a class="btn btn-warning" href="/persons">Спортсмены</a>
     </div>
     <div class="row pt-3">
         <table class="table table-bordered table-fixed"

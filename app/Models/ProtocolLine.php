@@ -38,6 +38,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder|ProtocolLine whereEventId($value)
  * @method static Builder|ProtocolLine whereFirstname($value)
  * @method static Builder|ProtocolLine whereGroupId($value)
+ * @method static Builder|ProtocolLine wherePersonId($value)
  * @method static Builder|ProtocolLine whereId($value)
  * @method static Builder|ProtocolLine whereLastname($value)
  * @method static Builder|ProtocolLine wherePlace($value)
@@ -82,5 +83,17 @@ class ProtocolLine extends Model
     public function person(): HasOne
     {
         return $this->hasOne(Person::class, 'id', 'person_id');
+    }
+
+    public function getIndentLine(): string
+    {
+        $data = [
+            $this->lastname,
+            $this->firstname,
+        ];
+        if ($this->year !== null) {
+            $data[] = $this->year;
+        }
+        return strtolower(implode('_', $data));
     }
 }

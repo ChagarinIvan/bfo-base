@@ -23,10 +23,10 @@
         >
             <thead>
             <tr class="table-info">
-                <th>Фамилия</th>
-                <th>Имя</th>
-                <th>Отчество</th>
-                <th>Дата рожедния</th>
+                <th>{{ $protocolLine->lastname }}</th>
+                <th>{{ $protocolLine->firstname }}</th>
+                <th>-</th>
+                <th>{{ $protocolLine->year }}</th>
             </tr>
             </thead>
             <tbody>

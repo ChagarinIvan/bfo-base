@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use JetBrains\PhpStorm\Pure;
 
 /**
  * Class Person
@@ -25,6 +26,26 @@ class Person extends Model
     public $timestamps = false;
     protected $table = 'person';
     protected $dates = ['birthday'];
+    protected $casts = [
+        'prompt' => 'array'
+    ];
+
+    public function setPrompt(string $line): void
+    {
+        $this->prompt = array_unique(array_merge($this->getPrompts(), [$line]));
+    }
+
+    /**
+     * @return string[]
+     */
+    #[Pure] public function getPrompts(): array
+    {
+        if (is_array($this->prompt)) {
+            return $this->prompt;
+        }
+
+        return [];
+    }
 
     public function protocolLines(): HasMany
     {

@@ -49,7 +49,7 @@ class Event extends Model
 
     public function competition(): HasOne
     {
-        return $this->hasOne(Competition::class);
+        return $this->hasOne(Competition::class, 'id', 'competition_id');
     }
 
     public function protocolLines(): HasMany

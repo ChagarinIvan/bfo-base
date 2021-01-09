@@ -37,7 +37,6 @@
                     </td>
                     <td><a href="{{ $link }}"><u>{{ $line->firstname }}</u></a></td>
                 @endif
-                <td>{{ $line->firstname }}</td>
                 <td>{{ $line->club }}</td>
                 <td>{{ $line->year }}</td>
                 <td>{{ $line->rank }}</td>

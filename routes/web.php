@@ -35,3 +35,4 @@ Route::get('/persons/{person}/show', [PersonController::class, 'show']);
 //protocol-line
 Route::get('/protocol-lines/{protocolLine}/edit-person', [ProtocolLinesController::class, 'editPerson']);
 Route::get('/protocol-lines/{protocolLine}/set-person/{person}', [ProtocolLinesController::class, 'setPerson']);
+Route::get('/not-ident/show', [ProtocolLinesController::class, 'setPerson']);
