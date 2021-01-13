@@ -19,7 +19,7 @@ class PersonController extends BaseController
 
     public function show(int $personId): View
     {
-        $person = Person::find($personId);
+        $person = Person::with(['protocolLines.event.competition', 'protocolLines.group'])->find($personId);
         return view('persons.show', ['person' => $person]);
     }
 }

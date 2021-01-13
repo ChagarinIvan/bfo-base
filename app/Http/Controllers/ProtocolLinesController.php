@@ -58,6 +58,7 @@ class ProtocolLinesController extends BaseController
 
         $lines = ProtocolLine::wherePersonId(null)
             ->whereIn('group_id', $personsGroupIds)
+            ->with(['event.competition', 'group'])
             ->get();
 
         $lines = $lines->groupBy(fn(ProtocolLine $line) => $line->lastname.'_'.$line->firstname);
