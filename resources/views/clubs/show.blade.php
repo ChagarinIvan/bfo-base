@@ -1,18 +1,18 @@
 @php
-    use App\Models\Person;
+    use App\Models\Club;
     /**
-     * @var Person $person
+     * @var Club $club
      */
 @endphp
 
 @extends('layouts.app')
 
-@section('title', $person->lastname)
+@section('title', $club->name)
 
 @section('content')
-    <h3>{{ $person->lastname }} {{ $person->firstname }}</h3>
-    <h4>{{ $person->birthday ? $person->birthday->format('Y') : '' }}</h4>
-    @if($person->protocolLines->count() > 0)
+    <h3>{{ __('app.club.name') }}{{ $club->name }}</h3>
+
+    @if($club->persons->count() > 0)
         <table class="table table-bordered table-fixed"
                id="table"
                data-toggle="table"
@@ -20,7 +20,7 @@
         >
             <thead>
             <tr class="table-info">
-                <th scope="col">Соревнования</th>
+                <th scope="col">Фамилия Имя</th>
                 <th scope="col">Этап</th>
                 <th scope="col">Фамилия Имя</th>
                 <th scope="col">Дата</th>

@@ -14,7 +14,7 @@ use Illuminate\Support\Collection;
  *
  * @package App\Models
  * @property int $id
- * @property int $name
+ * @property string $name
  * @property string $type
  * @property string $description
  * @property Carbon $date
@@ -23,8 +23,8 @@ use Illuminate\Support\Collection;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read Competition|null $competition
  * @property-read Collection|ProtocolLine[] $protocolLines
- * @property-read int|null $protocol_lines_count
- * @method static Builder|Event find(int $id)
+ * @property-read Collection|EventFlag[] $flags
+ * @method static Builder|Event find(mixed $ids)
  * @method static Builder|Event newModelQuery()
  * @method static Builder|Event newQuery()
  * @method static Builder|Event query()
@@ -55,5 +55,10 @@ class Event extends Model
     public function protocolLines(): HasMany
     {
         return $this->hasMany(ProtocolLine::class);
+    }
+
+    public function flags(): HasMany
+    {
+        return $this->hasMany(EventFlag::class);
     }
 }

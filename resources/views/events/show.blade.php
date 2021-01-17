@@ -1,3 +1,10 @@
+@php
+    use App\Models\Event;
+    /**
+     * @var Event $event
+     *
+     */
+@endphp
 @extends('layouts.app')
 
 @section('title', Str::limit($event->name, 20, '...'))
@@ -14,7 +21,8 @@
 @endsection
 
 @section('content')
-    <h1 id="up">{{ $event->name }} : {{ $event->date->format('d.m.Y') }}</h1>
+    <a href="/competitions/{{ $event->competition->id }}/show"><h1>{{ $event->competition->name }}</h1></a>
+    <h2 id="up">{{ $event->name }} : {{ $event->date->format('d.m.Y') }}</h2>
     <div class="pt-5 pb-3 m-3">
         <a class="btn btn-info mr-2" href="/competitions/events/{{ $event->id }}/edit">Редактировать</a>
     </div>

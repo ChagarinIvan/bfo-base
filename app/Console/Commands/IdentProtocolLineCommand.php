@@ -27,7 +27,7 @@ class IdentProtocolLineCommand extends Command
             ->get('id');
 
         $lines = ProtocolLine::wherePersonId(null)
-            ->whereIn('group_id', $personsGroupIds)
+//            ->whereIn('group_id', $personsGroupIds)
             ->get();
 
         $indentService = new IdentService();

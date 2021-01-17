@@ -1,6 +1,7 @@
 @php
     use App\Models\Person;
     /**
+     * @var string $title;
      * @var Person[] $persons;
      */
 @endphp
@@ -10,14 +11,14 @@
 @section('title', 'Люди')
 
 @section('content')
-    <h3>Члены федерации</h3>
+    <h3>{{ $title }}</h3>
     <table class="table table-bordered" id="table">
         <thead>
         <tr class="table-info">
-            <th>Фамилия</th>
-            <th>Имя</th>
-            <th>Отчество</th>
-            <th>Дата рожедния</th>
+            <th>{{ __('app.common.lastname') }}</th>
+            <th>{{ __('app.common.name') }}</th>
+            <th>{{ __('app.club.name') }}</th>
+            <th>{{ __('app.common.birthday') }}</th>
         </tr>
         </thead>
         <tbody>
@@ -30,13 +31,13 @@
                 @if($hide)
                     <td>{{ $person->lastname }}</td>
                     <td>{{ $person->firstname }}</td>
-                    <td>{{ $person->patronymic }}</td>
-                    <td>{{ $person->birthday ? $person->birthday->format('Y-m-d') : '' }}</td>
+                    @if($person->club === null)<td></td>@else<td><a href="/club/{{ $person->club_id }}/show"><u>{{ $person->club->name }}</u></a></td>@endif
+                    <td>{{ $person->birthday ? $person->birthday->format('Y') : '' }}</td>
                 @else
                     <td><a href="{{ $link }}"><u>{{ $person->lastname }}</u></a></td>
                     <td><a href="{{ $link }}"><u>{{ $person->firstname }}</u></a></td>
-                    <td><a href="{{ $link }}"><u>{{ $person->patronymic }}</u></a></td>
-                    <td><a href="{{ $link }}"><u>{{ $person->birthday ? $person->birthday->format('Y-m-d') : '' }}</u></a></td>
+                    @if($person->club === null)<td></td>@else<td><a href="/club/{{ $person->club_id }}/show"><u>{{ $person->club->name }}</u></a></td>@endif
+                    <td><a href="{{ $link }}"><u>{{ $person->birthday ? $person->birthday->format('Y') : '' }}</u></a></td>
                 @endif
             </tr>
         @endforeach

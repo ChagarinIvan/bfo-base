@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\ClubController;
 use App\Http\Controllers\CompetitionController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\LocalizationController;
 use App\Http\Controllers\PersonController;
 use App\Http\Controllers\ProtocolLinesController;
 use Illuminate\Support\Facades\Route;
@@ -32,7 +34,12 @@ Route::get('/competitions/events/{event}/delete', [EventController::class, 'dele
 //persons
 Route::get('/persons', [PersonController::class, 'index']);
 Route::get('/persons/{person}/show', [PersonController::class, 'show']);
+//clubs
+Route::get('club', [ClubController::class, 'index']);
+Route::get('/club/{club}/show', [ClubController::class, 'show']);
 //protocol-line
 Route::get('/protocol-lines/{protocolLine}/edit-person', [ProtocolLinesController::class, 'editPerson']);
 Route::get('/protocol-lines/{protocolLine}/set-person/{person}', [ProtocolLinesController::class, 'setPerson']);
 Route::get('/protocol-lines/not-ident/show', [ProtocolLinesController::class, 'showNotIdent']);
+//localization
+Route::get('/localization/{code}', [LocalizationController::class, 'changeLocale']);

@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Jobs\ParserEventJob;
 use App\Models\Event;
 use App\Models\Group;
 use App\Models\Parser\ParserFactory;
 use App\Models\ProtocolLine;
+use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -32,7 +34,7 @@ class EventController extends Controller
     {
         $event = Event::find($eventId);
         $competitionId = $event->competition_id;
-        $event->delete();
+        ProtocolLine::whereEventId($eventId)->delete();
         return redirect("/competitions/{$competitionId}/show");
     }
 
@@ -47,7 +49,14 @@ class EventController extends Controller
 
         $protocol = $request->file('protocol');
         if ($protocol === null) {
-            throw new RuntimeException('empty file');
+            $event = Event::find($eventId);
+            if ($event === null) {
+                throw new RuntimeException('Нету ивента с таким id - '.$eventId);
+            }
+
+            $event->fill($formParams);
+            $event->save();
+            return redirect("/competitions/events/{$event->id}/show");
         }
 
         $parser = ParserFactory::createParser($protocol, $formParams['type'] ?? null);
@@ -75,6 +84,8 @@ class EventController extends Controller
             $protocolLine->event_id = $event->id;
             $protocolLine->save();
         });
+
+        ParserEventJob::dispatch($event)->delay(Carbon::now()->addMinutes(1));
 
         return redirect("/competitions/events/{$event->id}/show");
     }
@@ -114,21 +125,22 @@ class EventController extends Controller
             $protocolLine->save();
         });
 
+        ParserEventJob::dispatch($event)->delay(Carbon::now()->addMinutes());
+
         return redirect("/competitions/events/{$event->id}/show");
     }
 
     public function show(int $eventId): View
     {
-        $event = Event::find($eventId);
-        $protocolLines = $event->protocolLines;
+        $event = Event::with('protocolLines.person.club')->find($eventId);
         $withPoints = false;
-        foreach ($protocolLines as $protocolLine) {
+        foreach ($event->protocolLines as $protocolLine) {
             $withPoints = $protocolLine->points !== null;
             if ($withPoints) {
                 break;
             }
         }
-        $protocolLines = $protocolLines->groupBy('group_id')
+        $protocolLines = $event->protocolLines->groupBy('group_id')
             ->sortKeys();
         $groups = Group::find($protocolLines->keys());
         $groupAnchors = $groups->pluck('name');

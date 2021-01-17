@@ -20,33 +20,33 @@ class PersonsSeeder extends Seeder
         foreach (explode(PHP_EOL, $personsList) as $index => $personLine) {
             $personData = str_getcsv($personLine, ';');
 
-            if (!isset($personData[1])) {
+            if ($index === 0 || !isset($personData[0]) || $personData[0] === null) {
                 continue;
             }
 
-            $lastname = $personData[1];
-            $firstname = $personData[2];
-            if ($index === 0 || $index === 1 || empty($lastname) || empty($firstname)) {
+            $person = explode(' ', $personData[0]);
+            $lastname = $person[0] ?? '';
+            $firstname = $person[1] ?? '';
+
+            if (empty($lastname) || empty($firstname)) {
                 continue;
             }
+
             $person = new Person();
             $lastname = mb_convert_encoding($lastname, "utf-8", "windows-1251");
             $firstname = mb_convert_encoding($firstname, "utf-8", "windows-1251");
             $person->lastname = $lastname;
             $person->firstname = $firstname;
-            $person->patronymic = empty($personData[3]) ? null : mb_convert_encoding($personData[3], "utf-8", "windows-1251");
+            $person->prompt = '[]';
             try {
-                $birthday = Carbon::createFromFormat('d.m.Y', $personData[4]);
-                $person->birthday = $birthday;
-            } catch (\Exception) {
-                try {
-                    $birthday = Carbon::createFromFormat('Y', $personData[4]);
-                    $birthday->setDay(1);
-                    $birthday->setMonth(1);
+                if ($personData[9] !== '0') {
+                    $birthday = Carbon::createFromFormat('Y', $personData[9]);
                     $person->birthday = $birthday;
-                } catch (\Exception) {
+                } else {
                     $person->birthday = null;
                 }
+            } catch (\Exception) {
+                $person->birthday = null;
             }
             $person->save();
         }

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddPersonsPromt extends Migration
+class AddClubTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,13 @@ class AddPersonsPromt extends Migration
      */
     public function up()
     {
+        Schema::create('club', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+        });
+
         Schema::table('person', function (Blueprint $table) {
-            $table->json('prompt');
+            $table->integer('club_id')->nullable(true);
         });
     }
 
@@ -25,8 +30,10 @@ class AddPersonsPromt extends Migration
      */
     public function down()
     {
+        Schema::dropIfExists('club');
+
         Schema::table('person', function (Blueprint $table) {
-            $table->dropColumn('prompt');
+            $table->dropColumn('club_id');
         });
     }
 }

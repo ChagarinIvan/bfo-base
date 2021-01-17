@@ -12,9 +12,12 @@ class PersonController extends BaseController
 {
     public function index(): View
     {
-        $persons = Person::all();
+        $persons = Person::with(['protocolLines', 'club'])->get();
         $persons = $persons->sortBy('lastname');
-        return view('persons.index', ['persons' => $persons]);
+        return view('persons.index', [
+            'title' => __('app.persons.title'),
+            'persons' => $persons,
+        ]);
     }
 
     public function show(int $personId): View

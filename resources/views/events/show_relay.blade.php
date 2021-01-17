@@ -20,14 +20,10 @@
         @foreach($groupedLines->get($group->id) as $linesGroup)
             @foreach($linesGroup as $line)
                 <tr {!! $loop->parent->odd ? 'class="table-secondary"' : '' !!}>
-                    @if($line->person_id === null)
-                        <td>{{ $line->lastname }}&nbsp;
-                            <a href="/protocol-lines/{{ $line->id }}/edit-person">
-                                <span class="badge rounded-pill bg-danger">add</span>
-                            </a>
-                        </td>
-                        <td>{{ $line->firstname }}</td>
-                    @else
+                    @php
+                        $hasPerson = $line->person_id !== null;
+                    @endphp
+                    @if($hasPerson)
                         @php
                             $link = "/persons/{$line->person_id}/show";
                         @endphp
@@ -37,8 +33,23 @@
                             </a>
                         </td>
                         <td><a href="{{ $link }}"><u>{{ $line->firstname }}</u></a></td>
+                    @else
+                        <td>{{ $line->lastname }}&nbsp;
+                            <a href="/protocol-lines/{{ $line->id }}/edit-person">
+                                <span class="badge rounded-pill bg-danger">add</span>
+                            </a>
+                        </td>
+                        <td>{{ $line->firstname }}</td>
                     @endif
-                    <td>{{ $line->club }}</td>
+                    @if(
+                        $hasPerson &&
+                        ($line->club === ($line->person->club->name ?? '') ||
+                        (preg_match("#^[A-Z]{3}\s.*#", $line->club) && substr($line->club, 3) === ($line->person->club->name ?? '')))
+                    )
+                        <td><a href="/club/{{ $line->person->club_id }}/show"><u>{{ ($line->club) }}</u></a></td>
+                    @else
+                        <td>{{ ($line->club) }}</td>
+                    @endif
                     <td>{{ $line->year }}</td>
                     <td>{{ $line->rank }}</td>
                     <td>{{ $line->time ? $line->time->format('H:i:s') : '-' }}</td>

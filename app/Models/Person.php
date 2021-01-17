@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -16,9 +17,10 @@ use JetBrains\PhpStorm\Pure;
  * @property int $id
  * @property string $lastname
  * @property string $firstname
- * @property string|null $patronymic
  * @property Carbon|null $birthday
  * @property ProtocolLine[]|Collection $protocolLines
+ * @property int $club_id
+ * @property Club $club
  * @method static Builder|Person find(mixed $ids)
  */
 class Person extends Model
@@ -50,5 +52,10 @@ class Person extends Model
     public function protocolLines(): HasMany
     {
         return $this->hasMany(ProtocolLine::class);
+    }
+
+    public function club(): HasOne
+    {
+        return $this->hasOne(Club::class, 'id', 'club_id');
     }
 }

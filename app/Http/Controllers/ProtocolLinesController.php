@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Jobs\ParserEventJob;
+use App\Models\Event;
 use App\Models\Group;
 use App\Models\Person;
 use App\Models\ProtocolLine;
 use App\Services\IdentService;
+use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -19,7 +22,7 @@ class ProtocolLinesController extends BaseController
     public function editPerson(int $protocolLineId): View
     {
         $protocolLine = ProtocolLine::find($protocolLineId);
-        $persons = Person::all();
+        $persons = Person::with('club')->get();
         $persons = $persons->sortBy('lastname');
 
         return view('protocol-line.edit-person', [
@@ -39,8 +42,15 @@ class ProtocolLinesController extends BaseController
             $person->setPrompt($protocolLine->getIndentLine());
             $person->save();
         }
-        $protocolLine->person_id = $personId;
-        $protocolLine->save();
+        $protocolLinesToRecheck = ProtocolLine::whereLastname($protocolLine->lastname)
+            ->whereFirstname($protocolLine->firstname)
+            ->get();
+
+        foreach ($protocolLinesToRecheck as $protocolLine) {
+            $protocolLine->person_id = $personId;
+            $protocolLine->save();
+        }
+
         if ($url === null) {
             return redirect('/');
         }

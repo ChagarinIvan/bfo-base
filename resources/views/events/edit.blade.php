@@ -28,7 +28,9 @@
             </div>
         </div>
         <div class="form-group">
-            <input class="form-control" type="file" name="protocol"/>
+            <label for="protocol" class="col-2 col-form-label">{{ __('app.protocol') }}</label>
+            <p>{{ __('app.protocol-hint') }}</p>
+            <input class="form-control" type="file" name="protocol" id="protocol"/>
         </div>
         <div class="row">
             <input type="submit" class="btn btn-primary" value="Сохранить">
