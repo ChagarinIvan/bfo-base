@@ -1,3 +1,11 @@
+@php
+    use \App\Models\Flag;
+    use Illuminate\Support\Collection;
+    /**
+     * @var Flag[]|Collection $flags;
+     */
+@endphp
+
 @extends('layouts.app')
 
 @section('title', 'Добавление этапа')
@@ -11,10 +19,6 @@
         <div class="form-group">
             <label for="name">Название этапа</label>
             <input class="form-control" id="name" name="name">
-        </div>
-        <div class="form-group">
-            <label for="type">Тип</label>
-            <input class="form-control" id="type" name="type">
         </div>
         <div class="form-group">
             <label for="description">Описание</label>

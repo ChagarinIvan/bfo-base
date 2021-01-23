@@ -1,21 +1,26 @@
+@php
+    use \App\Models\Event;
+    use \App\Models\Flag;
+    use Illuminate\Support\Collection;
+    /**
+     * @var Event $event;
+     * @var Flag[]|Collection $flags;
+     */
+@endphp
+
 @extends('layouts.app')
 
 @section('title', 'Редактирование этапа')
 
 @section('content')
     <div class="row">
-        <h1>Редактирование этапа</h1>
+        <h1>{{ __('app.common.edit_event') }}</h1>
     </div>
     <form class="pt-5" method="POST" action="/competitions/events/{{ $event->id }}/update" enctype="multipart/form-data">
-        @method('PATCH')
         @csrf
         <div class="form-group">
             <label for="name">Название этапа</label>
             <input class="form-control" id="name" name="name" value="{{ $event->name }}"/>
-        </div>
-        <div class="form-group">
-            <label for="type">Тип</label>
-            <input class="form-control" id="type" name="type" value="{{ $event->type }}">
         </div>
         <div class="form-group">
             <label for="description">Описание</label>
@@ -34,7 +39,7 @@
         </div>
         <div class="row">
             <input type="submit" class="btn btn-primary" value="Сохранить">
-            <a href="/competitions/events/{{ $event->id }}/show" class="btn btn-danger ml-1">Отмена</a>
+            <a href="/competitions/events/{{ $event->id }}/show" class="btn btn-danger ml-1">{{ __('app.common.cancel') }}</a>
         </div>
     </form>
 @endsection

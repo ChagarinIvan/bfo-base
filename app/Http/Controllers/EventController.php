@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Jobs\ParserEventJob;
 use App\Models\Event;
+use App\Models\Flag;
 use App\Models\Group;
 use App\Models\Parser\ParserFactory;
 use App\Models\ProtocolLine;
-use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -21,13 +20,42 @@ class EventController extends Controller
 {
     public function create(int $competitionId): View
     {
-        return view('events.create', ['competitionId' => $competitionId]);
+        return view('events.create', [
+            'competitionId' => $competitionId,
+            'flags' => Flag::all(),
+        ]);
     }
 
     public function edit(int $eventId): View
     {
+        return view('events.edit', [
+            'event' => Event::find($eventId),
+            'flags' => Flag::all(),
+        ]);
+    }
+
+    public function addFlags(int $eventId): View
+    {
+        return view('events.add-flags', [
+            'event' => Event::find($eventId),
+            'flags' => Flag::all(),
+        ]);
+    }
+
+    public function setFlags(int $eventId, int $flagId): RedirectResponse
+    {
         $event = Event::find($eventId);
-        return view('events.edit', ['event' => $event]);
+        $event->flags()->attach($flagId);
+
+        return redirect("/competitions/events/{$eventId}/add-flags");
+    }
+
+    public function deleteFlags(int $eventId, int $flagId): RedirectResponse
+    {
+        $event = Event::find($eventId);
+        $event->flags()->detach($flagId);
+
+        return redirect("/competitions/events/{$eventId}/add-flags");
     }
 
     public function delete(int $eventId): RedirectResponse
@@ -35,6 +63,7 @@ class EventController extends Controller
         $event = Event::find($eventId);
         $competitionId = $event->competition_id;
         ProtocolLine::whereEventId($eventId)->delete();
+        $event->delete();
         return redirect("/competitions/{$competitionId}/show");
     }
 
@@ -42,7 +71,6 @@ class EventController extends Controller
     {
         $formParams = $request->validate([
             'name' => 'required',
-            'type' => 'nullable',
             'description' => 'nullable',
             'date' => 'required|date',
         ]);
@@ -59,8 +87,9 @@ class EventController extends Controller
             return redirect("/competitions/events/{$event->id}/show");
         }
 
-        $parser = ParserFactory::createParser($protocol, $formParams['type'] ?? null);
+        $parser = ParserFactory::createParser($protocol);
         $lineList = $parser->parse($protocol);
+
         $lineList->transform(function (array $lineData) {
             $protocolLine = new ProtocolLine($lineData);
             $group = Group::where('name', str_replace(' ', '', $lineData['group']))->first();
@@ -85,7 +114,7 @@ class EventController extends Controller
             $protocolLine->save();
         });
 
-        ParserEventJob::dispatch($event)->delay(Carbon::now()->addMinutes(1));
+//        ParserEventJob::dispatch($event)->delay(Carbon::now()->addMinutes(1));
 
         return redirect("/competitions/events/{$event->id}/show");
     }
@@ -94,7 +123,7 @@ class EventController extends Controller
     {
         $formParams = $request->validate([
             'name' => 'required',
-            'type' => 'nullable',
+            'flags' => 'array',
             'description' => 'nullable',
             'date' => 'required|date',
         ]);
@@ -104,7 +133,7 @@ class EventController extends Controller
             throw new RuntimeException('empty file');
         }
 
-        $parser = ParserFactory::createParser($protocol, $formParams['type'] ?? null);
+        $parser = ParserFactory::createParser($protocol);
         $lineList = $parser->parse($protocol);
         $lineList->transform(function (array $lineData) {
             $protocolLine = new ProtocolLine($lineData);
@@ -125,7 +154,7 @@ class EventController extends Controller
             $protocolLine->save();
         });
 
-        ParserEventJob::dispatch($event)->delay(Carbon::now()->addMinutes());
+//        ParserEventJob::dispatch($event)->delay(Carbon::now()->addMinutes());
 
         return redirect("/competitions/events/{$event->id}/show");
     }
@@ -140,12 +169,14 @@ class EventController extends Controller
                 break;
             }
         }
+        $numbers = $event->protocolLines->pluck('runner_number');
+        $isRelay = count($numbers) > count($numbers->unique());
         $protocolLines = $event->protocolLines->groupBy('group_id')
             ->sortKeys();
         $groups = Group::find($protocolLines->keys());
         $groupAnchors = $groups->pluck('name');
 
-        if (str_contains(strtolower($event->type), 'relay')) {
+        if ($isRelay) {
             $protocolLines->transform(function(Collection $lines) {
                 $groupedLine = [];
                 $place = 0;

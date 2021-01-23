@@ -8,7 +8,7 @@
 
 @extends('layouts.app')
 
-@section('title', 'Люди')
+@section('title', __('app.navbar.persons'))
 
 @section('content')
     <h3>{{ $title }}</h3>

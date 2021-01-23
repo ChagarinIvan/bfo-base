@@ -11,7 +11,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
 use RuntimeException;
 
-class AlbatrosTimingParser implements ParserInterface
+class HandicapAlbatrosTimingParser implements ParserInterface
 {
     public function parse(UploadedFile $file): Collection
     {
@@ -39,12 +39,17 @@ class AlbatrosTimingParser implements ParserInterface
             $groupHeader = $lines[2];
             $withPoints = str_contains($groupHeader, 'Oчки');
             $withComment = str_contains($groupHeader, 'Прим');
+            $withCompletedRank = str_contains($groupHeader, 'Вып');
+            $isOpen = str_contains($groupName, 'OPEN');
             for ($index = 4; $index < $linesCount; $index++) {
                 $line = trim($lines[$index]);
                 if (empty(trim($line, '-'))) {
                     break;
                 }
                 $preparedLine = preg_replace('#\s+#', ' ', $line);
+//                if (str_contains($preparedLine, 'Михалкин')) {
+//                    sleep(1);
+//                }
                 $lineData = explode(' ', $preparedLine);
                 $fieldsCount = count($lineData);
                 $protocolLine = ['group' => $groupName];
@@ -56,7 +61,12 @@ class AlbatrosTimingParser implements ParserInterface
                     $points = $lineData[$fieldsCount - $indent++];
                     $protocolLine['points'] = is_numeric($points) ? (int)$points : null;
                 }
-                $protocolLine['complete_rank'] = $lineData[$fieldsCount - $indent++];
+                if ($withCompletedRank) {
+                    $protocolLine['complete_rank'] = $lineData[$fieldsCount - $indent++];
+                    if (!preg_match('#^[КМСCKMIбр\/юЮБРкмсkmc]{1,4}$#s', $protocolLine['complete_rank']) && !in_array($protocolLine['complete_rank'], ['КМС', 'б/р'], true)) {
+                        $protocolLine['complete_rank'] = '';
+                    }
+                }
                 $place = $lineData[$fieldsCount - $indent++];
                 $protocolLine['place'] = is_numeric($place) ? (int)$place : null;
                 $time = null;
@@ -66,6 +76,9 @@ class AlbatrosTimingParser implements ParserInterface
                         $indent++;
                         $indent++;
                         throw new Exception();
+                    }
+                    if (!$isOpen) {
+                        Carbon::createFromTimeString($lineData[$fieldsCount - ($indent++)]);
                     }
                     $time = Carbon::createFromTimeString($lineData[$fieldsCount - ($indent++)]);
                 } catch (Exception) {
@@ -100,16 +113,15 @@ class AlbatrosTimingParser implements ParserInterface
         $doc = new DOMDocument();
         $content = $file->get();
         if (str_contains($content, 'Albatros-Timing')) {
-            return true;
-        }
+            @$doc->loadHTML($content);
+            $xpath = new DOMXpath($doc);
+            $preNodes = $xpath->query('//pre');
 
-        @$doc->loadHTML($content);
-        $xpath = new DOMXpath($doc);
-        $preNodes = $xpath->query('//pre');
-
-        if ($preNodes->length > 0) {
-            $firstItem = $preNodes->item(0);
-            return str_contains($firstItem->nodeValue, 'Параметры дистанции');
+            foreach ($preNodes as $preNode) {
+                if (str_contains($preNode->nodeValue, 'Финиш')) {
+                    return true;
+                }
+            }
         }
         return  false;
     }

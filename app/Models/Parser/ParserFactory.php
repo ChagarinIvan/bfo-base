@@ -8,18 +8,20 @@ use RuntimeException;
 class ParserFactory
 {
     private const PARSER = [
+        HandicapAlbatrosTimingParser::class,
         AlbatrosTimingParser::class,
         WinOrientHtmlParser::class,
         OBelarusNetRelayWithHeadersParser::class,
         OBelarusNetRelayParser::class,
+        SimplyParser::class,
         OBelarusNetParser::class,
     ];
 
-    public static function createParser(UploadedFile $file, string $type = null): ParserInterface
+    public static function createParser(UploadedFile $file): ParserInterface
     {
         foreach (self::PARSER as $parser) {
             $parser = new $parser();
-            if ($parser->check($file, $type)) {
+            if ($parser->check($file)) {
                 return $parser;
             }
         }

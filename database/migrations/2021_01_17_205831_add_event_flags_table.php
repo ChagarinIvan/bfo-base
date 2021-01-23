@@ -20,8 +20,8 @@ class AddEventFlagsTable extends Migration
         });
 
         Schema::create('event_flags', function (Blueprint $table) {
-            $table->bigInteger('event_id')->nullable(false)->index();
-            $table->bigInteger('flag_id')->nullable(false)->index();
+            $table->bigInteger('event_id')->unsigned()->nullable(false)->index();
+            $table->bigInteger('flag_id')->unsigned()->nullable(false)->index();
             $table->foreign('event_id')
                 ->references('id')->on('events')
                 ->onDelete('cascade');

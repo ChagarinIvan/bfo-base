@@ -12,5 +12,5 @@ interface ParserInterface
      * @return Collection
      */
     public function parse(UploadedFile $file): Collection;
-    public function check(UploadedFile $file, string $type = null): bool;
+    public function check(UploadedFile $file): bool;
 }

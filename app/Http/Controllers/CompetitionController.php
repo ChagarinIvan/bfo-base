@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Models\Competition;
+use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
@@ -15,7 +16,16 @@ class CompetitionController extends BaseController
     public function index(): View
     {
         $competitions = Competition::all();
-        return view('competitions.index', ['competitions' => $competitions]);
+        $dates = $competitions->pluck('from');
+        $years = $dates->transform(fn(Carbon $date) => $date->format('Y'))->unique()->sortDesc();
+        $groupedCompetitions = $competitions->groupBy(function (Competition $competition) {
+            return $competition->from->format('Y');
+        });
+
+        return view('competitions.index', [
+            'groupedCompetitions' => $groupedCompetitions,
+            'years' => $years,
+        ]);
     }
 
     public function create(): View

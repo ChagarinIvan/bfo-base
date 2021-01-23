@@ -13,10 +13,10 @@ use function PHPUnit\Framework\stringContains;
 
 class OBelarusNetRelayParser implements ParserInterface
 {
-    private $commandPlace = 0;
-    private $commandPoints = 0;
-    private $commandRank = '';
-    private $commandCounter = 0;
+    private int $commandPlace = 0;
+    private int $commandPoints = 0;
+    private string $commandRank = '';
+    private int $commandCounter = 0;
 
 
     public function parse(UploadedFile $file): Collection
@@ -223,13 +223,9 @@ class OBelarusNetRelayParser implements ParserInterface
         return $linesList;
     }
 
-    public function check(UploadedFile $file, string $type = null): bool
+    public function check(UploadedFile $file): bool
     {
-        if (str_contains($type, 'relay')) {
-            $content = $file->get();
-            return preg_match('#<b>\d#', $content);
-        }
-        return false;
+        return preg_match('#<b>\d#', $file->get());
     }
 
     private function parseByHeader(string $header, string $value, array &$protocolLine): bool

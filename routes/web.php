@@ -3,6 +3,7 @@
 use App\Http\Controllers\ClubController;
 use App\Http\Controllers\CompetitionController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\FlagsController;
 use App\Http\Controllers\LocalizationController;
 use App\Http\Controllers\PersonController;
 use App\Http\Controllers\ProtocolLinesController;
@@ -29,8 +30,11 @@ Route::get('/competitions/{competition}/events/add', [EventController::class, 'c
 Route::get('/competitions/events/{event}/edit', [EventController::class, 'edit']);
 Route::get('/competitions/events/{event}/show', [EventController::class, 'show']);
 Route::post('/competitions/{competition}/events/store', [EventController::class, 'store']);
-Route::patch('/competitions/events/{event}/update', [EventController::class, 'update']);
+Route::post('/competitions/events/{event}/update', [EventController::class, 'update']);
 Route::get('/competitions/events/{event}/delete', [EventController::class, 'delete']);
+Route::get('/competitions/events/{event}/add-flags', [EventController::class, 'addFlags']);
+Route::get('/competitions/events/{event}/set-flag/{flag}', [EventController::class, 'setFlags']);
+Route::get('/competitions/events/{event}/delete-flag/{flag}', [EventController::class, 'deleteFlags']);
 //persons
 Route::get('/persons', [PersonController::class, 'index']);
 Route::get('/persons/{person}/show', [PersonController::class, 'show']);
@@ -43,3 +47,11 @@ Route::get('/protocol-lines/{protocolLine}/set-person/{person}', [ProtocolLinesC
 Route::get('/protocol-lines/not-ident/show', [ProtocolLinesController::class, 'showNotIdent']);
 //localization
 Route::get('/localization/{code}', [LocalizationController::class, 'changeLocale']);
+//flags
+Route::get('/flags', [FlagsController::class, 'index']);
+Route::get('/flags/create', [FlagsController::class, 'create']);
+Route::get('/flags/{flag}/edit', [FlagsController::class, 'edit']);
+Route::post('/flags/store', [FlagsController::class, 'store']);
+Route::patch('/flags/{flag}/update', [FlagsController::class, 'update']);
+Route::get('/flags/{flag}/delete', [FlagsController::class, 'delete']);
+Route::get('/flags/{flag}/show-events', [FlagsController::class, 'showEvents']);

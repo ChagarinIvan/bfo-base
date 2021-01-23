@@ -1,10 +1,13 @@
 <?php
 
-namespace Tests\Integration;
+declare(strict_types=1);
+
+namespace Tests\Integration\AlbatrosTimingParser;
 
 use App\Models\Parser\AlbatrosTimingParser;
+use Tests\Integration\AbstractParserTest;
 
-class AlbatrosTimingParserTest extends AbstractParserTest
+class AlbatrosTimingParser1Test extends AbstractParserTest
 {
     protected function getParser(): string
     {

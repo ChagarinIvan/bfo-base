@@ -15,7 +15,8 @@
         "laravel/framework": "^8.0",
         "laravel/telescope": "^4.4",
         "laravel/tinker": "^2.0",
-        "maximebf/debugbar": "^1.16"
+        "maximebf/debugbar": "^1.16",
+        "ext-dom": "*"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.5",

@@ -106,7 +106,7 @@ class OBelarusNetParser implements ParserInterface
         return $linesList;
     }
 
-    public function check(UploadedFile $file, string $type = null): bool
+    public function check(UploadedFile $file): bool
     {
         $content = $file->get();
         $result = preg_match('#pre>\n-#', $content, $m);

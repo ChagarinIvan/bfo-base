@@ -102,12 +102,9 @@ class OBelarusNetRelayWithHeadersParser implements ParserInterface
         return $linesList;
     }
 
-    public function check(UploadedFile $file, string $type = null): bool
+    public function check(UploadedFile $file): bool
     {
-        if (str_contains($type, 'relay')) {
-            $content = $file->get();
-            return preg_match('#<b>\d+\s+(-|\d+|в/к)\s+(-|.{1,4})\s+(-|\d{1,3})?#', $content);
-        }
-        return false;
+        $content = $file->get();
+        return preg_match('#<b>\d+\s+(-|\d+|в/к)\s+(-|.{1,4})\s+(-|\d{1,3})?#', $content);
     }
 }

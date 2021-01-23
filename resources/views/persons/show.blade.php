@@ -20,7 +20,7 @@
         >
             <thead>
             <tr class="table-info">
-                <th scope="col">Соревнования</th>
+                <th scope="col">{{ __('app.competition') }}</th>
                 <th scope="col">Этап</th>
                 <th scope="col">Фамилия Имя</th>
                 <th scope="col">Дата</th>

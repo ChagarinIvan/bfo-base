@@ -92,7 +92,7 @@ class WinOrientHtmlParser implements ParserInterface
         return $linesList;
     }
 
-    public function check(UploadedFile $file, string $type = null): bool
+    public function check(UploadedFile $file): bool
     {
         return str_contains($file->get(), '<title>WinOrient');
     }
