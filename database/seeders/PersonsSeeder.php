@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Club;
 use App\Models\Person;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
@@ -16,7 +17,7 @@ class PersonsSeeder extends Seeder
      */
     public function run()
     {
-        $personsList = Storage::get('bfo.csv');
+        $personsList = Storage::get('base.csv');
         foreach (explode(PHP_EOL, $personsList) as $index => $personLine) {
             $personData = str_getcsv($personLine, ';');
 
@@ -24,6 +25,7 @@ class PersonsSeeder extends Seeder
                 continue;
             }
 
+            $personData = explode(',', $personData[0]);
             $person = explode(' ', $personData[0]);
             $lastname = $person[0] ?? '';
             $firstname = $person[1] ?? '';
@@ -33,20 +35,22 @@ class PersonsSeeder extends Seeder
             }
 
             $person = new Person();
-            $lastname = mb_convert_encoding($lastname, "utf-8", "windows-1251");
-            $firstname = mb_convert_encoding($firstname, "utf-8", "windows-1251");
+//            $lastname = mb_convert_encoding($lastname, "utf-8", "windows-1251");
+//            $firstname = mb_convert_encoding($firstname, "utf-8", "windows-1251");
             $person->lastname = $lastname;
             $person->firstname = $firstname;
             $person->prompt = '[]';
             try {
-                if ($personData[9] !== '0') {
-                    $birthday = Carbon::createFromFormat('Y', $personData[9]);
-                    $person->birthday = $birthday;
-                } else {
-                    $person->birthday = null;
-                }
+                $birthday = Carbon::createFromFormat('Y', $personData[3]);
+                $birthday->startOfYear();
+                $person->birthday = $birthday;
             } catch (\Exception) {
                 $person->birthday = null;
+            }
+            $clubName = $personData[1];
+            $club = Club::whereName($clubName)->get();
+            if ($club->count() > 0) {
+                $person->club_id = $club->first()->id;
             }
             $person->save();
         }

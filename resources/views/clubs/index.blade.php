@@ -15,7 +15,7 @@
         <thead>
         <tr class="table-info">
             <th>Название</th>
-            <th>Чило членов</th>
+            <th>Чиcло членов</th>
         </tr>
         </thead>
         <tbody>
@@ -27,4 +27,5 @@
         @endforeach
         </tbody>
     </table>
+    {{ $clubs->links() }}
 @endsection

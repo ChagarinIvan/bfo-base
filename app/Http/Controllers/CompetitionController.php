@@ -21,6 +21,7 @@ class CompetitionController extends BaseController
         $groupedCompetitions = $competitions->groupBy(function (Competition $competition) {
             return $competition->from->format('Y');
         });
+        $groupedCompetitions = $groupedCompetitions->sortKeysDesc();
 
         return view('competitions.index', [
             'groupedCompetitions' => $groupedCompetitions,

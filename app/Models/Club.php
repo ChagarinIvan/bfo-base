@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
 
 /**
@@ -16,6 +17,8 @@ use Illuminate\Support\Collection;
  * @property Person[]|Collection $persons
  * @method static Builder|Club find(mixed $ids)
  * @method static Builder|Club with(mixed $with)
+ * @method static Builder|Club orderBy(string $column)
+ * @method static Club[]|Paginator paginate(int $size)
  */
 class Club extends Model
 {

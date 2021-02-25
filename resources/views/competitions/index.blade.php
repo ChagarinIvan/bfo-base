@@ -1,5 +1,4 @@
 @php
-    use App\Models\Competition;
     use Illuminate\Support\Collection;
     /**
      * @var Collection $groupedCompetitions;

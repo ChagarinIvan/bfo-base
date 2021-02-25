@@ -18,24 +18,27 @@ class SimplyParser implements ParserInterface
     {
         $doc = new DOMDocument();
         $content = $file->get();
+        $content = mb_convert_encoding($content, 'utf-8', 'windows-1251');
         $content = str_replace("&laquo;", '«', $content);
         $content = str_replace("&raquo;", '»', $content);
         @$doc->loadHTML($content);
         $xpath = new DOMXpath($doc);
-        $nodes = $xpath->query('//h2|//p|//pre[not(./p)]');
+        $nodes = $xpath->query('//h2|//p|//pre[not(./p[@class])]');
         $linesList = new Collection();
         foreach ($nodes as $node) {
             /** @var DOMElement $node */
             if ($node->nodeName === 'h2') {
                 $groupName = mb_convert_encoding($node->nodeValue, 'iso-8859-1', 'utf-8');
                 $groupName = str_replace(" ", ' ', $groupName);
-                $groupName = substr($groupName, 0, strpos($groupName, ' '));
+                if (str_contains($groupName, ' ')) {
+                    $groupName = substr($groupName, 0, strpos($groupName, ' '));
+                }
                 $groupName = trim($groupName);
                 $groupName = Group::FIXING_MAP[$groupName] ?? $groupName;
             } elseif ($node->nodeName === 'p' || $node->nodeName === 'pre') {
                 $line = mb_convert_encoding($node->nodeValue, 'iso-8859-1', 'utf-8');
                 $line = str_replace(" ", ' ', $line);
-                if (empty($line)) {
+                if (empty($line) || str_contains($line, 'амилия')) {
                     continue;
                 }
                 $preparedLine = preg_replace('#=#', ' ', $line);

@@ -24,7 +24,7 @@
                 <th scope="col">Название</th>
                 <th scope="col">{{ __('app.events.flags') }}</th>
                 <th scope="col">Описание</th>
-                <th scope="col">Дата</th>
+                <th scope="col">{{ __('app.common.date') }}</th>
                 <th scope="col">Число участников</th>
                 <th scope="col"></th>
             </tr>

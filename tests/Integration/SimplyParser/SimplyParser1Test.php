@@ -7,7 +7,7 @@ namespace Tests\Integration\SimplyParser;
 use App\Models\Parser\SimplyParser;
 use Tests\Integration\AbstractParserTest;
 
-class SimplyParserTest extends AbstractParserTest
+class SimplyParser1Test extends AbstractParserTest
 {
     protected function getParser(): string
     {

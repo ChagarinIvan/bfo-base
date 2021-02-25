@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use JetBrains\PhpStorm\Pure;
@@ -21,7 +22,11 @@ use JetBrains\PhpStorm\Pure;
  * @property ProtocolLine[]|Collection $protocolLines
  * @property int $club_id
  * @property Club $club
- * @method static Builder|Person find(mixed $ids)
+ * @method static Person|Builder find(mixed $ids)
+ * @method static Person|Builder with(mixed $ids)
+ * @method static Person|Builder orderBy(string $column)
+ * @method static Person|Builder whereClubId(int $clubId)
+ * @method static Person[]|Paginator paginate(int $size)
  */
 class Person extends Model
 {

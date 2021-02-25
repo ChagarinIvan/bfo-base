@@ -38,6 +38,8 @@ Route::get('/competitions/events/{event}/delete-flag/{flag}', [EventController::
 //persons
 Route::get('/persons', [PersonController::class, 'index']);
 Route::get('/persons/{person}/show', [PersonController::class, 'show']);
+Route::get('/persons/create', [PersonController::class, 'create']);
+Route::post('/persons/store', [PersonController::class, 'store']);
 //clubs
 Route::get('club', [ClubController::class, 'index']);
 Route::get('/club/{club}/show', [ClubController::class, 'show']);
