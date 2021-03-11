@@ -28,7 +28,7 @@ class SimplyParser3Test extends AbstractParserTest
                 'СКО «Орион»',
                 2009,
                 'Iю',
-                305,
+                78,
                 '00:06:42',
                 1,
                 '-',

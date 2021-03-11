@@ -25,9 +25,13 @@ class SimplyParser implements ParserInterface
         $xpath = new DOMXpath($doc);
         $nodes = $xpath->query('//h2|//p[not(./b)]|//p/b|//pre[not(./p[@class])]');
         $linesList = new Collection();
+        $groupHeaderIndex = 0;
+        $groupName = '';
+        $groupHeaderData = [];
+        $groupHeaderCount = 0;
         foreach ($nodes as $node) {
             /** @var DOMElement $node */
-            if ($node->nodeName === 'h2' || $node->nodeName === 'b') {
+            if ($node->nodeName === 'h2' || $node->nodeName === 'b' || ($node->nodeName === 'pre' && $groupHeaderCount === 0)) {
                 $groupNameLine = mb_convert_encoding($node->nodeValue, 'iso-8859-1', 'utf-8');
                 $groupNameLine = str_replace(" ", ' ', $groupNameLine);
                 if (empty($groupNameLine) || str_contains($groupNameLine, 'амилия')) {
@@ -39,12 +43,13 @@ class SimplyParser implements ParserInterface
                     if (str_contains($groupHeaderData[$groupHeaderIndex], 'рим')) {
                         $groupHeaderIndex--;
                     }
-                }
-                if (str_contains($groupNameLine, ' ')) {
+                } elseif (str_contains($groupNameLine, ' ')) {
                     $groupNameLine = substr($groupNameLine, 0, strpos($groupNameLine, ' '));
+                    $groupNameLine = trim($groupNameLine, ' ,');
+                    $groupName = Group::FIXING_MAP[$groupNameLine] ?? $groupNameLine;
+                    $groupHeaderCount = 0;
+                    $groupHeaderData = [];
                 }
-                $groupNameLine = trim($groupNameLine, ' ,');
-                $groupName = Group::FIXING_MAP[$groupNameLine] ?? $groupNameLine;
             } elseif ($node->nodeName === 'p' || $node->nodeName === 'pre') {
                 $line = mb_convert_encoding($node->nodeValue, 'iso-8859-1', 'utf-8');
                 $line = str_replace(" ", ' ', $line);
@@ -55,33 +60,20 @@ class SimplyParser implements ParserInterface
                 $preparedLine = preg_replace('#\s+#', ' ', $preparedLine);
                 $preparedLine = trim($preparedLine);
                 $lineData = explode(' ', $preparedLine);
-                if (count($lineData) <= 5) {
+                $fieldsCount = count($lineData);
+                if ($fieldsCount <= 5) {
                     continue;
                 }
-                $fieldsCount = count($lineData);
                 $protocolLine = ['group' => $groupName];
                 $indent = 1;
-                $columnName = $this->getColumn($groupHeaderData[$groupHeaderIndex--]);
-                $protocolLine[$columnName] = $this->getValue($columnName, $lineData, $fieldsCount, $indent);
-                $columnName = $this->getColumn($groupHeaderData[$groupHeaderIndex--]);
-                $protocolLine[$columnName] = $this->getValue($columnName, $lineData, $fieldsCount, $indent);
-                $place = $lineData[$fieldsCount - $indent++];
-                if (str_contains($groupHeaderData[$groupHeaderIndex--], 'есто')) {
-                    $protocolLine['place'] = is_numeric($place) ? (int)$place : null;
+                for ($i = $groupHeaderIndex; $i > 2; $i--) {
+                    $columnName = $this->getColumn($groupHeaderData[$i]);
+                    if ($columnName === '') {
+                        break;
+                    }
+                    $protocolLine[$columnName] = $this->getValue($columnName, $lineData, $fieldsCount, $indent);
                 }
 
-                $protocolLine['time'] = $time;
-                $protocolLine['runner_number'] = (int)$lineData[$fieldsCount - $indent++];
-                 if (!is_numeric($protocolLine['runner_number'])) {
-                    throw new RuntimeException('Что то не так с номером участника ' . $preparedLine);
-                }
-                $rank = $lineData[$fieldsCount - $indent];
-                if (preg_match('#^[КМСCKMIбр\/юЮБРкмсkmc]{1,4}$#s', $rank) || in_array($rank, ['КМС', 'б/р'], true)) {
-                    $protocolLine['rank'] = $rank;
-                    $indent++;
-                }
-                $year = $lineData[$fieldsCount - $indent++];
-                $protocolLine['year'] = is_numeric($year) ? (int)$year : null;
                 $protocolLine['serial_number'] = (int)$lineData[0];
                 $protocolLine['lastname'] = $lineData[1];
                 $protocolLine['firstname'] = $lineData[2];
@@ -96,7 +88,7 @@ class SimplyParser implements ParserInterface
 
     private function getColumn(string $field): string
     {
-        $field = strtolower($field);
+        $field = mb_strtolower($field);
         if (str_contains($field, 'ып')) {
             return 'complete_rank';
         }
@@ -106,7 +98,7 @@ class SimplyParser implements ParserInterface
         if (str_contains($field, 'зультат')) {
             return 'time';
         }
-        if (str_contains($field, 'гр')) {
+        if ($field ==='гр' || $field === 'г.р.') {
             return 'year';
         }
         if (str_contains($field, 'омер')) {
@@ -115,13 +107,7 @@ class SimplyParser implements ParserInterface
         if (str_contains($field, 'вал')) {
             return 'rank';
         }
-        if (str_contains($field, 'мя')) {
-            return 'firstname';
-        }
-        if (str_contains($field, 'амили')) {
-            return 'lastname';
-        }
-        return 'serial_number';
+        return '';
     }
 
     public function check(UploadedFile $file): bool
@@ -136,8 +122,12 @@ class SimplyParser implements ParserInterface
             return $lineData[$fieldsCount - $indent++];
         }
         if ($column === 'place') {
-            $place = $lineData[$fieldsCount - $indent++];
-            $protocolLine['place'] = is_numeric($place) ? (int)$place : null;
+            $place = $lineData[$fieldsCount - $indent];
+            if (is_numeric($place) || $place === '-') {
+                $indent++;
+                return  (int)$place;
+            }
+            return null;
         }
         if ($column === 'time') {
             try {
@@ -145,6 +135,23 @@ class SimplyParser implements ParserInterface
             } catch (Exception) {
                 $time = null;
             }
+            return $time;
         }
+        if ($column === 'runner_number') {
+            return (int)$lineData[$fieldsCount - $indent++];
+        }
+        if ($column === 'rank') {
+            $rank = $lineData[$fieldsCount - $indent];
+            if (preg_match('#^[КМСCKMIбр\/юЮБРкмсkmc]{1,4}$#s', $rank) || in_array($rank, ['КМС', 'б/р'], true)) {
+                $protocolLine['rank'] = $rank;
+                $indent++;
+            }
+            return $rank;
+        }
+        if ($column === 'year') {
+            $year = $lineData[$fieldsCount - $indent++];
+            return is_numeric($year) ? (int)$year : null;
+        }
+        return null;
     }
 }
