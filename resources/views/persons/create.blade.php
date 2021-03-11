@@ -20,8 +20,8 @@
             <input class="form-control" id="lastname" name="lastname">
         </div>
         <div class="form-group">
-            <label for="name">{{ __('app.common.name') }}</label>
-            <input class="form-control" id="name" name="name">
+            <label for="firstname">{{ __('app.common.name') }}</label>
+            <input class="form-control" id="name" name="firstname">
         </div>
         <div class="form-group row">
             <label for="birthday" class="col-2 col-form-label">{{ __('app.common.birthday') }}</label>
@@ -30,12 +30,17 @@
             </div>
         </div>
         <div class="form-group">
-            <label for="club">{{ __('app.club.name') }}</label>
-            <input class="form-control" id="club" name="club">
+            <label for="club_id">{{ __('app.club.name') }}</label>
+            <select class="custom-select" id="club_id" name="club_id">
+                <option value="0"></option>
+                @foreach($clubs as $club)
+                    <option value="{{ $club->id }}">{{ $club->name }}</option>
+                @endforeach
+            </select>
         </div>
-{{--        <div class="row">--}}
-{{--            <input type="submit" class="btn btn-primary" value="{{ __('app.common.create') }}">--}}
-{{--            <a href="/persons" class="btn btn-danger ml-1">{{ __('app.common.cancel') }}</a>--}}
-{{--        </div>--}}
+        <div class="row">
+            <input type="submit" class="btn btn-primary" value="{{ __('app.common.create') }}">
+            <a href="/persons" class="btn btn-danger ml-1">{{ __('app.common.cancel') }}</a>
+        </div>
     </form>
 @endsection

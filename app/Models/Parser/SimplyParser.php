@@ -23,18 +23,28 @@ class SimplyParser implements ParserInterface
         $content = str_replace("&raquo;", '»', $content);
         @$doc->loadHTML($content);
         $xpath = new DOMXpath($doc);
-        $nodes = $xpath->query('//h2|//p|//pre[not(./p[@class])]');
+        $nodes = $xpath->query('//h2|//p[not(./b)]|//p/b|//pre[not(./p[@class])]');
         $linesList = new Collection();
         foreach ($nodes as $node) {
             /** @var DOMElement $node */
-            if ($node->nodeName === 'h2') {
-                $groupName = mb_convert_encoding($node->nodeValue, 'iso-8859-1', 'utf-8');
-                $groupName = str_replace(" ", ' ', $groupName);
-                if (str_contains($groupName, ' ')) {
-                    $groupName = substr($groupName, 0, strpos($groupName, ' '));
+            if ($node->nodeName === 'h2' || $node->nodeName === 'b') {
+                $groupNameLine = mb_convert_encoding($node->nodeValue, 'iso-8859-1', 'utf-8');
+                $groupNameLine = str_replace(" ", ' ', $groupNameLine);
+                if (empty($groupNameLine) || str_contains($groupNameLine, 'амилия')) {
+                    $groupHeaderLine = preg_replace('#\s+#', ' ', $groupNameLine);
+                    $groupHeaderLine = trim($groupHeaderLine);
+                    $groupHeaderData = explode(' ', $groupHeaderLine);
+                    $groupHeaderCount = count($groupHeaderData);
+                    $groupHeaderIndex = $groupHeaderCount - 1;
+                    if (str_contains($groupHeaderData[$groupHeaderIndex], 'рим')) {
+                        $groupHeaderIndex--;
+                    }
                 }
-                $groupName = trim($groupName);
-                $groupName = Group::FIXING_MAP[$groupName] ?? $groupName;
+                if (str_contains($groupNameLine, ' ')) {
+                    $groupNameLine = substr($groupNameLine, 0, strpos($groupNameLine, ' '));
+                }
+                $groupNameLine = trim($groupNameLine, ' ,');
+                $groupName = Group::FIXING_MAP[$groupNameLine] ?? $groupNameLine;
             } elseif ($node->nodeName === 'p' || $node->nodeName === 'pre') {
                 $line = mb_convert_encoding($node->nodeValue, 'iso-8859-1', 'utf-8');
                 $line = str_replace(" ", ' ', $line);
@@ -51,16 +61,15 @@ class SimplyParser implements ParserInterface
                 $fieldsCount = count($lineData);
                 $protocolLine = ['group' => $groupName];
                 $indent = 1;
-                $protocolLine['complete_rank'] = $lineData[$fieldsCount - $indent++];
+                $columnName = $this->getColumn($groupHeaderData[$groupHeaderIndex--]);
+                $protocolLine[$columnName] = $this->getValue($columnName, $lineData, $fieldsCount, $indent);
+                $columnName = $this->getColumn($groupHeaderData[$groupHeaderIndex--]);
+                $protocolLine[$columnName] = $this->getValue($columnName, $lineData, $fieldsCount, $indent);
                 $place = $lineData[$fieldsCount - $indent++];
-                $protocolLine['place'] = is_numeric($place) ? (int)$place : null;
-
-                $time = null;
-                try {
-                    $time = Carbon::createFromTimeString($lineData[$fieldsCount - $indent++]);
-                } catch (Exception) {
-                    $time = null;
+                if (str_contains($groupHeaderData[$groupHeaderIndex--], 'есто')) {
+                    $protocolLine['place'] = is_numeric($place) ? (int)$place : null;
                 }
+
                 $protocolLine['time'] = $time;
                 $protocolLine['runner_number'] = (int)$lineData[$fieldsCount - $indent++];
                  if (!is_numeric($protocolLine['runner_number'])) {
@@ -85,9 +94,57 @@ class SimplyParser implements ParserInterface
         return $linesList;
     }
 
+    private function getColumn(string $field): string
+    {
+        $field = strtolower($field);
+        if (str_contains($field, 'ып')) {
+            return 'complete_rank';
+        }
+        if (str_contains($field, 'есто')) {
+            return 'place';
+        }
+        if (str_contains($field, 'зультат')) {
+            return 'time';
+        }
+        if (str_contains($field, 'гр')) {
+            return 'year';
+        }
+        if (str_contains($field, 'омер')) {
+            return 'runner_number';
+        }
+        if (str_contains($field, 'вал')) {
+            return 'rank';
+        }
+        if (str_contains($field, 'мя')) {
+            return 'firstname';
+        }
+        if (str_contains($field, 'амили')) {
+            return 'lastname';
+        }
+        return 'serial_number';
+    }
+
     public function check(UploadedFile $file): bool
     {
         $content = $file->get();
         return str_contains($content, '<o:p></o:p>');
+    }
+
+    private function getValue(string $column, array $lineData, int $fieldsCount, int &$indent): mixed
+    {
+        if ($column === 'complete_rank') {
+            return $lineData[$fieldsCount - $indent++];
+        }
+        if ($column === 'place') {
+            $place = $lineData[$fieldsCount - $indent++];
+            $protocolLine['place'] = is_numeric($place) ? (int)$place : null;
+        }
+        if ($column === 'time') {
+            try {
+                $time = Carbon::createFromTimeString($lineData[$fieldsCount - $indent++]);
+            } catch (Exception) {
+                $time = null;
+            }
+        }
     }
 }

@@ -36,6 +36,9 @@ class Person extends Model
     protected $casts = [
         'prompt' => 'array'
     ];
+    protected $fillable = [
+        'lastname', 'firstname', 'birthday', 'club_id'
+    ];
 
     public function setPrompt(string $line): void
     {

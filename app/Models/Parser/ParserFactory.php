@@ -7,7 +7,7 @@ use RuntimeException;
 
 class ParserFactory
 {
-    private const PARSER = [
+    private const PARSERS = [
         HandicapAlbatrosTimingParser::class,
         AlbatrosTimingParser::class,
         WinOrientHtmlParser::class,
@@ -19,7 +19,7 @@ class ParserFactory
 
     public static function createParser(UploadedFile $file): ParserInterface
     {
-        foreach (self::PARSER as $parser) {
+        foreach (self::PARSERS as $parser) {
             $parser = new $parser();
             if ($parser->check($file)) {
                 return $parser;

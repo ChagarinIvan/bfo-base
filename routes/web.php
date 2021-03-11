@@ -40,6 +40,9 @@ Route::get('/persons', [PersonController::class, 'index']);
 Route::get('/persons/{person}/show', [PersonController::class, 'show']);
 Route::get('/persons/create', [PersonController::class, 'create']);
 Route::post('/persons/store', [PersonController::class, 'store']);
+Route::get('/persons/{person}/delete', [PersonController::class, 'delete']);
+Route::get('/persons/{person}/edit', [PersonController::class, 'edit']);
+Route::post('/persons/{person}/update', [PersonController::class, 'update']);
 //clubs
 Route::get('club', [ClubController::class, 'index']);
 Route::get('/club/{club}/show', [ClubController::class, 'show']);

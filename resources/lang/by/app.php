@@ -3,6 +3,7 @@
 return [
     'club' => [
         'name' => 'Клюб',
+        'persons_count' => 'Колькасць членаў',
     ],
     'persons' => [
         'title' => 'Члены федэрацыі',
@@ -42,6 +43,7 @@ return [
         'place' => 'Месца',
         'points' => 'Ачкі',
         'complete_rank' => 'Выкананы разрад',
+        'search' => 'Пошук',
     ],
     'competition' => 'Спаборніцтвы',
     'add_competition' => 'Дадаць спаборніцтвы',
@@ -69,5 +71,6 @@ return [
     'person' => [
         'create_button' => 'Дадаць асобу',
         'create_title' => 'Даданне асобы',
+        'edit_title' => 'Рэдагаванне асобы',
     ],
 ];
