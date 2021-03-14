@@ -10,7 +10,6 @@ use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
-use RuntimeException;
 
 class SimplyParser implements ParserInterface
 {
@@ -28,42 +27,45 @@ class SimplyParser implements ParserInterface
         $groupHeaderIndex = 0;
         $groupName = '';
         $groupHeaderData = [];
-        $groupHeaderCount = 0;
         foreach ($nodes as $node) {
-            /** @var DOMElement $node */
-            if ($node->nodeName === 'h2' || $node->nodeName === 'b' || ($node->nodeName === 'pre' && $groupHeaderCount === 0)) {
-                $groupNameLine = mb_convert_encoding($node->nodeValue, 'iso-8859-1', 'utf-8');
-                $groupNameLine = str_replace(" ", ' ', $groupNameLine);
-                if (empty($groupNameLine) || str_contains($groupNameLine, 'амилия')) {
-                    $groupHeaderLine = preg_replace('#\s+#', ' ', $groupNameLine);
-                    $groupHeaderLine = trim($groupHeaderLine);
-                    $groupHeaderData = explode(' ', $groupHeaderLine);
-                    $groupHeaderCount = count($groupHeaderData);
-                    $groupHeaderIndex = $groupHeaderCount - 1;
-                    if (str_contains($groupHeaderData[$groupHeaderIndex], 'рим')) {
-                        $groupHeaderIndex--;
-                    }
-                } elseif (str_contains($groupNameLine, ' ')) {
-                    $groupNameLine = substr($groupNameLine, 0, strpos($groupNameLine, ' '));
-                    $groupNameLine = trim($groupNameLine, ' ,');
-                    $groupName = Group::FIXING_MAP[$groupNameLine] ?? $groupNameLine;
-                    $groupHeaderCount = 0;
-                    $groupHeaderData = [];
+                /** @var DOMElement $node */
+            $line = mb_convert_encoding($node->nodeValue, 'iso-8859-1', 'utf-8');
+            $line = str_replace(" ", ' ', $line);
+            if (empty($line)) {
+                continue;
+            }
+
+            $withSpace = str_contains($line, ' ');
+            if (str_contains($line, 'амилия')) {
+                $groupHeaderLine = preg_replace('#\s+#', ' ', $line);
+                $groupHeaderLine = trim($groupHeaderLine);
+                $groupHeaderData = explode(' ', $groupHeaderLine);
+                $groupHeaderIndex = count($groupHeaderData) - 1;
+                if (str_contains($groupHeaderData[$groupHeaderIndex], 'рим')) {
+                    $groupHeaderIndex--;
                 }
-            } elseif ($node->nodeName === 'p' || $node->nodeName === 'pre') {
-                $line = mb_convert_encoding($node->nodeValue, 'iso-8859-1', 'utf-8');
-                $line = str_replace(" ", ' ', $line);
-                if (empty($line) || str_contains($line, 'амилия')) {
-                    continue;
-                }
+            } elseif (
+                (
+                    ($groupNameLine = trim($line, ' ,')) &&
+                    (isset(Group::FIXING_MAP[$line]) || in_array($line, Group::GROUPS, true))
+                ) ||
+                (
+                    $withSpace &&
+                    ($groupNameLine = trim(substr($line, 0, strpos($line, ' ')), ' ,')) &&
+                    (isset(Group::FIXING_MAP[$groupNameLine]) || in_array($groupNameLine, Group::GROUPS, true))
+                )
+            ) {
+                $groupName = Group::FIXING_MAP[$groupNameLine] ?? $groupNameLine;
+                $groupHeaderData = [];
+            } elseif ($groupHeaderIndex > 0) {
                 $preparedLine = preg_replace('#=#', ' ', $line);
                 $preparedLine = preg_replace('#\s+#', ' ', $preparedLine);
                 $preparedLine = trim($preparedLine);
-                $lineData = explode(' ', $preparedLine);
-                $fieldsCount = count($lineData);
-                if ($fieldsCount <= 5) {
+                if (!preg_match('#^\d+\s[^\s\d]+#', $preparedLine)) {
                     continue;
                 }
+                $lineData = explode(' ', $preparedLine);
+                $fieldsCount = count($lineData);
                 $protocolLine = ['group' => $groupName];
                 $indent = 1;
                 for ($i = $groupHeaderIndex; $i > 2; $i--) {
@@ -89,6 +91,9 @@ class SimplyParser implements ParserInterface
     private function getColumn(string $field): string
     {
         $field = mb_strtolower($field);
+        if (str_contains($field, 'чки')) {
+            return 'points';
+        }
         if (str_contains($field, 'ып')) {
             return 'complete_rank';
         }
@@ -118,6 +123,10 @@ class SimplyParser implements ParserInterface
 
     private function getValue(string $column, array $lineData, int $fieldsCount, int &$indent): mixed
     {
+        if ($column === 'points') {
+            $points = $lineData[$fieldsCount - $indent++];
+            return is_numeric($points) ? (int)$points : null;
+        }
         if ($column === 'complete_rank') {
             return $lineData[$fieldsCount - $indent++];
         }

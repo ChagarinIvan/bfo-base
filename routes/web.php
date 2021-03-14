@@ -6,6 +6,7 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\FlagsController;
 use App\Http\Controllers\LocalizationController;
 use App\Http\Controllers\PersonController;
+use App\Http\Controllers\FaqController;
 use App\Http\Controllers\ProtocolLinesController;
 use Illuminate\Support\Facades\Route;
 
@@ -57,6 +58,9 @@ Route::get('/flags', [FlagsController::class, 'index']);
 Route::get('/flags/create', [FlagsController::class, 'create']);
 Route::get('/flags/{flag}/edit', [FlagsController::class, 'edit']);
 Route::post('/flags/store', [FlagsController::class, 'store']);
-Route::patch('/flags/{flag}/update', [FlagsController::class, 'update']);
+Route::post('/flags/{flag}/update', [FlagsController::class, 'update']);
 Route::get('/flags/{flag}/delete', [FlagsController::class, 'delete']);
 Route::get('/flags/{flag}/show-events', [FlagsController::class, 'showEvents']);
+//faq
+Route::get('/faq', [FaqController::class, 'index']);
+Route::get('/faq/api', [FaqController::class, 'api']);

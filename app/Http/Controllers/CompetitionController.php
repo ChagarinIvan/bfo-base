@@ -10,18 +10,24 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Collection;
 
 class CompetitionController extends BaseController
 {
     public function index(): View
     {
-        $competitions = Competition::all();
-        $dates = $competitions->pluck('from');
+        $allCompetitions = Competition::all();
+        $dates = $allCompetitions->pluck('from');
         $years = $dates->transform(fn(Carbon $date) => $date->format('Y'))->unique()->sortDesc();
-        $groupedCompetitions = $competitions->groupBy(function (Competition $competition) {
+        $groupedCompetitions = $allCompetitions->groupBy(function (Competition $competition) {
             return $competition->from->format('Y');
         });
         $groupedCompetitions = $groupedCompetitions->sortKeysDesc();
+        $groupedCompetitions = $groupedCompetitions->transform(function(Collection $competitions) {
+            return $competitions->sortByDesc(function (Competition $competition) {
+                return $competition->from->format('Y-m-d');
+            });
+        });
 
         return view('competitions.index', [
             'groupedCompetitions' => $groupedCompetitions,

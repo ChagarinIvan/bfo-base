@@ -7,7 +7,7 @@ namespace Tests\Integration\SimplyParser;
 use App\Models\Parser\SimplyParser;
 use Tests\Integration\AbstractParserTest;
 
-class SimplyParser2Test extends AbstractParserTest
+class SimplyParser4Test extends AbstractParserTest
 {
     protected function getParser(): string
     {
@@ -16,41 +16,41 @@ class SimplyParser2Test extends AbstractParserTest
 
     protected function getFilePath(): string
     {
-        return '2019/protocol_191027_otkrytyy-kubok-minskogo-rayona-po-sportivnomu-orientirovaniyu-belaya-rus-2019_72005.htm';
+        return '2019/protocol_190329_brestskiy-podsnezhnik-2019_37611.htm';
     }
 
     protected function getResults(): array
     {
         return [
             0 => [
-                'Холод',
-                'Ирина',
-                'СКО «Орион»',
-                2009,
+                'Томанова',
+                'Валерия',
+                'КО Случь',
+                2007,
                 'Iю',
-                305,
-                '0:12:57',
+                533,
+                '0:10:40',
                 1,
-                '-',
-                null,
+                'Iю',
+                1000,
             ],
-            13 => [
-                'Малышко',
-                'Анна',
-                'КСО «Белая Русь»',
-                2013,
+            35 => [
+                'Бойко',
+                'Елизавета',
+                'Червенский р-н',
+                2007,
                 'б/р',
-                167,
+                680,
                 null,
                 null,
                 '-',
-                null
+                null,
             ],
         ];
     }
 
     protected function geLinesCount(): int
     {
-        return 329;
+        return 521;
     }
 }

@@ -1,6 +1,10 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Api\ClubsController;
+use App\Http\Controllers\Api\CompetitionController;
+use App\Http\Controllers\Api\EventsController;
+use App\Http\Controllers\Api\PersonsController;
+use App\Http\Controllers\Api\ResultsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,7 +17,8 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::get('/api/competitions', [CompetitionController::class, 'index']);
+Route::get('/api/competition/{competition_id}/events', [EventsController::class, 'index']);
+Route::get('/api/event/{event_id}/results', [ResultsController::class, 'index']);
+Route::get('/api/clubs', [ClubsController::class, 'index']);
+Route::get('/api/persons', [PersonsController::class, 'index']);

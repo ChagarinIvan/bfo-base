@@ -1,8 +1,9 @@
 <?php
 
-namespace Tests\Integration;
+namespace Tests\Integration\WinOrientParser;
 
 use App\Models\Parser\WinOrientHtmlParser;
+use Tests\Integration\AbstractParserTest;
 
 class WinOrientParserTest extends AbstractParserTest
 {

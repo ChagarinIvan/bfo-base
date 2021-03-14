@@ -51,6 +51,6 @@ class SimplyParser3Test extends AbstractParserTest
 
     protected function geLinesCount(): int
     {
-        return 298;
+        return 296;
     }
 }

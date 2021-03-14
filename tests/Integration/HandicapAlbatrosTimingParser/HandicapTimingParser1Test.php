@@ -21,7 +21,7 @@ class HandicapTimingParser1Test extends AbstractParserTest
 
     protected function getResults(): array
     {
-        return [
+        $var = [
             0 => [
                 'Волосевич',
                 'Александра',
@@ -47,6 +47,7 @@ class HandicapTimingParser1Test extends AbstractParserTest
                 null
             ],
         ];
+        return $var;
     }
 
     protected function geLinesCount(): int

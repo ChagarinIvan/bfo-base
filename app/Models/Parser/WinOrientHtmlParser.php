@@ -38,7 +38,10 @@ class WinOrientHtmlParser implements ParserInterface
             for ($index = 1; $index < $linesCount; $index++) {
                 $line = trim($lines[$index]);
                 if (empty(trim($line, '-'))) {
-                    break;
+                    continue;
+                }
+                if (str_contains($line, 'амилия')) {
+                    continue;
                 }
                 $preparedLine = preg_replace('#\s+#', ' ', $line);
                 $lineData = explode(' ', $preparedLine);
