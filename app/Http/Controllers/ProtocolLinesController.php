@@ -19,15 +19,22 @@ use Illuminate\Support\Collection;
 
 class ProtocolLinesController extends BaseController
 {
-    public function editPerson(int $protocolLineId): View
+    public function editPerson(Request $request, int $protocolLineId): View
     {
+        $search = (string)$request->get('search');
         $protocolLine = ProtocolLine::find($protocolLineId);
-        $persons = Person::with('club')->get();
-        $persons = $persons->sortBy('lastname');
+        $personsQuery = Person::with('club')->orderBy('lastname');
+        if(strlen($search) > 0) {
+            $personsQuery->where('firstname', 'LIKE', '%'.$search.'%')
+                ->orWhere('lastname', 'LIKE', '%'.$search.'%')
+                ->orWhere('birthday', 'LIKE', '%'.$search.'%');
+        }
+        $persons = $personsQuery->paginate(13);
 
         return view('protocol-line.edit-person', [
             'protocolLine' => $protocolLine,
             'persons' => $persons,
+            'search' => $search,
         ]);
     }
 

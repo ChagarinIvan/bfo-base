@@ -18,7 +18,6 @@ class OBelarusNetRelayParser implements ParserInterface
     private string $commandRank = '';
     private int $commandCounter = 0;
 
-
     public function parse(UploadedFile $file): Collection
     {
         $doc = new DOMDocument();
@@ -67,8 +66,7 @@ class OBelarusNetRelayParser implements ParserInterface
                     $this->commandPlace = 0;
                     $this->commandRank = '';
                     continue;
-                }
-                if (empty($line)) {
+                } elseif (empty($line) || !preg_match('#^\d+\.\d+#', $line)) {
                     break;
                 }
                 $preparedLine = preg_replace('#=#', ' ', $line);
@@ -152,11 +150,10 @@ class OBelarusNetRelayParser implements ParserInterface
                                     if (strlen($data) < 4) {
                                         continue;
                                     }
-                                    try {
-                                        Carbon::createFromTimeString($data);
+                                    if (preg_match('#\d\d:\d\d#', $data)) {
                                         $indent = $fieldsCount - $key;
                                         break;
-                                    } catch (\Exception $e) {}
+                                    }
                                 }
                             }
 

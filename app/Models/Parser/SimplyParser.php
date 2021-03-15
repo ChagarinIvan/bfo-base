@@ -152,10 +152,9 @@ class SimplyParser implements ParserInterface
         if ($column === 'rank') {
             $rank = $lineData[$fieldsCount - $indent];
             if (preg_match('#^[КМСCKMIбр\/юЮБРкмсkmc]{1,4}$#s', $rank) || in_array($rank, ['КМС', 'б/р'], true)) {
-                $protocolLine['rank'] = $rank;
                 $indent++;
+                return $rank;
             }
-            return $rank;
         }
         if ($column === 'year') {
             $year = $lineData[$fieldsCount - $indent++];

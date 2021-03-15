@@ -1,8 +1,9 @@
 <?php
 
-namespace Tests\Integration;
+namespace Tests\Integration\WinOrientParser;
 
 use App\Models\Parser\WinOrientHtmlParser;
+use Tests\Integration\AbstractParserTest;
 
 class WinOrientParser2Test extends AbstractParserTest
 {
@@ -13,57 +14,33 @@ class WinOrientParser2Test extends AbstractParserTest
 
     protected function getFilePath(): string
     {
-        return '2020/18072020.htm';
+        return '2019/protocol_190414_otkrytyy-kubok-g-grodno-2019_72884.htm';
     }
 
     protected function getResults(): array
     {
         return [
             0 => [
-                'Михалкин', //фаммилия
-                'Игорь', //имя
-                'Эридан', //клуб
-                2008, //год
-                null, //разряд
-                141, //номер
-                '00:27:39', //время
+                'Мурашка', //фаммилия
+                'Усяслаў', //имя
+                'СКО «Орион»', //клуб
+                2007, //год
+                'Iю', //разряд
+                435, //номер
+                '00:07:52', //время
                 1, //место
-                null, //очки
-                null, //выполненный разряд
+                'IIю', //выполненный разряд
+                80, //очки
             ],
-            14 => [
-                'Голютов',
-                'Никита',
-                'Лагерь "Волобо"',
+            50 => [
+                'Комаров',
+                'Максим',
+                'OK Kaliningrad RUS',
+                2005,
+                null,
+                311,
                 null,
                 null,
-                36,
-                null,
-                null,
-                null,
-                null,
-            ],
-            45 => [
-                'Языков',
-                'Юрий',
-                'КСО "Немига-Норд"',
-                1990,
-                'МСМК',
-                150,
-                '00:42:10',
-                5,
-                null,
-                null,
-            ],
-            46 => [
-                'Попов',
-                'Дмитрий',
-                'Эридан',
-                1999,
-                'КМС',
-                191,
-                '00:42:12',
-                6,
                 null,
                 null,
             ],
@@ -72,6 +49,6 @@ class WinOrientParser2Test extends AbstractParserTest
 
     protected function geLinesCount(): int
     {
-        return 219;
+        return 411;
     }
 }

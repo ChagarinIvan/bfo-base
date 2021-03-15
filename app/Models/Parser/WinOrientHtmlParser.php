@@ -6,6 +6,7 @@ use App\Models\Group;
 use App\Models\Rank;
 use DOMDocument;
 use DOMXPath;
+use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
@@ -35,52 +36,44 @@ class WinOrientHtmlParser implements ParserInterface
             if ($linesCount < 2) {
                 continue;
             }
+            $groupHeaderData = [];
+            $groupHeaderIndex = 0;
+            $isFirst = true;
             for ($index = 1; $index < $linesCount; $index++) {
                 $line = trim($lines[$index]);
+                if (str_contains($line, 'Комаров')) {
+                    sleep(1);
+                }
                 if (empty(trim($line, '-'))) {
-                    continue;
+                    if ($isFirst) {
+                        $isFirst = false;
+                        continue;
+                    } else {
+                        break;
+                    }
                 }
                 if (str_contains($line, 'амилия')) {
+                    $groupHeaderLine = preg_replace('#\s+#', ' ', $line);
+                    $groupHeaderLine = trim($groupHeaderLine);
+                    $groupHeaderData = explode(' ', $groupHeaderLine);
+                    $groupHeaderIndex = count($groupHeaderData) - 1;
+                    if (str_contains($groupHeaderData[$groupHeaderIndex], 'рим')) {
+                        $groupHeaderIndex--;
+                    }
                     continue;
                 }
-                $preparedLine = preg_replace('#\s+#', ' ', $line);
+                $preparedLine = str_replace('=', '', $line);
+                $preparedLine = preg_replace('#\s+#', ' ', $preparedLine);
                 $lineData = explode(' ', $preparedLine);
                 $fieldsCount = count($lineData);
                 $protocolLine = ['group' => $groupName];
                 $indent = 1;
-                $place = $lineData[$fieldsCount - $indent++];
-                $protocolLine['place'] = is_numeric($place) ? (int)$place : null;
-
-                try {
-                    $time = $lineData[$fieldsCount - $indent];
-                    if (!str_contains($time, '+')) {
-                        throw new RuntimeException('wrong time');
-                    } else {
-                        $indent++;
+                for ($i = $groupHeaderIndex; $i > 2; $i--) {
+                    $columnName = $this->getColumn($groupHeaderData[$i]);
+                    if ($columnName === '') {
+                        break;
                     }
-                    $time = $lineData[$fieldsCount - $indent];
-                    $time = Carbon::createFromTimeString($time);
-                    $indent++;
-                } catch (\Exception $e) {
-                    $time = null;
-                }
-                $protocolLine['time'] = $time;
-                $year = $lineData[$fieldsCount - $indent];
-                if (is_numeric($year) && preg_match('#\d{4}#', $year)) {
-                    $protocolLine['year'] = (int)$year;
-                    $indent++;
-                } else {
-                    $protocolLine['year'] = null;
-                }
-                $protocolLine['runner_number'] = (int)$lineData[$fieldsCount - $indent++];
-                if (!is_numeric($protocolLine['runner_number'])) {
-                    throw new RuntimeException('Что то не так с номером участника '.$preparedLine);
-                }
-
-                $rank = $lineData[$fieldsCount - $indent];
-                if (preg_match('#^[КМСKMIбр\/юЮБРкмсkmc]{1,4}$#', $rank) || in_array($rank, Rank::RANKS, true)) {
-                    $protocolLine['rank'] = $rank;
-                    $indent++;
+                    $protocolLine[$columnName] = $this->getValue($columnName, $lineData, $fieldsCount, $indent);
                 }
 
                 $protocolLine['serial_number'] = (int)$lineData[0];
@@ -93,6 +86,84 @@ class WinOrientHtmlParser implements ParserInterface
         }
 
         return $linesList;
+    }
+
+    private function getColumn(string $field): string
+    {
+        $field = mb_strtolower($field);
+        if (str_contains($field, 'чки')) {
+            return 'points';
+        }
+        if (str_contains($field, 'ып')) {
+            return 'complete_rank';
+        }
+        if (str_contains($field, 'есто')) {
+            return 'place';
+        }
+        if (str_contains($field, 'зультат')) {
+            return 'time';
+        }
+        if ($field ==='гр' || $field === 'г.р.') {
+            return 'year';
+        }
+        if (str_contains($field, 'омер')) {
+            return 'runner_number';
+        }
+        if (str_contains($field, 'вал')) {
+            return 'rank';
+        }
+        return '';
+    }
+
+    private function getValue(string $column, array $lineData, int $fieldsCount, int &$indent): mixed
+    {
+        if ($column === 'points') {
+            $points = $lineData[$fieldsCount - $indent++];
+            return is_numeric($points) ? (int)$points : null;
+        }
+        if ($column === 'complete_rank') {
+            return $lineData[$fieldsCount - $indent++];
+        }
+        if ($column === 'place') {
+            $place = $lineData[$fieldsCount - $indent];
+            if (is_numeric($place) || $place === '-') {
+                $indent++;
+                return  (int)$place;
+            }
+            return null;
+        }
+        if ($column === 'time') {
+            $time = $lineData[$fieldsCount - $indent++];
+            if (preg_match('#:\d\d:\d\d#', $time)) {
+                try {
+                    $time = Carbon::createFromTimeString($time);
+                } catch (Exception) {
+                    $time = null;
+                }
+            } else {
+                $indent++;
+                $time = null;
+            }
+
+            return $time;
+        }
+        if ($column === 'runner_number') {
+            return (int)$lineData[$fieldsCount - $indent++];
+        }
+        if ($column === 'rank') {
+            $rank = $lineData[$fieldsCount - $indent];
+            if (preg_match('#^[КМСCKMIбр\/юЮБРкмсkmc]{1,4}$#s', $rank) || in_array($rank, ['КМС', 'б/р'], true)) {
+                $indent++;
+                return $rank;
+            } else {
+                return '';
+            }
+        }
+        if ($column === 'year') {
+            $year = $lineData[$fieldsCount - $indent++];
+            return is_numeric($year) ? (int)$year : null;
+        }
+        return null;
     }
 
     public function check(UploadedFile $file): bool

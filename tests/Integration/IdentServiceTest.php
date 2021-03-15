@@ -8,5 +8,6 @@ class IdentServiceTest extends TestCase
 {
     public function testIdentPerson(): array
     {
+        return [];
     }
 }
