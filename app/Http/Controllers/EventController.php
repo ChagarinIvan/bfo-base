@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Facades\System;
 use App\Models\Event;
 use App\Models\Flag;
 use App\Models\Group;
@@ -114,7 +115,7 @@ class EventController extends Controller
             $protocolLine->save();
         });
 
-//        ParserEventJob::dispatch($event)->delay(Carbon::now()->addMinutes(1));
+        System::setNeedRecheck();
 
         return redirect("/competitions/events/{$event->id}/show");
     }
@@ -154,7 +155,7 @@ class EventController extends Controller
             $protocolLine->save();
         });
 
-//        ParserEventJob::dispatch($event)->delay(Carbon::now()->addMinutes());
+        System::setNeedRecheck();
 
         return redirect("/competitions/events/{$event->id}/show");
     }

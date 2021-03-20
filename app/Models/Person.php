@@ -22,6 +22,7 @@ use JetBrains\PhpStorm\Pure;
  * @property ProtocolLine[]|Collection $protocolLines
  * @property int $club_id
  * @property Club $club
+ * @property string $prompt
  * @method static Person|Builder find(mixed $ids)
  * @method static Person|Builder with(mixed $ids)
  * @method static Person|Builder orderBy(string $column)

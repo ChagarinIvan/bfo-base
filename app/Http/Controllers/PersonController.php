@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Facades\System;
 use App\Models\Club;
 use App\Models\Person;
 use App\Models\ProtocolLine;
@@ -68,6 +69,8 @@ class PersonController extends BaseController
         }
         $person->prompt = '[]';
         $person->save();
+        System::setNeedRecheck();
+
         return redirect(strlen($redirectUrl) > 0 ? $redirectUrl : '/persons');
     }
 
@@ -86,6 +89,8 @@ class PersonController extends BaseController
         }
 
         $person->save();
+        System::setNeedRecheck();
+
         return redirect("/persons");
     }
 

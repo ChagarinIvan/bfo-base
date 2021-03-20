@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Jobs\ParserEventJob;
-use App\Models\Event;
+use App\Facades\System;
 use App\Models\Group;
 use App\Models\Person;
 use App\Models\ProtocolLine;
 use App\Services\IdentService;
-use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -61,6 +59,9 @@ class ProtocolLinesController extends BaseController
         if ($url === null) {
             return redirect('/');
         }
+
+        System::setNeedRecheck();
+
         return redirect($url);
     }
 
