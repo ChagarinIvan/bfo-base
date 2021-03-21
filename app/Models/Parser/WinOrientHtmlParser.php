@@ -2,90 +2,98 @@
 
 namespace App\Models\Parser;
 
+use App\Exceptions\ParsingException;
 use App\Models\Group;
-use App\Models\Rank;
 use DOMDocument;
 use DOMXPath;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
-use RuntimeException;
 
 class WinOrientHtmlParser implements ParserInterface
 {
+    /**
+     * @param UploadedFile $file
+     * @return Collection
+     * @throws ParsingException
+     */
     public function parse(UploadedFile $file): Collection
     {
-        $doc = new DOMDocument();
-        @$doc->loadHTML($file->get());
-        $xpath = new DOMXpath($doc);
-        $preNodes = $xpath->query('//pre');
-        $linesList = new Collection();
-        foreach ($preNodes as $node) {
-            $text = trim($node->nodeValue);
-            if (!str_contains($text, 'амилия')) {
-                continue;
-            }
-            $groupNode = $xpath->query('preceding::h2[1]', $node);
-            $groupName = $groupNode[0]->nodeValue;
-            $groupName = explode(',', $groupName)[0];
-            $groupName = Group::FIXING_MAP[$groupName] ?? $groupName;
-
-            $lines = preg_split('/\n|\r\n?/', $text);
-            $linesCount = count($lines);
-            if ($linesCount < 2) {
-                continue;
-            }
-            $groupHeaderData = [];
-            $groupHeaderIndex = 0;
-            $isFirst = true;
-            for ($index = 1; $index < $linesCount; $index++) {
-                $line = trim($lines[$index]);
-                if (str_contains($line, 'Комаров')) {
-                    sleep(1);
-                }
-                if (empty(trim($line, '-'))) {
-                    if ($isFirst) {
-                        $isFirst = false;
-                        continue;
-                    } else {
-                        break;
-                    }
-                }
-                if (str_contains($line, 'амилия')) {
-                    $groupHeaderLine = preg_replace('#\s+#', ' ', $line);
-                    $groupHeaderLine = trim($groupHeaderLine);
-                    $groupHeaderData = explode(' ', $groupHeaderLine);
-                    $groupHeaderIndex = count($groupHeaderData) - 1;
-                    if (str_contains($groupHeaderData[$groupHeaderIndex], 'рим')) {
-                        $groupHeaderIndex--;
-                    }
+        try {
+            $doc = new DOMDocument();
+            @$doc->loadHTML($file->get());
+            $xpath = new DOMXpath($doc);
+            $preNodes = $xpath->query('//pre');
+            $linesList = new Collection();
+            foreach ($preNodes as $node) {
+                $text = trim($node->nodeValue);
+                if (!str_contains($text, 'амилия')) {
                     continue;
                 }
-                $preparedLine = str_replace('=', '', $line);
-                $preparedLine = preg_replace('#\s+#', ' ', $preparedLine);
-                $lineData = explode(' ', $preparedLine);
-                $fieldsCount = count($lineData);
-                $protocolLine = ['group' => $groupName];
-                $indent = 1;
-                for ($i = $groupHeaderIndex; $i > 2; $i--) {
-                    $columnName = $this->getColumn($groupHeaderData[$i]);
-                    if ($columnName === '') {
-                        break;
-                    }
-                    $protocolLine[$columnName] = $this->getValue($columnName, $lineData, $fieldsCount, $indent);
+                $groupNode = $xpath->query('preceding::h2[1]', $node);
+                $groupName = $groupNode[0]->nodeValue;
+                $groupName = explode(',', $groupName)[0];
+                $groupName = Group::FIXING_MAP[$groupName] ?? $groupName;
+
+                $lines = preg_split('/\n|\r\n?/', $text);
+                $linesCount = count($lines);
+                if ($linesCount < 2) {
+                    continue;
                 }
+                $groupHeaderData = [];
+                $groupHeaderIndex = 0;
+                $isFirst = true;
+                for ($index = 1; $index < $linesCount; $index++) {
+                    $line = trim($lines[$index]);
+                    if (str_contains($line, 'Комаров')) {
+                        sleep(1);
+                    }
+                    if (empty(trim($line, '-'))) {
+                        if ($isFirst) {
+                            $isFirst = false;
+                            continue;
+                        } else {
+                            break;
+                        }
+                    }
+                    if (str_contains($line, 'амилия')) {
+                        $groupHeaderLine = preg_replace('#\s+#', ' ', $line);
+                        $groupHeaderLine = trim($groupHeaderLine);
+                        $groupHeaderData = explode(' ', $groupHeaderLine);
+                        $groupHeaderIndex = count($groupHeaderData) - 1;
+                        if (str_contains($groupHeaderData[$groupHeaderIndex], 'рим')) {
+                            $groupHeaderIndex--;
+                        }
+                        continue;
+                    }
+                    $preparedLine = str_replace('=', '', $line);
+                    $preparedLine = preg_replace('#\s+#', ' ', $preparedLine);
+                    $lineData = explode(' ', $preparedLine);
+                    $fieldsCount = count($lineData);
+                    $protocolLine = ['group' => $groupName];
+                    $indent = 1;
+                    for ($i = $groupHeaderIndex; $i > 2; $i--) {
+                        $columnName = $this->getColumn($groupHeaderData[$i]);
+                        if ($columnName === '') {
+                            break;
+                        }
+                        $protocolLine[$columnName] = $this->getValue($columnName, $lineData, $fieldsCount, $indent);
+                    }
 
-                $protocolLine['serial_number'] = (int)$lineData[0];
-                $protocolLine['lastname'] = $lineData[1];
-                $protocolLine['firstname'] = $lineData[2];
-                $protocolLine['club'] = implode(' ', array_slice($lineData, 3, $fieldsCount - $indent - 2));
+                    $protocolLine['serial_number'] = (int)$lineData[0];
+                    $protocolLine['lastname'] = $lineData[1];
+                    $protocolLine['firstname'] = $lineData[2];
+                    $protocolLine['club'] = implode(' ', array_slice($lineData, 3, $fieldsCount - $indent - 2));
 
-                $linesList->push($protocolLine);
+                    $linesList->push($protocolLine);
+                }
             }
-        }
 
-        return $linesList;
+            return $linesList;
+        } catch (Exception $e) {
+            throw new ParsingException($e->getMessage(), $e->getCode(), $e->getPrevious(),);
+        }
     }
 
     private function getColumn(string $field): string
