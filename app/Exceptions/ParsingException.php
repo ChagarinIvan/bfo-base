@@ -16,7 +16,7 @@ class ParsingException extends Exception
     {
         $this->event;
         //send email
-        $test = Mail::send();
+//        $test = Mail::send();
     }
 
     /**

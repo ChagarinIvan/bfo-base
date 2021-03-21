@@ -137,9 +137,13 @@ class EventController extends Controller
         }
 
         $parser = ParserFactory::createParser($protocol);
+        $event = new Event($formParams);
+        $event->competition_id = $competitionId;
+
         try {
             $lineList = $parser->parse($protocol);
         } catch (ParsingException $e) {
+            $e->setEvent($event);
             report($e);
             return redirect('/404');
         }
@@ -153,8 +157,7 @@ class EventController extends Controller
             return $protocolLine;
         });
 
-        $event = new Event($formParams);
-        $event->competition_id = $competitionId;
+
         $event->save();
 
         $lineList->each(function (ProtocolLine $protocolLine) use ($event) {
