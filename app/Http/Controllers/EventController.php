@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\ParsingException;
 use App\Facades\System;
 use App\Models\Event;
 use App\Models\Flag;
@@ -77,19 +78,27 @@ class EventController extends Controller
         ]);
 
         $protocol = $request->file('protocol');
-        if ($protocol === null) {
-            $event = Event::find($eventId);
-            if ($event === null) {
-                throw new RuntimeException('Нету ивента с таким id - '.$eventId);
-            }
+        $event = Event::find($eventId);
 
-            $event->fill($formParams);
-            $event->save();
+        if ($event === null) {
+            throw new RuntimeException('Нету ивента с таким id - '.$eventId);
+        }
+
+        $event->fill($formParams);
+        $event->save();
+
+        if ($protocol === null) {
             return redirect("/competitions/events/{$event->id}/show");
         }
 
         $parser = ParserFactory::createParser($protocol);
-        $lineList = $parser->parse($protocol);
+        try {
+            $lineList = $parser->parse($protocol);
+        } catch (ParsingException $e) {
+            $e->setEvent($event);
+            report($e);
+            return redirect('/404');
+        }
 
         $lineList->transform(function (array $lineData) {
             $protocolLine = new ProtocolLine($lineData);
@@ -101,13 +110,6 @@ class EventController extends Controller
             return $protocolLine;
         });
 
-        $event = Event::find($eventId);
-        if ($event === null) {
-            throw new RuntimeException('Нету ивента с таким id - '.$eventId);
-        }
-
-        $event->fill($formParams);
-        $event->save();
         $event->protocolLines()->delete();
 
         $lineList->each(function (ProtocolLine $protocolLine) use ($event) {
@@ -135,7 +137,16 @@ class EventController extends Controller
         }
 
         $parser = ParserFactory::createParser($protocol);
-        $lineList = $parser->parse($protocol);
+        $event = new Event($formParams);
+        $event->competition_id = $competitionId;
+
+        try {
+            $lineList = $parser->parse($protocol);
+        } catch (ParsingException $e) {
+            $e->setEvent($event);
+            report($e);
+            return redirect('/404');
+        }
         $lineList->transform(function (array $lineData) {
             $protocolLine = new ProtocolLine($lineData);
             $group = Group::whereName(str_replace(' ', '', $lineData['group']))->first();
@@ -146,8 +157,7 @@ class EventController extends Controller
             return $protocolLine;
         });
 
-        $event = new Event($formParams);
-        $event->competition_id = $competitionId;
+
         $event->save();
 
         $lineList->each(function (ProtocolLine $protocolLine) use ($event) {

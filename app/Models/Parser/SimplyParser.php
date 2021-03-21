@@ -2,6 +2,7 @@
 
 namespace App\Models\Parser;
 
+use App\Exceptions\ParsingException;
 use App\Models\Group;
 use DOMDocument;
 use DOMElement;
@@ -15,77 +16,81 @@ class SimplyParser implements ParserInterface
 {
     public function parse(UploadedFile $file): Collection
     {
-        $doc = new DOMDocument();
-        $content = $file->get();
-        $content = mb_convert_encoding($content, 'utf-8', 'windows-1251');
-        $content = str_replace("&laquo;", '«', $content);
-        $content = str_replace("&raquo;", '»', $content);
-        @$doc->loadHTML($content);
-        $xpath = new DOMXpath($doc);
-        $nodes = $xpath->query('//h2|//p[not(./b)]|//p/b|//pre[not(./p[@class])]');
-        $linesList = new Collection();
-        $groupHeaderIndex = 0;
-        $groupName = '';
-        $groupHeaderData = [];
-        foreach ($nodes as $node) {
+        try {
+            $doc = new DOMDocument();
+            $content = $file->get();
+            $content = mb_convert_encoding($content, 'utf-8', 'windows-1251');
+            $content = str_replace("&laquo;", '«', $content);
+            $content = str_replace("&raquo;", '»', $content);
+            @$doc->loadHTML($content);
+            $xpath = new DOMXpath($doc);
+            $nodes = $xpath->query('//h2|//p[not(./b)]|//p/b|//pre[not(./p[@class])]');
+            $linesList = new Collection();
+            $groupHeaderIndex = 0;
+            $groupName = '';
+            $groupHeaderData = [];
+            foreach ($nodes as $node) {
                 /** @var DOMElement $node */
-            $line = mb_convert_encoding($node->nodeValue, 'iso-8859-1', 'utf-8');
-            $line = str_replace(" ", ' ', $line);
-            if (empty($line)) {
-                continue;
-            }
-
-            $withSpace = str_contains($line, ' ');
-            if (str_contains($line, 'амилия')) {
-                $groupHeaderLine = preg_replace('#\s+#', ' ', $line);
-                $groupHeaderLine = trim($groupHeaderLine);
-                $groupHeaderData = explode(' ', $groupHeaderLine);
-                $groupHeaderIndex = count($groupHeaderData) - 1;
-                if (str_contains($groupHeaderData[$groupHeaderIndex], 'рим')) {
-                    $groupHeaderIndex--;
-                }
-            } elseif (
-                (
-                    ($groupNameLine = trim($line, ' ,')) &&
-                    (isset(Group::FIXING_MAP[$line]) || in_array($line, Group::GROUPS, true))
-                ) ||
-                (
-                    $withSpace &&
-                    ($groupNameLine = trim(substr($line, 0, strpos($line, ' ')), ' ,')) &&
-                    (isset(Group::FIXING_MAP[$groupNameLine]) || in_array($groupNameLine, Group::GROUPS, true))
-                )
-            ) {
-                $groupName = Group::FIXING_MAP[$groupNameLine] ?? $groupNameLine;
-                $groupHeaderData = [];
-            } elseif ($groupHeaderIndex > 0) {
-                $preparedLine = preg_replace('#=#', ' ', $line);
-                $preparedLine = preg_replace('#\s+#', ' ', $preparedLine);
-                $preparedLine = trim($preparedLine);
-                if (!preg_match('#^\d+\s[^\s\d]+#', $preparedLine)) {
+                $line = mb_convert_encoding($node->nodeValue, 'iso-8859-1', 'utf-8');
+                $line = str_replace(" ", ' ', $line);
+                if (empty($line)) {
                     continue;
                 }
-                $lineData = explode(' ', $preparedLine);
-                $fieldsCount = count($lineData);
-                $protocolLine = ['group' => $groupName];
-                $indent = 1;
-                for ($i = $groupHeaderIndex; $i > 2; $i--) {
-                    $columnName = $this->getColumn($groupHeaderData[$i]);
-                    if ($columnName === '') {
-                        break;
+
+                $withSpace = str_contains($line, ' ');
+                if (str_contains($line, 'амилия')) {
+                    $groupHeaderLine = preg_replace('#\s+#', ' ', $line);
+                    $groupHeaderLine = trim($groupHeaderLine);
+                    $groupHeaderData = explode(' ', $groupHeaderLine);
+                    $groupHeaderIndex = count($groupHeaderData) - 1;
+                    if (str_contains($groupHeaderData[$groupHeaderIndex], 'рим')) {
+                        $groupHeaderIndex--;
                     }
-                    $protocolLine[$columnName] = $this->getValue($columnName, $lineData, $fieldsCount, $indent);
+                } elseif (
+                    (
+                        ($groupNameLine = trim($line, ' ,')) &&
+                        (isset(Group::FIXING_MAP[$line]) || in_array($line, Group::GROUPS, true))
+                    ) ||
+                    (
+                        $withSpace &&
+                        ($groupNameLine = trim(substr($line, 0, strpos($line, ' ')), ' ,')) &&
+                        (isset(Group::FIXING_MAP[$groupNameLine]) || in_array($groupNameLine, Group::GROUPS, true))
+                    )
+                ) {
+                    $groupName = Group::FIXING_MAP[$groupNameLine] ?? $groupNameLine;
+                    $groupHeaderData = [];
+                } elseif ($groupHeaderIndex > 0) {
+                    $preparedLine = preg_replace('#=#', ' ', $line);
+                    $preparedLine = preg_replace('#\s+#', ' ', $preparedLine);
+                    $preparedLine = trim($preparedLine);
+                    if (!preg_match('#^\d+\s[^\s\d]+#', $preparedLine)) {
+                        continue;
+                    }
+                    $lineData = explode(' ', $preparedLine);
+                    $fieldsCount = count($lineData);
+                    $protocolLine = ['group' => $groupName];
+                    $indent = 1;
+                    for ($i = $groupHeaderIndex; $i > 2; $i--) {
+                        $columnName = $this->getColumn($groupHeaderData[$i]);
+                        if ($columnName === '') {
+                            break;
+                        }
+                        $protocolLine[$columnName] = $this->getValue($columnName, $lineData, $fieldsCount, $indent);
+                    }
+
+                    $protocolLine['serial_number'] = (int)$lineData[0];
+                    $protocolLine['lastname'] = $lineData[1];
+                    $protocolLine['firstname'] = $lineData[2];
+                    $protocolLine['club'] = implode(' ', array_slice($lineData, 3, $fieldsCount - $indent - 2));
+
+                    $linesList->push($protocolLine);
                 }
-
-                $protocolLine['serial_number'] = (int)$lineData[0];
-                $protocolLine['lastname'] = $lineData[1];
-                $protocolLine['firstname'] = $lineData[2];
-                $protocolLine['club'] = implode(' ', array_slice($lineData, 3, $fieldsCount - $indent - 2));
-
-                $linesList->push($protocolLine);
             }
-        }
 
-        return $linesList;
+            return $linesList;
+        } catch (Exception $e) {
+            throw new ParsingException($e->getMessage(), $e->getCode(), $e->getPrevious());
+        }
     }
 
     private function getColumn(string $field): string

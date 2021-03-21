@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ClubController;
 use App\Http\Controllers\CompetitionController;
+use App\Http\Controllers\ErrorController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\FlagsController;
 use App\Http\Controllers\LocalizationController;
@@ -63,4 +64,6 @@ Route::get('/flags/{flag}/delete', [FlagsController::class, 'delete']);
 Route::get('/flags/{flag}/show-events', [FlagsController::class, 'showEvents']);
 //faq
 Route::get('/faq', [FaqController::class, 'index']);
-Route::get('/faq/api', [FaqController::class, 'api']);
+Route::get('/faq-api', [FaqController::class, 'api']);
+
+Route::get('/404', [ErrorController::class, 'action404']);
