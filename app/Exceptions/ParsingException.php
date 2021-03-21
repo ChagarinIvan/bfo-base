@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Exceptions;
 
+use App\Mail\ErrorMail;
 use App\Models\Event;
 use Exception;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Mail;
 
 class ParsingException extends Exception
@@ -14,9 +16,7 @@ class ParsingException extends Exception
 
     public function report()
     {
-        $this->event;
-        //send email
-//        $test = Mail::send();
+        Mail::to(Config::get('ERROR_EMAIL'))->send(new ErrorMail($this));
     }
 
     /**
@@ -25,5 +25,10 @@ class ParsingException extends Exception
     public function setEvent(Event $event): void
     {
         $this->event = $event;
+    }
+
+    public function getEvent(): Event
+    {
+        return $this->event;
     }
 }

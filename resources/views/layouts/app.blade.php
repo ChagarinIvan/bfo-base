@@ -1,8 +1,8 @@
-@php
-    use DebugBar\StandardDebugBar;
-    $debugBar = new StandardDebugBar();
-    $debugBarRenderer = $debugBar->getJavascriptRenderer();
-@endphp
+{{--@php--}}
+{{--    use DebugBar\StandardDebugBar;--}}
+{{--    $debugBar = new StandardDebugBar();--}}
+{{--    $debugBarRenderer = $debugBar->getJavascriptRenderer();--}}
+{{--@endphp--}}
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
