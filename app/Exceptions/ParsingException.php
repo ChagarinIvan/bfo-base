@@ -7,7 +7,6 @@ namespace App\Exceptions;
 use App\Mail\ErrorMail;
 use App\Models\Event;
 use Exception;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Mail;
 
 class ParsingException extends Exception
@@ -16,7 +15,7 @@ class ParsingException extends Exception
 
     public function report()
     {
-        Mail::to(Config::get('ERROR_EMAIL'))->send(new ErrorMail($this));
+        Mail::send(new ErrorMail($this));
     }
 
     /**

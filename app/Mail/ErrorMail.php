@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Mail;
 
 use App\Exceptions\ParsingException;
+use App\Models\Competition;
 use Illuminate\Mail\Mailable;
+use Illuminate\Support\Facades\Config;
 
 class ErrorMail extends Mailable
 {
@@ -23,8 +25,11 @@ class ErrorMail extends Mailable
     {
         $event = $this->error->getEvent();
         $competition = Competition::find($event->competition_id);
+        $email = 'Chagarin.Ivan@gmail.com';
 
-        return $this->from('support@orient.by')
+        return $this->from('Chagarin_Ivan@tut.by')
+            ->to($email)
+            ->setAddress($email, $email)
             ->subject('Parsing error')
             ->view('emails.error')
             ->with([
