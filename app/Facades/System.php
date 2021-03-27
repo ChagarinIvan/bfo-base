@@ -11,7 +11,7 @@ class System extends Facade
 
     public static function needRecheck(): bool
     {
-        $flags = SystemFlag::whereKey(self::NEED_RECHECK_KEY)->get();
+        $flags = SystemFlag::where('key', self::NEED_RECHECK_KEY)->get();
         /** @var SystemFlag $flag */
         $flag = $flags->first();
         return $flag ? (bool)$flag->volume : false;
@@ -19,7 +19,7 @@ class System extends Facade
 
     public static function setNeedRecheck(bool $needRecheck = true): void
     {
-        $flags = SystemFlag::whereKey(self::NEED_RECHECK_KEY)->get();
+        $flags = SystemFlag::where('key', self::NEED_RECHECK_KEY)->get();
         /** @var SystemFlag $flag */
         $flag = $flags->first();
         if (!$flag) {
