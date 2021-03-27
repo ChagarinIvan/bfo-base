@@ -3,11 +3,9 @@
 namespace App\Console\Commands;
 
 use App\Facades\System;
-//use App\Models\Group;
 use App\Models\ProtocolLine;
 use App\Services\IdentService;
 use Illuminate\Console\Command;
-//use Illuminate\Support\Collection;
 
 class IdentProtocolLineCommand extends Command
 {
@@ -19,15 +17,9 @@ class IdentProtocolLineCommand extends Command
             return;
         }
 
-//        /** @var Collection|ProtocolLine[] $lines */
-//        $personsGroupIds = Group::where('name', 'NOT LIKE', "%10")
-//            ->where('name', 'NOT LIKE', "%12")
-//            ->where('name', 'NOT LIKE', "%14")
-//            ->where('name', 'NOT LIKE', "%16")
-//            ->get('id');
+        System::setNeedRecheck(false);
 
         $lines = ProtocolLine::wherePersonId(null)
-//            ->whereIn('group_id', $personsGroupIds)
             ->get();
 
         $indentService = new IdentService();
@@ -38,7 +30,5 @@ class IdentProtocolLineCommand extends Command
                 $line->save();
             }
         }
-
-        System::setNeedRecheck(false);
     }
 }
