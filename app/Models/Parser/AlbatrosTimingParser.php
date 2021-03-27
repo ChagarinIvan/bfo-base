@@ -26,6 +26,7 @@ class AlbatrosTimingParser implements ParserInterface
                 $text = trim($node->nodeValue);
                 $text = trim($text, '-');
                 $text = trim($text);
+
                 $groupNode = $xpath->query('preceding::h2[1]', $node);
                 $groupName = $groupNode[0]->nodeValue;
                 if (str_contains($groupName, ',')) {
@@ -58,7 +59,15 @@ class AlbatrosTimingParser implements ParserInterface
                         $points = $lineData[$fieldsCount - $indent++];
                         $protocolLine['points'] = is_numeric($points) ? (int)$points : null;
                     }
-                    $protocolLine['complete_rank'] = $lineData[$fieldsCount - $indent++];
+                    $completeRank = $lineData[$fieldsCount - $indent];
+                    if (
+                        preg_match('#^[КМСCKMIбр\/юЮБРкмсkmc]{1,4}$#s', $completeRank) ||
+                        in_array($completeRank, ['КМС', 'б/р', '-'], true)
+                    ) {
+                        $protocolLine['complete_rank'] = $completeRank;
+                        $indent++;
+                    }
+
                     $place = $lineData[$fieldsCount - $indent++];
                     $protocolLine['place'] = is_numeric($place) ? (int)$place : null;
                     $time = null;

@@ -13,7 +13,7 @@ use Illuminate\Database\Query\Builder;
  * @property string $key
  * @property string $volume
  * @method static Builder|SystemFlag find(mixed $ids)
- * @method static Builder|SystemFlag whereKey(string $key)
+ * @method static Builder|SystemFlag where(string $index, string $value)
  */
 class SystemFlag extends Model
 {
