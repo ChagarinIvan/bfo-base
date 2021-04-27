@@ -10,6 +10,9 @@
             <a class="navbar-brand {{ ('faq-api' === request()->segment(1)) ? 'text-light' : 'text-secondary' }}" href="/faq-api">{{ __('app.navbar.api') }}</a>
             <a class="navbar-brand {{ App::isLocale('by') ? 'text-danger' : '' }}" href="/localization/by">{{ __('app.lang.by') }}</a>
             <a class="navbar-brand {{ App::isLocale('ru') ? 'text-danger' : ''}}" href="/localization/ru">{{ __('app.lang.ru') }}</a>
+            <div class="spinner-border text-danger" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
         </nav>
     </header>
 @show
