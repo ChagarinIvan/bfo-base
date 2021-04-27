@@ -13,10 +13,11 @@ class IdentProtocolLineCommand extends Command
 
     public function handle(): void
     {
-        if (!System::needRecheck()) {
+        if (!System::isNeedRecheck()) {
             return;
         }
 
+        System::startIdent();
         System::setNeedRecheck(false);
 
         $lines = ProtocolLine::wherePersonId(null)
@@ -30,5 +31,7 @@ class IdentProtocolLineCommand extends Command
                 $line->save();
             }
         }
+
+        System::stopIdent();
     }
 }
