@@ -24,7 +24,7 @@
                     <input type="text" class="form-control" id="search" name="search" value="{{ $search }}">
                 </div>
                 <button type="submit" class="btn btn-primary mr-1">{{ __('app.common.search') }}</button>
-                <a type="submit" href="/persons" class="btn btn-danger">{{ __('app.common.cancel') }}</a>
+                <a type="submit" href="/protocol-lines/{{ $protocolLine->id }}/edit-person" class="btn btn-danger">{{ __('app.common.cancel') }}</a>
             </form>
         </div>
     </div>
@@ -41,7 +41,7 @@
             <tbody>
             @foreach ($persons as $person)
                 @php
-                    $link = "/protocol-lines/{$protocolLine->id}/set-person/{$person->id}?url=".url()->previous();
+                    $link = "/protocol-lines/{$protocolLine->id}/set-person/{$person->id}";
                 @endphp
                 <tr>
                     <td><a href="{{ $link }}">{{ $person->lastname }}</a></td>
@@ -73,7 +73,6 @@
         </nav>
     @endif
 @endsection
-
 @section('footer')
     <footer class="footer bg-dark">
         <div class="container-relative">

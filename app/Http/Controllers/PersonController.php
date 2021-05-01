@@ -20,7 +20,7 @@ class PersonController extends BaseController
     {
         $search = (string)$request->get('search');
         $personsQuery = Person::with(['protocolLines', 'club'])->orderBy('lastname');
-        if(strlen($search) > 0) {
+        if (strlen($search) > 0) {
             $personsQuery->where('firstname', 'LIKE', '%'.$search.'%')
                 ->orWhere('lastname', 'LIKE', '%'.$search.'%');
         }

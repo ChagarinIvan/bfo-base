@@ -89,6 +89,8 @@ class Group extends Model
     ];
 
     public const FIXING_MAP = [
+        'M10' => 'М10',
+        'W10' => 'Ж10',
         'W12' => 'Ж12',
         'W14' => 'Ж14',
         'W20' => 'Ж20',
@@ -100,6 +102,7 @@ class Group extends Model
         'W60' => 'Ж60',
         'W65' => 'Ж65',
         'W70' => 'Ж70',
+        'W75' => 'Ж75',
         'Ж21' => 'Ж21Е',
         'M16A' => 'М16А',
         'M16E' => 'М16Е',
@@ -150,6 +153,7 @@ class Group extends Model
         'M70' => 'М70',
         'M75' => 'М75',
         'M80' => 'М80',
+        'Open' => 'OPEN1',
         'Open 1' => 'OPEN1',
         'ОPEN' => 'OPEN1',
         'Оpen1' => 'OPEN1',
