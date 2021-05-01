@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Facades\System;
-use App\Models\Group;
 use App\Models\Person;
 use App\Models\ProtocolLine;
 use App\Services\IdentService;
@@ -14,11 +13,16 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 
 class ProtocolLinesController extends BaseController
 {
     public function editPerson(Request $request, int $protocolLineId): View
     {
+        if (!Session::exists('prev_url')) {
+            Session::put('prev_url', url()->previous());
+        }
         $search = (string)$request->get('search');
         $protocolLine = ProtocolLine::find($protocolLineId);
         $personsQuery = Person::with('club')->orderBy('lastname');
@@ -36,9 +40,8 @@ class ProtocolLinesController extends BaseController
         ]);
     }
 
-    public function setPerson(int $protocolLineId, int $personId, Request $request): RedirectResponse
+    public function setPerson(int $protocolLineId, int $personId): RedirectResponse
     {
-        $url = $request->get('url');
         $person = Person::find($personId);
         $protocolLine = ProtocolLine::find($protocolLineId);
         $identService = new IdentService();
@@ -56,32 +59,42 @@ class ProtocolLinesController extends BaseController
             $protocolLine->save();
         }
 
-        if ($url === null) {
-            return redirect('/');
-        }
-
         System::setNeedRecheck();
+        $url = Session::get('prev_url');
+        Session::forget('prev_url');
 
         return redirect($url);
     }
 
-    public function showNotIdent(): View
+    public function showNotIdent(Request $request): View
     {
-        /** @var Collection|ProtocolLine[] $lines */
-        $personsGroupIds = Group::where('name', 'NOT LIKE', "%10")
-            ->where('name', 'NOT LIKE', "%12")
-            ->where('name', 'NOT LIKE', "%14")
-            ->where('name', 'NOT LIKE', "%16")
-            ->get('id');
+        $search = (string)$request->get('search');
 
         $lines = ProtocolLine::wherePersonId(null)
-            ->whereIn('group_id', $personsGroupIds)
+            ->select(DB::raw("CONCAT(lastname, ' ',firstname) AS name"))
+            ->groupBy('name')
+            ->orderBy('name');
+
+        if (strlen($search) > 0) {
+            $lines->where('firstname', 'LIKE', '%'.$search.'%')
+                ->orWhere('lastname', 'LIKE', '%'.$search.'%');
+        }
+
+        $paginator = $lines->paginate(13);
+        $persons = $paginator->items();
+        $names = collect($persons)->transform(fn($line) => $line->name)->toArray();
+
+        /** @var Collection $lines */
+        $lines = ProtocolLine::whereIn(DB::raw("CONCAT(lastname, ' ', firstname)"), $names)
+            ->select('*', DB::raw("CONCAT(lastname, ' ',firstname) AS name"))
             ->with(['event.competition', 'group'])
             ->get();
+        $lines = $lines->groupBy('name');
 
-        $lines = $lines->groupBy(fn(ProtocolLine $line) => $line->lastname.'_'.$line->firstname);
-        $persons = $lines->sortKeys();
-
-        return view('protocol-line.show-not-ident', ['persons' => $persons]);
+        return view('protocol-line.show-not-ident', [
+            'persons' => $paginator,
+            'lines' => $lines,
+            'search' => $search,
+        ]);
     }
 }
