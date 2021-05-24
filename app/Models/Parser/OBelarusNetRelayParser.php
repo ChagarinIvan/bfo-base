@@ -61,7 +61,7 @@ class OBelarusNetRelayParser implements ParserInterface
 
                 $withPoints = str_contains($groupHeader, 'Очки');
                 $isOpen = str_contains($groupName, 'OPEN');
-                for ($index = ($isOpen ? 1 : 3); $index < $linesCount; $index++) {
+                for ($index = ($isOpen ? 1 : 2); $index < $linesCount; $index++) {
                     $line = trim($lines[$index]);
                     if (is_numeric($line)) {
                         $this->commandCounter = 0;
@@ -69,7 +69,10 @@ class OBelarusNetRelayParser implements ParserInterface
                         $this->commandPlace = 0;
                         $this->commandRank = '';
                         continue;
-                    } elseif (empty($line) || !preg_match('#^\d+\.\d+#', $line)) {
+                    } elseif (
+                        (empty($line) || !preg_match('#^\d\d\d\.?\d\s#', $line)) &&
+                        !$isOpen
+                    ) {
                         break;
                     }
                     $preparedLine = preg_replace('#=#', ' ', $line);

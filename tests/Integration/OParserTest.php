@@ -4,7 +4,7 @@ namespace Tests\Integration;
 
 use App\Models\Parser\OParser;
 
-class OParserTest extends AbstractParserTest
+class OParserTest
 {
     protected function getParser(): string
     {

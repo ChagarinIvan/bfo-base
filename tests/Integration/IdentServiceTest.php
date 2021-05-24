@@ -6,8 +6,8 @@ use Tests\TestCase;
 
 class IdentServiceTest extends TestCase
 {
-    public function testIdentPerson(): array
+    public function testIdentPerson(): void
     {
-        return [];
+        $this->assertTrue(true);
     }
 }

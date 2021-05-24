@@ -31,6 +31,18 @@ class OBelarusNetRelayParserTest extends AbstractParserTest
                 'МС',
                 291,
             ],
+            47 => [
+                'Шванц',
+                'Алексей',
+                'КСО «Верас»',
+                1991,
+                'КМС',
+                3015,
+                null,
+                null,
+                null,
+                null,
+            ],
         ];
     }
 

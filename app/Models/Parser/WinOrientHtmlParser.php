@@ -44,21 +44,21 @@ class WinOrientHtmlParser implements ParserInterface
                 $groupHeaderData = [];
                 $groupHeaderIndex = 0;
                 $isFirst = true;
-                for ($index = 1; $index < $linesCount; $index++) {
+                for ($index = 0; $index < $linesCount; $index++) {
                     $line = trim($lines[$index]);
-                    if (str_contains($line, 'Комаров')) {
-                        sleep(1);
-                    }
                     if (empty(trim($line, '-'))) {
                         if ($isFirst) {
-                            $isFirst = false;
                             continue;
                         } else {
                             break;
                         }
                     }
                     if (str_contains($line, 'амилия')) {
+                        if (preg_match('#[^\s]{2}тставан#', $line)) {
+                            $line = preg_replace('#[^\s]{2}тставан#', ' тставан', $line);
+                        }
                         $groupHeaderLine = preg_replace('#\s+#', ' ', $line);
+
                         $groupHeaderLine = trim($groupHeaderLine);
                         $groupHeaderData = explode(' ', $groupHeaderLine);
                         $groupHeaderIndex = count($groupHeaderData) - 1;
@@ -67,6 +67,7 @@ class WinOrientHtmlParser implements ParserInterface
                         }
                         continue;
                     }
+                    $isFirst = false;
                     $preparedLine = str_replace('=', '', $line);
                     $preparedLine = preg_replace('#\s+#', ' ', $preparedLine);
                     $lineData = explode(' ', $preparedLine);
@@ -75,8 +76,13 @@ class WinOrientHtmlParser implements ParserInterface
                     $indent = 1;
                     for ($i = $groupHeaderIndex; $i > 2; $i--) {
                         $columnName = $this->getColumn($groupHeaderData[$i]);
-                        if ($columnName === '') {
+                        if ($columnName === null) {
                             break;
+                        } elseif ($columnName === '' && $lineData[$fieldsCount - $indent] === 'снят') {
+                            continue;
+                        } elseif ($columnName === '') {
+                            $indent++;
+                            continue;
                         }
                         $protocolLine[$columnName] = $this->getValue($columnName, $lineData, $fieldsCount, $indent);
                     }
@@ -96,7 +102,7 @@ class WinOrientHtmlParser implements ParserInterface
         }
     }
 
-    private function getColumn(string $field): string
+    private function getColumn(string $field): ?string
     {
         $field = mb_strtolower($field);
         if (str_contains($field, 'чки')) {
@@ -120,7 +126,10 @@ class WinOrientHtmlParser implements ParserInterface
         if (str_contains($field, 'вал')) {
             return 'rank';
         }
-        return '';
+        if (str_contains($field, 'ставан')) {
+            return '';
+        }
+        return null;
     }
 
     private function getValue(string $column, array $lineData, int $fieldsCount, int &$indent): mixed
@@ -148,6 +157,8 @@ class WinOrientHtmlParser implements ParserInterface
                 } catch (Exception) {
                     $time = null;
                 }
+            } elseif ($time === 'снят') {
+                $time = null;
             } else {
                 $indent++;
                 $time = null;
@@ -160,7 +171,7 @@ class WinOrientHtmlParser implements ParserInterface
         }
         if ($column === 'rank') {
             $rank = $lineData[$fieldsCount - $indent];
-            if (preg_match('#^[КМСCKMIбр\/юЮБРкмсkmc]{1,4}$#s', $rank) || in_array($rank, ['КМС', 'б/р'], true)) {
+            if (preg_match('#^[КМСCKMIбр\/юЮБРкмсkmc]{1,4}$#s', $rank) || in_array($rank, ['МСМК', 'КМС', 'б/р'], true)) {
                 $indent++;
                 return $rank;
             } else {
@@ -168,8 +179,13 @@ class WinOrientHtmlParser implements ParserInterface
             }
         }
         if ($column === 'year') {
-            $year = $lineData[$fieldsCount - $indent++];
-            return is_numeric($year) ? (int)$year : null;
+            $year = $lineData[$fieldsCount - $indent];
+            if (is_numeric($year) && preg_match('#\d{4}#', $year)) {
+                $indent++;
+                return (int)$year;
+            } else {
+                return null;
+            }
         }
         return null;
     }
