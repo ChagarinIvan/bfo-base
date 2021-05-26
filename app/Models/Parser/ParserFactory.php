@@ -10,10 +10,11 @@ class ParserFactory
     private const PARSERS = [
         HandicapAlbatrosTimingParser::class,
         AlbatrosTimingParser::class,
+        OBelarusNetRelayWithHeadersParser::class,
         OBelarusNetRelayParser::class,
         WinOrientHtmlParser::class,
-        OBelarusNetRelayWithHeadersParser::class,
         SimplyParser::class,
+        OParser::class,
         OBelarusNetParser::class,
     ];
 

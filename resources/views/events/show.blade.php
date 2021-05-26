@@ -2,7 +2,7 @@
     use App\Models\Event;
     /**
      * @var Event $event
-     *
+     * array $groupAnchors
      */
 @endphp
 @extends('layouts.app')
@@ -54,7 +54,7 @@
             @foreach($groupAnchors as $groupAnchor)
                 <a class="text-danger" href="#{{ $groupAnchor }}">{{ $groupAnchor }}</a>&nbsp;&nbsp;
             @endforeach
-            <a class="text-success" href="#up">Вверх</a>
+            <a class="text-success" href="#up">{{ __('app.up') }}</a>
         </div>
     </footer>
 @endsection
