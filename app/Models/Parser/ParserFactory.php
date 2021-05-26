@@ -14,7 +14,7 @@ class ParserFactory
         OBelarusNetRelayParser::class,
         WinOrientHtmlParser::class,
         SimplyParser::class,
-//        OParser::class,
+        OParser::class,
         OBelarusNetParser::class,
     ];
 
