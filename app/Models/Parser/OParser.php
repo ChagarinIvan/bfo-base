@@ -94,10 +94,10 @@ class OParser implements ParserInterface
                         }
 
                         if ($this->setVk) {
-                            $protocolLine['isVk'] = true;
+                            $protocolLine['vk'] = true;
                             $this->setVk = false;
                         } else {
-                            $protocolLine['isVk'] = false;
+                            $protocolLine['vk'] = false;
                         }
                         $protocolLine['serial_number'] = (int)$lineData[0];
                         $protocolLine['lastname'] = $lineData[1];

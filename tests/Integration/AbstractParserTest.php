@@ -43,7 +43,7 @@ abstract class AbstractParserTest extends TestCase
             self::assertEquals($result[8], $line['complete_rank'] ?? null, 'complete_rank');
             self::assertEquals($result[9], $line['points'] ?? null, 'points');
             if (isset($result[10])) {
-                self::assertEquals($result[10], $line['isVk'] ?? false, 'isVk');
+                self::assertEquals($result[10], $line['vk'] ?? false, 'vk');
             }
         }
     }
