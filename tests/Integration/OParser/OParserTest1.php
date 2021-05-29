@@ -1,10 +1,11 @@
 <?php
 
-namespace Tests\Integration;
+namespace Tests\Integration\OParser;
 
 use App\Models\Parser\OParser;
+use Tests\Integration\AbstractParserTest;
 
-class OParserTest extends AbstractParserTest
+class OParserTest1 extends AbstractParserTest
 {
     protected function getParser(): string
     {
@@ -31,6 +32,19 @@ class OParserTest extends AbstractParserTest
                 'IIю',
                 1000,
             ],
+            11 => [
+                'Мурашко',
+                'Злата',
+                'СКО Орион',
+                2013,
+                'б/р',
+                700,
+                '0:38:01',
+                null,
+                '-',
+                null,
+                true,
+            ],
             47 => [
                 'Иванькова',
                 'анастасия',
@@ -42,6 +56,7 @@ class OParserTest extends AbstractParserTest
                 null,
                 '-',
                 null,
+                false,
             ],
             50 => [
                 'Волкова',

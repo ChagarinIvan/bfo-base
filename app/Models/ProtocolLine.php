@@ -26,6 +26,7 @@ use Illuminate\Support\Carbon;
  * @property int $event_id
  * @property int $group_id
  * @property int $person_id
+ * @property bool $vk
  * @property-read Event|null $event
  * @property-read Group|null $group
  * @property-read Person|null $person
@@ -68,6 +69,7 @@ class ProtocolLine extends Model
         'place',
         'complete_rank',
         'points',
+        'vk',
     ];
 
     public function group(): HasOne

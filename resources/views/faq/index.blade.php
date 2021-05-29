@@ -13,7 +13,6 @@
         <li>{{ __('app.faq.relation_faq') }}.</li>
         <li>{{ __('app.faq.relation_edit') }}.</li>
         <li>{{ __('app.faq.flags_adding') }}.</li>
-        <li>{{ __('app.faq.add_events') }}.</li>
         <li>{{ __('app.faq.api_link') }} <a href="/faq/api"><u>API</u></a>.</li>
     </ul>
 

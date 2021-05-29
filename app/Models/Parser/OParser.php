@@ -14,6 +14,8 @@ use RuntimeException;
 
 class OParser implements ParserInterface
 {
+    private bool $setVk = false;
+
     public function parse(UploadedFile $file): Collection
     {
         try {
@@ -68,9 +70,9 @@ class OParser implements ParserInterface
                     }
 
                     if ($startProtocol) {
-                        if (str_contains($line, 'Иванькова')) {
-                            sleep(1);
-                        }
+                        //if (str_contains($line, 'Злата')) {
+                        //    sleep(1);
+                        //}
                         $preparedLine = preg_replace('#=#', ' ', $line);
                         $preparedLine = preg_replace('#\s+#', ' ', $preparedLine);
                         $lineData = explode(' ', $preparedLine);
@@ -91,6 +93,12 @@ class OParser implements ParserInterface
                             $protocolLine[$columnName] = $this->getValue($columnName, $lineData, $fieldsCount, $indent);
                         }
 
+                        if ($this->setVk) {
+                            $protocolLine['vk'] = true;
+                            $this->setVk = false;
+                        } else {
+                            $protocolLine['vk'] = false;
+                        }
                         $protocolLine['serial_number'] = (int)$lineData[0];
                         $protocolLine['lastname'] = $lineData[1];
                         $protocolLine['firstname'] = $lineData[2];
@@ -121,6 +129,9 @@ class OParser implements ParserInterface
             if (is_numeric($place) || $place === '-') {
                 $indent++;
                 return  (int)$place;
+            } elseif ($place === 'в/к') {
+                $indent++;
+                $this->setVk = true;
             }
             return null;
         }
@@ -198,6 +209,6 @@ class OParser implements ParserInterface
     public function check(UploadedFile $file): bool
     {
         $content = $file->get();
-        return (bool)preg_match('#<h2>\w{3}</h2><pre\>\w+#u', $content);
+        return (bool)preg_match('#<h2>\w{3}</h2><pre\>\w+|<br />#u', $content);
     }
 }
