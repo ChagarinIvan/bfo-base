@@ -31,6 +31,8 @@ class OParserTest1 extends AbstractParserTest
                 1,
                 'IIю',
                 1000,
+                false,
+                'Ж12',
             ],
             11 => [
                 'Мурашко',
@@ -69,6 +71,20 @@ class OParserTest1 extends AbstractParserTest
                 null,
                 '-',
                 null,
+            ],
+            51 => [
+                'Кляусова',
+                'Ксения',
+                'Гомельская обл.',
+                2007,
+                'Iю',
+                237,
+                '0:26:38',
+                1,
+                'Iю',
+                '1000',
+                false,
+                'Ж14',
             ],
         ];
     }

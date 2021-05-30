@@ -45,6 +45,9 @@ abstract class AbstractParserTest extends TestCase
             if (isset($result[10])) {
                 self::assertEquals($result[10], $line['vk'] ?? false, 'vk');
             }
+            if (isset($result[11])) {
+                self::assertEquals($result[11], $line['group'], 'group');
+            }
         }
     }
 }
