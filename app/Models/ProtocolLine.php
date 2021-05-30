@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 
 /**
  * Class ProtocolLine
@@ -31,24 +32,14 @@ use Illuminate\Support\Carbon;
  * @property-read Group|null $group
  * @property-read Person|null $person
  * @method static Builder|ProtocolLine find(mixed $ids)
- * @method static Builder|ProtocolLine newModelQuery()
- * @method static Builder|ProtocolLine newQuery()
- * @method static Builder|ProtocolLine query()
- * @method static Builder|ProtocolLine whereClub($value)
- * @method static Builder|ProtocolLine whereCompleteRank($value)
+ * @method static Builder|ProtocolLine[]|Collection get()
  * @method static Builder|ProtocolLine whereEventId($value)
  * @method static Builder|ProtocolLine whereFirstname($value)
  * @method static Builder|ProtocolLine whereGroupId($value)
  * @method static Builder|ProtocolLine wherePersonId($value)
- * @method static Builder|ProtocolLine whereId($value)
  * @method static Builder|ProtocolLine whereLastname($value)
- * @method static Builder|ProtocolLine wherePlace($value)
- * @method static Builder|ProtocolLine wherePoints($value)
- * @method static Builder|ProtocolLine whereRank($value)
- * @method static Builder|ProtocolLine whereRunnerNumber($value)
- * @method static Builder|ProtocolLine whereSerialNumber($value)
- * @method static Builder|ProtocolLine whereTime($value)
- * @method static Builder|ProtocolLine whereYear($value)
+ * @method static Builder|ProtocolLine whereNotNull(string $column)
+ * @method static Builder|ProtocolLine whereIn(string $column, array $list  )
  */
 class ProtocolLine extends Model
 {

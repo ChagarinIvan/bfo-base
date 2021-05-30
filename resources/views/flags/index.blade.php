@@ -29,8 +29,8 @@
                     <td>{{ $flag->name }}</td>
                     <td style="background: {{ $flag->color }}">{{ $flag->color }}</td>
                     <td>
-                        <a href="/flags/{{ $flag->id }}/edit" class="text-primary">Edit</a>
-                        <a href="/flags/{{ $flag->id }}/delete" class="text-danger">Delete</a>
+                        <a href="/flags/{{ $flag->id }}/edit" class="text-primary">{{ __('app.common.edit') }}</a>
+                        <a href="/flags/{{ $flag->id }}/delete" class="text-danger">{{ __('app.common.delete') }}</a>
                     </td>
                 </tr>
             @endforeach

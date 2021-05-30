@@ -10,24 +10,24 @@
 
 @extends('layouts.app')
 
-@section('title', 'Редактирование этапа')
+@section('title', __('app.events.edit'))
 
 @section('content')
     <div class="row">
-        <h1>{{ __('app.common.edit_event') }}</h1>
+        <h1>{{ __('app.events.edit') }}</h1>
     </div>
     <form class="pt-5" method="POST" action="/competitions/events/{{ $event->id }}/update" enctype="multipart/form-data">
         @csrf
         <div class="form-group">
-            <label for="name">Название этапа</label>
+            <label for="name">{{ __('app.common.title') }}</label>
             <input class="form-control" id="name" name="name" value="{{ $event->name }}"/>
         </div>
         <div class="form-group">
-            <label for="description">Описание</label>
+            <label for="description">{{ __('app.competition.description') }}</label>
             <input class="form-control" id="description" name="description" value="{{ $event->description }}">
         </div>
         <div class="form-group row">
-            <label for="date" class="col-2 col-form-label">Дата проведения</label>
+            <label for="date" class="col-2 col-form-label">{{ __('app.common.date') }}</label>
             <div class="col-10">
                 <input class="form-control" type="date" id="date" name="date" value="{{ $event->date->format('Y-m-d') }}">
             </div>
@@ -38,7 +38,7 @@
             <input class="form-control" type="file" name="protocol" id="protocol"/>
         </div>
         <div class="row">
-            <input type="submit" class="btn btn-primary" value="Сохранить">
+            <input type="submit" class="btn btn-primary" value="{{ __('app.common.save') }}">
             <a href="/competitions/events/{{ $event->id }}/show" class="btn btn-danger ml-1">{{ __('app.common.cancel') }}</a>
         </div>
     </form>

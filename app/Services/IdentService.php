@@ -53,6 +53,15 @@ class IdentService
         $this->persons = Person::all();
     }
 
+    /**
+     * Можно ускорить за счет сохранения подготовленных строк персоны в базу
+     * prepared_line|prepared_line_with_year
+     * чагарин_иван  |чагарин_иван_1988
+     * попробовать перенети левенштайн на SQL
+     *
+     * @param ProtocolLine $protocolLine
+     * @return int
+     */
     public function identPerson(ProtocolLine $protocolLine): int
     {
         $withYear = $protocolLine->year !== null;
