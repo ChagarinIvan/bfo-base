@@ -29,7 +29,8 @@ class CupEventController extends BaseController
     public function create(int $cupId): View
     {
         $cup = Cup::with('events')->find($cupId);
-        $events = Event::where('date', 'LIKE', "%{$cup->year}%")
+        $events = Event::with('competition')
+            ->where('date', 'LIKE', "%{$cup->year}%")
             ->whereNotIn('id', $cup->events->pluck('event_id'))
             ->get();
 
