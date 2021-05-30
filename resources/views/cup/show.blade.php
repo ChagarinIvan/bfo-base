@@ -43,7 +43,11 @@
             @foreach($cup->events as $index => $event)
                 <tr>
                     <td>{{ $index + 1 }}</td>
-                    <td><a href="/cups/{{ $cup->id }}/events/{{ $event->id }}/show/0"><u>{{ $event->event->name }}</u></a></td>
+                    <td>
+                        <a href="/cups/{{ $cup->id }}/events/{{ $event->id }}/show/0">
+                            <u>{{ $event->event->competition->name.' - '.$event->event->name }}</u>
+                        </a>
+                    </td>
                     <td>{{ $event->event->date->format('Y-m-d') }}</td>
                     <td>{{ $event->event
                         ->protocolLines()
