@@ -32,7 +32,7 @@
                 <th scope="col">{{ __('app.common.lastname') }}</th>
                 <th scope="col">{{ __('app.common.name') }}</th>
                 <th scope="col">{{ __('app.navbar.competitions') }}</th>
-                <th scope="col">{{ __('app.event') }}</th>
+                <th scope="col">{{ __('app.events.title') }}</th>
                 <th scope="col">{{ __('app.club.name') }}</th>
                 <th scope="col">{{ __('app.common.date') }}</th>
                 <th scope="col">{{ __('app.common.group') }}</th>

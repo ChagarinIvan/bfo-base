@@ -23,12 +23,14 @@ use Illuminate\Support\Collection;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read Competition|null $competition
  * @property-read Collection|ProtocolLine[] $protocolLines
+ * @property-read Collection|CupEvent[] $cups
  * @property-read Collection|Flag[] $flags
  * @method static Builder|Event find(mixed $ids)
  * @method static Builder|Event newModelQuery()
  * @method static Builder|Event newQuery()
  * @method static Builder|Event query()
  * @method static Builder|Event with(mixed $params)
+ * @method static Builder|Event where(mixed ... $args)
  * @method static Builder|Event whereCompetitionId($value)
  * @method static Builder|Event whereCreatedAt($value)
  * @method static Builder|Event whereDate($value)
@@ -56,6 +58,11 @@ class Event extends Model
     public function protocolLines(): HasMany
     {
         return $this->hasMany(ProtocolLine::class);
+    }
+
+    public function cups(): HasMany
+    {
+        return $this->hasMany(CupEvent::class);
     }
 
     public function flags(): BelongsToMany

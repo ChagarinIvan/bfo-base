@@ -29,14 +29,14 @@
                         @endphp
                         <td><a href="{{ $link }}"><u>{{ $line->lastname }}</u></a>&nbsp;
                             <a href="/protocol-lines/{{ $line->id }}/edit-person">
-                                <span class="badge rounded-pill bg-warning">edit</span>
+                                <span class="badge rounded-pill bg-warning">{{ __('app.common.edit') }}</span>
                             </a>
                         </td>
                         <td><a href="{{ $link }}"><u>{{ $line->firstname }}</u></a></td>
                     @else
                         <td>{{ $line->lastname }}&nbsp;
                             <a href="/protocol-lines/{{ $line->id }}/edit-person">
-                                <span class="badge rounded-pill bg-danger">add</span>
+                                <span class="badge rounded-pill bg-danger">{{ __('app.common.new') }}</span>
                             </a>
                         </td>
                         <td>{{ $line->firstname }}</td>

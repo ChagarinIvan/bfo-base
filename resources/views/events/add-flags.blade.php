@@ -12,15 +12,15 @@
 
 @extends('layouts.app')
 
-@section('title', 'Соревнования')
+@section('title', __('app.flags.add_flags_title'))
 
 @section('content')
     <h3>{{ __('app.flags.add_flags_title') }}</h3>
-    <div class="row pt-5">
+    <h4>{{ __('app.events.title') }} — {{ $event->name }}</h4>
+    <div class="row pt-2">
         <a class="btn btn-success mr-2" href="/competitions/{{ $event->competition_id }}/show">{{ __('app.common.back') }}</a>
     </div>
-    <h4>{{ $event->name }}</h4>
-    <div class="row pt-5">
+    <div class="row pt-3">
         @foreach($eventFlags as $flag)
             <span class="badge" style="background: {{ $flag->color }}"><a href="/flags/{{ $flag->id }}/show-events">{{ $flag->name }}</a></span>
         @endforeach

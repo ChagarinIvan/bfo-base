@@ -30,15 +30,15 @@
     <table class="table table-bordered" id="table">
         <thead>
         <tr class="table-info">
-            <th scope="col">Фамилия</th>
-            <th scope="col">Имя</th>
-            <th scope="col">Клуб</th>
-            <th scope="col">Год</th>
-            <th scope="col">Разряд</th>
-            <th scope="col">Время</th>
-            <th scope="col">Место</th>
-            <th scope="col">Выполнил</th>
-            @if($withPoints)<th scope="col">Очки</th>@endif
+            <th scope="col">{{ __('app.common.lastname') }}</th>
+            <th scope="col">{{ __('app.common.name') }}</th>
+            <th scope="col">{{ __('app.club.name') }}</th>
+            <th scope="col">{{ __('app.common.year') }}</th>
+            <th scope="col">{{ __('app.common.rank') }}</th>
+            <th scope="col">{{ __('app.common.time') }}</th>
+            <th scope="col">{{ __('app.common.place') }}</th>
+            <th scope="col">{{ __('app.common.complete') }}</th>
+            @if($withPoints)<th scope="col">{{ __('app.common.points') }}</th>@endif
         </tr>
         </thead>
         <tbody>

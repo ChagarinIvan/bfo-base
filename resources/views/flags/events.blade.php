@@ -18,7 +18,7 @@
         <table class="table">
             <thead>
             <tr>
-                <th scope="col">{{ __('app.competition') }}</th>
+                <th scope="col">{{ __('app.competition.title') }}</th>
                 <th scope="col">{{ __('app.common.title') }}</th>
                 <th scope="col">{{ __('app.common.description') }}</th>
                 <th scope="col">{{ __('app.common.date') }}</th>

@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\ClubController;
 use App\Http\Controllers\CompetitionController;
+use App\Http\Controllers\CupController;
+use App\Http\Controllers\CupEventController;
 use App\Http\Controllers\ErrorController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\FlagsController;
@@ -67,3 +69,19 @@ Route::get('/faq', [FaqController::class, 'index']);
 Route::get('/faq-api', [FaqController::class, 'api']);
 
 Route::get('/404', [ErrorController::class, 'action404']);
+//cups
+Route::get('/cups', [CupController::class, 'index']);
+Route::get('/cups/create', [CupController::class, 'create']);
+Route::get('/cups/{cup}/show', [CupController::class, 'show']);
+Route::get('/cups/{cup}/edit', [CupController::class, 'edit']);
+Route::get('/cups/{cup}/delete', [CupController::class, 'delete']);
+Route::get('/cups/{cup}/table', [CupController::class, 'table']);
+Route::post('/cups/store', [CupController::class, 'store']);
+Route::post('/cups/{cup}/update', [CupController::class, 'update']);
+//cup-events
+Route::get('/cups/{cup}/events/create', [CupEventController::class, 'create']);
+Route::get('/cups/{cup}/events/{cupEvent}/delete', [CupEventController::class, 'delete']);
+Route::get('/cups/{cup}/events/{cupEvent}/edit', [CupEventController::class, 'edit']);
+Route::get('/cups/{cup}/events/{cupEvent}/show/{group}', [CupEventController::class, 'show']);
+Route::post('/cups/{cup}/events/{cupEvent}/update', [CupEventController::class, 'update']);
+Route::post('/cups/{cup}/events/store', [CupEventController::class, 'store']);

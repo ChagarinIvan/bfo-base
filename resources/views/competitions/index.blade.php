@@ -11,9 +11,9 @@
 @section('title', 'Соревнования')
 
 @section('content')
-    <h3 id="up">{{ __('app.competition') }}</h3>
+    <h3 id="up">{{ __('app.competition.title') }}</h3>
     <div class="row pt-5">
-        <a class="btn btn-success mr-2" href="/competitions/create">{{ __('app.add_competition') }}</a>
+        <a class="btn btn-success mr-2" href="/competitions/create">{{ __('app.competition.add_competition') }}</a>
     </div>
     <div class="row pt-3">
         <table class="table table-bordered" id="table">
@@ -54,7 +54,7 @@
             @foreach($years as $year)
                 <a class="text-danger" href="#{{ $year }}">{{ $year }}</a>&nbsp;&nbsp;
             @endforeach
-            <a class="text-success" href="#up">Вверх</a>
+            <a class="text-success" href="#up">{{ __('app.up') }}</a>
         </div>
     </footer>
 @endsection
