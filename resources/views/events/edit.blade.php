@@ -10,11 +10,11 @@
 
 @extends('layouts.app')
 
-@section('title', __('app.events.edit'))
+@section('title', __('app.event.edit'))
 
 @section('content')
     <div class="row">
-        <h1>{{ __('app.events.edit') }}</h1>
+        <h1>{{ __('app.event.edit') }}</h1>
     </div>
     <form class="pt-5" method="POST" action="/competitions/events/{{ $event->id }}/update" enctype="multipart/form-data">
         @csrf
