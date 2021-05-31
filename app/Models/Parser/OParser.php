@@ -20,9 +20,9 @@ class OParser implements ParserInterface
     {
         try {
             $content = $file->get();
-            $content = strip_tags($content);
             $lines = preg_split('/\n|\r\n?/', $content);
             $linesList = new Collection();
+            $startGroups = false;
             $startGroupHeader = false;
             $startProtocol = false;
             $groupHeaderData = [];
@@ -31,17 +31,21 @@ class OParser implements ParserInterface
 
             foreach ($lines as $line) {
                 $line = trim($line);
+
                 if ($line === '') {
                     continue;
                 }
-                if (preg_match('#^[^\d]\d\d#uism', $line)) {
-                    if (str_contains($line, ',')) {
-                        $line = substr($line, 0, strpos($line, ','));
-                    }
+
+                if (preg_match('#<h2>([^\d]\d\d|[]^\d]{5,6})</h2>#uism', $line, $match)) {
+                    $line = $match[1];
                     $groupName = Group::FIXING_MAP[$line] ?? $line;
                     continue;
                 }
 
+                $line = strip_tags($line);
+                if ($line === '') {
+                    continue;
+                }
                 if (trim($line, '-') === '') {
                     if ($startGroupHeader) {
                         $startGroupHeader = false;
@@ -67,9 +71,6 @@ class OParser implements ParserInterface
                 }
 
                 if ($startProtocol) {
-                    if (str_contains($line, 'Кляусова')) {
-                        sleep(1);
-                    }
                     $preparedLine = preg_replace('#=#', ' ', $line);
                     $preparedLine = preg_replace('#\s+#', ' ', $preparedLine);
                     $lineData = explode(' ', $preparedLine);
