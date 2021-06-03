@@ -22,7 +22,6 @@ class OParser implements ParserInterface
             $content = $file->get();
             $lines = preg_split('/\n|\r\n?/', $content);
             $linesList = new Collection();
-            $startGroups = false;
             $startGroupHeader = false;
             $startProtocol = false;
             $groupHeaderData = [];
@@ -36,7 +35,7 @@ class OParser implements ParserInterface
                     continue;
                 }
 
-                if (preg_match('#<h2>([^\d]\d\d|[]^\d]{5,6})</h2>#uism', $line, $match)) {
+                if (preg_match('#<h2>([^\d]\d\d[^\d]?|[]^\d]{5,6})</h2>#uism', $line, $match)) {
                     $line = $match[1];
                     $groupName = Group::FIXING_MAP[$line] ?? $line;
                     continue;
@@ -45,6 +44,9 @@ class OParser implements ParserInterface
                 $line = strip_tags($line);
                 if ($line === '') {
                     continue;
+                }
+                if (str_contains($line, 'Нипарко')) {
+//                    sleep(1);
                 }
                 if (trim($line, '-') === '') {
                     if ($startGroupHeader) {
