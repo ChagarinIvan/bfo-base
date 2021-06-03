@@ -22,7 +22,7 @@
         >
             <thead>
             <tr class="table-info">
-                <th scope="col">{{ __('app.competition') }}</th>
+                <th scope="col">{{ __('app.competition.title') }}</th>
                 <th scope="col">{{ __('app.events.title') }}</th>
                 <th scope="col">{{ __('app.common.lastname') }} {{ __('app.common.name') }}</th>
                 <th scope="col">{{ __('app.common.date') }}</th>

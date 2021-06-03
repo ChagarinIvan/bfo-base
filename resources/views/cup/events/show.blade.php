@@ -38,6 +38,7 @@
             <table class="table table-bordered" id="table">
                 <thead>
                 <tr class="table-info">
+                    <th scope="col"></th>
                     <th scope="col">{{ __('app.common.lastname') }}</th>
                     <th scope="col">{{ __('app.common.name') }}</th>
                     <th scope="col">{{ __('app.common.year') }}</th>
@@ -46,9 +47,10 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach($protocolLines as $line)
+                @foreach($protocolLines as $index => $line)
                     <tr>
-                        <td>{{ $line->lastname }}</td>
+                        <td>{{ $index + 1 }}</td>
+                        <td><a href="/persons/{{ $line->person_id }}/show"><u>{{ $line->lastname }}</u></a></td>
                         <td>{{ $line->firstname }}</td>
                         <td>{{ $line->year }}</td>
                         <td>{{ $line->time ? $line->time->format('H:i:s') : '-' }}</td>

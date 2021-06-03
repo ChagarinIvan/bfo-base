@@ -14,6 +14,7 @@ use Illuminate\Support\Collection;
  * @package App\Models
  * @property int $id
  * @property string $name
+ * @property int $events_count
  * @property int $year
  * @property-read Collection|CupEvent[] $events
  * @property-read Collection|Group[] $groups

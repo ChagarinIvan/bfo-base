@@ -6,6 +6,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Cup;
 use App\Models\Group;
+use App\Models\ProtocolLine;
+use App\Services\CalculatingService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -42,12 +44,14 @@ class CupController extends BaseController
             'name' => 'required|unique:competitions|max:255',
             'year' => 'required|digits:4',
             'groups' => 'required|array',
+            'events_count' => 'required|numeric',
             'groups.*' => 'integer',
         ]);
 
         $cup = Cup::find($cupId);
         $cup->name = $formParams['name'];
         $cup->year = $formParams['year'];
+        $cup->events_count = $formParams['events_count'];
         $cup->save();
         $cup->groups()->sync($formParams['groups']);
 
@@ -71,12 +75,31 @@ class CupController extends BaseController
         ]);
     }
 
-    public function table(int $cupId): View
+    public function table(int $cupId, int $groupId): View
     {
-        $cup = Cup::find($cupId);
+        $cup = Cup::with(['groups', 'events.event'])->find($cupId);
+        if ($groupId === 0) {
+            /** @var Group $group */
+            $group = $cup->groups->first();
+            $groupId = $group->id;
+        } else {
+            $group = Group::find($groupId);
+        }
+        $cupIds = $cup->events->pluck('event_id');
+        $protocolLines = ProtocolLine::with('person')
+            ->whereIn('event_id', $cupIds)
+            ->whereNotNull('person_id')
+            ->whereGroupId($groupId)
+            ->get();
+
+        $cupPoints = CalculatingService::calculateCup($cup, $protocolLines);
+        $protocolLines = $protocolLines->groupBy('person_id');
 
         return view('cup.table', [
             'cup' => $cup,
+            'cupPoints' => $cupPoints,
+            'protocolLines' => $protocolLines,
+            'activeGroup' => $group,
         ]);
     }
 
@@ -91,6 +114,7 @@ class CupController extends BaseController
         $formParams = $request->validate([
             'name' => 'required|unique:competitions|max:255',
             'year' => 'required|digits:4',
+            'events_count' => 'required|numeric',
             'groups' => 'required|array',
             'groups.*' => 'integer',
         ]);
@@ -98,6 +122,7 @@ class CupController extends BaseController
         $cup = new Cup();
         $cup->name = $formParams['name'];
         $cup->year = $formParams['year'];
+        $cup->events_count = $formParams['events_count'];
         $cup->save();
         $cup->groups()->sync($formParams['groups']);
 

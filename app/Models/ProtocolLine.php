@@ -39,7 +39,8 @@ use Illuminate\Support\Collection;
  * @method static Builder|ProtocolLine wherePersonId($value)
  * @method static Builder|ProtocolLine whereLastname($value)
  * @method static Builder|ProtocolLine whereNotNull(string $column)
- * @method static Builder|ProtocolLine whereIn(string $column, array $list  )
+ * @method static Builder|ProtocolLine whereIn(string $column, array $list)
+ * @method static Builder|ProtocolLine with(mixed $ids)
  */
 class ProtocolLine extends Model
 {

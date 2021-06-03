@@ -75,7 +75,7 @@ Route::get('/cups/create', [CupController::class, 'create']);
 Route::get('/cups/{cup}/show', [CupController::class, 'show']);
 Route::get('/cups/{cup}/edit', [CupController::class, 'edit']);
 Route::get('/cups/{cup}/delete', [CupController::class, 'delete']);
-Route::get('/cups/{cup}/table', [CupController::class, 'table']);
+Route::get('/cups/{cup}/table/{group}', [CupController::class, 'table']);
 Route::post('/cups/store', [CupController::class, 'store']);
 Route::post('/cups/{cup}/update', [CupController::class, 'update']);
 //cup-events

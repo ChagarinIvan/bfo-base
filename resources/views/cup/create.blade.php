@@ -23,6 +23,10 @@
             <input class="form-control" id="name" name="name">
         </div>
         <div class="form-group">
+            <label for="events_count">{{ __('app.cup.events_count') }}</label>
+            <input class="form-control" id="events_count" name="events_count">
+        </div>
+        <div class="form-group">
             <label for="year" class="col-2 col-form-label">{{ __('app.common.year') }}</label>
             <select class="custom-select" id="year" name="year">
                 @php

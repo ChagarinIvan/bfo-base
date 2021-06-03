@@ -16,7 +16,7 @@
     <div class="row pt-5">
         <a class="btn btn-info mr-2" href="/cups/{{ $cup->id }}/edit">{{ __('app.common.edit') }}</a>
         <a class="btn btn-success mr-2" href="/cups/{{ $cup->id }}/events/create">{{ __('app.competition.add_event') }}</a>
-        <a class="btn btn-secondary mr-2" href="/cups/{{ $cup->id }}/table">{{ __('app.cup.table') }}</a>
+        <a class="btn btn-secondary mr-2" href="/cups/{{ $cup->id }}/table/0">{{ __('app.cup.table') }}</a>
         <a class="btn btn-danger mr-2" href="/cups">{{ __('app.common.back') }}</a>
     </div>
     <div class="row pt-3">
@@ -52,7 +52,6 @@
                     <td>{{ $event->event
                         ->protocolLines()
                         ->whereIn('group_id', $cup->groups->pluck('id'))
-                        ->whereNotNull('person_id')
                         ->count() }}</td>
                     <td>{{ $event->points }}</td>
                     <td>

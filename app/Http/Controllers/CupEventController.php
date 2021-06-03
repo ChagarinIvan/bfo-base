@@ -6,15 +6,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Cup;
 use App\Models\CupEvent;
-use App\Models\CupEventPoint;
 use App\Models\Event;
 use App\Models\Group;
 use App\Models\ProtocolLine;
+use App\Services\CalculatingService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Collection;
 
 class CupEventController extends BaseController
 {
@@ -51,10 +50,9 @@ class CupEventController extends BaseController
         $cupEvent = CupEvent::with(['event.competition'])->find($cupEventId);
         $protocolLines = ProtocolLine::whereEventId($cupEvent->event_id)
             ->whereGroupId($groupId)
-            ->whereNotNull('person_id')
             ->get();
 
-        $cupEventPoints = $this->calculatePoints($cupEvent, $protocolLines);
+        $cupEventPoints = CalculatingService::calculateEvent($cupEvent, $protocolLines);
 
         return view('cup.events.show', [
             'cup' => $cup,
@@ -109,52 +107,5 @@ class CupEventController extends BaseController
         $cupEvent->save();
 
         return redirect("/cups/{$cupId}/show");
-    }
-
-    /**
-     * @param CupEvent $cupEvent
-     * @param Collection $protocolLines
-     * @return array<int, CupEventPoint>
-     */
-    private function calculatePoints(CupEvent $cupEvent, Collection $protocolLines): array
-    {
-        if ($protocolLines->isEmpty()) {
-            return [];
-        }
-
-        $maxPoints = $cupEvent->points;
-        $cupEventPointsList = [];
-
-        $protocolLines = $protocolLines->sortByDesc(function (ProtocolLine $line) {
-            return $line->time ? $line->time->diffInSeconds() : 0;
-        });
-
-        /** @var ProtocolLine $firstResult */
-        $firstResult = $protocolLines->first();
-        $firstResultSeconds = $firstResult->time ? $firstResult->time->secondsSinceMidnight() : 0;
-
-        //а этапах Кубков Федерации очки начисляются по формуле:
-        //O = Kus × (2W ÷ T − 1),
-        //где T – результат спортсмена в секундах, W – результат победителя в секундах, Kus – коэффициент уровня соревнований.
-
-        foreach ($protocolLines as $protocolLine) {
-            /** @var ProtocolLine $protocolLine */
-
-            if ($firstResult->id === $protocolLine->id) {
-                $cupEventPoints = new CupEventPoint($cupEvent->id, $protocolLine->id, $maxPoints);
-            } else {
-                if ($protocolLine->time !== null) {
-                    $diff = $protocolLine->time->secondsSinceMidnight();
-                    $points = (int)round($maxPoints * (2 * $firstResultSeconds / $diff - 1));
-                } else {
-                    $points = 0;
-                }
-
-                $cupEventPoints = new CupEventPoint($cupEvent->id, $protocolLine->id, $points < 0 ? 0 : $points);
-            }
-            $cupEventPointsList[$cupEventPoints->protocolLineId] = $cupEventPoints;
-        }
-
-        return $cupEventPointsList;
     }
 }

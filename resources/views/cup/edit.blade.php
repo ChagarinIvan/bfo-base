@@ -25,6 +25,10 @@
             <input class="form-control" id="name" name="name" value="{{ $cup->name }}">
         </div>
         <div class="form-group">
+            <label for="events_count">{{ __('app.cup.events_count') }}</label>
+            <input class="form-control" id="events_count" name="events_count" value="{{ $cup->events_count }}">
+        </div>
+        <div class="form-group">
             <label for="year" class="col-2 col-form-label">{{ __('app.common.year') }}</label>
             <select class="custom-select" id="year" name="year">
                 @for($i = $cup->year - 5; $i <= ($cup->year + 1); $i++)

@@ -45,7 +45,7 @@
                         <td>{{ $cup->year }}</td>
                         <td>
                             @foreach($cup->groups as $group)
-                                <span class="badge" style="background: {{ Color::getColor($group->name) }}"><a href="/cups/{{ $cup->id }}/groups/{{ $group->id }}">{{ $group->name }}</a></span>
+                                <span class="badge" style="background: {{ Color::getColor($group->name) }}"><a href="/cups/{{ $cup->id }}/table/{{ $group->id }}">{{ $group->name }}</a></span>
                             @endforeach
                         </td>
                         <td>{{ \App\Models\ProtocolLine::whereIn('event_id', $cup->events->pluck('event_id'))
