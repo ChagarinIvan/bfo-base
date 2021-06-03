@@ -50,7 +50,11 @@
                 @foreach($protocolLines as $index => $line)
                     <tr>
                         <td>{{ $index + 1 }}</td>
-                        <td><a href="/persons/{{ $line->person_id }}/show"><u>{{ $line->lastname }}</u></a></td>
+                        @if ($line->person_id)
+                            <td><a href="/persons/{{ $line->person_id }}/show"><u>{{ $line->lastname }}</u></a></td>
+                        @else
+                            <td>{{ $line->lastname }}</td>
+                        @endif
                         <td>{{ $line->firstname }}</td>
                         <td>{{ $line->year }}</td>
                         <td>{{ $line->time ? $line->time->format('H:i:s') : '-' }}</td>
