@@ -19,19 +19,22 @@ class IdentProtocolLineCommand extends Command
 
         System::startIdent();
         System::setNeedRecheck(false);
+        self::runIdent();
+        System::stopIdent();
+    }
 
+    public static function runIdent(): void
+    {
         $lines = ProtocolLine::wherePersonId(null)
             ->get();
 
         $indentService = new IdentService();
         foreach ($lines as $line) {
-            $personId = $indentService->identPerson($line);
+            $personId = $indentService->identPerson($line->prepared_line);
             if ($personId > 0) {
                 $line->person_id = $personId;
                 $line->save();
             }
         }
-
-        System::stopIdent();
     }
 }

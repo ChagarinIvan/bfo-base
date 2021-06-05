@@ -67,8 +67,8 @@ class PersonController extends BaseController
         if ($person->club_id === 0) {
             $person->club_id = null;
         }
-        $person->prompt = '[]';
         $person->save();
+        $person->makePrompts();
         System::setNeedRecheck();
 
         return redirect(strlen($redirectUrl) > 0 ? $redirectUrl : '/persons');
@@ -89,6 +89,7 @@ class PersonController extends BaseController
         }
 
         $person->save();
+        $person->makePrompts();
         System::setNeedRecheck();
 
         return redirect("/persons");

@@ -10,6 +10,7 @@ use App\Http\Controllers\FlagsController;
 use App\Http\Controllers\LocalizationController;
 use App\Http\Controllers\PersonController;
 use App\Http\Controllers\FaqController;
+use App\Http\Controllers\IdentController;
 use App\Http\Controllers\ProtocolLinesController;
 use Illuminate\Support\Facades\Route;
 
@@ -85,3 +86,5 @@ Route::get('/cups/{cup}/events/{cupEvent}/edit', [CupEventController::class, 'ed
 Route::get('/cups/{cup}/events/{cupEvent}/show/{group}', [CupEventController::class, 'show']);
 Route::post('/cups/{cup}/events/{cupEvent}/update', [CupEventController::class, 'update']);
 Route::post('/cups/{cup}/events/store', [CupEventController::class, 'store']);
+//ident
+//Route::get('/ident/start-ident', [IdentController::class, 'startIdent']);

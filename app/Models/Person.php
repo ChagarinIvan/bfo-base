@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\IdentService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -9,7 +10,6 @@ use Illuminate\Database\Query\Builder;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
-use JetBrains\PhpStorm\Pure;
 
 /**
  * Class Person
@@ -22,7 +22,7 @@ use JetBrains\PhpStorm\Pure;
  * @property ProtocolLine[]|Collection $protocolLines
  * @property int $club_id
  * @property Club $club
- * @property string $prompt
+ * @property PersonPrompt[]|Collection $prompts
  * @method static Person|Builder find(mixed $ids)
  * @method static Person|Builder with(mixed $ids)
  * @method static Person|Builder orderBy(string $column)
@@ -41,30 +41,42 @@ class Person extends Model
         'lastname', 'firstname', 'birthday', 'club_id'
     ];
 
-    public function setPrompt(string $line): void
-    {
-        $this->prompt = array_unique(array_merge($this->getPrompts(), [$line]));
-    }
-
-    /**
-     * @return string[]
-     */
-    #[Pure] public function getPrompts(): array
-    {
-        if (is_array($this->prompt)) {
-            return $this->prompt;
-        }
-
-        return [];
-    }
-
     public function protocolLines(): HasMany
     {
         return $this->hasMany(ProtocolLine::class);
     }
 
+    public function prompts(): HasMany
+    {
+        return $this->hasMany(PersonPrompt::class);
+    }
+
     public function club(): HasOne
     {
         return $this->hasOne(Club::class, 'id', 'club_id');
+    }
+
+    public function makePrompts(): void
+    {
+        $personData = [
+            $this->lastname,
+            $this->firstname,
+        ];
+        $personLine = mb_strtolower(implode('_', $personData));
+        $personLine = IdentService::prepareLine($personLine);
+        $prompt = new PersonPrompt();
+        $prompt->person_id = $this->id;
+        $prompt->prompt = $personLine;
+        $prompt->save();
+
+        if ($this->birthday !== null) {
+            $personData[] = $this->birthday->format('Y');
+            $personLine = mb_strtolower(implode('_', $personData));
+            $personLine = IdentService::prepareLine($personLine);
+            $prompt = new PersonPrompt();
+            $prompt->person_id = $this->id;
+            $prompt->prompt = $personLine;
+            $prompt->save();
+        }
     }
 }

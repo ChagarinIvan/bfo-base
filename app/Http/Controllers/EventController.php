@@ -149,6 +149,7 @@ class EventController extends Controller
         }
         $lineList->transform(function (array $lineData) {
             $protocolLine = new ProtocolLine($lineData);
+            $protocolLine->prepared_line = $protocolLine->makeIdentLine();
             $group = Group::whereName(str_replace(' ', '', $lineData['group']))->first();
             if ($group === null) {
                 throw new RuntimeException('Wrong group '.$lineData['group']);

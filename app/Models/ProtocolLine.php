@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use App\Services\IdentService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
@@ -27,6 +29,7 @@ use Illuminate\Support\Collection;
  * @property int $event_id
  * @property int $group_id
  * @property int $person_id
+ * @property string $prepared_line
  * @property bool $vk
  * @property-read Event|null $event
  * @property-read Group|null $group
@@ -34,12 +37,11 @@ use Illuminate\Support\Collection;
  * @method static Builder|ProtocolLine find(mixed $ids)
  * @method static Builder|ProtocolLine[]|Collection get()
  * @method static Builder|ProtocolLine whereEventId($value)
- * @method static Builder|ProtocolLine whereFirstname($value)
+ * @method static Builder|ProtocolLine wherePreparedLine(string $value)
  * @method static Builder|ProtocolLine whereGroupId($value)
  * @method static Builder|ProtocolLine wherePersonId($value)
- * @method static Builder|ProtocolLine whereLastname($value)
  * @method static Builder|ProtocolLine whereNotNull(string $column)
- * @method static Builder|ProtocolLine whereIn(string $column, array $list)
+ * @method static Builder|ProtocolLine whereIn(string|Expression $column, array $list)
  * @method static Builder|ProtocolLine with(mixed $ids)
  */
 class ProtocolLine extends Model
@@ -79,7 +81,7 @@ class ProtocolLine extends Model
         return $this->hasOne(Person::class, 'id', 'person_id');
     }
 
-    public function getIndentLine(): string
+    public function makeIdentLine(): string
     {
         $data = [
             $this->lastname,
@@ -88,6 +90,7 @@ class ProtocolLine extends Model
         if ($this->year !== null) {
             $data[] = $this->year;
         }
-        return mb_strtolower(implode('_', $data));
+        $line = mb_strtolower(implode('_', $data));
+        return IdentService::prepareLine($line);
     }
 }

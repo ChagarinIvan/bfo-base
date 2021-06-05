@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Facades\System;
 use App\Models\Person;
+use App\Models\PersonPrompt;
 use App\Models\ProtocolLine;
 use App\Services\IdentService;
 use Illuminate\Contracts\View\View;
@@ -42,17 +43,20 @@ class ProtocolLinesController extends BaseController
 
     public function setPerson(int $protocolLineId, int $personId): RedirectResponse
     {
-        $person = Person::find($personId);
         $protocolLine = ProtocolLine::find($protocolLineId);
         $identService = new IdentService();
-        $identPersonId = $identService->identPerson($protocolLine);
+        $identPersonId = $identService->identPerson($protocolLine->prepared_line);
+
         if ($identPersonId !== $personId) {
-            $person->setPrompt($protocolLine->getIndentLine());
-            $person->save();
+            $prompt = new PersonPrompt();
+            $prompt->person_id = $personId;
+            $prompt->prompt = $protocolLine->prepared_line;
+            $prompt->save();
+
+            System::setNeedRecheck(true);
         }
-        $protocolLinesToRecheck = ProtocolLine::whereLastname($protocolLine->lastname)
-            ->whereFirstname($protocolLine->firstname)
-            ->get();
+
+        $protocolLinesToRecheck = ProtocolLine::wherePreparedLine($protocolLine->prepared_line)->get();
 
         foreach ($protocolLinesToRecheck as $protocolLine) {
             $protocolLine->person_id = $personId;
@@ -89,6 +93,7 @@ class ProtocolLinesController extends BaseController
             ->select('*', DB::raw("CONCAT(lastname, ' ',firstname) AS name"))
             ->with(['event.competition', 'group'])
             ->get();
+
         $lines = $lines->groupBy('name');
 
         return view('protocol-line.show-not-ident', [
