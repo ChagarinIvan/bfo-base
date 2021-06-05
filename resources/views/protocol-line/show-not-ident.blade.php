@@ -21,7 +21,9 @@
                     <input type="text" class="form-control" id="search" name="search" value="{{ $search }}">
                 </div>
                 <button type="submit" class="btn btn-primary mr-1">{{ __('app.common.search') }}</button>
-                <a type="submit" href="/protocol-lines/not-ident/show" class="btn btn-danger">{{ __('app.common.cancel') }}</a>
+                @if ($search !== '')
+                    <a type="submit" href="/protocol-lines/not-ident/show" class="btn btn-danger">{{ __('app.common.cancel') }}</a>
+                @endif
             </form>
         </div>
     </div>
@@ -29,8 +31,7 @@
         <table class="table table-bordered" id="table">
             <thead>
             <tr class="table-info">
-                <th scope="col">{{ __('app.common.lastname') }}</th>
-                <th scope="col">{{ __('app.common.name') }}</th>
+                <th scope="col">{{ __('app.common.fio') }}</th>
                 <th scope="col">{{ __('app.navbar.competitions') }}</th>
                 <th scope="col">{{ __('app.events.title') }}</th>
                 <th scope="col">{{ __('app.club.name') }}</th>
@@ -42,14 +43,16 @@
             </thead>
             <tbody>
             @foreach($persons as $person)
+                @php
+                    $rows = $lines->get($person->name);
+                @endphp
                 @foreach($rows as $line)
                     @php
                         /** @var \App\Models\ProtocolLine $line */
                     @endphp
                     <tr>
                         @if($loop->first)
-                            <td rowspan="{{ count($rows) }}"><a href="{{ "/protocol-lines/{$line->id}/edit-person" }}"><u>{{ $line->lastname }}</u></a></td>
-                            <td rowspan="{{ count($rows) }}"><a href="{{ "/protocol-lines/{$line->id}/edit-person" }}"><u>{{ $line->firstname }}</u></a></td>
+                            <td rowspan="{{ $rows->count() }}"><a href="{{ "/protocol-lines/{$line->id}/edit-person" }}"><u>{{ $line->lastname.' '.$line->firstname }}</u></a></td>
                         @endif
                         <td><a href="/competitions/{{ $line->event->competition_id }}/show"><u>{{ Str::limit($line->event->competition->name, 20, '...') }}</u></a></td>
                         <td><a href="/competitions/events/{{ $line->event_id }}/show"><u>{{ Str::limit($line->event->name, 20, '...') }}</u></a></td>

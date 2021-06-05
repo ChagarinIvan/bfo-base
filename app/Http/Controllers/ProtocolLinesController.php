@@ -74,8 +74,9 @@ class ProtocolLinesController extends BaseController
     {
         $search = (string)$request->get('search');
 
+        $nameExpr = DB::raw("CONCAT(lastname, ' ',firstname) AS name");
         $lines = ProtocolLine::wherePersonId(null)
-            ->select(DB::raw("CONCAT(lastname, ' ',firstname) AS name"))
+            ->select($nameExpr)
             ->groupBy('name')
             ->orderBy('name');
 
@@ -90,7 +91,7 @@ class ProtocolLinesController extends BaseController
 
         /** @var Collection $lines */
         $lines = ProtocolLine::whereIn(DB::raw("CONCAT(lastname, ' ', firstname)"), $names)
-            ->select('*', DB::raw("CONCAT(lastname, ' ',firstname) AS name"))
+            ->select('*', $nameExpr)
             ->with(['event.competition', 'group'])
             ->get();
 
