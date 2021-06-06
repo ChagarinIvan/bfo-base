@@ -24,7 +24,9 @@
                     <input type="text" class="form-control" id="search" name="search" value="{{ $search }}">
                 </div>
                 <button type="submit" class="btn btn-primary mr-1">{{ __('app.common.search') }}</button>
-                <a type="submit" href="/protocol-lines/{{ $protocolLine->id }}/edit-person" class="btn btn-danger">{{ __('app.common.cancel') }}</a>
+                @if ($search !== '')
+                    <a type="submit" href="/protocol-lines/{{ $protocolLine->id }}/edit-person" class="btn btn-danger">{{ __('app.common.cancel') }}</a>
+                @endif
             </form>
         </div>
     </div>

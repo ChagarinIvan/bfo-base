@@ -13,6 +13,7 @@ class IdentProtocolLineCommand extends Command
 
     public function handle(): void
     {
+        echo time().PHP_EOL;
         if (!System::isNeedRecheck()) {
             return;
         }
@@ -21,6 +22,7 @@ class IdentProtocolLineCommand extends Command
         System::setNeedRecheck(false);
         self::runIdent();
         System::stopIdent();
+        echo time().PHP_EOL;
     }
 
     public static function runIdent(): void
