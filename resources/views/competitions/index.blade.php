@@ -8,7 +8,7 @@
 
 @extends('layouts.app')
 
-@section('title', 'Соревнования')
+@section('title', __('app.competition.title'))
 
 @section('content')
     <h3 id="up">{{ __('app.competition.title') }}</h3>

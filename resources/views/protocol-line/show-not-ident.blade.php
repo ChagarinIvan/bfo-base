@@ -33,7 +33,7 @@
             <tr class="table-info">
                 <th scope="col">{{ __('app.common.fio') }}</th>
                 <th scope="col">{{ __('app.navbar.competitions') }}</th>
-                <th scope="col">{{ __('app.events.title') }}</th>
+                <th scope="col">{{ __('app.event.title') }}</th>
                 <th scope="col">{{ __('app.club.name') }}</th>
                 <th scope="col">{{ __('app.common.date') }}</th>
                 <th scope="col">{{ __('app.common.group') }}</th>

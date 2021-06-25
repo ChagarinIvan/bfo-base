@@ -31,6 +31,7 @@ class CupEventController extends BaseController
         $events = Event::with('competition')
             ->where('date', 'LIKE', "%{$cup->year}%")
             ->whereNotIn('id', $cup->events->pluck('event_id'))
+            ->orderBy('date')
             ->get();
 
         return view('cup.events.create', [
@@ -52,7 +53,11 @@ class CupEventController extends BaseController
             ->whereGroupId($groupId)
             ->get();
 
-        $cupEventPoints = CalculatingService::calculateEvent($cupEvent, $protocolLines);
+        if ($protocolLines === null) {
+            $cupEventPoints = [];
+        } else {
+            $cupEventPoints = CalculatingService::calculateEvent($cupEvent, $protocolLines);
+        }
 
         return view('cup.events.show', [
             'cup' => $cup,

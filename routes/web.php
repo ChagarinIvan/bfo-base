@@ -10,7 +10,6 @@ use App\Http\Controllers\FlagsController;
 use App\Http\Controllers\LocalizationController;
 use App\Http\Controllers\PersonController;
 use App\Http\Controllers\FaqController;
-use App\Http\Controllers\IdentController;
 use App\Http\Controllers\ProtocolLinesController;
 use Illuminate\Support\Facades\Route;
 

@@ -1,7 +1,9 @@
 @php
     use \App\Models\Cup;
+    use App\Models\CupEvent;
     /**
      * @var Cup $cup;
+     * @var CupEvent[] $events;
      */
 @endphp
 
@@ -40,7 +42,7 @@
             </tr>
             </thead>
             <tbody>
-            @foreach($cup->events as $index => $event)
+            @foreach($events as $index => $event)
                 <tr>
                     <td>{{ $index + 1 }}</td>
                     <td>

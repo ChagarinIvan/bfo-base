@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="row">
-        <h1>__('app.competition.add')</h1>
+        <h1>{{ __('app.competition.add') }}</h1>
     </div>
     <form class="pt-5" method="POST" action="/competitions/store">
         @csrf

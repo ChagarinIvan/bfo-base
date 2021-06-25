@@ -1,16 +1,17 @@
 @php
     use App\Models\Cup;
+    use App\Models\CupEvent;
     use App\Models\CupEventPoint;
     use App\Models\Group;
     use App\Models\ProtocolLine;
     /**
      * @var Cup $cup;
+     * @var CupEvent[] $events;
      * @var array<int, CupEventPoint[]> $cupPoints;
      * @var array<int, ProtocolLine> $protocolLines;
      * @var Group $activeGroup;
      */
     $place = 1;
-    $events = []
 @endphp
 
 @extends('layouts.app')
@@ -38,10 +39,7 @@
                 <tr class="table-info">
                     <th scope="col"></th>
                     <th scope="col">{{ __('app.common.fio') }}</th>
-                    @foreach($cup->events as $event)
-                        @php
-                            $events[] = $event->id;
-                        @endphp
+                    @foreach($events as $event)
                         <th scope="col"><a href="/competitions/events/{{ $event->event_id }}/show#{{ $activeGroup->name }}"><u>{{ $event->event->date->format('Y-m-d') }}</u></a></th>
                     @endforeach
                     <th scope="col">{{ __('app.common.points') }}</th>
@@ -59,10 +57,10 @@
                     <tr>
                         <td>{{ $place++ }}</td>
                         <td><a href="/persons/{{ $person->id }}/show"><b><u>{{ $person->lastname.' '.$person->firstname }}</u></b></a></td>
-                        @foreach($events as $eventId)
-                            @if(isset($cupEventPoints[$eventId]))
+                        @foreach($events as $event)
+                            @if(isset($cupEventPoints[$event->id]))
                                 @php
-                                    $cupEventPoint = $cupEventPoints[$eventId];
+                                    $cupEventPoint = $cupEventPoints[$event->id];
                                     $isBold = false;
                                     foreach ($cupEventPointsValues as $index => $cupEventPointsValue) {
                                         if ($index >= $cup->events_count) {
@@ -77,9 +75,9 @@
                                     @php
                                         $sum += $cupEventPoint->points;
                                     @endphp
-                                    <td><b class="text-info">{{ $cupEventPoints[$eventId]->points }}</b></td>
+                                    <td><b class="text-info">{{ $cupEventPoints[$event->id]->points }}</b></td>
                                 @else
-                                    <td>{{ $cupEventPoints[$eventId]->points }}</td>
+                                    <td>{{ $cupEventPoints[$event->id]->points }}</td>
                                 @endif
                             @else
                                 <td></td>

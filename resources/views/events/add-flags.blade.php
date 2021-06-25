@@ -16,7 +16,7 @@
 
 @section('content')
     <h3>{{ __('app.flags.add_flags_title') }}</h3>
-    <h4>{{ __('app.events.title') }} — {{ $event->name }}</h4>
+    <h4>{{ __('app.event.title') }} — {{ $event->name }}</h4>
     <div class="row pt-2">
         <a class="btn btn-success mr-2" href="/competitions/{{ $event->competition_id }}/show">{{ __('app.common.back') }}</a>
     </div>

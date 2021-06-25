@@ -30,7 +30,7 @@
             <label for="event">{{ __('app.event.title') }}</label>
             <select class="custom-select" id="event" name="event">
                 @foreach($events as $event)
-                    <option value="{{ $event->id }}">{{ $event->competition->name.' - '.$event->name }}</option>
+                    <option value="{{ $event->id }}">{{ $event->date->format('d.m')." - ".$event->competition->name.' - '.$event->name }}</option>
                 @endforeach
             </select>
         </div>

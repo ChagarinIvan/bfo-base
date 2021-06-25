@@ -60,8 +60,13 @@ class CupController extends BaseController
 
     public function show(int $cupId): View
     {
-        $cup = Cup::find($cupId);
-        return view('cup.show', ['cup' => $cup]);
+        $cup = Cup::with('events')
+            ->find($cupId);
+        $events = $cup->events()
+            ->join('events', 'events.id', '=', 'cup_events.event_id')
+            ->orderBy('events.date')
+            ->get();
+        return view('cup.show', ['cup' => $cup, 'events' => $events]);
     }
 
     public function edit(int $cupId): View
@@ -92,11 +97,21 @@ class CupController extends BaseController
             ->whereGroupId($groupId)
             ->get();
 
-        $cupPoints = CalculatingService::calculateCup($cup, $protocolLines);
+        $events = $cup->events()
+            ->join('events', 'events.id', '=', 'cup_events.event_id')
+            ->orderBy('events.date')
+            ->get();
+
+        if ($protocolLines->isEmpty()) {
+            $cupPoints = [];
+        } else {
+            $cupPoints = CalculatingService::calculateCup($cup, $events, $protocolLines);
+        }
         $protocolLines = $protocolLines->groupBy('person_id');
 
         return view('cup.table', [
             'cup' => $cup,
+            'events' => $events,
             'cupPoints' => $cupPoints,
             'protocolLines' => $protocolLines,
             'activeGroup' => $group,

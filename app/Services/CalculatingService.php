@@ -19,17 +19,23 @@ class CalculatingService
 {
     /**
      * @param Cup $cup
-     * @param Collection|ProtocolLine[] $protocolLines
+     * @param Collection $cupEvents
+     * @param Collection $protocolLines
      * @return array
      */
-    public static function calculateCup(Cup $cup, Collection $protocolLines): array
+    public static function calculateCup(Cup $cup, Collection $cupEvents, Collection $protocolLines): array
     {
         $groupedProtocolLines = $protocolLines->groupBy('event_id');
         $protocolLines = $protocolLines->keyBy('id');
 
         $results = [];
-        foreach ($cup->events as $event) {
-            $eventResults = self::calculateEvent($event, $groupedProtocolLines->get($event->event_id));
+        foreach ($cupEvents as $event) {
+            $groupProtocolLines = $groupedProtocolLines->get($event->event_id);
+            if ($groupProtocolLines === null) {
+                $eventResults = [];
+            } else {
+                $eventResults = self::calculateEvent($event, $groupProtocolLines);
+            }
             foreach ($eventResults as $result) {
                 /** @var ProtocolLine $protocolLine */
                 $protocolLine = $protocolLines->get($result->protocolLineId);
