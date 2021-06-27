@@ -59,11 +59,10 @@ class Person extends Model
     public function makePrompts(): void
     {
         $personData = [
-            $this->lastname,
-            $this->firstname,
+            IdentService::prepareLine(mb_strtolower($this->lastname)),
+            IdentService::prepareLine(mb_strtolower($this->firstname)),
         ];
-        $personLine = mb_strtolower(implode('_', $personData));
-        $personLine = IdentService::prepareLine($personLine);
+        $personLine = implode('_', $personData);
         $prompt = new PersonPrompt();
         $prompt->person_id = $this->id;
         $prompt->prompt = $personLine;
@@ -71,8 +70,7 @@ class Person extends Model
 
         if ($this->birthday !== null) {
             $personData[] = $this->birthday->format('Y');
-            $personLine = mb_strtolower(implode('_', $personData));
-            $personLine = IdentService::prepareLine($personLine);
+            $personLine = implode('_', $personData);
             $prompt = new PersonPrompt();
             $prompt->person_id = $this->id;
             $prompt->prompt = $personLine;

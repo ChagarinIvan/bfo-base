@@ -41,6 +41,7 @@ use Illuminate\Support\Collection;
  * @method static Builder|ProtocolLine whereGroupId($value)
  * @method static Builder|ProtocolLine wherePersonId($value)
  * @method static Builder|ProtocolLine whereNotNull(string $column)
+ * @method static Builder|ProtocolLine whereNull(string $column)
  * @method static Builder|ProtocolLine whereIn(string|Expression $column, array $list)
  * @method static Builder|ProtocolLine with(mixed $ids)
  */
@@ -81,16 +82,19 @@ class ProtocolLine extends Model
         return $this->hasOne(Person::class, 'id', 'person_id');
     }
 
+    /**
+     * Создаём идентификационную строку из фамилии имени и года
+     * @return string
+     */
     public function makeIdentLine(): string
     {
         $data = [
-            $this->lastname,
-            $this->firstname,
+            IdentService::prepareLine(mb_strtolower($this->lastname)),
+            IdentService::prepareLine(mb_strtolower($this->firstname)),
         ];
         if ($this->year !== null) {
             $data[] = $this->year;
         }
-        $line = mb_strtolower(implode('_', $data));
-        return IdentService::prepareLine($line);
+        return implode('_', $data);
     }
 }
