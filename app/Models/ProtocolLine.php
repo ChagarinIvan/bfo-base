@@ -35,7 +35,7 @@ use Illuminate\Support\Collection;
  * @property-read Group|null $group
  * @property-read Person|null $person
  * @method static Builder|ProtocolLine find(mixed $ids)
- * @method static Builder|ProtocolLine[]|Collection get()
+ * @method static ProtocolLine[]|Collection get(array $columns = ['*'])
  * @method static Builder|ProtocolLine whereEventId($value)
  * @method static Builder|ProtocolLine wherePreparedLine(string $value)
  * @method static Builder|ProtocolLine whereGroupId($value)
@@ -44,6 +44,8 @@ use Illuminate\Support\Collection;
  * @method static Builder|ProtocolLine whereNull(string $column)
  * @method static Builder|ProtocolLine whereIn(string|Expression $column, array $list)
  * @method static Builder|ProtocolLine with(mixed $ids)
+ * @method static Builder|ProtocolLine distinct()
+ * @method static Builder|ProtocolLine orderByDesc(string $column)
  */
 class ProtocolLine extends Model
 {

@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Models\IdentLine;
+use App\Models\PersonPrompt;
+use App\Models\ProtocolLine;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -59,79 +62,56 @@ class IdentService
     }
 
     /**
-     * Идентификация прямым запросом в базу на поиск литий протокола с такой же "идентификационной" строкой и имеющимся person_id.
-     * На вход коллекция линий протокола, на выходе число апдейтнутых строк.
+     * Идентификация прямым запросом в базу на поиск линий протокола,
+     * с такой же "идентификационной" строкой и имеющимся person_id.
+     *
+     * На вход коллекция линий протокола, на выходе строки протокола, у которых не определилсь люди.
      * Используется при создании или редактировании протокола соревнований для быстрой идентификации части людей.
      *
-     * @param Collection $protocolLines
-     * @return int
+     * @param Collection|ProtocolLine[] $protocolLines
+     * @return Collection|ProtocolLine[]
      */
-    public function simpleIdent(Collection $protocolLines): int
+    public function simpleIdent(Collection $protocolLines): Collection
     {
-        return DB::table('protocol_lines', 'pls')
+        $linesIds = $protocolLines->pluck('id');
+        DB::table('protocol_lines', 'pls')
             ->join('protocol_lines AS plj', 'plj.prepared_line', '=', 'pls.prepared_line')
             ->whereNull('pls.person_id')
             ->whereNotNull('plj.person_id')
-            ->whereIn('pls.id', $protocolLines->pluck('id'))
+            ->whereIn('pls.id', $linesIds)
             ->update(['pls.person_id' => DB::raw('plj.person_id')]);
+
+        return ProtocolLine::whereIn('id', $linesIds)
+            ->whereNull('person_id')
+            ->get();
     }
 
     /**
+     * Определяем людей по идентификаторам с использованием расстояния левенштайна.
+     *
      * @param string $searchLine
      * @return int
      */
     public function identPerson(string $searchLine): int
     {
+        $prompts = PersonPrompt::all();
+        $ranks = collect();
+
+        foreach ($prompts->pluck('prompt') as $prompt) {
+            $rank = levenshtein($searchLine, $prompt);
+            $ranks->push([
+                'prompt' => $prompt,
+                'rank' => $rank,
+            ]);
+        }
+
+        $minRank = $ranks->sortBy('rank')->first();
+        if ($minRank['rank'] <= 5) {
+            /** @var PersonPrompt $prompt */
+            $prompt = $prompts->where('prompt', $minRank['prompt'])->first();
+            return $prompt->person_id;
+        }
         return 0;
-//        $result = new Collection();
-//
-//        foreach ($this->persons as $person) {
-//            $personData = [
-//                $person->lastname,
-//                $person->firstname,
-//            ];
-//            $personLine = mb_strtolower(implode('_', $personData));
-//            $personLine = self::prepareLine($personLine);
-//
-//            $rank = levenshtein($searchLine, $personLine);
-//            $result->push([
-//                'id' => $person->id,
-//                'rank' => $rank,
-//            ]);
-//
-//            if ($person->birthday !== null) {
-//                $personData[] = $person->birthday->format('Y');
-//                $personLine = mb_strtolower(implode('_', $personData));
-//                $personLine = self::prepareLine($personLine);
-//
-//                $rank = levenshtein($searchLine, $personLine);
-//                $result->push([
-//                    'id' => $person->id,
-//                    'rank' => $rank,
-//                ]);
-//            }
-//
-//            foreach ($person->getPrompts() as $prompt) {
-//                $prompt = self::prepareLine($prompt);
-//                $rank = levenshtein($searchLine, $prompt);
-//                $result->push([
-//                    'id' => $person->id,
-//                    'rank' => $rank,
-//                ]);
-//            }
-//        }
-//
-//        $result = $result->groupBy('rank');
-//        $result = $result->toArray();
-//        ksort($result);
-//        $minRank = array_key_first($result);
-//        if ($minRank <= 5) {
-//            $result = reset($result);
-//            $result = reset($result);
-//            return $result['id'];
-//        }
-//
-//        return 0;
     }
 
     /**
@@ -158,5 +138,21 @@ class IdentService
             }
         }
         return $line;
+    }
+
+    /**
+     * @param Collection|string[] $protocolLines
+     */
+    public function pushIdentLines(Collection $protocolLines): void
+    {
+        foreach ($protocolLines as $line) {
+            $identLinesCount = IdentLine::whereIdentLine($line->prepared_line)->count();
+
+            if ($identLinesCount === 0) {
+                $ident = new IdentLine();
+                $ident->ident_line = $line->prepared_line;
+                $ident->save();
+            }
+        }
     }
 }

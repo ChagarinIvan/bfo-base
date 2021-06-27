@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Facades\System;
+use App\Models\IdentLine;
 use App\Models\Person;
 use App\Models\PersonPrompt;
 use App\Models\ProtocolLine;
@@ -27,11 +27,13 @@ class ProtocolLinesController extends BaseController
         $search = (string)$request->get('search');
         $protocolLine = ProtocolLine::find($protocolLineId);
         $personsQuery = Person::with('club')->orderBy('lastname');
+
         if(strlen($search) > 0) {
             $personsQuery->where('firstname', 'LIKE', '%'.$search.'%')
                 ->orWhere('lastname', 'LIKE', '%'.$search.'%')
                 ->orWhere('birthday', 'LIKE', '%'.$search.'%');
         }
+
         $persons = $personsQuery->paginate(13);
 
         return view('protocol-line.edit-person', [
@@ -44,18 +46,29 @@ class ProtocolLinesController extends BaseController
     public function setPerson(int $protocolLineId, int $personId): RedirectResponse
     {
         $protocolLine = ProtocolLine::find($protocolLineId);
-        $identService = new IdentService();
-        $identPersonId = $identService->identPerson($protocolLine->prepared_line);
 
-        if ($identPersonId !== $personId) {
-            $prompt = new PersonPrompt();
-            $prompt->person_id = $personId;
-            $prompt->prompt = $protocolLine->prepared_line;
-            $prompt->save();
+        //создаём новый промпт, т.к. видно простая идентификаия не помогла
+        $prompt = new PersonPrompt();
+        $prompt->person_id = $personId;
+        $prompt->prompt = $protocolLine->prepared_line;
+        $prompt->save();
 
-            System::setNeedRecheck(true);
-        }
+        //закідываем на новую проверку все не идентифицированные строки протоколов
+        //т.к. с новым промтом мы может найти новые совпадения
+        $preparedLines = ProtocolLine::whereNull('person_id')
+            ->get()
+            ->pluck('prepared_line')
+            ->unique();
 
+        $identLines = IdentLine::whereIn('ident_line', $preparedLines)
+            ->get()
+            ->pluck('ident_line');
+
+        $preparedLines = $preparedLines->diff($identLines);
+
+        (new IdentService())->pushIdentLines($preparedLines);
+
+        //сохраняем результат для всех строчек с установленным идетификатором
         $protocolLinesToRecheck = ProtocolLine::wherePreparedLine($protocolLine->prepared_line)->get();
 
         foreach ($protocolLinesToRecheck as $protocolLine) {
@@ -63,7 +76,6 @@ class ProtocolLinesController extends BaseController
             $protocolLine->save();
         }
 
-        System::setNeedRecheck();
         $url = Session::get('prev_url');
         Session::forget('prev_url');
 

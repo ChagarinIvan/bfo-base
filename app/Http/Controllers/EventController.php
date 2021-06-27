@@ -5,15 +5,17 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Exceptions\ParsingException;
-use App\Facades\System;
 use App\Models\Event;
 use App\Models\Flag;
 use App\Models\Group;
 use App\Models\Parser\ParserFactory;
 use App\Models\ProtocolLine;
+use App\Services\IdentService;
+use Exception;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Collection;
 use RuntimeException;
@@ -91,33 +93,21 @@ class EventController extends Controller
             return redirect("/competitions/events/{$event->id}/show");
         }
 
-        $parser = ParserFactory::createParser($protocol);
         try {
-            $lineList = $parser->parse($protocol);
-        } catch (ParsingException $e) {
-            $e->setEvent($event);
-            report($e);
-            return redirect('/404');
+            $lineList = $this->parserProtocol($protocol);
+            // если не было ошибок при парсинге новго протокола,
+            // то можно удалить старые строки, перед сохранением новых
+            $event->protocolLines()->delete();
+
+            // заполняем event_id и сохраняем
+            $lineList->each(function (ProtocolLine $protocolLine) use ($event) {
+                $protocolLine->event_id = $event->id;
+                $protocolLine->save();
+            });
+            $this->identPersons($lineList);
+        } catch (Exception $e) {
+            return $this->errorHandling($e, $event);
         }
-
-        $lineList->transform(function (array $lineData) {
-            $protocolLine = new ProtocolLine($lineData);
-            $group = Group::where('name', str_replace(' ', '', $lineData['group']))->first();
-            if ($group === null) {
-                throw new RuntimeException('Wrong group '.$lineData['group']);
-            }
-            $protocolLine->group_id = $group->id;
-            return $protocolLine;
-        });
-
-        $event->protocolLines()->delete();
-
-        $lineList->each(function (ProtocolLine $protocolLine) use ($event) {
-            $protocolLine->event_id = $event->id;
-            $protocolLine->save();
-        });
-
-        System::setNeedRecheck();
 
         return redirect("/competitions/events/{$event->id}/show");
     }
@@ -136,37 +126,23 @@ class EventController extends Controller
             throw new RuntimeException('empty file');
         }
 
-        $parser = ParserFactory::createParser($protocol);
         $event = new Event($formParams);
         $event->competition_id = $competitionId;
 
         try {
-            $lineList = $parser->parse($protocol);
-        } catch (ParsingException $e) {
-            $e->setEvent($event);
-            report($e);
-            return redirect('/404');
+            $lineList = $this->parserProtocol($protocol);
+            $event->save();
+
+            // добавляем линиям протокола идентификатор нового протокола и сохраняем их
+            $lineList->each(function (ProtocolLine $protocolLine) use ($event) {
+                $protocolLine->event_id = $event->id;
+                $protocolLine->save();
+            });
+
+            $this->identPersons($lineList);
+        } catch (Exception $e) {
+            return $this->errorHandling($e, $event);
         }
-        $lineList->transform(function (array $lineData) {
-            $protocolLine = new ProtocolLine($lineData);
-            $protocolLine->prepared_line = $protocolLine->makeIdentLine();
-            $group = Group::whereName(str_replace(' ', '', $lineData['group']))->first();
-            if ($group === null) {
-                throw new RuntimeException('Wrong group '.$lineData['group']);
-            }
-            $protocolLine->group_id = $group->id;
-            return $protocolLine;
-        });
-
-
-        $event->save();
-
-        $lineList->each(function (ProtocolLine $protocolLine) use ($event) {
-            $protocolLine->event_id = $event->id;
-            $protocolLine->save();
-        });
-
-        System::setNeedRecheck();
 
         return redirect("/competitions/events/{$event->id}/show");
     }
@@ -227,5 +203,66 @@ class EventController extends Controller
             'withPoints' => $withPoints,
             'groupAnchors' => $groupAnchors,
         ]);
+    }
+
+    private function errorHandling(Exception $e, Event $event): RedirectResponse
+    {
+        if (!$e instanceof ParsingException) {
+            $e = new ParsingException($e->getMessage());
+        }
+        $e->setEvent($event);
+        report($e);
+        return redirect('/404');
+    }
+
+    /**
+     * По протоколу определяет необходимый парсер
+     * Парсер разбирает протокол на сырые массивы данных из строк
+     * Из сырых строк наполняются модели ProtocolLine
+     *
+     * @param $protocol
+     * @return Collection
+     * @throw Exception
+     */
+    private function parserProtocol(UploadedFile $protocol): Collection
+    {
+        $parser = ParserFactory::createParser($protocol);
+        $lineList = $parser->parse($protocol);
+        $groups = Group::all();
+
+        // из массива сырых данных формирует модель записи протокола
+        // определяем группу и формируем идентификационную строку
+        $lineList->transform(function (array $lineData) use ($groups) {
+            $protocolLine = new ProtocolLine($lineData);
+            $protocolLine->prepared_line = $protocolLine->makeIdentLine();
+            $groupName = str_replace(' ', '', $lineData['group']);
+            $group = $groups->firstWhere('name', $groupName);
+            if ($group === null) {
+                throw new RuntimeException('Wrong group '.$lineData['group']);
+            }
+            $protocolLine->group_id = $group->id;
+            return $protocolLine;
+        });
+
+        return $lineList;
+    }
+
+    /**
+     * Запускаем процесс идентификации людей в строчках протокола
+     * состоит из 2 частей:
+     * - по прямому совпадению идентификатора (на лету)
+     * - по расстоянию левенштейна (в очередь)
+     *
+     * @param Collection $protocolLines
+     */
+    private function identPersons(Collection $protocolLines): void
+    {
+        // пробуем идентифицировать людей из нового протокола прямым подобием идентификационных строк
+        $identService = new IdentService();
+        $protocolLines = $identService->simpleIdent($protocolLines);
+        $protocolLines = $protocolLines->pluck('prepared_line')->unique();
+        $identService->pushIdentLines($protocolLines);
+
+
     }
 }

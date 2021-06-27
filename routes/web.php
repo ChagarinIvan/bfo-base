@@ -85,5 +85,3 @@ Route::get('/cups/{cup}/events/{cupEvent}/edit', [CupEventController::class, 'ed
 Route::get('/cups/{cup}/events/{cupEvent}/show/{group}', [CupEventController::class, 'show']);
 Route::post('/cups/{cup}/events/{cupEvent}/update', [CupEventController::class, 'update']);
 Route::post('/cups/{cup}/events/store', [CupEventController::class, 'store']);
-//ident
-//Route::get('/ident/start-ident', [IdentController::class, 'startIdent']);
