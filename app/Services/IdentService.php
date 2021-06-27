@@ -146,7 +146,7 @@ class IdentService
     public function pushIdentLines(Collection $protocolLines): void
     {
         foreach ($protocolLines as $line) {
-            $identLinesCount = IdentLine::whereIdentLine($line->prepared_line)->count();
+            $identLinesCount = IdentLine::whereIdentLine($protocolLines)->count();
 
             if ($identLinesCount === 0) {
                 $ident = new IdentLine();

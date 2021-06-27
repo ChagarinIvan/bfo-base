@@ -262,7 +262,5 @@ class EventController extends Controller
         $protocolLines = $identService->simpleIdent($protocolLines);
         $protocolLines = $protocolLines->pluck('prepared_line')->unique();
         $identService->pushIdentLines($protocolLines);
-
-
     }
 }
