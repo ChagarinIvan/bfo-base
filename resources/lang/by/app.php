@@ -54,6 +54,7 @@ return [
         'save' => 'Захаваць',
         'complete' => 'Выканаў',
         'time' => 'Час',
+        'type' => 'Тып',
     ],
     'competition' => [
         'title' => 'Спаборніцтвы',

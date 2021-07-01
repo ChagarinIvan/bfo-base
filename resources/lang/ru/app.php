@@ -51,6 +51,7 @@ return [
         'complete' => 'Выполнил',
         'time' => 'Время',
         'rank' => 'Разряд',
+        'type' => 'Тип',
     ],
     'protocol' => 'Протокол',
     'competition' => [

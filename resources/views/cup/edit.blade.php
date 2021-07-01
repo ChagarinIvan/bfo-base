@@ -25,6 +25,14 @@
             <input class="form-control" id="name" name="name" value="{{ $cup->name }}">
         </div>
         <div class="form-group">
+            <label for="type" class="col-2 col-form-label">{{ __('app.common.type') }}</label>
+            <select class="custom-select" id="type" name="type">
+                @foreach(\App\Models\Cups\CupType::getCupTypes() as $cupType)
+                    <option value="{{ $cupType->getId() }}" {{ $cup->type === $cupType->getId() ? 'selected' : '' }}>{{ $cupType->getName() }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="form-group">
             <label for="events_count">{{ __('app.cup.events_count') }}</label>
             <input class="form-control" id="events_count" name="events_count" value="{{ $cup->events_count }}">
         </div>

@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Models\Cup;
+use App\Models\Cups\CupType;
 use App\Models\Group;
 use App\Models\ProtocolLine;
-use App\Services\CalculatingService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -43,6 +43,7 @@ class CupController extends BaseController
         $formParams = $request->validate([
             'name' => 'required|unique:competitions|max:255',
             'year' => 'required|digits:4',
+            'type' => 'required',
             'groups' => 'required|array',
             'events_count' => 'required|numeric',
             'groups.*' => 'integer',
@@ -51,6 +52,10 @@ class CupController extends BaseController
         $cup = Cup::find($cupId);
         $cup->name = $formParams['name'];
         $cup->year = $formParams['year'];
+        $cup->type = $formParams['type'];
+        if (!in_array($cup->type, array_keys(CupType::CLASS_MAP), true)) {
+            $cup->type = CupType::ELITE;
+        }
         $cup->events_count = $formParams['events_count'];
         $cup->save();
         $cup->groups()->sync($formParams['groups']);
@@ -83,6 +88,13 @@ class CupController extends BaseController
     public function table(int $cupId, int $groupId): View
     {
         $cup = Cup::with(['groups', 'events.event'])->find($cupId);
+        $cupType = $cup->cupType();
+
+        $events = $cup->events()
+            ->join('events', 'events.id', '=', 'cup_events.event_id')
+            ->orderBy('events.date')
+            ->get();
+
         if ($groupId === 0) {
             /** @var Group $group */
             $group = $cup->groups->first();
@@ -90,23 +102,13 @@ class CupController extends BaseController
         } else {
             $group = Group::find($groupId);
         }
-        $cupIds = $cup->events->pluck('event_id');
         $protocolLines = ProtocolLine::with('person')
-            ->whereIn('event_id', $cupIds)
+            ->whereIn('event_id', $cup->events->pluck('event_id'))
             ->whereNotNull('person_id')
             ->whereGroupId($groupId)
             ->get();
 
-        $events = $cup->events()
-            ->join('events', 'events.id', '=', 'cup_events.event_id')
-            ->orderBy('events.date')
-            ->get();
-
-        if ($protocolLines->isEmpty()) {
-            $cupPoints = [];
-        } else {
-            $cupPoints = CalculatingService::calculateCup($cup, $events, $protocolLines);
-        }
+        $cupPoints = $cupType->calculate($cup, $events, $protocolLines);
         $protocolLines = $protocolLines->groupBy('person_id');
 
         return view('cup.table', [
@@ -129,6 +131,7 @@ class CupController extends BaseController
         $formParams = $request->validate([
             'name' => 'required|unique:competitions|max:255',
             'year' => 'required|digits:4',
+            'type' => 'required',
             'events_count' => 'required|numeric',
             'groups' => 'required|array',
             'groups.*' => 'integer',
@@ -137,6 +140,11 @@ class CupController extends BaseController
         $cup = new Cup();
         $cup->name = $formParams['name'];
         $cup->year = $formParams['year'];
+        $cup->type = $formParams['type'];
+        if (!in_array($cup->type, CupType::CLASS_MAP, true)) {
+            $cup->type = CupType::ELITE;
+        }
+
         $cup->events_count = $formParams['events_count'];
         $cup->save();
         $cup->groups()->sync($formParams['groups']);

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Carbon;
 
 /**
  * Class ProtocolLine
@@ -201,6 +202,16 @@ class Group extends Model
 
     public $timestamps = false;
     protected $table = 'groups';
+
+    public function year(): int
+    {
+        $now = Carbon::now();
+
+        if (preg_match('#\d+#', $this->name, $match)) {
+            $now = $now->addYears((int)$match);
+        }
+        return (int)$now->format('Y');
+    }
 
     public function lines(): HasMany
     {
