@@ -39,7 +39,7 @@
                     /** @var ProtocolLine[]|Collection $lines */;
                 @endphp
                 <tr>
-                    <td class="text-center" colspan="4"><b id="{{ $year }}">{{ $year }}</b></td>
+                    <td class="text-center" colspan="9"><b id="{{ $year }}">{{ $year }}</b></td>
                 </tr>
                 @foreach($lines as $line)
                     <tr>

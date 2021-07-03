@@ -12,6 +12,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\URL;
 
 class PersonController extends BaseController
@@ -35,6 +36,9 @@ class PersonController extends BaseController
         $person = Person::with(['protocolLines.event.competition', 'protocolLines.group'])->find($personId);
         $groupedProtocolLines = $person->protocolLines->groupBy(function (ProtocolLine $line) {
             return $line->event->date->format('Y');
+        });
+        $groupedProtocolLines->transform(function (Collection $protocolLines) {
+            return $protocolLines->sortByDesc(fn(ProtocolLine $line) => $line->event->date);
         });
         $groupedProtocolLines = $groupedProtocolLines->sortKeysDesc();
         return view('persons.show', ['person' => $person, 'groupedProtocolLines' => $groupedProtocolLines]);

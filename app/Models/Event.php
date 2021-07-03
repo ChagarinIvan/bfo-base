@@ -19,6 +19,7 @@ use Illuminate\Support\Collection;
  * @property string $description
  * @property Carbon $date
  * @property int $competition_id
+ * @property string $file
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read Competition|null $competition

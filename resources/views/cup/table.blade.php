@@ -75,9 +75,17 @@
                                     @php
                                         $sum += $cupEventPoint->points;
                                     @endphp
-                                    <td><b class="text-info">{{ $cupEventPoints[$event->id]->points }}</b></td>
+                                    <td>
+                                        <a href="/competitions/events/{{ $event->event_id }}/show#{{ $cupEventPoint->protocolLineId }}">
+                                            <u><b class="text-info">{{ $cupEventPoints[$event->id]->points }}</b></u>
+                                        </a>
+                                    </td>
                                 @else
-                                    <td>{{ $cupEventPoints[$event->id]->points }}</td>
+                                    <td>
+                                        <a href="/competitions/events/{{ $event->event_id }}/show#{{ $cupEventPoint->protocolLineId }}">
+                                            <u>{{ $cupEventPoints[$event->id]->points }}</u>
+                                        </a>
+                                    </td>
                                 @endif
                             @else
                                 <td></td>

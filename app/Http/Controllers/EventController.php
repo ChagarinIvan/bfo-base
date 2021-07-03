@@ -18,6 +18,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Storage;
 use RuntimeException;
 
 class EventController extends Controller
@@ -87,23 +88,30 @@ class EventController extends Controller
         }
 
         $event->fill($formParams);
-        $event->save();
 
         if ($protocol === null) {
+            $event->save();
             return redirect("/competitions/events/{$event->id}/show");
         }
+        $year = $event->date->format('Y');
+        $protocolPath = $year .'/'.$protocol->getClientOriginalName();
 
         try {
             $lineList = $this->parserProtocol($protocol);
+            Storage::delete($event->file);
+            $event->file = $protocolPath;
+            $event->save();
+
             // если не было ошибок при парсинге новго протокола,
             // то можно удалить старые строки, перед сохранением новых
             $event->protocolLines()->delete();
-
             // заполняем event_id и сохраняем
             $lineList->each(function (ProtocolLine $protocolLine) use ($event) {
                 $protocolLine->event_id = $event->id;
                 $protocolLine->save();
             });
+            Storage::putFileAs($year, $protocol, $protocol->getClientOriginalName());
+
             $this->identPersons($lineList);
         } catch (Exception $e) {
             return $this->errorHandling($e, $event);
@@ -128,6 +136,10 @@ class EventController extends Controller
 
         $event = new Event($formParams);
         $event->competition_id = $competitionId;
+        $year = $event->date->format('Y');
+
+        $protocolPath = $year .'/'.$protocol->getClientOriginalName();
+        $event->file = $protocolPath;
 
         try {
             $lineList = $this->parserProtocol($protocol);
@@ -144,6 +156,7 @@ class EventController extends Controller
             return $this->errorHandling($e, $event);
         }
 
+        Storage::putFileAs($year, $protocol, $protocol->getClientOriginalName());
         return redirect("/competitions/events/{$event->id}/show");
     }
 
