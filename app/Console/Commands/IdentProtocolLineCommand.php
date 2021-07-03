@@ -9,8 +9,11 @@ use Illuminate\Console\Command;
 
 /**
  * Будем определять людей из очереди на определение.
- * 1 человек в минуту
+ * 2 человека в минуту
  * независимо от результата запись удаляется из очереди
+ *
+ * * * * * php /var/www/blog/artisan protocol-lines:queue-ident
+ * * * * * (sleep 30; php /var/www/blog/artisan protocol-lines:queue-ident)
  *
  * Class IdentProtocolLineCommand
  * @package App\Console\Commands
