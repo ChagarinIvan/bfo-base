@@ -10,7 +10,7 @@ use Illuminate\Console\Command;
  * Команда для добавленія в очередь на определение всех не опознанных людей.
  * Запускаем раз в месяц
  *
- * 1 1 1 * * php artisan protocol-lines:simple-ident
+ * 1 1 1 * * php artisan protocol-lines:big-ident
  *
  * Class SimpleIndentCommand
  * @package App\Console\Commands
@@ -25,7 +25,7 @@ class StartBigIdentCommand extends Command
         $startTime = time();
         $protocolLines = ProtocolLine::whereNull('person_id')->get();
         $this->info("Has {$protocolLines->count()} lines");
-        (new IdentService())->pushIdentLines($protocolLines);
+        (new IdentService())->pushIdentLines($protocolLines->pluck('prepared_line'));
         $time = time() - $startTime;
         $this->info("Time for query: {$time}");
         $this->info("Finish");
