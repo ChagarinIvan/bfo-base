@@ -31,7 +31,11 @@ class PersonsSyncSeeder extends Seeder
             $firstname = $person[1] ?? '';
 
             $birthday = Carbon::createFromFormat('Y', $personData[2]);
-            $birthday->startOfYear();
+            if ($birthday instanceof Carbon) {
+                $birthday->startOfYear();
+            } else {
+                continue;
+            }
 
             if (empty($lastname) || empty($firstname)) {
                 continue;
