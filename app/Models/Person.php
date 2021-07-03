@@ -27,6 +27,9 @@ use Illuminate\Support\Collection;
  * @method static Person|Builder with(mixed $ids)
  * @method static Person|Builder orderBy(string $column)
  * @method static Person|Builder whereClubId(int $clubId)
+ * @method static Person|Builder whereFirstname(string $firstname)
+ * @method static Person|Builder whereLastname(string $lastname)
+ * @method static Person|Builder whereBirthday(Carbon $date)
  * @method static Person[]|Paginator paginate(int $size)
  */
 class Person extends Model
