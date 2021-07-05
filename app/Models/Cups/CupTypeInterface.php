@@ -3,11 +3,13 @@
 namespace App\Models\Cups;
 
 use App\Models\Cup;
+use App\Models\Group;
 use Illuminate\Support\Collection;
 
 interface CupTypeInterface
 {
     public function getId(): string;
     public function getName(): string;
-    public function calculate(Cup $cup, Collection $events, Collection $protocolLines): array;
+    public function calculate(Cup $cup, Collection $cupEvents, Collection $protocolLines, int $mainGroupId): array;
+    public function getProtocolLines(Cup $cup, Group $mainGroup): Collection;
 }

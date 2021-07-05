@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\Builder;
-use Illuminate\Support\Carbon;
 
 /**
  * Class ProtocolLine
@@ -20,11 +19,19 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Group newQuery()
  * @method static Builder|Group query()
  * @method static Builder|Group where(...$value)
+ * @method static Builder|Group whereIn(string $column, array $values)
  * @method static Builder|Group whereId($value)
  * @method static Builder|Group whereName($value)
  */
 class Group extends Model
 {
+    public const CUP_GROUPS = [
+        'М35' => ['М21Е'],
+        'М45' => ['М35', 'М21Е'],
+        'Ж35' => ['Ж21Е'],
+        'Ж45' => ['Ж35', 'Ж21Е'],
+    ];
+
     public const GROUPS = [
         'М10',
         'M10C',
@@ -203,14 +210,12 @@ class Group extends Model
     public $timestamps = false;
     protected $table = 'groups';
 
-    public function year(): int
+    public function years(): int
     {
-        $now = Carbon::now();
-
         if (preg_match('#\d+#', $this->name, $match)) {
-            $now = $now->addYears((int)$match);
+           return (int)$match[0];
         }
-        return (int)$now->format('Y');
+        return 0;
     }
 
     public function lines(): HasMany

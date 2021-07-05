@@ -3,10 +3,12 @@
 namespace App\Models\Cups;
 
 use App\Models\Cup;
-use App\Services\CalculatingService;
+use App\Models\Group;
+use App\Models\Person;
+use App\Models\ProtocolLine;
 use Illuminate\Support\Collection;
 
-class EliteCupType implements CupTypeInterface
+class EliteCupType extends MasterCupType
 {
     public function getId(): string
     {
@@ -18,12 +20,23 @@ class EliteCupType implements CupTypeInterface
         return 'Elite';
     }
 
-    public function calculate(Cup $cup, Collection $events, Collection $protocolLines): array
+    public function getProtocolLines(Cup $cup, Group $mainGroup): Collection
     {
-        if ($protocolLines->isEmpty()) {
-            return [];
-        } else {
-            return CalculatingService::calculateCup($cup, $events, $protocolLines);
-        }
+        $startYear = $cup->year - $mainGroup->years();
+        $finishYear = $startYear - 5;
+
+        $persons = Person::where('birthday', '<=', "{$startYear}-01-01")
+            ->where('birthday', '>', "{$finishYear}-01-01")
+            ->get();
+
+        $additionalGroups = Group::CUP_GROUPS[$mainGroup->name];
+        $groups = Group::whereIn('name', $additionalGroups)->get();
+        $groups->push($mainGroup);
+
+        return ProtocolLine::with('person')
+            ->whereIn('event_id', $cup->events->pluck('event_id'))
+            ->whereIn('person_id', $persons->pluck('id'))
+            ->whereIn('group_id', $groups->pluck('id'))
+            ->get();
     }
 }

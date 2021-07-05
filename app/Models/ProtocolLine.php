@@ -42,7 +42,7 @@ use Illuminate\Support\Collection;
  * @method static Builder|ProtocolLine wherePersonId($value)
  * @method static Builder|ProtocolLine whereNotNull(string $column)
  * @method static Builder|ProtocolLine whereNull(string $column)
- * @method static Builder|ProtocolLine whereIn(string|Expression $column, array $list)
+ * @method static Builder|ProtocolLine whereIn(string|Expression $column, array|Collection $list)
  * @method static Builder|ProtocolLine with(mixed $ids)
  * @method static Builder|ProtocolLine distinct()
  * @method static Builder|ProtocolLine orderByDesc(string $column)

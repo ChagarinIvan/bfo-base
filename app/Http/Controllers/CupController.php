@@ -99,16 +99,12 @@ class CupController extends BaseController
             /** @var Group $group */
             $group = $cup->groups->first();
             $groupId = $group->id;
-        } else {
-            $group = Group::find($groupId);
         }
-        $protocolLines = ProtocolLine::with('person')
-            ->whereIn('event_id', $cup->events->pluck('event_id'))
-            ->whereNotNull('person_id')
-            ->whereGroupId($groupId)
-            ->get();
 
-        $cupPoints = $cupType->calculate($cup, $events, $protocolLines);
+        $group = Group::find($groupId);
+
+        $protocolLines = $cupType->getProtocolLines($cup, $group);
+        $cupPoints = $cupType->calculate($cup, $events, $protocolLines, $group->id);
         $protocolLines = $protocolLines->groupBy('person_id');
 
         return view('cup.table', [

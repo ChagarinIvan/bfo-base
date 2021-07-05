@@ -26,6 +26,7 @@ use Illuminate\Support\Collection;
  * @method static Person|Builder find(mixed $ids)
  * @method static Person|Builder with(mixed $ids)
  * @method static Person|Builder orderBy(string $column)
+ * @method static Person|Builder where(string $column, string $operator, string $value)
  * @method static Person|Builder whereClubId(int $clubId)
  * @method static Person|Builder whereFirstname(string $firstname)
  * @method static Person|Builder whereLastname(string $lastname)
