@@ -26,7 +26,7 @@
             <label for="type" class="col-2 col-form-label">{{ __('app.common.type') }}</label>
             <select class="custom-select" id="type" name="type">
                 @foreach(\App\Models\Cups\CupType::getCupTypes() as $cupType)
-                    <option value="{{ $cupType->getId() }}" {{ $loop->first() ? 'selected' : '' }}>{{ $cupType->getName() }}</option>
+                    <option value="{{ $cupType->getId() }}" {{ $loop->first ? 'selected' : '' }}>{{ $cupType->getName() }}</option>
                 @endforeach
             </select>
         </div>
