@@ -8,8 +8,6 @@ use App\Models\Cup;
 use App\Models\CupEvent;
 use App\Models\Event;
 use App\Models\Group;
-use App\Models\ProtocolLine;
-use App\Services\CalculatingService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
@@ -19,9 +17,12 @@ class CupEventController extends BaseController
 {
     public const DEFAULT_POINTS = 1000;
 
-    public function delete(int $cupId, int $cupEventId): RedirectResponse
+    public function delete(int $cupId, int $eventId): RedirectResponse
     {
-        CupEvent::find($cupEventId)->delete();
+        CupEvent::whereCupId($cupId)
+            ->whereEventId($eventId)
+            ->delete();
+
         return redirect("/cups/{$cupId}/show");
     }
 
@@ -40,38 +41,40 @@ class CupEventController extends BaseController
         ]);
     }
 
-    public function show(int $cupId, int $cupEventId, int $groupId): View
+    public function show(int $cupId, int $eventId, int $groupId): View
     {
         $cup = Cup::with('groups')->find($cupId);
         if ($groupId === 0) {
             /** @var Group $group */
             $group = $cup->groups->first();
-            $groupId = $group->id;
-        }
-        $cupEvent = CupEvent::with(['event.competition'])->find($cupEventId);
-        $protocolLines = ProtocolLine::whereEventId($cupEvent->event_id)
-            ->whereGroupId($groupId)
-            ->get();
-
-        if ($protocolLines === null) {
-            $cupEventPoints = [];
         } else {
-            $cupEventPoints = CalculatingService::calculateEvent($cupEvent, $protocolLines);
+            $group = Group::find($groupId);
         }
+        /** @var CupEvent $cupEvent */
+        $cupEvent = CupEvent::with(['event.competition'])
+            ->whereCupId($cupId)
+            ->whereEventId($eventId)
+            ->get()->first();
+
+        $cupType = $cup->cupType();
+        $cupEventPoints = $cupType->calculateEvent($cupEvent, $group);
 
         return view('cup.events.show', [
             'cup' => $cup,
             'cupEvent' => $cupEvent,
-            'protocolLines' => $protocolLines,
             'cupEventPoints' => $cupEventPoints,
             'groupId' => $groupId,
         ]);
     }
 
-    public function edit(int $cupId, int $cupEventId): View
+    public function edit(int $cupId, int $eventId): View
     {
         $cup = Cup::find($cupId);
-        $cupEvent = CupEvent::find($cupEventId);
+        /** @var CupEvent $cupEvent */
+        $cupEvent = CupEvent::whereCupId($cupId)
+            ->whereEventId($eventId)
+            ->get()->first();
+
         $events = Event::where('date', 'LIKE', "%{$cup->year}%")
             ->get();
 
@@ -82,14 +85,18 @@ class CupEventController extends BaseController
         ]);
     }
 
-    public function update(int $cupId, int $cupEventId, Request $request): RedirectResponse
+    public function update(int $cupId, int $eventId, Request $request): RedirectResponse
     {
         $formData = $request->validate([
             'event' => 'required|numeric',
             'points' => 'required|numeric',
         ]);
 
-        $cupEvent = CupEvent::find($cupEventId);
+        /** @var CupEvent $cupEvent */
+        $cupEvent = CupEvent::whereCupId($cupId)
+            ->whereEventId($eventId)
+            ->get()->first();
+
         $cupEvent->event_id = $formData['event'];
         $cupEvent->cup_id = $cupId;
         $cupEvent->points = $formData['points'];

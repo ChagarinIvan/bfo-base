@@ -23,10 +23,12 @@ use Illuminate\Support\Collection;
  * @property int $club_id
  * @property Club $club
  * @property PersonPrompt[]|Collection $prompts
+ * @property PersonPayment[]|Collection $payments
  * @method static Person|Builder find(mixed $ids)
  * @method static Person|Builder with(mixed $ids)
  * @method static Person|Builder orderBy(string $column)
  * @method static Person|Builder where(string $column, string $operator, string $value)
+ * @method static Person|Builder whereIn(string $column, array $value)
  * @method static Person|Builder whereClubId(int $clubId)
  * @method static Person|Builder whereFirstname(string $firstname)
  * @method static Person|Builder whereLastname(string $lastname)
@@ -53,6 +55,11 @@ class Person extends Model
     public function prompts(): HasMany
     {
         return $this->hasMany(PersonPrompt::class);
+    }
+
+    public function payments(): HasMany
+    {
+        return $this->hasMany(PersonPayment::class);
     }
 
     public function club(): HasOne

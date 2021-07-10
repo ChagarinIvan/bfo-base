@@ -9,14 +9,15 @@ class CupEventPoint
 {
     public function __construct(
         public int $eventCupId,
-        public int $protocolLineId,
-        public int|string $points,
+        public ProtocolLine $protocolLine,
+        public int $points,
     ) {}
 
     public function equal(self $point): bool
     {
         return $this->eventCupId === $point->eventCupId &&
             $this->points === $point->points &&
-            $this->protocolLineId === $point->protocolLineId;
+            $this->protocolLine->id === $point->protocolLine->id &&
+            $this->protocolLine->person_id === $point->protocolLine->person_id;
     }
 }

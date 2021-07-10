@@ -2,15 +2,13 @@
     use App\Models\Cup;
     use App\Models\CupEvent;
     use App\Models\CupEventPoint;
-    use App\Models\ProtocolLine;
-    use Illuminate\Support\Collection;
     /**
      * @var Cup $cup;
      * @var CupEvent $cupEvent;
-     * @var ProtocolLine[]|Collection $protocolLines;
      * @var array<int, CupEventPoint> $cupEventPoints;
      * @var int $groupId;
      */
+    $index = 0;
 @endphp
 
 @extends('layouts.app')
@@ -27,7 +25,7 @@
     <ul class="nav nav-tabs pt-2">
         @foreach($cup->groups as $group)
             <li class="nav-item">
-                <a href="/cups/{{ $cup->id }}/events/{{ $cupEvent->id }}/show/{{ $group->id }}"
+                <a href="/cups/{{ $cup->id }}/events/{{ $cupEvent->event_id }}/show/{{ $group->id }}"
                    class="nav-link {{ $groupId === $group->id ? 'active' : ''}}"
                 >{{ $group->name }}</a>
             </li>
@@ -39,29 +37,27 @@
                 <thead>
                 <tr class="table-info">
                     <th scope="col"></th>
-                    <th scope="col">{{ __('app.common.lastname') }}</th>
-                    <th scope="col">{{ __('app.common.name') }}</th>
+                    <th scope="col">{{ __('app.common.fio') }}</th>
                     <th scope="col">{{ __('app.common.year') }}</th>
                     <th scope="col">{{ __('app.common.time') }}</th>
                     <th scope="col">{{ __('app.common.points') }}</th>
                 </tr>
                 </thead>
                 <tbody>
-                @foreach($protocolLines as $index => $line)
+                @foreach($cupEventPoints as $cupEventPoint)
                     <tr>
-                        <td>{{ $index + 1 }}</td>
-                        @if ($line->person_id)
-                            <td><a href="/persons/{{ $line->person_id }}/show"><u>{{ $line->lastname }}</u></a></td>
+                        <td>{{ ++$index }}</td>
+                        <td>
+                            <a href="/persons/{{ $cupEventPoint->protocolLine->person_id }}/show">
+                                <u>{{ $cupEventPoint->protocolLine->lastname }} {{ $cupEventPoint->protocolLine->firstname }}</u>
+                            </a>
+                        </td>
+                        <td>{{ $cupEventPoint->protocolLine->year }}</td>
+                        <td>{{ $cupEventPoint->protocolLine->time ? $cupEventPoint->protocolLine->time->format('H:i:s') : '-' }}</td>
+                        @if($cupEventPoint->points === $cupEvent->points)
+                            <td><b class="text-info">{{ $cupEventPoint->points }}</b></td>
                         @else
-                            <td>{{ $line->lastname }}</td>
-                        @endif
-                        <td>{{ $line->firstname }}</td>
-                        <td>{{ $line->year }}</td>
-                        <td>{{ $line->time ? $line->time->format('H:i:s') : '-' }}</td>
-                        @if($cupEventPoints[$line->id]->points === $cupEvent->points)
-                            <td><b class="text-info">{{ $cupEventPoints[$line->id]->points }}</b></td>
-                        @else
-                            <td>{{ $cupEventPoints[$line->id]->points }}</td>
+                            <td>{{ $cupEventPoint->points }}</td>
                         @endif
                     </tr>
                 @endforeach

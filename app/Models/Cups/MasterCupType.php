@@ -6,6 +6,7 @@ use App\Models\Cup;
 use App\Models\CupEvent;
 use App\Models\CupEventPoint;
 use App\Models\Group;
+use App\Models\PersonPayment;
 use App\Models\ProtocolLine;
 use Illuminate\Support\Collection;
 
@@ -21,47 +22,15 @@ class MasterCupType implements CupTypeInterface
         return 'Master';
     }
 
-    public function calculate(Cup $cup, Collection $cupEvents, Collection $protocolLines, int $mainGroupId): array
+    public function calculate(Cup $cup, Collection $cupEvents, Group $mainGroup): array
     {
-        $groupedByEventProtocolLines = $protocolLines->groupBy('event_id');
-        $protocolLinesByIds = $protocolLines->keyBy('id');
-
-        $results = [];
-        foreach ($cupEvents as $event) {
-            $eventProtocolLines = $groupedByEventProtocolLines->get($event->event_id);
-            $eventResults = Collection::make();
-
-            if ($eventProtocolLines !== null && !$eventProtocolLines->isEmpty()) {
-                $groupProtocolLines = $eventProtocolLines->groupBy('group_id');
-                foreach ($groupProtocolLines as $groupId => $groupEventProtocolLines) {
-                    if ($groupId === $mainGroupId) {
-                        $eventResults = $eventResults->merge($this->calculateEvent($event, $groupEventProtocolLines));
-                    } else {
-                        $groupLines = ProtocolLine::whereGroupId($groupId)
-                            ->whereNotNull('person_id')
-                            ->whereEventId($event->event_id)
-                            ->get();
-
-                        $groupLines = $groupLines->sortByDesc(function (ProtocolLine $line) {
-                            return $line->time ? $line->time->diffInSeconds() : 0;
-                        });
-
-                        $groupEventProtocolLines->push($groupLines->first());
-                        $groupEventProtocolLines->unique();
-                        $eventResults = $eventResults->merge($this->calculateEvent($event, $groupEventProtocolLines));
-                    }
-                }
-            }
-
-            foreach ($eventResults as $result) {
-                if ($protocolLinesByIds->has($result->protocolLineId)) {
-                    /** @var ProtocolLine $protocolLine */
-                    $protocolLine = $protocolLinesByIds->get($result->protocolLineId);
-                    $results[$protocolLine->person_id][$event->id] = $result;
-                }
-            }
+        $results = Collection::make();
+        foreach ($cupEvents as $cupEvent) {
+            $results = $results->merge($this->calculateEvent($cupEvent, $mainGroup));
         }
 
+        $results = $results->groupBy('protocolLine.person_id');
+        $results = $results->toArray();
         foreach ($results as &$cupEventPoints) {
             uasort($cupEventPoints, function (CupEventPoint $a, CupEventPoint $b) {
                 if ($a->points === $b->points) {
@@ -102,12 +71,82 @@ class MasterCupType implements CupTypeInterface
 
     /**
      * @param CupEvent $cupEvent
-     * @param Collection $protocolLines
+     * @param Group $mainGroup
      * @return array<int, CupEventPoint>|Collection
      */
-    public function calculateEvent(CupEvent $cupEvent, Collection $protocolLines): Collection
+    public function calculateEvent(CupEvent $cupEvent, Group $mainGroup): Collection
+    {
+        $groupProtocolLines = ProtocolLine::whereEventId($cupEvent->event_id)
+            ->whereGroupId($mainGroup->id)
+            ->get();
+        $emptyGroup = $groupProtocolLines->count() === 0;
+
+        $emptyNextGroup = false;
+        if (isset(Group::NEXT_GROUPS[$mainGroup->name])) {
+            $nextGroupProtocolLines = ProtocolLine::whereEventId($cupEvent->event_id)
+                ->whereGroupId(Group::NEXT_GROUPS[$mainGroup->name])
+                ->get();
+            $emptyNextGroup = $nextGroupProtocolLines->count() === 0;
+        }
+
+        $needSplit = $emptyGroup || $emptyNextGroup;
+
+        if ($needSplit) {
+            if ($emptyGroup) {
+                if (isset(Group::CUP_GROUPS[$mainGroup->name])) {
+                    $additionalGroups = Group::CUP_GROUPS[$mainGroup->name];
+                    foreach ($additionalGroups as $groupName) {
+                        $group = Group::whereName($groupName)->first();
+                        $protocolLines = ProtocolLine::whereEventId($cupEvent->event_id)
+                            ->whereGroupId($group->id)
+                            ->get();
+
+                        if ($protocolLines->count() > 0) {
+                            break;
+                        }
+                    }
+                } else {
+                    return Collection::make();
+                }
+            } else {
+                $group = $mainGroup;
+            }
+
+            return $this->calculateLines($cupEvent, ProtocolLine::with('person.payments')
+                ->whereEventId($cupEvent->event_id)
+                ->whereNotNull('person_id')
+                ->whereIn('person_id', $cupEvent->getGroupPersons($mainGroup)->pluck('id'))
+                ->whereGroupId($group->id)
+                ->get()
+            );
+        } else {
+            $cupEventPointsList = $this->calculateLines($cupEvent, ProtocolLine::with('person.payments')
+                ->whereEventId($cupEvent->event_id)
+                ->whereNotNull('person_id')
+                ->whereGroupId($mainGroup->id)
+                ->get()
+            );
+        }
+
+        return $cupEventPointsList;
+    }
+
+    /**
+     * @param CupEvent $cupEvent
+     * @param Collection|ProtocolLine[] $lines
+     * @return array<int, CupEventPoint>|Collection
+     */
+    public function calculateLines(CupEvent $cupEvent, Collection $lines): Collection
     {
         $cupEventPointsList = Collection::make();
+
+        $protocolLines = Collection::make();
+        foreach($lines as $protocolLine) {
+            $payment = $protocolLine->person->payments->where('year', $cupEvent->cup->year)->first();
+            if ($payment instanceof PersonPayment && $cupEvent->event->date >= $payment->date) {
+                $protocolLines->push($protocolLine);
+            }
+        }
 
         if ($protocolLines->isEmpty()) {
             return $cupEventPointsList;
@@ -131,10 +170,10 @@ class MasterCupType implements CupTypeInterface
                     /** @var ProtocolLine $firstResult */
                     $firstResult = $protocolLines->first();
                     $firstResultSeconds = $firstResult->time ? $firstResult->time->secondsSinceMidnight() : 0;
-                    $cupEventPoints = new CupEventPoint($cupEvent->id, $protocolLine->id, $maxPoints);
+                    $cupEventPoints = new CupEventPoint($cupEvent->id, $protocolLine, $maxPoints);
                     $first = false;
                 } else {
-                    $cupEventPoints = new CupEventPoint($cupEvent->id, $protocolLine->id, '-');
+                    $cupEventPoints = new CupEventPoint($cupEvent->id, $protocolLine, '-');
                 }
             } else {
                 if ($protocolLine->person_id === null) {
@@ -146,10 +185,10 @@ class MasterCupType implements CupTypeInterface
                 } else {
                     $points = 0;
                 }
-                $cupEventPoints = new CupEventPoint($cupEvent->id, $protocolLine->id, $points);
+                $cupEventPoints = new CupEventPoint($cupEvent->id, $protocolLine, $points);
             }
 
-            $cupEventPointsList->put($cupEventPoints->protocolLineId, $cupEventPoints);
+            $cupEventPointsList->put($cupEventPoints->protocolLine->person_id, $cupEventPoints);
         }
 
         return $cupEventPointsList;

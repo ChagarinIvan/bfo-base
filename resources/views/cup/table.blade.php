@@ -3,12 +3,13 @@
     use App\Models\CupEvent;
     use App\Models\CupEventPoint;
     use App\Models\Group;
-    use App\Models\ProtocolLine;
+    use App\Models\Person;
+    use Illuminate\Support\Collection;
     /**
      * @var Cup $cup;
      * @var CupEvent[] $events;
      * @var array<int, CupEventPoint[]> $cupPoints;
-     * @var array<int, ProtocolLine> $protocolLines;
+     * @var Person[]|Collection $persons;
      * @var Group $activeGroup;
      */
     $place = 1;
@@ -50,19 +51,26 @@
                 @foreach($cupPoints as $personId => $cupEventPoints)
                     @php
                         /** @var \App\Models\Person $person */
-                        $person = $protocolLines->get($personId)->first()->person;
+                        $person = $persons->get($personId);
                         $sum = 0;
-                        $cupEventPointsValues = array_values($cupEventPoints);
                     @endphp
                     <tr>
                         <td>{{ $place++ }}</td>
                         <td><a href="/persons/{{ $person->id }}/show"><b><u>{{ $person->lastname.' '.$person->firstname }}</u></b></a></td>
                         @foreach($events as $event)
-                            @if(isset($cupEventPoints[$event->id]))
-                                @php
-                                    $cupEventPoint = $cupEventPoints[$event->id];
+                            @php
+                                $find = false;
+                                foreach ($cupEventPoints as $cupEventPoint) {
+                                    if ($cupEventPoint->eventCupId === $event->id) {
+                                        $find = true;
+                                        break;
+                                    }
+                                }
+                            @endphp
+                            @if($find)
+                                    @php
                                     $isBold = false;
-                                    foreach ($cupEventPointsValues as $index => $cupEventPointsValue) {
+                                    foreach (array_values($cupEventPoints) as $index => $cupEventPointsValue) {
                                         if ($index >= $cup->events_count) {
                                             break;
                                         }
@@ -76,14 +84,14 @@
                                         $sum += $cupEventPoint->points;
                                     @endphp
                                     <td>
-                                        <a href="/competitions/events/{{ $event->event_id }}/show#{{ $cupEventPoint->protocolLineId }}">
-                                            <u><b class="text-info">{{ $cupEventPoints[$event->id]->points }}</b></u>
+                                        <a href="/competitions/events/{{ $event->event_id }}/show#{{ $cupEventPoint->protocolLine->id }}">
+                                            <u><b class="text-info">{{ $cupEventPoint->points }}</b></u>
                                         </a>
                                     </td>
                                 @else
                                     <td>
-                                        <a href="/competitions/events/{{ $event->event_id }}/show#{{ $cupEventPoint->protocolLineId }}">
-                                            <u>{{ $cupEventPoints[$event->id]->points }}</u>
+                                        <a href="/competitions/events/{{ $event->event_id }}/show#{{ $cupEventPoint->protocolLine->id }}">
+                                            <u>{{ $cupEventPoint->points }}</u>
                                         </a>
                                     </td>
                                 @endif

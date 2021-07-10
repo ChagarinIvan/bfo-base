@@ -7,7 +7,7 @@ namespace App\Http\Controllers;
 use App\Models\Cup;
 use App\Models\Cups\CupType;
 use App\Models\Group;
-use App\Models\ProtocolLine;
+use App\Models\Person;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -65,8 +65,8 @@ class CupController extends BaseController
 
     public function show(int $cupId): View
     {
-        $cup = Cup::with('events')
-            ->find($cupId);
+        $cup = Cup::find($cupId);
+
         $events = $cup->events()
             ->join('events', 'events.id', '=', 'cup_events.event_id')
             ->orderBy('events.date')
@@ -98,20 +98,17 @@ class CupController extends BaseController
         if ($groupId === 0) {
             /** @var Group $group */
             $group = $cup->groups->first();
-            $groupId = $group->id;
+        } else {
+            $group = Group::find($groupId);
         }
 
-        $group = Group::find($groupId);
-
-        $protocolLines = $cupType->getProtocolLines($cup, $group);
-        $cupPoints = $cupType->calculate($cup, $events, $protocolLines, $group->id);
-        $protocolLines = $protocolLines->groupBy('person_id');
+        $cupPoints = $cupType->calculate($cup, $events, $group);
 
         return view('cup.table', [
             'cup' => $cup,
             'events' => $events,
             'cupPoints' => $cupPoints,
-            'protocolLines' => $protocolLines,
+            'persons' => Person::whereIn('id', array_keys($cupPoints))->get()->keyBy('id'),
             'activeGroup' => $group,
         ]);
     }

@@ -103,10 +103,10 @@ class CalculatingService
                     /** @var ProtocolLine $firstResult */
                     $firstResult = $protocolLines->first();
                     $firstResultSeconds = $firstResult->time ? $firstResult->time->secondsSinceMidnight() : 0;
-                    $cupEventPoints = new CupEventPoint($cupEvent->id, $protocolLine->id, $maxPoints);
+                    $cupEventPoints = new CupEventPoint($cupEvent->id, $protocolLine, $maxPoints);
                     $first = false;
                 } else {
-                    $cupEventPoints = new CupEventPoint($cupEvent->id, $protocolLine->id, '-');
+                    $cupEventPoints = new CupEventPoint($cupEvent->id, $protocolLine, '-');
                 }
             } else {
                 if ($protocolLine->person_id === null) {
@@ -118,9 +118,9 @@ class CalculatingService
                 } else {
                     $points = 0;
                 }
-                $cupEventPoints = new CupEventPoint($cupEvent->id, $protocolLine->id, $points);
+                $cupEventPoints = new CupEventPoint($cupEvent->id, $protocolLine, $points);
             }
-            $cupEventPointsList[$cupEventPoints->protocolLineId] = $cupEventPoints;
+            $cupEventPointsList[$cupEventPoints->protocolLine->person_id] = $cupEventPoints;
         }
 
         return $cupEventPointsList;
