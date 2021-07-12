@@ -56,6 +56,7 @@ class IdentProtocolLineCommand extends Command
                 $person->club_id = $club->first()->id;
             }
             $person->save();
+            $person->makePrompts();
         }
     }
 }
