@@ -12,6 +12,7 @@ use App\Models\Group;
 use App\Models\Parser\ParserFactory;
 use App\Models\ProtocolLine;
 use App\Services\IdentService;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -47,26 +48,46 @@ class EventController extends Controller
         $formParams = $request->validate([
             'events' => 'required|array',
         ]);
-
         $events = Event::find($formParams['events']);
         $firstEvent = $events->first();
-        $firstEventProtocolLines = ProtocolLine::whereEventId($firstEvent->id)->groupBy('group_id')->get();
+
+        $newEvent = new Event();
+        $name = $events->pluck('name')->implode(' + ');
+        $newEvent->name = $name;
+        $newEvent->description = "Аб'яднанне этапаў: {$name}";
+        $newEvent->date = $firstEvent->date;
+        $newEvent->save();
+
+        $firstEventProtocolLines = ProtocolLine::whereEventId($firstEvent->id)->get()->groupBy('group_id');
         foreach ($events as $event) {
             if ($firstEvent->id === $event->id) {
                 continue;
             }
 
-            $eventsProtocolLines = ProtocolLine::whereEventId($event->id)->groupBy('group_id')->get();
+            $eventsProtocolLines = ProtocolLine::whereEventId($event->id)->get()->groupBy('group_id');
             foreach ($firstEventProtocolLines as $groupId => $firstEventGroupProtocolLines) {
                 $eventGroupProtocolLines = $eventsProtocolLines->get($groupId);
-                $eventGroupProtocolLines->keyBy('person_id');
-            }
+                $firstEventGroupProtocolLines = $firstEventGroupProtocolLines->keyBy('person_id');
+                $eventGroupProtocolLines = $eventGroupProtocolLines->keyBy('person_id');
 
+                foreach ($firstEventGroupProtocolLines as $personId => $firstEventProtocolLine) {
+                    /** @var ProtocolLine $firstEventProtocolLine */
+                    /** @var ProtocolLine $eventProtocolLine */
+                    $eventProtocolLine = $eventGroupProtocolLines->get($personId);
+                    if ($eventProtocolLine !== null) {
+                        $newProtocolLine = $firstEventProtocolLine->replicate();
+                        $newProtocolLine->event_id = $newEvent->id;
+                        if ($firstEventProtocolLine->time instanceof Carbon && $eventProtocolLine->time instanceof Carbon) {
+                            $newProtocolLine->time = $firstEventProtocolLine->time + $eventProtocolLine->time;
+                        } else {
+                            $newProtocolLine->time = null;
+                        }
+                    }
+                }
+            }
         }
 
-        return view('events.sum', [
-            'competition' => $competition,
-        ]);
+        return redirect("/competitions/events/{$newEvent->id}/show");
     }
 
     public function edit(int $eventId): View
