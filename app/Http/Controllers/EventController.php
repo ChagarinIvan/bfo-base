@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Exceptions\ParsingException;
+use App\Models\Competition;
 use App\Models\Event;
 use App\Models\Flag;
 use App\Models\Group;
@@ -28,6 +29,43 @@ class EventController extends Controller
         return view('events.create', [
             'competitionId' => $competitionId,
             'flags' => Flag::all(),
+        ]);
+    }
+
+    public function sum(int $competitionId): View
+    {
+        $competition = Competition::with('events')->find($competitionId);
+        return view('events.sum', [
+            'competition' => $competition,
+        ]);
+    }
+
+    public function unit(int $competitionId, Request $request): RedirectResponse
+    {
+        $competition = Competition::find($competitionId);
+
+        $formParams = $request->validate([
+            'events' => 'required|array',
+        ]);
+
+        $events = Event::find($formParams['events']);
+        $firstEvent = $events->first();
+        $firstEventProtocolLines = ProtocolLine::whereEventId($firstEvent->id)->groupBy('group_id')->get();
+        foreach ($events as $event) {
+            if ($firstEvent->id === $event->id) {
+                continue;
+            }
+
+            $eventsProtocolLines = ProtocolLine::whereEventId($event->id)->groupBy('group_id')->get();
+            foreach ($firstEventProtocolLines as $groupId => $firstEventGroupProtocolLines) {
+                $eventGroupProtocolLines = $eventsProtocolLines->get($groupId);
+                $eventGroupProtocolLines->keyBy('person_id');
+            }
+
+        }
+
+        return view('events.sum', [
+            'competition' => $competition,
         ]);
     }
 

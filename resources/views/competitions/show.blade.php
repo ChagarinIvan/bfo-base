@@ -16,6 +16,7 @@
     </div>
     <div class="row pt-5">
         <a class="btn btn-success mr-2" href="/competitions/{{ $competition->id }}/events/add">{{ __('app.competition.add_event') }}</a>
+        <a class="btn btn-info mr-2" href="/competitions/{{ $competition->id }}/events/sum">{{ __('app.competition.sum') }}</a>
     </div>
     <div class="row pt-3">
         <table class="table">

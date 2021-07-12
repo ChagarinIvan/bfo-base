@@ -26,7 +26,7 @@
             <span class="badge" style="background: {{ \App\Facades\Color::getColor($group->name) }}">{{ $group->name }}</span>
         @endforeach
     </div>
-    <form class="pt-5" method="POST" action="/cups/{{ $cup->id }}/events/{{ $cupEvent->id }}/update">
+    <form class="pt-5" method="POST" action="/cups/{{ $cup->id }}/events/{{ $cupEvent->event_id }}/update">
         @csrf
         <div class="form-group">
             <label for="event">{{ __('app.event.title') }}</label>

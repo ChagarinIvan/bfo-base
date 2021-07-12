@@ -32,6 +32,8 @@ Route::post('/competitions/store', [CompetitionController::class, 'store']);
 Route::get('/competitions/{competition}/show', [CompetitionController::class, 'show']);
 //event
 Route::get('/competitions/{competition}/events/add', [EventController::class, 'create']);
+Route::get('/competitions/{competition}/events/sum', [EventController::class, 'sum']);
+Route::post('/competitions/{competition}/events/unit', [EventController::class, 'unit']);
 Route::get('/competitions/events/{event}/edit', [EventController::class, 'edit']);
 Route::get('/competitions/events/{event}/show', [EventController::class, 'show']);
 Route::post('/competitions/{competition}/events/store', [EventController::class, 'store']);
