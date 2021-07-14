@@ -19,7 +19,7 @@
         </tr>
         @foreach($groupedLines->get($group->id) as $linesGroup)
             @foreach($linesGroup as $line)
-                <tr {!! $loop->parent->odd ? 'class="table-secondary"' : '' !!}>
+                <tr id="{{ $line->id }}" {!! $loop->parent->odd ? 'class="table-secondary"' : '' !!}>
                     @php
                         $hasPerson = $line->person_id !== null;
                     @endphp

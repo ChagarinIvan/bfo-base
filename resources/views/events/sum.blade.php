@@ -30,7 +30,7 @@
             </select>
         </div>
         <div class="row">
-            <input type="submit" class="btn btn-primary" value="{{ __('app.common.create') }}">
+            <input type="submit" class="btn btn-primary" value="{{ __('app.common.sum') }}">
             <a href="/competitions/{{ $competition->id }}/show" class="btn btn-danger ml-1">{{ __('app.common.cancel') }}</a>
         </div>
     </form>

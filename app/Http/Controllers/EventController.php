@@ -107,6 +107,8 @@ class EventController extends Controller
                     $newProtocolLines->push($newProtocolLine);
                 }
             }
+
+            $firstEventProtocolLines = $newProtocolLines->groupBy('group_id');
         }
         foreach ($newProtocolLines as $protocolLine) {
             $protocolLine->save();

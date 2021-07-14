@@ -57,13 +57,11 @@ class IdentProtocolLineCommand extends Command
             }
             $person->save();
             $person->makePrompts();
-        }
 
-        $personId = (new IdentService())->identPerson($identLine->ident_line);
-        $protocolLines = ProtocolLine::wherePreparedLine($identLine->ident_line)->get();
-        $protocolLines->each(function (ProtocolLine $protocolLine) use ($personId) {
-            $protocolLine->person_id = $personId;
-            $protocolLine->save();
-        });
+            $protocolLines->each(function (ProtocolLine $protocolLine) use ($person) {
+                $protocolLine->person_id = $person->id;
+                $protocolLine->save();
+            });
+        }
     }
 }
