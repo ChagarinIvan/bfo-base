@@ -56,7 +56,6 @@ Route::get('/club/{club}/show', [ClubController::class, 'show']);
 //protocol-line
 Route::get('/protocol-lines/{protocolLine}/edit-person', [ProtocolLinesController::class, 'editPerson']);
 Route::get('/protocol-lines/{protocolLine}/set-person/{person}', [ProtocolLinesController::class, 'setPerson']);
-Route::get('/protocol-lines/not-ident/show', [ProtocolLinesController::class, 'showNotIdent']);
 //localization
 Route::get('/localization/{code}', [LocalizationController::class, 'changeLocale']);
 //flags

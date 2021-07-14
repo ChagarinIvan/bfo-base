@@ -41,10 +41,16 @@ class EventController extends Controller
         ]);
     }
 
+    /**
+     * Объединяем несколько протоколов в один.
+     * у всех строк протокола должен быть персон ИД
+     *
+     * @param int $competitionId
+     * @param Request $request
+     * @return RedirectResponse
+     */
     public function unit(int $competitionId, Request $request): RedirectResponse
     {
-        $competition = Competition::find($competitionId);
-
         $formParams = $request->validate([
             'events' => 'required|array',
         ]);
@@ -56,8 +62,10 @@ class EventController extends Controller
         $newEvent->name = $name;
         $newEvent->description = "Аб'яднанне этапаў: {$name}";
         $newEvent->date = $firstEvent->date;
+        $newEvent->competition_id = $competitionId;
         $newEvent->save();
 
+        $newProtocolLines = new Collection();
         $firstEventProtocolLines = ProtocolLine::whereEventId($firstEvent->id)->get()->groupBy('group_id');
         foreach ($events as $event) {
             if ($firstEvent->id === $event->id) {
@@ -66,25 +74,42 @@ class EventController extends Controller
 
             $eventsProtocolLines = ProtocolLine::whereEventId($event->id)->get()->groupBy('group_id');
             foreach ($firstEventProtocolLines as $groupId => $firstEventGroupProtocolLines) {
+                /** @var Collection $firstEventGroupProtocolLines */
+                /** @var Collection $eventGroupProtocolLines */
                 $eventGroupProtocolLines = $eventsProtocolLines->get($groupId);
                 $firstEventGroupProtocolLines = $firstEventGroupProtocolLines->keyBy('person_id');
                 $eventGroupProtocolLines = $eventGroupProtocolLines->keyBy('person_id');
+                $personIds = $firstEventGroupProtocolLines->keys()->merge($eventGroupProtocolLines->keys())->unique();
 
-                foreach ($firstEventGroupProtocolLines as $personId => $firstEventProtocolLine) {
+                foreach ($personIds as $personId) {
                     /** @var ProtocolLine $firstEventProtocolLine */
+                    $firstEventProtocolLine = $firstEventGroupProtocolLines->get($personId);
                     /** @var ProtocolLine $eventProtocolLine */
                     $eventProtocolLine = $eventGroupProtocolLines->get($personId);
-                    if ($eventProtocolLine !== null) {
+
+                    if ($firstEventProtocolLine !== null) {
                         $newProtocolLine = $firstEventProtocolLine->replicate();
-                        $newProtocolLine->event_id = $newEvent->id;
-                        if ($firstEventProtocolLine->time instanceof Carbon && $eventProtocolLine->time instanceof Carbon) {
-                            $newProtocolLine->time = $firstEventProtocolLine->time + $eventProtocolLine->time;
-                        } else {
-                            $newProtocolLine->time = null;
+                        if ($eventProtocolLine !== null) {
+                            if ($firstEventProtocolLine->time instanceof Carbon && $eventProtocolLine->time instanceof Carbon) {
+                                $newProtocolLine->time = $firstEventProtocolLine->time->addHours($eventProtocolLine->time->hour);
+                                $newProtocolLine->time = $firstEventProtocolLine->time->addMinutes($eventProtocolLine->time->minute);
+                                $newProtocolLine->time = $firstEventProtocolLine->time->addSeconds($eventProtocolLine->time->second);
+                            } else {
+                                $newProtocolLine->time = null;
+                            }
                         }
+                    } elseif ($eventProtocolLine !== null) {
+                        $newProtocolLine = $eventProtocolLine->replicate();
+                    } else {
+                        continue;
                     }
+                    $newProtocolLine->event_id = $newEvent->id;
+                    $newProtocolLines->push($newProtocolLine);
                 }
             }
+        }
+        foreach ($newProtocolLines as $protocolLine) {
+            $protocolLine->save();
         }
 
         return redirect("/competitions/events/{$newEvent->id}/show");
@@ -292,7 +317,7 @@ class EventController extends Controller
      * Парсер разбирает протокол на сырые массивы данных из строк
      * Из сырых строк наполняются модели ProtocolLine
      *
-     * @param $protocol
+     * @param UploadedFile $protocol
      * @return Collection
      * @throw Exception
      */

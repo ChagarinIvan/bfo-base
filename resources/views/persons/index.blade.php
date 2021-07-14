@@ -1,7 +1,10 @@
 @php
+    use App\Models\Person;
     use Illuminate\Pagination\Paginator;
+    use Illuminate\Support\Collection;
     /**
-     * @var Paginator $persons;
+     * @var Paginator $paginator;
+     * @var Collection|Person[] $persons;
      * @var string $search;
      */
 @endphp
@@ -40,7 +43,7 @@
             </tr>
             </thead>
             <tbody>
-            @foreach ($persons->items() as $person)
+            @foreach ($persons as $person)
                 @php
                     /** @var \App\Models\Person $person */
                     $hide = $person->protocolLines->count() === 0;
@@ -67,21 +70,21 @@
             </tbody>
         </table>
     </div>
-    @if($persons->hasPages())
+    @if($paginator->hasPages())
         <nav aria-label="Page navigation example">
             <ul class="pagination">
-                @if(!$persons->onFirstPage())
+                @if(!$paginator->onFirstPage())
                     <li class="page-item"><a class="page-link" href="/persons?search={{ $search }}">1</a></li>
                 @endif
-                @if($persons->previousPageUrl() !== null)
-                    <li class="page-item"><a class="page-link" href="{{ $persons->previousPageUrl() }}&search={{ $search }}">{{ __('pagination.previous') }}</a></li>
+                @if($paginator->previousPageUrl() !== null)
+                    <li class="page-item"><a class="page-link" href="{{ $paginator->previousPageUrl() }}&search={{ $search }}">{{ __('pagination.previous') }}</a></li>
                 @endif
-                <li class="page-item active"><a class="page-link" href="#">{{ $persons->currentPage() }} <span class="sr-only">(current)</span></a></li>
-                @if($persons->nextPageUrl() !== null)
-                    <li class="page-item"><a class="page-link" href="{{ $persons->nextPageUrl() }}&search={{ $search }}">{{ __('pagination.next') }}</a></li>
+                <li class="page-item active"><a class="page-link" href="#">{{ $paginator->currentPage() }} <span class="sr-only">(current)</span></a></li>
+                @if($paginator->nextPageUrl() !== null)
+                    <li class="page-item"><a class="page-link" href="{{ $paginator->nextPageUrl() }}&search={{ $search }}">{{ __('pagination.next') }}</a></li>
                 @endif
-                @if($persons->lastPage() !== $persons->currentPage())
-                    <li class="page-item"><a class="page-link" href="/persons?page={{ $persons->lastPage() }}&search={{ $search }}">{{ $persons->lastPage() }}</a></li>
+                @if($paginator->lastPage() !== $paginator->currentPage())
+                    <li class="page-item"><a class="page-link" href="/persons?page={{ $paginator->lastPage() }}&search={{ $search }}">{{ $paginator->lastPage() }}</a></li>
                 @endif
             </ul>
         </nav>

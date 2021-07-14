@@ -13,8 +13,6 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 
 class ProtocolLinesController extends BaseController
@@ -43,6 +41,13 @@ class ProtocolLinesController extends BaseController
         ]);
     }
 
+    /**
+     * теперь при установке персон ИД надо смотреть если у старого персон ИД только одна запись, то надо этот старый персону далить
+     *
+     * @param int $protocolLineId
+     * @param int $personId
+     * @return RedirectResponse
+     */
     public function setPerson(int $protocolLineId, int $personId): RedirectResponse
     {
         $protocolLine = ProtocolLine::find($protocolLineId);
@@ -80,39 +85,5 @@ class ProtocolLinesController extends BaseController
         Session::forget('prev_url');
 
         return redirect($url);
-    }
-
-    public function showNotIdent(Request $request): View
-    {
-        $search = (string)$request->get('search');
-
-        $nameExpr = DB::raw("CONCAT(lastname, ' ',firstname) AS name");
-        $lines = ProtocolLine::wherePersonId(null)
-            ->select($nameExpr)
-            ->groupBy('name')
-            ->orderBy('name');
-
-        if (strlen($search) > 0) {
-            $lines->where('firstname', 'LIKE', '%'.$search.'%')
-                ->orWhere('lastname', 'LIKE', '%'.$search.'%');
-        }
-
-        $paginator = $lines->paginate(13);
-        $persons = $paginator->items();
-        $names = collect($persons)->transform(fn($line) => $line->name)->toArray();
-
-        /** @var Collection $lines */
-        $lines = ProtocolLine::whereIn(DB::raw("CONCAT(lastname, ' ', firstname)"), $names)
-            ->select('*', $nameExpr)
-            ->with(['event.competition', 'group'])
-            ->get();
-
-        $lines = $lines->groupBy('name');
-
-        return view('protocol-line.show-not-ident', [
-            'persons' => $paginator,
-            'lines' => $lines,
-            'search' => $search,
-        ]);
     }
 }

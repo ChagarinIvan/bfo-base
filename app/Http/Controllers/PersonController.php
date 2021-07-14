@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 
 class PersonController extends BaseController
@@ -20,14 +21,24 @@ class PersonController extends BaseController
     public function index(Request $request): View
     {
         $search = (string)$request->get('search');
-        $personsQuery = Person::with(['protocolLines', 'club'])->orderBy('lastname');
-        if (strlen($search) > 0) {
-            $personsQuery->where('firstname', 'LIKE', '%'.$search.'%')
-                ->orWhere('lastname', 'LIKE', '%'.$search.'%');
-        }
-        $persons = $personsQuery->paginate(13);
 
-        return view('persons.index', ['persons' => $persons, 'search' => $search]);
+        $personsQuery = Person::join('protocol_lines', 'protocol_lines.person_id', '=', 'person.id')
+            ->addSelect(DB::raw('ANY_VALUE(person.id) AS id'))
+            ->groupBy('protocol_lines.person_id')
+            ->orderByRaw(DB::raw('COUNT(protocol_lines.person_id) DESC'));
+
+        if (strlen($search) > 0) {
+            $personsQuery->where('person.firstname', 'LIKE', '%'.$search.'%')
+                ->orWhere('person.lastname', 'LIKE', '%'.$search.'%');
+        }
+        $paginator = $personsQuery->paginate(13);
+        $persons = Person::with(['protocolLines', 'club'])->find(collect($paginator->items())->pluck('id'));
+
+        return view('persons.index', [
+            'paginator' => $paginator,
+            'persons' => $persons,
+            'search' => $search,
+        ]);
     }
 
     public function show(int $personId): View
