@@ -6,10 +6,9 @@ use App\Models\Cup;
 use App\Models\CupEvent;
 use App\Models\CupEventPoint;
 use App\Models\Group;
-use App\Models\Person;
-use App\Models\PersonPayment;
 use App\Models\ProtocolLine;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class MasterCupType implements CupTypeInterface
 {
@@ -78,30 +77,24 @@ class MasterCupType implements CupTypeInterface
     public function calculateEvent(CupEvent $cupEvent, Group $mainGroup): Collection
     {
         $results = new Collection();
-        $groupPersons = Person::with('payments')->find($cupEvent->getGroupPersons($mainGroup)->pluck('id'));
-        $cupEventParticipants = new Collection();
-        $cupGroups = Group::whereIn('name', $mainGroup->maleGroups())->get();
+        $cupEventParticipants = $cupEvent->getGroupPersonsIds($mainGroup);
 
-        foreach($groupPersons as $person) {
-            /** @var Person $person */
-            $payment = $person->payments->where('year', $cupEvent->cup->year)->first();
-            if ($payment instanceof PersonPayment && $cupEvent->event->date >= $payment->date) {
-                $cupEventParticipants->push($person);
-            }
-        }
-
-        $cupEventProtocolLines = ProtocolLine::whereEventId($cupEvent->event_id)
-            ->whereIn('group_id', $cupGroups->pluck('id'))
+        $cupEventProtocolLines = ProtocolLine::with('group')
+            ->whereEventId($cupEvent->event_id)
             ->whereIn('person_id', $cupEventParticipants->pluck('id'))
             ->get();
 
-        $cupGroups = $cupGroups->keyBy('id');
+        $groupsName = $mainGroup->maleGroups();
+        $cupEventProtocolLines = $cupEventProtocolLines->filter(function (ProtocolLine $protocolLine) use ($groupsName) {
+            return in_array($protocolLine->group->name, $groupsName, true);
+        });
+
         $cupEventProtocolLines = $cupEventProtocolLines->groupBy('group_id');
         $validGroups = $cupEvent->cup->groups->pluck('id');
         $cupEventProtocolLines = $cupEventProtocolLines->intersectByKeys($validGroups->flip());
 
         foreach ($cupEventProtocolLines as $groupId => $groupProtocolLines) {
-            $eventGroupResults = $this->calculateGroup($cupEvent, $cupGroups->get($groupId));
+            $eventGroupResults = $this->calculateGroup($cupEvent, $groupId);
             $results = $results->merge($eventGroupResults->intersectByKeys($groupProtocolLines->keyBy('person_id')));
         }
 
@@ -112,24 +105,21 @@ class MasterCupType implements CupTypeInterface
 
     /**
      * @param CupEvent $cupEvent
-     * @param Group $group
+     * @param int $groupId
      * @return Collection
      */
-    public function calculateGroup(CupEvent $cupEvent, Group $group): Collection
+    public function calculateGroup(CupEvent $cupEvent, int $groupId): Collection
     {
-        $protocolLines = ProtocolLine::with('person.payments')
+        $protocolLinesIds = ProtocolLine::selectRaw(DB::raw('protocol_lines.id AS id, persons_payments.date AS date'))
+            ->join('person', 'person.id', '=', 'protocol_lines.person_id')
+            ->join('persons_payments', 'person.id', '=', 'persons_payments.person_id')
+            ->where('persons_payments.year', $cupEvent->cup->year)
             ->whereEventId($cupEvent->event_id)
-            ->whereGroupId($group->id)
+            ->whereGroupId($groupId)
+            ->havingRaw(DB::raw("persons_payments.date <= '{$cupEvent->event->date}'"))
             ->get();
 
-        $cupEventGroupLines = new Collection();
-        foreach($protocolLines as $protocolLine) {
-            $payment = $protocolLine->person->payments->where('year', $cupEvent->cup->year)->first();
-            if ($payment instanceof PersonPayment && $cupEvent->event->date >= $payment->date) {
-                $cupEventGroupLines->push($protocolLine);
-            }
-        }
-
+        $protocolLines = ProtocolLine::find($protocolLinesIds->pluck('id'));
         return $this->calculateLines($cupEvent, $protocolLines);
     }
 

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Class CupEvent
@@ -36,15 +37,19 @@ class CupEvent extends Model
 
     /**
      * @param Group $group
-     * @return Collection|Person[]
+     * @return Collection
      */
-    public function getGroupPersons(Group $group): Collection
+    public function getGroupPersonsIds(Group $group): Collection
     {
         $startYear = $this->cup->year - $group->years();
         $finishYear = $startYear - 5;
 
-        return Person::where('birthday', '<=', "{$startYear}-01-01")
-            ->where('birthday', '>', "{$finishYear}-01-01")
+        return Person::selectRaw(DB::raw('person.id AS id, persons_payments.date AS date'))
+            ->join('persons_payments', 'person.id', '=', 'persons_payments.person_id')
+            ->where('person.birthday', '<=', "{$startYear}-01-01")
+            ->where('person.birthday', '>', "{$finishYear}-01-01")
+            ->where('persons_payments.year', $this->cup->year)
+            ->havingRaw(DB::raw("persons_payments.date <= '{$this->event->date}'"))
             ->get();
     }
 }
