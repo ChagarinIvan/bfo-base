@@ -25,6 +25,80 @@ use Illuminate\Database\Query\Builder;
  */
 class Group extends Model
 {
+    public const MALE = 'male';
+    public const FEMALE = 'female';
+    public const MALE_GROUPS = [
+        self::MALE => [
+            'М10',
+            'M10C',
+            'М12',
+            'М12Б',
+            'М14',
+            'М14_МТВО',
+            'М14Б',
+            'М16',
+            'М16_МТВО',
+            'М16Е',
+            'М16А',
+            'М16Б',
+            'М18',
+            'М18_МТВО',
+            'М18Е',
+            'М18А',
+            'М20',
+            'М21Е',
+            'М21_МТВО',
+            'М21А',
+            'М21Б',
+            'М21C',
+            'М21D',
+            'М35',
+            'М40',
+            'М45',
+            'М50',
+            'М55',
+            'М60',
+            'М65',
+            'М70',
+            'М75',
+            'М80',
+        ],
+        self::FEMALE => [
+            'Ж10',
+            'Ж10C',
+            'Ж12',
+            'Ж12Б',
+            'Ж14',
+            'Ж14_МТВО',
+            'Ж14Б',
+            'Ж16',
+            'Ж16Е',
+            'Ж16_МТВО',
+            'Ж16А',
+            'Ж18',
+            'Ж18_МТВО',
+            'Ж18Е',
+            'Ж18А',
+            'Ж20',
+            'Ж21Е',
+            'Ж21_МТВО',
+            'Ж21А',
+            'Ж21Б',
+            'Ж21C',
+            'Ж21D',
+            'Ж35',
+            'Ж40',
+            'Ж45',
+            'Ж50',
+            'Ж55',
+            'Ж60',
+            'Ж65',
+            'Ж70',
+            'Ж75',
+            'Ж80',
+        ],
+    ];
+
     public const CUP_GROUPS = [
         'М40' => ['М35'],
         'М45' => ['М40', 'М35'],
@@ -245,10 +319,21 @@ class Group extends Model
     public $timestamps = false;
     protected $table = 'groups';
 
-    public function years(): int
+    public function maleGroups(): array
+    {
+        $maleIndex = mb_substr($this->name, 0, 1);
+        if ($maleIndex === 'М') {
+            return self::MALE_GROUPS[self::MALE];
+        } elseif ($maleIndex === 'Ж') {
+            return self::MALE_GROUPS[self::FEMALE];
+        }
+        return [];
+    }
+
+    public function years(): string
     {
         if (preg_match('#\d+#', $this->name, $match)) {
-           return (int)$match[0];
+            return (int)$match[0];
         }
         return 0;
     }

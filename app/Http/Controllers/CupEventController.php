@@ -41,15 +41,16 @@ class CupEventController extends BaseController
         ]);
     }
 
-    public function show(int $cupId, int $eventId, int $groupId): View
+    public function show(int $cupId, int $eventId, int $groupId)
     {
         $cup = Cup::with('groups')->find($cupId);
         if ($groupId === 0) {
             /** @var Group $group */
             $group = $cup->groups->first();
-        } else {
-            $group = Group::find($groupId);
+            return redirect("/cups/{$cupId}/events/{$eventId}/show/{$group->id}");
         }
+
+        $group = Group::find($groupId);
         /** @var CupEvent $cupEvent */
         $cupEvent = CupEvent::with(['event.competition'])
             ->whereCupId($cupId)

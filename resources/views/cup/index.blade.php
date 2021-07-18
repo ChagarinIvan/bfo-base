@@ -53,6 +53,7 @@
                             ->whereNotNull('person_id')
                             ->count() }}</td>
                         <td>
+                            <a class="btn btn-secondary mr-2" href="/cups/{{ $cup->id }}/table/0">{{ __('app.cup.table') }}</a>
                             <a class="btn btn-info mr-2" href="/cups/{{ $cup->id }}/edit">{{ __('app.common.edit') }}</a>
                             <a class="btn btn-danger mr-2" href="/cups/{{ $cup->id }}/delete">{{ __('app.common.delete') }}</a>
                         </td>

@@ -73,10 +73,18 @@ class EventController extends Controller
             }
 
             $eventsProtocolLines = ProtocolLine::whereEventId($event->id)->get()->groupBy('group_id');
-            foreach ($firstEventProtocolLines as $groupId => $firstEventGroupProtocolLines) {
+            $groupsIds = $firstEventProtocolLines->keys()->merge($eventsProtocolLines->keys())->unique();
+
+            foreach ($groupsIds as $groupId) {
                 /** @var Collection $firstEventGroupProtocolLines */
                 /** @var Collection $eventGroupProtocolLines */
-                $eventGroupProtocolLines = $eventsProtocolLines->get($groupId);
+                $firstEventGroupProtocolLines = $firstEventProtocolLines->has($groupId) ?
+                    $firstEventProtocolLines->get($groupId) :
+                    collect();
+                $eventGroupProtocolLines = $eventsProtocolLines->has($groupId) ?
+                    $eventsProtocolLines->get($groupId) :
+                    collect();
+
                 $firstEventGroupProtocolLines = $firstEventGroupProtocolLines->keyBy('person_id');
                 $eventGroupProtocolLines = $eventGroupProtocolLines->keyBy('person_id');
                 $personIds = $firstEventGroupProtocolLines->keys()->merge($eventGroupProtocolLines->keys())->unique();
@@ -91,15 +99,18 @@ class EventController extends Controller
                         $newProtocolLine = $firstEventProtocolLine->replicate();
                         if ($eventProtocolLine !== null) {
                             if ($firstEventProtocolLine->time instanceof Carbon && $eventProtocolLine->time instanceof Carbon) {
-                                $newProtocolLine->time = $firstEventProtocolLine->time->addHours($eventProtocolLine->time->hour);
-                                $newProtocolLine->time = $firstEventProtocolLine->time->addMinutes($eventProtocolLine->time->minute);
-                                $newProtocolLine->time = $firstEventProtocolLine->time->addSeconds($eventProtocolLine->time->second);
+                                $newProtocolLine->time = $newProtocolLine->time->addHours($eventProtocolLine->time->hour);
+                                $newProtocolLine->time = $newProtocolLine->time->addMinutes($eventProtocolLine->time->minute);
+                                $newProtocolLine->time = $newProtocolLine->time->addSeconds($eventProtocolLine->time->second);
                             } else {
                                 $newProtocolLine->time = null;
                             }
+                        } else {
+                            $newProtocolLine->time = null;
                         }
                     } elseif ($eventProtocolLine !== null) {
                         $newProtocolLine = $eventProtocolLine->replicate();
+                        $newProtocolLine->time = null;
                     } else {
                         continue;
                     }
@@ -109,9 +120,30 @@ class EventController extends Controller
             }
 
             $firstEventProtocolLines = $newProtocolLines->groupBy('group_id');
+            $newProtocolLines = new Collection();
         }
-        foreach ($newProtocolLines as $protocolLine) {
-            $protocolLine->save();
+
+        $number = 1;
+        foreach ($firstEventProtocolLines as $groupProtocolLines) {
+            /** @var Collection $groupProtocolLines */
+            $groupProtocolLines = $groupProtocolLines->transform(function (ProtocolLine $line) use (&$number) {
+                $line->runner_number = $number++;
+                $line->time = $line->time === null ?
+                    null :
+                    Carbon::createFromFormat('H:i:s', $line->time->format('H:i:s'));
+                return $line;
+            });
+
+            $groupProtocolLines = $groupProtocolLines->sortBy(function (ProtocolLine $line) {
+                return $line->time ? $line->time->secondsSinceMidnight() : 86400;
+            });
+
+            $place = 1;
+            foreach ($groupProtocolLines as $line) {
+                $line->place = $line->time === null ? $place : $place++;
+                $line->points = null;
+                $line->save();
+            }
         }
 
         return redirect("/competitions/events/{$newEvent->id}/show");

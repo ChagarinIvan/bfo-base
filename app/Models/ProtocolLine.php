@@ -39,7 +39,6 @@ use Illuminate\Support\Collection;
  * @method static Builder|ProtocolLine whereEventId($value)
  * @method static Builder|ProtocolLine wherePreparedLine(string $value)
  * @method static Builder|ProtocolLine whereGroupId($value)
- * @method static Builder|ProtocolLine wherePersonId($value)
  * @method static Builder|ProtocolLine whereNotNull(string $column)
  * @method static Builder|ProtocolLine whereNull(string $column)
  * @method static Builder|ProtocolLine whereIn(string|Expression $column, array|Collection $list)

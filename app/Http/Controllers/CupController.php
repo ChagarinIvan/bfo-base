@@ -85,7 +85,7 @@ class CupController extends BaseController
         ]);
     }
 
-    public function table(int $cupId, int $groupId): View
+    public function table(int $cupId, int $groupId)
     {
         $cup = Cup::with(['groups', 'events.event'])->find($cupId);
         $cupType = $cup->cupType();
@@ -98,10 +98,10 @@ class CupController extends BaseController
         if ($groupId === 0) {
             /** @var Group $group */
             $group = $cup->groups->first();
-        } else {
-            $group = Group::find($groupId);
+            return redirect("/cups/{$cupId}/table/{$group->id}");
         }
 
+        $group = Group::find($groupId);
         $cupPoints = $cupType->calculate($cup, $events, $group);
 
         return view('cup.table', [

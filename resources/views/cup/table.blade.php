@@ -55,7 +55,7 @@
                         $sum = 0;
                     @endphp
                     <tr>
-                        <td>{{ $place++ }}</td>
+                        <td>{{ $place }}</td>
                         <td><a href="/persons/{{ $person->id }}/show"><b><u>{{ $person->lastname.' '.$person->firstname }}</u></b></a></td>
                         @foreach($events as $event)
                             @php
@@ -100,7 +100,7 @@
                             @endif
                         @endforeach
                         <td><b>{{ $sum }}</b></td>
-                        <td><b>{{ $place }}</b></td>
+                        <td><b>{{ $place++ }}</b></td>
                     </tr>
                 @endforeach
                 </tbody>
