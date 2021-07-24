@@ -38,6 +38,7 @@ use Illuminate\Support\Collection;
  * @method static ProtocolLine[]|Collection get(array $columns = ['*'])
  * @method static Builder|ProtocolLine whereEventId($value)
  * @method static Builder|ProtocolLine wherePreparedLine(string $value)
+ * @method static Builder|ProtocolLine wherePersonId(int $personId)
  * @method static Builder|ProtocolLine whereGroupId($value)
  * @method static Builder|ProtocolLine whereNotNull(string $column)
  * @method static Builder|ProtocolLine whereNull(string $column)

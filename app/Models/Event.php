@@ -70,4 +70,9 @@ class Event extends Model
     {
         return $this->belongsToMany(Flag::class, 'event_flags');
     }
+
+    public function groups(): Collection
+    {
+        return Group::find(ProtocolLine::whereEventId($this->id)->get()->pluck('group_id'));
+    }
 }

@@ -90,11 +90,17 @@ class MasterCupType implements CupTypeInterface
         });
 
         $cupEventProtocolLines = $cupEventProtocolLines->groupBy('group_id');
-        $validGroups = $cupEvent->cup->groups->pluck('id');
-        $cupEventProtocolLines = $cupEventProtocolLines->intersectByKeys($validGroups->flip());
+        $validGroups = $cupEvent->cup->groups->pluck('id')->flip();
+        $cupEventProtocolLines = $cupEventProtocolLines->intersectByKeys($validGroups);
+        $hasGroupOnEvent = $cupEvent->event->groups()->pluck('id')->flip()->has($mainGroup->id);
 
         foreach ($cupEventProtocolLines as $groupId => $groupProtocolLines) {
-            $eventGroupResults = $this->calculateGroup($cupEvent, $groupId);
+            $needDivideGroup = !$hasGroupOnEvent && $mainGroup->isPreviousGroup($groupId);
+            if ($needDivideGroup) {
+                $eventGroupResults = $this->calculateLines($cupEvent, $groupProtocolLines);
+            } else {
+                $eventGroupResults = $this->calculateGroup($cupEvent, $groupId);
+            }
             $results = $results->merge($eventGroupResults->intersectByKeys($groupProtocolLines->keyBy('person_id')));
         }
 

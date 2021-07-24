@@ -113,6 +113,11 @@ class PersonController extends BaseController
     public function delete(int $personId): RedirectResponse
     {
         $person = Person::find($personId);
+        $protocolLines = ProtocolLine::wherePersonId($personId)->get();
+        $protocolLines->each(function (ProtocolLine $line) {
+            $line->person_id = null;
+            $line->save();
+        });
         $person->delete();
         return redirect("/persons");
     }

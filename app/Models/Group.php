@@ -5,16 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Collection;
 
 /**
  * Class ProtocolLine
  *
  * @package App\Models
  * @property int $id
- * @property int $name
+ * @property string $name
  * @property ProtocolLine[] $lines
  * @property-read int|null $lines_count
- * @method static Builder|Group find(mixed $id)
+ * @method static Builder|Group|Collection find(mixed $id)
  * @method static Builder|Group newModelQuery()
  * @method static Builder|Group newQuery()
  * @method static Builder|Group query()
@@ -99,46 +100,25 @@ class Group extends Model
         ],
     ];
 
-    public const CUP_GROUPS = [
-        'М40' => ['М35'],
-        'М45' => ['М40', 'М35'],
-        'М50' => ['М45', 'М40', 'М35'],
-        'М55' => ['М50', 'М40', 'М40', 'М35'],
-        'М60' => ['М55', 'М50', 'М40', 'М40', 'М35'],
-        'М65' => ['М60', 'М55', 'М50', 'М40', 'М40', 'М35'],
-        'М70' => ['М65', 'М60', 'М55', 'М50', 'М40', 'М40', 'М35'],
-        'М75' => ['М70', 'М65', 'М60', 'М55', 'М50', 'М40', 'М40', 'М35'],
-        'М80' => ['М75', 'М70', 'М65', 'М60', 'М55', 'М50', 'М40', 'М40', 'М35'],
-        'Ж40' => ['Ж35'],
-        'Ж45' => ['Ж40', 'Ж35'],
-        'Ж50' => ['Ж45', 'Ж40', 'Ж35'],
-        'Ж55' => ['Ж50', 'Ж40', 'Ж40', 'Ж35'],
-        'Ж60' => ['Ж55', 'Ж50', 'Ж40', 'Ж40', 'Ж35'],
-        'Ж65' => ['Ж60', 'Ж55', 'Ж50', 'Ж40', 'Ж40', 'Ж35'],
-        'Ж70' => ['Ж65', 'Ж60', 'Ж55', 'Ж50', 'Ж40', 'Ж40', 'Ж35'],
-        'Ж75' => ['Ж70', 'Ж65', 'Ж60', 'Ж55', 'Ж50', 'Ж40', 'Ж40', 'Ж35'],
-        'Ж80' => ['Ж75', 'Ж70', 'Ж65', 'Ж60', 'Ж55', 'Ж50', 'Ж40', 'Ж40', 'Ж35'],
-    ];
-
     public const NEXT_GROUPS = [
-        'М35' => 'М40',
-        'М40' => 'М45',
-        'М45' => 'М50',
-        'М50' => 'М55',
-        'М55' => 'М60',
-        'М60' => 'М65',
-        'М65' => 'М70',
-        'М70' => 'М75',
-        'М75' => 'М80',
-        'Ж35' => 'Ж40',
-        'Ж40' => 'Ж45',
-        'Ж45' => 'Ж50',
-        'Ж50' => 'Ж55',
-        'Ж55' => 'Ж60',
-        'Ж60' => 'Ж65' ,
-        'Ж65' => 'Ж70',
-        'Ж70' => 'Ж75',
-        'Ж75' => 'Ж80',
+        'М40' => 'М35',
+        'М45' => 'М40',
+        'М50' => 'М45',
+        'М55' => 'М50',
+        'М60' => 'М55',
+        'М65' => 'М60',
+        'М70' => 'М65',
+        'М75' => 'М70',
+        'М80' => 'М75',
+        'Ж40' => 'Ж35',
+        'Ж45' => 'Ж40',
+        'Ж50' => 'Ж45',
+        'Ж55' => 'Ж50',
+        'Ж60' => 'Ж55',
+        'Ж65' => 'Ж60' ,
+        'Ж70' => 'Ж65',
+        'Ж75' => 'Ж70',
+        'Ж80' => 'Ж75',
     ];
 
     public const GROUPS = [
@@ -341,5 +321,11 @@ class Group extends Model
     public function lines(): HasMany
     {
         return $this->hasMany(ProtocolLine::class);
+    }
+
+    public function isPreviousGroup(int $groupId): bool
+    {
+        $group = Group::find($groupId);
+        return self::NEXT_GROUPS[$this->name] === $group->name;
     }
 }

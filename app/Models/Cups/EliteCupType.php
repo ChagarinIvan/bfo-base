@@ -29,14 +29,9 @@ class EliteCupType extends MasterCupType
             ->where('birthday', '>', "{$finishYear}-01-01")
             ->get();
 
-        $additionalGroups = Group::CUP_GROUPS[$mainGroup->name];
-        $groups = Group::whereIn('name', $additionalGroups)->get();
-        $groups->push($mainGroup);
-
         return ProtocolLine::with('person')
             ->whereIn('event_id', $cup->events->pluck('event_id'))
             ->whereIn('person_id', $persons->pluck('id'))
-            ->whereIn('group_id', $groups->pluck('id'))
             ->get();
     }
 }
