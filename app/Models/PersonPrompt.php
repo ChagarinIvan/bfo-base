@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
  * Class PersonPrompt
  *
  * @package App\Models
+ * @property int $id
  * @property int $person_id
  * @property string $prompt
  * @property Person $person

@@ -23,7 +23,7 @@
     </div>
     <div class="row pt-3">
         @foreach($cup->groups as $group)
-            <span class="badge" style="background: {{ \App\Facades\Color::getColor($group->name) }}">{{ $group->name }}</span>
+            <span class="badge" style="background: {{ \App\Facades\Color::getColor($group->name) }}"><a href="/cups/{{ $cup->id }}/table/{{ $group->id }}">{{ $group->name }}</a></span>
         @endforeach
     </div>
     <div class="row">

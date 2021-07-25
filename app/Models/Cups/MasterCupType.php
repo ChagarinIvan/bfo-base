@@ -155,7 +155,11 @@ class MasterCupType implements CupTypeInterface
                     /** @var ProtocolLine $firstResult */
                     $firstResult = $protocolLines->first();
                     $firstResultSeconds = $firstResult->time ? $firstResult->time->secondsSinceMidnight() : 0;
-                    $cupEventPoints = new CupEventPoint($cupEvent->id, $protocolLine, $maxPoints);
+                    $cupEventPoints = new CupEventPoint(
+                        $cupEvent->id,
+                        $protocolLine,
+                        $firstResult->time === null ? 0 : $maxPoints
+                    );
                     $first = false;
                 } else {
                     $cupEventPoints = new CupEventPoint($cupEvent->id, $protocolLine, '-');

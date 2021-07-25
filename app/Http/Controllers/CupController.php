@@ -85,7 +85,7 @@ class CupController extends BaseController
         ]);
     }
 
-    public function table(int $cupId, int $groupId)
+    public function table(int $cupId, int $groupId): View|RedirectResponse
     {
         $cup = Cup::with(['groups', 'events.event'])->find($cupId);
         $cupType = $cup->cupType();

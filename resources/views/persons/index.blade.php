@@ -35,8 +35,8 @@
         <table class="table table-bordered" id="table">
             <thead>
             <tr class="table-info">
-                <th>{{ __('app.common.lastname') }}</th>
-                <th>{{ __('app.common.name') }}</th>
+                <th>{{ __('app.common.fio') }}</th>
+                <th>{{ __('app.common.events_count') }}</th>
                 <th>{{ __('app.club.name') }}</th>
                 <th>{{ __('app.common.birthday') }}</th>
                 <th></th>
@@ -46,18 +46,19 @@
             @foreach ($persons as $person)
                 @php
                     /** @var \App\Models\Person $person */
-                    $hide = $person->protocolLines->count() === 0;
+                    $count = $person->protocolLines->count();
+                    $hide = $count === 0;
                     $link = "/persons/{$person->id}/show";
                 @endphp
                 <tr>
                     @if($hide)
-                        <td>{{ $person->lastname }}</td>
-                        <td>{{ $person->firstname }}</td>
+                        <td>{{ $person->lastname }} {{ $person->firstname }}</td>
+                        <td><span class="badge" style="background: {{ \App\Facades\Color::getColor($count) }}">{{ $count }}</span></td>
                         @if($person->club === null)<td></td>@else<td><a href="/club/{{ $person->club_id }}/show"><u>{{ $person->club->name }}</u></a></td>@endif
                         <td>{{ $person->birthday ? $person->birthday->format('Y') : '' }}</td>
                     @else
-                        <td><a href="{{ $link }}"><u>{{ $person->lastname }}</u></a></td>
-                        <td><a href="{{ $link }}"><u>{{ $person->firstname }}</u></a></td>
+                        <td><a href="{{ $link }}"><u>{{ $person->lastname }} {{ $person->firstname }}</u></a></td>
+                        <td><span class="badge" style="background: {{ \App\Facades\Color::getColor($count) }}">{{ $count }}</span></td>
                         @if($person->club === null)<td></td>@else<td><a href="/club/{{ $person->club_id }}/show"><u>{{ $person->club->name }}</u></a></td>@endif
                         <td><a href="{{ $link }}"><u>{{ $person->birthday ? $person->birthday->format('Y') : '' }}</u></a></td>
                     @endif
