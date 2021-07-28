@@ -87,10 +87,11 @@ class CupController extends BaseController
 
     public function table(int $cupId, int $groupId): View|RedirectResponse
     {
-        $cup = Cup::with(['groups', 'events.event'])->find($cupId);
+        $cup = Cup::with(['groups'])->find($cupId);
         $cupType = $cup->cupType();
 
         $events = $cup->events()
+            ->with(['cup'])
             ->join('events', 'events.id', '=', 'cup_events.event_id')
             ->orderBy('events.date')
             ->get();

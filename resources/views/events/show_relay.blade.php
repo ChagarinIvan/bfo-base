@@ -1,9 +1,9 @@
 @php
-    use App\Models\Group;
+    use App\Models\Distance;
     use App\Models\ProtocolLine;
     use Illuminate\Support\Collection;
     /**
-     * @var Group[] $groups;
+     * @var Distance[] $distances;
      * @var Collection $lines;
      * @var ProtocolLine $line;
      * @var bool $withPoints;
@@ -13,11 +13,11 @@
 @extends('events.show')
 
 @section('groups')
-    @foreach ($groups as $group)
+    @foreach ($distances as $distance)
         <tr>
-            <td class="text-center" colspan="{{ $withPoints ? 9 : 8 }}"><b id="{{ $group->name }}">{{ $group->name }}</b></td>
+            <td class="text-center" colspan="{{ $withPoints ? 9 : 8 }}"><b id="{{ $distance->group->name }}">{{ $distance->group->name }}</b></td>
         </tr>
-        @foreach($groupedLines->get($group->id) as $linesGroup)
+        @foreach($groupedLines->get($distance->id) as $linesGroup)
             @foreach($linesGroup as $line)
                 <tr id="{{ $line->id }}" {!! $loop->parent->odd ? 'class="table-secondary"' : '' !!}>
                     @php

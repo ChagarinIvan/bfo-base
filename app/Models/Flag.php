@@ -16,6 +16,7 @@ use Illuminate\Support\Collection;
  * @property string $color
  * @property-read Collection|Event[] $events
  * @method static Builder|Flag find(mixed $ids)
+ * @method static Builder|Flag with(mixed $params)
  */
 class Flag extends Model
 {

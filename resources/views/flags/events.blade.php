@@ -1,7 +1,10 @@
 @php
-    use \App\Models\Flag;
+    use App\Models\Event;
+    use App\Models\Flag;
+    use Illuminate\Support\Collection;
     /**
      * @var Flag $flag;
+     * @var Collection|Event[] $events;
      */
 @endphp
 
@@ -15,7 +18,7 @@
         <h1 style="color: {{ $flag->color }}">{{ $flag->name }}</h1>
     </div>
     <div class="row pt-3">
-        <table class="table">
+        <table class="table table-bordered pt-3" id="table">
             <thead>
             <tr>
                 <th scope="col">{{ __('app.competition.title') }}</th>
@@ -27,7 +30,7 @@
             </tr>
             </thead>
             <tbody>
-            @foreach ($flag->events as $event)
+            @foreach ($events as $event)
                 <tr>
                     <td><a href="/competitions/{{ $event->competition->id }}/show">{{ $event->competition->name }}</a></td>
                     <td><a href="/competitions/events/{{ $event->id }}/show">{{ $event->name }}</a></td>

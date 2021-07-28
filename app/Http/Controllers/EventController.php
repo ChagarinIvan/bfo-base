@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\ParsingException;
 use App\Models\Competition;
+use App\Models\Distance;
 use App\Models\Event;
 use App\Models\Flag;
 use App\Models\Group;
@@ -66,16 +67,27 @@ class EventController extends Controller
         $newEvent->save();
 
         $newProtocolLines = new Collection();
-        $firstEventProtocolLines = ProtocolLine::whereEventId($firstEvent->id)->get()->groupBy('group_id');
+        $firstEventProtocolLines = $firstEvent->protocolLines->groupBy('distance.group_id');
+
         foreach ($events as $event) {
             if ($firstEvent->id === $event->id) {
                 continue;
             }
 
-            $eventsProtocolLines = ProtocolLine::whereEventId($event->id)->get()->groupBy('group_id');
+            $eventsProtocolLines = $event->protocolLines->groupBy('distance.group_id');
+
             $groupsIds = $firstEventProtocolLines->keys()->merge($eventsProtocolLines->keys())->unique();
 
             foreach ($groupsIds as $groupId) {
+                /** @var Distance $firstEventDistance */
+                $firstEventDistance = Distance::whereEventId($firstEvent->id)->whereGroupId($groupId)->get()->first();
+                /** @var Distance $eventDistance */
+                $eventDistance = Distance::whereEventId($event->id)->whereGroupId($groupId)->get()->first();
+                $distance = $firstEventDistance->replicate();
+                $distance->add($eventDistance);
+                $distance->event_id = $newEvent->id;
+                $distance->save();
+
                 /** @var Collection $firstEventGroupProtocolLines */
                 /** @var Collection $eventGroupProtocolLines */
                 $firstEventGroupProtocolLines = $firstEventProtocolLines->has($groupId) ?
@@ -114,13 +126,14 @@ class EventController extends Controller
                     } else {
                         continue;
                     }
-                    $newProtocolLine->event_id = $newEvent->id;
+                    $newProtocolLine->distance_id = $distance->id;
                     $newProtocolLines->push($newProtocolLine);
                 }
             }
 
-            $firstEventProtocolLines = $newProtocolLines->groupBy('group_id');
+            $firstEventProtocolLines = $newProtocolLines->groupBy('distance.group_id');
             $newProtocolLines = new Collection();
+            $firstEvent = $newEvent;
         }
 
         $number = 1;
@@ -140,8 +153,10 @@ class EventController extends Controller
 
             $place = 1;
             foreach ($groupProtocolLines as $line) {
+                /** @var ProtocolLine $line */
                 $line->place = $line->time === null ? $place : $place++;
                 $line->points = null;
+                $line = new ProtocolLine($line->toArray());
                 $line->save();
             }
         }
@@ -185,7 +200,8 @@ class EventController extends Controller
     {
         $event = Event::find($eventId);
         $competitionId = $event->competition_id;
-        ProtocolLine::whereEventId($eventId)->delete();
+        $event->distances()->delete();
+        $event->protocolLines()->delete();
         $event->delete();
         return redirect("/competitions/{$competitionId}/show");
     }
@@ -219,15 +235,13 @@ class EventController extends Controller
             Storage::delete($event->file);
             $event->file = $protocolPath;
             $event->save();
+            $event->distances()->delete();
+            $event->protocolLines()->delete();
+            $lineList = $this->fillProtocolLines($event, $lineList);
 
             // если не было ошибок при парсинге новго протокола,
             // то можно удалить старые строки, перед сохранением новых
-            $event->protocolLines()->delete();
             // заполняем event_id и сохраняем
-            $lineList->each(function (ProtocolLine $protocolLine) use ($event) {
-                $protocolLine->event_id = $event->id;
-                $protocolLine->save();
-            });
             Storage::putFileAs($year, $protocol, $protocol->getClientOriginalName());
 
             $this->identPersons($lineList);
@@ -262,13 +276,7 @@ class EventController extends Controller
         try {
             $lineList = $this->parserProtocol($protocol);
             $event->save();
-
-            // добавляем линиям протокола идентификатор нового протокола и сохраняем их
-            $lineList->each(function (ProtocolLine $protocolLine) use ($event) {
-                $protocolLine->event_id = $event->id;
-                $protocolLine->save();
-            });
-
+            $lineList = $this->fillProtocolLines($event, $lineList);
             $this->identPersons($lineList);
         } catch (Exception $e) {
             return $this->errorHandling($e, $event);
@@ -280,7 +288,7 @@ class EventController extends Controller
 
     public function show(int $eventId): View
     {
-        $event = Event::with('protocolLines.person.club')->find($eventId);
+        $event = Event::with(['protocolLines.person.club'])->find($eventId);
         $withPoints = false;
         foreach ($event->protocolLines as $protocolLine) {
             $withPoints = $protocolLine->points !== null;
@@ -290,10 +298,10 @@ class EventController extends Controller
         }
         $numbers = $event->protocolLines->pluck('runner_number');
         $isRelay = count($numbers) > count($numbers->unique());
-        $protocolLines = $event->protocolLines->groupBy('group_id')
+        $protocolLines = $event->protocolLines->groupBy('distance_id')
             ->sortKeys();
-        $groups = Group::find($protocolLines->keys());
-        $groupAnchors = $groups->pluck('name');
+        $distances = Distance::with(['group'])->find($protocolLines->keys());
+        $groupAnchors = $distances->pluck('group');
 
         if ($isRelay) {
             $protocolLines->transform(function(Collection $lines) {
@@ -321,7 +329,7 @@ class EventController extends Controller
             return view('events.show_relay', [
                 'event' => $event,
                 'groupedLines' => $protocolLines,
-                'groups' => $groups,
+                'distances' => $distances,
                 'withPoints' => $withPoints,
                 'groupAnchors' => $groupAnchors,
             ]);
@@ -330,7 +338,7 @@ class EventController extends Controller
         return view('events.show_others', [
             'event' => $event,
             'lines' => $protocolLines,
-            'groups' => $groups,
+            'distances' => $distances,
             'withPoints' => $withPoints,
             'groupAnchors' => $groupAnchors,
         ]);
@@ -358,24 +366,49 @@ class EventController extends Controller
     private function parserProtocol(UploadedFile $protocol): Collection
     {
         $parser = ParserFactory::createParser($protocol);
-        $lineList = $parser->parse($protocol);
+        return $parser->parse($protocol);
+    }
+
+    private function fillProtocolLines(Event $event, Collection $lineList): Collection
+    {
         $groups = Group::all();
 
         // из массива сырых данных формирует модель записи протокола
         // определяем группу и формируем идентификационную строку
-        $lineList->transform(function (array $lineData) use ($groups) {
+        return $lineList->transform(function (array $lineData) use ($groups, $event) {
             $protocolLine = new ProtocolLine($lineData);
             $protocolLine->prepared_line = $protocolLine->makeIdentLine();
             $groupName = str_replace(' ', '', $lineData['group']);
+            /** @var Group $group */
             $group = $groups->firstWhere('name', $groupName);
             if ($group === null) {
                 throw new RuntimeException('Wrong group '.$lineData['group']);
             }
-            $protocolLine->group_id = $group->id;
+
+            $length = $lineData['distance']['length'] ?? 0;
+            $points = $lineData['distance']['points'] ?? 0;
+
+            $distances = Distance::whereGroupId($group->id)
+                ->whereEventId($event->id)
+                ->whereLength($length)
+                ->wherePoints($points)
+                ->get();
+
+            if ($distances->count() === 0) {
+                $distance = new Distance();
+                $distance->group_id = $group->id;
+                $distance->event_id = $event->id;
+                $distance->length = $length;
+                $distance->points = $points;
+                $distance->save();
+            } else {
+                $distance = $distances->first();
+            }
+
+            $protocolLine->distance_id = $distance->id;
+            $protocolLine->save();
             return $protocolLine;
         });
-
-        return $lineList;
     }
 
     /**

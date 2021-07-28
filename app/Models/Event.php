@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
@@ -24,6 +25,7 @@ use Illuminate\Support\Collection;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read Competition|null $competition
  * @property-read Collection|ProtocolLine[] $protocolLines
+ * @property-read Collection|Distance[] $distances
  * @property-read Collection|CupEvent[] $cups
  * @property-read Collection|Flag[] $flags
  * @method static Builder|Event find(mixed $ids)
@@ -56,9 +58,14 @@ class Event extends Model
         return $this->hasOne(Competition::class, 'id', 'competition_id');
     }
 
-    public function protocolLines(): HasMany
+    public function protocolLines(): HasManyThrough
     {
-        return $this->hasMany(ProtocolLine::class);
+        return $this->hasManyThrough(ProtocolLine::class, Distance::class, 'event_id', 'distance_id', 'id', 'id');
+    }
+
+    public function distances(): HasMany
+    {
+        return $this->hasMany(Distance::class, 'event_id', 'id');
     }
 
     public function cups(): HasMany
@@ -73,6 +80,6 @@ class Event extends Model
 
     public function groups(): Collection
     {
-        return Group::find(ProtocolLine::whereEventId($this->id)->get()->pluck('group_id'));
+        return Group::find(Distance::with(['group'])->whereEventId($this->id)->get()->pluck('group_id'));
     }
 }

@@ -26,7 +26,7 @@
             <tbody>
             @foreach ($flags as $flag)
                 <tr>
-                    <td>{{ $flag->name }}</td>
+                    <td><a href="/flags/{{ $flag->id }}/show-events"><u>{{ $flag->name }}</u></a></td>
                     <td style="background: {{ $flag->color }}">{{ $flag->color }}</td>
                     <td>
                         <a href="/flags/{{ $flag->id }}/edit" class="text-primary">{{ __('app.common.edit') }}</a>

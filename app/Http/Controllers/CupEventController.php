@@ -52,7 +52,7 @@ class CupEventController extends BaseController
 
         $group = Group::find($groupId);
         /** @var CupEvent $cupEvent */
-        $cupEvent = CupEvent::with(['event.competition'])
+        $cupEvent = CupEvent::with(['event.competition', 'cup'])
             ->whereCupId($cupId)
             ->whereEventId($eventId)
             ->get()->first();

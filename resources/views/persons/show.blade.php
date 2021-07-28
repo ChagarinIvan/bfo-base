@@ -42,17 +42,20 @@
                     <td class="text-center" colspan="9"><b id="{{ $year }}">{{ $year }}</b></td>
                 </tr>
                 @foreach($lines as $line)
+                    @php
+                        /** @var App\Models\ProtocolLine $line */
+                    @endphp
                     <tr>
-                        <td><a href="/competitions/{{ $line->event->competition_id }}/show"><u>{{ Str::limit($line->event->competition->name, 20, '...') }}</u></a></td>
+                        <td><a href="/competitions/{{ $line->distance->event->competition_id }}/show"><u>{{ Str::limit($line->distance->event->competition->name, 20, '...') }}</u></a></td>
                         <td>
-                            <a href="/competitions/events/{{ $line->event_id }}/show#{{ $line->id }}"><u>{{ Str::limit($line->event->name, 20, '...') }}</u></a>
-                            @foreach($line->event->flags as $flag)
+                            <a href="/competitions/events/{{ $line->distance->event->id }}/show#{{ $line->id }}"><u>{{ Str::limit($line->distance->event->name, 20, '...') }}</u></a>
+                            @foreach($line->distance->event->flags as $flag)
                                 <span class="badge" style="background: {{ $flag->color }}"><a href="/flags/{{ $flag->id }}/show-events">{{ $flag->name }}</a></span>
                             @endforeach
                         </td>
                         <td>{{ $line->lastname }} {{ $line->firstname }}</td>
-                        <td>{{ $line->event->date->format('Y-m-d') }}</td>
-                        <td>{{ $line->group->name }}</td>
+                        <td>{{ $line->distance->event->date->format('Y-m-d') }}</td>
+                        <td>{{ $line->distance->group->name }}</td>
                         <td>{{ $line->time ? $line->time->format('H:i:s') : '-' }}</td>
                         <td>{{ $line->place }}</td>
                         <td>{{ $line->points }}</td>

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Models\Event;
 use App\Models\Flag;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -63,7 +64,14 @@ class FlagsController extends Controller
 
     public function showEvents(int $flagId): View
     {
-        $flag = Flag::with(['events.protocolLines', 'events.competition'])->find($flagId);
-        return view('flags.events', ['flag' => $flag]);
+        $flag = Flag::find($flagId);
+        $events = Event::with(['protocolLines', 'competition'])
+            ->orderByDesc('date')
+            ->find($flag->events->pluck('id'));
+
+        return view('flags.events', [
+            'flag' => $flag,
+            'events' => $events,
+        ]);
     }
 }

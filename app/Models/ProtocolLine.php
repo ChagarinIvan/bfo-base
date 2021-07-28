@@ -4,7 +4,7 @@ namespace App\Models;
 
 use App\Services\IdentService;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Carbon;
@@ -26,26 +26,28 @@ use Illuminate\Support\Collection;
  * @property null|int $place
  * @property string $complete_rank
  * @property null|int $points
- * @property int $event_id
- * @property int $group_id
+ * @property int $distance_id
  * @property int $person_id
  * @property string $prepared_line
  * @property bool $vk
- * @property-read Event|null $event
- * @property-read Group|null $group
+ * @property-read Event $event
+ * @property-read Group $group
+ * @property-read Distance $distance
  * @property-read Person|null $person
  * @method static Builder|ProtocolLine|ProtocolLine[]|Collection find(mixed $ids)
  * @method static ProtocolLine[]|Collection get(array $columns = ['*'])
- * @method static Builder|ProtocolLine whereEventId($value)
+ * @method static Builder|ProtocolLine whereDistanceId(int $distanceId)
  * @method static Builder|ProtocolLine wherePreparedLine(string $value)
  * @method static Builder|ProtocolLine wherePersonId(int $personId)
- * @method static Builder|ProtocolLine whereGroupId($value)
  * @method static Builder|ProtocolLine whereNotNull(string $column)
  * @method static Builder|ProtocolLine whereNull(string $column)
  * @method static Builder|ProtocolLine whereIn(string|Expression $column, array|Collection $list)
+ * @method static Builder|ProtocolLine where(string|Expression $column, int|string $value)
  * @method static Builder|ProtocolLine with(mixed $ids)
  * @method static Builder|ProtocolLine distinct()
  * @method static Builder|ProtocolLine orderByDesc(string $column)
+ * @method static Builder|ProtocolLine selectRaw(Expression $raw)
+ * @method static Builder|ProtocolLine join(string $table, string $tableId, string $operator, string $joinId)
  */
 class ProtocolLine extends Model
 {
@@ -67,21 +69,29 @@ class ProtocolLine extends Model
         'complete_rank',
         'points',
         'vk',
+        'distance_id',
+        'prepared_line',
+        'person_id',
     ];
 
-    public function group(): HasOne
+    public function distance(): BelongsTo
     {
-        return $this->hasOne(Group::class, 'id', 'group_id');
+        return $this->belongsTo(Distance::class, 'distance_id', 'id');
     }
 
-    public function event(): HasOne
+    public function event(): BelongsTo
     {
-        return $this->hasOne(Event::class, 'id', 'event_id');
+        return $this->distance->event();
     }
 
-    public function person(): HasOne
+    public function group(): BelongsTo
     {
-        return $this->hasOne(Person::class, 'id', 'person_id');
+        return $this->distance->group();
+    }
+
+    public function person(): BelongsTo
+    {
+        return $this->BelongsTo(Person::class, 'person_id', 'id');
     }
 
     /**

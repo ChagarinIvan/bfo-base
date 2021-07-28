@@ -1,8 +1,10 @@
 @php
     use App\Models\Event;
+    use App\Models\Group;
+    use Illuminate\Support\Collection;
     /**
      * @var Event $event
-     * array $groupAnchors
+     * @var Collection|Group[] $groupAnchors
      */
 @endphp
 @extends('layouts.app')
@@ -52,7 +54,7 @@
         <div class="container-relative">
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             @foreach($groupAnchors as $groupAnchor)
-                <a class="text-danger" href="#{{ $groupAnchor }}">{{ $groupAnchor }}</a>&nbsp;&nbsp;
+                <a class="text-danger" href="#{{ $groupAnchor->id }}">{{ $groupAnchor->name }}</a>&nbsp;&nbsp;
             @endforeach
             <a class="text-success" href="#up">{{ __('app.up') }}</a>
         </div>

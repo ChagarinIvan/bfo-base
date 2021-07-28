@@ -48,8 +48,8 @@
                                 <span class="badge" style="background: {{ Color::getColor($group->name) }}"><a href="/cups/{{ $cup->id }}/table/{{ $group->id }}">{{ $group->name }}</a></span>
                             @endforeach
                         </td>
-                        <td>{{ \App\Models\ProtocolLine::whereIn('event_id', $cup->events->pluck('event_id'))
-                            ->whereIn('group_id', $cup->groups->pluck('id'))
+                        <td>{{ \App\Models\ProtocolLine::join('distances', 'distances.id', '=', 'protocol_lines.distance_id')
+                            ->whereIn('distances.group_id', $cup->groups->pluck('id'))
                             ->whereNotNull('person_id')
                             ->count() }}</td>
                         <td>

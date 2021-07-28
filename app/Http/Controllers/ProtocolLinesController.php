@@ -5,13 +5,10 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Models\Club;
-use App\Models\IdentLine;
 use App\Models\Person;
 use App\Models\PersonPrompt;
 use App\Models\ProtocolLine;
-use App\Services\IdentService;
 use Illuminate\Contracts\View\View;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;

@@ -36,7 +36,13 @@ class AlbatrosTimingParser implements ParserInterface
 
                 $lines = preg_split('/\n|\r\n?/', $text);
                 $linesCount = count($lines);
-                if ($linesCount < 5) {
+                $distance = $lines[0];
+                $distanceLength = 0;
+                $distancePoints = 0;
+                if (preg_match('#(\d+)\s+[^\d]+,\s+(\d+,\d+)#s', $distance, $match)) {
+                    $distancePoints = (int)$match[1];
+                    $distanceLength = floatval(str_replace(',', '.', $match[2])) * 1000;
+                } elseif (count($lines) < 4) {
                     continue;
                 }
                 $groupHeader = $lines[2];
@@ -50,7 +56,13 @@ class AlbatrosTimingParser implements ParserInterface
                     $preparedLine = preg_replace('#\s+#', ' ', $line);
                     $lineData = explode(' ', $preparedLine);
                     $fieldsCount = count($lineData);
-                    $protocolLine = ['group' => $groupName];
+                    $protocolLine = [
+                        'group' => $groupName,
+                        'distance' => [
+                            'length' => $distanceLength,
+                            'points' => $distancePoints,
+                        ],
+                    ];
                     $indent = 1;
                     if ($withComment && str_contains($lineData[$fieldsCount - $indent], 'ично')) {
                         $indent++;

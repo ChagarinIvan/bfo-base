@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 
 /**
  * Class PersonPrompt
@@ -25,14 +24,6 @@ class PersonPrompt extends Model
 {
     public $timestamps = false;
     protected $table = 'persons_prompt';
-
-    public static function getPersonsByLevenshtein(string $preparedLine, int $value): Collection
-    {
-        $lev = DB::raw("levenshtein(`prompt`, '{$preparedLine}')");
-        return self::where($lev, '<=',  $value)
-            ->orderBy($lev)
-            ->get();
-    }
 
     public function person(): HasOne
     {

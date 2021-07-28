@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Query\Expression;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -34,6 +35,7 @@ use Illuminate\Support\Collection;
  * @method static Person|Builder whereLastname(string $lastname)
  * @method static Person|Builder whereBirthday(Carbon $date)
  * @method static Person[]|Paginator paginate(int $size)
+ * @method static Person|Builder selectRaw(Expression $raw)
  */
 class Person extends Model
 {

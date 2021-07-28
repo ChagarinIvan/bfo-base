@@ -44,12 +44,12 @@ class PersonController extends BaseController
     public function show(int $personId): View
     {
         /** @var Person $person */
-        $person = Person::with(['protocolLines.event.competition', 'protocolLines.group'])->find($personId);
+        $person = Person::with(['protocolLines.distance.event.competition', 'protocolLines.distance.group'])->find($personId);
         $groupedProtocolLines = $person->protocolLines->groupBy(function (ProtocolLine $line) {
-            return $line->event->date->format('Y');
+            return $line->distance->event->date->format('Y');
         });
         $groupedProtocolLines->transform(function (Collection $protocolLines) {
-            return $protocolLines->sortByDesc(fn(ProtocolLine $line) => $line->event->date);
+            return $protocolLines->sortByDesc(fn(ProtocolLine $line) => $line->distance->event->date);
         });
         $groupedProtocolLines = $groupedProtocolLines->sortKeysDesc();
         return view('persons.show', ['person' => $person, 'groupedProtocolLines' => $groupedProtocolLines]);
