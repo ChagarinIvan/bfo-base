@@ -25,9 +25,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 //competitions
-Route::redirect('/', '/competitions');
-Route::get('/competitions', [CompetitionController::class, 'index']);
-Route::get('/competitions/create', [CompetitionController::class, 'create']);
+Route::redirect('/', '/competitions/y0');
+Route::get('/competitions/y{year}', [CompetitionController::class, 'index']);
+Route::get('/competitions/y{year}/create', [CompetitionController::class, 'create']);
 Route::post('/competitions/store', [CompetitionController::class, 'store']);
 Route::get('/competitions/{competition}/show', [CompetitionController::class, 'show']);
 //event

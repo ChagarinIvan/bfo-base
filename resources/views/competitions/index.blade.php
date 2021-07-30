@@ -1,8 +1,9 @@
 @php
     use Illuminate\Support\Collection;
     /**
-     * @var Collection $groupedCompetitions;
-     * @var string[]|Collection $years;
+     * @var Collection $competitions;
+     * @var int[] $years;
+     * @var int $selectedYear;
      */
 @endphp
 
@@ -13,25 +14,28 @@
 @section('content')
     <h3 id="up">{{ __('app.competition.title') }}</h3>
     <div class="row pt-5">
-        <a class="btn btn-success mr-2" href="/competitions/create">{{ __('app.competition.add_competition') }}</a>
+        <a class="btn btn-success mr-2" href="/competitions/y{{ $selectedYear }}/create">{{ __('app.competition.add_competition') }}</a>
     </div>
-    <div class="row pt-3">
-        <table class="table table-bordered" id="table">
-            <thead>
-            <tr class="table-info">
-                <th>{{ __('app.common.title') }}</th>
-                <th>{{ __('app.common.dates') }}</th>
-                <th>{{ __('app.common.description') }}</th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach ($groupedCompetitions as $year => $competitions)
-                @php
-                    /** @var Competition|Collection $competitions */;
-                @endphp
-                <tr>
-                    <td class="text-center" colspan="4"><b id="{{$year }}">{{ $year }}</b></td>
+    <ul class="nav nav-tabs pt-2">
+        @foreach($years as $year)
+            <li class="nav-item">
+                <a href="/competitions/y{{ $year }}"
+                   class="nav-link {{ $year === $selectedYear ? 'active' : '' }}"
+                >{{ $year }}</a>
+            </li>
+        @endforeach
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane fade show active">
+            <table class="table table-bordered" id="table">
+                <thead>
+                <tr class="table-info">
+                    <th>{{ __('app.common.title') }}</th>
+                    <th>{{ __('app.common.dates') }}</th>
+                    <th>{{ __('app.common.description') }}</th>
                 </tr>
+                </thead>
+                <tbody>
                 @foreach ($competitions as $competition)
                     <tr>
                         <td>
@@ -41,9 +45,9 @@
                         <td><small>{{ Str::limit($competition->description, 100, '...') }}</small></td>
                     </tr>
                 @endforeach
-            @endforeach
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </div>
     </div>
 @endsection
 
@@ -51,9 +55,6 @@
     <footer class="footer bg-dark">
         <div class="container-relative">
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            @foreach($years as $year)
-                <a class="text-danger" href="#{{ $year }}">{{ $year }}</a>&nbsp;&nbsp;
-            @endforeach
             <a class="text-success" href="#up">{{ __('app.up') }}</a>
         </div>
     </footer>

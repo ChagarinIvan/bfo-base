@@ -22,16 +22,7 @@ use Illuminate\Support\Collection;
  * @property-read Collection|Event[] $events
  * @property-read int|null $events_count
  * @method static Builder|Competition find(mixed $ids)
- * @method static Builder|Competition newModelQuery()
- * @method static Builder|Competition newQuery()
- * @method static Builder|Competition query()
- * @method static Builder|Competition whereCreatedAt($value)
- * @method static Builder|Competition whereDescription($value)
- * @method static Builder|Competition whereFrom($value)
- * @method static Builder|Competition whereId($value)
- * @method static Builder|Competition whereName($value)
- * @method static Builder|Competition whereTo($value)
- * @method static Builder|Competition whereUpdatedAt($value)
+ * @method static Builder|Competition where(string $column, string $operator, string|int $value)
  */
 class Competition extends Model
 {

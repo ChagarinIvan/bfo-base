@@ -83,8 +83,22 @@ class EventController extends Controller
                 $firstEventDistance = Distance::whereEventId($firstEvent->id)->whereGroupId($groupId)->get()->first();
                 /** @var Distance $eventDistance */
                 $eventDistance = Distance::whereEventId($event->id)->whereGroupId($groupId)->get()->first();
-                $distance = $firstEventDistance->replicate();
-                $distance->add($eventDistance);
+                $distances = Distance::whereEventId($newEvent->id)->whereGroupId($groupId)->get();
+                if ($distances->isNotEmpty()) {
+                    $distance = $distances->first();
+                } else {
+                    $distance = new Distance();
+                }
+
+                if ($firstEventDistance) {
+                    $distance->points += $firstEventDistance->points;
+                    $distance->length += $firstEventDistance->length;
+                }
+                if ($eventDistance) {
+                    $distance->points += $eventDistance->points;
+                    $distance->length += $eventDistance->length;
+                }
+                $distance->group_id = $groupId;
                 $distance->event_id = $newEvent->id;
                 $distance->save();
 

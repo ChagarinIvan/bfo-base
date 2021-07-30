@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\DB;
 class MasterCupType implements CupTypeInterface
 {
     /** @var Collection */
-    private Collection $eventGroupsIds;
+    private $eventGroupsIds;
 
     public function getId(): string
     {

@@ -15,7 +15,7 @@
 @section('groups')
     @foreach ($distances as $distance)
         <tr>
-            <td class="text-center" colspan="{{ $withPoints ? 9 : 8 }}"><b id="{{ $distance->group->name }}">{{ $distance->group->name }}</b></td>
+            <td class="text-center" colspan="{{ $withPoints ? 9 : 8 }}"><b id="{{ $distance->group->id }}">{{ $distance->group->name }} - {{ $distance->points }} {{ __('app.distance.points') }}, {{ round($distance->length/1000, 1) }} {{ __('app.distance.length') }}</b></td>
         </tr>
         @foreach($groupedLines->get($distance->id) as $linesGroup)
             @foreach($linesGroup as $line)

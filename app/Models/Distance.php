@@ -51,10 +51,4 @@ class Distance extends Model
     {
         return $this->hasMany(ProtocolLine::class, 'distance_id', 'id');
     }
-
-    public function add(Distance $eventDistance): void
-    {
-        $this->points += $eventDistance->points;
-        $this->length += $eventDistance->length;
-    }
 }

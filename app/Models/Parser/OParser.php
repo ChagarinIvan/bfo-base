@@ -4,14 +4,18 @@ namespace App\Models\Parser;
 
 use App\Exceptions\ParsingException;
 use App\Models\Group;
-use DOMDocument;
-use DOMXPath;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
-use RuntimeException;
 
+/**
+ * Class OParser
+ *
+ * Брестский подснежник 2021
+ *
+ * @package App\Models\Parser
+ */
 class OParser implements ParserInterface
 {
     private bool $setVk = false;
@@ -27,6 +31,8 @@ class OParser implements ParserInterface
             $groupHeaderData = [];
             $groupHeaderIndex = 0;
             $groupName = '';
+            $distanceLength = 0;
+            $distancePoints = 0;
 
             foreach ($lines as $line) {
                 $line = trim($line);
@@ -36,17 +42,26 @@ class OParser implements ParserInterface
                 }
 
                 if (preg_match('#<h2>([^\d]\d\d[^\d]?|[]^\d]{5,6})</h2>#uism', $line, $match)) {
-                    $line = $match[1];
-                    $groupName = Group::FIXING_MAP[$line] ?? $line;
+                    $groupLine = $match[1];
+                    $groupName = Group::FIXING_MAP[$groupLine] ?? $groupLine;
+                    $distanceLength = 0;
+                    $distancePoints = 0;
+                    if (preg_match('#:\s+(\d+)\s+[^\d]+,\s+(\d+,\d+)\s+[^\d]+#s', $line, $match)) {
+                        $distancePoints = (int)$match[1];
+                        $distanceLength = floatval(str_replace(',', '.', $match[2])) * 1000;
+                    }
+                    continue;
+                }
+
+                if (preg_match('#:\s+(\d+)\s+[^\d]+,\s+(\d+,\d+)\s+[^\d]+#s', $line, $match)) {
+                    $distancePoints = (int)$match[1];
+                    $distanceLength = floatval(str_replace(',', '.', $match[2])) * 1000;
                     continue;
                 }
 
                 $line = strip_tags($line);
                 if ($line === '') {
                     continue;
-                }
-                if (str_contains($line, 'Нипарко')) {
-//                    sleep(1);
                 }
                 if (trim($line, '-') === '') {
                     if ($startGroupHeader) {
@@ -77,7 +92,13 @@ class OParser implements ParserInterface
                     $preparedLine = preg_replace('#\s+#', ' ', $preparedLine);
                     $lineData = explode(' ', $preparedLine);
                     $fieldsCount = count($lineData);
-                    $protocolLine = ['group' => $groupName];
+                    $protocolLine = [
+                        'group' => $groupName,
+                        'distance' => [
+                            'length' => $distanceLength,
+                            'points' => $distancePoints,
+                        ],
+                    ];
                     $indent = 1;
 
                     for ($i = $groupHeaderIndex; $i > 2; $i--) {

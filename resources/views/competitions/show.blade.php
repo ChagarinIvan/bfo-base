@@ -1,7 +1,9 @@
 @php
     use \App\Models\Competition;
+    use App\Models\Event;
     /**
      * @var Competition $competition;
+     * @var Event $events;
      */
 @endphp
 
@@ -17,6 +19,7 @@
     <div class="row pt-5">
         <a class="btn btn-success mr-2" href="/competitions/{{ $competition->id }}/events/add">{{ __('app.competition.add_event') }}</a>
         <a class="btn btn-info mr-2" href="/competitions/{{ $competition->id }}/events/sum">{{ __('app.competition.sum') }}</a>
+        <a class="btn btn-danger mr-2" href="/competitions/{{ $competition->from->format('Y') }}">{{ __('app.common.back') }}</a>
     </div>
     <div class="row pt-3">
         <table class="table">
@@ -31,7 +34,7 @@
             </tr>
             </thead>
             <tbody>
-            @foreach ($competition->events as $event)
+            @foreach ($events as $event)
                 <tr>
                     <td><a href="/competitions/events/{{ $event->id }}/show">{{ $event->name }}</a></td>
                     <td>

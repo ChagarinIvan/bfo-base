@@ -1,3 +1,9 @@
+@php
+    /**
+     * @var int $year;
+     */
+@endphp
+
 @extends('layouts.app')
 
 @section('title', __('app.competition.add'))
@@ -30,7 +36,7 @@
         </div>
         <div class="row">
             <input type="submit" class="btn btn-primary" value="{{ __('app.common.create') }}">
-            <a href="/competitions" class="btn btn-danger ml-1">{{ __('app.common.cancel') }}</a>
+            <a href="/competitions/y{{ $year }}" class="btn btn-danger ml-1">{{ __('app.common.cancel') }}</a>
         </div>
     </form>
 @endsection
