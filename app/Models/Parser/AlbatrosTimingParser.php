@@ -39,9 +39,13 @@ class AlbatrosTimingParser implements ParserInterface
                 $distance = $lines[0];
                 $distanceLength = 0;
                 $distancePoints = 0;
-                if (preg_match('#(\d+)\s+[^\d]+,\s+(\d+,\d+)#s', $distance, $match)) {
+                if (preg_match('#(\d+)\s+[^\d]+,\s+((\d+,\d+)\s+[^\d]+|(\d+)\s+[^\d])#s', $distance, $match)) {
                     $distancePoints = (int)$match[1];
-                    $distanceLength = floatval(str_replace(',', '.', $match[2])) * 1000;
+                    if (str_contains($match[2], ',')) {
+                        $distanceLength = floatval(str_replace(',', '.', $match[3])) * 1000;
+                    } else {
+                        $distanceLength = floatval($match[4]);
+                    }
                 } elseif (count($lines) < 4) {
                     continue;
                 }

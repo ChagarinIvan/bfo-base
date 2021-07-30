@@ -19,7 +19,7 @@
     <div class="row pt-5">
         <a class="btn btn-success mr-2" href="/competitions/{{ $competition->id }}/events/add">{{ __('app.competition.add_event') }}</a>
         <a class="btn btn-info mr-2" href="/competitions/{{ $competition->id }}/events/sum">{{ __('app.competition.sum') }}</a>
-        <a class="btn btn-danger mr-2" href="/competitions/{{ $competition->from->format('Y') }}">{{ __('app.common.back') }}</a>
+        <a class="btn btn-danger mr-2" href="/competitions/y{{ $competition->from->format('Y') }}">{{ __('app.common.back') }}</a>
     </div>
     <div class="row pt-3">
         <table class="table">

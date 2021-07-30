@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Models\Competition;
+use App\Models\Distance;
 use App\Models\Event;
+use App\Models\ProtocolLine;
 use App\Models\Year;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -64,5 +66,18 @@ class CompetitionController extends BaseController
         $competition = new Competition($formParams);
         $competition->save();
         return redirect("/competitions/{$competition->id}/show");
+    }
+
+    public function delete(int $year, int $competitionId): RedirectResponse
+    {
+        Competition::destroy($competitionId);
+        $events = Event::whereCompetitionId($competitionId)->get();
+        $eventsIds = $events->pluck('id');
+        Event::destroy($eventsIds);
+        $distances = Distance::whereIn('event_id', $eventsIds)->get();
+        $distancesIds = $distances->pluck('id');
+        Distance::destroy($distancesIds);
+        ProtocolLine::whereIn('distance_id', $distancesIds)->get();
+        return redirect("/competitions/y{$year}");
     }
 }

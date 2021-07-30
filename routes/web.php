@@ -30,6 +30,7 @@ Route::get('/competitions/y{year}', [CompetitionController::class, 'index']);
 Route::get('/competitions/y{year}/create', [CompetitionController::class, 'create']);
 Route::post('/competitions/store', [CompetitionController::class, 'store']);
 Route::get('/competitions/{competition}/show', [CompetitionController::class, 'show']);
+Route::get('/competitions/y{year}/delete/{competition}', [CompetitionController::class, 'delete']);
 //event
 Route::get('/competitions/{competition}/events/add', [EventController::class, 'create']);
 Route::get('/competitions/{competition}/events/sum', [EventController::class, 'sum']);

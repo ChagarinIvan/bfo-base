@@ -23,6 +23,7 @@ use Illuminate\Support\Collection;
  * @property ProtocolLine[]|Collection $protocolLines
  * @method static Distance[]|Distance find(mixed $ids)
  * @method static Builder|Distance with(mixed $params)
+ * @method static Builder|Distance where(string $column, string|int $value)
  * @method static Builder|Distance whereGroupId(int $groupId)
  * @method static Builder|Distance whereEventId(int $eventId)
  * @method static Builder|Distance whereLength(int $length)

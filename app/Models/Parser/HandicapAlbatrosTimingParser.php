@@ -12,6 +12,13 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
 use RuntimeException;
 
+/**
+ * Class HandicapAlbatrosTimingParser
+ *
+ * Гандикап на Гродненской лесной многодневке
+ *
+ * @package App\Models\Parser
+ */
 class HandicapAlbatrosTimingParser implements ParserInterface
 {
     public function parse(UploadedFile $file): Collection
@@ -35,7 +42,17 @@ class HandicapAlbatrosTimingParser implements ParserInterface
 
                 $lines = preg_split('/\n|\r\n?/', $text);
                 $linesCount = count($lines);
-                if ($linesCount < 5) {
+                $distance = $lines[0];
+                $distanceLength = 0;
+                $distancePoints = 0;
+                if (preg_match('#(\d+)\s+[^\d]+,\s+((\d+,\d+)\s+[^\d]+|(\d+)\s+[^\d])#s', $distance, $match)) {
+                    $distancePoints = (int)$match[1];
+                    if (str_contains($match[2], ',')) {
+                        $distanceLength = floatval(str_replace(',', '.', $match[3])) * 1000;
+                    } else {
+                        $distanceLength = floatval($match[4]);
+                    }
+                } elseif (count($lines) < 4) {
                     continue;
                 }
                 $groupHeader = $lines[2];
@@ -49,12 +66,15 @@ class HandicapAlbatrosTimingParser implements ParserInterface
                         break;
                     }
                     $preparedLine = preg_replace('#\s+#', ' ', $line);
-//                if (str_contains($preparedLine, 'Михалкин')) {
-//                    sleep(1);
-//                }
                     $lineData = explode(' ', $preparedLine);
                     $fieldsCount = count($lineData);
-                    $protocolLine = ['group' => $groupName];
+                    $protocolLine = [
+                        'group' => $groupName,
+                        'distance' => [
+                            'length' => $distanceLength,
+                            'points' => $distancePoints,
+                        ],
+                    ];
                     $indent = 1;
                     if ($withComment && str_contains($lineData[$fieldsCount - $indent], 'ично')) {
                         $indent++;
