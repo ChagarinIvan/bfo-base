@@ -40,7 +40,7 @@
                     <td>
                         @foreach($event->cups as $cupEvent)
                             <span class="badge" style="background: {{ \App\Facades\Color::getColor($cupEvent->cup->name) }}">
-                                <a href="/cups/{{ $cupEvent->cup->id }}/show">{{ $cupEvent->cup->name }}</a>
+                                <a href="/cups/{{ $cupEvent->cup->id }}/show">{{ $cupEvent->cup->name }} {{ $cupEvent->cup->year }}</a>
                             </span>
                         @endforeach
                         @foreach($event->flags as $flag)

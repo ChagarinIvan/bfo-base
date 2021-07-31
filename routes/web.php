@@ -73,8 +73,8 @@ Route::get('/faq-api', [FaqController::class, 'api']);
 
 Route::get('/404', [ErrorController::class, 'action404']);
 //cups
-Route::get('/cups', [CupController::class, 'index']);
-Route::get('/cups/create', [CupController::class, 'create']);
+Route::get('/cups/y{year}', [CupController::class, 'index']);
+Route::get('/cups/y{year}/create', [CupController::class, 'create']);
 Route::get('/cups/{cup}/show', [CupController::class, 'show']);
 Route::get('/cups/{cup}/edit', [CupController::class, 'edit']);
 Route::get('/cups/{cup}/delete', [CupController::class, 'delete']);

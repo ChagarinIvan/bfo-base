@@ -12,29 +12,31 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Support\Carbon;
 
 class CupController extends BaseController
 {
-    public function index(): View
+    public function index(int $year): View|RedirectResponse
     {
-        $allCups = Cup::all();
-        $years = $allCups->pluck('year');
-        $groupedCups = $allCups->groupBy(function (Cup $cup) {
-            return $cup->year;
-        });
-        $groupedCups = $groupedCups->sortKeysDesc();
+        if ($year === 0) {
+            $year = Carbon::now()->year;
+            return redirect("/cups/y{$year}");
+        }
+
+        $cups = Cup::where('year', $year)->get();
 
         return view('cup.index', [
-            'groupedCups' => $groupedCups,
-            'years' => $years,
+            'cups' => $cups,
+            'selectedYear' => $year,
         ]);
     }
 
-    public function create(): View
+    public function create(int $year): View
     {
         $groups = Group::all();
         return view('cup.create', [
             'groups' => $groups,
+            'selectedYear' => $year,
         ]);
     }
 

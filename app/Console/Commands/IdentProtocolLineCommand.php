@@ -7,6 +7,7 @@ use App\Models\IdentLine;
 use App\Models\Person;
 use App\Models\ProtocolLine;
 use App\Services\IdentService;
+use Carbon\Exceptions\InvalidFormatException;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
 
@@ -48,9 +49,12 @@ class IdentProtocolLineCommand extends Command
             $person = new Person();
             $person->lastname = $protocolLine->lastname;
             $person->firstname = $protocolLine->firstname;
-            if ($birthday = Carbon::createFromFormat('Y', $protocolLine->year)) {
-                $person->birthday = $birthday->startOfYear();
-            }
+            try {
+                if ($birthday = Carbon::createFromFormat('Y', $protocolLine->year)) {
+                    $person->birthday = $birthday->startOfYear();
+                }
+            } catch (InvalidFormatException) {}
+
             $club = Club::whereName($protocolLine->club)->get();
             if ($club->count() > 0) {
                 $person->club_id = $club->first()->id;

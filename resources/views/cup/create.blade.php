@@ -1,11 +1,10 @@
 @php
     use App\Models\Group;
-    use Carbon\Carbon;
     use Illuminate\Support\Collection;
     /**
      * @var Group[]|Collection $groups;
+     * @var int $selectedYear;
      */
-    $year = Carbon::now()->year;
 @endphp
 
 @extends('layouts.app')
@@ -37,12 +36,9 @@
         <div class="form-group">
             <label for="year" class="col-2 col-form-label">{{ __('app.common.year') }}</label>
             <select class="custom-select" id="year" name="year">
-                @php
-                    $year = \Illuminate\Support\Carbon::now()->year;
-                @endphp
-                @for($i = $year - 5; $i <= ($year + 1); $i++)
-                    <option value="{{ $i }}" {{ $i === $year ? 'selected' : '' }}>{{ $i }}</option>
-                @endfor
+                @foreach(App\Models\Year::YEARS as $year)
+                    <option value="{{ $year }}" {{ $year === $selectedYear ? 'selected' : '' }}>{{ $year }}</option>
+                @endforeach
             </select>
         </div>
         <div class="form-group">
@@ -57,7 +53,7 @@
         </div>
         <div class="row">
             <input type="submit" class="btn btn-primary" value="{{ __('app.common.create') }}">
-            <a href="/cups" class="btn btn-danger ml-1">{{ __('app.common.cancel') }}</a>
+            <a href="/cups/y{{ $selectedYear }}" class="btn btn-danger ml-1">{{ __('app.common.cancel') }}</a>
         </div>
     </form>
 @endsection

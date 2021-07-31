@@ -23,6 +23,7 @@ use Illuminate\Support\Collection;
  * @property-read Collection|Group[] $groups
  * @method static Builder|Cup find(mixed $ids)
  * @method static Builder|Cup with(mixed $ids)
+ * @method static Builder|Cup where(string $column, int|string $value)
  */
 class Cup extends Model
 {

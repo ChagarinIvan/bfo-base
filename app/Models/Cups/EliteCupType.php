@@ -2,13 +2,15 @@
 
 namespace App\Models\Cups;
 
-use App\Models\Cup;
+use App\Models\CupEvent;
+use App\Models\CupEventPoint;
+use App\Models\Distance;
 use App\Models\Group;
-use App\Models\Person;
 use App\Models\ProtocolLine;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
-class EliteCupType extends MasterCupType
+class EliteCupType extends AbstractCupType
 {
     public function getId(): string
     {
@@ -20,18 +22,35 @@ class EliteCupType extends MasterCupType
         return 'Elite';
     }
 
-    public function getProtocolLines(Cup $cup, Group $mainGroup): Collection
+    /**
+     * @param CupEvent $cupEvent
+     * @param Group $mainGroup
+     * @return array<int, CupEventPoint>|Collection
+     */
+    public function calculateEvent(CupEvent $cupEvent, Group $mainGroup): Collection
     {
-        $startYear = $cup->year - $mainGroup->years();
-        $finishYear = $startYear - 5;
+        $cupEventProtocolLines = $this->getProtocolLines($cupEvent, $mainGroup);
+        $results = $this->calculateLines($cupEvent, $cupEventProtocolLines);
 
-        $persons = Person::where('birthday', '<=', "{$startYear}-01-01")
-            ->where('birthday', '>', "{$finishYear}-01-01")
+        return $results->sortByDesc(function (CupEventPoint $cupEventResult) {
+            return $cupEventResult->points;
+        });
+    }
+
+    private function getProtocolLines(CupEvent $cupEvent, Group $group): Collection
+    {
+        $mainDistance = Distance::whereGroupId($group->id)->whereEventId($cupEvent->event_id)->first();
+        $groupsName = $group->maleGroups();
+        $equalDistances = Distance::selectRaw(DB::raw('distances.id'))
+            ->whereEventId($cupEvent->event_id)
+            ->join('groups', 'groups.id', '=', 'distances.group_id')
+            ->whereIn('groups.name', $groupsName)
+            ->whereLength($mainDistance->length)
+            ->wherePoints($mainDistance->points)
             ->get();
 
-        return ProtocolLine::with('person')
-            ->whereIn('event_id', $cup->events->pluck('event_id'))
-            ->whereIn('person_id', $persons->pluck('id'))
-            ->get();
+        $distances = $equalDistances->add($mainDistance);
+
+        return ProtocolLine::whereIn('distance_id', $distances->pluck('id')->unique())->get();
     }
 }
