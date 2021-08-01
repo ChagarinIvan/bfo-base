@@ -16,9 +16,11 @@
 @section('content')
     <h3 id="up">{{ __('app.navbar.persons') }}</h3>
     <div class="row pt-5">
-        <div class="col-sm-2">
-            <a class="btn btn-success mr-2" href="/persons/create">{{ __('app.person.create_button') }}</a>
-        </div>
+        @auth
+            <div class="col-sm-2">
+                <a class="btn btn-success mr-2" href="/persons/create">{{ __('app.person.create_button') }}</a>
+            </div>
+        @endauth
         <div class="col-sm-10">
             <form class="form-inline" action="/persons">
                 <div class="form-group mr-1">
@@ -39,7 +41,7 @@
                 <th>{{ __('app.common.events_count') }}</th>
                 <th>{{ __('app.club.name') }}</th>
                 <th>{{ __('app.common.birthday') }}</th>
-                <th></th>
+                @auth<th></th>@endauth
             </tr>
             </thead>
             <tbody>
@@ -62,10 +64,12 @@
                         @if($person->club === null)<td></td>@else<td><a href="/club/{{ $person->club_id }}/show"><u>{{ $person->club->name }}</u></a></td>@endif
                         <td><a href="{{ $link }}"><u>{{ $person->birthday ? $person->birthday->format('Y') : '' }}</u></a></td>
                     @endif
-                    <td>
-                        <a href="/persons/{{ $person->id }}/edit" class="text-primary">Edit</a>
-                        <a href="/persons/{{ $person->id }}/delete" class="text-danger">Delete</a>
-                    </td>
+                    @auth
+                        <td>
+                            <a href="/persons/{{ $person->id }}/edit" class="text-primary">{{ __('app.common.edit') }}</a>
+                            <a href="/persons/{{ $person->id }}/delete" class="text-danger">{{ __('app.common.delete') }}</a>
+                        </td>
+                    @endauth
                 </tr>
             @endforeach
             </tbody>

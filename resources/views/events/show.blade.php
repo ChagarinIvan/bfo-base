@@ -26,7 +26,9 @@
     <a href="/competitions/{{ $event->competition->id }}/show"><h1>{{ $event->competition->name }}</h1></a>
     <h2 id="up">{{ $event->name }} : {{ $event->date->format('d.m.Y') }}</h2>
     <div class="pt-5 pb-3 m-3">
-        <a class="btn btn-info mr-2" href="/competitions/events/{{ $event->id }}/edit">{{ __('app.common.edit') }}</a>
+        @auth
+            <a class="btn btn-info mr-2" href="/competitions/events/{{ $event->id }}/edit">{{ __('app.common.edit') }}</a>
+        @endauth
         <a class="btn btn-danger mr-2" href="/competitions/{{ $event->competition_id }}/show">{{ __('app.common.back') }}</a>
     </div>
     <table class="table table-bordered" id="table">

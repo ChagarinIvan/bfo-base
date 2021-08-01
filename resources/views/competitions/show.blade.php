@@ -17,8 +17,10 @@
         <h1>{{ $competition->name }}</h1>
     </div>
     <div class="row pt-5">
-        <a class="btn btn-success mr-2" href="/competitions/{{ $competition->id }}/events/add">{{ __('app.competition.add_event') }}</a>
-        <a class="btn btn-info mr-2" href="/competitions/{{ $competition->id }}/events/sum">{{ __('app.competition.sum') }}</a>
+        @auth
+            <a class="btn btn-success mr-2" href="/competitions/{{ $competition->id }}/events/add">{{ __('app.competition.add_event') }}</a>
+            <a class="btn btn-info mr-2" href="/competitions/{{ $competition->id }}/events/sum">{{ __('app.competition.sum') }}</a>
+        @endauth
         <a class="btn btn-danger mr-2" href="/competitions/y{{ $competition->from->format('Y') }}">{{ __('app.common.back') }}</a>
     </div>
     <div class="row pt-3">
@@ -30,7 +32,7 @@
                 <th scope="col">{{ __('app.competition.description') }}</th>
                 <th scope="col">{{ __('app.common.date') }}</th>
                 <th scope="col">{{ __('app.common.competitors') }}</th>
-                <th scope="col"></th>
+                @auth<th scope="col"></th>@endauth
             </tr>
             </thead>
             <tbody>
@@ -50,11 +52,13 @@
                     <td><small>{{ Str::limit($event->description, 100, '...') }}</small></td>
                     <td>{{ $event->date->format('Y-m-d') }}</td>
                     <td>{{ count($event->protocolLines) }}</td>
-                    <td>
-                        <a href="/competitions/events/{{ $event->id }}/add-flags" class="text-info">{{ __('app.common.add_flags') }}</a>
-                        <a href="/competitions/events/{{ $event->id }}/edit" class="text-primary">{{ __('app.common.edit') }}</a>
-                        <a href="/competitions/events/{{ $event->id }}/delete" class="text-danger">{{ __('app.common.delete') }}</a>
-                    </td>
+                    @auth
+                        <td>
+                            <a href="/competitions/events/{{ $event->id }}/add-flags" class="text-info">{{ __('app.common.add_flags') }}</a>
+                            <a href="/competitions/events/{{ $event->id }}/edit" class="text-primary">{{ __('app.common.edit') }}</a>
+                            <a href="/competitions/events/{{ $event->id }}/delete" class="text-danger">{{ __('app.common.delete') }}</a>
+                        </td>
+                    @endauth
                 </tr>
             @endforeach
             </tbody>

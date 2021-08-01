@@ -28,16 +28,20 @@
                             $link = "/persons/{$line->person_id}/show";
                         @endphp
                         <td><a href="{{ $link }}"><u>{{ $line->lastname }}</u></a>&nbsp;
-                            <a href="/protocol-lines/{{ $line->id }}/edit-person">
-                                <span class="badge rounded-pill bg-warning">{{ __('app.common.edit') }}</span>
-                            </a>
+                            @auth
+                                <a href="/protocol-lines/{{ $line->id }}/edit-person">
+                                    <span class="badge rounded-pill bg-warning">{{ __('app.common.edit') }}</span>
+                                </a>
+                            @endauth
                         </td>
                         <td><a href="{{ $link }}"><u>{{ $line->firstname }}</u></a></td>
                     @else
                         <td>{{ $line->lastname }}&nbsp;
-                            <a href="/protocol-lines/{{ $line->id }}/edit-person">
-                                <span class="badge rounded-pill bg-danger">{{ __('app.common.new') }}</span>
-                            </a>
+                            @auth
+                                <a href="/protocol-lines/{{ $line->id }}/edit-person">
+                                    <span class="badge rounded-pill bg-danger">{{ __('app.common.new') }}</span>
+                                </a>
+                            @endauth
                         </td>
                         <td>{{ $line->firstname }}</td>
                     @endif

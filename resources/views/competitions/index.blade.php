@@ -13,9 +13,11 @@
 
 @section('content')
     <h3 id="up">{{ __('app.competition.title') }}</h3>
-    <div class="row pt-5">
-        <a class="btn btn-success mr-2" href="/competitions/y{{ $selectedYear }}/create">{{ __('app.competition.add_competition') }}</a>
-    </div>
+    @auth
+        <div class="row pt-5">
+            <a class="btn btn-success mr-2" href="/competitions/y{{ $selectedYear }}/create">{{ __('app.competition.add_competition') }}</a>
+        </div>
+    @endauth
     <ul class="nav nav-tabs pt-2">
         @foreach($years as $year)
             <li class="nav-item">
@@ -33,7 +35,7 @@
                     <th>{{ __('app.common.title') }}</th>
                     <th>{{ __('app.common.dates') }}</th>
                     <th>{{ __('app.common.description') }}</th>
-                    <th scope="col"></th>
+                    @auth<th scope="col"></th>@endauth
                 </tr>
                 </thead>
                 <tbody>
@@ -44,9 +46,11 @@
                         </td>
                         <td>{{ $competition->from->format('d.m.Y') }} - {{ $competition->to->format('d.m.Y') }}</td>
                         <td><small>{{ Str::limit($competition->description, 100, '...') }}</small></td>
-                        <td>
-                            <a href="/competitions/y{{ $selectedYear }}/delete/{{ $competition->id }}" class="text-danger">{{ __('app.common.delete') }}</a>
-                        </td>
+                        @auth
+                            <td>
+                                <a href="/competitions/y{{ $selectedYear }}/delete/{{ $competition->id }}" class="text-danger">{{ __('app.common.delete') }}</a>
+                            </td>
+                        @endauth
                     </tr>
                 @endforeach
                 </tbody>

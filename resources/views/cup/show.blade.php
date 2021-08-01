@@ -16,8 +16,10 @@
         <h1>{{ $cup->name }} - {{ $cup->year }}</h1>
     </div>
     <div class="row pt-5">
-        <a class="btn btn-info mr-2" href="/cups/{{ $cup->id }}/edit">{{ __('app.common.edit') }}</a>
-        <a class="btn btn-success mr-2" href="/cups/{{ $cup->id }}/events/create">{{ __('app.competition.add_event') }}</a>
+        @auth
+            <a class="btn btn-info mr-2" href="/cups/{{ $cup->id }}/edit">{{ __('app.common.edit') }}</a>
+            <a class="btn btn-success mr-2" href="/cups/{{ $cup->id }}/events/create">{{ __('app.competition.add_event') }}</a>
+        @endauth
         <a class="btn btn-secondary mr-2" href="/cups/{{ $cup->id }}/table/0">{{ __('app.cup.table') }}</a>
         <a class="btn btn-danger mr-2" href="/cups/y{{ $cup->year }}">{{ __('app.common.back') }}</a>
     </div>
@@ -38,7 +40,7 @@
                 <th scope="col">{{ __('app.common.date') }}</th>
                 <th scope="col">{{ __('app.common.competitors') }}</th>
                 <th scope="col">{{ __('app.common.points') }}</th>
-                <th scope="col"></th>
+                @auth<th scope="col"></th>@endauth
             </tr>
             </thead>
             <tbody>
@@ -56,10 +58,12 @@
                         ->whereIn('group_id', $cup->groups->pluck('id'))
                         ->count() }}</td>
                     <td>{{ $event->points }}</td>
-                    <td>
-                        <a href="/cups/{{ $cup->id }}/events/{{ $event->id }}/edit" class="text-primary">{{ __('app.common.edit') }}</a>
-                        <a href="/cups/{{ $cup->id }}/events/{{ $event->id }}/delete" class="text-danger">{{ __('app.common.delete') }}</a>
-                    </td>
+                    @auth
+                        <td>
+                            <a href="/cups/{{ $cup->id }}/events/{{ $event->id }}/edit" class="text-primary">{{ __('app.common.edit') }}</a>
+                            <a href="/cups/{{ $cup->id }}/events/{{ $event->id }}/delete" class="text-danger">{{ __('app.common.delete') }}</a>
+                        </td>
+                    @endauth
                 </tr>
             @endforeach
             </tbody>

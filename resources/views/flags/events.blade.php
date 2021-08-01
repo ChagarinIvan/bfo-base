@@ -26,7 +26,7 @@
                 <th scope="col">{{ __('app.common.description') }}</th>
                 <th scope="col">{{ __('app.common.date') }}</th>
                 <th scope="col">{{ __('app.common.competitors') }}</th>
-                <th scope="col"></th>
+                @auth<th scope="col"></th>@endauth
             </tr>
             </thead>
             <tbody>
@@ -37,9 +37,11 @@
                     <td><small>{{ Str::limit($event->description, 100, '...') }}</small></td>
                     <td>{{ $event->date->format('Y-m-d') }}</td>
                     <td>{{ count($event->protocolLines) }}</td>
-                    <td>
-                        <a href="/competitions/events/{{ $event->id }}/add-flags" class="text-info">{{ __('app.common.add_flags') }}</a>
-                    </td>
+                    @auth
+                        <td>
+                            <a href="/competitions/events/{{ $event->id }}/add-flags" class="text-info">{{ __('app.common.add_flags') }}</a>
+                        </td>
+                    @endauth
                 </tr>
             @endforeach
             </tbody>

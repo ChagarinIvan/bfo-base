@@ -12,9 +12,11 @@
 
 @section('content')
     <h3 id="up">{{ __('app.cups') }}</h3>
-    <div class="row pt-5">
-        <a class="btn btn-success mr-2" href="/cups/y{{ $selectedYear }}/create">{{ __('app.common.new') }}</a>
-    </div>
+    @auth
+        <div class="row pt-5">
+            <a class="btn btn-success mr-2" href="/cups/y{{ $selectedYear }}/create">{{ __('app.common.new') }}</a>
+        </div>
+    @endauth
     <ul class="nav nav-tabs pt-2">
         @foreach(\App\Models\Year::YEARS as $year)
             <li class="nav-item">
@@ -57,8 +59,10 @@
                                 ->count() }}</td>
                             <td>
                                 <a class="btn btn-secondary mr-2" href="/cups/{{ $cup->id }}/table/0">{{ __('app.cup.table') }}</a>
-                                <a class="btn btn-info mr-2" href="/cups/{{ $cup->id }}/edit">{{ __('app.common.edit') }}</a>
-                                <a class="btn btn-danger mr-2" href="/cups/{{ $cup->id }}/delete">{{ __('app.common.delete') }}</a>
+                                @auth
+                                    <a class="btn btn-info mr-2" href="/cups/{{ $cup->id }}/edit">{{ __('app.common.edit') }}</a>
+                                    <a class="btn btn-danger mr-2" href="/cups/{{ $cup->id }}/delete">{{ __('app.common.delete') }}</a>
+                                @endauth
                             </td>
                         </tr>
                     @endforeach
