@@ -15,7 +15,7 @@ class RegistrationUrlMail extends Mailable
 
     public function build(): self
     {
-        return $this->from('bfo-base@orient.by')
+        return $this->from('Chagarin_Ivan@tut.by')
             ->to($this->email)
             ->setAddress($this->email, $this->email)
             ->subject('Registration')

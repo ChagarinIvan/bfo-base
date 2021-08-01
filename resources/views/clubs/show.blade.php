@@ -33,7 +33,7 @@
                 <th>{{ __('app.common.lastname') }}</th>
                 <th>{{ __('app.common.name') }}</th>
                 <th>{{ __('app.common.birthday') }}</th>
-                <th></th>
+                @auth<th></th>@endauth
             </tr>
             </thead>
             <tbody>
@@ -52,10 +52,12 @@
                         <td><a href="{{ $link }}"><u>{{ $person->firstname }}</u></a></td>
                         <td><a href="{{ $link }}"><u>{{ $person->birthday ? $person->birthday->format('Y') : '' }}</u></a></td>
                     @endif
-                    <td>
-                        <a href="/persons/{{ $person->id }}/edit" class="text-primary">Edit</a>
-                        <a href="/persons/{{ $person->id }}/delete" class="text-danger">Delete</a>
-                    </td>
+                    @auth
+                        <td>
+                            <a href="/persons/{{ $person->id }}/edit" class="text-primary">Edit</a>
+                            <a href="/persons/{{ $person->id }}/delete" class="text-danger">Delete</a>
+                        </td>
+                    @endauth
                 </tr>
             @endforeach
             </tbody>

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Auth\LoginRequest;
 use App\Mail\PasswordMail;
 use App\Mail\RegistrationUrlMail;
 use App\Models\User;
@@ -12,6 +11,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -26,11 +26,19 @@ class LoginController extends Controller
         return view('auth.login');
     }
 
-    public function signIn(LoginRequest $request): RedirectResponse
+    public function signIn(Request $request): RedirectResponse
     {
-        $request->authenticate();
-        $request->session()->regenerate();
-        return redirect('competitions/y0');
+        $authData = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        if (Auth::attempt($authData, true)) {
+            $request->session()->regenerate();
+            return redirect('competitions/y0');
+        }
+
+        return redirect('login');
     }
 
     public function registration(Request $request): View|RedirectResponse
@@ -42,7 +50,7 @@ class LoginController extends Controller
 
             $email = $form['email'];
             $token = Crypt::encrypt($email);
-            Mail::send(new RegistrationUrlMail($email, Url::make("/login/auth/{$token}")));
+            Mail::send(new RegistrationUrlMail($email, Url::to("/login/auth/{$token}")));
             return redirect('competitions/y0');
         }
 
