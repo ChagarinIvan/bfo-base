@@ -34,7 +34,7 @@
                 @foreach($events as $event)
                     <option value="{{ $event->id }}"
                         {{ $event->id === $cupEvent->event_id ? 'selected' : ''}}
-                    >{{ $event->name }}</option>
+                    >{{ $event->date->format('d.m')." - ".$event->competition->name.' - '.$event->name }}</option>
                 @endforeach
             </select>
         </div>

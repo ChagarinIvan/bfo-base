@@ -51,6 +51,16 @@ class EliteCupType extends AbstractCupType
 
         $distances = $equalDistances->add($mainDistance);
 
-        return ProtocolLine::whereIn('distance_id', $distances->pluck('id')->unique())->get();
+        $protocolLinesIds = ProtocolLine::selectRaw(DB::raw('protocol_lines.id AS id, persons_payments.date AS date'))
+            ->join('person', 'person.id', '=', 'protocol_lines.person_id')
+            ->join('persons_payments', 'person.id', '=', 'persons_payments.person_id')
+            ->where('persons_payments.year', '=', $cupEvent->cup->year)
+            ->where('persons_payments.date', '<=', $cupEvent->event->date)
+            ->whereIn('distance_id', $distances->pluck('id')->unique())
+            ->havingRaw(DB::raw("persons_payments.date <= '{$cupEvent->event->date}'"))
+            ->get()
+            ->pluck('id');
+
+        return ProtocolLine::find($protocolLinesIds);
     }
 }

@@ -77,6 +77,7 @@ class CupEventController extends BaseController
             ->get()->first();
 
         $events = Event::where('date', 'LIKE', "%{$cup->year}%")
+            ->orderBy('date')
             ->get();
 
         return view('cup.events.edit', [

@@ -18,7 +18,7 @@ abstract class AbstractParserTest extends TestCase
 
     public function testParse()
     {
-        $protocolContent = Storage::get($this->getFilePath());
+        $protocolContent = Storage::disk('tests')->get($this->getFilePath());
         $protocolFactory = UploadedFile::fake();
         $protocol = $protocolFactory->createWithContent('test', $protocolContent);
 

@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\ApiCallbackController;
 use App\Http\Controllers\ClubController;
 use App\Http\Controllers\CompetitionController;
 use App\Http\Controllers\CupController;
