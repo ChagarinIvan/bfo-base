@@ -45,10 +45,10 @@ class PersonController extends BaseController
     {
         /** @var Person $person */
         $person = Person::with(['protocolLines.distance.event.competition', 'protocolLines.distance.group'])->find($personId);
-        $groupedProtocolLines = $person->protocolLines->groupBy(function (ProtocolLine $line) {
-            return $line->distance->event->date->format('Y');
-        });
+        /** fn features from php 7.4 */
+        $groupedProtocolLines = $person->protocolLines->groupBy(fn (ProtocolLine $line) => $line->distance->event->date->format('Y'));
         $groupedProtocolLines->transform(function (Collection $protocolLines) {
+            /** fn features from php 7.4 */
             return $protocolLines->sortByDesc(fn(ProtocolLine $line) => $line->distance->event->date);
         });
         $groupedProtocolLines = $groupedProtocolLines->sortKeysDesc();

@@ -32,9 +32,7 @@ class EliteCupType extends AbstractCupType
         $cupEventProtocolLines = $this->getProtocolLines($cupEvent, $mainGroup);
         $results = $this->calculateLines($cupEvent, $cupEventProtocolLines);
 
-        return $results->sortByDesc(function (CupEventPoint $cupEventResult) {
-            return $cupEventResult->points;
-        });
+        return $results->sortByDesc(fn (CupEventPoint $cupEventResult) => $cupEventResult->points);
     }
 
     private function getProtocolLines(CupEvent $cupEvent, Group $group): Collection
