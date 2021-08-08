@@ -76,6 +76,6 @@ class LoginController extends Controller
         $user->save();
         Mail::send(new PasswordMail($email, $password));
 
-        return view('auth.registration');
+        return view('auth.login');
     }
 }
