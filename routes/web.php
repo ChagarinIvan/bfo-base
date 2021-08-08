@@ -70,13 +70,13 @@ Route::middleware(['auth'])->group(function () {
 Route::get('/localization/{code}', [LocalizationController::class, 'changeLocale']);
 //flags
 Route::get('/flags', [FlagsController::class, 'index']);
+Route::get('/flags/{flag}/show-events', [FlagsController::class, 'showEvents']);
 Route::middleware(['auth'])->group(function () {
     Route::get('/flags/create', [FlagsController::class, 'create']);
     Route::get('/flags/{flag}/edit', [FlagsController::class, 'edit']);
     Route::post('/flags/store', [FlagsController::class, 'store']);
     Route::post('/flags/{flag}/update', [FlagsController::class, 'update']);
     Route::get('/flags/{flag}/delete', [FlagsController::class, 'delete']);
-    Route::get('/flags/{flag}/show-events', [FlagsController::class, 'showEvents']);
 });
 //faq
 Route::get('/faq', [FaqController::class, 'index']);

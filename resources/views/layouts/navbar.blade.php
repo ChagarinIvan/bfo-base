@@ -17,6 +17,9 @@
                     <span class="sr-only">Loading...</span>
                 </div>
             @endif
+            @if(!Auth::check())
+                <a class="navbar-brand text-info ml-auto" href="/login">{{ __('app.common.login') }}</a>
+            @endif
         </nav>
     </header>
 @show
