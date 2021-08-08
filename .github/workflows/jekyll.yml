@@ -24,11 +24,15 @@ jobs:
         run: |
           cp .env.example .env
           php artisan key:generate
-      - name: Cache yarn dependencies
-        uses: actions/cache@v1
-        with:
-          path: node_modules
-          key: yarn-${{ hashFiles('yarn.lock') }}
+
+      - name: Init psalm
+        run: ./vendor/bin/psalm --init
+
+      - name: Init laravel psalm-plugin
+        run: ./vendor/bin/psalm-plugin enable psalm/plugin-laravel
+
+      - name: Run psalm
+        run: ./vendor/bin/psalm
 
       - name: Run tests
         run: php artisan test
