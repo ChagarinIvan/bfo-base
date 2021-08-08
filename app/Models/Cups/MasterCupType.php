@@ -60,9 +60,9 @@ class MasterCupType extends AbstractCupType
             ->pluck('id')
             ->toArray();
 
-        $cupEventProtocolLines = $cupEventProtocolLines->filter(function (ProtocolLine $protocolLine) use ($eventDistances) {
-            return in_array($protocolLine->distance_id, $eventDistances, true);
-        });
+        $cupEventProtocolLines = $cupEventProtocolLines->filter(
+            fn (ProtocolLine $protocolLine) => in_array($protocolLine->distance_id, $eventDistances, true)
+        );
 
         $cupEventProtocolLines = $cupEventProtocolLines->groupBy('distance.group_id');
         $validGroups = $eventGroups->flip();
@@ -79,9 +79,7 @@ class MasterCupType extends AbstractCupType
             $results = $results->merge($eventGroupResults->intersectByKeys($groupProtocolLines->keyBy('person_id')));
         }
 
-        return $results->sortByDesc(function (CupEventPoint $cupEventResult) {
-            return $cupEventResult->points;
-        });
+        return $results->sortByDesc(fn (CupEventPoint $cupEventResult) => $cupEventResult->points);
     }
 
     /**

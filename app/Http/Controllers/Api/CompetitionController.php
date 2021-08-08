@@ -14,9 +14,7 @@ class CompetitionController extends BaseController
     {
         $allCompetitions = Competition::all()->makeHidden(['created_at', 'updated_at']);
 
-        $groupedCompetitions = $allCompetitions->sortByDesc(function (Competition $competition) {
-            return $competition->from->format('Y-m-d');
-        });
+        $groupedCompetitions = $allCompetitions->sortByDesc(fn (Competition $competition) => $competition->from->format('Y-m-d'));
 
         return response()->json($groupedCompetitions);
     }
