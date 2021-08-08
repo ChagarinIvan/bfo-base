@@ -34,10 +34,3 @@ jobs:
         run: php artisan test
         env:
           APP_ENV: testing
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@master
-        if: failure()
-        with:
-          name: Logs
-          path: ./storage/logs
