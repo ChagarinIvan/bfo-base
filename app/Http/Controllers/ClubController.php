@@ -30,7 +30,7 @@ class ClubController extends Controller
 
         $personsQuery = Person::with(['protocolLines', 'club'])->orderBy('lastname');
         if(strlen($search) > 0) {
-            $personsQuery->where(function($query) use ($search) {
+            $personsQuery->where(function ($query) use ($search) {
                 $query->where('firstname', 'LIKE', '%'.$search.'%')
                     ->orWhere('lastname', 'LIKE', '%'.$search.'%');
             });

@@ -161,9 +161,7 @@ class EventController extends Controller
                 return $line;
             });
 
-            $groupProtocolLines = $groupProtocolLines->sortBy(function (ProtocolLine $line) {
-                return $line->time ? $line->time->secondsSinceMidnight() : 86400;
-            });
+            $groupProtocolLines = $groupProtocolLines->sortBy(fn (ProtocolLine $line) => $line->time ? $line->time->secondsSinceMidnight() : 86400);
 
             $place = 1;
             foreach ($groupProtocolLines as $line) {
@@ -318,7 +316,7 @@ class EventController extends Controller
         $groupAnchors = $distances->pluck('group');
 
         if ($isRelay) {
-            $protocolLines->transform(function(Collection $lines) {
+            $protocolLines->transform(function (Collection $lines) {
                 $groupedLine = [];
                 $place = 0;
                 $numberIndex = 0;

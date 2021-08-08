@@ -54,9 +54,7 @@ abstract class AbstractCupType implements CupTypeInterface
         $cupEventPointsList = Collection::make();
         $maxPoints = $cupEvent->points;
 
-        $protocolLines = $protocolLines->sortByDesc(function (ProtocolLine $line) {
-            return $line->time ? $line->time->diffInSeconds() : 0;
-        });
+        $protocolLines = $protocolLines->sortByDesc(fn (ProtocolLine $line) => $line->time ? $line->time->diffInSeconds() : 0);
 
         $first = true;
         //а этапах Кубков Федерации очки начисляются по формуле:
