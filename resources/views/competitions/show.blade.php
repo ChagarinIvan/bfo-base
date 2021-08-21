@@ -7,7 +7,6 @@
      */
 @endphp
 
-
 @extends('layouts.app')
 
 @section('title', Str::limit($competition->name, 20, '...'))
@@ -21,7 +20,9 @@
             <a class="btn btn-success mr-2" href="/competitions/{{ $competition->id }}/events/add">{{ __('app.competition.add_event') }}</a>
             <a class="btn btn-info mr-2" href="/competitions/{{ $competition->id }}/events/sum">{{ __('app.competition.sum') }}</a>
         @endauth
-        <a class="btn btn-danger mr-2" href="/competitions/y{{ $competition->from->format('Y') }}">{{ __('app.common.back') }}</a>
+        <a class="btn btn-danger mr-2"
+           href="{{ action(\App\Http\Controllers\Competition\ShowCompetitionsTableAction::class, [$competition->from->format('Y')]) }}"
+        >{{ __('app.common.back') }}</a>
     </div>
     <div class="row pt-3">
         <table class="table">

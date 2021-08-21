@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
 /**
  * Class Year
@@ -17,4 +18,9 @@ class Year extends Model
         2019,
         2018
     ];
+
+    public static function actualYear(): int
+    {
+        return Carbon::now()->year;
+    }
 }

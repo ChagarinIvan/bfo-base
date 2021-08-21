@@ -177,7 +177,7 @@
     <div class="wrapper fadeInDown">
         <div id="formContent">
             <div>{{ __('app.common.registration') }}</div>
-            <form method="POST" action="/login/registration">
+            <form method="POST" action="{{ action(\App\Http\Controllers\Registration\SendRegistrationDataAction::class) }}">
                 @csrf
                 <input type="email" id="email" class="fadeIn second" name="email" placeholder="email@email.com">
                 <input type="submit" class="fadeIn fourth" value="{{ __('app.common.login') }}">
