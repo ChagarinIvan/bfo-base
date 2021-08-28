@@ -26,18 +26,6 @@ abstract class AbstractViewAction extends Controller
         return $this->viewFactory->make($template, $data, $this->navbarData());
     }
 
-    #[ArrayShape([
-        'isAuth' => "bool",
-        'isByLocale' => "bool",
-        'isRuLocale' => "bool",
-        'isCompetitionsRoute' => "bool",
-        'isCupsRoute' => "bool",
-        'isPersonsRoute' => "bool",
-        'isClubsRoute' => "bool",
-        'isFlagsRoute' => "bool",
-        'isFaqRoute' => "bool",
-        'isFaqApiRoute' => "bool",
-    ])]
     private function navbarData(): array
     {
         return [

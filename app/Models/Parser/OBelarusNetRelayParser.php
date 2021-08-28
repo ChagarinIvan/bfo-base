@@ -232,7 +232,7 @@ class OBelarusNetRelayParser implements ParserInterface
 
     public function check(UploadedFile $file): bool
     {
-        return preg_match('#<b>\d#', $file->get());
+        return (bool)preg_match('#<b>\d#', $file->get());
     }
 
     private function parseByHeader(string $header, string $value, array &$protocolLine): bool

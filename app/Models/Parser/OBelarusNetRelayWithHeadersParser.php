@@ -112,6 +112,6 @@ class OBelarusNetRelayWithHeadersParser implements ParserInterface
     public function check(UploadedFile $file): bool
     {
         $content = $file->get();
-        return preg_match('#<b>\d+\s+(-|\d+|в/к)\s+(-|.{1,4})\s+(-|\d{1,3})?#', $content);
+        return (bool)preg_match('#<b>\d+\s+(-|\d+|в/к)\s+(-|.{1,4})\s+(-|\d{1,3})?#', $content);
     }
 }

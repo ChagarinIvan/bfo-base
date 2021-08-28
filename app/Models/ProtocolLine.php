@@ -34,7 +34,7 @@ use Illuminate\Support\Collection;
  * @property-read Group $group
  * @property-read Distance $distance
  * @property-read Person|null $person
- * @method static Builder|ProtocolLine|ProtocolLine[]|Collection find(mixed $ids)
+ * @method static Collection find(mixed $ids)
  * @method static ProtocolLine[]|Collection get(array $columns = ['*'])
  * @method static Builder|ProtocolLine whereDistanceId(int $distanceId)
  * @method static Builder|ProtocolLine wherePreparedLine(string $value)
