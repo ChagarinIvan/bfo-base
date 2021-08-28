@@ -13,7 +13,10 @@
     <div class="row">
         <h1>{{ __('app.person.create_title') }}</h1>
     </div>
-    <form class="pt-5" method="POST" action="/persons/store">
+    <form class="pt-5"
+          method="POST"
+          action="{{ action(\App\Http\Controllers\Person\StorePersonAction::class) }}"
+    >
         @csrf
         <div class="form-group">
             <label for="lastname">{{ __('app.common.lastname') }}</label>
@@ -40,7 +43,9 @@
         </div>
         <div class="row">
             <input type="submit" class="btn btn-primary" value="{{ __('app.common.create') }}">
-            <a href="/persons" class="btn btn-danger ml-1">{{ __('app.common.cancel') }}</a>
+            <a href="{{ action(\App\Http\Controllers\Person\ShowPersonsListAction::class) }}"
+               class="btn btn-danger ml-1"
+            >{{ __('app.common.cancel') }}</a>
         </div>
     </form>
 @endsection

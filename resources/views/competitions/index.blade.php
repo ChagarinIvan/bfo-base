@@ -16,14 +16,14 @@
     @auth
         <div class="row pt-5">
             <a class="btn btn-success mr-2"
-               href="{{ action(\App\Http\Controllers\Competition\ShowCreateFormAction::class, [$selectedYear]) }}"
+               href="{{ action(\App\Http\Controllers\Competition\ShowCreateCompetitionFormAction::class, [$selectedYear]) }}"
             >{{ __('app.competition.add_competition') }}</a>
         </div>
     @endauth
     <ul class="nav nav-tabs pt-2">
         @foreach($years as $year)
             <li class="nav-item">
-                <a href="{{ action(\App\Http\Controllers\Competition\ShowCompetitionsTableAction::class, [$year]) }}"
+                <a href="{{ action(\App\Http\Controllers\Competition\ShowCompetitionsListAction::class, [$year]) }}"
                    class="nav-link {{ $year === $selectedYear ? 'active' : '' }}"
                 >{{ $year }}</a>
             </li>
@@ -48,7 +48,7 @@
                             >{{ $competition->name }}</a>
                         </td>
                         <td>{{ $competition->from->format('d.m.Y') }} - {{ $competition->to->format('d.m.Y') }}</td>
-                        <td><small>{{ Str::limit($competition->description, 100, '...') }}</small></td>
+                        <td><small>{{ \Illuminate\Support\Str::limit($competition->description, 100, '...') }}</small></td>
                         @auth
                             <td>
                                 <a href="{{ action(\App\Http\Controllers\Competition\DeleteCompetitionAction::class, [$selectedYear, $competition->id]) }}"

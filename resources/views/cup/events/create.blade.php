@@ -10,7 +10,7 @@
 
 @extends('layouts.app')
 
-@section('title', Str::limit($cup->name, 20, '...'))
+@section('title', \Illuminate\Support\Str::limit($cup->name, 20, '...'))
 
 @section('content')
     <div class="row">
@@ -24,7 +24,10 @@
             <span class="badge" style="background: {{ \App\Facades\Color::getColor($group->name) }}">{{ $group->name }}</span>
         @endforeach
     </div>
-    <form class="pt-5" method="POST" action="/cups/{{ $cup->id }}/events/store">
+    <form class="pt-5"
+          method="POST"
+          action="{{ action(\App\Http\Controllers\CupEvents\StoreCupEventAction::class, [$cup]) }}"
+    >
         @csrf
         <div class="form-group">
             <label for="event">{{ __('app.event.title') }}</label>
@@ -36,11 +39,13 @@
         </div>
         <div class="form-group">
             <label for="points">{{ __('app.common.points') }}</label>
-            <input class="form-control" id="points" name="points" value="{{ \App\Http\Controllers\CupEventController::DEFAULT_POINTS }}">
+            <input class="form-control" id="points" name="points" value="{{ \App\Http\Controllers\CupCupEventController::DEFAULT_POINTS }}">
         </div>
         <div class="row">
             <input type="submit" class="btn btn-primary" value="{{ __('app.common.new') }}">
-            <a href="/cups/{{ $cup->id }}/show" class="btn btn-danger ml-1">{{ __('app.common.cancel') }}</a>
+            <a href="{{ action(\App\Http\Controllers\Cups\ShowCupAction::class, [$cup]) }}"
+               class="btn btn-danger ml-1"
+            >{{ __('app.common.cancel') }}</a>
         </div>
     </form>
 @endsection

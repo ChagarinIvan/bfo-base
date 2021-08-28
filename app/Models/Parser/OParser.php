@@ -4,6 +4,7 @@ namespace App\Models\Parser;
 
 use App\Exceptions\ParsingException;
 use App\Models\Group;
+use App\Models\Rank;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\UploadedFile;
@@ -177,7 +178,7 @@ class OParser implements ParserInterface
         }
         if ($column === 'rank') {
             $rank = $lineData[$fieldsCount - $indent];
-            if (preg_match('#^[КМСCKMIбр\/юЮБРкмсkmc]{1,4}$#s', $rank) || in_array($rank, ['МСМК', 'КМС', 'б/р'], true)) {
+            if (Rank::validateRank($rank)) {
                 $indent++;
                 return $rank;
             } else {
@@ -229,6 +230,6 @@ class OParser implements ParserInterface
     public function check(UploadedFile $file): bool
     {
         $content = $file->get();
-        return (bool)preg_match('#<h2>\w{3}</h2><pre\>\w+|<br />#u', $content);
+        return (bool)preg_match('#<h2>\w{3}</h2><pre>\w+|<br />#u', $content);
     }
 }

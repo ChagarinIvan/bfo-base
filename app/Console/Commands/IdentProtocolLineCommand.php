@@ -30,7 +30,11 @@ class IdentProtocolLineCommand extends Command
     public function handle(): void
     {
         $identLine = IdentLine::first();
-        $identLine->delete();
+        if ($identLine) {
+            $identLine->delete();
+        } else {
+            return;
+        }
 
         $personId = (new IdentService())->identPerson($identLine->ident_line);
         $protocolLines = ProtocolLine::wherePreparedLine($identLine->ident_line)->get();

@@ -9,7 +9,7 @@
 @endphp
 @extends('layouts.app')
 
-@section('title', Str::limit($event->name, 20, '...'))
+@section('title', \Illuminate\Support\Str::limit($event->name, 20, '...'))
 
 @section('style')
     main.container-fluid {
@@ -23,13 +23,19 @@
 @endsection
 
 @section('content')
-    <a href="/competitions/{{ $event->competition->id }}/show"><h1>{{ $event->competition->name }}</h1></a>
+    <a href="{{ action(\App\Http\Controllers\Competition\ShowCompetitionAction::class, [$event->competition_id]) }}">
+        <h1>{{ $event->competition->name }}</h1>
+    </a>
     <h2 id="up">{{ $event->name }} : {{ $event->date->format('d.m.Y') }}</h2>
     <div class="pt-5 pb-3 m-3">
         @auth
-            <a class="btn btn-info mr-2" href="/competitions/events/{{ $event->id }}/edit">{{ __('app.common.edit') }}</a>
+            <a class="btn btn-info mr-2"
+               href="{{ action(\App\Http\Controllers\Event\ShowEditEventFormAction::class, [$event]) }}"
+            >{{ __('app.common.edit') }}</a>
         @endauth
-        <a class="btn btn-danger mr-2" href="/competitions/{{ $event->competition_id }}/show">{{ __('app.common.back') }}</a>
+        <a class="btn btn-danger mr-2"
+           href="{{ action(\App\Http\Controllers\Competition\ShowCompetitionAction::class, [$event->competition_id]) }}"
+        >{{ __('app.common.back') }}</a>
     </div>
     <table class="table table-bordered" id="table">
         <thead>

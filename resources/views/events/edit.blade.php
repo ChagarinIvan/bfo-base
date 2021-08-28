@@ -16,7 +16,11 @@
     <div class="row">
         <h1>{{ __('app.event.edit') }}</h1>
     </div>
-    <form class="pt-5" method="POST" action="/competitions/events/{{ $event->id }}/update" enctype="multipart/form-data">
+    <form class="pt-5"
+          method="POST"
+          action="{{ action(\App\Http\Controllers\Event\UpdateEventAction::class, [$event]) }}"
+          enctype="multipart/form-data"
+    >
         @csrf
         <div class="form-group">
             <label for="name">{{ __('app.common.title') }}</label>
@@ -39,7 +43,9 @@
         </div>
         <div class="row">
             <input type="submit" class="btn btn-primary" value="{{ __('app.common.save') }}">
-            <a href="/competitions/events/{{ $event->id }}/show" class="btn btn-danger ml-1">{{ __('app.common.cancel') }}</a>
+            <a class="btn btn-danger ml-1"
+               href="{{ action(\App\Http\Controllers\Event\ShowEventAction::class, [$event->id]) }}"
+            >{{ __('app.common.cancel') }}</a>
         </div>
     </form>
 @endsection

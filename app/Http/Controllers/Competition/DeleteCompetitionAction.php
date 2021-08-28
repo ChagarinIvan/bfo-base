@@ -23,6 +23,6 @@ class DeleteCompetitionAction extends AbstractRedirectAction
         $distancesIds = $distances->pluck('id');
         Distance::destroy($distancesIds);
         ProtocolLine::whereIn('distance_id', $distancesIds)->get();
-        return $this->redirector->action(ShowCompetitionsTableAction::class, ['year' => $year]);
+        return $this->redirector->action(ShowCompetitionsListAction::class, ['year' => $year]);
     }
 }

@@ -18,17 +18,24 @@
     <div class="row pt-5">
         @auth
             <div class="col-sm-2">
-                <a class="btn btn-success mr-2" href="/persons/create">{{ __('app.person.create_button') }}</a>
+                <a class="btn btn-success mr-2"
+                   href="{{ action(\App\Http\Controllers\Person\ShowCreatePersonFormAction::class) }}"
+                >{{ __('app.person.create_button') }}</a>
             </div>
         @endauth
         <div class="col-sm-10">
-            <form class="form-inline" action="/persons">
+            <form class="form-inline"
+                  action="{{ action(\App\Http\Controllers\Person\ShowPersonsListAction::class) }}"
+            >
                 <div class="form-group mr-1">
                     <input type="text" class="form-control" id="search" name="search" value="{{ $search }}">
                 </div>
                 <button type="submit" class="btn btn-primary mr-1">{{ __('app.common.search') }}</button>
                 @if ($search !== '')
-                    <a type="submit" href="/persons" class="btn btn-danger">{{ __('app.common.cancel') }}</a>
+                    <a type="submit"
+                       href="{{ action(\App\Http\Controllers\Person\ShowPersonsListAction::class) }}"
+                       class="btn btn-danger"
+                    >{{ __('app.common.cancel') }}</a>
                 @endif
             </form>
         </div>
@@ -50,24 +57,44 @@
                     /** @var \App\Models\Person $person */
                     $count = $person->protocolLines->count();
                     $hide = $count === 0;
-                    $link = "/persons/{$person->id}/show";
+                    $link = action(\App\Http\Controllers\Person\ShowPersonAction::class, [$person]);
                 @endphp
                 <tr>
                     @if($hide)
                         <td>{{ $person->lastname }} {{ $person->firstname }}</td>
                         <td><span class="badge" style="background: {{ \App\Facades\Color::getColor($count) }}">{{ $count }}</span></td>
-                        @if($person->club === null)<td></td>@else<td><a href="/club/{{ $person->club_id }}/show"><u>{{ $person->club->name }}</u></a></td>@endif
+                        @if($person->club === null)
+                            <td></td>
+                        @else
+                            <td>
+{{--                                <a href="{{ action(\App\Http\Controllers\Club\ShowClubAction::class, [$person->club_id]) }}">--}}
+                                    <u>{{ $person->club->name }}</u>
+{{--                                </a>--}}
+                            </td>
+                        @endif
                         <td>{{ $person->birthday ? $person->birthday->format('Y') : '' }}</td>
                     @else
                         <td><a href="{{ $link }}"><u>{{ $person->lastname }} {{ $person->firstname }}</u></a></td>
                         <td><span class="badge" style="background: {{ \App\Facades\Color::getColor($count) }}">{{ $count }}</span></td>
-                        @if($person->club === null)<td></td>@else<td><a href="/club/{{ $person->club_id }}/show"><u>{{ $person->club->name }}</u></a></td>@endif
+                        @if($person->club === null)
+                            <td></td>
+                        @else
+                            <td>
+                                <a href="{{ action(\App\Http\Controllers\Club\ShowClubAction::class, [$person->club_id]) }}">
+                                    <u>{{ $person->club->name }}</u>
+                                </a>
+                            </td>
+                        @endif
                         <td><a href="{{ $link }}"><u>{{ $person->birthday ? $person->birthday->format('Y') : '' }}</u></a></td>
                     @endif
                     @auth
                         <td>
-                            <a href="/persons/{{ $person->id }}/edit" class="text-primary">{{ __('app.common.edit') }}</a>
-                            <a href="/persons/{{ $person->id }}/delete" class="text-danger">{{ __('app.common.delete') }}</a>
+                            <a href="{{ action(\App\Http\Controllers\Person\ShowEditPersonFormAction::class, [$person->id]) }}"
+                               class="text-primary"
+                            >{{ __('app.common.edit') }}</a>
+                            <a href="{{ action(\App\Http\Controllers\Person\DeletePersonAction::class, [$person->id]) }}"
+                               class="text-danger"
+                            >{{ __('app.common.delete') }}</a>
                         </td>
                     @endauth
                 </tr>
@@ -79,7 +106,11 @@
         <nav aria-label="Page navigation example">
             <ul class="pagination">
                 @if(!$paginator->onFirstPage())
-                    <li class="page-item"><a class="page-link" href="/persons?search={{ $search }}">1</a></li>
+                    <li class="page-item">
+                        <a class="page-link"
+                           href="{{ action(\App\Http\Controllers\Person\ShowPersonsListAction::class, ['search' => $search,]) }}"
+                        >1</a>
+                    </li>
                 @endif
                 @if($paginator->previousPageUrl() !== null)
                     <li class="page-item"><a class="page-link" href="{{ $paginator->previousPageUrl() }}&search={{ $search }}">{{ __('pagination.previous') }}</a></li>
@@ -89,7 +120,11 @@
                     <li class="page-item"><a class="page-link" href="{{ $paginator->nextPageUrl() }}&search={{ $search }}">{{ __('pagination.next') }}</a></li>
                 @endif
                 @if($paginator->lastPage() !== $paginator->currentPage())
-                    <li class="page-item"><a class="page-link" href="/persons?page={{ $paginator->lastPage() }}&search={{ $search }}">{{ $paginator->lastPage() }}</a></li>
+                    <li class="page-item">
+                        <a class="page-link"
+                           href="{{ action(\App\Http\Controllers\Person\ShowPersonsListAction::class, ['page' => $paginator->lastPage(), 'search' => $search,]) }}"
+                        >{{ $paginator->lastPage() }}</a>
+                    </li>
                 @endif
             </ul>
         </nav>

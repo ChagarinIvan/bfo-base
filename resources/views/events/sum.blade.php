@@ -13,7 +13,11 @@
     <div class="row">
         <h1>{{ __('app.competition.sum') }}</h1>
     </div>
-    <form class="pt-5" method="POST" action="/competitions/{{ $competition->id }}/events/unit" enctype="multipart/form-data">
+    <form class="pt-5"
+          method="POST"
+          action="{{ action(\App\Http\Controllers\Event\UnitEventsAction::class, [$competition->id]) }}"
+          enctype="multipart/form-data"
+    >
         @csrf
         <div class="form-group">
             <label for=events" class="col-2 col-form-label">{{ __('app.cup.events') }}</label>
@@ -23,7 +27,7 @@
                         $eventName = $event->date->format('d.m').' - '.$event->competition->name.' - '.$event->name;
                     @endphp
                     <option value="{{ $event->id }}"
-                            data-content="<span class='badge' style='background: {{ \Color::getColor($eventName) }}'
+                            data-content="<span class='badge' style='background: {{ \App\Facades\Color::getColor($eventName) }}'
                                           >{{ $eventName }}</span>"
                     >{{ $eventName }}</option>
                 @endforeach
@@ -31,7 +35,9 @@
         </div>
         <div class="row">
             <input type="submit" class="btn btn-primary" value="{{ __('app.common.sum') }}">
-            <a href="/competitions/{{ $competition->id }}/show" class="btn btn-danger ml-1">{{ __('app.common.cancel') }}</a>
+            <a href="{{ action(\App\Http\Controllers\Competition\ShowCompetitionAction::class, [$competition]) }}"
+               class="btn btn-danger ml-1"
+            >{{ __('app.common.cancel') }}</a>
         </div>
     </form>
 @endsection

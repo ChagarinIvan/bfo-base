@@ -109,4 +109,14 @@ class ProtocolLine extends Model
         }
         return implode('_', $data);
     }
+
+    public function fillProtocolLine(int $distanceId): void
+    {
+        $this->prepared_line = $this->makeIdentLine();
+
+        //чистим разряды
+        $this->rank = Rank::getRank($this->rank) ?? '';
+        $this->complete_rank = Rank::getRank($this->complete_rank) ?? '';
+        $this->distance_id = $distanceId;
+    }
 }

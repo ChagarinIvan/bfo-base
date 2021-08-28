@@ -16,7 +16,10 @@
     <div class="row">
         <h1>{{ __('app.person.edit_title') }}</h1>
     </div>
-    <form class="pt-5" method="POST" action="/persons/{{ $person->id }}/update">
+    <form class="pt-5"
+          method="POST"
+          action="{{ action(\App\Http\Controllers\Person\UpdatePersonAction::class, [$person]) }}"
+    >
         @csrf
         <label>
             <input class="form-control" hidden name="redirect" value="{{ $redirect }}">

@@ -11,6 +11,6 @@ class Show404ErrorAction extends AbstractViewAction
 {
     public function __invoke(): View
     {
-        return $this->viewFactory->make('errors.404');
+        return $this->view('errors.404');
     }
 }

@@ -4,6 +4,7 @@ namespace App\Models\Parser;
 
 use App\Exceptions\ParsingException;
 use App\Models\Group;
+use App\Models\Rank;
 use DOMDocument;
 use DOMXPath;
 use Exception;
@@ -85,7 +86,7 @@ class OBelarusNetRelayWithHeadersParser implements ParserInterface
                     $protocolLine['serial_number'] = $protocolLine['runner_number'];
                     $value = $lineData[$fieldsCount - $indent++ - 1];
 
-                    if (preg_match('#^[КМСCKMIбр\/юЮБРкмсkmc]{1,4}$#s', $value) || in_array($value, ['КМС', 'б/р'], true)) {
+                    if (Rank::validateRank($value)) {
                         $protocolLine['rank'] = $value;
                         $indent++;
                     }

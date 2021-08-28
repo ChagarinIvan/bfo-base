@@ -12,7 +12,7 @@
 
 @extends('layouts.app')
 
-@section('title', Str::limit($cup->name, 20, '...'))
+@section('title', \Illuminate\Support\Str::limit($cup->name, 20, '...'))
 
 @section('content')
     <div class="row">
@@ -26,7 +26,10 @@
             <span class="badge" style="background: {{ \App\Facades\Color::getColor($group->name) }}">{{ $group->name }}</span>
         @endforeach
     </div>
-    <form class="pt-5" method="POST" action="/cups/{{ $cup->id }}/events/{{ $cupEvent->event_id }}/update">
+    <form class="pt-5"
+          method="POST"
+          action="{{ action(\App\Http\Controllers\CupEvents\UpdateCupEventAction::class, [$cup, $cupEvent]) }}"
+    >
         @csrf
         <div class="form-group">
             <label for="event">{{ __('app.event.title') }}</label>
@@ -44,7 +47,9 @@
         </div>
         <div class="row">
             <input type="submit" class="btn btn-primary" value="{{ __('app.common.update') }}">
-            <a href="/cups/{{ $cup->id }}/show" class="btn btn-danger ml-1">{{ __('app.common.cancel') }}</a>
+            <a href="{{ action(\App\Http\Controllers\Cups\ShowCupAction::class, [$cup]) }}"
+               class="btn btn-danger ml-1"
+            >{{ __('app.common.cancel') }}</a>
         </div>
     </form>
 @endsection

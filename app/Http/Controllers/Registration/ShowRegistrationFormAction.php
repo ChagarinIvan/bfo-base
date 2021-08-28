@@ -11,6 +11,6 @@ class ShowRegistrationFormAction extends AbstractViewAction
 {
     public function __invoke(): View
     {
-        return $this->viewFactory->make('auth.registration');
+        return $this->view('auth.registration');
     }
 }

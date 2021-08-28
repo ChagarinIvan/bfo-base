@@ -11,6 +11,6 @@ class ShowLoginFormAction extends AbstractViewAction
 {
     public function __invoke(): View
     {
-        return $this->viewFactory->make('auth.login');
+        return $this->view('auth.login');
     }
 }

@@ -4,6 +4,7 @@ namespace App\Models\Parser;
 
 use App\Exceptions\ParsingException;
 use App\Models\Group;
+use App\Models\Rank;
 use DOMDocument;
 use DOMElement;
 use DOMXPath;
@@ -156,7 +157,7 @@ class SimplyParser implements ParserInterface
         }
         if ($column === 'rank') {
             $rank = $lineData[$fieldsCount - $indent];
-            if (preg_match('#^[КМСCKMIбр\/юЮБРкмсkmc]{1,4}$#s', $rank) || in_array($rank, ['КМС', 'б/р'], true)) {
+            if (Rank::validateRank($rank)) {
                 $indent++;
                 return $rank;
             }

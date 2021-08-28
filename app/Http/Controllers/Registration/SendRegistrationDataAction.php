@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Registration;
 
 use App\Http\Controllers\AbstractRedirectAction;
-use App\Http\Controllers\Login\TokenAuthAction;
+use App\Http\Controllers\Login\MakeNewPasswordByTokenAction;
 use App\Mail\RegistrationUrlMail;
 use Illuminate\Contracts\Mail\Mailer;
 use Illuminate\Contracts\Routing\UrlGenerator;
@@ -36,7 +36,7 @@ class SendRegistrationDataAction extends AbstractRedirectAction
 
         $email = $form['email'];
         $token = $this->encrypter->encrypt($email);
-        $this->mailer->send(new RegistrationUrlMail($email, $this->urlGenerator->action(TokenAuthAction::class, ['token' => $token])));
+        $this->mailer->send(new RegistrationUrlMail($email, $this->urlGenerator->action(MakeNewPasswordByTokenAction::class, ['token' => $token])));
 
         return $this->redirector->to('competitions/y0');
     }
