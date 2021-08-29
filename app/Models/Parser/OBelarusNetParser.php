@@ -4,6 +4,7 @@ namespace App\Models\Parser;
 
 use App\Exceptions\ParsingException;
 use App\Models\Group;
+use App\Models\Rank;
 use DOMDocument;
 use DOMXPath;
 use Exception;
@@ -93,7 +94,7 @@ class OBelarusNetParser implements ParserInterface
                         throw new RuntimeException('Что то не так с номером участника '.$preparedLine);
                     }
                     $rank = $lineData[$fieldsCount - $indent];
-                    if (preg_match('#^[КМСCKMIбр\/юЮБРкмсkmc]{1,4}$#s', $rank) || in_array($rank, ['КМС', 'б/р'], true)) {
+                    if (Rank::validateRank($rank)) {
                         $protocolLine['rank'] = $rank;
                         $indent++;
                     }

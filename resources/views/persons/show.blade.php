@@ -4,6 +4,7 @@
     /**
      * @var Person $person
      * @var Collection $groupedProtocolLines
+     * @var string $backUrl
      */
 @endphp
 
@@ -14,6 +15,12 @@
 @section('content')
     <h3>{{ $person->lastname }} {{ $person->firstname }}</h3>
     <h4>{{ $person->birthday ? $person->birthday->format('Y') : '' }}</h4>
+    <div class="pb-3">
+        <a class="btn btn-success mr-2"
+           href="{{ action(\App\Http\Controllers\Person\ShowPersonRanksAction::class, [$person->id]) }}"
+        >{{ __('app.ranks') }}</a>
+        <a class="btn btn-danger mr-2" href="{{ $backUrl }}">{{ __('app.common.back') }}</a>
+    </div>
     @if($person->protocolLines->count() > 0)
         <table class="table table-bordered table-fixed"
                id="table"
@@ -36,6 +43,8 @@
             <tbody>
             @foreach ($groupedProtocolLines as $year => $lines)
                 @php
+                    use App\Models\ProtocolLine;
+                    use Illuminate\Support\Collection;
                     /** @var ProtocolLine[]|Collection $lines */;
                 @endphp
                 <tr>
@@ -46,11 +55,19 @@
                         /** @var App\Models\ProtocolLine $line */
                     @endphp
                     <tr>
-                        <td><a href="/competitions/{{ $line->distance->event->competition_id }}/show"><u>{{ Str::limit($line->distance->event->competition->name, 20, '...') }}</u></a></td>
                         <td>
-                            <a href="/competitions/events/{{ $line->distance->event->id }}/show#{{ $line->id }}"><u>{{ Str::limit($line->distance->event->name, 20, '...') }}</u></a>
+                            <a href="{{ action(\App\Http\Controllers\Competition\ShowCompetitionAction::class, [$line->distance->event->competition_id]) }}">
+                                <u>{{ \Illuminate\Support\Str::limit($line->distance->event->competition->name, 20, '...') }}</u>
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{{ action(\App\Http\Controllers\Event\ShowEventAction::class, [$line->distance->event->id]) }}#{{ $line->id }}">
+                                <u>{{ \Illuminate\Support\Str::limit($line->distance->event->name, 20, '...') }}</u>
+                            </a>
                             @foreach($line->distance->event->flags as $flag)
-                                <span class="badge" style="background: {{ $flag->color }}"><a href="/flags/{{ $flag->id }}/show-events">{{ $flag->name }}</a></span>
+                                <span class="badge" style="background: {{ $flag->color }}">
+                                    <a href="{{ action(\App\Http\Controllers\Flags\ShowFlagEventsAction::class, [$flag]) }}">{{ $flag->name }}</a>
+                                </span>
                             @endforeach
                         </td>
                         <td>{{ $line->lastname }} {{ $line->firstname }}</td>

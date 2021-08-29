@@ -56,6 +56,7 @@ class AddDistancesTable extends Migration
         });
 
         foreach ($protocolLinesDistances as $protocolId => $distanceId) {
+            /** @var ProtocolLine $protocolLine */
             $protocolLine = ProtocolLine::find($protocolId);
             $protocolLine->distance_id = $distanceId;
             $protocolLine->save();

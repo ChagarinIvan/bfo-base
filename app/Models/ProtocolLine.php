@@ -34,7 +34,7 @@ use Illuminate\Support\Collection;
  * @property-read Group $group
  * @property-read Distance $distance
  * @property-read Person|null $person
- * @method static Builder|ProtocolLine|ProtocolLine[]|Collection find(mixed $ids)
+ * @method static Collection find(mixed $ids)
  * @method static ProtocolLine[]|Collection get(array $columns = ['*'])
  * @method static Builder|ProtocolLine whereDistanceId(int $distanceId)
  * @method static Builder|ProtocolLine wherePreparedLine(string $value)
@@ -108,5 +108,15 @@ class ProtocolLine extends Model
             $data[] = $this->year;
         }
         return implode('_', $data);
+    }
+
+    public function fillProtocolLine(int $distanceId): void
+    {
+        $this->prepared_line = $this->makeIdentLine();
+
+        //чистим разряды
+        $this->rank = Rank::getRank($this->rank) ?? '';
+        $this->complete_rank = Rank::getRank($this->complete_rank) ?? '';
+        $this->distance_id = $distanceId;
     }
 }

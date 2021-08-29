@@ -15,7 +15,7 @@
     <div class="row">
         <h1>{{ __('app.cup.add') }}</h1>
     </div>
-    <form class="pt-5" method="POST" action="/cups/store">
+    <form class="pt-5" method="POST" action="{{ \App\Http\Controllers\Cups\StoreCupAction::class }}">
         @csrf
         <div class="form-group">
             <label for="name">{{ __('app.cup.name') }}</label>
@@ -46,14 +46,16 @@
             <select class="selectpicker form-control" multiple data-live-search="true" id="groups" name="groups[]'">
                 @foreach($groups as $group)
                     <option value="{{ $group->id }}"
-                            data-content="<span class='badge' style='background: {{ \Color::getColor($group->name) }}'
+                            data-content="<span class='badge' style='background: {{ \App\Facades\Color::getColor($group->name) }}'
                     >{{ $group->name }}</span>">{{ $group->name }}</option>
                 @endforeach
             </select>
         </div>
         <div class="row">
             <input type="submit" class="btn btn-primary" value="{{ __('app.common.create') }}">
-            <a href="/cups/y{{ $selectedYear }}" class="btn btn-danger ml-1">{{ __('app.common.cancel') }}</a>
+            <a href="{{ action(\App\Http\Controllers\Cups\ShowCupsListAction::class, [$selectedYear]) }}"
+               class="btn btn-danger ml-1"
+            >{{ __('app.common.cancel') }}</a>
         </div>
     </form>
 @endsection

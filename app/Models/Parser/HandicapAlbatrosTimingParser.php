@@ -4,6 +4,7 @@ namespace App\Models\Parser;
 
 use App\Exceptions\ParsingException;
 use App\Models\Group;
+use App\Models\Rank;
 use DOMDocument;
 use DOMXPath;
 use Exception;
@@ -85,7 +86,7 @@ class HandicapAlbatrosTimingParser implements ParserInterface
                     }
                     if ($withCompletedRank) {
                         $protocolLine['complete_rank'] = $lineData[$fieldsCount - $indent++];
-                        if (!preg_match('#^[КМСCKMIбр\/юЮБРкмсkmc]{1,4}$#s', $protocolLine['complete_rank']) && !in_array($protocolLine['complete_rank'], ['КМС', 'б/р'], true)) {
+                        if (!Rank::validateRank($protocolLine['complete_rank'])) {
                             $protocolLine['complete_rank'] = '';
                         }
                     }

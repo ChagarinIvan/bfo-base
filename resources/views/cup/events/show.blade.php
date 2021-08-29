@@ -13,19 +13,21 @@
 
 @extends('layouts.app')
 
-@section('title', Str::limit($cup->name.' '.$cupEvent->event->competition->name, 20, '...'))
+@section('title', \Illuminate\Support\Str::limit($cup->name.' '.$cupEvent->event->competition->name, 20, '...'))
 
 @section('content')
     <div class="row"><h1>{{ $cup->name }}</h1></div>
     <div class="row"><h2>{{ $cupEvent->event->competition->name }}</h2></div>
     <div class="row"><h3>{{ $cupEvent->event->name }}</h3></div>
     <div class="row pt-5">
-        <a class="btn btn-danger mr-2" href="/cups/{{ $cup->id }}/show">{{ __('app.common.back') }}</a>
+        <a class="btn btn-danger mr-2"
+           href="{{ action(\App\Http\Controllers\Cups\ShowCupAction::class, [$cup]) }}"
+        >{{ __('app.common.back') }}</a>
     </div>
     <ul class="nav nav-tabs pt-2">
         @foreach($cup->groups as $group)
             <li class="nav-item">
-                <a href="/cups/{{ $cup->id }}/events/{{ $cupEvent->event_id }}/show/{{ $group->id }}"
+                <a href="{{ action(\App\Http\Controllers\CupEvents\ShowCupEventGroupAction::class, [$cup, $cupEvent, $cup->groups->first()]) }}"
                    class="nav-link {{ $groupId === $group->id ? 'active' : ''}}"
                 >{{ $group->name }}</a>
             </li>
@@ -48,7 +50,7 @@
                     <tr>
                         <td>{{ ++$index }}</td>
                         <td>
-                            <a href="/persons/{{ $cupEventPoint->protocolLine->person_id }}/show">
+                            <a href="{{ action(\App\Http\Controllers\Person\ShowPersonAction::class, [$cupEventPoint->protocolLine->person_id]) }}">
                                 <u>{{ $cupEventPoint->protocolLine->lastname }} {{ $cupEventPoint->protocolLine->firstname }}</u>
                             </a>
                         </td>

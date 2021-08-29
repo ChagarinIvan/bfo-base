@@ -14,7 +14,11 @@
     <div class="row">
         <h1>{{ __('app.event.add') }}</h1>
     </div>
-    <form class="pt-5" method="POST" action="/competitions/{{ $competitionId }}/events/store" enctype="multipart/form-data">
+    <form class="pt-5"
+          method="POST"
+          action="{{ action(\App\Http\Controllers\Event\StoreEventAction::class, [$competitionId]) }}"
+          enctype="multipart/form-data"
+    >
         @csrf
         <div class="form-group">
             <label for="name">{{ __('app.common.title') }}</label>
@@ -35,7 +39,9 @@
         </div>
         <div class="row">
             <input type="submit" class="btn btn-primary" value="{{ __('app.common.create') }}">
-            <a href="/competitions/{{ $competitionId }}/show" class="btn btn-danger ml-1">{{ __('app.common.cancel') }}</a>
+            <a href="{{ action(\App\Http\Controllers\Competition\ShowCompetitionAction::class, [$competitionId]) }}"
+               class="btn btn-danger ml-1"
+            >{{ __('app.common.cancel') }}</a>
         </div>
     </form>
 @endsection

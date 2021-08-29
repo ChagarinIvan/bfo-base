@@ -17,17 +17,19 @@
 
 @extends('layouts.app')
 
-@section('title', Str::limit($cup->name, 20, '...'))
+@section('title', \Illuminate\Support\Str::limit($cup->name, 20, '...'))
 
 @section('content')
     <div class="row"><h1>{{ $cup->name }}</h1></div>
     <div class="row">
-        <a class="btn btn-danger mr-2" href="/cups/{{ $cup->id }}/show">{{ __('app.common.back') }}</a>
+        <a class="btn btn-danger mr-2"
+           href="{{ action(\App\Http\Controllers\Cups\ShowCupAction::class, [$cup]) }}"
+        >{{ __('app.common.back') }}</a>
     </div>
     <ul class="nav nav-tabs pt-2">
         @foreach($cup->groups as $group)
             <li class="nav-item">
-                <a href="/cups/{{ $cup->id }}/table/{{ $group->id }}"
+                <a href="{{ action(\App\Http\Controllers\Cups\ShowCupTableAction::class, [$cup, $group]) }}"
                    class="nav-link {{ $activeGroup->id === $group->id ? 'active' : ''}}"
                 >{{ $group->name }}</a>
             </li>
@@ -41,7 +43,11 @@
                     <th scope="col"></th>
                     <th scope="col">{{ __('app.common.fio') }}</th>
                     @foreach($events as $event)
-                        <th scope="col"><a href="/competitions/events/{{ $event->event_id }}/show#{{ $activeGroup->name }}"><u>{{ $event->event->date->format('Y-m-d') }}</u></a></th>
+                        <th scope="col">
+                            <a href="{{ action(\App\Http\Controllers\Event\ShowEventAction::class,[$event->event_id]) }}#{{ $activeGroup->name }}">
+                                <u>{{ $event->event->date->format('Y-m-d') }}</u>
+                            </a>
+                        </th>
                     @endforeach
                     <th scope="col">{{ __('app.common.points') }}</th>
                     <th scope="col">{{ __('app.common.place') }}</th>
@@ -56,7 +62,13 @@
                     @endphp
                     <tr>
                         <td>{{ $place }}</td>
-                        <td><a href="/persons/{{ $person->id }}/show"><b><u>{{ $person->lastname.' '.$person->firstname }}</u></b></a></td>
+                        <td>
+                            <a href="{{ action(\App\Http\Controllers\Person\ShowPersonAction::class, [$person]) }}">
+                                <b>
+                                    <u>{{ $person->lastname.' '.$person->firstname }}</u>
+                                </b>
+                            </a>
+                        </td>
                         @foreach($events as $event)
                             @php
                                 $find = false;
@@ -84,13 +96,13 @@
                                         $sum += $cupEventPoint->points;
                                     @endphp
                                     <td>
-                                        <a href="/competitions/events/{{ $event->event_id }}/show#{{ $cupEventPoint->protocolLine->id }}">
+                                        <a href="{{ action(\App\Http\Controllers\Event\ShowEventAction::class,[$event->event_id]) }}#{{ $cupEventPoint->protocolLine->id }}">
                                             <u><b class="text-info">{{ $cupEventPoint->points }}</b></u>
                                         </a>
                                     </td>
                                 @else
                                     <td>
-                                        <a href="/competitions/events/{{ $event->event_id }}/show#{{ $cupEventPoint->protocolLine->id }}">
+                                        <a href="{{ action(\App\Http\Controllers\Event\ShowEventAction::class,[$event->event_id]) }}#{{ $cupEventPoint->protocolLine->id }}">
                                             <u>{{ $cupEventPoint->points }}</u>
                                         </a>
                                     </td>

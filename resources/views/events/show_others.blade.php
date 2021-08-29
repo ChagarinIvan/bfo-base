@@ -24,11 +24,11 @@
                 @endphp
                 @if($hasPerson)
                     @php
-                        $link = "/persons/{$line->person_id}/show";
+                        $link = action(\App\Http\Controllers\Person\ShowPersonAction::class, [$line->person_id]);
                     @endphp
                     <td><a href="{{ $link }}"><u>{{ $line->lastname }}</u></a>&nbsp;
                         @auth
-                            <a href="/protocol-lines/{{ $line->id }}/edit-person">
+                            <a href="{{ action(\App\Http\Controllers\Person\ShowSetPersonToProtocolLineAction::class, [$line]) }}">
                                 <span class="badge rounded-pill bg-warning">{{ __('app.common.edit') }}</span>
                             </a>
                         @endauth
@@ -37,7 +37,7 @@
                 @else
                     <td>{{ $line->lastname }}&nbsp;
                         @auth
-                            <a href="/protocol-lines/{{ $line->id }}/edit-person">
+                            <a href="{{ action(\App\Http\Controllers\Person\ShowSetPersonToProtocolLineAction::class, [$line]) }}">
                                 <span class="badge rounded-pill bg-danger">{{ __('app.common.new') }}</span>
                             </a>
                         @endauth
@@ -45,7 +45,11 @@
                     <td>{{ $line->firstname }}</td>
                 @endif
                 @if($hasPerson && $line->club === ($line->person->club->name ?? ''))
-                    <td><a href="/club/{{ $line->person->club_id }}/show"><u>{{ ($line->club) }}</u></a></td>
+                    <td>
+                        <a href="{{ action(\App\Http\Controllers\Cups\ShowCupAction::class, [$line->person->club_id]) }}">
+                            <u>{{ ($line->club) }}</u>
+                        </a>
+                    </td>
                 @else
                     <td>{{ ($line->club) }}</td>
                 @endif

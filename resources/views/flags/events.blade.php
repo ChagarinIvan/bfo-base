@@ -11,7 +11,7 @@
 
 @extends('layouts.app')
 
-@section('title', Str::limit($flag->name, 20, '...'))
+@section('title', \Illuminate\Support\Str::limit($flag->name, 20, '...'))
 
 @section('content')
     <div class="row">
@@ -32,14 +32,20 @@
             <tbody>
             @foreach ($events as $event)
                 <tr>
-                    <td><a href="/competitions/{{ $event->competition->id }}/show">{{ $event->competition->name }}</a></td>
-                    <td><a href="/competitions/events/{{ $event->id }}/show">{{ $event->name }}</a></td>
-                    <td><small>{{ Str::limit($event->description, 100, '...') }}</small></td>
+                    <td>
+                        <a href="{{ action(\App\Http\Controllers\Competition\ShowCompetitionAction::class, [$event->competition]) }}">{{ $event->competition->name }}</a>
+                    </td>
+                    <td>
+                        <a href="{{ action(\App\Http\Controllers\Event\ShowEventAction::class, [$event->id]) }}">{{ $event->name }}</a>
+                    </td>
+                    <td><small>{{ \Illuminate\Support\Str::limit($event->description, 100, '...') }}</small></td>
                     <td>{{ $event->date->format('Y-m-d') }}</td>
                     <td>{{ count($event->protocolLines) }}</td>
                     @auth
                         <td>
-                            <a href="/competitions/events/{{ $event->id }}/add-flags" class="text-info">{{ __('app.common.add_flags') }}</a>
+                            <a href="{{ action(\App\Http\Controllers\Event\ShowAddFlagToEventFormAction::class, [$event]) }}"
+                               class="text-info"
+                            >{{ __('app.common.add_flags') }}</a>
                         </td>
                     @endauth
                 </tr>

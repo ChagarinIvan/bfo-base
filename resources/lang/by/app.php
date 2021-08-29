@@ -27,6 +27,10 @@ return [
         'length' => 'км',
         'points' => 'КП',
     ],
+    'ranks' => 'Разрады',
+    'rank' => [
+        'completed_date' => 'Дата выканання',
+    ],
     'common' => [
         'name' => 'Імя',
         'lastname' => 'Прозвішча',
@@ -64,6 +68,7 @@ return [
         'time' => 'Час',
         'type' => 'Тып',
         'sum' => 'Аб\'яднаць',
+        'do' => 'да',
     ],
     'competition' => [
         'title' => 'Спаборніцтвы',

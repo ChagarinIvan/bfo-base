@@ -12,7 +12,10 @@
     <div class="row">
         <h1>{{ __('app.competition.add') }}</h1>
     </div>
-    <form class="pt-5" method="POST" action="/competitions/store">
+    <form class="pt-5"
+          method="POST"
+          action="{{ action(\App\Http\Controllers\Competition\StoreCompetitionAction::class) }}"
+    >
         @csrf
         <div class="form-group">
             <label for="name">{{ __('app.competition.name') }}</label>
@@ -36,7 +39,9 @@
         </div>
         <div class="row">
             <input type="submit" class="btn btn-primary" value="{{ __('app.common.create') }}">
-            <a href="/competitions/y{{ $year }}" class="btn btn-danger ml-1">{{ __('app.common.cancel') }}</a>
+            <a href="{{ action(\App\Http\Controllers\Competition\ShowCompetitionsListAction::class, [$year]) }}"
+               class="btn btn-danger ml-1"
+            >{{ __('app.common.cancel') }}</a>
         </div>
     </form>
 @endsection

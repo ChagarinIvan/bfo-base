@@ -4,6 +4,7 @@ namespace App\Models\Parser;
 
 use App\Exceptions\ParsingException;
 use App\Models\Group;
+use App\Models\Rank;
 use DOMDocument;
 use DOMXPath;
 use Exception;
@@ -11,7 +12,6 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
 use RuntimeException;
-use function PHPUnit\Framework\stringContains;
 
 class OBelarusNetRelayParser implements ParserInterface
 {
@@ -123,7 +123,7 @@ class OBelarusNetRelayParser implements ParserInterface
                             throw new RuntimeException('Что то не так с номером участника ' . $preparedLine);
                         }
                         $rank = $lineData[$fieldsCount - $indent];
-                        if (preg_match('#^[КМСCKMIбр\/юЮБРкмсkmc]{1,4}$#s', $rank) || in_array($rank, ['КМС', 'б/р'], true)) {
+                        if (Rank::validateRank($rank)) {
                             $protocolLine['rank'] = $rank;
                             $indent++;
                         }
@@ -232,7 +232,7 @@ class OBelarusNetRelayParser implements ParserInterface
 
     public function check(UploadedFile $file): bool
     {
-        return preg_match('#<b>\d#', $file->get());
+        return (bool)preg_match('#<b>\d#', $file->get());
     }
 
     private function parseByHeader(string $header, string $value, array &$protocolLine): bool
@@ -270,14 +270,14 @@ class OBelarusNetRelayParser implements ParserInterface
             if ($this->commandCounter > 0) {
                 return false;
             }
-            if (preg_match('#^[КМСCKMIбр\/юЮБРкмсkmc]{1,4}$#s', $value) || in_array($value, ['КМС', 'б/р'], true)) {
+            if (Rank::validateRank($value)) {
                 $protocolLine['complete_rank'] = $value;
                 $this->commandRank = $value;
             }
             return true;
         }
         if ($header === 'Квал') {
-            if (preg_match('#^[КМСCKMIбр\/юЮБРкмсkmc]{1,4}$#s', $value) || in_array($value, ['КМС', 'б/р', 'IIIю'], true)) {
+            if (Rank::validateRank($value)) {
                 $protocolLine['rank'] = $value;
                 return true;
             }

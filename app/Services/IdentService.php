@@ -56,6 +56,22 @@ class IdentService
     ];
 
     /**
+     * Запускаем процесс идентификации людей в строчках протокола
+     * состоит из 2 частей:
+     * - по прямому совпадению идентификатора (на лету)
+     * - по расстоянию левенштейна (в очередь)
+     *
+     * @param Collection $protocolLines
+     */
+    public function identPersons(Collection $protocolLines): void
+    {
+        // пробуем идентифицировать людей из нового протокола прямым подобием идентификационных строк
+        $protocolLines = $this->simpleIdent($protocolLines);
+        $protocolLines = $protocolLines->pluck('prepared_line')->unique();
+        $this->pushIdentLines($protocolLines);
+    }
+
+    /**
      * Идентификация прямым запросом в базу на поиск линий протокола,
      * с такой же "идентификационной" строкой и имеющимся person_id.
      *

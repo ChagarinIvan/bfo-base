@@ -78,8 +78,8 @@ class Event extends Model
         return $this->belongsToMany(Flag::class, 'event_flags');
     }
 
-    public function groups(): Collection
+    public function ranks(): HasMany
     {
-        return Group::find(Distance::with(['group'])->whereEventId($this->id)->get()->pluck('group_id'));
+        return $this->hasMany(Rank::class);
     }
 }

@@ -15,13 +15,15 @@
     <h3 id="up">{{ __('app.competition.title') }}</h3>
     @auth
         <div class="row pt-5">
-            <a class="btn btn-success mr-2" href="/competitions/y{{ $selectedYear }}/create">{{ __('app.competition.add_competition') }}</a>
+            <a class="btn btn-success mr-2"
+               href="{{ action(\App\Http\Controllers\Competition\ShowCreateCompetitionFormAction::class, [$selectedYear]) }}"
+            >{{ __('app.competition.add_competition') }}</a>
         </div>
     @endauth
     <ul class="nav nav-tabs pt-2">
         @foreach($years as $year)
             <li class="nav-item">
-                <a href="/competitions/y{{ $year }}"
+                <a href="{{ action(\App\Http\Controllers\Competition\ShowCompetitionsListAction::class, [$year]) }}"
                    class="nav-link {{ $year === $selectedYear ? 'active' : '' }}"
                 >{{ $year }}</a>
             </li>
@@ -42,13 +44,16 @@
                 @foreach ($competitions as $competition)
                     <tr>
                         <td>
-                            <a href="/competitions/{{$competition->id}}/show">{{ $competition->name }}</a>
+                            <a href="{{ action(\App\Http\Controllers\Competition\ShowCompetitionAction::class, [$competition->id]) }}"
+                            >{{ $competition->name }}</a>
                         </td>
                         <td>{{ $competition->from->format('d.m.Y') }} - {{ $competition->to->format('d.m.Y') }}</td>
-                        <td><small>{{ Str::limit($competition->description, 100, '...') }}</small></td>
+                        <td><small>{{ \Illuminate\Support\Str::limit($competition->description, 100, '...') }}</small></td>
                         @auth
                             <td>
-                                <a href="/competitions/y{{ $selectedYear }}/delete/{{ $competition->id }}" class="text-danger">{{ __('app.common.delete') }}</a>
+                                <a href="{{ action(\App\Http\Controllers\Competition\DeleteCompetitionAction::class, [$selectedYear, $competition->id]) }}"
+                                   class="text-danger"
+                                >{{ __('app.common.delete') }}</a>
                             </td>
                         @endauth
                     </tr>

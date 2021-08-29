@@ -25,10 +25,11 @@ use Illuminate\Support\Collection;
  * @property Club $club
  * @property PersonPrompt[]|Collection $prompts
  * @property PersonPayment[]|Collection $payments
+ * @property Rank[]|Collection $ranks
  * @method static Person|Builder find(mixed $ids)
  * @method static Person|Builder with(mixed $ids)
  * @method static Person|Builder orderBy(string $column)
- * @method static Person|Builder where(string $column, string $operator, string|int $value)
+ * @method static Person|Builder where(mixed ...$params)
  * @method static Person|Builder whereIn(string $column, array|Collection $value)
  * @method static Person|Builder whereClubId(int $clubId)
  * @method static Person|Builder whereFirstname(string $firstname)
@@ -62,6 +63,11 @@ class Person extends Model
     public function payments(): HasMany
     {
         return $this->hasMany(PersonPayment::class);
+    }
+
+    public function ranks(): HasMany
+    {
+        return $this->hasMany(Rank::class);
     }
 
     public function club(): HasOne

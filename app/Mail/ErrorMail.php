@@ -24,7 +24,10 @@ class ErrorMail extends Mailable
     public function build(): self
     {
         $event = $this->error->getEvent();
-        $competition = Competition::find($event->competition_id);
+        if ($event !== null) {
+            $competition = Competition::find($event->competition_id);
+        }
+
         $email = 'Chagarin.Ivan@gmail.com';
 
         return $this->from('Chagarin_Ivan@tut.by')
@@ -33,8 +36,8 @@ class ErrorMail extends Mailable
             ->subject('Parsing error')
             ->view('emails.error')
             ->with([
-                'eventName' => $event->name,
-                'competitionName' => $competition->name,
+                'eventName' => $event === null ? '' : $event->name,
+                'competitionName' => isset($competition) ? $competition->name : '',
                 'error' => $this->error->getMessage(),
             ]);
     }

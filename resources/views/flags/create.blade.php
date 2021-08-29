@@ -6,7 +6,11 @@
     <div class="row">
         <h1>{{ __('app.flags.create.title') }}</h1>
     </div>
-    <form class="pt-5" method="POST" action="/flags/store" enctype="multipart/form-data">
+    <form class="pt-5"
+          method="POST"
+          action="{{ action(\App\Http\Controllers\Flags\StoreFlagAction::class) }}"
+          enctype="multipart/form-data"
+    >
         @csrf
         <div class="form-group">
             <label for="name">{{ __('app.flags.name') }}</label>

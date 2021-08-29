@@ -15,7 +15,7 @@ use Illuminate\Support\Collection;
  * @property string $name
  * @property ProtocolLine[] $lines
  * @property-read int|null $lines_count
- * @method static Builder|Group|Collection find(mixed $id)
+ * @method static Collection find(mixed $id)
  * @method static Builder|Group newModelQuery()
  * @method static Builder|Group newQuery()
  * @method static Builder|Group query()
@@ -314,7 +314,7 @@ class Group extends Model
         return [];
     }
 
-    public function years(): string
+    public function years(): int
     {
         if (preg_match('#\d+#', $this->name, $match)) {
             return (int)$match[0];
@@ -329,6 +329,7 @@ class Group extends Model
 
     public function isPreviousGroup(int $groupId): bool
     {
+        /** @var Group $group */
         $group = Group::find($groupId);
         return self::NEXT_GROUPS[$this->name] === $group->name;
     }

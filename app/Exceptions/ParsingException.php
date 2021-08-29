@@ -7,15 +7,15 @@ namespace App\Exceptions;
 use App\Mail\ErrorMail;
 use App\Models\Event;
 use Exception;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Contracts\Mail\Mailer;
 
 class ParsingException extends Exception
 {
     private ?Event $event;
 
-    public function report()
+    public function report(Mailer $mailer)
     {
-        Mail::send(new ErrorMail($this));
+        $mailer->send(new ErrorMail($this));
     }
 
     /**
@@ -26,7 +26,7 @@ class ParsingException extends Exception
         $this->event = $event;
     }
 
-    public function getEvent(): Event
+    public function getEvent(): ?Event
     {
         return $this->event;
     }

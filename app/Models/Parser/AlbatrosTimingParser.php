@@ -4,6 +4,7 @@ namespace App\Models\Parser;
 
 use App\Exceptions\ParsingException;
 use App\Models\Group;
+use App\Models\Rank;
 use DOMDocument;
 use DOMXPath;
 use Exception;
@@ -76,10 +77,7 @@ class AlbatrosTimingParser implements ParserInterface
                         $protocolLine['points'] = is_numeric($points) ? (int)$points : null;
                     }
                     $completeRank = $lineData[$fieldsCount - $indent];
-                    if (
-                        preg_match('#^[КМСCKMIбр\/юЮБРкмсkmc]{1,4}$#s', $completeRank) ||
-                        in_array($completeRank, ['КМС', 'б/р', '-'], true)
-                    ) {
+                    if (Rank::validateRank($completeRank) || $completeRank === '-') {
                         $protocolLine['complete_rank'] = $completeRank;
                         $indent++;
                     }

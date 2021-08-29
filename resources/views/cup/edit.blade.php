@@ -18,7 +18,10 @@
     <div class="row pr-2">
         <h1>{{ __('app.cup.edit') }}</h1>
     </div>
-    <form class="pt-5" method="POST" action="/cups/{{ $cup->id }}/update">
+    <form class="pt-5"
+          method="POST"
+          action="{{ action(\App\Http\Controllers\Cups\UpdateCupAction::class, [$cup]) }}"
+    >
         @csrf
         <div class="form-group">
             <label for="name">{{ __('app.cup.name') }}</label>
@@ -53,7 +56,7 @@
                 @foreach($groups as $group)
                     <option value="{{ $group->id }}"
                             {{ in_array($group->id, $selectedGroups, true) ? 'selected' : '' }}
-                            data-content="<span class='badge' style='background: {{ \Color::getColor($group->name) }}'
+                            data-content="<span class='badge' style='background: {{ \App\Facades\Color::getColor($group->name) }}'
                     >{{ $group->name }}</span>">{{ $group->name }}</option>
                 @endforeach
             </select>

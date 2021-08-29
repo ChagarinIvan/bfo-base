@@ -14,13 +14,13 @@
     <h3>{{ __('app.navbar.clubs') }}</h3>
     <div class="row pt-5">
         <div class="col-sm-10">
-            <form class="form-inline" action="/club">
+            <form class="form-inline" action="{{ action(\App\Http\Controllers\Club\ShowClubsListAction::class) }}">
                 <div class="form-group mr-1">
                     <input type="text" class="form-control" id="search" name="search" value="{{ $search }}">
                 </div>
                 <button type="submit" class="btn btn-primary mr-1">{{ __('app.common.search') }}</button>
                 @if($search !== '')
-                    <a type="submit" href="/club" class="btn btn-danger">{{ __('app.common.cancel') }}</a>
+                    <a type="submit" href="{{ action(\App\Http\Controllers\Club\ShowClubsListAction::class) }}" class="btn btn-danger">{{ __('app.common.cancel') }}</a>
                 @endif
             </form>
         </div>
@@ -36,7 +36,11 @@
             <tbody>
             @foreach ($clubs as $club)
                 <tr>
-                    <td><a href="/club/{{ $club->id }}/show">{{ $club->name }}</a></td>
+                    <td>
+                        <a href="{{ action(\App\Http\Controllers\Club\ShowClubAction::class, [$club->id]) }}">
+                            {{ $club->name }}
+                        </a>
+                    </td>
                     <td>{{ $club->persons->count() }}</td>
                 </tr>
             @endforeach
@@ -47,17 +51,28 @@
         <nav aria-label="Page navigation example">
             <ul class="pagination">
                 @if(!$clubs->onFirstPage())
-                    <li class="page-item"><a class="page-link" href="/club?search={{ $search }}">1</a></li>
+                    <li class="page-item">
+                        <a class="page-link"
+                           href="{{ action(\App\Http\Controllers\Club\ShowClubsListAction::class, ['search' => $search]) }}"
+                        >1</a>
+                    </li>
                 @endif
                 @if($clubs->previousPageUrl() !== null)
-                    <li class="page-item"><a class="page-link" href="{{ $clubs->previousPageUrl() }}&search={{ $search }}">{{ __('pagination.previous') }}</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="{{ $clubs->previousPageUrl() }}&search={{ $search }}">{{ __('pagination.previous') }}</a>
+                    </li>
                 @endif
-                <li class="page-item active"><a class="page-link" href="#">{{ $clubs->currentPage() }} <span class="sr-only">(current)</span></a></li>
+                <li class="page-item active">
+                    <a class="page-link" href="#">{{ $clubs->currentPage() }} <span class="sr-only">(current)</span></a></li>
                 @if($clubs->nextPageUrl() !== null)
                     <li class="page-item"><a class="page-link" href="{{ $clubs->nextPageUrl() }}&search={{ $search }}">{{ __('pagination.next') }}</a></li>
                 @endif
                 @if($clubs->lastPage() !== $clubs->currentPage())
-                    <li class="page-item"><a class="page-link" href="/club?page={{ $clubs->lastPage() }}&search={{ $search }}">{{ $clubs->lastPage() }}</a></li>
+                    <li class="page-item">
+                        <a class="page-link"
+                           href="{{ action(\App\Http\Controllers\Club\ShowClubsListAction::class, ['search' => $search, 'page' => $clubs->lastPage(),]) }}"
+                        >{{ $clubs->lastPage() }}</a>
+                    </li>
                 @endif
             </ul>
         </nav>
