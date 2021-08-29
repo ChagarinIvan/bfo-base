@@ -8,13 +8,24 @@ use App\Http\Controllers\AbstractRedirectAction;
 use App\Models\Person;
 use App\Models\PersonPrompt;
 use App\Models\ProtocolLine;
+use App\Services\BackUrlService;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Session;
+use Illuminate\Routing\Redirector;
 
 class SetProtocolLinePersonAction extends AbstractRedirectAction
 {
-    public function __invoke(ProtocolLine $protocolLine, Person $person): RedirectResponse
+    private BackUrlService $backUrlService;
+
+    public function __construct(Redirector $redirector, BackUrlService $backUrlService)
     {
+        parent::__construct($redirector);
+        $this->backUrlService = $backUrlService;
+    }
+
+    public function __invoke(Person $person, int $protocolLineId): RedirectResponse
+    {
+        /** @var ProtocolLine $protocolLine */
+        $protocolLine = ProtocolLine::find($protocolLineId);
         $oldPersonId = $protocolLine->person_id;
         $preparedLine = $protocolLine->prepared_line;
 
@@ -44,9 +55,6 @@ class SetProtocolLinePersonAction extends AbstractRedirectAction
             Person::destroy($oldPersonId);
         };
 
-        $url = Session::get('prev_url');
-        Session::forget('prev_url');
-
-        return $this->redirector->to($url);
+        return $this->redirector->to($this->backUrlService->pop());
     }
 }

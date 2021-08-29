@@ -2,15 +2,15 @@
 
 namespace App\Models\Cups;
 
-class SprintCupType extends EliteCupType
+class BikeCupType extends EliteCupType
 {
     public function getId(): string
     {
-        return CupType::SPRINT;
+        return CupType::BIKE;
     }
 
     public function getName(): string
     {
-        return 'Спринтерский';
+        return 'Вело';
     }
 }

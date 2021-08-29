@@ -15,7 +15,7 @@ class CupType
         self::SPRINT => SprintCupType::class,
         self::ELITE => EliteCupType::class,
         self::MASTER => MasterCupType::class,
-//        self::BIKE => EliteCupType::class,
+        self::BIKE => BikeCupType::class,
 //        self::JUNIORS => EliteCupType::class,
 //        self::YOUTH => EliteCupType::class,
     ];

@@ -39,9 +39,7 @@
         </div>
         <div class="row">
             <input type="submit" class="btn btn-primary" value="{{ __('app.common.create') }}">
-            <a href="{{ action(\App\Http\Controllers\Competition\ShowCompetitionAction::class, [$competitionId]) }}"
-               class="btn btn-danger ml-1"
-            >{{ __('app.common.cancel') }}</a>
+            <a href="{{ action(\App\Http\Controllers\BackAction::class) }}" class="btn btn-danger ml-1">{{ __('app.common.cancel') }}</a>
         </div>
     </form>
 @endsection

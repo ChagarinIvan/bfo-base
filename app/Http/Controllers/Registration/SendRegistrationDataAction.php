@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Registration;
 
 use App\Http\Controllers\AbstractRedirectAction;
+use App\Http\Controllers\Competition\ShowCompetitionsListAction;
 use App\Http\Controllers\Login\MakeNewPasswordByTokenAction;
 use App\Mail\RegistrationUrlMail;
+use App\Models\Year;
 use Illuminate\Contracts\Mail\Mailer;
 use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Encryption\Encrypter;
@@ -38,6 +40,6 @@ class SendRegistrationDataAction extends AbstractRedirectAction
         $token = $this->encrypter->encrypt($email);
         $this->mailer->send(new RegistrationUrlMail($email, $this->urlGenerator->action(MakeNewPasswordByTokenAction::class, ['token' => $token])));
 
-        return $this->redirector->to('competitions/y0');
+        return $this->redirector->action(ShowCompetitionsListAction::class, [Year::actualYear()]);
     }
 }

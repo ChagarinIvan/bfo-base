@@ -20,7 +20,7 @@
     <div class="row">
         <div class="col-sm-10">
             <form class="form-inline"
-                  action="{{ action(\App\Http\Controllers\Person\ShowSetPersonToProtocolLineAction::class, [$protocolLine]) }}"
+                  action="{{ action(\App\Http\Controllers\Person\ShowSetPersonToProtocolLineAction::class, [$protocolLine->id]) }}"
             >
                 <div class="form-group mr-1">
                     <input type="text" class="form-control" id="search" name="search" value="{{ $search }}">
@@ -28,7 +28,7 @@
                 <button type="submit" class="btn btn-primary mr-1">{{ __('app.common.search') }}</button>
                 @if ($search !== '')
                     <a type="submit"
-                       href="{{ action(\App\Http\Controllers\Person\ShowSetPersonToProtocolLineAction::class, [$protocolLine]) }}"
+                       href="{{ action(\App\Http\Controllers\BackAction::class) }}"
                        class="btn btn-danger"
                     >{{ __('app.common.cancel') }}</a>
                 @endif
@@ -48,7 +48,7 @@
             <tbody>
             @foreach ($persons as $person)
                 @php
-                    $link = action(\App\Http\Controllers\Person\SetProtocolLinePersonAction::class, [$protocolLine, $person]);
+                    $link = action(\App\Http\Controllers\Person\SetProtocolLinePersonAction::class, [$person, $protocolLine->id]);
                 @endphp
                 <tr>
                     <td><a href="{{ $link }}">{{ $person->lastname }}</a></td>
@@ -66,7 +66,7 @@
                 @if(!$persons->onFirstPage())
                     <li class="page-item">
                         <a class="page-link"
-                           href="{{ action(\App\Http\Controllers\Person\ShowSetPersonToProtocolLineAction::class, ['search' => $search, $protocolLine]) }}"
+                           href="{{ action(\App\Http\Controllers\Person\ShowSetPersonToProtocolLineAction::class, ['search' => $search, 'protocol' => $protocolLine]) }}"
                         >1</a>
                     </li>
                 @endif
@@ -88,7 +88,11 @@
                 @if($persons->lastPage() !== $persons->currentPage())
                     <li class="page-item">
                         <a class="page-link"
-                           href="{{ action(\App\Http\Controllers\Person\ShowSetPersonToProtocolLineAction::class, ['page' => $persons->lastPage(), 'search' => $search, $protocolLine,]) }}"
+                           href="{{ action(\App\Http\Controllers\Person\ShowSetPersonToProtocolLineAction::class, [
+                               'page' => $persons->lastPage(),
+                               'search' => $search,
+                               'protocol' => $protocolLine,
+                           ]) }}"
                         >{{ $persons->lastPage() }}</a>
                     </li>
                 @endif

@@ -23,4 +23,9 @@ class ShowCompetitionsListAction extends AbstractCompetitionViewAction
             'selectedYear' => $year,
         ]);
     }
+
+    protected function isNavbarRoute(): bool
+    {
+        return true;
+    }
 }

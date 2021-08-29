@@ -39,13 +39,11 @@
         </div>
         <div class="form-group">
             <label for="points">{{ __('app.common.points') }}</label>
-            <input class="form-control" id="points" name="points" value="{{ \App\Http\Controllers\CupCupEventController::DEFAULT_POINTS }}">
+            <input class="form-control" id="points" name="points" value="{{ 1000 }}">
         </div>
         <div class="row">
             <input type="submit" class="btn btn-primary" value="{{ __('app.common.new') }}">
-            <a href="{{ action(\App\Http\Controllers\Cups\ShowCupAction::class, [$cup]) }}"
-               class="btn btn-danger ml-1"
-            >{{ __('app.common.cancel') }}</a>
+            <a href="{{ action(\App\Http\Controllers\BackAction::class) }}" class="btn btn-danger ml-1">{{ __('app.common.cancel') }}</a>
         </div>
     </form>
 @endsection

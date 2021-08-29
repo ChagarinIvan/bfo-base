@@ -27,9 +27,7 @@
         <a class="btn btn-secondary mr-2"
            href="{{ action(\App\Http\Controllers\Cups\ShowCupTableAction::class, [$cup, $cup->groups->first()]) }}"
         >{{ __('app.cup.table') }}</a>
-        <a class="btn btn-danger mr-2"
-           href="{{ action(\App\Http\Controllers\Cups\ShowCupsListAction::class, [$cup->year]) }}"
-        >{{ __('app.common.back') }}</a>
+        <a class="btn btn-danger mr-2" href="{{ action(\App\Http\Controllers\BackAction::class) }}">{{ __('app.common.back') }}</a>
     </div>
     <div class="row pt-3">
         @foreach($cup->groups as $group)

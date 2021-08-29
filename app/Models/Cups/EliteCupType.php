@@ -19,7 +19,7 @@ class EliteCupType extends AbstractCupType
 
     public function getName(): string
     {
-        return 'Elite';
+        return 'Элитный';
     }
 
     /**

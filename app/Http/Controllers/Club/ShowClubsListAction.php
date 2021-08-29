@@ -20,4 +20,9 @@ class ShowClubsListAction extends AbstractClubViewAction
         $clubs = $clubsQuery->paginate(20);
         return $this->view('clubs.index', ['clubs' => $clubs, 'search' => $search,]);
     }
+
+    protected function isNavbarRoute(): bool
+    {
+        return true;
+    }
 }

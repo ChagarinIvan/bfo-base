@@ -18,9 +18,7 @@
     <h4>{{ $person->lastname }} {{ $person->firstname }}</h4>
     <h4>{{ $actualRank->rank }} {{ __('app.common.do') }} {{ $actualRank->finish_date->format('Y-m-d') }}</h4>
     <div class="row pt-2">
-        <a class="btn btn-success mr-2"
-           href="{{ action(\App\Http\Controllers\Person\ShowPersonAction::class, [$person]) }}"
-        >{{ __('app.common.back') }}</a>
+        <a class="btn btn-success mr-2" href="{{ action(\App\Http\Controllers\BackAction::class) }}">{{ __('app.common.back') }}</a>
     </div>
     <div class="row pt-3">
         <table class="table table-bordered" id="table">

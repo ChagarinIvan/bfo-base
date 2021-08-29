@@ -35,4 +35,9 @@ class ShowPersonsListAction extends AbstractPersonViewAction
             'search' => $search,
         ]);
     }
+
+    protected function isNavbarRoute(): bool
+    {
+        return true;
+    }
 }

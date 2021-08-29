@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Http\Controllers\BackAction;
 use App\Http\Controllers\Competition;
 use App\Http\Controllers\Event;
 use App\Http\Controllers\Person;
@@ -40,6 +41,7 @@ class WebRoutesServiceProvider extends ServiceProvider
         $this->routes(function () {
             $this->routeRegistrar->middleware('web')->group(function () {
                 $this->route->get('', fn() => $this->redirector->action(Competition\ShowCompetitionsListAction::class, [Year::actualYear()]));
+                $this->route->get('back', BackAction:: class);
 
                 //competitions
                 $this->routeRegistrar->prefix('competitions')->group(function () {
@@ -84,7 +86,7 @@ class WebRoutesServiceProvider extends ServiceProvider
                         $this->route->get( '{person}/edit',           Person\ShowEditPersonFormAction::class);
                         $this->route->post('{person}/update',         Person\UpdatePersonAction::class);
                         $this->route->get( '{person}/delete',         Person\DeletePersonAction::class);
-                        $this->route->get( '{person}/protocol/show',  Person\ShowSetPersonToProtocolLineAction::class);
+                        $this->route->get( 'person/{protocol}/show',  Person\ShowSetPersonToProtocolLineAction::class);
                         $this->route->get( '{person}/{protocol}/set', Person\SetProtocolLinePersonAction::class);
                     });
                 });

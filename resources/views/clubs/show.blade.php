@@ -26,10 +26,7 @@
                        class="btn btn-danger"
                     >{{ __('app.common.cancel') }}</a>
                 @else
-                    <a type="submit"
-                       href="{{ action(\App\Http\Controllers\Club\ShowClubsListAction::class) }}"
-                       class="btn btn-danger"
-                    >{{ __('app.common.back') }}</a>
+                    <a type="submit" href="{{ action(\App\Http\Controllers\BackAction::class) }}" class="btn btn-danger">{{ __('app.common.back') }}</a>
                 @endif
             </form>
 

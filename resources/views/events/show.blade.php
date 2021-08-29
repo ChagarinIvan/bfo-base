@@ -33,9 +33,7 @@
                href="{{ action(\App\Http\Controllers\Event\ShowEditEventFormAction::class, [$event]) }}"
             >{{ __('app.common.edit') }}</a>
         @endauth
-        <a class="btn btn-danger mr-2"
-           href="{{ action(\App\Http\Controllers\Competition\ShowCompetitionAction::class, [$event->competition_id]) }}"
-        >{{ __('app.common.back') }}</a>
+        <a class="btn btn-danger mr-2" href="{{ action(\App\Http\Controllers\BackAction::class) }}">{{ __('app.common.back') }}</a>
     </div>
     <table class="table table-bordered" id="table">
         <thead>
