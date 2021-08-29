@@ -10,16 +10,13 @@ use App\Models\ProtocolLine;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Session;
 
 class ShowSetPersonToProtocolLineAction extends AbstractPersonViewAction
 {
-    public function __invoke(ProtocolLine $protocolLine, Request $request): View
+    public function __invoke(int $protocolLineId, Request $request): View
     {
-        if (!Session::exists('prev_url')) {
-            Session::put('prev_url', url()->previous());
-        }
-
+        /** @var ProtocolLine $protocolLine */
+        $protocolLine = ProtocolLine::find($protocolLineId);
         $search = (string)$request->get('search');
         $personsQuery = Person::with('club');
 

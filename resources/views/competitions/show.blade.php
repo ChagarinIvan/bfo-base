@@ -24,9 +24,7 @@
                href="{{ action(\App\Http\Controllers\Event\ShowUnitEventsFormAction::class, [$competition->id]) }}"
             >{{ __('app.competition.sum') }}</a>
         @endauth
-        <a class="btn btn-danger mr-2"
-           href="{{ action(\App\Http\Controllers\Competition\ShowCompetitionsListAction::class, [$competition->from->format('Y')]) }}"
-        >{{ __('app.common.back') }}</a>
+        <a class="btn btn-danger mr-2" href="{{ action(\App\Http\Controllers\BackAction::class) }}">{{ __('app.common.back') }}</a>
     </div>
     <div class="row pt-3">
         <table class="table">

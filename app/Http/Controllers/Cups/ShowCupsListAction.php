@@ -18,4 +18,9 @@ class ShowCupsListAction extends AbstractCupViewAction
             'selectedYear' => $year,
         ]);
     }
+
+    protected function isNavbarRoute(): bool
+    {
+        return true;
+    }
 }

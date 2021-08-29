@@ -17,6 +17,9 @@
     <div class="row">
         <h1 style="color: {{ $flag->color }}">{{ $flag->name }}</h1>
     </div>
+    <div class="row pt-5">
+        <a class="btn btn-danger mr-2" href="{{ action(\App\Http\Controllers\BackAction::class) }}">{{ __('app.common.back') }}</a>
+    </div>
     <div class="row pt-3">
         <table class="table table-bordered pt-3" id="table">
             <thead>

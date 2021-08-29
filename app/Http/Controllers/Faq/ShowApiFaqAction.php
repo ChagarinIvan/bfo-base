@@ -20,4 +20,9 @@ class ShowApiFaqAction extends AbstractViewAction
     {
         return true;
     }
+
+    protected function isNavbarRoute(): bool
+    {
+        return true;
+    }
 }

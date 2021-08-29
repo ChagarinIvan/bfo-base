@@ -2,7 +2,6 @@
     use App\Models\Club;
     use App\Models\Person;
     /**
-     * @var string $redirect;
      * @var Person $person;
      * @var Club[] $clubs;
      */
@@ -21,9 +20,6 @@
           action="{{ action(\App\Http\Controllers\Person\UpdatePersonAction::class, [$person]) }}"
     >
         @csrf
-        <label>
-            <input class="form-control" hidden name="redirect" value="{{ $redirect }}">
-        </label>
         <div class="form-group">
             <label for="lastname">{{ __('app.common.lastname') }}</label>
             <input class="form-control" id="lastname" name="lastname" value="{{ $person->lastname }}">
@@ -49,7 +45,7 @@
         </div>
         <div class="row">
             <input type="submit" class="btn btn-primary" value="{{ __('app.common.edit') }}">
-            <a href="{{ $redirect }}" class="btn btn-danger ml-1">{{ __('app.common.cancel') }}</a>
+            <a href="{{ action(\App\Http\Controllers\BackAction::class) }}" class="btn btn-danger ml-1">{{ __('app.common.cancel') }}</a>
         </div>
     </form>
 @endsection

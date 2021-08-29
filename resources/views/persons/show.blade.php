@@ -4,7 +4,6 @@
     /**
      * @var Person $person
      * @var Collection $groupedProtocolLines
-     * @var string $backUrl
      */
 @endphp
 
@@ -19,7 +18,7 @@
         <a class="btn btn-success mr-2"
            href="{{ action(\App\Http\Controllers\Person\ShowPersonRanksAction::class, [$person->id]) }}"
         >{{ __('app.ranks') }}</a>
-        <a class="btn btn-danger mr-2" href="{{ $backUrl }}">{{ __('app.common.back') }}</a>
+        <a class="btn btn-danger mr-2" href="{{ action(\App\Http\Controllers\BackAction::class) }}">{{ __('app.common.back') }}</a>
     </div>
     @if($person->protocolLines->count() > 0)
         <table class="table table-bordered table-fixed"

@@ -43,9 +43,7 @@
         </div>
         <div class="row">
             <input type="submit" class="btn btn-primary" value="{{ __('app.common.save') }}">
-            <a class="btn btn-danger ml-1"
-               href="{{ action(\App\Http\Controllers\Event\ShowEventAction::class, [$event->id]) }}"
-            >{{ __('app.common.cancel') }}</a>
+            <a href="{{ action(\App\Http\Controllers\BackAction::class) }}" class="btn btn-danger ml-1">{{ __('app.common.cancel') }}</a>
         </div>
     </form>
 @endsection

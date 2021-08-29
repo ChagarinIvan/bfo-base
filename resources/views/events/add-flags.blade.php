@@ -18,9 +18,7 @@
     <h3>{{ __('app.flags.add_flags_title') }}</h3>
     <h4>{{ __('app.event.title') }} — {{ $event->name }}</h4>
     <div class="row pt-2">
-        <a class="btn btn-success mr-2"
-           href="{{ action(\App\Http\Controllers\Competition\ShowCompetitionAction::class, [$event->competition_id]) }}"
-        >{{ __('app.common.back') }}</a>
+        <a class="btn btn-success mr-2" href="{{ action(\App\Http\Controllers\BackAction::class) }}">{{ __('app.common.back') }}</a>
     </div>
     <div class="row pt-3">
         @foreach($eventFlags as $flag)

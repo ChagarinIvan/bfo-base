@@ -22,9 +22,7 @@
 @section('content')
     <div class="row"><h1>{{ $cup->name }}</h1></div>
     <div class="row">
-        <a class="btn btn-danger mr-2"
-           href="{{ action(\App\Http\Controllers\Cups\ShowCupAction::class, [$cup]) }}"
-        >{{ __('app.common.back') }}</a>
+        <a class="btn btn-danger mr-2" href="{{ action(\App\Http\Controllers\BackAction::class) }}">{{ __('app.common.back') }}</a>
     </div>
     <ul class="nav nav-tabs pt-2">
         @foreach($cup->groups as $group)

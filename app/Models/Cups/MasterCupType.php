@@ -23,7 +23,7 @@ class MasterCupType extends AbstractCupType
 
     public function getName(): string
     {
-        return 'Master';
+        return 'Ветеранский';
     }
 
     private function getEventGroups(CupEvent $cupEvent): Collection

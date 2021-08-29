@@ -13,4 +13,9 @@ class ShowFlagsListAction extends AbstractFlagsViewAction
     {
         return $this->view('flags.index', ['flags' => Flag::all()]);
     }
+
+    protected function isNavbarRoute(): bool
+    {
+        return true;
+    }
 }
