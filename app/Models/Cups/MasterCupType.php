@@ -100,7 +100,8 @@ class MasterCupType extends AbstractCupType
             ->havingRaw(DB::raw("persons_payments.date <= '{$cupEvent->event->date}'"))
             ->get();
 
-        $protocolLines = ProtocolLine::find($protocolLinesIds->pluck('id'));
+        $ids = $protocolLinesIds->pluck('id');
+        $protocolLines = ProtocolLine::whereIn('id', $ids)->get();
         return $this->calculateLines($cupEvent, $protocolLines);
     }
 
