@@ -42,11 +42,6 @@
             </thead>
             <tbody>
             @foreach ($groupedProtocolLines as $year => $lines)
-                @php
-                    use App\Models\ProtocolLine;
-                    use Illuminate\Support\Collection;
-                    /** @var ProtocolLine[]|Collection $lines */;
-                @endphp
                 <tr>
                     <td class="text-center" colspan="9"><b id="{{ $year }}">{{ $year }}</b></td>
                 </tr>

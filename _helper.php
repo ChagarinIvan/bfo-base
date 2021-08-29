@@ -15362,31 +15362,6 @@
         class Arr {
 
     }
-            /**
-     *
-     *
-     */
-        class Str {
-
-    }
-            /**
-     *
-     *
-     */
-        class Collection {
-                    /**
-         *
-         *
-         * @see \Barryvdh\Debugbar\ServiceProvider::register()
-         * @static
-         */
-        public static function debug()
-        {
-                        return \Illuminate\Support\Collection::debug();
-        }
-
-    }
-
 }
 
         namespace Facade\Ignition\Facades {
