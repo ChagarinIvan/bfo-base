@@ -32,7 +32,7 @@ class RankValidationCommand extends Command
                 $protocolLine->complete_rank === '' ||
                 $protocolLine->complete_rank === '-'
             ) {
-                $protocolLine->rank = Rank::getRank($protocolLine->complete_rank) ?? '';
+                $protocolLine->complete_rank = Rank::getRank($protocolLine->complete_rank) ?? '';
             } else {
                 $this->info("no valid complete rank: {$protocolLine->complete_rank}");
                 $protocolLine->complete_rank = '';
