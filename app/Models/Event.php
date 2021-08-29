@@ -82,9 +82,4 @@ class Event extends Model
     {
         return $this->hasMany(Rank::class);
     }
-
-    public function groups(): Collection
-    {
-        return Group::find(Distance::with(['group'])->whereEventId($this->id)->get()->pluck('group_id'));
-    }
 }

@@ -59,6 +59,6 @@ class EliteCupType extends AbstractCupType
             ->get()
             ->pluck('id');
 
-        return ProtocolLine::find($protocolLinesIds);
+        return ProtocolLine::whereIn('id', $protocolLinesIds)->get();
     }
 }

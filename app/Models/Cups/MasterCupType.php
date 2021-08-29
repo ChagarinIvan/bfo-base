@@ -67,7 +67,8 @@ class MasterCupType extends AbstractCupType
         $cupEventProtocolLines = $cupEventProtocolLines->groupBy('distance.group_id');
         $validGroups = $eventGroups->flip();
         $cupEventProtocolLines = $cupEventProtocolLines->intersectByKeys($validGroups);
-        $hasGroupOnEvent = $cupEvent->event->groups()->pluck('id')->flip()->has($mainGroup->id);
+        $groups = Group::find(Distance::with(['group'])->whereEventId($cupEvent->event->id)->get()->pluck('group_id'));
+        $hasGroupOnEvent = $groups->pluck('id')->flip()->has($mainGroup->id);
 
         foreach ($cupEventProtocolLines as $groupId => $groupProtocolLines) {
             $needDivideGroup = !$hasGroupOnEvent && $mainGroup->isPreviousGroup($groupId);

@@ -25,7 +25,7 @@ use Illuminate\Support\Collection;
  * @method static Rank|Builder where(string $column, string $operator, string|int|Carbon $value)
  * @method static Rank|Builder whereEventId(int $eventId)
  * @method static Rank|Builder wherePersonId(int $personId)
- * @method static Rank|Builder with(array $relations)
+ * @method static Rank|Builder with(array|string $relations)
  * @method static Rank[]|Collection get()
  */
 class Rank extends Model
