@@ -87,8 +87,11 @@ class Rank extends Model
         return in_array(self::prepareRank($rank), self::getPreparedRanks(), true);
     }
 
-    public static function getRank(string $rank): ?string
+    public static function getRank(?string $rank): ?string
     {
+        if ($rank === null) {
+            return null;
+        }
         $ranks = array_flip(self::getPreparedRanks());
         $rank = self::prepareRank($rank);
         if (array_key_exists($rank, $ranks)) {

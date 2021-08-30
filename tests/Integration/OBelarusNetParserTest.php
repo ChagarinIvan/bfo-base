@@ -31,6 +31,19 @@ class OBelarusNetParserTest extends AbstractParserTest
                 'МС',
                 100,
             ],
+            1 => [
+                'Минаков',
+                'Александр',
+                'RUS КСО «Москомпас»',
+                1982,
+                'б/р',
+                156,
+                '1:33:53',
+                null,
+                '-',
+                null,
+                true
+            ],
             64 => [
                 'Буковец',
                 'Артём',

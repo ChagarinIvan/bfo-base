@@ -42,10 +42,11 @@ class ProtocolLineService
                 throw new \RuntimeException('Wrong group '.$lineData['group']);
             }
 
-            $distance = $this->findDistance($group->id, $eventId, $lineData['distance']['length'] ?? 0, $lineData['distance']['points'] ?? 0);
+            $distance = $this->findDistance($group->id, $eventId, (int)($lineData['distance']['length'] ?? 0), (int)($lineData['distance']['points'] ?? 0));
             $protocolLine->fillProtocolLine($distance->id);
             $protocolLine->save();
-            $this->rankService->fillRank($protocolLine);
+            //            $this->rankService->fillRank($protocolLine);
+            return $protocolLine;
         });
     }
 

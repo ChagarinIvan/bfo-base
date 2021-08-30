@@ -64,9 +64,9 @@ class OBelarusNetParser implements ParserInterface
                 for ($index = 4; $index < $linesCount; $index++) {
                     $line = trim($lines[$index]);
 
-//                    if (str_contains($line, 'Буковец')) {
-//                        sleep(1);
-//                    }
+                    if (str_contains($line, 'Минаков')) {
+                        sleep(1);
+                    }
                     if (empty(trim($line, '-'))) {
                         break;
                     }
@@ -87,7 +87,7 @@ class OBelarusNetParser implements ParserInterface
                         if ($columnName === '') {
                             continue;
                         }
-                        $protocolLine[$columnName] = $this->getValue($columnName, $lineData, $fieldsCount, $indent);
+                        $protocolLine[$columnName] = $this->getValue($columnName, $lineData, $fieldsCount, $indent, $protocolLine);
                     }
                     $protocolLine['serial_number'] = (int)$lineData[0];
                     $protocolLine['lastname'] = $lineData[1];
@@ -136,7 +136,7 @@ class OBelarusNetParser implements ParserInterface
         return '';
     }
 
-    private function getValue(string $column, array $lineData, int $fieldsCount, int &$indent): mixed
+    private function getValue(string $column, array $lineData, int $fieldsCount, int &$indent, array &$data): mixed
     {
         if ($column === 'points') {
             $points = $lineData[$fieldsCount - $indent++];
@@ -147,6 +147,11 @@ class OBelarusNetParser implements ParserInterface
         }
         if ($column === 'place') {
             $place = $lineData[$fieldsCount - $indent];
+            if ($place === 'в/к') {
+                $data['vk'] = true;
+                $indent++;
+                return null;
+            }
             if (is_numeric($place) || $place === '-') {
                 $indent++;
                 return  (int)$place;
