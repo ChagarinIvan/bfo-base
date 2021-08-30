@@ -64,7 +64,7 @@ class OBelarusNetParser implements ParserInterface
                 for ($index = 4; $index < $linesCount; $index++) {
                     $line = trim($lines[$index]);
 
-                    if (str_contains($line, 'Минаков')) {
+                    if (str_contains($line, 'Плеханенко')) {
                         sleep(1);
                     }
                     if (empty(trim($line, '-'))) {
@@ -140,6 +140,9 @@ class OBelarusNetParser implements ParserInterface
     {
         if ($column === 'points') {
             $points = $lineData[$fieldsCount - $indent++];
+            if ($points === 'лично') {
+                $points = $lineData[$fieldsCount - $indent++];
+            }
             return is_numeric($points) ? (int)$points : null;
         }
         if ($column === 'complete_rank') {

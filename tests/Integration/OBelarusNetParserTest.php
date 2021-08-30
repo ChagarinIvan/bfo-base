@@ -44,6 +44,18 @@ class OBelarusNetParserTest extends AbstractParserTest
                 null,
                 true
             ],
+            45 => [
+                'Плеханенко',
+                'Виктор',
+                'Каденс',
+                1987,
+                'б/р',
+                148,
+                '1:51:08',
+                20,
+                'III',
+                null,
+            ],
             64 => [
                 'Буковец',
                 'Артём',
