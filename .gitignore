@@ -3,7 +3,7 @@
 /public/storage
 /storage/*.key
 /vendor
-/storage/tests
+/storage/results
 /.vagrant
 /.idea
 .env
