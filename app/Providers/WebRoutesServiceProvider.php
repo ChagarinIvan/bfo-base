@@ -153,10 +153,9 @@ class WebRoutesServiceProvider extends ServiceProvider
                 $this->route->get( '/login/auth/{token}', Login\MakeNewPasswordByTokenAction::class);
                 $this->route->post('/sign-in',            Login\AuthValidationAction::class);
 
-                $this->routeRegistrar->middleware(['auth'])->group(function () {
-                    $this->route->get( '/registration',      Registration\ShowRegistrationFormAction::class);
-                    $this->route->post('/registration/data', Registration\SendRegistrationDataAction::class);
-                    $this->route->post('/registration/data', Registration\SendRegistrationDataAction::class);
+                $this->routeRegistrar->middleware(['auth'])->prefix('registration')->group(function () {
+                    $this->route->get( '',      Registration\ShowRegistrationFormAction::class);
+                    $this->route->post('/data', Registration\SendRegistrationDataAction::class);
                 });
             });
         });
