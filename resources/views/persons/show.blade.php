@@ -5,6 +5,7 @@
      * @var Person $person
      * @var Collection $groupedProtocolLines
      */
+    $actualRank = $person->ranks->sortByDesc('finish_date')->last();
 @endphp
 
 @extends('layouts.app')
@@ -13,6 +14,9 @@
 
 @section('content')
     <h3>{{ $person->lastname }} {{ $person->firstname }}</h3>
+    @if ($actualRank)
+        <h4>{{ $actualRank->rank }} {{ __('app.common.do') }} {{ $actualRank->finish_date->format('Y-m-d') }}</h4>
+    @endif
     <h4>{{ $person->birthday ? $person->birthday->format('Y') : '' }}</h4>
     <div class="pb-3">
         <a class="btn btn-success mr-2"

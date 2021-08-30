@@ -15,7 +15,7 @@
     <div class="row">
         <h1>{{ __('app.cup.add') }}</h1>
     </div>
-    <form class="pt-5" method="POST" action="{{ \App\Http\Controllers\Cups\StoreCupAction::class }}">
+    <form class="pt-5" method="POST" action="{{ action(\App\Http\Controllers\Cups\StoreCupAction::class) }}">
         @csrf
         <div class="form-group">
             <label for="name">{{ __('app.cup.name') }}</label>

@@ -5,19 +5,19 @@ namespace App\Http\Controllers\Login;
 use App\Http\Controllers\AbstractRedirectAction;
 use App\Http\Controllers\Competition\ShowCompetitionsListAction;
 use App\Models\Year;
-use \Illuminate\Auth\SessionGuard;
+use Illuminate\Auth\AuthManager;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Redirector;
 use Illuminate\Http\Request;
 
 class AuthValidationAction extends AbstractRedirectAction
 {
-    private SessionGuard $sessionGuard;
+    private AuthManager $authManager;
 
-    public function __construct(Redirector $redirector, SessionGuard $sessionGuard)
+    public function __construct(Redirector $redirector, AuthManager $sessionGuard)
     {
         parent::__construct($redirector);
-        $this->sessionGuard = $sessionGuard;
+        $this->authManager = $sessionGuard;
     }
 
     public function __invoke(Request $request): RedirectResponse
@@ -27,7 +27,7 @@ class AuthValidationAction extends AbstractRedirectAction
             'password' => 'required',
         ]);
 
-        if ($this->sessionGuard->attempt($authData, true)) {
+        if ($this->authManager->guard('web')->attempt($authData, true)) {
             $request->session()->regenerate();
             return $this->redirector->action(ShowCompetitionsListAction::class, Year::actualYear());
         }
