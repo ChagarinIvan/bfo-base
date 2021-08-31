@@ -5,7 +5,9 @@ namespace Tests\Integration;
 use App\Models\Parser\ParserFactory;
 use App\Models\ProtocolLine;
 use Carbon\Carbon;
-use Illuminate\Contracts\Filesystem\Filesystem;
+use Illuminate\Filesystem\Filesystem;
+use Illuminate\Filesystem\FilesystemAdapter;
+use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
 
@@ -18,8 +20,8 @@ abstract class AbstractParserTest extends TestCase
 
     public function testParse()
     {
-        $storage = $this->app->make(Filesystem::class);
-        $protocolContent = $storage->disk('tests')->get($this->getFilePath());
+        $storageManager = new FilesystemManager($this->app);
+        $protocolContent = $storageManager->disk('tests')->get($this->getFilePath());
         $protocolFactory = UploadedFile::fake();
         $protocol = $protocolFactory->createWithContent('test', $protocolContent);
 
