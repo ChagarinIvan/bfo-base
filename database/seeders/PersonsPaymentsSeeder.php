@@ -4,12 +4,19 @@ namespace Database\Seeders;
 
 use App\Models\Person;
 use App\Models\PersonPayment;
+use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Storage;
 
 class PersonsPaymentsSeeder extends Seeder
 {
+    private Filesystem $storage;
+
+    public function __construct(Filesystem $storage)
+    {
+        $this->storage = $storage;
+    }
+
     /**
      * Seed the application's database.
      *
@@ -26,7 +33,7 @@ class PersonsPaymentsSeeder extends Seeder
         $payments = [];
         echo "Start sync {$year} year!".PHP_EOL;
 
-        $csvBase = Storage::get("{$year}.csv");
+        $csvBase = $this->storage->get("{$year}.csv");
         $list = explode(PHP_EOL, $csvBase);
 
         foreach ($list as $index => $personLine) {

@@ -11,13 +11,6 @@ use Illuminate\Support\Collection;
 
 class ProtocolLineService
 {
-    private RankService $rankService;
-
-    public function __construct(RankService $rankService)
-    {
-        $this->rankService = $rankService;
-    }
-
     /**
      * Коллекция сырых данных линий протокола, из каждой
      * формирует модель записи протокола
@@ -45,7 +38,6 @@ class ProtocolLineService
             $distance = $this->findDistance($group->id, $eventId, (int)($lineData['distance']['length'] ?? 0), (int)($lineData['distance']['points'] ?? 0));
             $protocolLine->fillProtocolLine($distance->id);
             $protocolLine->save();
-            //            $this->rankService->fillRank($protocolLine);
             return $protocolLine;
         });
     }

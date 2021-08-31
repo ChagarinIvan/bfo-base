@@ -15,6 +15,13 @@ use Illuminate\Support\Collection;
  */
 class RefillRanksSeeder extends Seeder
 {
+    private RankService $rankService;
+
+    public function __construct(RankService $rankService)
+    {
+        $this->rankService = $rankService;
+    }
+
     public function run(): void
     {
         Rank::destroy(Rank::all('id'));
@@ -25,11 +32,10 @@ class RefillRanksSeeder extends Seeder
 
         $protocolLinesGroupedByPersons = $protocolLines->groupBy('person_id');
         $protocolLinesGroupedByPersons = $protocolLinesGroupedByPersons->transform(fn (Collection $protocolLines) => $protocolLines->sortBy('distance.event.date'));
-        $rankService = new RankService();
         foreach ($protocolLinesGroupedByPersons as $protocolLines) {
             foreach ($protocolLines as $protocolLine) {
                 /** @var ProtocolLine $protocolLine */
-                $rankService->fillRank($protocolLine);
+                $this->rankService->fillRank($protocolLine);
             }
         }
     }

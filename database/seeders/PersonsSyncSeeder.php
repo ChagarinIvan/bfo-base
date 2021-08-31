@@ -3,12 +3,19 @@
 namespace Database\Seeders;
 
 use App\Models\Person;
+use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Storage;
 
 class PersonsSyncSeeder extends Seeder
 {
+    private Filesystem $storage;
+
+    public function __construct(Filesystem $storage)
+    {
+        $this->storage = $storage;
+    }
+
     /**
      * Seed the application's database.
      *
@@ -16,7 +23,7 @@ class PersonsSyncSeeder extends Seeder
      */
     public function run()
     {
-        $personsList = Storage::get('base.csv');
+        $personsList = $this->storage->get('base.csv');
         $list = explode(PHP_EOL, $personsList);
 
         foreach ($list as $index => $personLine) {
