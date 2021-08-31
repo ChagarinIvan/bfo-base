@@ -21,7 +21,7 @@ class ShowEventAction extends AbstractCompetitionViewAction
                 break;
             }
         }
-        $numbers = $event->protocolLines->pluck('runner_number');
+        $numbers = $event->protocolLines->pluck('runner_number')->diff([0]);
         $isRelay = count($numbers) > count($numbers->unique());
         $protocolLines = $event->protocolLines->groupBy('distance_id')
             ->sortKeys();

@@ -12,10 +12,10 @@ use App\Services\IdentService;
 use App\Services\ParserService;
 use App\Services\ProtocolLineService;
 use Illuminate\Contracts\Debug\ExceptionHandler;
+use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
-use Illuminate\Support\Facades\Storage;
 
 class UpdateEventAction extends AbstractRedirectAction
 {
@@ -23,6 +23,7 @@ class UpdateEventAction extends AbstractRedirectAction
     private IdentService $identService;
     private ExceptionHandler $exceptionHandler;
     private ProtocolLineService $protocolLineService;
+    private Filesystem $storage;
 
     public function __construct(
         Redirector $redirector,
@@ -30,12 +31,14 @@ class UpdateEventAction extends AbstractRedirectAction
         IdentService $identService,
         ExceptionHandler $exceptionHandler,
         ProtocolLineService $protocolLineService,
+        Filesystem $storage,
     ) {
         parent::__construct($redirector);
         $this->parserService = $parserService;
         $this->identService = $identService;
         $this->exceptionHandler = $exceptionHandler;
         $this->protocolLineService = $protocolLineService;
+        $this->storage = $storage;
     }
 
     public function __invoke(Event $event, Request $request): RedirectResponse
@@ -58,7 +61,7 @@ class UpdateEventAction extends AbstractRedirectAction
 
         try {
             $lineList = $this->parserService->parserProtocol($protocol);
-            Storage::delete($event->file);
+            $this->storage->delete($event->file);
             $event->file = $protocolPath;
             $event->save();
             $event->distances()->delete();
@@ -68,7 +71,7 @@ class UpdateEventAction extends AbstractRedirectAction
             // если не было ошибок при парсинге новго протокола,
             // то можно удалить старые строки, перед сохранением новых
             // заполняем event_id и сохраняем
-            Storage::putFileAs($year, $protocol, $protocol->getClientOriginalName());
+            $this->storage->putFileAs($year, $protocol, $protocol->getClientOriginalName());
             $this->identService->identPersons($lineList);
         } catch (\Exception $e) {
             $e = new ParsingException($e->getMessage());

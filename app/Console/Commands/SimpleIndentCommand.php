@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\ProtocolLine;
 use App\Services\IdentService;
+use App\Services\RankService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
@@ -26,7 +27,7 @@ class SimpleIndentCommand extends Command
         $startTime = time();
         $protocolLines = ProtocolLine::whereNull('person_id')->get();
         $this->info("Has {$protocolLines->count()} lines");
-        $indentCount = (new IdentService())->simpleIdent($protocolLines)->count();
+        $indentCount = (new IdentService(new RankService()))->simpleIdent($protocolLines)->count();
         $this->info("Affected rows count is {$indentCount}");
         $time = time() - $startTime;
         $this->info("Time for query: {$time}");

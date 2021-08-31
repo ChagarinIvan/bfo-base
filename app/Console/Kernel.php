@@ -2,6 +2,10 @@
 
 namespace App\Console;
 
+use App\Console\Commands\IdentProtocolLineCommand;
+use App\Console\Commands\RankValidationCommand;
+use App\Console\Commands\SimpleIndentCommand;
+use App\Console\Commands\StartBigIdentCommand;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -12,7 +16,12 @@ class Kernel extends ConsoleKernel
      *
      * @var array
      */
-    protected $commands = [];
+    protected $commands = [
+        IdentProtocolLineCommand::class,
+        SimpleIndentCommand::class,
+        StartBigIdentCommand::class,
+        RankValidationCommand::class,
+    ];
 
     /**
      * Define the application's command schedule.
@@ -22,7 +31,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+//        $schedule->command('protocol-lines:queue-ident')->everyMinute();
     }
 
     /**

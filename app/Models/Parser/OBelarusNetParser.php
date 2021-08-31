@@ -64,9 +64,9 @@ class OBelarusNetParser implements ParserInterface
                 for ($index = 4; $index < $linesCount; $index++) {
                     $line = trim($lines[$index]);
 
-                    if (str_contains($line, 'Плеханенко')) {
-                        sleep(1);
-                    }
+//                    if (str_contains($line, 'Плеханенко')) {
+//                        sleep(1);
+//                    }
                     if (empty(trim($line, '-'))) {
                         break;
                     }

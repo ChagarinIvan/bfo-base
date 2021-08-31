@@ -17,6 +17,13 @@ use Illuminate\Support\Facades\DB;
  */
 class IdentService
 {
+    private RankService $rankService;
+
+    public function __construct(RankService $rankService)
+    {
+        $this->rankService = $rankService;
+    }
+
     /**
      * карта исправления имён, разные сокращения и формы аналоги
      */
@@ -66,9 +73,16 @@ class IdentService
     public function identPersons(Collection $protocolLines): void
     {
         // пробуем идентифицировать людей из нового протокола прямым подобием идентификационных строк
-        $protocolLines = $this->simpleIdent($protocolLines);
-        $protocolLines = $protocolLines->pluck('prepared_line')->unique();
-        $this->pushIdentLines($protocolLines);
+        $notIdentedLines = $this->simpleIdent($protocolLines);
+        $protocolLines = $protocolLines->keyBy('id');
+        $notIdentedLines = $notIdentedLines->keyBy('id');
+        $identedLines = ProtocolLine::find($protocolLines->diffKeys($notIdentedLines)->keys());
+        // надо для определившихся добавить разряды
+        foreach ($identedLines as $line) {
+            $this->rankService->fillRank($line);
+        }
+
+        $this->pushIdentLines($notIdentedLines->pluck('prepared_line')->unique());
     }
 
     /**

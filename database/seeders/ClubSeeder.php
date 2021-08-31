@@ -6,11 +6,18 @@ namespace Database\Seeders;
 
 use App\Models\Club;
 use App\Models\Person;
+use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Storage;
 
 class ClubSeeder extends Seeder
 {
+    private Filesystem $storage;
+
+    public function __construct(Filesystem $storage)
+    {
+        $this->storage = $storage;
+    }
+
     /**
      * Seed the application's database.
      *
@@ -18,7 +25,7 @@ class ClubSeeder extends Seeder
      */
     public function run()
     {
-        $personsList = Storage::get('bfo.csv');
+        $personsList = $this->storage->get('bfo.csv');
         $clubs = Club::all();
         $clubs = $clubs->keyBy('name');
         foreach (explode(PHP_EOL, $personsList) as $index => $personLine) {
