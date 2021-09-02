@@ -26,6 +26,7 @@
             <tr class="table-info">
                 <th>{{ __('app.common.rank') }}</th>
                 <th>{{ __('app.rank.completed_date') }}</th>
+                <th>{{ __('app.rank.finished_date') }}</th>
                 <th>{{ __('app.event.title') }}</th>
                 <th>
                     <a href="#">{{ __('app.common.edit') }}</a>
@@ -37,6 +38,7 @@
                     <tr>
                         <td>{{ $rank->rank }}</td>
                         <td>{{ $rank->event->date->format('Y-m-d') }}</td>
+                        <td>{{ $rank->finish_date->format('Y-m-d') }}</td>
                         <td>
                             <a href="{{ action(\App\Http\Controllers\Event\ShowEventAction::class, [$rank->event->id]) }}">
                                 {{ $rank->event->competition->name }} ({{ $rank->event->name }})

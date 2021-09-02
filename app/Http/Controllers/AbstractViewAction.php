@@ -4,49 +4,40 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Services\BackUrlService;
-use App\Services\UserService;
-use Illuminate\Contracts\Routing\UrlGenerator;
+use App\Services\ViewActionsService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Routing\Controller;
-use \Illuminate\Contracts\View\Factory as ViewFactory;
 
 abstract class AbstractViewAction extends Controller
 {
-    protected ViewFactory $viewFactory;
-    private UserService $userService;
-    private BackUrlService $backUrlService;
-    private UrlGenerator $urlGenerator;
+    private ViewActionsService $viewService;
 
-    public function __construct(ViewFactory $viewFactory, UserService $userService, BackUrlService $backUrlService, UrlGenerator $urlGenerator)
+    public function __construct(ViewActionsService $viewService)
     {
-        $this->viewFactory = $viewFactory;
-        $this->userService = $userService;
-        $this->backUrlService = $backUrlService;
-        $this->urlGenerator = $urlGenerator;
+        $this->viewService = $viewService;
     }
 
     protected function view(string $template, array $data = []): View
     {
         if ($this->isNavbarRoute()) {
-            $this->backUrlService->clean();
+            $this->viewService->cleanBackUrls();
         } else {
-            $previous = $this->urlGenerator->previous();
-            $backUrl = $this->urlGenerator->action(BackAction::class);
+            $previous = $this->viewService->generatePreviousUrl();
+            $backUrl = $this->viewService->makeBackAction();
             if ($previous !== $backUrl) {
-                $this->backUrlService->push($previous);
+                $this->viewService->pushUrlInBackUrlsQueue($previous);
             }
         }
 
-        return $this->viewFactory->make($template, $data, $this->navbarData());
+        return $this->viewService->makeView($template, $data, $this->navbarData());
     }
 
     private function navbarData(): array
     {
         return [
-            'isAuth' => $this->userService->isAuth(),
-            'isByLocale' => $this->userService->isByLocale(),
-            'isRuLocale' => $this->userService->isRuLocale(),
+            'isAuth' => $this->viewService->isAuth(),
+            'isByLocale' => $this->viewService->isByLocale(),
+            'isRuLocale' => $this->viewService->isRuLocale(),
             'isCompetitionsRoute' => $this->isCompetitionsRoute(),
             'isCupsRoute' => $this->isCupsRoute(),
             'isPersonsRoute' => $this->isPersonsRoute(),

@@ -73,7 +73,7 @@ class IdentService
     public function identPersons(Collection $protocolLines): void
     {
         // пробуем идентифицировать людей из нового протокола прямым подобием идентификационных строк
-        $notIdentedLines = $this->simpleIdent($protocolLines);
+        $notIdentedLines = self::simpleIdent($protocolLines);
         $protocolLines = $protocolLines->keyBy('id');
         $notIdentedLines = $notIdentedLines->keyBy('id');
         $identedLines = ProtocolLine::find($protocolLines->diffKeys($notIdentedLines)->keys());
@@ -82,7 +82,7 @@ class IdentService
             $this->rankService->fillRank($line);
         }
 
-        $this->pushIdentLines($notIdentedLines->pluck('prepared_line')->unique());
+        self::pushIdentLines($notIdentedLines->pluck('prepared_line')->unique());
     }
 
     /**
@@ -95,7 +95,7 @@ class IdentService
      * @param Collection|ProtocolLine[] $protocolLines
      * @return Collection|ProtocolLine[]
      */
-    public function simpleIdent(Collection $protocolLines): Collection
+    public static function simpleIdent(Collection $protocolLines): Collection
     {
         $linesIds = $protocolLines->pluck('id');
         DB::table('protocol_lines', 'pls')
@@ -167,7 +167,7 @@ class IdentService
     /**
      * @param Collection|string[] $protocolLines
      */
-    public function pushIdentLines(Collection $protocolLines): void
+    public static function pushIdentLines(Collection $protocolLines): void
     {
         foreach ($protocolLines as $line) {
             $identLinesCount = IdentLine::whereIdentLine($line)->count();

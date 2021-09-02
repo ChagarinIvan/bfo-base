@@ -4,11 +4,22 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Collections\RanksCollection;
+use App\Filters\RanksFilter;
 use App\Models\ProtocolLine;
 use App\Models\Rank;
+use App\Repositories\RanksRepository;
+use Carbon\Carbon;
 
 class RankService
 {
+    private RanksRepository $ranksRepository;
+
+    public function __construct(RanksRepository $ranksRepository)
+    {
+        $this->ranksRepository = $ranksRepository;
+    }
+
     public const RANKS_POWER = [
         Rank::WITHOUT_RANK => 0,
         Rank::UNIOR_THIRD_RANK => 1,
@@ -22,6 +33,22 @@ class RankService
         Rank::WSM_RANK => 9,
     ];
 
+    public function getPersonRanks(int $personId): RanksCollection
+    {
+        $filter = new RanksFilter();
+        $filter->personId = $personId;
+        return $this->ranksRepository->getRanksList($filter);
+    }
+
+    public function getActualRank(int $personId): ?Rank
+    {
+        $rank = $this->ranksRepository->getLatestRank($personId);
+        if ($rank !== null) {
+            $rank = $this->createPreviousRank($rank);
+        }
+        return $rank;
+    }
+
     public function fillRank(ProtocolLine $protocolLine): void
     {
         if (!Rank::validateRank($protocolLine->complete_rank)) {
@@ -29,29 +56,50 @@ class RankService
         }
 
         $event = $protocolLine->event;
+        $actualRank = $this->getActualRank($protocolLine->person_id);
+        if ($actualRank) {
+            if ($actualRank->rank === $protocolLine->complete_rank) {
+                $actualRank = $actualRank->replicate();
+                $actualRank->event_id = $event->id;
+                $actualRank->finish_date = $event->date->clone()->addYears(2);
+            } elseif (self::RANKS_POWER[$protocolLine->complete_rank] > self::RANKS_POWER[$actualRank->rank]) {
+                $ranksFilter = new RanksFilter();
+                $ranksFilter->personId = $actualRank->person_id;
+                $ranksFilter->rank = $actualRank->rank;
+                $ranks = $this->ranksRepository->getRanksList($ranksFilter);
+                $finishDate = $event->date->clone()->addDays(-1);
 
-        $ranks = Rank::with(['event'])
-            ->wherePersonId($protocolLine->person_id)
-            ->where('start_date', '<=', $event->date)
-            ->where('finish_date', '>=', $event->date)
-            ->get()
-            ->sortBy('event.date');
+                $ranks->each(function (Rank $rank) use ($finishDate) {
+                    $rank->finish_date = $finishDate;
+                    $this->ranksRepository->storeRank($rank);
+                });
 
-        /** @var Rank $lastRank */
-        $lastRank = $ranks->last();
-        if ($lastRank) {
-            if ($lastRank->rank === $protocolLine->complete_rank) {
-                $lastRank = $lastRank->replicate();
-                $lastRank->event_id = $event->id;
-                $lastRank->finish_date = $event->date->clone()->addYears(2);
-            } elseif (self::RANKS_POWER[$protocolLine->complete_rank] > self::RANKS_POWER[$lastRank->rank]) {
-                $lastRank->finish_date = $event->date->clone()->addDays(-1);
-                $lastRank = $this->createNewRank($protocolLine);
+                $actualRank = $this->createNewRank($protocolLine);
+            } else {
+                return;
             }
         } else {
-            $lastRank = $this->createNewRank($protocolLine);
+            $actualRank = $this->createNewRank($protocolLine);
         }
-        $lastRank->save();
+        $this->ranksRepository->storeRank($actualRank);
+    }
+
+    //еслі разряд просрочілся то создаётся новый с более низким разрядом
+    private function createPreviousRank(Rank $rank): ?Rank
+    {
+        if ($rank->finish_date < Carbon::now()) {
+            if (!isset(Rank::PREVIOUS_RANKS[$rank->rank])) {
+                return null;
+            };
+            $rank = $rank->replicate();
+            $rank->start_date = $rank->finish_date->addDay();
+            $rank->finish_date = $rank->start_date->addYears(2);
+            $rank->event_id = null;
+            $rank->rank = Rank::PREVIOUS_RANKS[$rank->rank];
+            $rank = $this->ranksRepository->storeRank($rank);
+            return $this->createPreviousRank($rank);
+        }
+        return $rank;
     }
 
     private function createNewRank(ProtocolLine $protocolLine): Rank
