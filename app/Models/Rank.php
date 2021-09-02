@@ -7,6 +7,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
@@ -17,15 +18,17 @@ use Illuminate\Support\Collection;
  * @property int $id
  * @property int $person_id
  * @property int $event_id
- * @property string $rank
+ * @property null|string $rank
  * @property Carbon $start_date
  * @property Carbon $finish_date
  * @property-read Event $event
  * @property-read Person $person
- * @method static Rank|Builder where(string $column, string $operator, string|int|Carbon $value)
+ * @method static Rank|Builder where(string $column, string|null $operator, string|int|Carbon $value = null)
  * @method static Rank|Builder whereEventId(int $eventId)
  * @method static Rank|Builder wherePersonId(int $personId)
  * @method static Rank|Builder with(array|string $relations)
+ * @method static Rank|Builder orderByRaw(Expression $expression)
+ * @method static Rank|Builder join(string $table, string $foreignColumn, string $operator, string $selfColumn)
  * @method static Rank[]|Collection get()
  */
 class Rank extends Model
@@ -52,6 +55,14 @@ class Rank extends Model
         self::UNIOR_SECOND_RANK => self::UNIOR_SECOND_RANK,
         self::UNIOR_THIRD_RANK => self::UNIOR_THIRD_RANK,
         self::WITHOUT_RANK => self::WITHOUT_RANK,
+    ];
+
+    public const PREVIOUS_RANKS = [
+        self::WSM_RANK => self::SMC_RANK,
+        self::SMC_RANK => self::SM_RANK,
+        self::SM_RANK => self::FIRST_RANK,
+        self::FIRST_RANK => self::SECOND_RANK,
+        self::SECOND_RANK => self::THIRD_RANK,
     ];
 
     private const REPLACES = [
