@@ -42,6 +42,7 @@ abstract class AbstractViewAction extends Controller
             'isCupsRoute' => $this->isCupsRoute(),
             'isPersonsRoute' => $this->isPersonsRoute(),
             'isClubsRoute' => $this->isClubsRoute(),
+            'isRanksRoute' => $this->isRanksRoute(),
             'isFlagsRoute' => $this->isFlagsRoute(),
             'isFaqRoute' => $this->isFaqRoute(),
             'isFaqApiRoute' => $this->isFaqApiRoute(),
@@ -64,6 +65,11 @@ abstract class AbstractViewAction extends Controller
     }
 
     protected function isClubsRoute(): bool
+    {
+        return false;
+    }
+
+    protected function isRanksRoute(): bool
     {
         return false;
     }

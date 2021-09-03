@@ -15,6 +15,7 @@ use App\Http\Controllers\Cups;
 use App\Http\Controllers\CupEvents;
 use App\Http\Controllers\Login;
 use App\Http\Controllers\Registration;
+use App\Http\Controllers\Rank;
 use App\Models\Year;
 use Illuminate\Contracts\Routing\Registrar;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
@@ -90,6 +91,9 @@ class WebRoutesServiceProvider extends ServiceProvider
                         $this->route->get( '{person}/{protocol}/set', Person\SetProtocolLinePersonAction::class);
                     });
                 });
+
+                //ranks
+                $this->route->get('ranks/{rank}', Rank\ShowRanksListAction::class);
 
                 //clubs
                 $this->routeRegistrar->prefix('club')->group(function () {

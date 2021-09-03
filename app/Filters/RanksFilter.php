@@ -9,7 +9,8 @@ class RanksFilter
     public ?int $personId = null;
     public ?int $eventId = null;
     public ?string $rank = null;
-    public ?Carbon $startDate = null;
-    public ?Carbon $finishDate = null;
+    public ?Carbon $date = null;
     public ?array $with = null;
+    public bool $isOrderDescByFinishDateAnd = false;
+    public bool $isOrderByFinish = false;
 }

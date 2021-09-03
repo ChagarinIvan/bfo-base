@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Database\Seeders;
 
 use App\Models\ProtocolLine;
-use App\Models\Rank;
 use App\Services\RankService;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Collection;
@@ -24,7 +23,7 @@ class RefillRanksSeeder extends Seeder
 
     public function run(): void
     {
-        Rank::destroy(Rank::all('id'));
+        $this->rankService->cleanAll();
 
         $protocolLines = ProtocolLine::with('distance.event')
             ->where('complete_rank', '<>', '')

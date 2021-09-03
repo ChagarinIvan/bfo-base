@@ -21,6 +21,11 @@ class RanksCollection
         $this->ranks->each($closure);
     }
 
+    public function transform(\Closure $closure): void
+    {
+        $this->ranks = $this->ranks->transform($closure);
+    }
+
     /**
      * @return Rank[]
      */
@@ -32,5 +37,10 @@ class RanksCollection
     public function getCollection(): Collection
     {
         return $this->ranks;
+    }
+
+    public function groupByPerson(): void
+    {
+        $this->ranks = $this->ranks->groupBy('person_id');
     }
 }
