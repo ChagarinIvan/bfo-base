@@ -6,7 +6,6 @@ use App\Models\Club;
 use App\Models\IdentLine;
 use App\Models\Person;
 use App\Models\ProtocolLine;
-use App\Repositories\RanksRepository;
 use App\Services\IdentService;
 use App\Services\RankService;
 use Carbon\Exceptions\InvalidFormatException;
@@ -38,8 +37,10 @@ class IdentProtocolLineCommand extends Command
             return;
         }
 
-        $rankService = new RankService(new RanksRepository());
-        $personId = (new IdentService($rankService))->identPerson($identLine->ident_line);
+        $rankService = app(RankService::class);
+        $identService = app(IdentService::class);
+
+        $personId = ($identService)->identPerson($identLine->ident_line);
         $protocolLines = ProtocolLine::wherePreparedLine($identLine->ident_line)->get();
 
         if ($personId > 0) {

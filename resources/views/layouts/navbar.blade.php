@@ -7,6 +7,7 @@
      * @var bool $isCupsRoute;
      * @var bool $isPersonsRoute;
      * @var bool $isClubsRoute;
+     * @var bool $isRanksRoute;
      * @var bool $isFlagsRoute;
      * @var bool $isFaqRoute;
      * @var bool $isFaqApiRoute;
@@ -28,6 +29,9 @@
             <a class="navbar-brand {{ $isClubsRoute ? 'text-light' : 'text-secondary' }}"
                href="{{ action(\App\Http\Controllers\Club\ShowClubsListAction::class) }}"
             >{{ __('app.navbar.clubs') }}</a>
+            <a class="navbar-brand {{ $isRanksRoute ? 'text-light' : 'text-secondary' }}"
+               href="{{ action(\App\Http\Controllers\Rank\ShowRanksListAction::class, [\App\Models\Rank::SM_RANK]) }}"
+            >{{ __('app.navbar.ranks') }}</a>
             @auth
                 <a class="navbar-brand {{ $isFlagsRoute ? 'text-light' : 'text-secondary' }}"
                    href="{{ action(\App\Http\Controllers\Flags\ShowFlagsListAction::class) }}"

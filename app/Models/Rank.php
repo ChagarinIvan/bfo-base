@@ -24,8 +24,8 @@ use Illuminate\Support\Collection;
  * @property-read Event $event
  * @property-read Person $person
  * @method static Rank|Builder where(string $column, string|null $operator, string|int|Carbon $value = null)
- * @method static Rank|Builder whereEventId(int $eventId)
- * @method static Rank|Builder wherePersonId(int $personId)
+ * @method static Rank|Builder selectRaw(Expression $expression)
+ * @method static Rank|Builder whereIn(string $column, array|Collection $list)
  * @method static Rank|Builder with(array|string $relations)
  * @method static Rank|Builder orderByRaw(Expression $expression)
  * @method static Rank|Builder join(string $table, string $foreignColumn, string $operator, string $selfColumn)
@@ -46,8 +46,8 @@ class Rank extends Model
 
     public const RANKS = [
         self::WSM_RANK => self::WSM_RANK,
-        self::SMC_RANK => self::SMC_RANK,
         self::SM_RANK => self::SM_RANK,
+        self::SMC_RANK => self::SMC_RANK,
         self::FIRST_RANK => self::FIRST_RANK,
         self::SECOND_RANK => self::SECOND_RANK,
         self::THIRD_RANK => self::THIRD_RANK,

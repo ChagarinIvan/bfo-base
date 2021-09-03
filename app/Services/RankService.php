@@ -9,7 +9,8 @@ use App\Filters\RanksFilter;
 use App\Models\ProtocolLine;
 use App\Models\Rank;
 use App\Repositories\RanksRepository;
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 
 class RankService
 {
@@ -37,7 +38,21 @@ class RankService
     {
         $filter = new RanksFilter();
         $filter->personId = $personId;
+        $filter->isOrderDescByFinishDateAnd = true;
         return $this->ranksRepository->getRanksList($filter);
+    }
+
+    public function getFinishedRanks(string $rank): RanksCollection
+    {
+        $filter = new RanksFilter();
+        $filter->rank = $rank;
+        $filter->with = ['person', 'event'];
+        $filter->isOrderByFinish = true;
+        $filter->date = Carbon::now();
+        $ranks = $this->ranksRepository->getRanksList($filter);
+        $ranks->groupByPerson();
+        $ranks->transform(fn(Collection $ranks) => $ranks->first());
+        return $ranks;
     }
 
     public function getActualRank(int $personId): ?Rank
@@ -111,5 +126,10 @@ class RankService
         $lastRank->start_date = $protocolLine->event->date;
         $lastRank->finish_date = $protocolLine->event->date->clone()->addYears(2);
         return $lastRank;
+    }
+
+    public function cleanAll(): void
+    {
+        $this->ranksRepository->cleanAll();
     }
 }
