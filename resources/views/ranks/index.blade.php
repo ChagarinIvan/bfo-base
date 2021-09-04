@@ -29,14 +29,24 @@
                 <tr class="table-info">
                     <th>{{ __('app.common.fio') }}</th>
                     <th>{{ __('app.rank.completed_date') }}</th>
+                    <th>{{ __('app.rank.recompleted_date') }}</th>
                     <th>{{ __('app.rank.finished_date') }}</th>
                 </tr>
                 </thead>
                 <tbody>
                 @foreach ($ranks as $rank)
                     <tr>
-                        <td>{{ $rank->person->lastname }} {{ $rank->person->firstname }}</td>
-                        <td>{{ $rank->event->date->format('Y-m-d') }}</td>
+                        <td>
+                            <a href="{{ action(\App\Http\Controllers\Person\ShowPersonRanksAction::class, [$rank->person_id]) }}">
+                                <u>{{ $rank->person->lastname }} {{ $rank->person->firstname }}</u>
+                            </a>
+                        </td>
+                        <td>{{ $rank->start_date->format('Y-m-d') }}</td>
+                        <td>
+                            <a href="{{ action(\App\Http\Controllers\Event\ShowEventAction::class, [$rank->event_id]) }}">
+                                <u>{{ $rank->event->date->format('Y-m-d') }}</u>
+                            </a>
+                        </td>
                         <td>{{ $rank->finish_date->format('Y-m-d') }}</td>
                     </tr>
                 @endforeach

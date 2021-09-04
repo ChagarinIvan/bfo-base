@@ -7,8 +7,9 @@ namespace App\Services;
 use App\Models\IdentLine;
 use App\Models\PersonPrompt;
 use App\Models\ProtocolLine;
+use Illuminate\Database\ConnectionInterface;
+use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 
 /**
  * Class IdentService
@@ -18,10 +19,12 @@ use Illuminate\Support\Facades\DB;
 class IdentService
 {
     private RankService $rankService;
+    private ConnectionInterface $db;
 
-    public function __construct(RankService $rankService)
+    public function __construct(RankService $rankService, ConnectionInterface $db)
     {
         $this->rankService = $rankService;
+        $this->db = $db;
     }
 
     /**
@@ -73,7 +76,7 @@ class IdentService
     public function identPersons(Collection $protocolLines): void
     {
         // пробуем идентифицировать людей из нового протокола прямым подобием идентификационных строк
-        $notIdentedLines = self::simpleIdent($protocolLines);
+        $notIdentedLines = $this->simpleIdent($protocolLines);
         $protocolLines = $protocolLines->keyBy('id');
         $notIdentedLines = $notIdentedLines->keyBy('id');
         $identedLines = ProtocolLine::find($protocolLines->diffKeys($notIdentedLines)->keys());
@@ -95,15 +98,21 @@ class IdentService
      * @param Collection|ProtocolLine[] $protocolLines
      * @return Collection|ProtocolLine[]
      */
-    public static function simpleIdent(Collection $protocolLines): Collection
+    public function simpleIdent(Collection $protocolLines): Collection
     {
         $linesIds = $protocolLines->pluck('id');
-        DB::table('protocol_lines', 'pls')
+        $this->db->table('protocol_lines', 'pls')
             ->join('protocol_lines AS plj', 'plj.prepared_line', '=', 'pls.prepared_line')
             ->whereNull('pls.person_id')
             ->whereNotNull('plj.person_id')
             ->whereIn('pls.id', $linesIds)
-            ->update(['pls.person_id' => DB::raw('plj.person_id')]);
+            ->update(['pls.person_id' => new Expression('plj.person_id')]);
+
+        $this->db->table('protocol_lines', 'pl')
+            ->join('persons_prompt AS pp', 'pl.prepared_line', '=', 'pp.prompt')
+            ->whereNull('pl.person_id')
+            ->whereIn('pl.id', $linesIds)
+            ->update(['pl.person_id' => new Expression('pp.person_id')]);
 
         return ProtocolLine::whereIn('id', $linesIds)
             ->whereNull('person_id')

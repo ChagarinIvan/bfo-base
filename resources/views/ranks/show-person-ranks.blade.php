@@ -6,6 +6,7 @@
      * @var Rank[]|Collection $ranks;
      * @var Person $person;
      * @var Rank $actualRank;
+     * @var array $protocolLinesIds;
      */
 @endphp
 
@@ -28,9 +29,6 @@
                 <th>{{ __('app.rank.completed_date') }}</th>
                 <th>{{ __('app.rank.finished_date') }}</th>
                 <th>{{ __('app.event.title') }}</th>
-                <th>
-                    <a href="#">{{ __('app.common.edit') }}</a>
-                </th>
             </tr>
             </thead>
             <tbody>
@@ -40,11 +38,10 @@
                         <td>{{ $rank->event->date->format('Y-m-d') }}</td>
                         <td>{{ $rank->finish_date->format('Y-m-d') }}</td>
                         <td>
-                            <a href="{{ action(\App\Http\Controllers\Event\ShowEventAction::class, [$rank->event->id]) }}">
-                                {{ $rank->event->competition->name }} ({{ $rank->event->name }})
+                            <a href="{{ action(\App\Http\Controllers\Event\ShowEventAction::class, [$rank->event->id]) }}#{{ $protocolLinesIds[$rank->id] }}">
+                                <u>{{ $rank->event->competition->name }} ({{ $rank->event->name }})</u>
                             </a>
                         </td>
-                        <td></td>
                     </tr>
                 @endforeach
             </tbody>

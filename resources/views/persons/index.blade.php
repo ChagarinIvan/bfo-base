@@ -6,6 +6,7 @@
      * @var Paginator $paginator;
      * @var Collection|Person[] $persons;
      * @var string $search;
+     * @var array $actualRanks;
      */
 @endphp
 
@@ -45,6 +46,7 @@
             <thead>
             <tr class="table-info">
                 <th>{{ __('app.common.fio') }}</th>
+                <th>{{ __('app.common.rank') }}</th>
                 <th>{{ __('app.common.events_count') }}</th>
                 <th>{{ __('app.club.name') }}</th>
                 <th>{{ __('app.common.birthday') }}</th>
@@ -62,19 +64,31 @@
                 <tr>
                     @if($hide)
                         <td>{{ $person->lastname }} {{ $person->firstname }}</td>
-                        <td><span class="badge" style="background: {{ \App\Facades\Color::getColor($count) }}">{{ $count }}</span></td>
+                        <td>
+                            <a href="{{ action(\App\Http\Controllers\Person\ShowPersonRanksAction::class, [$person->id]) }}">
+                                <u>{{ $actualRanks[$person->id] ? $actualRanks[$person->id]->rank : '' }}</u>
+                            </a>
+                        </td>
+                        <td>
+                            <span class="badge" style="background: {{ \App\Facades\Color::getColor($count) }}">{{ $count }}</span>
+                        </td>
                         @if($person->club === null)
                             <td></td>
                         @else
                             <td>
-{{--                                <a href="{{ action(\App\Http\Controllers\Club\ShowClubAction::class, [$person->club_id]) }}">--}}
+                                <a href="{{ action(\App\Http\Controllers\Club\ShowClubAction::class, [$person->club_id]) }}">
                                     <u>{{ $person->club->name }}</u>
-{{--                                </a>--}}
+                                </a>
                             </td>
                         @endif
                         <td>{{ $person->birthday ? $person->birthday->format('Y') : '' }}</td>
                     @else
                         <td><a href="{{ $link }}"><u>{{ $person->lastname }} {{ $person->firstname }}</u></a></td>
+                        <td>
+                            <a href="{{ action(\App\Http\Controllers\Person\ShowPersonRanksAction::class, [$person->id]) }}">
+                                <u>{{ $actualRanks[$person->id] ? $actualRanks[$person->id]->rank : '' }}</u>
+                            </a>
+                        </td>
                         <td><span class="badge" style="background: {{ \App\Facades\Color::getColor($count) }}">{{ $count }}</span></td>
                         @if($person->club === null)
                             <td></td>

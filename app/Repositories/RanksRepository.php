@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Collections\RanksCollection;
 use App\Filters\RanksFilter;
 use App\Models\Rank;
+use Carbon\Carbon;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Query\Expression;
 
@@ -39,9 +40,14 @@ class RanksRepository
         if ($filter->rank !== null) {
             $ranks->where('ranks.rank', $filter->rank);
         }
-        if ($filter->date !== null) {
-            $ranks->where('finish_date', '>=', $filter->date);
-            $ranks->where('start_date', '<=', $filter->date);
+        if ($filter->startDateLess !== null) {
+            $ranks->where('start_date', '<=', $filter->startDateLess);
+        }
+        if ($filter->startDateMore !== null) {
+            $ranks->where('start_date', '>', $filter->startDateMore);
+        }
+        if ($filter->finishDateMode !== null) {
+            $ranks->where('finish_date', '>=', $filter->finishDateMode);
         }
         if ($filter->with !== null) {
             $ranks->with($filter->with);
@@ -49,13 +55,17 @@ class RanksRepository
         return new RanksCollection($ranks->get());
     }
 
-    public function getLatestRank(int $personId): ?Rank
+    public function getDateRank(int $personId, Carbon $date = null): ?Rank
     {
-        return Rank::where('person_id', '=', $personId)
+        $rankQuery = Rank::where('person_id', '=', $personId)
             ->orderBy('finish_date', 'desc')
-            ->limit(1)
-            ->get()
-            ->first();
+            ->limit(1);
+
+        if ($date !== null) {
+            $rankQuery->where('finish_date', '>=', $date);
+            $rankQuery->where('start_date', '<=', $date);
+        }
+        return $rankQuery->get()->first();
     }
 
     public function storeRank(Rank $rank): Rank
@@ -67,5 +77,10 @@ class RanksRepository
     public function cleanAll(): void
     {
         $this->db->table(self::TABLE)->truncate();
+    }
+
+    public function deleteRanks(RanksCollection $ranks): void
+    {
+        $ranks->each(fn(Rank $rank) => $rank->delete());
     }
 }
