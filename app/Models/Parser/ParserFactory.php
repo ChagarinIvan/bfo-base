@@ -9,6 +9,7 @@ class ParserFactory
 {
     private const PARSERS = [
         HandicapAlbatrosTimingParser::class,
+        AlbatrosRelayParser::class,
         AlbatrosTimingParser::class,
         OBelarusNetRelayWithHeadersParser::class,
         OBelarusNetRelayParser::class,

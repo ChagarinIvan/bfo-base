@@ -7,10 +7,19 @@ namespace App\Services;
 use App\Models\Distance;
 use App\Models\Group;
 use App\Models\ProtocolLine;
+use App\Models\Rank;
+use App\Repositories\ProtocolLinesRepository;
 use Illuminate\Support\Collection;
 
 class ProtocolLineService
 {
+    private ProtocolLinesRepository $protocolLinesRepository;
+
+    public function __construct(ProtocolLinesRepository $protocolLinesRepository)
+    {
+        $this->protocolLinesRepository = $protocolLinesRepository;
+    }
+
     /**
      * Коллекция сырых данных линий протокола, из каждой
      * формирует модель записи протокола
@@ -62,5 +71,15 @@ class ProtocolLineService
         }
 
         return $distance;
+    }
+
+    public function getProtocolLineIdForRank(Rank $rank): int
+    {
+        return $this->protocolLinesRepository->getLineForPersonOnEvent($rank->person_id, $rank->event_id);
+    }
+
+    public function getProtocolLineWithEvent(int $id): ProtocolLine
+    {
+        return $this->protocolLinesRepository->getProtocolLine($id, ['distance.event']);
     }
 }

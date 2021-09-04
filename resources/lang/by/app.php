@@ -29,6 +29,7 @@ return [
     ],
     'ranks' => 'Разрады',
     'rank' => [
+        'recompleted_date' => 'Дата паследняга падтвярджэння',
         'completed_date' => 'Дата выканання',
         'finished_date' => 'Дата заканчэння',
     ],
