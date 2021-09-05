@@ -2,9 +2,6 @@
 
 namespace App\Models\Parser;
 
-use Illuminate\Http\UploadedFile;
-use RuntimeException;
-
 class ParserFactory
 {
     private const PARSERS = [
@@ -19,14 +16,14 @@ class ParserFactory
         OBelarusNetParser::class,
     ];
 
-    public static function createParser(UploadedFile $file): ParserInterface
+    public static function createParser(string $protocol): ParserInterface
     {
         foreach (self::PARSERS as $parser) {
             $parser = new $parser();
-            if ($parser->check($file)) {
+            if ($parser->check($protocol)) {
                 return $parser;
             }
         }
-        throw new RuntimeException('Нету подходящего парсера!!');
+        throw new \RuntimeException('нету подходящего парсера!!');
     }
 }

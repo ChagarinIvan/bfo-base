@@ -10,17 +10,15 @@ use DOMElement;
 use DOMXPath;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
 
 class SimplyParser implements ParserInterface
 {
-    public function parse(UploadedFile $file): Collection
+    public function parse(string $file, bool $needConvert = true): Collection
     {
         try {
             $doc = new DOMDocument();
-            $content = $file->get();
-            $content = mb_convert_encoding($content, 'utf-8', 'windows-1251');
+            $content = mb_convert_encoding($file, 'utf-8', 'windows-1251');
             $content = str_replace("&laquo;", '«', $content);
             $content = str_replace("&raquo;", '»', $content);
             @$doc->loadHTML($content);
@@ -121,10 +119,9 @@ class SimplyParser implements ParserInterface
         return '';
     }
 
-    public function check(UploadedFile $file): bool
+    public function check(string $file): bool
     {
-        $content = $file->get();
-        return str_contains($content, '<o:p></o:p>');
+        return str_contains($file, '<o:p></o:p>');
     }
 
     private function getValue(string $column, array $lineData, int $fieldsCount, int &$indent): mixed

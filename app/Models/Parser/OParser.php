@@ -7,7 +7,6 @@ use App\Models\Group;
 use App\Models\Rank;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
 
 /**
@@ -21,11 +20,10 @@ class OParser implements ParserInterface
 {
     private bool $setVk = false;
 
-    public function parse(UploadedFile $file): Collection
+    public function parse(string $file, bool $needConvert = true): Collection
     {
         try {
-            $content = $file->get();
-            $lines = preg_split('/\n|\r\n?/', $content);
+            $lines = preg_split('/\n|\r\n?/', $file);
             $linesList = new Collection();
             $startGroupHeader = false;
             $startProtocol = false;
@@ -227,9 +225,8 @@ class OParser implements ParserInterface
         return null;
     }
 
-    public function check(UploadedFile $file): bool
+    public function check(string $file): bool
     {
-        $content = $file->get();
-        return (bool)preg_match('#<h2>\w{3}</h2><pre>\w+|<br />#u', $content);
+        return (bool)preg_match('#<h2>\w{3}</h2><pre>\w+|<br />#u', $file);
     }
 }

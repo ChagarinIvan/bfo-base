@@ -3,16 +3,16 @@
 namespace App\Models\Parser;
 
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Http\UploadedFile;
 
 interface ParserInterface
 {
     /**
-     * @param UploadedFile $file
+     * @param string $file
+     * @param bool $needConvert
      * @return Collection
      * @throw \App\Exceptions\ParsingException
      */
-    public function parse(UploadedFile $file): Collection;
+    public function parse(string $file, bool $needConvert = true): Collection;
 
-    public function check(UploadedFile $file): bool;
+    public function check(string $file): bool;
 }
