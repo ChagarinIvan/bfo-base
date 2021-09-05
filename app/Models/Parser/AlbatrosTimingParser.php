@@ -9,17 +9,16 @@ use DOMDocument;
 use DOMXPath;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
 use RuntimeException;
 
 class AlbatrosTimingParser implements ParserInterface
 {
-    public function parse(UploadedFile $file): Collection
+    public function parse(string $file, bool $needConvert = true): Collection
     {
         try {
             $doc = new DOMDocument();
-            @$doc->loadHTML($file->get());
+            @$doc->loadHTML($file);
             $xpath = new DOMXpath($doc);
             $preNodes = $xpath->query('//pre');
             $linesList = new Collection();
@@ -123,15 +122,14 @@ class AlbatrosTimingParser implements ParserInterface
         }
     }
 
-    public function check(UploadedFile $file): bool
+    public function check(string $file): bool
     {
         $doc = new DOMDocument();
-        $content = $file->get();
-        if (str_contains($content, 'Albatros-Timing')) {
+        if (str_contains($file, 'Albatros-Timing')) {
             return true;
         }
 
-        @$doc->loadHTML($content);
+        @$doc->loadHTML($file);
         $xpath = new DOMXpath($doc);
         $preNodes = $xpath->query('//pre');
 

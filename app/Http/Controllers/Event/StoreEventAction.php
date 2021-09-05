@@ -16,6 +16,7 @@ use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
+use Illuminate\Support\Str;
 
 class StoreEventAction extends AbstractRedirectAction
 {
@@ -51,19 +52,27 @@ class StoreEventAction extends AbstractRedirectAction
         ]);
 
         $protocol = $request->file('protocol');
-        if ($protocol === null) {
-            return $this->redirector->action(ShowEditEventFormAction::class);
-        }
-
+        $url = $request->get('obelarus_net');
         $event = new Event($formParams);
-        $event->competition_id = $competitionId;
-        $year = $event->date->format('Y');
-
-        $protocolPath = $year .'/'.$protocol->getClientOriginalName();
-        $event->file = $protocolPath;
 
         try {
-            $lineList = $this->parserService->parserProtocol($protocol);
+            if ($protocol === null && $url === null) {
+                return $this->redirector->action(ShowCreateEventFormAction::class);
+            } elseif ($url !== null) {
+                $needConvert = false;
+                $protocol = $this->parserService->uploadProtocol($url);
+            } else {
+                $needConvert = true;
+                $protocol = $protocol->getContent();
+            }
+
+            $event->competition_id = $competitionId;
+            $year = $event->date->format('Y');
+
+            $protocolPath = "{$year}/{$event->date->format('Y-m-d')}_".Str::snake($event->name);
+            $event->file = $protocolPath;
+
+            $lineList = $this->parserService->parserProtocol($protocol, $needConvert);
             $event->save();
             $lineList = $this->protocolLineService->fillProtocolLines($event->id, $lineList);
             $this->identService->identPersons($lineList);
@@ -74,7 +83,7 @@ class StoreEventAction extends AbstractRedirectAction
             return $this->redirector->action(Show404ErrorAction::class);
         }
 
-        $this->storage->putFileAs($year, $protocol, $protocol->getClientOriginalName());
+        $this->storage->put($protocolPath, $protocol);
         return $this->redirector->action(ShowEventAction::class, [$event]);
     }
 }

@@ -28,6 +28,7 @@ class Group extends Model
 {
     public const MALE = 'male';
     public const FEMALE = 'female';
+
     public const MALE_GROUPS = [
         self::MALE => [
             'М10',
@@ -122,6 +123,20 @@ class Group extends Model
     ];
 
     public const GROUPS = [
+        'Ж1',
+        'Ж2',
+        'Ж3',
+        'Ж4',
+        'Ж5',
+        'Ж6',
+        'Ж7',
+        'М1',
+        'М2',
+        'М3',
+        'М4',
+        'М5',
+        'М6',
+        'М7',
         'М10',
         'M10C',
         'М12',

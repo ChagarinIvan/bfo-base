@@ -9,18 +9,18 @@ use DOMDocument;
 use DOMXPath;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
-use RuntimeException;
-use function PHPUnit\Framework\isInstanceOf;
 
 class OBelarusNetParser implements ParserInterface
 {
-    public function parse(UploadedFile $file): Collection
+    public function parse(string $file, bool $needConvert = true): Collection
     {
         try {
             $doc = new DOMDocument();
-            $content = mb_convert_encoding($file->get(), 'utf-8', 'windows-1251');
+            $content = $file;
+            if ($needConvert) {
+                $content = mb_convert_encoding($content, 'utf-8', 'windows-1251');
+            }
             @$doc->loadHTML($content);
             $xpath = new DOMXpath($doc);
             $preNodes = $xpath->query('//pre');
@@ -64,9 +64,6 @@ class OBelarusNetParser implements ParserInterface
                 for ($index = 4; $index < $linesCount; $index++) {
                     $line = trim($lines[$index]);
 
-//                    if (str_contains($line, 'Плеханенко')) {
-//                        sleep(1);
-//                    }
                     if (empty(trim($line, '-'))) {
                         break;
                     }
@@ -104,7 +101,7 @@ class OBelarusNetParser implements ParserInterface
         }
     }
 
-    public function check(UploadedFile $file): bool
+    public function check(string $file): bool
     {
         return true;
     }

@@ -30,6 +30,6 @@ class PersonsService
 
     public function getPersonsByIdsWithLinesAndClubs(Collection $ids): Collection
     {
-        return $this->personsRepository->getPersons($ids, [['protocolLines', 'club']]);
+        return $this->personsRepository->getPersons($ids, ['protocolLines', 'club']);
     }
 }

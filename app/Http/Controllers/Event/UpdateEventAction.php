@@ -16,6 +16,7 @@ use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
+use Illuminate\Support\Str;
 
 class UpdateEventAction extends AbstractRedirectAction
 {
@@ -50,17 +51,25 @@ class UpdateEventAction extends AbstractRedirectAction
         ]);
 
         $protocol = $request->file('protocol');
+        $url = $request->get('obelarus_net');
         $event->fill($formParams);
 
-        if ($protocol === null) {
-            $event->save();
-            return $this->redirector->action(ShowEventAction::class, [$event]);
-        }
-        $year = $event->date->format('Y');
-        $protocolPath = $year .'/'.$protocol->getClientOriginalName();
-
         try {
-            $lineList = $this->parserService->parserProtocol($protocol);
+            if ($protocol === null && $url === null) {
+                $event->save();
+                return $this->redirector->action(ShowEventAction::class, [$event]);
+            } elseif ($url !== null) {
+                $needConvert = false;
+                $protocol = $this->parserService->uploadProtocol($url);
+            } else {
+                $needConvert = true;
+                $protocol = $protocol->getContent();
+            }
+
+            $year = $event->date->format('Y');
+            $protocolPath = "{$year}/{$event->date->format('Y-m-d')}_".Str::snake($event->name);
+
+            $lineList = $this->parserService->parserProtocol($protocol, $needConvert);
             $this->storage->delete($event->file);
             $event->file = $protocolPath;
             $event->save();
@@ -71,7 +80,7 @@ class UpdateEventAction extends AbstractRedirectAction
             // если не было ошибок при парсинге новго протокола,
             // то можно удалить старые строки, перед сохранением новых
             // заполняем event_id и сохраняем
-            $this->storage->putFileAs($year, $protocol, $protocol->getClientOriginalName());
+            $this->storage->put($protocolPath, $protocol);
             $this->identService->identPersons($lineList);
         } catch (\Exception $e) {
             $e = new ParsingException($e->getMessage());

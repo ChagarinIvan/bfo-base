@@ -36,10 +36,45 @@
                 <input class="form-control" type="date" id="date" name="date" value="{{ $event->date->format('Y-m-d') }}">
             </div>
         </div>
-        <div class="form-group">
-            <label for="protocol" class="col-2 col-form-label">{{ __('app.protocol') }}</label>
-            <p>{{ __('app.protocol-hint') }}</p>
-            <input class="form-control" type="file" name="protocol" id="protocol"/>
+
+        <div class="accordion" id="accordion">
+            <div class="card-header" id="headingOne">
+                <h5 class="mb-0">
+                    <button class="btn btn-link collapsed"
+                            type="button"
+                            data-toggle="collapse"
+                            data-target="#collapseTwo"
+                            aria-expanded="false"
+                            aria-controls="collapseTwo"
+                    >{{ __('app.protocol') }}</button>
+                </h5>
+            </div>
+            <div id="collapseTwo" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+                <div class="card-body">
+                    <div class="form-group">
+                        <input class="form-control" type="file" name="protocol"/>
+                    </div>
+                </div>
+            </div>
+            <div class="card-header" id="headingTwo">
+                <h5 class="mb-0">
+                    <button class="btn btn-link collapsed"
+                            type="button"
+                            data-toggle="collapse"
+                            data-target="#collapseThree"
+                            aria-expanded="false"
+                            aria-controls="collapseThree"
+                    >OBelarus.net</button>
+                </h5>
+            </div>
+            <div id="collapseThree" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="obelarus-url">{{ __('app.common.url') }}</label>
+                        <input class="form-control" id="obelarus-url" name="obelarus_net">
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="row">
             <input type="submit" class="btn btn-primary" value="{{ __('app.common.save') }}">

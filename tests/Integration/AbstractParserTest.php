@@ -22,14 +22,12 @@ abstract class AbstractParserTest extends TestCase
     {
         $storageManager = new FilesystemManager($this->app);
         $protocolContent = $storageManager->disk('tests')->get($this->getFilePath());
-        $protocolFactory = UploadedFile::fake();
-        $protocol = $protocolFactory->createWithContent('test', $protocolContent);
 
         $parserClass = $this->getParser();
-        $parser = ParserFactory::createParser($protocol);
+        $parser = ParserFactory::createParser($protocolContent);
         self::assertInstanceOf($parserClass, $parser);
 
-        $lines = $parser->parse($protocol);
+        $lines = $parser->parse($protocolContent);
         self::assertCount($this->geLinesCount(), $lines);
         $results = $this->getResults();
         foreach ($results as $index => $result) {

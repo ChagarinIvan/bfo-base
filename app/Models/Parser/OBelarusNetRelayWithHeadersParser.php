@@ -9,16 +9,15 @@ use DOMDocument;
 use DOMXPath;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
 
 class OBelarusNetRelayWithHeadersParser implements ParserInterface
 {
-    public function parse(UploadedFile $file): Collection
+    public function parse(string $file, bool $needConvert = true): Collection
     {
         try {
             $doc = new DOMDocument();
-            @$doc->loadHTML($file->get());
+            @$doc->loadHTML($file);
             $xpath = new DOMXpath($doc);
             $preNodes = $xpath->query('//pre');
             $linesList = new Collection();
@@ -109,9 +108,8 @@ class OBelarusNetRelayWithHeadersParser implements ParserInterface
         }
     }
 
-    public function check(UploadedFile $file): bool
+    public function check(string $file): bool
     {
-        $content = $file->get();
-        return (bool)preg_match('#<b>\d+\s+(-|\d+|в/к)\s+(-|.{1,4})\s+(-|\d{1,3})?#', $content);
+        return (bool)preg_match('#<b>\d+\s+(-|\d+|в/к)\s+(-|.{1,4})\s+(-|\d{1,3})?#', $file);
     }
 }
