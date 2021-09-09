@@ -69,7 +69,7 @@ class StoreEventAction extends AbstractRedirectAction
             $event->competition_id = $competitionId;
             $year = $event->date->format('Y');
 
-            $protocolPath = "{$year}/{$event->date->format('Y-m-d')}_".Str::snake($event->name);
+            $protocolPath = "{$year}/{$event->date->format('Y-m-d')}_".Str::snake($event->name).'.html';
             $event->file = $protocolPath;
 
             $lineList = $this->parserService->parserProtocol($protocol, $needConvert);
