@@ -40,7 +40,7 @@ class OBelarusNetRelayParserTest extends AbstractParserTest
                 3015,
                 null,
                 null,
-                null,
+                '-',
                 null,
             ],
         ];

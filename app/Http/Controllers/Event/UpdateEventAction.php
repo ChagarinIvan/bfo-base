@@ -67,7 +67,7 @@ class UpdateEventAction extends AbstractRedirectAction
             }
 
             $year = $event->date->format('Y');
-            $protocolPath = "{$year}/{$event->date->format('Y-m-d')}_".Str::snake($event->name);
+            $protocolPath = "{$year}/{$event->date->format('Y-m-d')}_".Str::snake($event->name).'.html';
 
             $lineList = $this->parserService->parserProtocol($protocol, $needConvert);
             $this->storage->delete($event->file);
