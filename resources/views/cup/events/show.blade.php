@@ -27,7 +27,9 @@
     <ul class="nav nav-tabs pt-2">
         @foreach($cup->groups as $group)
             <li class="nav-item">
-                <a href="{{ action(\App\Http\Controllers\BackAction::class) }}" class="nav-link {{ $groupId === $group->id ? 'active' : ''}}">{{ $group->name }}</a>
+                <a href="{{ action(\App\Http\Controllers\CupEvents\ShowCupEventGroupAction::class, [$cup, $cupEvent, $group]) }}"
+                   class="nav-link {{ $groupId === $group->id ? 'active' : ''}}"
+                >{{ $group->name }}</a>
             </li>
         @endforeach
     </ul>

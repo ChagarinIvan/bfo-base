@@ -32,8 +32,18 @@ class WinOrientHtmlParser implements ParserInterface
                 if (!str_contains($text, 'амилия')) {
                     continue;
                 }
+                $distanceLength = 0;
+                $distancePoints = 0;
                 $groupNode = $xpath->query('preceding::h2[1]', $node);
                 $groupName = $groupNode[0]->nodeValue;
+                if (preg_match('#(\d+)\s+[^\d]+,\s+((\d+[,.]\d+)\s+[^\d]+|(\d+)\s+[^\d])#s', $groupName, $match)) {
+                    $distancePoints = (int)$match[1];
+                    if (str_contains($match[2], ',')) {
+                        $distanceLength = floatval(str_replace(',', '.', $match[3])) * 1000;
+                    } else {
+                        $distanceLength = floatval($match[3]) * 1000;
+                    }
+                }
                 $groupName = explode(',', $groupName)[0];
                 $groupName = Group::FIXING_MAP[$groupName] ?? $groupName;
 
@@ -73,7 +83,13 @@ class WinOrientHtmlParser implements ParserInterface
                     $preparedLine = preg_replace('#\s+#', ' ', $preparedLine);
                     $lineData = explode(' ', $preparedLine);
                     $fieldsCount = count($lineData);
-                    $protocolLine = ['group' => $groupName];
+                    $protocolLine = [
+                        'group' => $groupName,
+                        'distance' => [
+                            'length' => $distanceLength,
+                            'points' => $distancePoints,
+                        ],
+                    ];
                     $indent = 1;
                     for ($i = $groupHeaderIndex; $i > 2; $i--) {
                         $columnName = $this->getColumn($groupHeaderData[$i]);

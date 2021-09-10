@@ -3,19 +3,20 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 
 /**
- * Class ProtocolLine
+ * Class Group
  *
  * @package App\Models
  * @property int $id
  * @property string $name
- * @property ProtocolLine[] $lines
- * @property-read int|null $lines_count
- * @method static Collection find(mixed $id)
+ * @property Distance[] $distances
+ * @property Cup[] $cups
+ * @method static Collection|Group find(mixed $id)
  * @method static Builder|Group newModelQuery()
  * @method static Builder|Group newQuery()
  * @method static Builder|Group query()
@@ -337,17 +338,22 @@ class Group extends Model
         return [];
     }
 
+    public function distances(): HasMany
+    {
+        return $this->hasMany(Distance::class, 'group_id', 'id');
+    }
+
+    public function caps(): BelongsToMany
+    {
+        return $this->belongsToMany(Cup::class, 'cup_groups');
+    }
+
     public function years(): int
     {
         if (preg_match('#\d+#', $this->name, $match)) {
             return (int)$match[0];
         }
         return 0;
-    }
-
-    public function lines(): HasMany
-    {
-        return $this->hasMany(ProtocolLine::class);
     }
 
     public function isPreviousGroup(int $groupId): bool

@@ -56,7 +56,7 @@
                 <tr>
                     <td>{{ $index + 1 }}</td>
                     <td>
-                        <a href="{{ action(\App\Http\Controllers\CupEvents\ShowCupEventGroupAction::class, [$cup, $cupEvent, $group]) }}">
+                        <a href="{{ action(\App\Http\Controllers\CupEvents\ShowCupEventGroupAction::class, [$cup, $cupEvent, $cup->groups->first()]) }}">
                             <u>{{ $cupEvent->event->competition->name.' - '.$cupEvent->event->name }}</u>
                         </a>
                     </td>

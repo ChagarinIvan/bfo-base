@@ -58,7 +58,7 @@ class OBelarusNetParser implements ParserInterface
                     if (str_contains($match[2], ',')) {
                         $distanceLength = floatval(str_replace(',', '.', $match[3])) * 1000;
                     } else {
-                        $distanceLength = floatval($match[4]);
+                        $distanceLength = floatval($match[3]);
                     }
                 }
                 for ($index = 4; $index < $linesCount; $index++) {

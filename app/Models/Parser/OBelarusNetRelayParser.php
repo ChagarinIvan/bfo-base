@@ -50,10 +50,10 @@ class OBelarusNetRelayParser implements ParserInterface
                         if (str_contains($match[3], ',')) {
                             $distanceLength = floatval(str_replace(',', '.', $match[3])) * 1000;
                         } else {
-                            $distanceLength = (float)$match[3];
+                            $distanceLength = (float)$match[3] * 1000;
                         }
                     } else {
-                        $distanceLength = floatval($match[4]);
+                        $distanceLength = floatval($match[3]);
                     }
                 }
                 if (str_contains($groupName, ',')) {
@@ -207,7 +207,7 @@ class OBelarusNetRelayParser implements ParserInterface
             }
         } elseif ($column === 'points') {
             $column = $lineData[$fieldsCount - $indent];
-            if (is_numeric($column) && $this->commandPoints === null) {
+            if (is_numeric($column) && $this->commandPoints === null && $this->commandSerial != $column) {
                 $indent++;
                 $this->commandPoints = (int)$column;
             }
@@ -238,10 +238,16 @@ class OBelarusNetRelayParser implements ParserInterface
             } elseif (preg_match('#\d\d:\d\d:\d\d#', $column1) && !preg_match('#\d\d:\d\d:\d\d#', $column2)) {
                 $indent++;
                 $timeColumn = $column1;
-            } elseif ($column1 === '20.10') {
-                $indent += 2;
-                $protocolLine['time'] = null;
-                return $protocolLine;
+            } elseif ($column1 === '20.10' || $column1 === '24.4') {
+                $column3 = $lineData[$fieldsCount - $indent - 2];
+                if (preg_match('#\d\d:\d\d:\d\d#', $column3)) {
+                    $indent += 3;
+                    $timeColumn = $column3;
+                } else {
+                    $indent += 2;
+                    $protocolLine['time'] = null;
+                    return $protocolLine;
+                }
             } else {
                 $protocolLine['time'] = null;
                 return $protocolLine;

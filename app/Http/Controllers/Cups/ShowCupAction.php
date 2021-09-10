@@ -11,10 +11,7 @@ class ShowCupAction extends AbstractCupViewAction
 {
     public function __invoke(Cup $cup): View
     {
-        $events = $cup->events()
-            ->join('events', 'events.id', '=', 'cup_events.event_id')
-            ->orderBy('events.date')
-            ->get();
+        $events = $cup->events()->with('event')->get()->sortBy('events.date');
 
         return $this->view('cup.show', [
             'cup' => $cup,

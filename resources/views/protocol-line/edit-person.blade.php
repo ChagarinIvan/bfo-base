@@ -26,12 +26,10 @@
                     <input type="text" class="form-control" id="search" name="search" value="{{ $search }}">
                 </div>
                 <button type="submit" class="btn btn-primary mr-1">{{ __('app.common.search') }}</button>
-                @if ($search !== '')
-                    <a type="submit"
-                       href="{{ action(\App\Http\Controllers\BackAction::class) }}"
-                       class="btn btn-danger"
-                    >{{ __('app.common.cancel') }}</a>
-                @endif
+                <a type="submit"
+                   href="{{ action(\App\Http\Controllers\BackAction::class) }}"
+                   class="btn btn-danger"
+                >@if($search === null){{ __('app.common.back') }}@else{{ __('app.common.cancel') }}@endif</a>
             </form>
         </div>
     </div>

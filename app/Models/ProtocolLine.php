@@ -31,7 +31,6 @@ use Illuminate\Support\Collection;
  * @property string $prepared_line
  * @property bool $vk
  * @property-read Event $event
- * @property-read Group $group
  * @property-read Distance $distance
  * @property-read Person|null $person
  * @method static Collection find(mixed $ids)
@@ -82,11 +81,6 @@ class ProtocolLine extends Model
     public function event(): BelongsTo
     {
         return $this->distance->event();
-    }
-
-    public function group(): BelongsTo
-    {
-        return $this->distance->group();
     }
 
     public function person(): BelongsTo

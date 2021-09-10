@@ -12,8 +12,11 @@ use Illuminate\Contracts\View\View;
 
 class ShowCupEventGroupAction extends AbstractCupViewAction
 {
-    public function __invoke(Cup $cup, CupEvent $cupEvent, Group $group): View
+    public function __invoke(string $cup, string $cupEvent, string $group): View
     {
+        $group = Group::find($group);
+        $cup = Cup::find($cup);
+        $cupEvent = CupEvent::find($cupEvent);
         $cupType = $cup->cupType();
         $cupEventPoints = $cupType->calculateEvent($cupEvent, $group);
 
