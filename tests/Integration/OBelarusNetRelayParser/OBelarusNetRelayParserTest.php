@@ -1,8 +1,9 @@
 <?php
 
-namespace Tests\Integration;
+namespace Tests\Integration\OBelarusNetRelayParser;
 
 use App\Models\Parser\OBelarusNetRelayParser;
+use Tests\Integration\AbstractParserTest;
 
 class OBelarusNetRelayParserTest extends AbstractParserTest
 {
@@ -49,5 +50,10 @@ class OBelarusNetRelayParserTest extends AbstractParserTest
     protected function geLinesCount(): int
     {
         return 207;
+    }
+
+    protected function needConvert(): bool
+    {
+        return true;
     }
 }

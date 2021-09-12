@@ -5,10 +5,7 @@ namespace Tests\Integration;
 use App\Models\Parser\ParserFactory;
 use App\Models\ProtocolLine;
 use Carbon\Carbon;
-use Illuminate\Filesystem\Filesystem;
-use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Filesystem\FilesystemManager;
-use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
 
 abstract class AbstractParserTest extends TestCase
@@ -27,7 +24,7 @@ abstract class AbstractParserTest extends TestCase
         $parser = ParserFactory::createParser($protocolContent);
         self::assertInstanceOf($parserClass, $parser);
 
-        $lines = $parser->parse($protocolContent);
+        $lines = $parser->parse($protocolContent, $this->needConvert());
         self::assertCount($this->geLinesCount(), $lines);
         $results = $this->getResults();
         foreach ($results as $index => $result) {
@@ -50,5 +47,10 @@ abstract class AbstractParserTest extends TestCase
                 self::assertEquals($result[11], $line['group'], 'group');
             }
         }
+    }
+
+    protected function needConvert(): bool
+    {
+        return false;
     }
 }

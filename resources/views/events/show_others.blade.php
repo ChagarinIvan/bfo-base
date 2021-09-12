@@ -44,9 +44,9 @@
                     </td>
                     <td>{{ $line->firstname }}</td>
                 @endif
-                @if($hasPerson && $line->club === ($line->person->club->name ?? ''))
+                @if($hasPerson && $line->club === ($line->person->club->name ?? '') && $line->person->club_id !== null)
                     <td>
-                        <a href="{{ action(\App\Http\Controllers\Cups\ShowCupAction::class, [$line->person->club_id]) }}">
+                        <a href="{{ action(\App\Http\Controllers\Club\ShowClubAction::class, [$line->person->club_id]) }}">
                             <u>{{ ($line->club) }}</u>
                         </a>
                     </td>

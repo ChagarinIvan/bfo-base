@@ -5,8 +5,6 @@ namespace App\Models\Parser;
 use App\Exceptions\ParsingException;
 use App\Models\Group;
 use App\Models\Rank;
-use DOMDocument;
-use DOMXPath;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
@@ -22,28 +20,29 @@ class OBelarusNetRelayParser implements ParserInterface
     public function parse(string $file, bool $needConvert = true): Collection
     {
         try {
-            $doc = new DOMDocument();
-            @$doc->loadHTML($file);
-            $xpath = new DOMXpath($doc);
-            $preNodes = $xpath->query('//pre');
+            if ($needConvert) {
+                $file = mb_convert_encoding($file, 'utf-8', 'windows-1251');
+            }
             $linesList = new Collection();
             $distancePoints = 0;
             $distanceLength = 0;
 
-            foreach ($preNodes as $node) {
+            preg_match_all('#<h2>(.+?)</h2>.*?<pre>(.+?)</pre#msi', $file, $nodesMatch);
+            foreach ($nodesMatch[2] as $nodeIndex => $node) {
                 $this->commandCounter = 1;
                 $this->commandPoints = null;
                 $this->commandPlace = null;
                 $this->commandRank = null;
 
-                $text = trim($node->nodeValue);
-                $text = trim($text, '-');
+                $text = trim($node, '-');
+                $text = strip_tags($text);
                 $text = trim($text);
                 if (!str_contains($text, 'амилия')) {
                     continue;
                 }
-                $groupNode = $xpath->query('preceding::h2[1]', $node);
-                $groupName = $groupNode[0]->nodeValue;
+
+                $groupName = $nodesMatch[1][$nodeIndex];
+                $groupName = strip_tags($groupName);
                 if (preg_match('#(\d+)\s+[^\d]+,\s+((\d+([,.])\d+)\s+[^\d]+|(\d+)\s+[^\d])#s', $groupName, $match)) {
                     $distancePoints = (int)$match[1];
                     if (str_contains($match[3], ',') || str_contains($match[3], '.')) {
@@ -79,7 +78,7 @@ class OBelarusNetRelayParser implements ParserInterface
                     if (empty($line)) {
                         continue;
                     }
-                    if (str_contains($line, 'ласс дистан')) {
+                    if (str_contains($line, 'ласс дистан') || str_contains($line, 'лавный судь')) {
                         break;
                     }
                     if (!preg_match('#\d#', $line)) {
@@ -238,13 +237,17 @@ class OBelarusNetRelayParser implements ParserInterface
             } elseif (preg_match('#\d\d:\d\d:\d\d#', $column1) && !preg_match('#\d\d:\d\d:\d\d#', $column2)) {
                 $indent++;
                 $timeColumn = $column1;
-            } elseif ($column1 === '20.10' || $column1 === '24.4') {
+            } elseif ($column1 === '20.10' || $column1 === '24.4' || $column1 === 'DSQ') {
                 $column3 = $lineData[$fieldsCount - $indent - 2];
                 if (preg_match('#\d\d:\d\d:\d\d#', $column3)) {
                     $indent += 3;
                     $timeColumn = $column3;
-                } else {
+                } elseif ($column1 === '20.10' || $column1 === '24.4') {
                     $indent += 2;
+                    $protocolLine['time'] = null;
+                    return $protocolLine;
+                } else {
+                    $indent += 1;
                     $protocolLine['time'] = null;
                     return $protocolLine;
                 }
