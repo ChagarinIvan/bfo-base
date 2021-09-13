@@ -16,14 +16,9 @@ use Illuminate\Support\Collection;
  * @property string $name
  * @property Distance[] $distances
  * @property Cup[] $cups
- * @method static Collection|Group find(mixed $id)
- * @method static Builder|Group newModelQuery()
- * @method static Builder|Group newQuery()
- * @method static Builder|Group query()
- * @method static Builder|Group where(...$value)
- * @method static Builder|Group whereIn(string $column, array $values)
- * @method static Builder|Group whereId($value)
+ * @method static Group|null find(int $id)
  * @method static Builder|Group whereName($value)
+ * @method static Group|null first()
  */
 class Group extends Model
 {

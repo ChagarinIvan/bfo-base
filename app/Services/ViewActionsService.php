@@ -16,8 +16,12 @@ class ViewActionsService
     private BackUrlService $backUrlService;
     private UrlGenerator $urlGenerator;
 
-    public function __construct(ViewFactory $viewFactory, UserService $userService, BackUrlService $backUrlService, UrlGenerator $urlGenerator)
-    {
+    public function __construct(
+        ViewFactory $viewFactory,
+        UserService $userService,
+        BackUrlService $backUrlService,
+        UrlGenerator $urlGenerator,
+    ) {
         $this->viewFactory = $viewFactory;
         $this->userService = $userService;
         $this->backUrlService = $backUrlService;

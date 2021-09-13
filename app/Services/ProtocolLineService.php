@@ -8,16 +8,21 @@ use App\Models\Distance;
 use App\Models\Group;
 use App\Models\ProtocolLine;
 use App\Models\Rank;
+use App\Repositories\GroupsRepository;
 use App\Repositories\ProtocolLinesRepository;
 use Illuminate\Support\Collection;
 
 class ProtocolLineService
 {
     private ProtocolLinesRepository $protocolLinesRepository;
+    private GroupsRepository $groupsRepository;
 
-    public function __construct(ProtocolLinesRepository $protocolLinesRepository)
-    {
+    public function __construct(
+        ProtocolLinesRepository $protocolLinesRepository,
+        GroupsRepository $groupsRepository
+    ) {
         $this->protocolLinesRepository = $protocolLinesRepository;
+        $this->groupsRepository = $groupsRepository;
     }
 
     /**
@@ -33,15 +38,15 @@ class ProtocolLineService
      */
     public function fillProtocolLines(int $eventId, Collection $lineList): Collection
     {
-        $groups = Group::all();
-
-        return $lineList->transform(function (array $lineData) use ($groups, $eventId) {
+        return $lineList->transform(function (array $lineData) use ($eventId) {
             $protocolLine = new ProtocolLine($lineData);
             $groupName = str_replace(' ', '', $lineData['group']);
-            /** @var Group $group */
-            $group = $groups->firstWhere('name', $groupName);
+            $group = $this->groupsRepository->searchGroup($groupName);
+
             if ($group === null) {
-                throw new \RuntimeException('Wrong group '.$lineData['group']);
+                $group = new Group();
+                $group->name = $groupName;
+                $group = $this->groupsRepository->storeGroup($group);
             }
 
             $distance = $this->findDistance($group->id, $eventId, (int)($lineData['distance']['length'] ?? 0), (int)($lineData['distance']['points'] ?? 0));
