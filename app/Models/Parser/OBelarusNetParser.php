@@ -130,7 +130,7 @@ class OBelarusNetParser implements ParserInterface
         if (str_contains($field, 'вал')) {
             return 'rank';
         }
-        if (str_contains($field, 'рим')) {
+        if (str_contains($field, 'рим') || str_contains($field, 'тарт')) {
             return 'prim';
         }
         return '';

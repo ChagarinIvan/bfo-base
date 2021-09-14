@@ -1,8 +1,9 @@
 <?php
 
-namespace Tests\Integration;
+namespace Tests\Integration\OBelarusNetParser;
 
 use App\Models\Parser\OBelarusNetParser;
+use Tests\Integration\AbstractParserTest;
 
 class OBelarusNetParserTest extends AbstractParserTest
 {
