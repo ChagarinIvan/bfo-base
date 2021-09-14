@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Login;
 use App\Http\Controllers\AbstractRedirectAction;
 use App\Http\Controllers\Competition\ShowCompetitionsListAction;
 use App\Models\Year;
+use App\Services\BackUrlService;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Redirector;
@@ -14,9 +15,12 @@ class AuthValidationAction extends AbstractRedirectAction
 {
     private AuthManager $authManager;
 
-    public function __construct(Redirector $redirector, AuthManager $sessionGuard)
-    {
-        parent::__construct($redirector);
+    public function __construct(
+        Redirector $redirector,
+        BackUrlService $backUrlService,
+        AuthManager $sessionGuard
+    ) {
+        parent::__construct($redirector, $backUrlService);
         $this->authManager = $sessionGuard;
     }
 

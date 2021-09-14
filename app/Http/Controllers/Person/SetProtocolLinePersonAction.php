@@ -8,20 +8,10 @@ use App\Http\Controllers\AbstractRedirectAction;
 use App\Models\Person;
 use App\Models\PersonPrompt;
 use App\Models\ProtocolLine;
-use App\Services\BackUrlService;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Routing\Redirector;
 
 class SetProtocolLinePersonAction extends AbstractRedirectAction
 {
-    private BackUrlService $backUrlService;
-
-    public function __construct(Redirector $redirector, BackUrlService $backUrlService)
-    {
-        parent::__construct($redirector);
-        $this->backUrlService = $backUrlService;
-    }
-
     public function __invoke(Person $person, int $protocolLineId): RedirectResponse
     {
         /** @var ProtocolLine $protocolLine */
