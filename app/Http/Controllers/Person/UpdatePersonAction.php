@@ -20,6 +20,7 @@ class UpdatePersonAction extends AbstractRedirectAction
             'club_id' => 'required|int',
         ]);
 
+        $person->prompts()->delete();
         $person->fill($formParams);
         if ($person->club_id === 0) {
             $person->club_id = null;

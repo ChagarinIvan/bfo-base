@@ -130,6 +130,9 @@ class OBelarusNetParser implements ParserInterface
         if (str_contains($field, 'вал')) {
             return 'rank';
         }
+        if (str_contains($field, 'рим')) {
+            return 'prim';
+        }
         return '';
     }
 
@@ -188,6 +191,12 @@ class OBelarusNetParser implements ParserInterface
                 return (int)$year;
             } else {
                 return null;
+            }
+        }
+        if ($column === 'prim') {
+            $prim = $lineData[$fieldsCount - $indent];
+            if (preg_match('#\d\d:\d\d#', $prim)) {
+                $indent++;
             }
         }
         return null;

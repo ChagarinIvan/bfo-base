@@ -87,4 +87,9 @@ class OBelarusNetParserTest extends AbstractParserTest
     {
         return 127;
     }
+
+    protected function needConvert(): bool
+    {
+        return true;
+    }
 }
