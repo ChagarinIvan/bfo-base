@@ -8,6 +8,7 @@ use App\Http\Controllers\AbstractRedirectAction;
 use App\Http\Controllers\Error\Show404ErrorAction;
 use App\Mail\PasswordMail;
 use App\Models\User;
+use App\Services\BackUrlService;
 use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Contracts\Mail\Mailer;
 use Illuminate\Hashing\HashManager;
@@ -25,12 +26,13 @@ class MakeNewPasswordByTokenAction extends AbstractRedirectAction
 
     public function __construct(
         Redirector $redirector,
+        BackUrlService $backUrlService,
         Encrypter $encrypter,
         Validator $validator,
         HashManager $hashManager,
         Mailer $mailer,
     ) {
-        parent::__construct($redirector);
+        parent::__construct($redirector, $backUrlService);
         $this->encrypter = $encrypter;
         $this->validator = $validator;
         $this->hashManager = $hashManager;

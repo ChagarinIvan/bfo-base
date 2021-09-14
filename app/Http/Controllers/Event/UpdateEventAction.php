@@ -8,6 +8,7 @@ use App\Exceptions\ParsingException;
 use App\Http\Controllers\AbstractRedirectAction;
 use App\Http\Controllers\Error\Show404ErrorAction;
 use App\Models\Event;
+use App\Services\BackUrlService;
 use App\Services\IdentService;
 use App\Services\ParserService;
 use App\Services\ProtocolLineService;
@@ -28,13 +29,14 @@ class UpdateEventAction extends AbstractRedirectAction
 
     public function __construct(
         Redirector $redirector,
+        BackUrlService $backUrlService,
         ParserService $parserService,
         IdentService $identService,
         ExceptionHandler $exceptionHandler,
         ProtocolLineService $protocolLineService,
         Filesystem $storage,
     ) {
-        parent::__construct($redirector);
+        parent::__construct($redirector, $backUrlService);
         $this->parserService = $parserService;
         $this->identService = $identService;
         $this->exceptionHandler = $exceptionHandler;
@@ -89,6 +91,7 @@ class UpdateEventAction extends AbstractRedirectAction
             return $this->redirector->action(Show404ErrorAction::class);
         }
 
+        $this->removeLastBackUrl();
         return $this->redirector->action(ShowEventAction::class, [$event]);
     }
 }

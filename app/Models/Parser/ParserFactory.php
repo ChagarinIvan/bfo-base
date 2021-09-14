@@ -5,6 +5,7 @@ namespace App\Models\Parser;
 class ParserFactory
 {
     private const PARSERS = [
+        SFRParser::class,
         HandicapAlbatrosTimingParser::class,
         AlbatrosRelayParser::class,
         AlbatrosTimingParser::class,
