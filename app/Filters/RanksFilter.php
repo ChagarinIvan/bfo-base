@@ -11,7 +11,7 @@ class RanksFilter
     public ?string $rank = null;
     public ?Carbon $startDateLess = null;
     public ?Carbon $startDateMore = null;
-    public ?Carbon $finishDateMode = null;
+    public ?Carbon $finishDateMore = null;
     public ?array $with = null;
     public bool $isOrderDescByFinishDateAnd = false;
     public bool $isOrderByFinish = false;

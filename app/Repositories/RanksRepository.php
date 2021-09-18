@@ -46,8 +46,8 @@ class RanksRepository
         if ($filter->startDateMore !== null) {
             $ranks->where('start_date', '>', $filter->startDateMore);
         }
-        if ($filter->finishDateMode !== null) {
-            $ranks->where('finish_date', '>=', $filter->finishDateMode);
+        if ($filter->finishDateMore !== null) {
+            $ranks->where('finish_date', '>=', $filter->finishDateMore);
         }
         if ($filter->with !== null) {
             $ranks->with($filter->with);
