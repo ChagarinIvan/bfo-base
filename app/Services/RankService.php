@@ -49,11 +49,14 @@ class RankService
         $filter = new RanksFilter();
         $filter->rank = $rank;
         $filter->with = ['person', 'event'];
-        $filter->isOrderByFinish = true;
-        $filter->startDateLess = Carbon::now();
+        $carbon = Carbon::now();
+        $filter->startDateLess = $carbon;
+        $filter->finishDateMore = $carbon;
         $ranks = $this->ranksRepository->getRanksList($filter);
         $ranks->groupByPerson();
-        $ranks->transform(fn(Collection $ranks) => $ranks->first());
+        $ranks->transform(fn(Collection $ranks) => $ranks->last());
+        $ranks->orderByFinishDateAsc();
+
         return $ranks;
     }
 
