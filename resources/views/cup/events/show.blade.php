@@ -25,7 +25,10 @@
         >{{ __('app.common.back') }}</a>
     </div>
     <ul class="nav nav-tabs pt-2">
-        @foreach($cup->groups as $group)
+        @foreach($cup->getGroups() as $group)
+            @php
+                /** @var \App\Models\Group $group */
+            @endphp
             <li class="nav-item">
                 <a href="{{ action(\App\Http\Controllers\CupEvents\ShowCupEventGroupAction::class, [$cup, $cupEvent, $group]) }}"
                    class="nav-link {{ $groupId === $group->id ? 'active' : ''}}"
@@ -38,7 +41,7 @@
             <table class="table table-bordered" id="table">
                 <thead>
                 <tr class="table-info">
-                    <th scope="col"></th>
+                    <th scope="col">№</th>
                     <th scope="col">{{ __('app.common.fio') }}</th>
                     <th scope="col">{{ __('app.common.year') }}</th>
                     <th scope="col">{{ __('app.common.time') }}</th>

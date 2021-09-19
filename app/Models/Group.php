@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Collection;
 
 /**
@@ -19,6 +20,8 @@ use Illuminate\Support\Collection;
  * @method static Group|null find(int $id)
  * @method static Builder|Group whereName($value)
  * @method static Group|null first()
+ * @method static Builder|Group selectRaw(Expression $raw)
+ * @method static Builder|Group join(string $table, string $tableId, string $operator, string $joinId)
  */
 class Group extends Model
 {
@@ -322,15 +325,24 @@ class Group extends Model
     public $timestamps = false;
     protected $table = 'groups';
 
-    public function maleGroups(): array
+    public function maleGroups(): Collection
     {
-        $maleIndex = mb_substr($this->name, 0, 1);
-        if ($maleIndex === 'М') {
-            return self::MALE_GROUPS[self::MALE];
-        } elseif ($maleIndex === 'Ж') {
-            return self::MALE_GROUPS[self::FEMALE];
+        if ($this->isMale()) {
+            return new Collection(self::MALE_GROUPS[self::MALE]);
+        } elseif ($this->isFeMale()) {
+            return new Collection(self::MALE_GROUPS[self::FEMALE]);
         }
-        return [];
+        return Collection::empty();
+    }
+
+    public function isMale(): bool
+    {
+        return mb_substr($this->name, 0, 1)  === 'М';
+    }
+
+    public function isFeMale(): bool
+    {
+        return mb_substr($this->name, 0, 1)  === 'Ж';
     }
 
     public function distances(): HasMany

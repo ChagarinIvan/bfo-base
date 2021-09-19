@@ -23,15 +23,15 @@ use Illuminate\Support\Collection;
  * @property ProtocolLine[]|Collection $protocolLines
  * @method static Distance[]|Distance find(mixed $ids)
  * @method static Builder|Distance with(mixed $params)
- * @method static Builder|Distance where(string $column, string|int $value)
+ * @method static Builder|Distance where(string $column, string $equal, string|int $value)
  * @method static Builder|Distance whereGroupId(int $groupId)
  * @method static Builder|Distance whereEventId(int $eventId)
  * @method static Builder|Distance whereLength(int $length)
  * @method static Builder|Distance wherePoints(int $points)
- * @method static Builder|Distance whereIn(string $string, array|Collection $eventGroups)
+ * @method static Builder|Distance whereIn(string $column, array|Collection $eventGroups)
+ * @method static Builder|Distance whereNot(string $column, int $value)
  * @method static Builder|Distance selectRaw(Expression $raw)
  * @method static Builder|Distance join(string $table, string $tableId, string $operator, string $joinId)
-
  */
 class Distance extends Model
 {

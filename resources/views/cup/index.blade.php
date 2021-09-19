@@ -1,7 +1,8 @@
 @php
+    use App\Models\Cup;
     use Illuminate\Support\Collection;
     /**
-     * @var Collection $cups;
+     * @var Collection|Cup[] $cups;
      * @var int $selectedYear;
      */
 @endphp
@@ -42,16 +43,16 @@
                 </thead>
                 <tbody>
                     @foreach ($cups as $cup)
-                        @php
-                            /** @var \App\Models\Cup $cup */
-                        @endphp
                         <tr>
                             <td>
                                 <a href="{{ action(\App\Http\Controllers\Cups\ShowCupAction::class, [$cup]) }}">{{ $cup->name }}</a>
                             </td>
                             <td>{{ $cup->year }}</td>
                             <td>
-                                @foreach($cup->groups as $group)
+                                @foreach($cup->getGroups() as $group)
+                                    @php
+                                        /** @var \App\Models\Group $group */
+                                    @endphp
                                     <span class="badge" style="background: {{ \App\Facades\Color::getColor($group->name) }}">
                                         <a href="{{ action(\App\Http\Controllers\Cups\ShowCupTableAction::class, [$cup, $group]) }}">{{ $group->name }}</a>
                                     </span>

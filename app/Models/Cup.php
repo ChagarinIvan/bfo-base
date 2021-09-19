@@ -37,8 +37,14 @@ class Cup extends Model
         return $this->hasMany(CupEvent::class);
     }
 
-    public function cupType(): CupTypeInterface
+    public function getCupType(): CupTypeInterface
     {
         return CupType::getCupTypeClass($this->type);
+    }
+
+    public function getGroups(): Collection
+    {
+        $cupType = $this->getCupType();
+        return $cupType->getCupGroups($this->groups);
     }
 }
