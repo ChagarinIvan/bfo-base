@@ -30,7 +30,10 @@
         <a class="btn btn-danger mr-2" href="{{ action(\App\Http\Controllers\BackAction::class) }}">{{ __('app.common.back') }}</a>
     </div>
     <div class="row pt-3">
-        @foreach($cup->groups as $group)
+        @foreach($cup->getGroups() as $group)
+            @php
+                /** @var \App\Models\Group $group */
+            @endphp
             <span class="badge" style="background: {{ \App\Facades\Color::getColor($group->name) }}">
                 <a href="{{ action(\App\Http\Controllers\Cups\ShowCupTableAction::class, [$cup, $group]) }}">{{ $group->name }}</a>
             </span>

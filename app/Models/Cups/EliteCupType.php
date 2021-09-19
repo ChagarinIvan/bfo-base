@@ -4,14 +4,28 @@ namespace App\Models\Cups;
 
 use App\Models\CupEvent;
 use App\Models\CupEventPoint;
-use App\Models\Distance;
 use App\Models\Group;
-use App\Models\ProtocolLine;
+use App\Repositories\DistanceRepository;
+use App\Repositories\GroupsRepository;
+use App\Repositories\ProtocolLinesRepository;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 
 class EliteCupType extends AbstractCupType
 {
+    protected DistanceRepository $distanceRepository;
+    protected ProtocolLinesRepository $protocolLinesRepository;
+    protected GroupsRepository $groupsRepository;
+
+    public function __construct(
+        DistanceRepository $distanceRepository,
+        ProtocolLinesRepository $protocolLinesRepository,
+        GroupsRepository $groupsRepository,
+    ) {
+        $this->distanceRepository = $distanceRepository;
+        $this->protocolLinesRepository = $protocolLinesRepository;
+        $this->groupsRepository = $groupsRepository;
+    }
+
     public function getId(): string
     {
         return CupType::ELITE;
@@ -25,7 +39,7 @@ class EliteCupType extends AbstractCupType
     /**
      * @param CupEvent $cupEvent
      * @param Group $mainGroup
-     * @return array<int, CupEventPoint>|Collection
+     * @return Collection //array<int, CupEventPoint>
      */
     public function calculateEvent(CupEvent $cupEvent, Group $mainGroup): Collection
     {
@@ -35,30 +49,16 @@ class EliteCupType extends AbstractCupType
         return $results->sortByDesc(fn (CupEventPoint $cupEventResult) => $cupEventResult->points);
     }
 
-    private function getProtocolLines(CupEvent $cupEvent, Group $group): Collection
+    protected function getProtocolLines(CupEvent $cupEvent, Group $group): Collection
     {
-        $mainDistance = Distance::whereGroupId($group->id)->whereEventId($cupEvent->event_id)->first();
-        $groupsName = $group->maleGroups();
-        $equalDistances = Distance::selectRaw(DB::raw('distances.id'))
-            ->whereEventId($cupEvent->event_id)
-            ->join('groups', 'groups.id', '=', 'distances.group_id')
-            ->whereIn('groups.name', $groupsName)
-            ->whereLength($mainDistance->length)
-            ->wherePoints($mainDistance->points)
-            ->get();
-
+        $mainDistance = $this->distanceRepository->findDistance($group->id, $cupEvent->event_id);
+        $equalDistances = $this->distanceRepository->getEqualDistances($mainDistance);
         $distances = $equalDistances->add($mainDistance);
+        return $this->protocolLinesRepository->getCupEventDistanceProtocolLines($distances, $cupEvent);
+    }
 
-        $protocolLinesIds = ProtocolLine::selectRaw(DB::raw('protocol_lines.id AS id, persons_payments.date AS date'))
-            ->join('person', 'person.id', '=', 'protocol_lines.person_id')
-            ->join('persons_payments', 'person.id', '=', 'persons_payments.person_id')
-            ->where('persons_payments.year', '=', $cupEvent->cup->year)
-            ->where('persons_payments.date', '<=', $cupEvent->event->date)
-            ->whereIn('distance_id', $distances->pluck('id')->unique())
-            ->havingRaw(DB::raw("persons_payments.date <= '{$cupEvent->event->date}'"))
-            ->get()
-            ->pluck('id');
-
-        return ProtocolLine::whereIn('id', $protocolLinesIds)->get();
+    public function getCupGroups(Collection $groups): Collection
+    {
+        return $groups;
     }
 }

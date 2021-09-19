@@ -119,4 +119,9 @@ class MasterCupType extends AbstractCupType
             ->havingRaw(DB::raw("persons_payments.date <= '{$cupEvent->event->date}'"))
             ->get();
     }
+
+    public function getCupGroups(Collection $groups): Collection
+    {
+        return $groups;
+    }
 }

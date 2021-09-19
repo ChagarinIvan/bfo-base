@@ -25,7 +25,10 @@
         <a class="btn btn-danger mr-2" href="{{ action(\App\Http\Controllers\BackAction::class) }}">{{ __('app.common.back') }}</a>
     </div>
     <ul class="nav nav-tabs pt-2">
-        @foreach($cup->groups as $group)
+        @foreach($cup->getGroups() as $group)
+            @php
+                /** @var \App\Models\Group $group */
+            @endphp
             <li class="nav-item">
                 <a href="{{ action(\App\Http\Controllers\Cups\ShowCupTableAction::class, [$cup, $group]) }}"
                    class="nav-link {{ $activeGroup->id === $group->id ? 'active' : ''}}"
@@ -38,7 +41,7 @@
             <table class="table table-bordered" id="table">
                 <thead>
                 <tr class="table-info">
-                    <th scope="col"></th>
+                    <th scope="col">№</th>
                     <th scope="col">{{ __('app.common.fio') }}</th>
                     @foreach($events as $event)
                         <th scope="col">

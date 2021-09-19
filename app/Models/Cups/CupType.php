@@ -23,7 +23,7 @@ class CupType
     public static function getCupTypeClass(string $cupType): CupTypeInterface
     {
         $class = self::CLASS_MAP[$cupType];
-        return (new $class());
+        return app($class);
     }
 
     /**

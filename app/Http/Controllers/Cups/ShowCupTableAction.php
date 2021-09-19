@@ -13,7 +13,7 @@ class ShowCupTableAction extends AbstractCupViewAction
 {
     public function __invoke(Cup $cup, Group $group): View
     {
-        $cupType = $cup->cupType();
+        $cupType = $cup->getCupType();
 
         $events = $cup->events()
             ->with(['cup'])
