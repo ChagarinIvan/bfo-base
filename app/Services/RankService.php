@@ -40,7 +40,7 @@ class RankService
     {
         $filter = new RanksFilter();
         $filter->personId = $personId;
-        $filter->isOrderDescByFinishDateAnd = true;
+        $filter->isOrderDescByFinishDate = true;
         return $this->ranksRepository->getRanksList($filter);
     }
 

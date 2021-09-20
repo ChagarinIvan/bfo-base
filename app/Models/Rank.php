@@ -17,11 +17,11 @@ use Illuminate\Support\Collection;
  * @package App\Models
  * @property int $id
  * @property int $person_id
- * @property int $event_id
+ * @property int|null $event_id
  * @property null|string $rank
  * @property Carbon $start_date
  * @property Carbon $finish_date
- * @property-read Event $event
+ * @property-read Event|null $event
  * @property-read Person $person
  * @method static Rank|Builder where(string $column, string|null $operator, string|int|Carbon $value = null)
  * @method static Rank|Builder selectRaw(Expression $expression)
@@ -58,9 +58,9 @@ class Rank extends Model
     ];
 
     public const PREVIOUS_RANKS = [
-        self::WSM_RANK => self::SMC_RANK,
-        self::SMC_RANK => self::SM_RANK,
-        self::SM_RANK => self::FIRST_RANK,
+        self::WSM_RANK => self::SM_RANK,
+        self::SM_RANK => self::SMC_RANK,
+        self::SMC_RANK => self::FIRST_RANK,
         self::FIRST_RANK => self::SECOND_RANK,
         self::SECOND_RANK => self::THIRD_RANK,
     ];

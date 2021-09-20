@@ -43,9 +43,11 @@
                         </td>
                         <td>{{ $rank->start_date->format('Y-m-d') }}</td>
                         <td>
-                            <a href="{{ action(\App\Http\Controllers\Event\ShowEventAction::class, [$rank->event_id]) }}">
-                                <u>{{ $rank->event->date->format('Y-m-d') }}</u>
-                            </a>
+                            @if ($rank->event_id !== null)
+                                <a href="{{ action(\App\Http\Controllers\Event\ShowEventAction::class, [$rank->event_id]) }}">
+                                    <u>{{ $rank->event->date->format('Y-m-d') }}</u>
+                                </a>
+                            @endif
                         </td>
                         <td>{{ $rank->finish_date->format('Y-m-d') }}</td>
                     </tr>

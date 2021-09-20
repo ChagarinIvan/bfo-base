@@ -35,12 +35,14 @@
                 @foreach ($ranks as $rank)
                     <tr>
                         <td>{{ $rank->rank }}</td>
-                        <td>{{ $rank->event->date->format('Y-m-d') }}</td>
+                        <td>{{ $rank->event ? $rank->event->date->format('Y-m-d') : $rank->start_date->format('Y-m-d') }}</td>
                         <td>{{ $rank->finish_date->format('Y-m-d') }}</td>
                         <td>
-                            <a href="{{ action(\App\Http\Controllers\Event\ShowEventAction::class, [$rank->event->id]) }}#{{ $protocolLinesIds[$rank->id] }}">
-                                <u>{{ $rank->event->competition->name }} ({{ $rank->event->name }})</u>
-                            </a>
+                            @if ($rank->event_id !== null)
+                                <a href="{{ action(\App\Http\Controllers\Event\ShowEventAction::class, [$rank->event->id]) }}#{{ $protocolLinesIds[$rank->id] }}">
+                                    <u>{{ $rank->event->competition->name }} ({{ $rank->event->name }})</u>
+                                </a>
+                            @endif
                         </td>
                     </tr>
                 @endforeach
