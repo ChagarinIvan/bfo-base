@@ -28,7 +28,7 @@ class ShowPersonRanksAction extends AbstractPersonViewAction
         $ranks = $this->rankService->getPersonRanks($person->id);
         $protocolLinesIds = [];
         $ranks->each(function (Rank $rank) use (&$protocolLinesIds) {
-            $protocolLinesIds[$rank->id] = $this->protocolLinesService->getProtocolLineIdForRank($rank);
+            $protocolLinesIds[$rank->id] = $rank->event_id ? $this->protocolLinesService->getProtocolLineIdForRank($rank) : null;
         });
 
         return $this->view('ranks.show-person-ranks', [

@@ -37,7 +37,7 @@ class MasterCupType extends AbstractCupType
     /**
      * @param CupEvent $cupEvent
      * @param Group $mainGroup
-     * @return array<int, CupEventPoint>|Collection
+     * @return Collection //array<int, CupEventPoint>
      */
     public function calculateEvent(CupEvent $cupEvent, Group $mainGroup): Collection
     {

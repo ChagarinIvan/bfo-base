@@ -26,9 +26,9 @@ class RanksRepository
     public function getRanksList(RanksFilter $filter): RanksCollection
     {
         $ranks = Rank::selectRaw(new Expression('ranks.*'))
-            ->join('events', 'events.id', '=', 'ranks.event_id');
+            ->leftJoin('events', 'events.id', '=', 'ranks.event_id');
 
-        if ($filter->isOrderDescByFinishDateAnd) {
+        if ($filter->isOrderDescByFinishDate) {
             $ranks->orderByRaw(new Expression('ranks.finish_date DESC, events.date DESC'));
         } elseif ($filter->isOrderByFinish) {
             $ranks->orderByRaw(new Expression('ranks.finish_date'));
