@@ -12,7 +12,9 @@ class RanksFilter
     public ?Carbon $startDateLess = null;
     public ?Carbon $startDateMore = null;
     public ?Carbon $finishDateMore = null;
+    public ?Carbon $finishDateLess = null;
     public ?array $with = null;
     public bool $isOrderDescByFinishDate = false;
     public bool $isOrderByFinish = false;
+    public bool $haveNoNextRank = false;
 }

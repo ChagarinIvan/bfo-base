@@ -49,6 +49,18 @@ class RanksRepository
         if ($filter->finishDateMore !== null) {
             $ranks->where('finish_date', '>=', $filter->finishDateMore);
         }
+        if ($filter->finishDateLess !== null) {
+            $ranks->where('finish_date', '<', $filter->finishDateLess);
+        }
+        if ($filter->haveNoNextRank) {
+            $ranks->where(new Expression("
+                (SELECT COUNT(*)
+                FROM ranks AS t1
+                WHERE t1.person_id = ranks.person_id
+                AND ranks.finish_date <= t1.start_date
+                )
+            "), '=', 0);
+        }
         if ($filter->with !== null) {
             $ranks->with($filter->with);
         }

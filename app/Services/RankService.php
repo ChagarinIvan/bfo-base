@@ -49,12 +49,26 @@ class RankService
         $filter = new RanksFilter();
         $filter->rank = $rank;
         $filter->with = ['person', 'event'];
-        $carbon = Carbon::now();
-        $filter->startDateLess = $carbon;
-        $filter->finishDateMore = $carbon;
+        $nowDate = Carbon::now();
+        $filter->startDateLess = $nowDate;
+        $filter->finishDateMore = $nowDate;
         $ranks = $this->ranksRepository->getRanksList($filter);
+        $filter->finishDateMore = null;
+        $filter->finishDateLess = $nowDate;
+
+        if (isset(Rank::NEXT_RANKS[$rank])) {
+            $filter->rank = Rank::NEXT_RANKS[$rank];
+            $filter->haveNoNextRank = true;
+            $previousRanks = $this->ranksRepository->getRanksList($filter);
+            $ranks->merge($previousRanks);
+        }
+
         $ranks->groupByPerson();
-        $ranks->transform(fn(Collection $ranks) => $ranks->last());
+        $personsIds = $ranks->getKeys();
+        $ranks = new RanksCollection(Collection::empty());
+        foreach ($personsIds as $personId) {
+            $ranks->put($personId, $this->getActualRank($personId, $nowDate));
+        }
         $ranks->orderByFinishDateAsc();
 
         return $ranks;
@@ -169,5 +183,16 @@ class RankService
     public function cleanAll(): void
     {
         $this->ranksRepository->cleanAll();
+    }
+
+    public function getRank(ProtocolLine $protocolLine): ?Rank
+    {
+        $filter = new RanksFilter();
+        $filter->
+        $nowDate = Carbon::now();
+        $filter->eventId = $protocolLine->distance->event_id;
+        $filter->personId = $protocolLine->person_id;
+        $ranks = $this->ranksRepository->getRanksList($filter);
+        return $ranks->first();
     }
 }

@@ -65,6 +65,14 @@ class Rank extends Model
         self::SECOND_RANK => self::THIRD_RANK,
     ];
 
+    public const NEXT_RANKS = [
+        self::SM_RANK => self::WSM_RANK,
+        self::SMC_RANK => self::SM_RANK,
+        self::FIRST_RANK => self::SMC_RANK,
+        self::SECOND_RANK => self::FIRST_RANK,
+        self::THIRD_RANK => self::SECOND_RANK,
+    ];
+
     private const REPLACES = [
         'к' => 'к',
         '1ю' => 'iю',

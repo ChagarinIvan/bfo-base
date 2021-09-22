@@ -48,4 +48,24 @@ class RanksCollection
     {
         $this->ranks = $this->ranks->sortBy('finish_date');
     }
+
+    public function merge(RanksCollection $previousRanks): void
+    {
+        $this->ranks = $this->ranks->merge($previousRanks->getCollection());
+    }
+
+    public function getKeys(): Collection
+    {
+        return $this->ranks->keys();
+    }
+
+    public function put(int $personId, ?Rank $actualRank): void
+    {
+        $this->ranks->put($personId, $actualRank);
+    }
+
+    public function first(): ?Rank
+    {
+        $this->ranks->first();
+    }
 }
