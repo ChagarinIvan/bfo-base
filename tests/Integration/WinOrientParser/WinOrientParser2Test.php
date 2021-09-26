@@ -21,7 +21,7 @@ class WinOrientParser2Test extends AbstractParserTest
     {
         return [
             0 => [
-                'Мурашка', //фаммилия
+                'Мурашка', //фамилия
                 'Усяслаў', //имя
                 'СКО «Орион»', //клуб
                 2007, //год
