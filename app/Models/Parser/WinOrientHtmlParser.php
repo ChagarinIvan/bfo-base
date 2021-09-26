@@ -174,7 +174,7 @@ class WinOrientHtmlParser implements ParserInterface
                 } catch (Exception) {
                     $time = null;
                 }
-            } elseif ($time === 'снят') {
+            } elseif ($time === 'снят' || $time === 'пп.24.4' || $time === 'пп.20.10') {
                 $time = null;
             } else {
                 $indent++;

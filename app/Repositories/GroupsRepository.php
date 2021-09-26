@@ -17,7 +17,7 @@ class GroupsRepository
     {
         return Group::selectRaw(new Expression('`groups`.*'))
             ->join('distances', 'distances.group_id', '=', 'groups.id')
-            ->where('distances.event_id', $eventId)
+            ->where('distances.event_id', '=', $eventId)
             ->get();
     }
 

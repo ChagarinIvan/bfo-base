@@ -26,7 +26,9 @@ class PersonsRepository
     }
 
     /**
-     * @return Collection|Person[]
+     * @param Collection $ids
+     * @param array $with
+     * @return Collection
      */
     public function getPersons(Collection $ids, array $with): Collection
     {

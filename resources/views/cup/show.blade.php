@@ -1,9 +1,11 @@
 @php
-    use \App\Models\Cup;
+    use App\Models\Cup;
     use App\Models\CupEvent;
+    use Illuminate\Support\Collection;
     /**
      * @var Cup $cup;
-     * @var CupEvent[] $events;
+     * @var CupEvent[] $cupEvents;
+     * @var Collection $cupEventsParticipateCount;
      */
 @endphp
 
@@ -55,7 +57,7 @@
             </tr>
             </thead>
             <tbody>
-            @foreach($events as $index => $cupEvent)
+            @foreach($cupEvents as $index => $cupEvent)
                 <tr>
                     <td>{{ $index + 1 }}</td>
                     <td>
@@ -64,10 +66,7 @@
                         </a>
                     </td>
                     <td>{{ $cupEvent->event->date->format('Y-m-d') }}</td>
-                    <td>{{ $cupEvent->event
-                        ->protocolLines()
-                        ->whereIn('group_id', $cup->groups->pluck('id'))
-                        ->count() }}</td>
+                    <td>{{ $cupEventsParticipateCount->get($cupEvent->id) ?? 0 }}</td>
                     <td>{{ $cupEvent->points }}</td>
                     @auth
                         <td>

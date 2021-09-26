@@ -37,7 +37,6 @@
                         <th>{{ __('app.common.title') }}</th>
                         <th>{{ __('app.common.year') }}</th>
                         <th>{{ __('app.common.groups') }}</th>
-                        <th>{{ __('app.common.competitors') }}</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -58,10 +57,6 @@
                                     </span>
                                 @endforeach
                             </td>
-                            <td>{{ \App\Models\ProtocolLine::join('distances', 'distances.id', '=', 'protocol_lines.distance_id')
-                                ->whereIn('distances.group_id', $cup->groups->pluck('id'))
-                                ->whereNotNull('person_id')
-                                ->count() }}</td>
                             <td>
                                 <a class="btn btn-secondary mr-2"
                                    href="{{ action(\App\Http\Controllers\Cups\ShowCupTableAction::class, [$cup, $cup->groups->first()]) }}"

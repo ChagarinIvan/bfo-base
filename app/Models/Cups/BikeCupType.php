@@ -29,15 +29,7 @@ class BikeCupType extends EliteCupType
      */
     public function calculateEvent(CupEvent $cupEvent, Group $mainGroup): Collection
     {
-        $eventGroups = $this->groupsRepository->getEventGroups($cupEvent->event_id)->keyBy('name');
-        $maleGroups = $mainGroup->maleGroups()->flip();
-        $cupGroups = $cupEvent->cup->groups->keyBy('name');
-        $cupGroups = $cupGroups->intersectByKeys($maleGroups);
-        $cupGroups = $cupGroups->intersectByKeys($eventGroups);
-        if ($cupGroups->count() > 1) {
-            throw new \RuntimeException('Many groups');
-        }
-        $cupEventProtocolLines = $this->getProtocolLines($cupEvent, $cupGroups->first());
+        $cupEventProtocolLines = $this->getGroupProtocolLines($cupEvent, $this->getGetRealGroup($cupEvent, $mainGroup));
         $results = $this->calculateLines($cupEvent, $cupEventProtocolLines);
 
         return $results->sortByDesc(fn (CupEventPoint $cupEventResult) => $cupEventResult->points);
@@ -65,5 +57,29 @@ class BikeCupType extends EliteCupType
             }
         }
         return $resultGroups;
+    }
+
+    protected function getGroupProtocolLines(CupEvent $cupEvent, Group $group): Collection
+    {
+        $realGroup = $this->getGetRealGroup($cupEvent, $group);
+        if ($realGroup === null) {
+            return Collection::empty();
+        }
+        return parent::getGroupProtocolLines($cupEvent, $realGroup);
+    }
+
+    private function getGetRealGroup(CupEvent $cupEvent, Group $mainGroup): ?Group
+    {
+        $eventGroups = $this->groupsRepository->getEventGroups($cupEvent->event_id)->keyBy('name');
+        $maleGroups = $mainGroup->maleGroups()->flip();
+        $cupGroups = $cupEvent->cup->groups()->get()->keyBy('name');
+        $cupGroups = $cupGroups->intersectByKeys($maleGroups);
+        $cupGroups = $cupGroups->intersectByKeys($eventGroups);
+
+        if ($cupGroups->count() > 1) {
+            throw new \RuntimeException('Many groups');
+        }
+
+        return $cupGroups->first();
     }
 }

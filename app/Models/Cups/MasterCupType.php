@@ -4,17 +4,30 @@ namespace App\Models\Cups;
 
 use App\Models\CupEvent;
 use App\Models\CupEventPoint;
-use App\Models\Distance;
 use App\Models\Group;
-use App\Models\Person;
 use App\Models\ProtocolLine;
+use App\Repositories\ProtocolLinesRepository;
+use App\Services\DistanceService;
+use App\Services\GroupsService;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 
 class MasterCupType extends AbstractCupType
 {
-    /** @var Collection */
-    private $eventGroupsIds;
+    private Collection $eventGroupsIds;
+    private ProtocolLinesRepository $protocolLinesRepository;
+    private GroupsService $groupsService;
+    private DistanceService $distanceService;
+
+    public function __construct(
+        ProtocolLinesRepository $protocolLinesRepository,
+        GroupsService $groupsService,
+        DistanceService $distanceService,
+    ) {
+        $this->protocolLinesRepository = $protocolLinesRepository;
+        $this->groupsService = $groupsService;
+        $this->distanceService = $distanceService;
+        $this->eventGroupsIds = Collection::empty();
+    }
 
     public function getId(): string
     {
@@ -26,9 +39,9 @@ class MasterCupType extends AbstractCupType
         return 'Ветеранский';
     }
 
-    private function getEventGroups(CupEvent $cupEvent): Collection
+    private function getEventGroupsIds(CupEvent $cupEvent): Collection
     {
-        if (!$this->eventGroupsIds) {
+        if ($this->eventGroupsIds->isEmpty()) {
             $this->eventGroupsIds = $cupEvent->cup->groups->pluck('id');
         }
         return $this->eventGroupsIds;
@@ -42,21 +55,11 @@ class MasterCupType extends AbstractCupType
     public function calculateEvent(CupEvent $cupEvent, Group $mainGroup): Collection
     {
         $results = new Collection();
-        $cupEventParticipants = $this->getGroupPersonsIds($cupEvent, $mainGroup);
-        $eventGroups = $this->getEventGroups($cupEvent);
-
-        $cupEventProtocolLines = $cupEvent->event->protocolLines()
-            ->with(['distance'])
-            ->whereIn('person_id', $cupEventParticipants->pluck('id'))
-            ->get();
+        $cupEventProtocolLines = $this->getGroupProtocolLines($cupEvent, $mainGroup);
+        $eventGroupsId = $this->getEventGroupsIds($cupEvent);
 
         $groupsName = $mainGroup->maleGroups();
-        $eventDistances = Distance::selectRaw(DB::raw('distances.id'))
-            ->join('groups', 'groups.id', '=', 'distances.group_id')
-            ->whereIn('group_id', $eventGroups)
-            ->whereIn('groups.name', $groupsName)
-            ->whereEventId($cupEvent->event_id)
-            ->get()
+        $eventDistances = $this->distanceService->getCupEventDistancesByGroups($cupEvent, $eventGroupsId, $groupsName)
             ->pluck('id')
             ->toArray();
 
@@ -65,9 +68,9 @@ class MasterCupType extends AbstractCupType
         );
 
         $cupEventProtocolLines = $cupEventProtocolLines->groupBy('distance.group_id');
-        $validGroups = $eventGroups->flip();
+        $validGroups = $eventGroupsId->flip();
         $cupEventProtocolLines = $cupEventProtocolLines->intersectByKeys($validGroups);
-        $groups = Group::find(Distance::with(['group'])->whereEventId($cupEvent->event->id)->get()->pluck('group_id'));
+        $groups = $this->groupsService->getCupEventGroups($cupEvent);
         $hasGroupOnEvent = $groups->pluck('id')->flip()->has($mainGroup->id);
 
         foreach ($cupEventProtocolLines as $groupId => $groupProtocolLines) {
@@ -90,34 +93,24 @@ class MasterCupType extends AbstractCupType
      */
     private function calculateGroup(CupEvent $cupEvent, int $groupId): Collection
     {
-        $protocolLinesIds = ProtocolLine::selectRaw(DB::raw('protocol_lines.id AS id, persons_payments.date AS date'))
-            ->join('person', 'person.id', '=', 'protocol_lines.person_id')
-            ->join('persons_payments', 'person.id', '=', 'persons_payments.person_id')
-            ->join('distances', 'distances.id', '=', 'protocol_lines.distance_id')
-            ->where('persons_payments.year', $cupEvent->cup->year)
-            ->where('distances.event_id', $cupEvent->event_id)
-            ->where('distances.group_id', $groupId)
-            ->havingRaw(DB::raw("persons_payments.date <= '{$cupEvent->event->date}'"))
-            ->get();
-
-        $ids = $protocolLinesIds->pluck('id');
-        $protocolLines = ProtocolLine::whereIn('id', $ids)->get();
-        return $this->calculateLines($cupEvent, $protocolLines);
+        return $this->calculateLines(
+            $cupEvent,
+            $this->protocolLinesRepository->getCupEventGroupProtocolLinesForPersonsWithPayment($cupEvent, $groupId),
+        );
     }
 
-    private function getGroupPersonsIds(CupEvent $cupEvent, Group $group): Collection
+    protected function getGroupProtocolLines(CupEvent $cupEvent, Group $group): Collection
     {
         $year = $cupEvent->cup->year;
         $startYear = $year - $group->years();
         $finishYear = $startYear - 5;
 
-        return Person::selectRaw(DB::raw('person.id AS id, persons_payments.date AS date'))
-            ->join('persons_payments', 'person.id', '=', 'persons_payments.person_id')
-            ->where('person.birthday', '<=', "{$startYear}-01-01")
-            ->where('person.birthday', '>', "{$finishYear}-01-01")
-            ->where('persons_payments.year', '=', $year)
-            ->havingRaw(DB::raw("persons_payments.date <= '{$cupEvent->event->date}'"))
-            ->get();
+        return $this->protocolLinesRepository->getCupEventProtocolLinesForPersonsCertainAge(
+            $cupEvent,
+            $finishYear,
+            $startYear,
+            true
+        );
     }
 
     public function getCupGroups(Collection $groups): Collection

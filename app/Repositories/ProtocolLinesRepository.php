@@ -43,19 +43,57 @@ class ProtocolLinesRepository
      * @param CupEvent $cupEvent
      * @return Collection
      */
-    public function getCupEventDistanceProtocolLines(Collection|array $distances, CupEvent $cupEvent): Collection
+    public function getCupEventDistancesProtocolLines(Collection|array $distances, CupEvent $cupEvent): Collection
     {
-        $protocolLinesIds = ProtocolLine::selectRaw(new Expression('protocol_lines.id AS id, persons_payments.date AS date'))
+        return ProtocolLine::selectRaw(new Expression('`protocol_lines`.*, `persons_payments`.`date`'))
             ->join('person', 'person.id', '=', 'protocol_lines.person_id')
             ->join('persons_payments', 'person.id', '=', 'persons_payments.person_id')
             ->where('persons_payments.year', '=', $cupEvent->cup->year)
             ->where('persons_payments.date', '<=', $cupEvent->event->date)
             ->whereIn('distance_id', $distances->pluck('id')->unique())
-            ->havingRaw(new Expression("persons_payments.date <= '{$cupEvent->event->date}'"))
-            ->get()
-            ->pluck('id');
-
-        return ProtocolLine::whereIn('id', $protocolLinesIds)->get();
+            ->havingRaw(new Expression("`persons_payments`.`date` <= '{$cupEvent->event->date}'"))
+            ->get();
     }
 
+    public function getCupEventProtocolLinesForPersonsCertainAge(
+        CupEvent $cupEvent,
+        string $startYear,
+        string $finishYear,
+        bool $withPayments = false,
+    ): Collection {
+        $protocolLinesQuery = ProtocolLine::selectRaw(new Expression('protocol_lines.*'))
+            ->join('person', 'person.id', '=', 'protocol_lines.person_id')
+            ->join('distances', 'distances.id', '=', 'protocol_lines.distance_id')
+            ->where('person.birthday', '<=', "{$finishYear}-01-01")
+            ->where('person.birthday', '>', "{$startYear}-01-01")
+            ->where('distances.event_id', $cupEvent->event_id);
+
+        if ($withPayments) {
+            $protocolLinesQuery->addSelect('persons_payments.date')
+                ->join('persons_payments', 'person.id', '=', 'persons_payments.person_id')
+                ->where('persons_payments.year', '=', $cupEvent->cup->year)
+                ->havingRaw(new Expression("`persons_payments`.`date` <= '{$cupEvent->event->date}'"));
+        }
+
+        return $protocolLinesQuery->get();
+    }
+
+    public function getCupEventGroupProtocolLinesForPersonsWithPayment(CupEvent $cupEvent, int $groupId): Collection
+    {
+        return ProtocolLine::selectRaw(new Expression('protocol_lines.*, persons_payments.date'))
+            ->join('person', 'person.id', '=', 'protocol_lines.person_id')
+            ->join('persons_payments', 'person.id', '=', 'persons_payments.person_id')
+            ->join('distances', 'distances.id', '=', 'protocol_lines.distance_id')
+            ->where('persons_payments.year', $cupEvent->cup->year)
+            ->where('distances.event_id', $cupEvent->event_id)
+            ->where('distances.group_id', $groupId)
+            ->havingRaw(new Expression("persons_payments.date <= '{$cupEvent->event->date}'"))
+            ->get();
+    }
+
+    public function getCupEventDistanceProtocolLines(int $distanceId): Collection
+    {
+        return ProtocolLine::where('protocol_lines.distance_id', $distanceId)
+            ->get();
+    }
 }

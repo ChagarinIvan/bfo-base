@@ -21,7 +21,7 @@ use Illuminate\Support\Collection;
  * @property Carbon|null $updated_at
  * @property-read Collection|Event[] $events
  * @property-read int|null $events_count
- * @method static Builder|Competition find(mixed $ids)
+ * @method static Builder|Competition|null find(mixed $ids)
  * @method static Builder|Competition where(string $column, string $operator, string|int $value)
  */
 class Competition extends Model
