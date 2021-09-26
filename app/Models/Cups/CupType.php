@@ -17,7 +17,7 @@ class CupType
         self::MASTER => MasterCupType::class,
         self::BIKE => BikeCupType::class,
 //        self::JUNIORS => EliteCupType::class,
-//        self::YOUTH => EliteCupType::class,
+        self::YOUTH => YouthCupType::class,
     ];
 
     public static function getCupTypeClass(string $cupType): CupTypeInterface

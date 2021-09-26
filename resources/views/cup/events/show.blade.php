@@ -21,7 +21,7 @@
     <div class="row"><h3>{{ $cupEvent->event->name }}</h3></div>
     <div class="row pt-5">
         <a class="btn btn-danger mr-2"
-           href="{{ action(\App\Http\Controllers\Cups\ShowCupAction::class, [$cup]) }}"
+           href="{{ action(\App\Http\Controllers\BackAction::class) }}"
         >{{ __('app.common.back') }}</a>
     </div>
     <ul class="nav nav-tabs pt-2">

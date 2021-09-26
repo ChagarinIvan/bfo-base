@@ -2,9 +2,10 @@
 
 namespace App\Repositories;
 
+use App\Models\CupEvent;
 use App\Models\Distance;
+use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 
 class DistanceRepository
 {
@@ -15,7 +16,7 @@ class DistanceRepository
 
     public function getEqualDistances(Distance $distance): Collection
     {
-       $distancesIds = Distance::selectRaw(DB::raw('distances.id'))
+       return Distance::selectRaw(new Expression('distances.*'))
             ->whereEventId($distance->event_id)
             ->join('groups', 'groups.id', '=', 'distances.group_id')
             ->whereIn('groups.name', $distance->group->maleGroups())
@@ -23,7 +24,15 @@ class DistanceRepository
             ->whereLength($distance->length)
             ->wherePoints($distance->points)
             ->get();
+    }
 
-       return Distance::whereIn('id', $distancesIds)->get();
+    public function getCupEventDistancesByGroups(CupEvent $cupEvent, Collection $groups, Collection $groupNames): Collection
+    {
+        return Distance::selectRaw(new Expression('distances.*'))
+            ->join('groups', 'groups.id', '=', 'distances.group_id')
+            ->whereIn('group_id', $groups)
+            ->whereIn('groups.name', $groupNames)
+            ->whereEventId($cupEvent->event_id)
+            ->get();
     }
 }

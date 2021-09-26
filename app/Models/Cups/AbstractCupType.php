@@ -11,7 +11,7 @@ use Illuminate\Support\Collection;
 
 abstract class AbstractCupType implements CupTypeInterface
 {
-    public function calculate(Cup $cup, Collection $cupEvents, Group $mainGroup): array
+    public function calculateCup(Cup $cup, Collection $cupEvents, Group $mainGroup): array
     {
         $results = Collection::make();
         foreach ($cupEvents as $cupEvent) {
@@ -94,5 +94,17 @@ abstract class AbstractCupType implements CupTypeInterface
         }
 
         return $cupEventPointsList;
+    }
+
+    public function getCupEventParticipatesCount(CupEvent $cupEvent): int
+    {
+        $groups = $cupEvent->cup->getGroups();
+        $lines = Collection::empty();
+
+        foreach ($groups as $group) {
+            $lines = $lines->merge($this->getGroupProtocolLines($cupEvent, $group));
+        }
+
+        return $lines->pluck('id')->unique()->count();
     }
 }

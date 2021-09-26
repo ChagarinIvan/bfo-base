@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Models\Distance;
+use App\Models\Event;
 use App\Models\Group;
 use App\Models\ProtocolLine;
 use App\Models\Rank;
@@ -86,5 +87,10 @@ class ProtocolLineService
     public function getProtocolLineWithEvent(int $id): ProtocolLine
     {
         return $this->protocolLinesRepository->getProtocolLine($id, ['distance.event']);
+    }
+
+    public function deleteEventLines(Event $event): void
+    {
+        $event->protocolLines()->delete();
     }
 }

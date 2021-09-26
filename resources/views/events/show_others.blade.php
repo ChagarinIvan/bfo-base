@@ -22,6 +22,7 @@
                 @php
                     $hasPerson = $line->person_id !== null;
                 @endphp
+                <td>{{ $line->serial_number }}</td>
                 @if($hasPerson)
                     @php
                         $link = action(\App\Http\Controllers\Person\ShowPersonAction::class, [$line->person_id]);

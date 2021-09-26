@@ -18,7 +18,9 @@ use Illuminate\Support\Collection;
  * @property Distance[] $distances
  * @property Cup[] $cups
  * @method static Group|null find(int $id)
- * @method static Builder|Group whereName($value)
+ * @method static Builder|Group whereName(string $value)
+ * @method static Builder|Group where(string $column, string $operator, string $value)
+ * @method static Collection get()
  * @method static Group|null first()
  * @method static Builder|Group selectRaw(Expression $raw)
  * @method static Builder|Group join(string $table, string $tableId, string $operator, string $joinId)
@@ -337,7 +339,7 @@ class Group extends Model
 
     public function isMale(): bool
     {
-        return mb_substr($this->name, 0, 1)  === 'М';
+        return mb_substr($this->name, 0, 1)  === 'М' || $this->name === 'M';
     }
 
     public function isFeMale(): bool

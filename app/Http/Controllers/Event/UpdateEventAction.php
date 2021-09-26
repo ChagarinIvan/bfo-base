@@ -9,6 +9,7 @@ use App\Http\Controllers\AbstractRedirectAction;
 use App\Http\Controllers\Error\Show404ErrorAction;
 use App\Models\Event;
 use App\Services\BackUrlService;
+use App\Services\EventService;
 use App\Services\IdentService;
 use App\Services\ParserService;
 use App\Services\ProtocolLineService;
@@ -21,6 +22,7 @@ use Illuminate\Support\Str;
 
 class UpdateEventAction extends AbstractRedirectAction
 {
+    private EventService $eventService;
     private ParserService $parserService;
     private IdentService $identService;
     private ExceptionHandler $exceptionHandler;
@@ -35,6 +37,7 @@ class UpdateEventAction extends AbstractRedirectAction
         ExceptionHandler $exceptionHandler,
         ProtocolLineService $protocolLineService,
         Filesystem $storage,
+        EventService $eventService,
     ) {
         parent::__construct($redirector, $backUrlService);
         $this->parserService = $parserService;
@@ -42,6 +45,7 @@ class UpdateEventAction extends AbstractRedirectAction
         $this->exceptionHandler = $exceptionHandler;
         $this->protocolLineService = $protocolLineService;
         $this->storage = $storage;
+        $this->eventService = $eventService;
     }
 
     public function __invoke(Event $event, Request $request): RedirectResponse
@@ -74,13 +78,13 @@ class UpdateEventAction extends AbstractRedirectAction
             $lineList = $this->parserService->parserProtocol($protocol, $needConvert);
             $this->storage->delete($event->file);
             $event->file = $protocolPath;
-            $event->save();
-            $event->distances()->delete();
-            $event->protocolLines()->delete();
+
+            // если не было ошибок при парсинге нового протокола,
+            // то можно удалить старые строки и разряды, перед сохранением новых
+            $this->eventService->deleteEvent($event);
+            $this->eventService->storeEvent($event);
             $lineList = $this->protocolLineService->fillProtocolLines($event->id, $lineList);
 
-            // если не было ошибок при парсинге новго протокола,
-            // то можно удалить старые строки, перед сохранением новых
             // заполняем event_id и сохраняем
             $this->storage->put($protocolPath, $protocol);
             $this->identService->identPersons($lineList);

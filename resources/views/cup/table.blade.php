@@ -7,7 +7,7 @@
     use Illuminate\Support\Collection;
     /**
      * @var Cup $cup;
-     * @var CupEvent[] $events;
+     * @var CupEvent[] $cupEvents;
      * @var array<int, CupEventPoint[]> $cupPoints;
      * @var Person[]|Collection $persons;
      * @var Group $activeGroup;
@@ -43,10 +43,13 @@
                 <tr class="table-info">
                     <th scope="col">№</th>
                     <th scope="col">{{ __('app.common.fio') }}</th>
-                    @foreach($events as $event)
+                    @foreach($cupEvents as $cupEvent)
                         <th scope="col">
-                            <a href="{{ action(\App\Http\Controllers\Event\ShowEventAction::class,[$event->event_id]) }}#{{ $activeGroup->name }}">
-                                <u>{{ $event->event->date->format('Y-m-d') }}</u>
+                            <a href="{{ action(
+                                \App\Http\Controllers\CupEvents\ShowCupEventGroupAction::class,
+                                [$cup->id, $cupEvent->id, $activeGroup->id]
+                            ) }}">
+                                <u>{{ $cupEvent->event->date->format('Y-m-d') }}</u>
                             </a>
                         </th>
                     @endforeach
@@ -70,11 +73,11 @@
                                 </b>
                             </a>
                         </td>
-                        @foreach($events as $event)
+                        @foreach($cupEvents as $cupEvent)
                             @php
                                 $find = false;
                                 foreach ($cupEventPoints as $cupEventPoint) {
-                                    if ($cupEventPoint->eventCupId === $event->id) {
+                                    if ($cupEventPoint->eventCupId === $cupEvent->id) {
                                         $find = true;
                                         break;
                                     }
@@ -97,13 +100,13 @@
                                         $sum += $cupEventPoint->points;
                                     @endphp
                                     <td>
-                                        <a href="{{ action(\App\Http\Controllers\Event\ShowEventAction::class,[$event->event_id]) }}#{{ $cupEventPoint->protocolLine->id }}">
+                                        <a href="{{ action(\App\Http\Controllers\Event\ShowEventAction::class,[$cupEvent->event_id]) }}#{{ $cupEventPoint->protocolLine->id }}">
                                             <u><b class="text-info">{{ $cupEventPoint->points }}</b></u>
                                         </a>
                                     </td>
                                 @else
                                     <td>
-                                        <a href="{{ action(\App\Http\Controllers\Event\ShowEventAction::class,[$event->event_id]) }}#{{ $cupEventPoint->protocolLine->id }}">
+                                        <a href="{{ action(\App\Http\Controllers\Event\ShowEventAction::class,[$cupEvent->event_id]) }}#{{ $cupEventPoint->protocolLine->id }}">
                                             <u>{{ $cupEventPoint->points }}</u>
                                         </a>
                                     </td>

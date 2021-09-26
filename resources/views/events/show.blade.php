@@ -38,6 +38,7 @@
     <table class="table table-bordered" id="table">
         <thead>
         <tr class="table-info">
+            <th scope="col"></th>
             <th scope="col">{{ __('app.common.lastname') }}</th>
             <th scope="col">{{ __('app.common.name') }}</th>
             <th scope="col">{{ __('app.club.name') }}</th>

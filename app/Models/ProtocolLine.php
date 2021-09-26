@@ -39,6 +39,7 @@ use Illuminate\Support\Collection;
  * @method static Builder|ProtocolLine wherePreparedLine(string $value)
  * @method static Builder|ProtocolLine wherePersonId(int $personId)
  * @method static Builder|ProtocolLine whereNotNull(string $column)
+ * @method static Builder|ProtocolLine havingRaw(Expression $expression)
  * @method static Builder|ProtocolLine whereNull(string $column)
  * @method static Builder|ProtocolLine whereIn(string|Expression $column, array|Collection $list)
  * @method static Builder|ProtocolLine where(string|Expression $column, string|int $operator, int|string $value = '')
@@ -46,6 +47,7 @@ use Illuminate\Support\Collection;
  * @method static Builder|ProtocolLine distinct()
  * @method static Builder|ProtocolLine orderByDesc(string $column)
  * @method static Builder|ProtocolLine selectRaw(Expression $raw)
+ * @method static Builder|ProtocolLine addSelect(string $column)
  * @method static Builder|ProtocolLine join(string $table, string $tableId, string $operator, string $joinId)
  */
 class ProtocolLine extends Model

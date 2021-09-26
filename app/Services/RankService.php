@@ -6,6 +6,7 @@ namespace App\Services;
 
 use App\Collections\RanksCollection;
 use App\Filters\RanksFilter;
+use App\Models\Event;
 use App\Models\ProtocolLine;
 use App\Models\Rank;
 use App\Repositories\RanksRepository;
@@ -194,5 +195,10 @@ class RankService
         $filter->personId = $protocolLine->person_id;
         $ranks = $this->ranksRepository->getRanksList($filter);
         return $ranks->first();
+    }
+
+    public function deleteEventRanks(Event $event): void
+    {
+        $event->ranks()->delete();
     }
 }
