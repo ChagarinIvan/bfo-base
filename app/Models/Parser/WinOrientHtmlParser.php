@@ -78,6 +78,9 @@ class WinOrientHtmlParser implements ParserInterface
                         }
                         continue;
                     }
+                    if (str_contains($line, 'Барановский')) {
+//                        sleep(1);
+                    }
                     $isFirst = false;
                     $preparedLine = str_replace('=', '', $line);
                     $preparedLine = preg_replace('#\s+#', ' ', $preparedLine);
@@ -101,7 +104,13 @@ class WinOrientHtmlParser implements ParserInterface
                             $indent++;
                             continue;
                         }
-                        $protocolLine[$columnName] = $this->getValue($columnName, $lineData, $fieldsCount, $indent);
+                        $protocolLine[$columnName] = $this->getValue(
+                            $columnName,
+                            $lineData,
+                            $fieldsCount,
+                            $indent,
+                            $protocolLine,
+                        );
                     }
 
                     $protocolLine['serial_number'] = (int)$lineData[0];
@@ -149,8 +158,13 @@ class WinOrientHtmlParser implements ParserInterface
         return null;
     }
 
-    private function getValue(string $column, array $lineData, int $fieldsCount, int &$indent): mixed
-    {
+    private function getValue(
+        string $column,
+        array $lineData,
+        int $fieldsCount,
+        int &$indent,
+        array &$protocolLine
+    ): mixed {
         if ($column === 'points') {
             $points = $lineData[$fieldsCount - $indent++];
             return is_numeric($points) ? (int)$points : null;
@@ -163,6 +177,9 @@ class WinOrientHtmlParser implements ParserInterface
             if (is_numeric($place) || $place === '-') {
                 $indent++;
                 return  (int)$place;
+            } elseif ($place === 'в/к') {
+                $indent++;
+                $protocolLine['vk'] = true;
             }
             return null;
         }
