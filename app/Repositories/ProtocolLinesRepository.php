@@ -65,7 +65,7 @@ class ProtocolLinesRepository
             ->join('person', 'person.id', '=', 'protocol_lines.person_id')
             ->join('distances', 'distances.id', '=', 'protocol_lines.distance_id')
             ->where('person.birthday', '<=', "{$finishYear}-01-01")
-            ->where('person.birthday', '>', "{$startYear}-01-01")
+            ->where('person.birthday', '>=', "{$startYear}-01-01")
             ->where('distances.event_id', $cupEvent->event_id);
 
         if ($withPayments) {
