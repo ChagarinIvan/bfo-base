@@ -7,20 +7,10 @@ namespace App\Http\Controllers\Cups;
 use App\Models\Cup;
 use App\Models\Group;
 use App\Models\Person;
-use App\Services\CupEventsService;
-use App\Services\ViewActionsService;
 use Illuminate\Contracts\View\View;
 
-class ShowCupTableAction extends AbstractCupViewAction
+class ShowCupTableAction extends AbstractCupAction
 {
-    private CupEventsService $cupEventsService;
-
-    public function __construct(ViewActionsService $viewService, CupEventsService $cupEventsService)
-    {
-        parent::__construct($viewService);
-        $this->cupEventsService = $cupEventsService;
-    }
-
     public function __invoke(Cup $cup, Group $group): View
     {
         $cupType = $cup->getCupType();

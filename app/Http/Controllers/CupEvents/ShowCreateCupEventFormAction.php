@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\CupEvents;
 
-use App\Http\Controllers\Cups\AbstractCupViewAction;
+use App\Http\Controllers\Cups\AbstractCupAction;
 use App\Models\Cup;
 use App\Models\Event;
 use Illuminate\Contracts\View\View;
 
-class ShowCreateCupEventFormAction extends AbstractCupViewAction
+class ShowCreateCupEventFormAction extends AbstractCupAction
 {
     public function __invoke(Cup $cup): View
     {

@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Cups;
 
-use App\Http\Controllers\AbstractRedirectAction;
 use App\Models\Cup;
 use App\Models\Cups\CupType;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
-class UpdateCupAction extends AbstractRedirectAction
+class UpdateCupAction extends AbstractCupAction
 {
     public function __invoke(Cup $cup, Request $request): RedirectResponse
     {
