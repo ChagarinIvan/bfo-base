@@ -13,10 +13,8 @@ class ShowCupTableAction extends AbstractCupAction
 {
     public function __invoke(Cup $cup, Group $group): View
     {
-        $cupType = $cup->getCupType();
-
         $cupEvents = $this->cupEventsService->getCupEvents($cup)->sortBy('events.date');
-        $cupPoints = $cupType->calculateCup($cup, $cupEvents, $group);
+        $cupPoints = $this->cupEventsService->calculateCup($cup, $cupEvents, $group);
 
         return $this->view('cup.table', [
             'cup' => $cup,
