@@ -65,7 +65,7 @@
                                     <a class="btn btn-info mr-2"
                                        href="{{ action(\App\Http\Controllers\Cups\ShowEditCupFormAction::class, [$cup]) }}"
                                     >{{ __('app.common.edit') }}</a>
-                                    <a class="btn btn-danger mr-2"
+                                    <a class="btn btn-danger"
                                        href="{{ action(\App\Http\Controllers\Cups\DeleteCupAction::class, [$cup]) }}"
                                     >{{ __('app.common.delete') }}</a>
                                 @endauth

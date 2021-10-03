@@ -5,18 +5,18 @@ declare(strict_types=1);
 namespace App\Http\Controllers\CupEvents;
 
 use App\Http\Controllers\Cups\AbstractCupAction;
-use App\Http\Controllers\Error\Show404ErrorAction;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 
 class ShowEditCupEventFormAction extends AbstractCupAction
 {
-    public function __invoke(int $cupId, int $cupEventId): View
+    public function __invoke(int $cupId, int $cupEventId): View|RedirectResponse
     {
         $cup = $this->cupsRepository->getCup($cupId);
         $cupEvent = $this->cupEventsService->getCupEvent($cupEventId);
 
         if ($cup === null || $cupEvent === null) {
-            $this->redirector->action(Show404ErrorAction::class);
+            $this->redirectToError();
         }
 
         $events = $this->eventsRepository->getYearEvents($cup->year);

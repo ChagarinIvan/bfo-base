@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Event;
 
-use App\Http\Controllers\Competition\AbstractCompetitionViewAction;
 use App\Models\Flag;
 use Illuminate\Contracts\View\View;
 
-class ShowCreateEventFormAction extends AbstractCompetitionViewAction
+class ShowCreateEventFormAction extends AbstractEventAction
 {
     public function __invoke(int $competitionId): View
     {

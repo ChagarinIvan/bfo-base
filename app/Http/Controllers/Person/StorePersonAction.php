@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Person;
 
-use App\Http\Controllers\AbstractRedirectAction;
 use App\Models\Person;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
-class StorePersonAction extends AbstractRedirectAction
+class StorePersonAction extends AbstractPersonAction
 {
     public function __invoke(Request $request): RedirectResponse
     {

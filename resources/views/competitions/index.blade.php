@@ -52,7 +52,7 @@
                         @auth
                             <td>
                                 <a href="{{ action(\App\Http\Controllers\Competition\DeleteCompetitionAction::class, [$selectedYear, $competition->id]) }}"
-                                   class="text-danger"
+                                   class="btn btn-danger"
                                 >{{ __('app.common.delete') }}</a>
                             </td>
                         @endauth

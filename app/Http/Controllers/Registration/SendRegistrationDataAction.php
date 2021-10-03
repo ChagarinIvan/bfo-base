@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Registration;
 
-use App\Http\Controllers\AbstractRedirectAction;
+use App\Http\Controllers\AbstractAction;
 use App\Http\Controllers\Competition\ShowCompetitionsListAction;
 use App\Http\Controllers\Login\MakeNewPasswordByTokenAction;
 use App\Mail\RegistrationUrlMail;
 use App\Models\Year;
 use App\Services\BackUrlService;
+use App\Services\ViewActionsService;
 use Illuminate\Contracts\Mail\Mailer;
 use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Encryption\Encrypter;
@@ -17,20 +18,21 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
 
-class SendRegistrationDataAction extends AbstractRedirectAction
+class SendRegistrationDataAction extends AbstractAction
 {
     private Encrypter $encrypter;
     private Mailer $mailer;
     private UrlGenerator $urlGenerator;
 
     public function __construct(
+        ViewActionsService $viewService,
         Redirector $redirector,
         BackUrlService $backUrlService,
         Encrypter $encrypter,
         Mailer $mailer,
         UrlGenerator $urlGenerator
     ) {
-        parent::__construct($redirector, $backUrlService);
+        parent::__construct($viewService, $redirector, $backUrlService);
         $this->encrypter = $encrypter;
         $this->mailer = $mailer;
         $this->urlGenerator = $urlGenerator;

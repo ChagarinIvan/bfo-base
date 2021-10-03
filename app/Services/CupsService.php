@@ -13,4 +13,9 @@ class CupsService
     {
         return Cup::where('year', $year)->get();
     }
+
+    public function deleteCup(Cup $cup): void
+    {
+        $cup->delete();
+    }
 }

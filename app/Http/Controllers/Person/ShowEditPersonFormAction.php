@@ -8,7 +8,7 @@ use App\Models\Club;
 use App\Models\Person;
 use Illuminate\Contracts\View\View;
 
-class ShowEditPersonFormAction extends AbstractPersonViewAction
+class ShowEditPersonFormAction extends AbstractPersonAction
 {
     public function __invoke(Person $person): View
     {

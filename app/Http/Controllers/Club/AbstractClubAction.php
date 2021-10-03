@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Club;
 
-use App\Http\Controllers\AbstractViewAction;
+use App\Http\Controllers\AbstractAction;
 
-abstract class AbstractClubViewAction extends AbstractViewAction
+abstract class AbstractClubAction extends AbstractAction
 {
     protected function isClubsRoute(): bool
     {

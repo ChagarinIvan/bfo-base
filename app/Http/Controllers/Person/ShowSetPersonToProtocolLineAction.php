@@ -11,7 +11,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class ShowSetPersonToProtocolLineAction extends AbstractPersonViewAction
+class ShowSetPersonToProtocolLineAction extends AbstractPersonAction
 {
     public function __invoke(int $protocolLineId, Request $request): View
     {

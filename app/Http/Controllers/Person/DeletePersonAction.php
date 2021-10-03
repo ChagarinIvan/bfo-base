@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Person;
 
-use App\Http\Controllers\AbstractRedirectAction;
 use App\Models\Person;
 use App\Models\ProtocolLine;
 use Illuminate\Http\RedirectResponse;
 
-class DeletePersonAction extends AbstractRedirectAction
+class DeletePersonAction extends AbstractPersonAction
 {
     public function __invoke(Person $person): RedirectResponse
     {

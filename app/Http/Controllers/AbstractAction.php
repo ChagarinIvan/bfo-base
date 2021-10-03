@@ -4,17 +4,28 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Error\Show404ErrorAction;
+use App\Services\BackUrlService;
 use App\Services\ViewActionsService;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller;
+use Illuminate\Routing\Redirector;
 
-abstract class AbstractViewAction extends Controller
+abstract class AbstractAction extends Controller
 {
     private ViewActionsService $viewService;
+    protected Redirector $redirector;
+    protected BackUrlService $backUrlService;
 
-    public function __construct(ViewActionsService $viewService)
-    {
+    public function __construct(
+        ViewActionsService $viewService,
+        Redirector $redirector,
+        BackUrlService $backUrlService,
+    ) {
         $this->viewService = $viewService;
+        $this->redirector = $redirector;
+        $this->backUrlService = $backUrlService;
     }
 
     protected function view(string $template, array $data = []): View
@@ -32,6 +43,11 @@ abstract class AbstractViewAction extends Controller
         return $this->viewService->makeView($template, $data, $this->navbarData());
     }
 
+    protected function removeLastBackUrl(): void
+    {
+        $this->backUrlService->pop();
+    }
+
     private function navbarData(): array
     {
         return [
@@ -46,7 +62,13 @@ abstract class AbstractViewAction extends Controller
             'isFlagsRoute' => $this->isFlagsRoute(),
             'isFaqRoute' => $this->isFaqRoute(),
             'isFaqApiRoute' => $this->isFaqApiRoute(),
+            'isGroupsRoute' => $this->isGroupsRoute(),
         ];
+    }
+
+    protected function redirectToError(): RedirectResponse
+    {
+        return $this->redirector->action(Show404ErrorAction::class);
     }
 
     protected function isCompetitionsRoute(): bool
@@ -85,6 +107,11 @@ abstract class AbstractViewAction extends Controller
     }
 
     protected function isFaqApiRoute(): bool
+    {
+        return false;
+    }
+
+    protected function isGroupsRoute(): bool
     {
         return false;
     }

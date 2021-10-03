@@ -6,7 +6,7 @@ namespace App\Http\Controllers\Competition;
 
 use Illuminate\Contracts\View\View;
 
-class ShowCreateCompetitionFormAction extends AbstractCompetitionViewAction
+class ShowCreateCompetitionFormAction extends AbstractCompetitionAction
 {
     public function __invoke(int $year): View
     {

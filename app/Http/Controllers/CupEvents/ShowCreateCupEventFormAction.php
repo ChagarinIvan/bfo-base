@@ -6,18 +6,15 @@ namespace App\Http\Controllers\CupEvents;
 
 use App\Http\Controllers\Cups\AbstractCupAction;
 use App\Models\Cup;
-use App\Models\Event;
 use Illuminate\Contracts\View\View;
 
 class ShowCreateCupEventFormAction extends AbstractCupAction
 {
     public function __invoke(Cup $cup): View
     {
-        $events = Event::with('competition')
-            ->where('date', 'LIKE', "%{$cup->year}%")
-            ->whereNotIn('id', $cup->events->pluck('event_id'))
-            ->orderBy('date')
-            ->get();
+        $events = $this->eventsRepository->getYearEvents($cup->year);
+        $events = $events->whereNotIn('id', $cup->events->pluck('event_id'))
+            ->sortBy('date');
 
         return $this->view('cup.events.create', [
             'cup' => $cup,

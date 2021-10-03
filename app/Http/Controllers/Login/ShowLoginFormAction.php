@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Login;
 
-use App\Http\Controllers\AbstractViewAction;
+use App\Http\Controllers\AbstractAction;
 use Illuminate\Contracts\View\View;
 
-class ShowLoginFormAction extends AbstractViewAction
+class ShowLoginFormAction extends AbstractAction
 {
     public function __invoke(): View
     {

@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Person;
 
-use App\Http\Controllers\AbstractViewAction;
 use App\Models\Club;
 use Illuminate\Contracts\View\View;
 
-class ShowCreatePersonFormAction extends AbstractPersonViewAction
+class ShowCreatePersonFormAction extends AbstractPersonAction
 {
     public function __invoke(): View
     {

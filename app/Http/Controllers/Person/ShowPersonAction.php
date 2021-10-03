@@ -6,21 +6,11 @@ namespace App\Http\Controllers\Person;
 
 use App\Models\Person;
 use App\Models\ProtocolLine;
-use App\Services\RankService;
-use App\Services\ViewActionsService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
 
-class ShowPersonAction extends AbstractPersonViewAction
+class ShowPersonAction extends AbstractPersonAction
 {
-    private RankService $rankService;
-
-    public function __construct(ViewActionsService $viewService, RankService $rankService)
-    {
-        parent::__construct($viewService);
-        $this->rankService = $rankService;
-    }
-
     public function __invoke(Person $person): View
     {
         /** fn features from php 7.4 */

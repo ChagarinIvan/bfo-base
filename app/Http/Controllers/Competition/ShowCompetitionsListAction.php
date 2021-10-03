@@ -8,7 +8,7 @@ use App\Models\Competition;
 use App\Models\Year;
 use Illuminate\Contracts\View\View;
 
-class ShowCompetitionsListAction extends AbstractCompetitionViewAction
+class ShowCompetitionsListAction extends AbstractCompetitionAction
 {
     public function __invoke(int $year): View
     {

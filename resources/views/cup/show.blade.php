@@ -29,7 +29,7 @@
         <a class="btn btn-secondary mr-2"
            href="{{ action(\App\Http\Controllers\Cups\ShowCupTableAction::class, [$cup, $cup->groups->first()]) }}"
         >{{ __('app.cup.table') }}</a>
-        <a class="btn btn-danger mr-2" href="{{ action(\App\Http\Controllers\BackAction::class) }}">{{ __('app.common.back') }}</a>
+        <a class="btn btn-danger" href="{{ action(\App\Http\Controllers\BackAction::class) }}">{{ __('app.common.back') }}</a>
     </div>
     <div class="row pt-3">
         @foreach($cup->getGroups() as $group)
@@ -71,10 +71,10 @@
                     @auth
                         <td>
                             <a href="{{ action(\App\Http\Controllers\CupEvents\ShowEditCupEventFormAction::class, [$cup, $cupEvent]) }}"
-                               class="text-primary"
+                               class="btn btn-primary mr-2"
                             >{{ __('app.common.edit') }}</a>
                             <a href="{{ action(\App\Http\Controllers\CupEvents\DeleteCupEventAction::class, [$cup, $cupEvent]) }}"
-                               class="text-danger"
+                               class="btn btn-danger"
                             >{{ __('app.common.delete') }}</a>
                         </td>
                     @endauth

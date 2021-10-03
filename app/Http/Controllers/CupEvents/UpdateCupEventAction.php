@@ -6,7 +6,6 @@ namespace App\Http\Controllers\CupEvents;
 
 use App\Http\Controllers\Cups\AbstractCupAction;
 use App\Http\Controllers\Cups\ShowCupAction;
-use App\Http\Controllers\Error\Show404ErrorAction;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -21,7 +20,7 @@ class UpdateCupEventAction extends AbstractCupAction
 
         $cupEvent = $this->cupEventsService->getCupEvent($cupEventId);
         if ($cupEvent === null) {
-            $this->redirector->action(Show404ErrorAction::class);
+            $this->redirectToError();
         }
 
         $cupEvent->event_id = $formData['event'];

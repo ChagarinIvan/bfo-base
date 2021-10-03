@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Event;
 
-use App\Http\Controllers\AbstractRedirectAction;
 use App\Models\Distance;
 use App\Models\Event;
 use App\Models\ProtocolLine;
@@ -13,7 +12,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
-class UnitEventsAction extends AbstractRedirectAction
+class UnitEventsAction extends AbstractEventAction
 {
     public function __invoke(int $competitionId, Request $request): RedirectResponse
     {

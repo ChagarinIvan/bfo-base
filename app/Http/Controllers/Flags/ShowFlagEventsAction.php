@@ -8,7 +8,7 @@ use App\Models\Event;
 use App\Models\Flag;
 use Illuminate\Contracts\View\View;
 
-class ShowFlagEventsAction extends AbstractFlagsViewAction
+class ShowFlagEventsAction extends AbstractFlagsAction
 {
     public function __invoke(Flag $flag): View
     {
