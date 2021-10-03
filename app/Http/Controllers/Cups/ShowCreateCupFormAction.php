@@ -11,7 +11,7 @@ class ShowCreateCupFormAction extends AbstractCupAction
     public function __invoke(int $year): View
     {
         return $this->view('cup.create', [
-            'groups' => $this->groupsRepository->getAll(),
+            'groups' => $this->groupsService->getGroupsList(),
             'selectedYear' => $year,
         ]);
     }

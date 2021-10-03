@@ -7,7 +7,7 @@ namespace App\Http\Controllers\Flags;
 use App\Models\Flag;
 use Illuminate\Contracts\View\View;
 
-class ShowEditFlagFormAction extends AbstractFlagsViewAction
+class ShowEditFlagFormAction extends AbstractFlagsAction
 {
     public function __invoke(Flag $flag): View
     {

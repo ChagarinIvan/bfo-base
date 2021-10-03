@@ -4,35 +4,36 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Cups;
 
-use App\Http\Controllers\AbstractViewAction;
+use App\Http\Controllers\AbstractAction;
 use App\Repositories\CupsRepository;
 use App\Repositories\EventsRepository;
-use App\Repositories\GroupsRepository;
+use App\Services\BackUrlService;
 use App\Services\CupEventsService;
 use App\Services\CupsService;
+use App\Services\GroupsService;
 use App\Services\ViewActionsService;
 use Illuminate\Routing\Redirector;
 
-abstract class AbstractCupAction extends AbstractViewAction
+abstract class AbstractCupAction extends AbstractAction
 {
-    protected GroupsRepository $groupsRepository;
+    protected GroupsService $groupsService;
     protected CupsRepository $cupsRepository;
     protected CupEventsService $cupEventsService;
     protected EventsRepository $eventsRepository;
     protected CupsService $cupsService;
-    protected Redirector $redirector;
 
     public function __construct(
         ViewActionsService $viewService,
-        GroupsRepository $groupsRepository,
+        GroupsService $groupsService,
         CupsRepository $cupsRepository,
         CupEventsService $cupEventsService,
         CupsService $cupsService,
         EventsRepository $eventsRepository,
-        Redirector $redirector
+        Redirector $redirector,
+        BackUrlService $backUrlService,
     ) {
-        parent::__construct($viewService);
-        $this->groupsRepository = $groupsRepository;
+        parent::__construct($viewService, $redirector, $backUrlService);
+        $this->groupsService = $groupsService;
         $this->cupsRepository = $cupsRepository;
         $this->cupEventsService = $cupEventsService;
         $this->eventsRepository = $eventsRepository;

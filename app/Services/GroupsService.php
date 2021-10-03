@@ -6,6 +6,7 @@ namespace App\Services;
 
 use App\Models\CupEvent;
 use App\Models\Event;
+use App\Models\Group;
 use App\Repositories\GroupsRepository;
 use Illuminate\Support\Collection;
 
@@ -26,5 +27,20 @@ class GroupsService
     public function getCupEventGroups(CupEvent $cupEvent): Collection
     {
         return $this->groupsRepository->getEventGroups($cupEvent->event_id);
+    }
+
+    public function getGroupsList(array $with = []): Collection
+    {
+        return $this->groupsRepository->getAll($with);
+    }
+
+    public function getGroup(int $groupId): ?Group
+    {
+        return $this->groupsRepository->getGroup($groupId);
+    }
+
+    public function deleteGroup(Group $group): void
+    {
+        $group->delete();
     }
 }

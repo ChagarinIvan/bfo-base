@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Login;
 
-use App\Http\Controllers\AbstractRedirectAction;
-use App\Http\Controllers\Error\Show404ErrorAction;
+use App\Http\Controllers\AbstractAction;
 use App\Mail\PasswordMail;
 use App\Models\User;
 use App\Services\BackUrlService;
+use App\Services\ViewActionsService;
 use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Contracts\Mail\Mailer;
 use Illuminate\Hashing\HashManager;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Redirector;
-use \Illuminate\Validation\Factory as Validator;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Factory as Validator;
 
-class MakeNewPasswordByTokenAction extends AbstractRedirectAction
+class MakeNewPasswordByTokenAction extends AbstractAction
 {
     private Encrypter $encrypter;
     private Validator $validator;
@@ -25,6 +25,7 @@ class MakeNewPasswordByTokenAction extends AbstractRedirectAction
     private Mailer $mailer;
 
     public function __construct(
+        ViewActionsService $viewService,
         Redirector $redirector,
         BackUrlService $backUrlService,
         Encrypter $encrypter,
@@ -32,7 +33,7 @@ class MakeNewPasswordByTokenAction extends AbstractRedirectAction
         HashManager $hashManager,
         Mailer $mailer,
     ) {
-        parent::__construct($redirector, $backUrlService);
+        parent::__construct($viewService, $redirector, $backUrlService);
         $this->encrypter = $encrypter;
         $this->validator = $validator;
         $this->hashManager = $hashManager;
@@ -43,7 +44,7 @@ class MakeNewPasswordByTokenAction extends AbstractRedirectAction
     {
         $email = $this->encrypter->decrypt($token);
         if (!$this->validator->validate(['email' => $email], ['email' => 'required|email'])) {
-            return $this->redirector->action(Show404ErrorAction::class);
+            return $this->redirectToError();
         }
         $users = User::whereEmail($email)->get();
         if ($users->isEmpty()) {

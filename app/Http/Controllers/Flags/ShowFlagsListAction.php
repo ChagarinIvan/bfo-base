@@ -7,7 +7,7 @@ namespace App\Http\Controllers\Flags;
 use App\Models\Flag;
 use Illuminate\Contracts\View\View;
 
-class ShowFlagsListAction extends AbstractFlagsViewAction
+class ShowFlagsListAction extends AbstractFlagsAction
 {
     public function __invoke(): View
     {

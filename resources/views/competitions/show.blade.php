@@ -24,7 +24,7 @@
                href="{{ action(\App\Http\Controllers\Event\ShowUnitEventsFormAction::class, [$competition->id]) }}"
             >{{ __('app.competition.sum') }}</a>
         @endauth
-        <a class="btn btn-danger mr-2" href="{{ action(\App\Http\Controllers\BackAction::class) }}">{{ __('app.common.back') }}</a>
+        <a class="btn btn-danger" href="{{ action(\App\Http\Controllers\BackAction::class) }}">{{ __('app.common.back') }}</a>
     </div>
     <div class="row pt-3">
         <table class="table">
@@ -61,12 +61,12 @@
                     @auth
                         <td>
                             <a href="{{ action(\App\Http\Controllers\Event\ShowAddFlagToEventFormAction::class, [$event]) }}"
-                               class="text-info"
+                               class="btn btn-info mr-2"
                             >{{ __('app.common.add_flags') }}</a>
                             <a href="{{ action(\App\Http\Controllers\Event\ShowEditEventFormAction::class, [$event]) }}"
-                               class="text-primary"
+                               class="btn btn-primary mr-2"
                             >{{ __('app.common.edit') }}</a>
-                            <a class="text-danger"
+                            <a class="btn btn-danger"
                                href="{{ action(\App\Http\Controllers\Event\DeleteEventAction::class, [$event->id]) }}"
                             >{{ __('app.common.delete') }}</a>
                         </td>

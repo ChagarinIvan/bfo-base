@@ -4,18 +4,24 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Rank;
 
-use App\Http\Controllers\AbstractViewAction;
+use App\Http\Controllers\AbstractAction;
+use App\Services\BackUrlService;
 use App\Services\RankService;
 use App\Services\ViewActionsService;
 use Illuminate\Contracts\View\View;
+use Illuminate\Routing\Redirector;
 
-class ShowRanksListAction extends AbstractViewAction
+class ShowRanksListAction extends AbstractAction
 {
     private RankService $rankService;
 
-    public function __construct(ViewActionsService $viewService, RankService $rankService)
-    {
-        parent::__construct($viewService);
+    public function __construct(
+        ViewActionsService $viewService,
+        Redirector $redirector,
+        BackUrlService $backUrlService,
+        RankService $rankService
+    ) {
+        parent::__construct($viewService, $redirector, $backUrlService);
         $this->rankService = $rankService;
     }
 

@@ -9,7 +9,7 @@ use App\Models\Person;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 
-class ShowClubAction extends AbstractClubViewAction
+class ShowClubAction extends AbstractClubAction
 {
     public function __invoke(Request $request, Club $club): View
     {

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Flags;
 
-use App\Http\Controllers\AbstractViewAction;
+use App\Http\Controllers\AbstractAction;
 
-abstract class AbstractFlagsViewAction extends AbstractViewAction
+abstract class AbstractFlagsAction extends AbstractAction
 {
     protected function isFlagsRoute(): bool
     {

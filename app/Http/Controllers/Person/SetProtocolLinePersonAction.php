@@ -4,25 +4,13 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Person;
 
-use App\Http\Controllers\AbstractRedirectAction;
 use App\Models\Person;
 use App\Models\PersonPrompt;
 use App\Models\ProtocolLine;
-use App\Services\BackUrlService;
-use App\Services\RankService;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Routing\Redirector;
 
-class SetProtocolLinePersonAction extends AbstractRedirectAction
+class SetProtocolLinePersonAction extends AbstractPersonAction
 {
-    private RankService $rankService;
-
-    public function __construct(Redirector $redirector, BackUrlService $backUrlService, RankService $rankService)
-    {
-        parent::__construct($redirector, $backUrlService);
-        $this->rankService = $rankService;
-    }
-
     public function __invoke(Person $person, int $protocolLineId): RedirectResponse
     {
         /** @var ProtocolLine $protocolLine */

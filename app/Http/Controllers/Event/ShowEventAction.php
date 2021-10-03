@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Event;
 
-use App\Http\Controllers\Competition\AbstractCompetitionViewAction;
 use App\Models\Distance;
 use App\Models\Event;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
 
-class ShowEventAction extends AbstractCompetitionViewAction
+class ShowEventAction extends AbstractEventAction
 {
     public function __invoke(Event $event): View
     {

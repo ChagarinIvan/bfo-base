@@ -37,10 +37,10 @@
                     @auth
                         <td>
                             <a href="{{ action(\App\Http\Controllers\Flags\ShowEditFlagFormAction::class, [$flag]) }}"
-                               class="text-primary"
+                               class="btn btn-primary mr-2"
                             >{{ __('app.common.edit') }}</a>
                             <a href="{{ action(\App\Http\Controllers\Flags\DeleteFlagAction::class, [$flag]) }}"
-                               class="text-danger"
+                               class="btn btn-danger"
                             >{{ __('app.common.delete') }}</a>
                         </td>
                     @endauth

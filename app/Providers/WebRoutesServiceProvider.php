@@ -3,19 +3,20 @@
 namespace App\Providers;
 
 use App\Http\Controllers\BackAction;
-use App\Http\Controllers\Competition;
-use App\Http\Controllers\Event;
-use App\Http\Controllers\Person;
 use App\Http\Controllers\Club;
-use App\Http\Controllers\Localization;
-use App\Http\Controllers\Flags;
-use App\Http\Controllers\Faq;
-use App\Http\Controllers\Error;
-use App\Http\Controllers\Cups;
+use App\Http\Controllers\Competition;
 use App\Http\Controllers\CupEvents;
+use App\Http\Controllers\Cups;
+use App\Http\Controllers\Error;
+use App\Http\Controllers\Event;
+use App\Http\Controllers\Faq;
+use App\Http\Controllers\Flags;
+use App\Http\Controllers\Groups;
+use App\Http\Controllers\Localization;
 use App\Http\Controllers\Login;
-use App\Http\Controllers\Registration;
+use App\Http\Controllers\Person;
 use App\Http\Controllers\Rank;
+use App\Http\Controllers\Registration;
 use App\Models\Year;
 use Illuminate\Contracts\Routing\Registrar;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
@@ -130,7 +131,6 @@ class WebRoutesServiceProvider extends ServiceProvider
 
                 //cups
                 $this->routeRegistrar->prefix('cups')->group(function () {
-                    //default route
                     $this->route->get('{year}',                     Cups\ShowCupsListAction::class);
                     $this->route->get('{cup}/show',                 Cups\ShowCupAction::class);
                     $this->route->get('{cup}/{group}/table',        Cups\ShowCupTableAction::class);
@@ -147,15 +147,21 @@ class WebRoutesServiceProvider extends ServiceProvider
                         $this->route->get( '{cup}/{event}/delete', CupEvents\DeleteCupEventAction::class);
                         $this->route->get( '{cup}/{event}/edit',   CupEvents\ShowEditCupEventFormAction::class);
                         $this->route->post('{cup}/{event}/update', CupEvents\UpdateCupEventAction::class);
-
-
                     });
+                });
+
+                //groups
+                $this->routeRegistrar->prefix('groups')->group(function () {
+                    $this->route->get('',               Groups\ShowGroupsListAction::class);
+                    $this->route->get('{group}/delete', Groups\DeleteGroupAction::class);
+                    $this->route->get('{group}',        Groups\ShowGroupAction::class);
                 });
 
                 //auth group
                 $this->route->get( '/login',              Login\ShowLoginFormAction::class);
                 $this->route->get( '/login/auth/{token}', Login\MakeNewPasswordByTokenAction::class);
-                $this->route->post('/sign-in',            Login\AuthValidationAction::class);
+                $this->route->post('/sign-in',            Login\SignInAction::class);
+                $this->route->get( '/sign-out',           Login\SignOutAction::class);
 
                 $this->routeRegistrar->middleware(['auth'])->prefix('registration')->group(function () {
                     $this->route->get( '',      Registration\ShowRegistrationFormAction::class);

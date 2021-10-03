@@ -10,6 +10,7 @@
      * @var bool $isRanksRoute;
      * @var bool $isFlagsRoute;
      * @var bool $isFaqRoute;
+     * @var bool $isGroupsRoute;
      * @var bool $isFaqApiRoute;
      */
 @endphp
@@ -32,6 +33,9 @@
             <a class="navbar-brand {{ $isRanksRoute ? 'text-light' : 'text-secondary' }}"
                href="{{ action(\App\Http\Controllers\Rank\ShowRanksListAction::class, [\App\Models\Rank::SM_RANK]) }}"
             >{{ __('app.navbar.ranks') }}</a>
+            <a class="navbar-brand {{ $isGroupsRoute ? 'text-light' : 'text-secondary' }}"
+               href="{{ action(\App\Http\Controllers\Groups\ShowGroupsListAction::class) }}"
+            >{{ __('app.common.groups') }}</a>
             @auth
                 <a class="navbar-brand {{ $isFlagsRoute ? 'text-light' : 'text-secondary' }}"
                    href="{{ action(\App\Http\Controllers\Flags\ShowFlagsListAction::class) }}"
@@ -53,6 +57,9 @@
                 <a class="navbar-brand text-info ml-auto"
                    href="{{ action(\App\Http\Controllers\Registration\ShowRegistrationFormAction::class) }}"
                 >{{ __('app.common.registration') }}</a>
+                <a class="navbar-brand text-danger"
+                   href="{{ action(\App\Http\Controllers\Login\SignOutAction::class) }}"
+                >{{ __('app.common.sign-out') }}</a>
             @else
                 <a class="navbar-brand text-info ml-auto"
                    href="{{ action(\App\Http\Controllers\Login\ShowLoginFormAction::class) }}"

@@ -7,7 +7,7 @@ namespace App\Http\Controllers\Competition;
 use App\Models\Competition;
 use Illuminate\Contracts\View\View;
 
-class ShowCompetitionAction extends AbstractCompetitionViewAction
+class ShowCompetitionAction extends AbstractCompetitionAction
 {
     public function __invoke(Competition $competition): View
     {

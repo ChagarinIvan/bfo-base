@@ -13,7 +13,7 @@ class ShowEditCupFormAction extends AbstractCupAction
     {
         return $this->view('cup.edit', [
             'cup' => $cup,
-            'groups' => $this->groupsRepository->getAll(),
+            'groups' => $this->groupsService->getGroupsList(),
         ]);
     }
 }

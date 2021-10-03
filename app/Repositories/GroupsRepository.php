@@ -21,9 +21,9 @@ class GroupsRepository
             ->get();
     }
 
-    public function getAll(): Collection
+    public function getAll(array $with): Collection
     {
-        return Group::all();
+        return count($with) > 0 ? Group::with($with)->get() : Group::all();
     }
 
     public function searchGroup(string $query): ?Group
