@@ -73,7 +73,7 @@ class YouthCupType extends AbstractCupType
         $ageParticipants = $ageParticipants->intersectByKeys($this->eventDistances);
 
         foreach ($ageParticipants as $distanceId => $groupProtocolLines) {
-            $eventGroupResults = $this->calculateDistance($cupEvent, $distanceId, );
+            $eventGroupResults = $this->calculateDistance($cupEvent, $distanceId);
             $results = $results->merge($eventGroupResults->intersectByKeys($groupProtocolLines->keyBy('person_id')));
         }
 
