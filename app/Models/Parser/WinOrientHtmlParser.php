@@ -174,6 +174,10 @@ class WinOrientHtmlParser implements ParserInterface
         }
         if ($column === 'place') {
             $place = $lineData[$fieldsCount - $indent];
+            if ($place === '20.10' || $place ===  '24.4') {
+                return null;
+            }
+
             if (is_numeric($place) || $place === '-') {
                 $indent++;
                 return  (int)$place;
@@ -191,7 +195,7 @@ class WinOrientHtmlParser implements ParserInterface
                 } catch (Exception) {
                     $time = null;
                 }
-            } elseif ($time === 'снят' || $time === 'пп.24.4' || $time === 'пп.20.10') {
+            } elseif ($time === 'снят' || str_contains($time, '24.4') || str_contains($time, '20.10')) {
                 $time = null;
             } else {
                 $indent++;
@@ -214,6 +218,10 @@ class WinOrientHtmlParser implements ParserInterface
         }
         if ($column === 'year') {
             $year = $lineData[$fieldsCount - $indent];
+            if ($year === 'пп') {
+                $indent++;
+                $year = $lineData[$fieldsCount - $indent];
+            }
             if (is_numeric($year) && preg_match('#\d{4}#', $year)) {
                 $indent++;
                 return (int)$year;
