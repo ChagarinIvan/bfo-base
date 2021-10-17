@@ -10,43 +10,69 @@
 @section('title', __('app.navbar.flags'))
 
 @section('content')
-    <h3>{{ __('app.navbar.flags') }}</h3>
     @auth
-        <div class="row pt-5">
-            <a class="btn btn-success mr-2" href="{{ action(\App\Http\Controllers\Flags\ShowCreateFlagFormAction::class) }}">{{ __('app.common.new') }}</a>
+        <div class="row mb-3">
+            <div class="col-12">
+                <x-button text="app.common.new"
+                          color="success"
+                          icon="bi-file-earmark-plus-fill"
+                          url="{{ action(\App\Http\Controllers\Flags\ShowCreateFlagFormAction::class) }}"
+                />
+            </div>
         </div>
     @endauth
-    <div class="row pt-3">
-        <table class="table table-bordered pt-3" id="table">
-            <thead>
-            <tr class="table-info">
-                <th scope="col">{{ __('app.flags.name') }}</th>
-                <th scope="col">{{ __('app.flags.color') }}</th>
-                @auth<th scope="col"></th>@endauth
-            </tr>
+    <div class="row">
+        <table id="table"
+               data-cookie="true"
+               data-cookie-id-table="flags-list"
+               data-mobile-responsive="true"
+               data-check-on-init="true"
+               data-min-width="800"
+               data-toggle="table"
+               data-search="true"
+               data-search-highlight="true"
+               data-sort-class="table-active"
+               data-pagination="true"
+               data-page-list="[10,25,50,100,All]"
+               data-resizable="true"
+               data-sticky-header="true"
+               data-sticky-header-offset-y="54"
+               data-custom-sort="customSort"
+               data-pagination-next-text="{{ __('pagination.next') }}"
+               data-pagination-pre-text="{{ __('pagination.previous') }}"
+        >
+            <thead class="table-dark">
+                <tr>
+                    <th data-sortable="true">{{ __('app.flags.name') }}</th>
+                    <th>{{ __('app.flags.color') }}</th>
+                    @auth<th></th>@endauth
+                </tr>
             </thead>
             <tbody>
-            @foreach ($flags as $flag)
-                <tr>
-                    <td>
-                        <a href="{{ action(\App\Http\Controllers\Flags\ShowFlagEventsAction::class, [$flag]) }}">
-                            <u>{{ $flag->name }}</u>
-                        </a>
-                    </td>
-                    <td style="background: {{ $flag->color }}">{{ $flag->color }}</td>
-                    @auth
+                @foreach ($flags as $flag)
+                    <tr>
                         <td>
-                            <a href="{{ action(\App\Http\Controllers\Flags\ShowEditFlagFormAction::class, [$flag]) }}"
-                               class="btn btn-primary mr-2"
-                            >{{ __('app.common.edit') }}</a>
-                            <a href="{{ action(\App\Http\Controllers\Flags\DeleteFlagAction::class, [$flag]) }}"
-                               class="btn btn-danger"
-                            >{{ __('app.common.delete') }}</a>
+                            <a href="{{ action(\App\Http\Controllers\Flags\ShowFlagEventsAction::class, [$flag]) }}">
+                                {{ $flag->name }}
+                            </a>
                         </td>
-                    @endauth
-                </tr>
-            @endforeach
+                        <td style="background: {{ $flag->color }}">{{ $flag->color }}</td>
+                        @auth
+                            <td>
+                                <x-edit-button url="{{ action(\App\Http\Controllers\Flags\ShowEditFlagFormAction::class, [$flag]) }}"/>
+                                <x-delete-button modal-id="deleteModal{{ $flag->id }}"/>
+                            </td>
+                        @endauth
+                    </tr>
+                @endforeach
             </tbody>
         </table>
     </div>
+    @foreach ($flags as $flag)
+        <x-modal modal-id="deleteModal{{ $flag->id }}"
+                 url="{{ action(\App\Http\Controllers\Flags\DeleteFlagAction::class, [$flag]) }}"
+        />
+    @endforeach
 @endsection
+
+@section('table_extracted_columns', '[0,1]')

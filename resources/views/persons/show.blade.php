@@ -11,75 +11,98 @@
 
 @extends('layouts.app')
 
-@section('title', $person->lastname)
+@section('title', $person->lastname.' '.$person->firstname)
 
 @section('content')
-    <h3>{{ $person->lastname }} {{ $person->firstname }}</h3>
     @if ($rank)
-        <h4>{{ $rank->rank }} {{ __('app.common.do') }} {{ $rank->finish_date->format('Y-m-d') }}</h4>
+        <div class="row mb-3">
+            <div class="col-12">
+                <h4>{{ $rank->rank }} {{ __('app.common.do') }} {{ $rank->finish_date->format('Y-m-d') }}</h4>
+            </div>
+        </div>
     @endif
-    <h4>{{ $person->birthday ? $person->birthday->format('Y') : '' }}</h4>
-    <div class="pb-3">
-        <a class="btn btn-success mr-2"
-           href="{{ action(\App\Http\Controllers\Person\ShowPersonRanksAction::class, [$person->id]) }}"
-        >{{ __('app.ranks') }}</a>
-        <a class="btn btn-danger mr-2" href="{{ action(\App\Http\Controllers\BackAction::class) }}">{{ __('app.common.back') }}</a>
+    <div class="row mb-3">
+        <div class="col-12">
+            <h4>{{ $person->birthday ? $person->birthday->format('Y') : '' }}</h4>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-12">
+            <x-button text="app.ranks"
+                      color="info"
+                      icon="bi-smartwatch"
+                      url="{{ action(\App\Http\Controllers\Person\ShowPersonRanksAction::class, [$person->id]) }}"
+            />
+            <x-back-button/>
+        </div>
     </div>
     @if($person->protocolLines->count() > 0)
-        <table class="table table-bordered table-fixed"
-               id="table"
+        <table id="table"
+               data-cookie="true"
+               data-cookie-id-table="persons-list"
+               data-mobile-responsive="true"
+               data-check-on-init="true"
+               data-min-width="800"
                data-toggle="table"
+               data-search="true"
+               data-search-highlight="true"
+               data-sort-class="table-active"
+               data-pagination="true"
+               data-page-list="[10,25,50,100,All]"
+               data-resizable="true"
                data-sticky-header="true"
+               data-sticky-header-offset-y="54"
+               data-custom-sort="customSort"
+               data-pagination-next-text="{{ __('pagination.next') }}"
+               data-pagination-pre-text="{{ __('pagination.previous') }}"
         >
-            <thead>
-            <tr class="table-info">
-                <th scope="col">{{ __('app.competition.title') }}</th>
-                <th scope="col">{{ __('app.event.title') }}</th>
-                <th scope="col">{{ __('app.common.lastname') }} {{ __('app.common.name') }}</th>
-                <th scope="col">{{ __('app.common.date') }}</th>
-                <th scope="col">{{ __('app.common.group') }}</th>
-                <th scope="col">{{ __('app.common.result') }}</th>
-                <th scope="col">{{ __('app.common.place') }}</th>
-                <th scope="col">{{ __('app.common.points') }}</th>
-                <th scope="col">{{ __('app.common.complete_rank') }}</th>
-            </tr>
+            <thead class="table-dark">
+                <tr>
+                    <th data-sortable="true">{{ __('app.competition.title') }}</th>
+                    <th data-sortable="true">{{ __('app.event.title') }}</th>
+                    <th data-sortable="true">{{ __('app.common.lastname') }} {{ __('app.common.name') }}</th>
+                    <th data-sortable="true">{{ __('app.common.date') }}</th>
+                    <th data-sortable="true">{{ __('app.common.group') }}</th>
+                    <th data-sortable="true">{{ __('app.common.result') }}</th>
+                    <th data-sortable="true">{{ __('app.common.place') }}</th>
+                    <th data-sortable="true">{{ __('app.common.points') }}</th>
+                    <th data-sortable="true">{{ __('app.common.complete_rank') }}</th>
+                </tr>
             </thead>
             <tbody>
-            @foreach ($groupedProtocolLines as $year => $lines)
-                <tr>
-                    <td class="text-center" colspan="9"><b id="{{ $year }}">{{ $year }}</b></td>
-                </tr>
-                @foreach($lines as $line)
-                    @php
-                        /** @var App\Models\ProtocolLine $line */
-                    @endphp
+                @foreach ($groupedProtocolLines as $year => $lines)
                     <tr>
-                        <td>
-                            <a href="{{ action(\App\Http\Controllers\Competition\ShowCompetitionAction::class, [$line->distance->event->competition_id]) }}">
-                                <u>{{ \Illuminate\Support\Str::limit($line->distance->event->competition->name, 20, '...') }}</u>
-                            </a>
-                        </td>
-                        <td>
-                            <a href="{{ action(\App\Http\Controllers\Event\ShowEventAction::class, [$line->distance->event->id]) }}#{{ $line->id }}">
-                                <u>{{ \Illuminate\Support\Str::limit($line->distance->event->name, 20, '...') }}</u>
-                            </a>
-                            @foreach($line->distance->event->flags as $flag)
-                                <span class="badge" style="background: {{ $flag->color }}">
-                                    <a href="{{ action(\App\Http\Controllers\Flags\ShowFlagEventsAction::class, [$flag]) }}">{{ $flag->name }}</a>
-                                </span>
-                            @endforeach
-                        </td>
-                        <td>{{ $line->lastname }} {{ $line->firstname }}</td>
-                        <td>{{ $line->distance->event->date->format('Y-m-d') }}</td>
-                        <td>{{ $line->distance->group->name }}</td>
-                        <td>{{ $line->time ? $line->time->format('H:i:s') : '-' }}</td>
-                        <td>{{ $line->place }}</td>
-                        <td>{{ $line->points }}</td>
-                        <td>{{ $line->complete_rank }}</td>
+                        <td class="text-center" colspan="9"><b id="{{ $year }}">{{ $year }}</b></td>
                     </tr>
+                    @foreach($lines as $line)
+                        @php
+                            /** @var App\Models\ProtocolLine $line */
+                        @endphp
+                        <tr>
+                            <td>
+                                <a href="{{ action(\App\Http\Controllers\Competition\ShowCompetitionAction::class, [$line->distance->event->competition_id]) }}">
+                                    {{ \Illuminate\Support\Str::limit($line->distance->event->competition->name, 20, '...') }}
+                                </a>
+                            </td>
+                            <td>
+                                <a href="{{ action(\App\Http\Controllers\Event\ShowEventAction::class, [$line->distance->event_id, $line->distance_id]) }}#{{ $line->id }}">
+                                    {{ \Illuminate\Support\Str::limit($line->distance->event->name, 20, '...') }}
+                                </a>
+                            </td>
+                            <td>{{ $line->lastname }} {{ $line->firstname }}</td>
+                            <td>{{ $line->distance->event->date->format('Y-m-d') }}</td>
+                            <td>{{ $line->distance->group ? $line->distance->group->name : '' }}</td>
+                            <td>{{ $line->time ? $line->time->format('H:i:s') : '-' }}</td>
+                            <td>{{ $line->place }}</td>
+                            <td>{{ $line->points }}</td>
+                            <td>{{ $line->complete_rank }}</td>
+                        </tr>
+                    @endforeach
                 @endforeach
-            @endforeach
             </tbody>
         </table>
     @endif
 @endsection
+
+@section('table_extracted_columns', '[0,1,2]')
+@section('table_extracted_dates_columns', '[3]')

@@ -13,7 +13,7 @@ use Illuminate\Database\Query\Builder;
  * @property int $id
  * @property int $cup_id
  * @property int $event_id
- * @property float  $points
+ * @property float $points
  * @property-read Cup $cup
  * @property-read Event $event
  * @method static Builder|CupEvent find(mixed $ids)

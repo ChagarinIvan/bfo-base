@@ -17,110 +17,131 @@
 
 @extends('layouts.app')
 
-@section('title', \Illuminate\Support\Str::limit($cup->name, 20, '...'))
+@section('title', $cup->name.' - '.$cup->year)
 
 @section('content')
-    <div class="row"><h1>{{ $cup->name }}</h1></div>
-    <div class="row">
-        <a class="btn btn-danger mr-2" href="{{ action(\App\Http\Controllers\BackAction::class) }}">{{ __('app.common.back') }}</a>
+    <div class="row mb-3">
+        <div class="col-12">
+            <x-back-button/>
+        </div>
     </div>
-    <ul class="nav nav-tabs pt-2">
-        @foreach($cup->getGroups() as $group)
-            @php
-                /** @var \App\Models\Group $group */
-            @endphp
-            <li class="nav-item">
-                <a href="{{ action(\App\Http\Controllers\Cups\ShowCupTableAction::class, [$cup, $group]) }}"
-                   class="nav-link {{ $activeGroup->id === $group->id ? 'active' : ''}}"
-                >{{ $group->name }}</a>
-            </li>
-        @endforeach
-    </ul>
-    <div class="tab-content">
-        <div class="tab-pane fade show active">
-            <table class="table table-bordered" id="table">
-                <thead>
-                <tr class="table-info">
-                    <th scope="col">№</th>
-                    <th scope="col">{{ __('app.common.fio') }}</th>
-                    @foreach($cupEvents as $cupEvent)
-                        <th scope="col">
-                            <a href="{{ action(
-                                \App\Http\Controllers\CupEvents\ShowCupEventGroupAction::class,
-                                [$cup->id, $cupEvent->id, $activeGroup->id]
-                            ) }}">
-                                <u>{{ $cupEvent->event->date->format('Y-m-d') }}</u>
-                            </a>
-                        </th>
-                    @endforeach
-                    <th scope="col">{{ __('app.common.points') }}</th>
-                    <th scope="col">{{ __('app.common.place') }}</th>
-                </tr>
-                </thead>
-                <tbody>
-                @foreach($cupPoints as $personId => $cupEventPoints)
-                    @php
-                        /** @var \App\Models\Person $person */
-                        $person = $persons->get($personId);
-                        $sum = 0;
-                    @endphp
-                    <tr>
-                        <td>{{ $place }}</td>
-                        <td>
-                            <a href="{{ action(\App\Http\Controllers\Person\ShowPersonAction::class, [$person]) }}">
-                                <b>
-                                    <u>{{ $person->lastname.' '.$person->firstname }}</u>
-                                </b>
-                            </a>
-                        </td>
-                        @foreach($cupEvents as $cupEvent)
+    <div class="row">
+        <ul class="nav nav-tabs">
+            @foreach($cup->getGroups() as $group)
+                @php
+                    /** @var \App\Models\Group $group */
+                @endphp
+                <li class="nav-item">
+                    <a href="{{ action(\App\Http\Controllers\Cups\ShowCupTableAction::class, [$cup, $group]) }}"
+                       class="text-decoration-none nav-link {{ $activeGroup->id === $group->id ? 'active' : ''}}"
+                    >
+                        <b>{{ $group->name }}</b>
+                    </a>
+                </li>
+            @endforeach
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane fade show active">
+                <table id="table"
+                       data-cookie="true"
+                       data-cookie-id-table="cup-table"
+                       data-mobile-responsive="true"
+                       data-check-on-init="true"
+                       data-min-width="800"
+                       data-toggle="table"
+                       data-sort-class="table-active"
+                       data-pagination="true"
+                       data-page-list="[10,25,50,100,All]"
+                       data-search="true"
+                       data-search-highlight="true"
+                       data-resizable="true"
+                       data-sticky-header="true"
+                       data-sticky-header-offset-y="54"
+                       data-custom-sort="customSort"
+                       data-pagination-next-text="{{ __('pagination.next') }}"
+                       data-pagination-pre-text="{{ __('pagination.previous') }}"
+                >
+                    <thead class="table-dark">
+                        <tr>
+                            <th data-sortable="true">№</th>
+                            <th data-sortable="true">{{ __('app.common.fio') }}</th>
+                            @foreach($cupEvents as $cupEvent)
+                                <th data-sortable="true">
+                                    <a href="{{ action(\App\Http\Controllers\CupEvents\ShowCupEventGroupAction::class, [$cup->id, $cupEvent->id, $activeGroup->id]) }}"
+                                        class="text-white">
+                                        {{ $cupEvent->event->date->format('Y-m-d') }}
+                                    </a>
+                                </th>
+                            @endforeach
+                            <th data-sortable="true">{{ __('app.common.points') }}</th>
+                            <th data-sortable="true">{{ __('app.common.place') }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($cupPoints as $personId => $cupEventPoints)
                             @php
-                                $find = false;
-                                foreach ($cupEventPoints as $cupEventPoint) {
-                                    if ($cupEventPoint->eventCupId === $cupEvent->id) {
-                                        $find = true;
-                                        break;
-                                    }
-                                }
+                                /** @var \App\Models\Person $person */
+                                $person = $persons->get($personId);
+                                $sum = 0;
                             @endphp
-                            @if($find)
+                            <tr>
+                                <td>{{ $place }}</td>
+                                <td>
+                                    <b>
+                                        <a href="{{ action(\App\Http\Controllers\Person\ShowPersonAction::class, [$person]) }}">{{ $person->lastname.' '.$person->firstname }}</a>
+                                    </b>
+                                </td>
+                                @foreach($cupEvents as $cupEvent)
                                     @php
-                                    $isBold = false;
-                                    foreach (array_values($cupEventPoints) as $index => $cupEventPointsValue) {
-                                        if ($index >= $cup->events_count) {
-                                            break;
+                                        $find = false;
+                                        foreach ($cupEventPoints as $cupEventPoint) {
+                                            if ($cupEventPoint->eventCupId === $cupEvent->id) {
+                                                $find = true;
+                                                break;
+                                            }
                                         }
-                                        if ($cupEventPointsValue->equal($cupEventPoint)) {
-                                            $isBold = true;
-                                        }
-                                    }
-                                @endphp
-                                @if ($isBold)
-                                    @php
-                                        $sum += $cupEventPoint->points;
                                     @endphp
-                                    <td>
-                                        <a href="{{ action(\App\Http\Controllers\Event\ShowEventAction::class,[$cupEvent->event_id]) }}#{{ $cupEventPoint->protocolLine->id }}">
-                                            <u><b class="text-info">{{ $cupEventPoint->points }}</b></u>
-                                        </a>
-                                    </td>
-                                @else
-                                    <td>
-                                        <a href="{{ action(\App\Http\Controllers\Event\ShowEventAction::class,[$cupEvent->event_id]) }}#{{ $cupEventPoint->protocolLine->id }}">
-                                            <u>{{ $cupEventPoint->points }}</u>
-                                        </a>
-                                    </td>
-                                @endif
-                            @else
-                                <td></td>
-                            @endif
+                                    @if($find)
+                                        @php
+                                            $isBold = false;
+                                            foreach (array_values($cupEventPoints) as $index => $cupEventPointsValue) {
+                                                if ($index >= $cup->events_count) {
+                                                    break;
+                                                }
+                                                if ($cupEventPointsValue->equal($cupEventPoint)) {
+                                                    $isBold = true;
+                                                }
+                                            }
+                                        @endphp
+                                        @if ($isBold)
+                                            @php
+                                                $sum += $cupEventPoint->points;
+                                            @endphp
+                                            <td>
+                                                <a href="{{ action(\App\Http\Controllers\Event\ShowEventAction::class, [$cupEvent->event_id, $cupEventPoint->protocolLine->distance_id]) }}#{{ $cupEventPoint->protocolLine->id }}">
+                                                    <b class="text-info">{{ $cupEventPoint->points }}</b>
+                                                </a>
+                                            </td>
+                                        @else
+                                            <td>
+                                                <a href="{{ action(\App\Http\Controllers\Event\ShowEventAction::class,[$cupEvent->event_id, $cupEventPoint->protocolLine->distance_id]) }}#{{ $cupEventPoint->protocolLine->id }}">
+                                                    <b class="text-dark">{{ $cupEventPoint->points }}</b>
+                                                </a>
+                                            </td>
+                                        @endif
+                                    @else
+                                        <td></td>
+                                    @endif
+                                @endforeach
+                                <td><b>{{ $sum }}</b></td>
+                                <td><b>{{ $place++ }}</b></td>
+                            </tr>
                         @endforeach
-                        <td><b>{{ $sum }}</b></td>
-                        <td><b>{{ $place++ }}</b></td>
-                    </tr>
-                @endforeach
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 @endsection
+
+@section('table_extracted_columns', '[1]')

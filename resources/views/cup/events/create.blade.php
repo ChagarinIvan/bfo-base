@@ -10,40 +10,42 @@
 
 @extends('layouts.app')
 
-@section('title', \Illuminate\Support\Str::limit($cup->name, 20, '...'))
+@section('title', __('app.event.add'))
 
 @section('content')
-    <div class="row">
-        <h1>{{ $cup->name }} - {{ $cup->year }}</h1>
+    <div class="row mb-3">
+        <h4>{{ $cup->name }} - {{ $cup->year }}</h4>
+    </div>
+    <div class="row mb-3">
+        <div class="col-12">
+            @foreach($cup->groups as $group)
+                <x-badge color="{{ \App\Facades\Color::getColor($group->name) }}"
+                         name="{{ $group->name }}"
+                />
+            @endforeach
+        </div>
     </div>
     <div class="row">
-        <h3>{{ __('app.event.add') }}</h3>
+        <form method="POST"
+              action="{{ action(\App\Http\Controllers\CupEvents\StoreCupEventAction::class, [$cup]) }}"
+        >
+            @csrf
+            <div class="form-floating mb-3">
+                <select class="form-select" id="event" name="event">
+                    @foreach($events as $event)
+                        <option value="{{ $event->id }}">{{ $event->date->format('d.m')." - ".$event->competition->name.' - '.$event->name }}</option>
+                    @endforeach
+                </select>
+                <label for="event">{{ __('app.event.title') }}</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input class="form-control" id="points" name="points" value="{{ 1000 }}">
+                <label for="points">{{ __('app.common.points') }}</label>
+            </div>
+            <div class="col-12">
+                <input type="submit" class="btn btn-outline-primary btn-sm" value="{{ __('app.common.new') }}">
+                <x-back-button/>
+            </div>
+        </form>
     </div>
-    <div class="row pt-3">
-        @foreach($cup->groups as $group)
-            <span class="badge" style="background: {{ \App\Facades\Color::getColor($group->name) }}">{{ $group->name }}</span>
-        @endforeach
-    </div>
-    <form class="pt-5"
-          method="POST"
-          action="{{ action(\App\Http\Controllers\CupEvents\StoreCupEventAction::class, [$cup]) }}"
-    >
-        @csrf
-        <div class="form-group">
-            <label for="event">{{ __('app.event.title') }}</label>
-            <select class="custom-select" id="event" name="event">
-                @foreach($events as $event)
-                    <option value="{{ $event->id }}">{{ $event->date->format('d.m')." - ".$event->competition->name.' - '.$event->name }}</option>
-                @endforeach
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="points">{{ __('app.common.points') }}</label>
-            <input class="form-control" id="points" name="points" value="{{ 1000 }}">
-        </div>
-        <div class="row">
-            <input type="submit" class="btn btn-primary" value="{{ __('app.common.new') }}">
-            <a href="{{ action(\App\Http\Controllers\BackAction::class) }}" class="btn btn-danger ml-1">{{ __('app.common.cancel') }}</a>
-        </div>
-    </form>
 @endsection

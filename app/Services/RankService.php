@@ -11,17 +11,23 @@ use App\Models\ProtocolLine;
 use App\Models\Rank;
 use App\Repositories\RanksRepository;
 use Carbon\Carbon;
+use Illuminate\Cache\CacheManager;
 use Illuminate\Support\Collection;
 
 class RankService
 {
     private RanksRepository $ranksRepository;
     private ProtocolLineService $protocolLineService;
+    private CacheManager $cache;
 
-    public function __construct(RanksRepository $ranksRepository, ProtocolLineService $protocolLineService)
-    {
+    public function __construct(
+        RanksRepository $ranksRepository,
+        ProtocolLineService $protocolLineService,
+        CacheManager $cache
+    ) {
         $this->ranksRepository = $ranksRepository;
         $this->protocolLineService = $protocolLineService;
+        $this->cache = $cache;
     }
 
     public const RANKS_POWER = [
@@ -70,7 +76,6 @@ class RankService
         foreach ($personsIds as $personId) {
             $ranks->put($personId, $this->getActualRank($personId, $nowDate));
         }
-        $ranks->orderByFinishDateAsc();
 
         return $ranks;
     }
@@ -86,6 +91,24 @@ class RankService
             $rank = $this->createPreviousRank($rank, $date);
         }
         return $rank;
+    }
+
+    public function getActualRanks(Collection $personIds): Collection
+    {
+        return $this->cache->store('redis')->remember(
+            md5($personIds->implode('')),
+            36000,
+            function () use ($personIds) {
+                $actualRanks = new Collection();
+                foreach ($personIds as $personId) {
+                    $rank = $this->getActualRank($personId);
+                    if ($rank) {
+                        $actualRanks->put($personId, $rank);
+                    }
+                }
+                return $actualRanks;
+            }
+        );
     }
 
     /**

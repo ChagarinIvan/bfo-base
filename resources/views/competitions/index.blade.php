@@ -12,63 +12,85 @@
 @section('title', __('app.competition.title'))
 
 @section('content')
-    <h3 id="up">{{ __('app.competition.title') }}</h3>
     @auth
-        <div class="row pt-5">
-            <a class="btn btn-success mr-2"
-               href="{{ action(\App\Http\Controllers\Competition\ShowCreateCompetitionFormAction::class, [$selectedYear]) }}"
-            >{{ __('app.competition.add_competition') }}</a>
+        <div class="row mb-3">
+            <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3 col-xxl-2">
+                <x-button text="app.competition.add_competition"
+                          color="success"
+                          icon="bi-file-earmark-plus-fill"
+                          url="{{ action(\App\Http\Controllers\Competition\ShowCreateCompetitionFormAction::class, [$selectedYear]) }}"
+                />
+            </div>
         </div>
     @endauth
-    <ul class="nav nav-tabs pt-2">
-        @foreach($years as $year)
-            <li class="nav-item">
-                <a href="{{ action(\App\Http\Controllers\Competition\ShowCompetitionsListAction::class, [$year]) }}"
-                   class="nav-link {{ $year === $selectedYear ? 'active' : '' }}"
-                >{{ $year }}</a>
-            </li>
-        @endforeach
-    </ul>
-    <div class="tab-content">
-        <div class="tab-pane fade show active">
-            <table class="table table-bordered" id="table">
-                <thead>
-                <tr class="table-info">
-                    <th>{{ __('app.common.title') }}</th>
-                    <th>{{ __('app.common.dates') }}</th>
-                    <th>{{ __('app.common.description') }}</th>
-                    @auth<th scope="col"></th>@endauth
-                </tr>
-                </thead>
-                <tbody>
-                @foreach ($competitions as $competition)
-                    <tr>
-                        <td>
-                            <a href="{{ action(\App\Http\Controllers\Competition\ShowCompetitionAction::class, [$competition->id]) }}"
-                            >{{ $competition->name }}</a>
-                        </td>
-                        <td>{{ $competition->from->format('d.m.Y') }} - {{ $competition->to->format('d.m.Y') }}</td>
-                        <td><small>{{ \Illuminate\Support\Str::limit($competition->description, 100, '...') }}</small></td>
-                        @auth
+    <div class="row">
+        <ul class="nav nav-tabs">
+            @foreach($years as $year)
+                <li class="nav-item">
+                    <a href="{{ action(\App\Http\Controllers\Competition\ShowCompetitionsListAction::class, [$year]) }}"
+                       class="text-decoration-none nav-link {{ $year === $selectedYear ? 'active' : '' }}"
+                    >
+                        <b>{{ $year }}</b>
+                    </a>
+                </li>
+            @endforeach
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane fade show active">
+                <table id="table"
+                       data-cookie="true"
+                       data-cookie-id-table="competition-list-{{ $selectedYear }}"
+                       data-mobile-responsive="true"
+                       data-check-on-init="true"
+                       data-min-width="800"
+                       data-toggle="table"
+                       data-search="true"
+                       data-search-highlight="true"
+                       data-sort-class="table-active"
+                       data-pagination="true"
+                       data-page-list="[10,25,50,100,All]"
+                       data-resizable="true"
+                       data-sticky-header="true"
+                       data-sticky-header-offset-y="54"
+                       data-custom-sort="customSort"
+                       data-pagination-next-text="{{ __('pagination.next') }}"
+                       data-pagination-pre-text="{{ __('pagination.previous') }}"
+                >
+                    <thead class="table-dark">
+                        <tr>
+                            <th data-sortable="true">{{ __('app.common.title') }}</th>
+                            <th data-sortable="true">{{ __('app.common.dates') }}</th>
+                            <th data-sortable="true">{{ __('app.common.description') }}</th>
+                            @auth<th></th>@endauth
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach ($competitions as $competition)
+                        <tr>
                             <td>
-                                <a href="{{ action(\App\Http\Controllers\Competition\DeleteCompetitionAction::class, [$selectedYear, $competition->id]) }}"
-                                   class="btn btn-danger"
-                                >{{ __('app.common.delete') }}</a>
+                                <a href="{{ action(\App\Http\Controllers\Competition\ShowCompetitionAction::class, [$competition->id]) }}"
+                                >{{ \Illuminate\Support\Str::limit($competition->name, 50) }}</a>
                             </td>
-                        @endauth
-                    </tr>
-                @endforeach
-                </tbody>
-            </table>
+                            <td>{{ $competition->from->format('Y-m-d') }} / {{ $competition->to->format('Y-m-d') }}</td>
+                            <td><small>{{ \Illuminate\Support\Str::limit($competition->description) }}</small></td>
+                            @auth
+                                <td>
+                                    <x-delete-button modal-id="deleteModal{{ $competition->id }}"/>
+                                </td>
+                            @endauth
+                        </tr>
+                    @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
+    @foreach ($competitions as $competition)
+        <x-modal modal-id="deleteModal{{ $competition->id }}"
+                 url="{{ action(\App\Http\Controllers\Competition\DeleteCompetitionAction::class, [$selectedYear, $competition->id]) }}"
+        />
+    @endforeach
 @endsection
 
-@section('footer')
-    <footer class="footer bg-dark">
-        <div class="container-relative">
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <a class="text-success" href="#up">{{ __('app.up') }}</a>
-        </div>
-    </footer>
-@endsection
+@section('table_extracted_columns', '[0]')
+@section('table_extracted_dates_columns', '[1]')

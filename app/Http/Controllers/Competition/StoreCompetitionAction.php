@@ -13,7 +13,7 @@ class StoreCompetitionAction extends AbstractCompetitionAction
     public function __invoke(Request $request): RedirectResponse
     {
         $formParams = $request->validate([
-            'name' => 'required|unique:competitions|max:255',
+            'name' => 'required|max:255',
             'description' => 'nullable',
             'from' => 'required|date',
             'to' => 'required|date',

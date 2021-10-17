@@ -13,7 +13,7 @@
         <li>{{ __('app.faq.relation_faq') }}.</li>
         <li>{{ __('app.faq.relation_edit') }}.</li>
         <li>{{ __('app.faq.flags_adding') }}.</li>
-        <li>{{ __('app.faq.api_link') }} <a href="{{ action(\App\Http\Controllers\Faq\ShowApiFaqAction::class) }}"><u>API</u></a>.</li>
+        <li>{{ __('app.faq.api_link') }} <a href="{{ action(\App\Http\Controllers\Faq\ShowApiFaqAction::class) }}">API</a>.</li>
     </ul>
 
     <h5>{{ __('app.faq.dev_plan') }}:</h5>

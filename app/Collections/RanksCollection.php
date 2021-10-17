@@ -44,11 +44,6 @@ class RanksCollection
         $this->ranks = $this->ranks->groupBy('person_id');
     }
 
-    public function orderByFinishDateAsc(): void
-    {
-        $this->ranks = $this->ranks->sortBy('finish_date');
-    }
-
     public function merge(RanksCollection $previousRanks): void
     {
         $this->ranks = $this->ranks->merge($previousRanks->getCollection());

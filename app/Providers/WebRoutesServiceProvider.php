@@ -59,7 +59,7 @@ class WebRoutesServiceProvider extends ServiceProvider
 
                 //event
                 $this->routeRegistrar->prefix('events')->group(function () {
-                    $this->route->get('{event}', Event\ShowEventAction::class);
+                    $this->route->get('{event}/d/{distance}', Event\ShowEventAction::class);
 
                     $this->middleware(['auth'])->group(function () {
                         $this->route->get( '{competition}/create',  Event\ShowCreateEventFormAction::class);

@@ -11,39 +11,58 @@
 @section('title', __('app.common.groups'))
 
 @section('content')
-    <h3>{{ __('app.common.groups') }}</h3>
-    <div class="row pt-3">
-        <table class="table table-bordered" id="table">
-            <thead>
-            <tr class="table-info">
-                <th>{{ __('app.common.title') }}</th>
-                <th>{{ __('app.groups.events_count') }}</th>
-                <th></th>
-            </tr>
+    <div class="row">
+        <table id="table"
+               data-cookie="true"
+               data-cookie-id-table="group-list"
+               data-mobile-responsive="true"
+               data-check-on-init="true"
+               data-min-width="800"
+               data-toggle="table"
+               data-search="true"
+               data-search-highlight="true"
+               data-sort-class="table-active"
+               data-pagination="true"
+               data-page-list="[10,25,50,100,All]"
+               data-resizable="true"
+               data-sticky-header="true"
+               data-sticky-header-offset-y="56"
+               data-custom-sort="customSort"
+               data-pagination-next-text="{{ __('pagination.next') }}"
+               data-pagination-pre-text="{{ __('pagination.previous') }}"
+        >
+            <thead class="table-dark">
+                <tr>
+                    <th data-sortable="true">{{ __('app.common.title') }}</th>
+                    <th data-sortable="true">{{ __('app.groups.events_count') }}</th>
+                    @auth<th></th>@endauth
+                </tr>
             </thead>
             <tbody>
-            @foreach ($groups as $group)
-                <tr>
-                    <td>
-                        <span class="badge" style="background: {{ \App\Facades\Color::getColor($group->name) }}">
-                            <a href="{{ action(\App\Http\Controllers\Groups\ShowGroupAction::class, [$group->id]) }}">{{ $group->name }}</a>
-                        </span>
-                    </td>
-                    <td>{{ $group->distances->count() }}</td>
-                    <td>
-                        <a href="#"
-                           class="btn btn-info mr-2"
-                        >{{ __('app.common.sum') }}</a>
-                        <a href="#"
-                           class="btn btn-primary mr-2"
-                        >{{ __('app.common.edit') }}</a>
-                        <a href="{{ action(\App\Http\Controllers\Groups\DeleteGroupAction::class, [$group->id]) }}"
-                           class="btn btn-danger mr-2"
-                        >{{ __('app.common.delete') }}</a>
-                    </td>
-                </tr>
-            @endforeach
+                @foreach ($groups as $group)
+                    <tr>
+                        <td>
+                            <x-badge color="{{ \App\Facades\Color::getColor($group->name) }}"
+                                     name="{{ $group->name }}"
+                                     url="{{ action(\App\Http\Controllers\Groups\ShowGroupAction::class, [$group->id]) }}"
+                            />
+                        </td>
+                        <td>{{ $group->distances->count() }}</td>
+                        <td>
+                            <x-button text="app.common.sum" color="info" icon="bi-stickies"/>
+                            <x-edit-button/>
+                            <x-delete-button modal-id="deleteModal{{ $group->id }}"/>
+                        </td>
+                    </tr>
+                @endforeach
             </tbody>
         </table>
     </div>
+    @foreach ($groups as $group)
+        <x-modal modal-id="deleteModal{{ $group->id }}"
+                 url="{{ action(\App\Http\Controllers\Groups\DeleteGroupAction::class, [$group->id]) }}"
+        />
+    @endforeach
 @endsection
+
+@section('table_extracted_columns', '[0]')

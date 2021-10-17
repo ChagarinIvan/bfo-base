@@ -28,8 +28,8 @@ class PersonsService
         return $query->paginate(12);
     }
 
-    public function getPersonsByIdsWithLinesAndClubs(Collection $ids): Collection
+    public function allPersons(): Collection
     {
-        return $this->personsRepository->getPersons($ids, ['protocolLines', 'club']);
+        return $this->personsRepository->getAll();
     }
 }

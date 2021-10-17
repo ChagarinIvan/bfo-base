@@ -27,7 +27,7 @@ class UpdateEventAction extends AbstractEventAction
         try {
             if ($protocol === null && $url === null) {
                 $event->save();
-                return $this->redirector->action(ShowEventAction::class, [$event]);
+                return $this->redirector->action(ShowEventAction::class, [$event, $event->distances->first()]);
             } elseif ($url !== null) {
                 $needConvert = false;
                 $protocol = $this->parserService->uploadProtocol($url);
@@ -60,6 +60,6 @@ class UpdateEventAction extends AbstractEventAction
         }
 
         $this->removeLastBackUrl();
-        return $this->redirector->action(ShowEventAction::class, [$event]);
+        return $this->redirector->action(ShowEventAction::class, [$event, $event->distances->first()]);
     }
 }

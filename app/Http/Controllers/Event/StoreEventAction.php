@@ -55,6 +55,7 @@ class StoreEventAction extends AbstractEventAction
 
         $this->storage->put($protocolPath, $protocol);
         $this->removeLastBackUrl();
-        return $this->redirector->action(ShowEventAction::class, [$event]);
+
+        return $this->redirector->action(ShowEventAction::class, [$event, $event->distances->first()]);
     }
 }

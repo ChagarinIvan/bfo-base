@@ -13,17 +13,11 @@ class ShowClubAction extends AbstractClubAction
 {
     public function __invoke(Request $request, Club $club): View
     {
-        $search = (string)$request->get('search');
+        $persons = Person::with(['protocolLines', 'club'])
+            ->orderBy('lastname')
+            ->where('club_id', $club->id)
+            ->get();
 
-        $personsQuery = Person::with(['protocolLines', 'club'])->orderBy('lastname');
-        if(strlen($search) > 0) {
-            $personsQuery->where(function ($query) use ($search) {
-                $query->where('firstname', 'LIKE', '%'.$search.'%')
-                    ->orWhere('lastname', 'LIKE', '%'.$search.'%');
-            });
-        }
-        $persons = $personsQuery->where('club_id', $club->id)->paginate(13);
-
-        return $this->view('clubs.show', ['club' => $club, 'persons' => $persons, 'search' => $search,]);
+        return $this->view('clubs.show', ['club' => $club, 'persons' => $persons,]);
     }
 }

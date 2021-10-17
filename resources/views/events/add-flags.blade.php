@@ -12,45 +12,78 @@
 
 @extends('layouts.app')
 
-@section('title', __('app.flags.add_flags_title'))
+@section('title', __('app.flags.add_flags_title').' - '.$event->name)
 
 @section('content')
-    <h3>{{ __('app.flags.add_flags_title') }}</h3>
-    <h4>{{ __('app.event.title') }} — {{ $event->name }}</h4>
-    <div class="row pt-2">
-        <a class="btn btn-danger mr-2" href="{{ action(\App\Http\Controllers\BackAction::class) }}">{{ __('app.common.back') }}</a>
+    <div class="row mb-3">
+        <div class="col-12 col-md-12 col-lg-6 col-xl-4 col-xxl-3">
+            <x-back-button/>
+        </div>
     </div>
-    <div class="row pt-3">
-        @foreach($eventFlags as $flag)
-            <span class="badge" style="background: {{ $flag->color }}">
-                <a href="{{ action(\App\Http\Controllers\Flags\ShowFlagEventsAction::class, [$flag]) }}">{{ $flag->name }}</a>
-            </span>
-        @endforeach
+    <div class="row mb-3">
+        <div class="col-12">
+            @foreach($eventFlags as $flag)
+                <x-badge color="{{ $flag->color }}"
+                         name="{{ $flag->name }}"
+                         url="{{ action(\App\Http\Controllers\Flags\ShowFlagEventsAction::class, [$flag]) }}"
+                />
+            @endforeach
+        </div>
     </div>
-    <div class="row pt-3">
-        <table class="table table-bordered" id="table">
-            <thead>
-            <tr class="table-info">
-                <th>{{ __('app.common.title') }}</th>
-                <th>{{ __('app.common.description') }}</th>
-                <th></th>
-            </tr>
+    <div class="row mb-3">
+        <table id="table"
+               data-cookie="true"
+               data-cookie-id-table="add-flags"
+               data-mobile-responsive="true"
+               data-check-on-init="true"
+               data-min-width="800"
+               data-toggle="table"
+               data-search="true"
+               data-search-highlight="true"
+               data-sort-class="table-active"
+               data-pagination="true"
+               data-page-list="[10,25,50,100,All]"
+               data-resizable="true"
+               data-sticky-header="true"
+               data-sticky-header-offset-y="54"
+               data-custom-sort="customSort"
+               data-pagination-next-text="{{ __('pagination.next') }}"
+               data-pagination-pre-text="{{ __('pagination.previous') }}"
+        >
+            <thead class="table-dark">
+                <tr>
+                    <th data-sortable="true">{{ __('app.common.title') }}</th>
+                    <th></th>
+                </tr>
             </thead>
             <tbody>
-            @foreach ($flags as $flag)
-                <tr style="background: {{ $flag->color }}">
-                    <td>{{ $flag->name }}</td>
-                    <td></td>
-                    <td>
-                        @if(!$eventFlags->has($flag->id))
-                            <a href="{{ action(\App\Http\Controllers\Event\AddFlagToEventAction::class, [$event, $flag->id]) }}">{{ __('app.common.new') }}</a>
-                        @else
-                            <a href="{{ action(\App\Http\Controllers\Event\DeleteEventFlagAction::class, [$event, $flag->id]) }}">{{ __('app.common.delete') }}</a>
-                        @endif
-                    </td>
-                </tr>
-            @endforeach
+                @foreach ($flags as $flag)
+                    <tr>
+                        <td>
+                            <x-badge color="{{ $flag->color }}"
+                                     name="{{ $flag->name }}"
+                            />
+                        </td>
+                        <td>
+                            @if(!$eventFlags->has($flag->id))
+                                <x-button text="app.common.new"
+                                          color="info"
+                                          icon="bi-file-earmark-plus-fill"
+                                          url="{{ action(\App\Http\Controllers\Event\AddFlagToEventAction::class, [$event, $flag->id]) }}"
+                                />
+                            @else
+                                <x-button text="app.common.delete"
+                                          color="danger"
+                                          icon="bi-trash-fill"
+                                          url="{{ action(\App\Http\Controllers\Event\ShowAddFlagToEventFormAction::class, [$event]) }}"
+                                />
+                            @endif
+                        </td>
+                    </tr>
+                @endforeach
             </tbody>
         </table>
     </div>
 @endsection
+
+@section('table_extracted_columns', '[0]')

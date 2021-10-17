@@ -137,6 +137,6 @@ class UnitEventsAction extends AbstractEventAction
             }
         }
 
-        return $this->redirector->action(ShowEventAction::class, [$newEvent]);
+        return $this->redirector->action(ShowEventAction::class, [$newEvent, $newEvent->distances->first()]);
     }
 }

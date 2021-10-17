@@ -12,71 +12,30 @@
 
 @section('content')
     <div class="row">
-        <h1>{{ __('app.event.add') }}</h1>
-    </div>
-    <form class="pt-5"
-          method="POST"
-          action="{{ action(\App\Http\Controllers\Event\StoreEventAction::class, [$competitionId]) }}"
-          enctype="multipart/form-data"
-    >
-        @csrf
-        <div class="form-group">
-            <label for="name">{{ __('app.common.title') }}</label>
-            <input class="form-control" id="name" name="name">
-        </div>
-        <div class="form-group">
-            <label for="description">{{ __('app.common.description') }}</label>
-            <input class="form-control" id="description" name="description">
-        </div>
-        <div class="form-group row">
-            <label for="date" class="col-2 col-form-label">{{ __('app.common.date') }}</label>
-            <div class="col-10">
+        <form method="POST"
+              action="{{ action(\App\Http\Controllers\Event\StoreEventAction::class, [$competitionId]) }}"
+              enctype="multipart/form-data"
+        >
+            @csrf
+            <div class="form-floating mb-3">
+                <input class="form-control" id="name" name="name">
+                <label for="name">{{ __('app.common.title') }}</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input class="form-control" id="description" name="description">
+                <label for="description">{{ __('app.common.description') }}</label>
+            </div>
+            <div class="form-floating mb-3">
                 <input class="form-control" type="date" id="date" name="date">
+                <label for="date">{{ __('app.common.date') }}</label>
             </div>
-        </div>
 
-        <div class="accordion" id="accordion">
-            <div class="card-header" id="headingOne">
-                <h5 class="mb-0">
-                    <button class="btn btn-link collapsed"
-                            type="button"
-                            data-toggle="collapse"
-                            data-target="#collapseTwo"
-                            aria-expanded="false"
-                            aria-controls="collapseTwo"
-                    >{{ __('app.protocol') }}</button>
-                </h5>
+            @include('events.accordion')
+
+            <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3 col-xxl-2">
+                <input type="submit" class="btn btn-outline-primary btn-sm" value="{{ __('app.common.create') }}">
+                <x-back-button/>
             </div>
-            <div id="collapseTwo" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
-                <div class="card-body">
-                    <div class="form-group">
-                        <input class="form-control" type="file" name="protocol"/>
-                    </div>
-                </div>
-            </div>
-            <div class="card-header" id="headingTwo">
-                <h5 class="mb-0">
-                    <button class="btn btn-link collapsed"
-                            type="button"
-                            data-toggle="collapse"
-                            data-target="#collapseThree"
-                            aria-expanded="false"
-                            aria-controls="collapseThree"
-                    >OBelarus.net</button>
-                </h5>
-            </div>
-            <div id="collapseThree" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
-                <div class="card-body">
-                    <div class="form-group">
-                        <label for="obelarus-url">{{ __('app.common.url') }}</label>
-                        <input class="form-control" id="obelarus-url" name="obelarus_net">
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <input type="submit" class="btn btn-primary" value="{{ __('app.common.create') }}">
-            <a href="{{ action(\App\Http\Controllers\BackAction::class) }}" class="btn btn-danger ml-1">{{ __('app.common.cancel') }}</a>
-        </div>
-    </form>
+        </form>
+    </div>
 @endsection
