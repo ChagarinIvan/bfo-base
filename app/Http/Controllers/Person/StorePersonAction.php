@@ -12,7 +12,6 @@ class StorePersonAction extends AbstractPersonAction
 {
     public function __invoke(Request $request): RedirectResponse
     {
-        $redirectUrl = (string)$request->get('redirect');
         $formParams = $request->validate([
             'lastname' => 'required',
             'firstname' => 'required',
@@ -20,13 +19,9 @@ class StorePersonAction extends AbstractPersonAction
             'club_id' => 'required|int',
         ]);
 
-        $person = new Person($formParams);
-        if ($person->club_id === 0) {
-            $person->club_id = null;
-        }
-        $person->save();
-        $person->makePrompts();
+        $person = $this->personsService->fillPerson(new Person(), $formParams);
+        $this->personsService->storePerson($person);
 
-        return strlen($redirectUrl) > 0 ? $this->redirector->to($redirectUrl) : $this->redirector->action(ShowPersonsListAction::class);
+        return $this->redirector->action(ShowPersonsListAction::class);
     }
 }
