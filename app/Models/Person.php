@@ -2,11 +2,10 @@
 
 namespace App\Models;
 
-use App\Services\IdentService;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Carbon;
@@ -78,27 +77,5 @@ class Person extends Model
     public function club(): HasOne
     {
         return $this->hasOne(Club::class, 'id', 'club_id');
-    }
-
-    public function makePrompts(): void
-    {
-        $personData = [
-            IdentService::prepareLine(mb_strtolower($this->lastname)),
-            IdentService::prepareLine(mb_strtolower($this->firstname)),
-        ];
-        $personLine = implode('_', $personData);
-        $prompt = new PersonPrompt();
-        $prompt->person_id = $this->id;
-        $prompt->prompt = $personLine;
-        $prompt->save();
-
-        if ($this->birthday !== null) {
-            $personData[] = $this->birthday->format('Y');
-            $personLine = implode('_', $personData);
-            $prompt = new PersonPrompt();
-            $prompt->person_id = $this->id;
-            $prompt->prompt = $personLine;
-            $prompt->save();
-        }
     }
 }

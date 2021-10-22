@@ -3,17 +3,20 @@
 namespace Database\Seeders;
 
 use App\Models\Person;
+use App\Services\PersonsService;
 use Illuminate\Contracts\Filesystem\Filesystem;
-use Illuminate\Support\Carbon;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Carbon;
 
 class PersonsSyncSeeder extends Seeder
 {
     private Filesystem $storage;
+    private PersonsService $personService;
 
-    public function __construct(Filesystem $storage)
+    public function __construct(Filesystem $storage, PersonsService $personService)
     {
         $this->storage = $storage;
+        $this->personService = $personService;
     }
 
     /**
@@ -56,8 +59,7 @@ class PersonsSyncSeeder extends Seeder
                 $person->lastname = $lastname;
                 $person->firstname = $firstname;
                 $person->birthday = $birthday;
-                $person->save();
-                $person->makePrompts();
+                $this->personService->storePerson($person);
             } elseif ($persons->count() > 1) {
                 echo 'ALARM!!!!'.PHP_EOL;
                 echo $lastname.' '.$firstname.PHP_EOL;

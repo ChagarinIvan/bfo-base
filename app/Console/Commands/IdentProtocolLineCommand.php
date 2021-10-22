@@ -7,6 +7,7 @@ use App\Models\IdentLine;
 use App\Models\Person;
 use App\Models\ProtocolLine;
 use App\Services\IdentService;
+use App\Services\PersonsService;
 use App\Services\RankService;
 use Carbon\Exceptions\InvalidFormatException;
 use Illuminate\Console\Command;
@@ -39,6 +40,7 @@ class IdentProtocolLineCommand extends Command
 
         $rankService = app(RankService::class);
         $identService = app(IdentService::class);
+        $personsService = app(PersonsService::class);
 
         $personId = ($identService)->identPerson($identLine->ident_line);
         $protocolLines = ProtocolLine::wherePreparedLine($identLine->ident_line)->get();
@@ -68,8 +70,8 @@ class IdentProtocolLineCommand extends Command
             if ($club->count() > 0) {
                 $person->club_id = $club->first()->id;
             }
-            $person->save();
-            $person->makePrompts();
+
+            $person = $personsService->storePerson($person);
 
             $protocolLines->each(function (ProtocolLine $protocolLine) use ($person, $rankService) {
                 $protocolLine->person_id = $person->id;
