@@ -7,10 +7,11 @@ namespace App\Http\Controllers\Competition;
 use App\Models\Competition;
 use App\Models\Year;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 
 class ShowCompetitionsListAction extends AbstractCompetitionAction
 {
-    public function __invoke(int $year): View
+    public function __invoke(int $year): View|RedirectResponse
     {
         $yearCompetitions = Competition::where('from', '>=', "{$year}-01-01")
             ->where('to', '<=', "{$year}-12-31")

@@ -2,7 +2,6 @@
 
 namespace App\Models\Parser;
 
-use App\Exceptions\ParsingException;
 use App\Models\Group;
 use App\Models\Rank;
 use DOMDocument;
@@ -15,90 +14,86 @@ class OBelarusNetParser implements ParserInterface
 {
     public function parse(string $file, bool $needConvert = true): Collection
     {
-        try {
-            $doc = new DOMDocument();
-            $content = $file;
-            if ($needConvert) {
-                $content = mb_convert_encoding($content, 'utf-8', 'windows-1251');
-            }
-            @$doc->loadHTML($content);
-            $xpath = new DOMXpath($doc);
-            $preNodes = $xpath->query('//pre');
-            $linesList = new Collection();
-            foreach ($preNodes as $node) {
-                $text = trim($node->nodeValue);
-                $text = trim($text,'-');
-                $text = mb_convert_encoding($text, 'iso-8859-1', 'utf-8');
-                $text = trim($text);
-                if (!str_contains($text, 'амилия')) {
-                    continue;
-                }
-                $distanceLength = 0;
-                $distancePoints = 0;
-                $groupNode = $xpath->query('preceding::h2[1]', $node);
-                $groupName = $groupNode[0]->nodeValue;
-                $groupName = mb_convert_encoding($groupName, 'iso-8859-1', 'utf-8');
-                if (str_contains($groupName, ',')) {
-                    $groupName = substr($groupName, 0, strpos($groupName, ','));
-                }
-                $groupName = Group::FIXING_MAP[$groupName] ?? $groupName;
-
-                $lines = preg_split('/\n|\r\n?/', $text);
-                $linesCount = count($lines);
-                if ($linesCount < 3) {
-                    continue;
-                }
-                $groupHeader = $lines[2];
-                $groupHeader = preg_replace('#\s+#', ' ', $groupHeader);
-                $groupHeaderData = explode(' ', $groupHeader);
-                $groupHeaderIndex = count($groupHeaderData) - 1;
-
-                if (preg_match('#(\d+)\s+[^\d]+,\s+((\d+,\d+)\s+[^\d]+|(\d+)\s+[^\d])#s', $lines[0], $match)) {
-                    $distancePoints = (int)$match[1];
-                    if (str_contains($match[2], ',')) {
-                        $distanceLength = floatval(str_replace(',', '.', $match[3])) * 1000;
-                    } else {
-                        $distanceLength = floatval($match[3]);
-                    }
-                }
-                for ($index = 4; $index < $linesCount; $index++) {
-                    $line = trim($lines[$index]);
-
-                    if (empty(trim($line, '-'))) {
-                        break;
-                    }
-                    $preparedLine = preg_replace('#=#', ' ', $line);
-                    $preparedLine = preg_replace('#\s+#', ' ', $preparedLine);
-                    $lineData = explode(' ', $preparedLine);
-                    $fieldsCount = count($lineData);
-                    $protocolLine = [
-                        'group' => $groupName,
-                        'distance' => [
-                            'length' => $distanceLength,
-                            'points' => $distancePoints,
-                        ],
-                    ];
-                    $indent = 1;
-                    for ($i = $groupHeaderIndex; $i > 2; $i--) {
-                        $columnName = $this->getColumn($groupHeaderData[$i]);
-                        if ($columnName === '') {
-                            continue;
-                        }
-                        $protocolLine[$columnName] = $this->getValue($columnName, $lineData, $fieldsCount, $indent, $protocolLine);
-                    }
-                    $protocolLine['serial_number'] = (int)$lineData[0];
-                    $protocolLine['lastname'] = $lineData[1];
-                    $protocolLine['firstname'] = $lineData[2];
-                    $protocolLine['club'] = implode(' ', array_slice($lineData, 3, $fieldsCount - $indent - 2));
-
-                    $linesList->push($protocolLine);
-                }
-            }
-
-            return $linesList;
-        } catch (Exception $e) {
-            throw new ParsingException($e->getMessage(), $e->getCode(), $e->getPrevious());
+        $doc = new DOMDocument();
+        $content = $file;
+        if ($needConvert) {
+            $content = mb_convert_encoding($content, 'utf-8', 'windows-1251');
         }
+        @$doc->loadHTML($content);
+        $xpath = new DOMXpath($doc);
+        $preNodes = $xpath->query('//pre');
+        $linesList = new Collection();
+        foreach ($preNodes as $node) {
+            $text = trim($node->nodeValue);
+            $text = trim($text,'-');
+            $text = mb_convert_encoding($text, 'iso-8859-1', 'utf-8');
+            $text = trim($text);
+            if (!str_contains($text, 'амилия')) {
+                continue;
+            }
+            $distanceLength = 0;
+            $distancePoints = 0;
+            $groupNode = $xpath->query('preceding::h2[1]', $node);
+            $groupName = $groupNode[0]->nodeValue;
+            $groupName = mb_convert_encoding($groupName, 'iso-8859-1', 'utf-8');
+            if (str_contains($groupName, ',')) {
+                $groupName = substr($groupName, 0, strpos($groupName, ','));
+            }
+            $groupName = Group::FIXING_MAP[$groupName] ?? $groupName;
+
+            $lines = preg_split('/\n|\r\n?/', $text);
+            $linesCount = count($lines);
+            if ($linesCount < 3) {
+                continue;
+            }
+            $groupHeader = $lines[2];
+            $groupHeader = preg_replace('#\s+#', ' ', $groupHeader);
+            $groupHeaderData = explode(' ', $groupHeader);
+            $groupHeaderIndex = count($groupHeaderData) - 1;
+
+            if (preg_match('#(\d+)\s+[^\d]+,\s+((\d+,\d+)\s+[^\d]+|(\d+)\s+[^\d])#s', $lines[0], $match)) {
+                $distancePoints = (int)$match[1];
+                if (str_contains($match[2], ',')) {
+                    $distanceLength = floatval(str_replace(',', '.', $match[3])) * 1000;
+                } else {
+                    $distanceLength = floatval($match[3]);
+                }
+            }
+            for ($index = 4; $index < $linesCount; $index++) {
+                $line = trim($lines[$index]);
+
+                if (empty(trim($line, '-'))) {
+                    break;
+                }
+                $preparedLine = preg_replace('#=#', ' ', $line);
+                $preparedLine = preg_replace('#\s+#', ' ', $preparedLine);
+                $lineData = explode(' ', $preparedLine);
+                $fieldsCount = count($lineData);
+                $protocolLine = [
+                    'group' => $groupName,
+                    'distance' => [
+                        'length' => $distanceLength,
+                        'points' => $distancePoints,
+                    ],
+                ];
+                $indent = 1;
+                for ($i = $groupHeaderIndex; $i > 2; $i--) {
+                    $columnName = $this->getColumn($groupHeaderData[$i]);
+                    if ($columnName === '') {
+                        continue;
+                    }
+                    $protocolLine[$columnName] = $this->getValue($columnName, $lineData, $fieldsCount, $indent, $protocolLine);
+                }
+                $protocolLine['serial_number'] = (int)$lineData[0];
+                $protocolLine['lastname'] = $lineData[1];
+                $protocolLine['firstname'] = $lineData[2];
+                $protocolLine['club'] = implode(' ', array_slice($lineData, 3, $fieldsCount - $indent - 2));
+
+                $linesList->push($protocolLine);
+            }
+        }
+
+        return $linesList;
     }
 
     public function check(string $file): bool

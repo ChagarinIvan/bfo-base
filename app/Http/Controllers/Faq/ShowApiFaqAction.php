@@ -7,11 +7,12 @@ namespace App\Http\Controllers\Faq;
 use App\Http\Controllers\AbstractAction;
 use App\Models\Club;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class ShowApiFaqAction extends AbstractAction
 {
-    public function __invoke(Request $request, Club $club): View
+    public function __invoke(Request $request, Club $club): View|RedirectResponse
     {
        return $this->view('faq.api');
     }

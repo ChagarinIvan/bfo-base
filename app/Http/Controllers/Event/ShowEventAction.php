@@ -7,10 +7,11 @@ namespace App\Http\Controllers\Event;
 use App\Models\Distance;
 use App\Models\Event;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 
 class ShowEventAction extends AbstractEventAction
 {
-    public function __invoke(Event $event, Distance $distance): View
+    public function __invoke(Event $event, Distance $distance): View|RedirectResponse
     {
         $withPoints = false;
         $protocolLines = $event->protocolLines()->where('distance_id', $distance->id)->get();

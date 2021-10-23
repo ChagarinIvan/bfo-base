@@ -9,7 +9,6 @@ use App\Http\Controllers\Competition\ShowCompetitionsListAction;
 use App\Http\Controllers\Login\MakeNewPasswordByTokenAction;
 use App\Mail\RegistrationUrlMail;
 use App\Models\Year;
-use App\Services\BackUrlService;
 use App\Services\ViewActionsService;
 use Illuminate\Contracts\Mail\Mailer;
 use Illuminate\Contracts\Routing\UrlGenerator;
@@ -27,12 +26,11 @@ class SendRegistrationDataAction extends AbstractAction
     public function __construct(
         ViewActionsService $viewService,
         Redirector $redirector,
-        BackUrlService $backUrlService,
         Encrypter $encrypter,
         Mailer $mailer,
         UrlGenerator $urlGenerator
     ) {
-        parent::__construct($viewService, $redirector, $backUrlService);
+        parent::__construct($viewService, $redirector);
         $this->encrypter = $encrypter;
         $this->mailer = $mailer;
         $this->urlGenerator = $urlGenerator;

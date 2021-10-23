@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Person;
 
 use App\Http\Controllers\AbstractAction;
-use App\Services\BackUrlService;
 use App\Services\PersonsService;
 use App\Services\ProtocolLineService;
 use App\Services\RankService;
@@ -21,12 +20,11 @@ abstract class AbstractPersonAction extends AbstractAction
     public function __construct(
         ViewActionsService $viewService,
         Redirector $redirector,
-        BackUrlService $backUrlService,
         RankService $rankService,
         ProtocolLineService $protocolLinesService,
         PersonsService $personsService,
     ) {
-        parent::__construct($viewService, $redirector, $backUrlService);
+        parent::__construct($viewService, $redirector);
         $this->rankService = $rankService;
         $this->protocolLinesService = $protocolLinesService;
         $this->personsService = $personsService;

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Localization;
 
 use App\Http\Controllers\AbstractAction;
-use App\Services\BackUrlService;
 use App\Services\UserService;
 use App\Services\ViewActionsService;
 use Illuminate\Http\RedirectResponse;
@@ -18,10 +17,9 @@ class ChangeLanguageAction extends AbstractAction
     public function __construct(
         ViewActionsService $viewService,
         Redirector $redirector,
-        BackUrlService $backUrlService,
         UserService $userService,
     ) {
-        parent::__construct($viewService, $redirector, $backUrlService);
+        parent::__construct($viewService, $redirector);
         $this->userService = $userService;
     }
 

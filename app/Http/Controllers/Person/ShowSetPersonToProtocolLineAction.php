@@ -7,11 +7,12 @@ namespace App\Http\Controllers\Person;
 use App\Models\Person;
 use App\Models\ProtocolLine;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class ShowSetPersonToProtocolLineAction extends AbstractPersonAction
 {
-    public function __invoke(int $protocolLineId, Request $request): View
+    public function __invoke(int $protocolLineId, Request $request): View|RedirectResponse
     {
         /** @var ProtocolLine $protocolLine */
         $protocolLine = ProtocolLine::find($protocolLineId);

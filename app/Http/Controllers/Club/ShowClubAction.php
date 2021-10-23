@@ -7,11 +7,12 @@ namespace App\Http\Controllers\Club;
 use App\Models\Club;
 use App\Models\Person;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class ShowClubAction extends AbstractClubAction
 {
-    public function __invoke(Request $request, Club $club): View
+    public function __invoke(Request $request, Club $club): View|RedirectResponse
     {
         $persons = Person::with(['protocolLines', 'club'])
             ->orderBy('lastname')

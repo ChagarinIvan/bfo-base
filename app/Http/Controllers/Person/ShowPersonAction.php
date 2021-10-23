@@ -7,11 +7,12 @@ namespace App\Http\Controllers\Person;
 use App\Models\Person;
 use App\Models\ProtocolLine;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Collection;
 
 class ShowPersonAction extends AbstractPersonAction
 {
-    public function __invoke(Person $person): View
+    public function __invoke(Person $person): View|RedirectResponse
     {
         /** fn features from php 7.4 */
         $groupedProtocolLines = $person->protocolLines->groupBy(fn (ProtocolLine $line) => $line->distance->event->date->format('Y'));

@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Rank;
 
 use App\Http\Controllers\AbstractAction;
-use App\Services\BackUrlService;
 use App\Services\RankService;
 use App\Services\ViewActionsService;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Redirector;
 
 class ShowRanksListAction extends AbstractAction
@@ -18,14 +18,13 @@ class ShowRanksListAction extends AbstractAction
     public function __construct(
         ViewActionsService $viewService,
         Redirector $redirector,
-        BackUrlService $backUrlService,
         RankService $rankService
     ) {
-        parent::__construct($viewService, $redirector, $backUrlService);
+        parent::__construct($viewService, $redirector);
         $this->rankService = $rankService;
     }
 
-    public function __invoke(string $selectedRank): View
+    public function __invoke(string $selectedRank): View|RedirectResponse
     {
         $ranks = $this->rankService->getFinishedRanks($selectedRank);
 

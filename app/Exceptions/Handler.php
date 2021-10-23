@@ -2,6 +2,8 @@
 
 namespace App\Exceptions;
 
+use App\Mail\ErrorMail;
+use Illuminate\Contracts\Mail\Mailer;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
 class Handler extends ExceptionHandler
@@ -32,6 +34,8 @@ class Handler extends ExceptionHandler
      */
     public function register()
     {
-        //
+        $this->reportable(function (\Exception $e) {
+            app(Mailer::class)->send(new ErrorMail($e));
+        });
     }
 }

@@ -2,10 +2,8 @@
 
 namespace App\Models\Parser;
 
-use App\Exceptions\ParsingException;
 use App\Models\Group;
 use App\Models\Rank;
-use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
 
@@ -19,136 +17,132 @@ class OBelarusNetRelayParser implements ParserInterface
 
     public function parse(string $file, bool $needConvert = true): Collection
     {
-        try {
-            if ($needConvert) {
-                $file = mb_convert_encoding($file, 'utf-8', 'windows-1251');
+        if ($needConvert) {
+            $file = mb_convert_encoding($file, 'utf-8', 'windows-1251');
+        }
+        $linesList = new Collection();
+        $distancePoints = 0;
+        $distanceLength = 0;
+
+        preg_match_all('#<h2>(.+?)</h2>.*?<pre>(.+?)</pre#msi', $file, $nodesMatch);
+        foreach ($nodesMatch[2] as $nodeIndex => $node) {
+            $this->commandCounter = 1;
+            $this->commandPoints = null;
+            $this->commandPlace = null;
+            $this->commandRank = null;
+
+            $text = trim($node, '-');
+            $text = strip_tags($text);
+            $text = trim($text);
+            if (!str_contains($text, 'амилия')) {
+                continue;
             }
-            $linesList = new Collection();
-            $distancePoints = 0;
-            $distanceLength = 0;
 
-            preg_match_all('#<h2>(.+?)</h2>.*?<pre>(.+?)</pre#msi', $file, $nodesMatch);
-            foreach ($nodesMatch[2] as $nodeIndex => $node) {
-                $this->commandCounter = 1;
-                $this->commandPoints = null;
-                $this->commandPlace = null;
-                $this->commandRank = null;
-
-                $text = trim($node, '-');
-                $text = strip_tags($text);
-                $text = trim($text);
-                if (!str_contains($text, 'амилия')) {
-                    continue;
-                }
-
-                $groupName = $nodesMatch[1][$nodeIndex];
-                $groupName = strip_tags($groupName);
-                if (preg_match('#(\d+)\s+[^\d]+,\s+((\d+([,.])\d+)\s+[^\d]+|(\d+)\s+[^\d])#s', $groupName, $match)) {
-                    $distancePoints = (int)$match[1];
-                    if (str_contains($match[3], ',') || str_contains($match[3], '.')) {
-                        if (str_contains($match[3], ',')) {
-                            $distanceLength = floatval(str_replace(',', '.', $match[3])) * 1000;
-                        } else {
-                            $distanceLength = (float)$match[3] * 1000;
-                        }
+            $groupName = $nodesMatch[1][$nodeIndex];
+            $groupName = strip_tags($groupName);
+            if (preg_match('#(\d+)\s+[^\d]+,\s+((\d+([,.])\d+)\s+[^\d]+|(\d+)\s+[^\d])#s', $groupName, $match)) {
+                $distancePoints = (int)$match[1];
+                if (str_contains($match[3], ',') || str_contains($match[3], '.')) {
+                    if (str_contains($match[3], ',')) {
+                        $distanceLength = floatval(str_replace(',', '.', $match[3])) * 1000;
                     } else {
-                        $distanceLength = floatval($match[3]);
+                        $distanceLength = (float)$match[3] * 1000;
                     }
+                } else {
+                    $distanceLength = floatval($match[3]);
                 }
-                if (str_contains($groupName, ',')) {
-                    $groupName = substr($groupName, 0, strpos($groupName, ','));
-                }
-                $groupName = trim($groupName, '+');
-                $groupName = Group::FIXING_MAP[$groupName] ?? $groupName;
+            }
+            if (str_contains($groupName, ',')) {
+                $groupName = substr($groupName, 0, strpos($groupName, ','));
+            }
+            $groupName = trim($groupName, '+');
+            $groupName = Group::FIXING_MAP[$groupName] ?? $groupName;
 
-                $lines = preg_split('/\n|\r\n?/', $text);
-                $linesCount = count($lines);
-                if ($linesCount < 3) {
+            $lines = preg_split('/\n|\r\n?/', $text);
+            $linesCount = count($lines);
+            if ($linesCount < 3) {
+                continue;
+            }
+            $groupHeader = $lines[0];
+            $groupHeader = trim($groupHeader);
+            $groupHeader = preg_replace('#\s+#', ' ', $groupHeader);
+            $headers = explode(' ', $groupHeader);
+            $groupHeaderIndex = count($headers) - 1;
+            $isOpen = str_contains($groupName, 'OPEN');
+
+            for ($index = 1; $index < $linesCount; $index++) {
+                $line = trim($lines[$index]);
+                if (empty($line)) {
                     continue;
                 }
-                $groupHeader = $lines[0];
-                $groupHeader = trim($groupHeader);
-                $groupHeader = preg_replace('#\s+#', ' ', $groupHeader);
-                $headers = explode(' ', $groupHeader);
-                $groupHeaderIndex = count($headers) - 1;
-                $isOpen = str_contains($groupName, 'OPEN');
-
-                for ($index = 1; $index < $linesCount; $index++) {
-                    $line = trim($lines[$index]);
-                    if (empty($line)) {
+                if (str_contains($line, 'ласс дистан') || str_contains($line, 'лавный судь')) {
+                    break;
+                }
+                if (!preg_match('#\d#', $line)) {
+                    continue;
+                }
+                if (is_numeric($line) || $isOpen) {
+                    $this->commandCounter = 1;
+                    $this->commandSerial = (int)$line;
+                    $this->commandPoints = null;
+                    $this->commandPlace = null;
+                    $this->commandRank = null;
+                    if (!$isOpen) {
                         continue;
                     }
-                    if (str_contains($line, 'ласс дистан') || str_contains($line, 'лавный судь')) {
+                }
+
+                $preparedLine = preg_replace('#=#', ' ', $line);
+                $preparedLine = preg_replace('#\s+#', ' ', $preparedLine);
+                $lineData = explode(' ', $preparedLine);
+                $fieldsCount = count($lineData);
+
+                $protocolLine = [
+                    'group' => $groupName,
+                    'distance' => [
+                        'length' => $distanceLength,
+                        'points' => $distancePoints,
+                    ],
+                ];
+
+                $indent = 1;
+
+                $number = false;
+                for ($i = $groupHeaderIndex; $i > 2; $i--) {
+                    $columnName = $this->getColumn($headers[$i]);
+                    if ($columnName === 'runner_number') {
+                        $number = true;
+                    }
+                    if ($columnName === '') {
                         break;
                     }
-                    if (!preg_match('#\d#', $line)) {
+                    if ($columnName === 'time' && array_key_exists('time', $protocolLine)) {
                         continue;
                     }
-                    if (is_numeric($line) || $isOpen) {
-                        $this->commandCounter = 1;
-                        $this->commandSerial = (int)$line;
-                        $this->commandPoints = null;
-                        $this->commandPlace = null;
-                        $this->commandRank = null;
-                        if (!$isOpen) {
-                            continue;
-                        }
-                    }
-
-                    $preparedLine = preg_replace('#=#', ' ', $line);
-                    $preparedLine = preg_replace('#\s+#', ' ', $preparedLine);
-                    $lineData = explode(' ', $preparedLine);
-                    $fieldsCount = count($lineData);
-
-                    $protocolLine = [
-                        'group' => $groupName,
-                        'distance' => [
-                            'length' => $distanceLength,
-                            'points' => $distancePoints,
-                        ],
-                    ];
-
-                    $indent = 1;
-
-                    $number = false;
-                    for ($i = $groupHeaderIndex; $i > 2; $i--) {
-                        $columnName = $this->getColumn($headers[$i]);
-                        if ($columnName === 'runner_number') {
-                            $number = true;
-                        }
-                        if ($columnName === '') {
-                            break;
-                        }
-                        if ($columnName === 'time' && array_key_exists('time', $protocolLine)) {
-                            continue;
-                        }
-                        $protocolLine = $this->getValue($columnName, $lineData, $fieldsCount, $indent, $protocolLine);
-                    }
-
-                    $protocolLine['points'] = $this->commandPoints;
-                    $protocolLine['place'] = $this->commandPlace;
-                    $protocolLine['complete_rank'] = $this->commandRank;
-
-                    $nameIndex = $isOpen ? 1 : 0;
-                    if (!$number) {
-                        $nameIndex++;
-                    }
-                    $protocolLine['lastname'] = $lineData[$nameIndex++];
-                    $protocolLine['firstname'] = $lineData[$nameIndex++];
-                    if ($number === false) {
-                        $protocolLine['runner_number'] = $lineData[$isOpen ? 1 : 0];
-                    }
-
-                    $protocolLine['serial_number'] = $isOpen ? $lineData[0] : $this->commandSerial;
-                    $protocolLine['club'] = implode(' ', array_slice($lineData, $nameIndex, $fieldsCount - $indent - $nameIndex + 1));
-                    $linesList->push($protocolLine);
-                    $this->commandCounter++;
+                    $protocolLine = $this->getValue($columnName, $lineData, $fieldsCount, $indent, $protocolLine);
                 }
+
+                $protocolLine['points'] = $this->commandPoints;
+                $protocolLine['place'] = $this->commandPlace;
+                $protocolLine['complete_rank'] = $this->commandRank;
+
+                $nameIndex = $isOpen ? 1 : 0;
+                if (!$number) {
+                    $nameIndex++;
+                }
+                $protocolLine['lastname'] = $lineData[$nameIndex++];
+                $protocolLine['firstname'] = $lineData[$nameIndex++];
+                if ($number === false) {
+                    $protocolLine['runner_number'] = $lineData[$isOpen ? 1 : 0];
+                }
+
+                $protocolLine['serial_number'] = $isOpen ? $lineData[0] : $this->commandSerial;
+                $protocolLine['club'] = implode(' ', array_slice($lineData, $nameIndex, $fieldsCount - $indent - $nameIndex + 1));
+                $linesList->push($protocolLine);
+                $this->commandCounter++;
             }
-            return $linesList;
-        } catch (Exception $e) {
-            throw new ParsingException($e->getMessage(), $e->getCode(), $e->getPrevious());
         }
+        return $linesList;
     }
 
     public function check(string $file): bool

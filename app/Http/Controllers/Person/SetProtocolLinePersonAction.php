@@ -51,6 +51,6 @@ class SetProtocolLinePersonAction extends AbstractPersonAction
             Person::destroy($oldPersonId);
         };
 
-        return $this->redirector->to($this->backUrlService->pop());
+        return $this->redirector->to($this->removeLastBackUrl());
     }
 }
