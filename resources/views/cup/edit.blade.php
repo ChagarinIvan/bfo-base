@@ -27,7 +27,7 @@
             <div class="form-floating mb-3">
                 <select class="form-select" id="type" name="type">
                     @foreach(\App\Models\Cups\CupType::getCupTypes() as $cupType)
-                        <option value="{{ $cupType->getId() }}" {{ $cup->type === $cupType->getId() ? 'selected' : '' }}>{{ $cupType->getName() }}</option>
+                        <option value="{{ $cupType->getId() }}" {{ $cup->type === $cupType->getId() ? 'selected' : '' }}>{{ __($cupType->getNameKey()) }}</option>
                     @endforeach
                 </select>
                 <label for="type">{{ __('app.common.type') }}</label>
@@ -47,7 +47,7 @@
             <div class="form-group mb-3">
                 <select class="selectpicker form-control" multiple data-live-search="true" id="groups" name="groups[]'" title="{{ __('app.common.groups') }}">
                     @php
-                        $selectedGroups = $cup->groups->pluck('id')->toArray();
+                        $selectedGroups = $cup->getCupType()->getGroups()->pluck('id')->toArray();
                     @endphp
                     @foreach($groups as $group)
                         <option value="{{ $group->id }}"

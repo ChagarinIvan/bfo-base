@@ -37,57 +37,61 @@
         </ul>
         <div class="tab-content">
             <div class="tab-pane fade show active">
-                <table id="table"
-                       data-cookie="true"
-                       data-cookie-id-table="cups-list-{{ $selectedYear }}"
-                       data-mobile-responsive="true"
-                       data-check-on-init="true"
-                       data-min-width="800"
-                       data-toggle="table"
-                       data-sort-class="table-active"
-                       data-page-list="[10,25,50,100,All]"
-                       data-resizable="true"
-                       data-sticky-header="true"
-                       data-sticky-header-offset-y="54"
-                       data-custom-sort="customSort"
-                >
-                    <thead class="table-dark">
-                    <tr>
-                        <th data-sortable="true">{{ __('app.common.title') }}</th>
-                        <th data-sortable="true">{{ __('app.cup.last_date') }}</th>
-                        <th>{{ __('app.common.groups') }}</th>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @foreach ($cups as $cup)
-                        <tr>
-                            <td>
-                                <a href="{{ action(\App\Http\Controllers\Cups\ShowCupAction::class, [$cup]) }}">{{ $cup->name }}</a>
-                            </td>
-                            <td>{{ $cup->events->sortByDesc('cup_event.event.date')->last()->event->date->format('Y-m-d') }}</td>
-                            <td>
-                                @foreach($cup->getGroups() as $group)
-                                    @php
-                                        /** @var \App\Models\Group $group */
-                                    @endphp
-                                    <x-badge color="{{ \App\Facades\Color::getColor($group->name) }}"
-                                             name="{{ $group->name }}"
-                                             url="{{ action(\App\Http\Controllers\Cups\ShowCupTableAction::class, [$cup, $group]) }}"
-                                    />
-                                @endforeach
-                            </td>
-                            <td>
-                                <x-button text="app.cup.table" color="secondary" icon="bi-table"/>
-                                @auth
-                                    <x-edit-button url="{{ action(\App\Http\Controllers\Cups\ShowEditCupFormAction::class, [$cup]) }}"/>
-                                    <x-delete-button modal-id="deleteModal{{ $cup->id }}"/>
-                                @endauth
-                            </td>
-                        </tr>
-                    @endforeach
-                    </tbody>
-                </table>
+                @if ($cups->count() > 0)
+                    <table id="table"
+                           data-cookie="true"
+                           data-cookie-id-table="cups-list-{{ $selectedYear }}"
+                           data-mobile-responsive="true"
+                           data-check-on-init="true"
+                           data-min-width="800"
+                           data-toggle="table"
+                           data-sort-class="table-active"
+                           data-page-list="[10,25,50,100,All]"
+                           data-resizable="true"
+                           data-sticky-header="true"
+                           data-sticky-header-offset-y="54"
+                           data-custom-sort="customSort"
+                    >
+                        <thead class="table-dark">
+                            <tr>
+                                <th data-sortable="true">{{ __('app.common.title') }}</th>
+                                <th data-sortable="true">{{ __('app.cup.last_date') }}</th>
+                                <th>{{ __('app.common.groups') }}</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($cups as $cup)
+                                <tr>
+                                    <td>
+                                        <a href="{{ action(\App\Http\Controllers\Cups\ShowCupAction::class, [$cup]) }}">{{ $cup->name }}</a>
+                                    </td>
+                                    <td>{{ $cup->events->sortByDesc('cup_event.event.date')->count() > 0
+                                        ? $cup->events->sortByDesc('cup_event.event.date')->last()->event->date->format('Y-m-d')
+                                        : '' }}</td>
+                                    <td>
+                                        @foreach($cup->getCupType()->getGroups() as $group)
+                                            @php
+                                                /** @var \App\Models\Group $group */
+                                            @endphp
+                                            <x-badge color="{{ \App\Facades\Color::getColor($group->name) }}"
+                                                     name="{{ $group->name }}"
+                                                     url="{{ action(\App\Http\Controllers\Cups\ShowCupTableAction::class, [$cup, $group]) }}"
+                                            />
+                                        @endforeach
+                                    </td>
+                                    <td>
+                                        <x-button text="app.cup.table" color="secondary" icon="bi-table"/>
+                                        @auth
+                                            <x-edit-button url="{{ action(\App\Http\Controllers\Cups\ShowEditCupFormAction::class, [$cup]) }}"/>
+                                            <x-delete-button modal-id="deleteModal{{ $cup->id }}"/>
+                                        @endauth
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                @endif
             </div>
         </div>
     </div>

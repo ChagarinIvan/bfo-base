@@ -1,8 +1,5 @@
 @php
-    use App\Models\Group;
-    use Illuminate\Support\Collection;
     /**
-     * @var Group[]|Collection $groups;
      * @var int $selectedYear;
      */
 @endphp
@@ -22,7 +19,7 @@
             <div class="form-floating mb-3">
                 <select class="form-select" id="type" name="type">
                     @foreach(\App\Models\Cups\CupType::getCupTypes() as $cupType)
-                        <option value="{{ $cupType->getId() }}" {{ $loop->first ? 'selected' : '' }}>{{ $cupType->getName() }}</option>
+                        <option value="{{ $cupType->getId() }}" {{ $loop->first ? 'selected' : '' }}>{{ __($cupType->getNameKey()) }}</option>
                     @endforeach
                 </select>
                 <label for="type">{{ __('app.common.type') }}</label>
@@ -38,15 +35,6 @@
                     @endforeach
                 </select>
                 <label for="year">{{ __('app.common.year') }}</label>
-            </div>
-            <div class="form-group mb-3">
-                <select class="selectpicker form-control" multiple data-live-search="true" id="groups" name="groups[]'" title="{{ __('app.common.groups') }}">
-                    @foreach($groups as $group)
-                        <option value="{{ $group->id }}"
-                                data-content="<span class='badge' style='background: {{ \App\Facades\Color::getColor($group->name) }}'
-                    >{{ $group->name }}</span>">{{ $group->name }}</option>
-                    @endforeach
-                </select>
             </div>
             <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3 col-xxl-2">
                 <input type="submit" class="btn btn-outline-primary btn-sm" value="{{ __('app.common.create') }}">

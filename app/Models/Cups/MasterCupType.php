@@ -6,45 +6,18 @@ use App\Models\CupEvent;
 use App\Models\CupEventPoint;
 use App\Models\Group;
 use App\Models\ProtocolLine;
-use App\Repositories\ProtocolLinesRepository;
-use App\Services\DistanceService;
-use App\Services\GroupsService;
 use Illuminate\Support\Collection;
 
 class MasterCupType extends AbstractCupType
 {
-    private Collection $eventGroupsIds;
-    private ProtocolLinesRepository $protocolLinesRepository;
-    private GroupsService $groupsService;
-    private DistanceService $distanceService;
-
-    public function __construct(
-        ProtocolLinesRepository $protocolLinesRepository,
-        GroupsService $groupsService,
-        DistanceService $distanceService,
-    ) {
-        $this->protocolLinesRepository = $protocolLinesRepository;
-        $this->groupsService = $groupsService;
-        $this->distanceService = $distanceService;
-        $this->eventGroupsIds = Collection::empty();
-    }
-
     public function getId(): string
     {
         return CupType::MASTER;
     }
 
-    public function getName(): string
+    public function getNameKey(): string
     {
-        return 'Ветеранский';
-    }
-
-    private function getEventGroupsIds(CupEvent $cupEvent): Collection
-    {
-        if ($this->eventGroupsIds->isEmpty()) {
-            $this->eventGroupsIds = $cupEvent->cup->groups->pluck('id');
-        }
-        return $this->eventGroupsIds;
+        return 'app.cup.type.master';
     }
 
     /**
@@ -56,7 +29,7 @@ class MasterCupType extends AbstractCupType
     {
         $results = new Collection();
         $cupEventProtocolLines = $this->getGroupProtocolLines($cupEvent, $mainGroup);
-        $eventGroupsId = $this->getEventGroupsIds($cupEvent);
+        $eventGroupsId = $this->getGroups()->pluck('id');
 
         $groupsName = $mainGroup->maleGroups();
         $eventDistances = $this->distanceService->getCupEventDistancesByGroups($cupEvent, $eventGroupsId, $groupsName)
@@ -113,8 +86,29 @@ class MasterCupType extends AbstractCupType
         );
     }
 
-    public function getCupGroups(Collection $groups): Collection
+    public function getGroups(): Collection
     {
-        return $groups;
+        return $this->groupsService->getGroups([
+            Group::M35,
+            Group::M40,
+            Group::M45,
+            Group::M50,
+            Group::M55,
+            Group::M60,
+            Group::M65,
+            Group::M70,
+            Group::M75,
+            Group::M80,
+            Group::W35,
+            Group::W40,
+            Group::W45,
+            Group::W50,
+            Group::W55,
+            Group::W60,
+            Group::W65,
+            Group::W70,
+            Group::W75,
+            Group::W80,
+        ]);
     }
 }

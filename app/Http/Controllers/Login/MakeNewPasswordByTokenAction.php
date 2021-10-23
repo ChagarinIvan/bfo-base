@@ -44,6 +44,7 @@ class MakeNewPasswordByTokenAction extends AbstractAction
         if (!$this->validator->validate(['email' => $email], ['email' => 'required|email'])) {
             return $this->redirectToError();
         }
+
         $users = User::whereEmail($email)->get();
         if ($users->isEmpty()) {
             $user = new User();

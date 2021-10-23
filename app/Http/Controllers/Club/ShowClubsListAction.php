@@ -4,16 +4,14 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Club;
 
-use App\Models\Club;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 
 class ShowClubsListAction extends AbstractClubAction
 {
-    public function __invoke(Request $request): View|RedirectResponse
+    public function __invoke(): View|RedirectResponse
     {
-        return $this->view('clubs.index', ['clubs' => Club::all()]);
+        return $this->view('clubs.index', ['clubs' => $this->clubsService->getAllClubs()]);
     }
 
     protected function isNavbarRoute(): bool

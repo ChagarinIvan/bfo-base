@@ -7,10 +7,27 @@ use App\Models\CupEvent;
 use App\Models\CupEventPoint;
 use App\Models\Group;
 use App\Models\ProtocolLine;
+use App\Repositories\ProtocolLinesRepository;
+use App\Services\DistanceService;
+use App\Services\GroupsService;
 use Illuminate\Support\Collection;
 
 abstract class AbstractCupType implements CupTypeInterface
 {
+    protected DistanceService $distanceService;
+    protected ProtocolLinesRepository $protocolLinesRepository;
+    protected GroupsService $groupsService;
+
+    public function __construct(
+        DistanceService $distanceService,
+        ProtocolLinesRepository $protocolLinesRepository,
+        GroupsService $groupsService,
+    ) {
+        $this->distanceService = $distanceService;
+        $this->protocolLinesRepository = $protocolLinesRepository;
+        $this->groupsService = $groupsService;
+    }
+
     public function calculateCup(Cup $cup, Collection $cupEvents, Group $mainGroup): array
     {
         $results = Collection::make();
@@ -98,7 +115,7 @@ abstract class AbstractCupType implements CupTypeInterface
 
     public function getCupEventParticipatesCount(CupEvent $cupEvent): int
     {
-        $groups = $cupEvent->cup->getGroups();
+        $groups = $cupEvent->cup->getCupType()->getGroups();
         $lines = Collection::empty();
 
         foreach ($groups as $group) {

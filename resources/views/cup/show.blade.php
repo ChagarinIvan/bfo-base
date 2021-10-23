@@ -27,14 +27,14 @@
             <x-button text="app.cup.table"
                       color="secondary"
                       icon="bi-table"
-                      url="{{ action(\App\Http\Controllers\Cups\ShowCupTableAction::class, [$cup, $cup->groups->first()]) }}"
+                      url="{{ action(\App\Http\Controllers\Cups\ShowCupTableAction::class, [$cup, $cup->getCupType()->getGroups()->first()]) }}"
             />
             <x-back-button/>
         </div>
     </div>
     <div class="row mb-3">
         <div class="col-12">
-            @foreach($cup->getGroups() as $group)
+            @foreach($cup->getCupType()->getGroups() as $group)
                 <x-badge color="{{ \App\Facades\Color::getColor($group->name) }}"
                          name="{{ $group->name }}"
                          url="{{ action(\App\Http\Controllers\Cups\ShowCupTableAction::class, [$cup, $group]) }}"/>
@@ -74,7 +74,7 @@
                     <tr>
                         <td>{{ $index + 1 }}</td>
                         <td>
-                            <a href="{{ action(\App\Http\Controllers\CupEvents\ShowCupEventGroupAction::class, [$cup, $cupEvent, $cup->groups->first()]) }}">
+                            <a href="{{ action(\App\Http\Controllers\CupEvents\ShowCupEventGroupAction::class, [$cup, $cupEvent, $cup->getCupType()->getGroups()->first()]) }}">
                                 <u class="">{{ \Illuminate\Support\Str::limit($cupEvent->event->competition->name, 30).' - '.\Illuminate\Support\Str::limit($cupEvent->event->name, 30) }}</u>
                             </a>
                         </td>

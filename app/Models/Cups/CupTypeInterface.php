@@ -10,9 +10,13 @@ use Illuminate\Support\Collection;
 interface CupTypeInterface
 {
     public function getId(): string;
-    public function getName(): string;
+    public function getNameKey(): string;
     public function calculateCup(Cup $cup, Collection $cupEvents, Group $mainGroup): array;
     public function calculateEvent(CupEvent $cupEvent, Group $mainGroup): Collection;
-    public function getCupGroups(Collection $groups): Collection;
     public function getCupEventParticipatesCount(CupEvent $cupEvent): int;
+
+    /**
+     * @return Collection|Group[]
+     */
+    public function getGroups(): Collection;
 }

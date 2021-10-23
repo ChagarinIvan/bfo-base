@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Models\CupEvent;
+use App\Models\Distance;
 use App\Models\Event;
 use App\Repositories\DistanceRepository;
 use Illuminate\Support\Collection;
@@ -23,8 +24,22 @@ class DistanceService
         return $this->distanceRepository->getCupEventDistancesByGroups($cupEvent, $groups, $groupNames);
     }
 
+    public function findDistance(int $groupId, int $eventId): ?Distance
+    {
+        return $this->distanceRepository->findDistance($groupId, $eventId);
+    }
+
     public function deleteEventDistances(Event $event): void
     {
         $event->distances()->delete();
+    }
+
+    /**
+     * @param Distance $mainDistance
+     * @return Collection|Distance[]
+     */
+    public function getEqualDistances(Distance $mainDistance): Collection
+    {
+        return $this->distanceRepository->getEqualDistances($mainDistance);
     }
 }

@@ -11,7 +11,9 @@ class DistanceRepository
 {
     public function findDistance(int $groupId, int $eventId): ?Distance
     {
-        return Distance::whereGroupId($groupId)->whereEventId($eventId)->first();
+        return Distance::whereGroupId($groupId)
+            ->whereEventId($eventId)
+            ->first();
     }
 
     public function getEqualDistances(Distance $distance): Collection

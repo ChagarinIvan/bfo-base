@@ -20,7 +20,7 @@ class UpdateCupEventAction extends AbstractCupAction
 
         $cupEvent = $this->cupEventsService->getCupEvent($cupEventId);
         if ($cupEvent === null) {
-            $this->redirectToError();
+            return $this->redirectToError();
         }
 
         $cupEvent->event_id = $formData['event'];
