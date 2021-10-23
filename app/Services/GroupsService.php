@@ -24,6 +24,10 @@ class GroupsService
         $event->distances()->delete();
     }
 
+    /**
+     * @param CupEvent $cupEvent
+     * @return Collection|Group[]
+     */
     public function getCupEventGroups(CupEvent $cupEvent): Collection
     {
         return $this->groupsRepository->getEventGroups($cupEvent->event_id);
@@ -37,6 +41,23 @@ class GroupsService
     public function getGroup(int $groupId): ?Group
     {
         return $this->groupsRepository->getGroup($groupId);
+    }
+
+    /**
+     * @param string[] $groupsNames
+     * @return Collection|Group[]
+     */
+    public function getGroups(array $groupsNames): Collection
+    {
+        $groups = new Collection();
+        foreach ($groupsNames as $groupName) {
+            $group = $this->groupsRepository->searchGroup($groupName);
+            if ($group) {
+                $groups->push($group);
+            }
+        }
+
+        return $groups;
     }
 
     public function deleteGroup(Group $group): void

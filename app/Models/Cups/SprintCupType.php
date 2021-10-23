@@ -9,8 +9,8 @@ class SprintCupType extends EliteCupType
         return CupType::SPRINT;
     }
 
-    public function getName(): string
+    public function getNameKey(): string
     {
-        return 'Спринтерский';
+        return 'app.cup.type.sprint';
     }
 }

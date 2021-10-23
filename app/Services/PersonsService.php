@@ -5,30 +5,15 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Models\Person;
-use App\Repositories\PersonsRepository;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
 class PersonsService
 {
-    private PersonsRepository $personsRepository;
     private PersonPromptService $promptService;
 
-    public function __construct(PersonsRepository $personsRepository, PersonPromptService $promptService)
+    public function __construct(PersonPromptService $promptService)
     {
-        $this->personsRepository = $personsRepository;
         $this->promptService = $promptService;
-    }
-
-    public function getMostParticipantPersonPaginator(string $search): LengthAwarePaginator
-    {
-        $query = $this->personsRepository->getPersonsOrderedByProtocolLinesCountQuery();
-
-        if (strlen($search) > 0) {
-            $query->where('person.firstname', 'LIKE', '%'.$search.'%')
-                ->orWhere('person.lastname', 'LIKE', '%'.$search.'%');
-        }
-        return $query->paginate(12);
     }
 
     /**
@@ -36,7 +21,7 @@ class PersonsService
      */
     public function allPersons(): Collection
     {
-        return $this->personsRepository->getAll();
+        return Person::all();
     }
 
     public function storePerson(Person $person): Person
@@ -83,5 +68,14 @@ class PersonsService
             $person->club_id = null;
         }
         return $person;
+    }
+
+    /**
+     * @param int $clubId
+     * @return Collection|Person[]
+     */
+    public function getClubPersons(int $clubId): Collection
+    {
+        return Person::whereClubId($clubId)->get();
     }
 }

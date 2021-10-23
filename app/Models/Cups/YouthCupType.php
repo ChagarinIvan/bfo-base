@@ -6,52 +6,37 @@ use App\Models\CupEvent;
 use App\Models\CupEventPoint;
 use App\Models\Group;
 use App\Models\ProtocolLine;
-use App\Repositories\ProtocolLinesRepository;
-use App\Services\DistanceService;
 use Illuminate\Support\Collection;
 
 class YouthCupType extends AbstractCupType
 {
     private const EVENTS_GROUPS_KOEF = [
-        7  => 1,   //М21Е
-        8  => 1,   //М21A
-        9  => 0.9, //М21Б
-        6  => 0.9, //М20
-        5  => 0.8, //М18
-        4  => 0.7, //М16
-        3  => 0.6, //М14
-        2  => 0.5, //М12
-        28 => 1,   //Ж21Е
-        29 => 1,   //Ж21A
-        30 => 0.9, //Ж21Б
-        27 => 0.9, //Ж20
-        26 => 0.8, //Ж18
-        25 => 0.7, //Ж16
-        24 => 0.6, //Ж14
-        23 => 0.5, //Ж12
+        Group::M21E => 1,   //М21Е
+        Group::M21A => 1,   //М21A
+        Group::M21B => 0.9, //М21Б
+        Group::M20 => 0.9,  //М20
+        Group::M18 => 0.8,  //М18
+        Group::M16 => 0.7,  //М16
+        Group::M14 => 0.6,  //М14
+        Group::M12 => 0.5,  //М12
+        Group::W21E => 1,   //Ж21Е
+        Group::W21A => 1,   //Ж21A
+        Group::W21B => 0.9, //Ж21Б
+        Group::W20 => 0.9,  //Ж20
+        Group::W18 => 0.8,  //Ж18
+        Group::W16 => 0.7,  //Ж16
+        Group::W14 => 0.6,  //Ж14
+        Group::W12 => 0.5,  //Ж12
     ];
-
-    private ProtocolLinesRepository $protocolLinesRepository;
-    private DistanceService $distanceService;
-    private Collection $eventDistances;
-
-    public function __construct(
-        ProtocolLinesRepository $protocolLinesRepository,
-        DistanceService         $distanceService,
-    ) {
-        $this->protocolLinesRepository = $protocolLinesRepository;
-        $this->distanceService = $distanceService;
-        $this->eventDistances = Collection::empty();
-    }
 
     public function getId(): string
     {
         return CupType::YOUTH;
     }
 
-    public function getName(): string
+    public function getNameKey(): string
     {
-        return 'Юношеский';
+        return 'app.cup.type.youth';
     }
 
     /**
@@ -66,18 +51,18 @@ class YouthCupType extends AbstractCupType
         $ageParticipants = $ageParticipants->groupBy('distance_id');
 
         $groupsNames = $mainGroup->maleGroups();
-        $eventGroupsIds = Collection::make(self::EVENTS_GROUPS_KOEF);
-        $this->eventDistances = $this->distanceService->getCupEventDistancesByGroups($cupEvent, $eventGroupsIds->keys(), $groupsNames);
-        $this->eventDistances = $this->eventDistances->keyBy('id');
+        $eventGroupsIds = $this->groupsService->getGroups(array_keys(self::EVENTS_GROUPS_KOEF))->pluck('id');
+        $eventDistances = $this->distanceService->getCupEventDistancesByGroups($cupEvent, $eventGroupsIds, $groupsNames)
+            ->keyBy('id');
 
-        $ageParticipants = $ageParticipants->intersectByKeys($this->eventDistances);
+        $ageParticipants = $ageParticipants->intersectByKeys($eventDistances);
 
         foreach ($ageParticipants as $distanceId => $groupProtocolLines) {
             $eventGroupResults = $this->calculateDistance($cupEvent, $distanceId);
             $results = $results->merge($eventGroupResults->intersectByKeys($groupProtocolLines->keyBy('person_id')));
         }
 
-        return $results->sortByDesc(fn (CupEventPoint $cupEventResult) => $cupEventResult->points);
+        return $results->sortByDesc(fn(CupEventPoint $cupEventResult) => $cupEventResult->points);
     }
 
     /**
@@ -111,7 +96,7 @@ class YouthCupType extends AbstractCupType
         $cupEventPointsList = Collection::make();
         $maxPoints = $cupEvent->points;
 
-        $protocolLines = $protocolLines->sortByDesc(fn (ProtocolLine $line) => $line->time ? $line->time->diffInSeconds() : 0);
+        $protocolLines = $protocolLines->sortByDesc(fn(ProtocolLine $line) => $line->time ? $line->time->diffInSeconds() : 0);
 
         $first = true;
         // О уч. = К сор. х 500 х К гр. (3 х Т поб. / Т уч. ‑ 1), где:
@@ -123,7 +108,7 @@ class YouthCupType extends AbstractCupType
 
         foreach ($protocolLines as $protocolLine) {
             /** @var ProtocolLine $protocolLine */
-            $koef = self::EVENTS_GROUPS_KOEF[$protocolLine->distance->group_id] ?? 0;
+            $koef = self::EVENTS_GROUPS_KOEF[$protocolLine->distance->group->name] ?? 0;
 
             if ($first) {
                 if ($protocolLine->person_id !== null) {
@@ -159,14 +144,23 @@ class YouthCupType extends AbstractCupType
         return $cupEventPointsList;
     }
 
-    public function getCupGroups(Collection $groups): Collection
+    public function getGroups(): Collection
     {
-        return $groups;
+        return $this->groupsService->getGroups([
+            Group::M18,
+            Group::M16,
+            Group::M14,
+            Group::M12,
+            Group::W18,
+            Group::W16,
+            Group::W14,
+            Group::W12,
+        ]);
     }
 
     public function getCupEventParticipatesCount(CupEvent $cupEvent): int
     {
-        $groups = $cupEvent->cup->getGroups();
+        $groups = $this->getGroups();
         $lines = Collection::empty();
 
         foreach ($groups as $group) {

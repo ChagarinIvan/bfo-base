@@ -16,7 +16,7 @@ class ShowEditCupEventFormAction extends AbstractCupAction
         $cupEvent = $this->cupEventsService->getCupEvent($cupEventId);
 
         if ($cup === null || $cupEvent === null) {
-            $this->redirectToError();
+            return $this->redirectToError();
         }
 
         $events = $this->eventsRepository->getYearEvents($cup->year);

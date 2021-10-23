@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Http\Controllers\BackAction;
-use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Contracts\View\Factory as ViewFactory;
 use Illuminate\Contracts\View\View;
@@ -16,20 +15,17 @@ class ViewActionsService
     private UserService $userService;
     private BackUrlService $backUrlService;
     private UrlGenerator $urlGenerator;
-    private ExceptionHandler $exceptionHandler;
 
     public function __construct(
         ViewFactory $viewFactory,
         UserService $userService,
         BackUrlService $backUrlService,
         UrlGenerator $urlGenerator,
-        ExceptionHandler $exceptionHandler,
     ) {
         $this->viewFactory = $viewFactory;
         $this->userService = $userService;
         $this->backUrlService = $backUrlService;
         $this->urlGenerator = $urlGenerator;
-        $this->exceptionHandler = $exceptionHandler;
     }
 
     public function cleanBackUrls(): void
@@ -77,8 +73,13 @@ class ViewActionsService
         return $this->backUrlService->pop();
     }
 
-    public function handleException(\Exception $e): void
+    public function setActualAction(string $action): void
     {
-        $this->exceptionHandler->report($e);
+        $this->backUrlService->setActualAction($action);
+    }
+
+    public function getActualAction(): string
+    {
+        return $this->backUrlService->getActualAction();
     }
 }

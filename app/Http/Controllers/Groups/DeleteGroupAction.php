@@ -10,7 +10,7 @@ class DeleteGroupAction extends AbstractGroupAction
     {
         $group = $this->groupsService->getGroup($groupId);
         if ($group === null) {
-            $this->redirectToError();
+            return $this->redirectToError();
         }
         $this->groupsService->deleteGroup($group);
         return $this->redirector->back();

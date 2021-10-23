@@ -2,7 +2,6 @@
     use Illuminate\Support\Collection;
     /**
      * @var Collection $competitions;
-     * @var int[] $years;
      * @var int $selectedYear;
      */
 @endphp
@@ -25,7 +24,7 @@
     @endauth
     <div class="row">
         <ul class="nav nav-tabs">
-            @foreach($years as $year)
+            @foreach(\App\Models\Year::YEARS as $year)
                 <li class="nav-item">
                     <a href="{{ action(\App\Http\Controllers\Competition\ShowCompetitionsListAction::class, [$year]) }}"
                        class="text-decoration-none nav-link {{ $year === $selectedYear ? 'active' : '' }}"

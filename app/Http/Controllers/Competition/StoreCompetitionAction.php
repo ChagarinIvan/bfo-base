@@ -21,6 +21,7 @@ class StoreCompetitionAction extends AbstractCompetitionAction
 
         $competition = new Competition($formParams);
         $competition->save();
+
         return $this->redirector->action(ShowCompetitionAction::class, [$competition->id]);
     }
 }

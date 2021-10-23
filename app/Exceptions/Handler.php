@@ -2,9 +2,11 @@
 
 namespace App\Exceptions;
 
+use App\Http\Controllers\Error\Show404ErrorAction;
 use App\Mail\ErrorMail;
 use Illuminate\Contracts\Mail\Mailer;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Routing\Redirector;
 
 class Handler extends ExceptionHandler
 {
@@ -35,7 +37,10 @@ class Handler extends ExceptionHandler
     public function register()
     {
         $this->reportable(function (\Exception $e) {
-            app(Mailer::class)->send(new ErrorMail($e));
+            if (!app()->runningInConsole() && !app()->runningUnitTests()) {
+                app(Mailer::class)->send(new ErrorMail($e));
+                app(Redirector::class)->action(Show404ErrorAction::class);
+            }
         });
     }
 }

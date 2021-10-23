@@ -24,24 +24,22 @@ abstract class AbstractAction extends Controller
         $this->redirector = $redirector;
     }
 
-    protected function view(string $template, array $data = []): View|RedirectResponse
+    protected function view(string $template, array $data = []): View
     {
-        try {
-            if ($this->isNavbarRoute()) {
-                $this->viewService->cleanBackUrls();
-            } else {
+        if ($this->isNavbarRoute()) {
+            $this->viewService->cleanBackUrls();
+        } else {
+            if ($this::class !== $this->viewService->getActualAction()) {
                 $previous = $this->viewService->generatePreviousUrl();
                 $backUrl = $this->viewService->makeBackAction();
                 if ($previous !== $backUrl) {
                     $this->viewService->pushUrlInBackUrlsQueue($previous);
                 }
             }
-
-            return $this->viewService->makeView($template, $data, $this->navbarData());
-        } catch (\Exception $exception) {
-            $this->viewService->handleException($exception);
-            return $this->redirectToError();
+            $this->viewService->setActualAction($this::class);
         }
+
+        return $this->viewService->makeView($template, $data, $this->navbarData());
     }
 
     protected function removeLastBackUrl(): string

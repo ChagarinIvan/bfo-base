@@ -11,6 +11,7 @@ class BackUrlService
 {
     private const BACK_URLS_KEY = 'back_urls_key';
     private const BACK = 'back';
+    private const ACTION = 'actions';
 
     private Session $sessionManager;
 
@@ -49,5 +50,15 @@ class BackUrlService
     private function set(Collection $urls): void
     {
         $this->sessionManager->put(self::BACK_URLS_KEY, $urls->toArray());
+    }
+
+    public function setActualAction(string $action): void
+    {
+        $this->sessionManager->put(self::ACTION, $action);
+    }
+
+    public function getActualAction(): string
+    {
+        return $this->sessionManager->get(self::ACTION, '');
     }
 }
