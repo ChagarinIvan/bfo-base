@@ -7,7 +7,6 @@ namespace App\Http\Controllers\Cups;
 use App\Http\Controllers\AbstractAction;
 use App\Repositories\CupsRepository;
 use App\Repositories\EventsRepository;
-use App\Services\BackUrlService;
 use App\Services\CupEventsService;
 use App\Services\CupsService;
 use App\Services\GroupsService;
@@ -30,9 +29,8 @@ abstract class AbstractCupAction extends AbstractAction
         CupsService $cupsService,
         EventsRepository $eventsRepository,
         Redirector $redirector,
-        BackUrlService $backUrlService,
     ) {
-        parent::__construct($viewService, $redirector, $backUrlService);
+        parent::__construct($viewService, $redirector);
         $this->groupsService = $groupsService;
         $this->cupsRepository = $cupsRepository;
         $this->cupEventsService = $cupEventsService;

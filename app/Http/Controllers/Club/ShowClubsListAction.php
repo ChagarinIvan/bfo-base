@@ -6,11 +6,12 @@ namespace App\Http\Controllers\Club;
 
 use App\Models\Club;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class ShowClubsListAction extends AbstractClubAction
 {
-    public function __invoke(Request $request): View
+    public function __invoke(Request $request): View|RedirectResponse
     {
         return $this->view('clubs.index', ['clubs' => Club::all()]);
     }

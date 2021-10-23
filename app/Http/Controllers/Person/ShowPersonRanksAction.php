@@ -7,10 +7,11 @@ namespace App\Http\Controllers\Person;
 use App\Models\Person;
 use App\Models\Rank;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 
 class ShowPersonRanksAction extends AbstractPersonAction
 {
-    public function __invoke(Person $person): View
+    public function __invoke(Person $person): View|RedirectResponse
     {
         $ranks = $this->rankService->getPersonRanks($person->id);
         $protocolLinesIds = [];

@@ -7,7 +7,6 @@ namespace App\Http\Controllers\Login;
 use App\Http\Controllers\AbstractAction;
 use App\Mail\PasswordMail;
 use App\Models\User;
-use App\Services\BackUrlService;
 use App\Services\ViewActionsService;
 use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Contracts\Mail\Mailer;
@@ -27,13 +26,12 @@ class MakeNewPasswordByTokenAction extends AbstractAction
     public function __construct(
         ViewActionsService $viewService,
         Redirector $redirector,
-        BackUrlService $backUrlService,
         Encrypter $encrypter,
         Validator $validator,
         HashManager $hashManager,
         Mailer $mailer,
     ) {
-        parent::__construct($viewService, $redirector, $backUrlService);
+        parent::__construct($viewService, $redirector);
         $this->encrypter = $encrypter;
         $this->validator = $validator;
         $this->hashManager = $hashManager;

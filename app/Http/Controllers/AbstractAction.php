@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Error\Show404ErrorAction;
-use App\Services\BackUrlService;
 use App\Services\ViewActionsService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -16,36 +15,38 @@ abstract class AbstractAction extends Controller
 {
     private ViewActionsService $viewService;
     protected Redirector $redirector;
-    protected BackUrlService $backUrlService;
 
     public function __construct(
         ViewActionsService $viewService,
-        Redirector $redirector,
-        BackUrlService $backUrlService,
+        Redirector $redirector
     ) {
         $this->viewService = $viewService;
         $this->redirector = $redirector;
-        $this->backUrlService = $backUrlService;
     }
 
-    protected function view(string $template, array $data = []): View
+    protected function view(string $template, array $data = []): View|RedirectResponse
     {
-        if ($this->isNavbarRoute()) {
-            $this->viewService->cleanBackUrls();
-        } else {
-            $previous = $this->viewService->generatePreviousUrl();
-            $backUrl = $this->viewService->makeBackAction();
-            if ($previous !== $backUrl) {
-                $this->viewService->pushUrlInBackUrlsQueue($previous);
+        try {
+            if ($this->isNavbarRoute()) {
+                $this->viewService->cleanBackUrls();
+            } else {
+                $previous = $this->viewService->generatePreviousUrl();
+                $backUrl = $this->viewService->makeBackAction();
+                if ($previous !== $backUrl) {
+                    $this->viewService->pushUrlInBackUrlsQueue($previous);
+                }
             }
-        }
 
-        return $this->viewService->makeView($template, $data, $this->navbarData());
+            return $this->viewService->makeView($template, $data, $this->navbarData());
+        } catch (\Exception $exception) {
+            $this->viewService->handleException($exception);
+            return $this->redirectToError();
+        }
     }
 
-    protected function removeLastBackUrl(): void
+    protected function removeLastBackUrl(): string
     {
-        $this->backUrlService->pop();
+        return $this->viewService->getLastBackUrl();
     }
 
     private function navbarData(): array

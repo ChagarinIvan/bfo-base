@@ -8,10 +8,11 @@ use App\Models\Cup;
 use App\Models\Group;
 use App\Models\Person;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 
 class ShowCupTableAction extends AbstractCupAction
 {
-    public function __invoke(Cup $cup, Group $group): View
+    public function __invoke(Cup $cup, Group $group): View|RedirectResponse
     {
         $cupEvents = $this->cupEventsService->getCupEvents($cup)->sortBy('events.date');
         $cupPoints = $this->cupEventsService->calculateCup($cup, $cupEvents, $group);

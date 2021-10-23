@@ -2,10 +2,8 @@
 
 namespace App\Models\Parser;
 
-use App\Exceptions\ParsingException;
 use App\Models\Group;
 use App\Models\Rank;
-use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
 
@@ -22,116 +20,112 @@ class OParser implements ParserInterface
 
     public function parse(string $file, bool $needConvert = true): Collection
     {
-        try {
-            $lines = preg_split('/\n|\r\n?/', $file);
-            $linesList = new Collection();
-            $startGroupHeader = false;
-            $startProtocol = false;
-            $groupHeaderData = [];
-            $groupHeaderIndex = 0;
-            $groupName = '';
-            $distanceLength = 0;
-            $distancePoints = 0;
+        $lines = preg_split('/\n|\r\n?/', $file);
+        $linesList = new Collection();
+        $startGroupHeader = false;
+        $startProtocol = false;
+        $groupHeaderData = [];
+        $groupHeaderIndex = 0;
+        $groupName = '';
+        $distanceLength = 0;
+        $distancePoints = 0;
 
-            foreach ($lines as $line) {
-                $line = trim($line);
+        foreach ($lines as $line) {
+            $line = trim($line);
 
-                if ($line === '') {
-                    continue;
-                }
+            if ($line === '') {
+                continue;
+            }
 
-                if (preg_match('#<h2>([^\d]\d\d[^\d]?|[]^\d]{5,6})</h2>#uism', $line, $match)) {
-                    $groupLine = $match[1];
-                    $groupName = Group::FIXING_MAP[$groupLine] ?? $groupLine;
-                    $distanceLength = 0;
-                    $distancePoints = 0;
-                    if (preg_match('#:\s+(\d+)\s+[^\d]+,\s+(\d+,\d+)\s+[^\d]+#s', $line, $match)) {
-                        $distancePoints = (int)$match[1];
-                        $distanceLength = floatval(str_replace(',', '.', $match[2])) * 1000;
-                    }
-                    continue;
-                }
-
+            if (preg_match('#<h2>([^\d]\d\d[^\d]?|[]^\d]{5,6})</h2>#uism', $line, $match)) {
+                $groupLine = $match[1];
+                $groupName = Group::FIXING_MAP[$groupLine] ?? $groupLine;
+                $distanceLength = 0;
+                $distancePoints = 0;
                 if (preg_match('#:\s+(\d+)\s+[^\d]+,\s+(\d+,\d+)\s+[^\d]+#s', $line, $match)) {
                     $distancePoints = (int)$match[1];
                     $distanceLength = floatval(str_replace(',', '.', $match[2])) * 1000;
-                    continue;
                 }
+                continue;
+            }
 
-                $line = strip_tags($line);
-                if ($line === '') {
-                    continue;
-                }
-                if (trim($line, '-') === '') {
-                    if ($startGroupHeader) {
-                        $startGroupHeader = false;
-                        $startProtocol = true;
-                    } elseif ($startProtocol) {
-                        $startGroupHeader = false;
-                        $startProtocol = false;
-                    } else {
-                        $startGroupHeader = true;
-                        $startProtocol = false;
-                    }
-                    continue;
-                }
+            if (preg_match('#:\s+(\d+)\s+[^\d]+,\s+(\d+,\d+)\s+[^\d]+#s', $line, $match)) {
+                $distancePoints = (int)$match[1];
+                $distanceLength = floatval(str_replace(',', '.', $match[2])) * 1000;
+                continue;
+            }
 
+            $line = strip_tags($line);
+            if ($line === '') {
+                continue;
+            }
+            if (trim($line, '-') === '') {
                 if ($startGroupHeader) {
-                    $groupHeaderLine = preg_replace('#\s+#', ' ', $line);
-                    $groupHeaderLine = trim($groupHeaderLine);
-                    $groupHeaderData = explode(' ', $groupHeaderLine);
-                    $groupHeaderIndex = count($groupHeaderData) - 1;
-                    if (str_contains($groupHeaderData[$groupHeaderIndex], 'рим')) {
-                        $groupHeaderIndex--;
-                    }
+                    $startGroupHeader = false;
+                    $startProtocol = true;
+                } elseif ($startProtocol) {
+                    $startGroupHeader = false;
+                    $startProtocol = false;
+                } else {
+                    $startGroupHeader = true;
+                    $startProtocol = false;
                 }
+                continue;
+            }
 
-                if ($startProtocol) {
-                    $preparedLine = preg_replace('#=#', ' ', $line);
-                    $preparedLine = preg_replace('#\s+#', ' ', $preparedLine);
-                    $lineData = explode(' ', $preparedLine);
-                    $fieldsCount = count($lineData);
-                    $protocolLine = [
-                        'group' => $groupName,
-                        'distance' => [
-                            'length' => $distanceLength,
-                            'points' => $distancePoints,
-                        ],
-                    ];
-                    $indent = 1;
-
-                    for ($i = $groupHeaderIndex; $i > 2; $i--) {
-                        $columnName = $this->getColumn($groupHeaderData[$i]);
-                        if ($columnName === null) {
-                            break;
-                        } elseif ($columnName === '' && $lineData[$fieldsCount - $indent] === 'снят') {
-                            continue;
-                        } elseif ($columnName === '') {
-                            $indent++;
-                            continue;
-                        }
-                        $protocolLine[$columnName] = $this->getValue($columnName, $lineData, $fieldsCount, $indent);
-                    }
-
-                    if ($this->setVk) {
-                        $protocolLine['vk'] = true;
-                        $this->setVk = false;
-                    } else {
-                        $protocolLine['vk'] = false;
-                    }
-                    $protocolLine['serial_number'] = (int)$lineData[0];
-                    $protocolLine['lastname'] = $lineData[1];
-                    $protocolLine['firstname'] = $lineData[2];
-                    $protocolLine['club'] = implode(' ', array_slice($lineData, 3, $fieldsCount - $indent - 2));
-
-                    $linesList->push($protocolLine);
+            if ($startGroupHeader) {
+                $groupHeaderLine = preg_replace('#\s+#', ' ', $line);
+                $groupHeaderLine = trim($groupHeaderLine);
+                $groupHeaderData = explode(' ', $groupHeaderLine);
+                $groupHeaderIndex = count($groupHeaderData) - 1;
+                if (str_contains($groupHeaderData[$groupHeaderIndex], 'рим')) {
+                    $groupHeaderIndex--;
                 }
             }
 
-            return $linesList;
-        } catch (Exception $e) {
-            throw new ParsingException($e->getMessage(), $e->getCode(), $e->getPrevious());
+            if ($startProtocol) {
+                $preparedLine = preg_replace('#=#', ' ', $line);
+                $preparedLine = preg_replace('#\s+#', ' ', $preparedLine);
+                $lineData = explode(' ', $preparedLine);
+                $fieldsCount = count($lineData);
+                $protocolLine = [
+                    'group' => $groupName,
+                    'distance' => [
+                        'length' => $distanceLength,
+                        'points' => $distancePoints,
+                    ],
+                ];
+                $indent = 1;
+
+                for ($i = $groupHeaderIndex; $i > 2; $i--) {
+                    $columnName = $this->getColumn($groupHeaderData[$i]);
+                    if ($columnName === null) {
+                        break;
+                    } elseif ($columnName === '' && $lineData[$fieldsCount - $indent] === 'снят') {
+                        continue;
+                    } elseif ($columnName === '') {
+                        $indent++;
+                        continue;
+                    }
+                    $protocolLine[$columnName] = $this->getValue($columnName, $lineData, $fieldsCount, $indent);
+                }
+
+                if ($this->setVk) {
+                    $protocolLine['vk'] = true;
+                    $this->setVk = false;
+                } else {
+                    $protocolLine['vk'] = false;
+                }
+                $protocolLine['serial_number'] = (int)$lineData[0];
+                $protocolLine['lastname'] = $lineData[1];
+                $protocolLine['firstname'] = $lineData[2];
+                $protocolLine['club'] = implode(' ', array_slice($lineData, 3, $fieldsCount - $indent - 2));
+
+                $linesList->push($protocolLine);
+            }
         }
+
+        return $linesList;
     }
 
     private function getValue(string $column, array $lineData, int $fieldsCount, int &$indent): mixed
@@ -159,7 +153,7 @@ class OParser implements ParserInterface
             if (preg_match('#:\d\d:\d\d#', $time)) {
                 try {
                     $time = Carbon::createFromTimeString($time);
-                } catch (Exception) {
+                } catch (\Exception) {
                     $time = null;
                 }
             } elseif (preg_match('#\d\d.\d\d#', $time)) {

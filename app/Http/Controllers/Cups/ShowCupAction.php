@@ -6,11 +6,12 @@ namespace App\Http\Controllers\Cups;
 
 use App\Models\Cup;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Collection;
 
 class ShowCupAction extends AbstractCupAction
 {
-    public function __invoke(Cup $cup): View
+    public function __invoke(Cup $cup): View|RedirectResponse
     {
         $cupEvents = $this->cupEventsService->getCupEvents($cup);
         $cupEvents = $cupEvents->sortBy('event.date')->values();

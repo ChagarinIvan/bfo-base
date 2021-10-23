@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Event;
 
 use App\Http\Controllers\AbstractAction;
-use App\Services\BackUrlService;
 use App\Services\EventService;
 use App\Services\IdentService;
 use App\Services\ParserService;
@@ -20,14 +19,12 @@ class AbstractEventAction extends AbstractAction
     protected EventService $eventService;
     protected ParserService $parserService;
     protected IdentService $identService;
-    protected ExceptionHandler $exceptionHandler;
     protected ProtocolLineService $protocolLineService;
     protected Filesystem $storage;
 
     public function __construct(
         ViewActionsService $viewActionsService,
         Redirector $redirector,
-        BackUrlService $backUrlService,
         EventService $eventService,
         ParserService $parserService,
         IdentService $identService,
@@ -35,7 +32,7 @@ class AbstractEventAction extends AbstractAction
         ProtocolLineService $protocolLineService,
         Filesystem $storage,
     ) {
-        parent::__construct($viewActionsService, $redirector, $backUrlService);
+        parent::__construct($viewActionsService, $redirector);
         $this->eventService = $eventService;
         $this->parserService = $parserService;
         $this->identService = $identService;
