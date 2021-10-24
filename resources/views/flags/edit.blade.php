@@ -2,7 +2,6 @@
     use App\Models\Flag;
     /**
      * @var Flag $flag;
-     *
      */
 @endphp
 @extends('layouts.app')

@@ -2,12 +2,9 @@
 
 namespace App\Exceptions;
 
-use App\Http\Controllers\Error\Show404ErrorAction;
 use App\Mail\ErrorMail;
-use Illuminate\Contracts\Mail\Mailer;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Illuminate\Routing\Redirector;
-use Throwable;
+use Illuminate\Mail\Mailer;
 
 class Handler extends ExceptionHandler
 {
@@ -30,16 +27,6 @@ class Handler extends ExceptionHandler
         'password_confirmation',
     ];
 
-    public function render($request, Throwable $e)
-    {
-        if (!app()->runningInConsole() && !app()->runningUnitTests() && ((bool)env('APP_DEBUG')) === false) {
-            app(Mailer::class)->send(new ErrorMail($e));
-            return app(Redirector::class)->action(Show404ErrorAction::class);
-        }
-
-        return parent::render($request, $e);
-    }
-
     /**
      * Register the exception handling callbacks for the application.
      *
@@ -47,5 +34,12 @@ class Handler extends ExceptionHandler
      */
     public function register()
     {
+        $this->renderable(function (\Exception $e, $request) {
+            if (!app()->runningInConsole() && !app()->runningUnitTests() && ((bool)env('APP_DEBUG')) === false) {
+                app(Mailer::class)->send(new ErrorMail($e));
+                return response()->view('errors.error', [], 404);
+            }
+            return false;
+        });
     }
 }

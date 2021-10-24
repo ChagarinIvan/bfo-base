@@ -12,6 +12,6 @@ class Show404ErrorAction extends AbstractAction
 {
     public function __invoke(): View|RedirectResponse
     {
-        return $this->view('errors.404');
+        return $this->view('errors.error');
     }
 }

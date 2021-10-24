@@ -7,6 +7,7 @@
      * @var string $search
      */
 @endphp
+
 @extends('layouts.app')
 
 @section('title', __('app.ident.edit.title'))

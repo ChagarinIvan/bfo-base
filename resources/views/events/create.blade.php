@@ -1,5 +1,5 @@
 @php
-    use \App\Models\Flag;
+    use App\Models\Flag;
     use Illuminate\Support\Collection;
     /**
      * @var Flag[]|Collection $flags;

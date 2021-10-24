@@ -8,7 +8,6 @@
      */
 @endphp
 
-
 @extends('layouts.app')
 
 @section('title', __('app.common.flag').' '.$flag->name)

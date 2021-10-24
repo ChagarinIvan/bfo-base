@@ -1,6 +1,6 @@
 @php
-    use \App\Models\Flag;
-    use \App\Models\Event;
+    use App\Models\Flag;
+    use App\Models\Event;
     use Illuminate\Support\Collection;
     /**
      * @var Flag[]|Collection $flags;

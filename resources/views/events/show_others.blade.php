@@ -1,5 +1,4 @@
 @php
-    use App\Models\Distance;
     use App\Models\ProtocolLine;
     use Illuminate\Support\Collection;
     /**
