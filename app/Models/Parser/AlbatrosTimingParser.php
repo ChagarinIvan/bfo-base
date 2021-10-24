@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
 use RuntimeException;
 
-class AlbatrosTimingParser implements ParserInterface
+class AlbatrosTimingParser extends AbstractParser
 {
     public function parse(string $file, bool $needConvert = true): Collection
     {

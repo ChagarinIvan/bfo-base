@@ -6,6 +6,7 @@ use App\Models\Parser\ParserFactory;
 use App\Models\ProtocolLine;
 use Carbon\Carbon;
 use Illuminate\Filesystem\FilesystemManager;
+use Illuminate\Support\Collection;
 use Tests\TestCase;
 
 abstract class AbstractParserTest extends TestCase
@@ -21,7 +22,7 @@ abstract class AbstractParserTest extends TestCase
         $protocolContent = $storageManager->disk('tests')->get($this->getFilePath());
 
         $parserClass = $this->getParser();
-        $parser = ParserFactory::createParser($protocolContent);
+        $parser = ParserFactory::createParser($protocolContent, Collection::empty());
         self::assertInstanceOf($parserClass, $parser);
 
         $lines = $parser->parse($protocolContent, $this->needConvert());

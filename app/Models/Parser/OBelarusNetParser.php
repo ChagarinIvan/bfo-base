@@ -10,7 +10,7 @@ use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
 
-class OBelarusNetParser implements ParserInterface
+class OBelarusNetParser extends AbstractParser
 {
     public function parse(string $file, bool $needConvert = true): Collection
     {

@@ -2,6 +2,8 @@
 
 namespace App\Models\Parser;
 
+use Illuminate\Support\Collection;
+
 class ParserFactory
 {
     private const PARSERS = [
@@ -17,10 +19,10 @@ class ParserFactory
         OBelarusNetParser::class,
     ];
 
-    public static function createParser(string $protocol): ParserInterface
+    public static function createParser(string $protocol, Collection $groups): ParserInterface
     {
         foreach (self::PARSERS as $parser) {
-            $parser = new $parser();
+            $parser = new $parser($groups);
             if ($parser->check($protocol)) {
                 return $parser;
             }

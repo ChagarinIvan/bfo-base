@@ -11,6 +11,13 @@ use Illuminate\Support\Collection;
 
 class ParserService
 {
+    private GroupsService $groupsService;
+
+    public function __construct(GroupsService $groupsService)
+    {
+        $this->groupsService = $groupsService;
+    }
+
     /**
      * По протоколу определяет необходимый парсер
      * Парсер разбирает протокол на сырые массивы данных из строк
@@ -23,7 +30,7 @@ class ParserService
      */
     public function parserProtocol(string $protocol, bool $needConvert): Collection
     {
-        $parser = ParserFactory::createParser($protocol);
+        $parser = ParserFactory::createParser($protocol, $this->groupsService->getAllGroupsWithout()->pluck('name'));
         return $parser->parse($protocol, $needConvert);
     }
 

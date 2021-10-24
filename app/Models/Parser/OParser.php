@@ -14,7 +14,7 @@ use Illuminate\Support\Carbon;
  *
  * @package App\Models\Parser
  */
-class OParser implements ParserInterface
+class OParser extends AbstractParser
 {
     private bool $setVk = false;
 

@@ -4,7 +4,6 @@ namespace App\Models\Parser;
 
 use App\Models\Group;
 use App\Models\Rank;
-use App\Services\GroupsService;
 use DOMDocument;
 use DOMElement;
 use DOMXPath;
@@ -12,15 +11,8 @@ use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
 
-class SimplyParser implements ParserInterface
+class SimplyParser extends AbstractParser
 {
-    protected Collection $groups;
-
-    public function __construct()
-    {
-        $this->groups = app(GroupsService::class)->getAllGroupsWithout()->pluck('name');
-    }
-
     public function parse(string $file, bool $needConvert = true): Collection
     {
         $doc = new DOMDocument();

@@ -10,7 +10,7 @@ use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
 
-class WinOrientHtmlParser implements ParserInterface
+class WinOrientHtmlParser extends AbstractParser
 {
     /**
      * @param string $file

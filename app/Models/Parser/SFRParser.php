@@ -8,7 +8,7 @@ use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
 
-class SFRParser implements ParserInterface
+class SFRParser extends AbstractParser
 {
     public function parse(string $file, bool $needConvert = true): Collection
     {

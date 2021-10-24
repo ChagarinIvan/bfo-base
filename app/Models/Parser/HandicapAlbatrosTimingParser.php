@@ -18,7 +18,7 @@ use RuntimeException;
  *
  * @package App\Models\Parser
  */
-class HandicapAlbatrosTimingParser implements ParserInterface
+class HandicapAlbatrosTimingParser extends AbstractParser
 {
     public function parse(string $file, bool $needConvert = true): Collection
     {
