@@ -152,9 +152,11 @@ class WebRoutesServiceProvider extends ServiceProvider
 
                 //groups
                 $this->routeRegistrar->prefix('groups')->group(function () {
-                    $this->route->get('',               Groups\ShowGroupsListAction::class);
-                    $this->route->get('{group}/delete', Groups\DeleteGroupAction::class);
-                    $this->route->get('{group}',        Groups\ShowGroupAction::class);
+                    $this->route->get( '',               Groups\ShowGroupsListAction::class);
+                    $this->route->get( '{group}/delete', Groups\DeleteGroupAction::class);
+                    $this->route->get( '{group}',        Groups\ShowGroupAction::class);
+                    $this->route->get( '{group}/unit',   Groups\ShowUnitGroupsAction::class);
+                    $this->route->post('{group}/unit',   Groups\UnitGroupsAction::class);
                 });
 
                 //auth group

@@ -7,10 +7,10 @@ use App\Models\Rank;
 use DOMDocument;
 use DOMXPath;
 use Exception;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 
-class WinOrientHtmlParser implements ParserInterface
+class WinOrientHtmlParser extends AbstractParser
 {
     /**
      * @param string $file

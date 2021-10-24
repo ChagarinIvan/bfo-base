@@ -49,7 +49,11 @@
                         </td>
                         <td>{{ $group->distances->count() }}</td>
                         <td>
-                            <x-button text="app.common.sum" color="info" icon="bi-stickies"/>
+                            <x-button url="{{ action(\App\Http\Controllers\Groups\ShowUnitGroupsAction::class, [$group->id]) }}"
+                                      text="app.common.sum"
+                                      color="info"
+                                      icon="bi-stickies"
+                            />
                             <x-edit-button/>
                             <x-delete-button modal-id="deleteModal{{ $group->id }}"/>
                         </td>

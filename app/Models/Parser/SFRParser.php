@@ -5,10 +5,10 @@ namespace App\Models\Parser;
 use App\Models\Group;
 use App\Models\Rank;
 use Exception;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 
-class SFRParser implements ParserInterface
+class SFRParser extends AbstractParser
 {
     public function parse(string $file, bool $needConvert = true): Collection
     {

@@ -9,11 +9,11 @@ use Illuminate\Mail\Mailable;
 class ErrorMail extends Mailable
 {
     /**
-     * @var \Exception
+     * @var \Throwable
      */
-    private \Exception $error;
+    private \Throwable $error;
 
-    public function __construct(\Exception $exception)
+    public function __construct(\Throwable $exception)
     {
         $this->error = $exception;
     }
@@ -25,7 +25,7 @@ class ErrorMail extends Mailable
         return $this->from('Chagarin_Ivan@tut.by')
             ->to($email)
             ->setAddress($email, $email)
-            ->subject('Parsing error')
+            ->subject($this->error->getMessage())
             ->view('emails.error')
             ->with([
                 'error' => $this->error,

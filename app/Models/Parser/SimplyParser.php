@@ -8,10 +8,10 @@ use DOMDocument;
 use DOMElement;
 use DOMXPath;
 use Exception;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 
-class SimplyParser implements ParserInterface
+class SimplyParser extends AbstractParser
 {
     public function parse(string $file, bool $needConvert = true): Collection
     {
@@ -46,12 +46,12 @@ class SimplyParser implements ParserInterface
             } elseif (
                 (
                     ($groupNameLine = trim($line, ' ,')) &&
-                    (isset(Group::FIXING_MAP[$line]) || in_array($line, Group::GROUPS, true))
+                    (isset(Group::FIXING_MAP[$line]) || $this->groups->containsStrict($groupNameLine))
                 ) ||
                 (
                     $withSpace &&
                     ($groupNameLine = trim(substr($line, 0, strpos($line, ' ')), ' ,')) &&
-                    (isset(Group::FIXING_MAP[$groupNameLine]) || in_array($groupNameLine, Group::GROUPS, true))
+                    (isset(Group::FIXING_MAP[$groupNameLine]) || $this->groups->containsStrict($groupNameLine))
                 )
             ) {
                 $groupName = Group::FIXING_MAP[$groupNameLine] ?? $groupNameLine;

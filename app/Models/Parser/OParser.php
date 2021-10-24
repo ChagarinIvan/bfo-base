@@ -4,8 +4,8 @@ namespace App\Models\Parser;
 
 use App\Models\Group;
 use App\Models\Rank;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 
 /**
  * Class OParser
@@ -14,7 +14,7 @@ use Illuminate\Support\Carbon;
  *
  * @package App\Models\Parser
  */
-class OParser implements ParserInterface
+class OParser extends AbstractParser
 {
     private bool $setVk = false;
 

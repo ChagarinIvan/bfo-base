@@ -12,6 +12,12 @@
 @section('content')
     <div class="row">
         <div class="col-12">
+            <x-button url="{{ action(\App\Http\Controllers\Groups\ShowUnitGroupsAction::class, [$group->id]) }}"
+                      text="app.common.sum"
+                      color="info"
+                      icon="bi-stickies"
+            />
+            <x-edit-button/>
             <x-back-button/>
         </div>
     </div>

@@ -4,10 +4,10 @@ namespace App\Models\Parser;
 
 use App\Models\Group;
 use App\Models\Rank;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 
-class OBelarusNetRelayParser implements ParserInterface
+class OBelarusNetRelayParser extends AbstractParser
 {
     private ?int $commandPlace = null;
     private ?int $commandPoints = null;

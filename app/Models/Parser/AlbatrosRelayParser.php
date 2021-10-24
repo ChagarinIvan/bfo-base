@@ -6,10 +6,10 @@ use App\Models\Group;
 use App\Models\Rank;
 use DOMDocument;
 use DOMXPath;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 
-class AlbatrosRelayParser implements ParserInterface
+class AlbatrosRelayParser extends AbstractParser
 {
     public function parse(string $file, bool $needConvert = true): Collection
     {
