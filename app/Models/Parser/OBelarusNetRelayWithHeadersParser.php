@@ -6,8 +6,8 @@ use App\Models\Group;
 use App\Models\Rank;
 use DOMDocument;
 use DOMXPath;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 
 class OBelarusNetRelayWithHeadersParser extends AbstractParser
 {

@@ -2,7 +2,7 @@
 
 namespace App\Models\Parser;
 
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 
 interface ParserInterface
 {
