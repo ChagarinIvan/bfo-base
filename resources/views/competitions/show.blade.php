@@ -1,6 +1,7 @@
 @php
     use App\Models\Competition;
     use App\Models\Event;
+    use Illuminate\Support\Collection;
     /**
      * @var Competition $competition;
      * @var Event[]|Collection $events;
@@ -9,7 +10,7 @@
 
 @extends('layouts.app')
 
-@section('title', $competition->name, 20)
+@section('title', $competition->name)
 
 @section('content')
     @auth

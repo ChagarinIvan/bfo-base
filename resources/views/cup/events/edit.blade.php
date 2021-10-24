@@ -1,5 +1,5 @@
 @php
-    use \App\Models\Cup;
+    use App\Models\Cup;
     use App\Models\CupEvent;
     use App\Models\Event;
     use Illuminate\Support\Collection;
