@@ -62,6 +62,20 @@ class GroupsService
 
     public function deleteGroup(Group $group): void
     {
+        foreach ($group->distances as $distance) {
+            $distance->protocolLines()->delete();
+        }
+        $group->distances()->delete();
         $group->delete();
+    }
+
+    /**
+     * @param array $groupIdList
+     * @return Collection
+     */
+    public function getAllGroupsWithout(array $groupIdList = []): Collection
+    {
+        $groups = $this->groupsRepository->getAll();
+        return $groups->filter(fn(Group $group) => !in_array($group->id, $groupIdList, true));
     }
 }

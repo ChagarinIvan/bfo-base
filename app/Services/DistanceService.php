@@ -42,4 +42,11 @@ class DistanceService
     {
         return $this->distanceRepository->getEqualDistances($mainDistance);
     }
+
+    public function updateDistanceGroup(Distance $distance, int $groupId): Distance
+    {
+        $distance->group_id = $groupId;
+        $distance->save();
+        return $distance;
+    }
 }

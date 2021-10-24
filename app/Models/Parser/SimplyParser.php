@@ -4,6 +4,7 @@ namespace App\Models\Parser;
 
 use App\Models\Group;
 use App\Models\Rank;
+use App\Services\GroupsService;
 use DOMDocument;
 use DOMElement;
 use DOMXPath;
@@ -13,6 +14,13 @@ use Illuminate\Support\Carbon;
 
 class SimplyParser implements ParserInterface
 {
+    protected Collection $groups;
+
+    public function __construct()
+    {
+        $this->groups = app(GroupsService::class)->getAllGroupsWithout()->pluck('name');
+    }
+
     public function parse(string $file, bool $needConvert = true): Collection
     {
         $doc = new DOMDocument();
@@ -46,12 +54,12 @@ class SimplyParser implements ParserInterface
             } elseif (
                 (
                     ($groupNameLine = trim($line, ' ,')) &&
-                    (isset(Group::FIXING_MAP[$line]) || in_array($line, Group::GROUPS, true))
+                    (isset(Group::FIXING_MAP[$line]) || $this->groups->containsStrict($groupNameLine))
                 ) ||
                 (
                     $withSpace &&
                     ($groupNameLine = trim(substr($line, 0, strpos($line, ' ')), ' ,')) &&
-                    (isset(Group::FIXING_MAP[$groupNameLine]) || in_array($groupNameLine, Group::GROUPS, true))
+                    (isset(Group::FIXING_MAP[$groupNameLine]) || $this->groups->containsStrict($groupNameLine))
                 )
             ) {
                 $groupName = Group::FIXING_MAP[$groupNameLine] ?? $groupNameLine;
