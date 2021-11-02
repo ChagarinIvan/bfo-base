@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Error\Show404ErrorAction;
@@ -10,7 +8,6 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller;
 use Illuminate\Routing\Redirector;
-use Symfony\Component\HttpFoundation\Response;
 
 abstract class AbstractAction extends Controller
 {
@@ -25,11 +22,11 @@ abstract class AbstractAction extends Controller
         $this->redirector = $redirector;
     }
 
-    public function callAction($method, $parameters): Response
+    public function callAction($method, $parameters)
     {
         try {
             return $this->{$method}(...array_values($parameters));
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             $this->viewService->sendErrorMail($exception);
             return $this->redirectToError();
         }

@@ -1,24 +1,22 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Http\Controllers\Api;
 
-use App\Repositories\PersonsRepository;
+use App\Services\PersonsService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller as BaseController;
 
 class PersonsController extends BaseController
 {
-    private PersonsRepository $repository;
+    private PersonsService $personsService;
 
-    public function __construct(PersonsRepository $repository)
+    public function __construct(PersonsService $personsService)
     {
-        $this->repository = $repository;
+        $this->personsService = $personsService;
     }
 
     public function index(): JsonResponse
     {
-        return response()->json($this->repository->getAll());
+        return response()->json($this->personsService->allPersons());
     }
 }

@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Http\Controllers\Login;
 
 use App\Http\Controllers\AbstractAction;
