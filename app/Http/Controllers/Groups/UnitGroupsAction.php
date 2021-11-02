@@ -9,8 +9,8 @@ use Illuminate\View\View;
 class UnitGroupsAction extends AbstractGroupAction
 {
     /**
+     * @param Request $request
      * @param int $firstGroupId //которую объединяем, в итоге она удаляется.
-     * @param int $secondGroupId //та на которую перекинутся результаты
      * @return View|RedirectResponse
      * @template resources/views/groups/show.blade.php
      */

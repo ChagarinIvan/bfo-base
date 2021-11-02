@@ -29,9 +29,8 @@
         </div>
     </div>
     <div class="row">
-        <form
-            method="POST"
-            action="{{ action(\App\Http\Controllers\CupEvents\UpdateCupEventAction::class, [$cup, $cupEvent]) }}"
+        <form method="POST"
+              action="{{ action(\App\Http\Controllers\CupEvents\UpdateCupEventAction::class, [$cup, $cupEvent]) }}"
         >
             @csrf
             <div class="form-floating mb-3">

@@ -14,7 +14,7 @@ class ShowCupTableAction extends AbstractCupAction
 {
     public function __invoke(Cup $cup, Group $group): View|RedirectResponse
     {
-        $cupEvents = $this->cupEventsService->getCupEvents($cup)->sortBy('events.date');
+        $cupEvents = $this->cupEventsService->getCupEvents($cup)->sortBy('event.date');
         $cupPoints = $this->cupEventsService->calculateCup($cup, $cupEvents, $group);
 
         return $this->view('cup.table', [

@@ -2,9 +2,7 @@
 
 namespace App\Exceptions;
 
-use App\Mail\ErrorMail;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Illuminate\Mail\Mailer;
 
 class Handler extends ExceptionHandler
 {
@@ -34,12 +32,5 @@ class Handler extends ExceptionHandler
      */
     public function register()
     {
-        $this->renderable(function (\Exception $e, $request) {
-            if (!app()->runningInConsole() && !app()->runningUnitTests() && ((bool)env('APP_DEBUG')) === false) {
-                app(Mailer::class)->send(new ErrorMail($e));
-                return response()->view('errors.error', [], 404);
-            }
-            return false;
-        });
     }
 }

@@ -10,6 +10,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller;
 use Illuminate\Routing\Redirector;
+use Symfony\Component\HttpFoundation\Response;
 
 abstract class AbstractAction extends Controller
 {
@@ -22,6 +23,16 @@ abstract class AbstractAction extends Controller
     ) {
         $this->viewService = $viewService;
         $this->redirector = $redirector;
+    }
+
+    public function callAction($method, $parameters): Response
+    {
+        try {
+            return $this->{$method}(...array_values($parameters));
+        } catch (\Exception $exception) {
+            $this->viewService->sendErrorMail($exception);
+            return $this->redirectToError();
+        }
     }
 
     protected function view(string $template, array $data = []): View

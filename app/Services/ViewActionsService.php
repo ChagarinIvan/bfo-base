@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Http\Controllers\BackAction;
+use App\Mail\ErrorMail;
+use Illuminate\Contracts\Mail\Mailer;
 use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Contracts\View\Factory as ViewFactory;
 use Illuminate\Contracts\View\View;
@@ -15,17 +17,20 @@ class ViewActionsService
     private UserService $userService;
     private BackUrlService $backUrlService;
     private UrlGenerator $urlGenerator;
+    private Mailer $mailer;
 
     public function __construct(
         ViewFactory $viewFactory,
         UserService $userService,
         BackUrlService $backUrlService,
         UrlGenerator $urlGenerator,
+        Mailer $mailer,
     ) {
         $this->viewFactory = $viewFactory;
         $this->userService = $userService;
         $this->backUrlService = $backUrlService;
         $this->urlGenerator = $urlGenerator;
+        $this->mailer = $mailer;
     }
 
     public function cleanBackUrls(): void
@@ -81,5 +86,10 @@ class ViewActionsService
     public function getActualAction(): string
     {
         return $this->backUrlService->getActualAction();
+    }
+
+    public function sendErrorMail(\Throwable $exception): void
+    {
+        $this->mailer->send(new ErrorMail($exception));
     }
 }
