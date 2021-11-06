@@ -86,7 +86,7 @@ class MasterCupType extends AbstractCupType
      * @param int $groupId
      * @return Collection
      */
-    private function calculateGroup(CupEvent $cupEvent, int $groupId): Collection
+    protected function calculateGroup(CupEvent $cupEvent, int $groupId): Collection
     {
         return $this->calculateLines(
             $cupEvent,

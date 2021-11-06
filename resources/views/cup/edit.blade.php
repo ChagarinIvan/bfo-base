@@ -44,19 +44,6 @@
                 </select>
                 <label for="year">{{ __('app.common.year') }}</label>
             </div>
-            <div class="form-group mb-3">
-                <select class="selectpicker form-control" multiple data-live-search="true" id="groups" name="groups[]'" title="{{ __('app.common.groups') }}">
-                    @php
-                        $selectedGroups = $cup->getCupType()->getGroups()->pluck('id')->toArray();
-                    @endphp
-                    @foreach($groups as $group)
-                        <option value="{{ $group->id }}"
-                                {{ in_array($group->id, $selectedGroups, true) ? 'selected' : '' }}
-                                data-content="<span class='badge' style='background: {{ \App\Facades\Color::getColor($group->name) }}'
-                    >{{ $group->name }}</span>">{{ $group->name }}</option>
-                    @endforeach
-                </select>
-            </div>
             <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3 col-xxl-2">
                 <input type="submit" class="btn btn-outline-primary btn-sm" value="{{ __('app.common.update') }}">
                 <x-back-button/>

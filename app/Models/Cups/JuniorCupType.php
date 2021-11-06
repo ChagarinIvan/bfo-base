@@ -2,10 +2,22 @@
 
 namespace App\Models\Cups;
 
+use App\Models\CupEvent;
+use App\Models\CupEventPoint;
 use App\Models\Group;
 use Illuminate\Support\Collection;
 
-class JuniorCupType extends EliteCupType
+/**
+ * При начислении очков Кубка БФО среди юниоров очки начисляются спортсменам
+ * в случае участия в группе 20 или в сильнейшей из групп 21.
+ * Если спортсмен на этапе участвует в сильнейшей 21 группе при наличии 20 группы,
+ * ему начисляются очки в соответствии с расчётом от лидера 21 группы.
+ *
+ * В случае отсутствия на этапе 20 группы,
+ * очки в юниорский рейтинг рассчитываются отдельно для спортсменов
+ * соответствующего возраста из результатов сильнейшей 21 группы.
+ */
+class JuniorCupType extends MasterCupType
 {
     public function getId(): string
     {
@@ -20,5 +32,41 @@ class JuniorCupType extends EliteCupType
     public function getGroups(): Collection
     {
         return $this->groupsService->getGroups([Group::M20, Group::W20]);
+    }
+
+    protected function getGroupProtocolLines(CupEvent $cupEvent, Group $group): Collection
+    {
+        $year = $cupEvent->cup->year;
+        $startYear = $year - $group->years();
+        $eliteGroup = $group->isMale() ? Group::M21E : Group::W21E;
+        $groups = $this->groupsService->getGroups([$eliteGroup]);
+        $groups->push($group);
+
+        return $this->protocolLinesRepository->getCupEventProtocolLinesForPersonsCertainAge(
+            $cupEvent,
+            $startYear,
+            $startYear,
+            true,
+            $groups
+        );
+    }
+
+    /**
+     * @param CupEvent $cupEvent
+     * @param Group $mainGroup
+     * @return Collection //array<int, CupEventPoint>
+     */
+    public function calculateEvent(CupEvent $cupEvent, Group $mainGroup): Collection
+    {
+        $results = new Collection();
+        $cupEventProtocolLines = $this->getGroupProtocolLines($cupEvent, $mainGroup);
+        $cupEventProtocolLines = $cupEventProtocolLines->groupBy('distance.group_id');
+
+        foreach ($cupEventProtocolLines as $groupId => $groupProtocolLines) {
+            $eventGroupResults = $this->calculateGroup($cupEvent, $groupId);
+            $results = $results->merge($eventGroupResults->intersectByKeys($groupProtocolLines->keyBy('person_id')));
+        }
+
+        return $results->sortByDesc(fn (CupEventPoint $cupEventResult) => $cupEventResult->points);
     }
 }

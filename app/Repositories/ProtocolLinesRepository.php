@@ -60,6 +60,7 @@ class ProtocolLinesRepository
         string $startYear,
         string $finishYear,
         bool $withPayments = false,
+        Collection $groups = null,
     ): Collection {
         $protocolLinesQuery = ProtocolLine::selectRaw(new Expression('protocol_lines.*'))
             ->join('person', 'person.id', '=', 'protocol_lines.person_id')
@@ -73,6 +74,10 @@ class ProtocolLinesRepository
                 ->join('persons_payments', 'person.id', '=', 'persons_payments.person_id')
                 ->where('persons_payments.year', '=', $cupEvent->cup->year)
                 ->havingRaw(new Expression("`persons_payments`.`date` <= '{$cupEvent->event->date}'"));
+        }
+
+        if ($groups) {
+            $protocolLinesQuery->whereIn('distances.group_id', $groups->pluck('id'));
         }
 
         return $protocolLinesQuery->get();
