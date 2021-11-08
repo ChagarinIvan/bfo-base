@@ -151,7 +151,7 @@ class WebRoutesServiceProvider extends ServiceProvider
                 });
 
                 //groups
-                $this->routeRegistrar->prefix('groups')->group(function () {
+                $this->routeRegistrar->prefix('groups')->middleware(['auth'])->group(function () {
                     $this->route->get( '',               Groups\ShowGroupsListAction::class);
                     $this->route->get( '{group}/delete', Groups\DeleteGroupAction::class);
                     $this->route->get( '{group}',        Groups\ShowGroupAction::class);

@@ -42,12 +42,12 @@
                                href="{{ action(\App\Http\Controllers\Cups\ShowCupsListAction::class, [App\Models\Year::actualYear()]) }}"
                             >{{ __('app.navbar.cups') }}</a>
                         </li>
-                        <li>
-                            <a class="dropdown-item {{ $isGroupsRoute ? 'active' : '' }}"
-                               href="{{ action(\App\Http\Controllers\Groups\ShowGroupsListAction::class) }}"
-                            >{{ __('app.common.groups') }}</a>
-                        </li>
                         @auth
+                            <li>
+                                <a class="dropdown-item {{ $isGroupsRoute ? 'active' : '' }}"
+                                   href="{{ action(\App\Http\Controllers\Groups\ShowGroupsListAction::class) }}"
+                                >{{ __('app.common.groups') }}</a>
+                            </li>
                             <li>
                                 <a class="dropdown-item {{ $isFlagsRoute ? 'active' : '' }}"
                                    href="{{ action(\App\Http\Controllers\Flags\ShowFlagsListAction::class) }}"
