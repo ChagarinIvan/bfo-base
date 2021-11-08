@@ -69,11 +69,12 @@
                                 <th data-sortable="true">
                                     <a href="{{ action(\App\Http\Controllers\CupEvents\ShowCupEventGroupAction::class, [$cup->id, $cupEvent->id, $activeGroup->id]) }}"
                                         class="text-white">
-                                        {{ $cupEvent->event->date->format('Y-m-d') }}
+                                        {{ $cupEvent->event->date->format('m-d') }}
                                     </a>
                                 </th>
                             @endforeach
                             <th data-sortable="true">{{ __('app.common.points') }}</th>
+                            <th data-sortable="true">{{ __('app.common.average') }}</th>
                             <th data-sortable="true">{{ __('app.common.place') }}</th>
                         </tr>
                     </thead>
@@ -83,6 +84,7 @@
                                 /** @var \App\Models\Person $person */
                                 $person = $persons->get($personId);
                                 $sum = 0;
+                                $count = 0;
                             @endphp
                             <tr>
                                 <td>{{ $place }}</td>
@@ -116,6 +118,7 @@
                                         @if ($isBold)
                                             @php
                                                 $sum += $cupEventPoint->points;
+                                                $count++;
                                             @endphp
                                             <td>
                                                 <a href="{{ action(\App\Http\Controllers\Event\ShowEventAction::class, [$cupEvent->event_id, $cupEventPoint->protocolLine->distance_id]) }}#{{ $cupEventPoint->protocolLine->id }}">
@@ -134,6 +137,7 @@
                                     @endif
                                 @endforeach
                                 <td><b>{{ $sum }}</b></td>
+                                <td><b>{{ ($count === 0) ? 0 : round($sum / $count) }}</b></td>
                                 <td><b>{{ $place++ }}</b></td>
                             </tr>
                         @endforeach

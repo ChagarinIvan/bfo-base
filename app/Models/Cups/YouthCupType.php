@@ -167,6 +167,6 @@ class YouthCupType extends AbstractCupType
             $lines = $lines->merge($this->getGroupProtocolLines($cupEvent, $group));
         }
 
-        return $lines->count();
+        return $lines->unique()->count();
     }
 }

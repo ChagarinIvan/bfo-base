@@ -26,7 +26,7 @@
                 <label for="firstname">{{ __('app.common.name') }}</label>
             </div>
             <div class="form-floating mb-3">
-                <input class="form-control" type="date" id="birthday" name="birthday" value="{{ $person->birthday->format('Y-m-d') }}">
+                <input class="form-control" type="date" id="birthday" name="birthday" value="{{ ($person->birthday === null) ? '' : $person->birthday->format('Y-m-d') }}">
                 <label for="birthday">{{ __('app.common.birthday') }}</label>
             </div>
             <div class="form-floating mb-3">
