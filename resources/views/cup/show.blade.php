@@ -53,8 +53,6 @@
                data-resizable="true"
                data-search="true"
                data-search-highlight="true"
-               data-sticky-header="true"
-               data-sticky-header-offset-y="54"
                data-custom-sort="customSort"
                data-pagination-next-text="{{ __('pagination.next') }}"
                data-pagination-pre-text="{{ __('pagination.previous') }}"

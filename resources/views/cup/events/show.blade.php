@@ -55,8 +55,6 @@
                        data-resizable="true"
                        data-search="true"
                        data-search-highlight="true"
-                       data-sticky-header="true"
-                       data-sticky-header-offset-y="54"
                        data-custom-sort="customSort"
                 >
                     <thead class="table-dark">

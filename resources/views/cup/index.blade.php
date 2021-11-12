@@ -48,8 +48,6 @@
                            data-sort-class="table-active"
                            data-page-list="[10,25,50,100,All]"
                            data-resizable="true"
-                           data-sticky-header="true"
-                           data-sticky-header-offset-y="54"
                            data-custom-sort="customSort"
                     >
                         <thead class="table-dark">

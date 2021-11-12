@@ -38,8 +38,6 @@
                data-resizable="true"
                data-pagination="true"
                data-page-list="[10,25,50,100,All]"
-               data-sticky-header="true"
-               data-sticky-header-offset-y="54"
                data-custom-sort="customSort"
                data-pagination-next-text="{{ __('pagination.next') }}"
                data-pagination-pre-text="{{ __('pagination.previous') }}"
