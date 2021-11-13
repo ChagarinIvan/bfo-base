@@ -10,7 +10,7 @@ class ShowEditCupEventFormAction extends AbstractCupAction
 {
     public function __invoke(int $cupId, int $cupEventId): View|RedirectResponse
     {
-        $cup = $this->cupsRepository->getCup($cupId);
+        $cup = $this->cupsService->getCup($cupId);
         $cupEvent = $this->cupEventsService->getCupEvent($cupEventId);
 
         if ($cup === null || $cupEvent === null) {

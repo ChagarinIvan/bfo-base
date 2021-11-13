@@ -104,6 +104,7 @@ class RankService
                         $actualRanks->put($personId, $rank);
                     }
                 }
+
                 return $actualRanks;
             }
         );

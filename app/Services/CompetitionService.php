@@ -3,17 +3,14 @@
 namespace App\Services;
 
 use App\Models\Competition;
-use App\Repositories\CompetitionsRepository;
 use Illuminate\Support\Collection;
 
 class CompetitionService
 {
     private EventService $eventService;
-    private CompetitionsRepository $competitionsRepository;
 
-    public function __construct(EventService $eventService, CompetitionsRepository $competitionsRepository) {
+    public function __construct(EventService $eventService) {
         $this->eventService = $eventService;
-        $this->competitionsRepository = $competitionsRepository;
     }
 
     public function deleteCompetition(Competition $competition): void
@@ -26,7 +23,7 @@ class CompetitionService
 
     public function getCompetition(int $competitionId): Competition
     {
-        $competition = $this->competitionsRepository->findCompetition($competitionId);
+        $competition = Competition::find($competitionId);
         if ($competition) {
             return $competition;
         }

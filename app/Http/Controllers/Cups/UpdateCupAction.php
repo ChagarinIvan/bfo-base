@@ -15,7 +15,6 @@ class UpdateCupAction extends AbstractCupAction
             'name' => 'required|unique:competitions|max:255',
             'year' => 'required|digits:4',
             'type' => 'required',
-            'groups' => 'required|array',
             'events_count' => 'required|numeric',
         ]);
 

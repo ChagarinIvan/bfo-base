@@ -2,7 +2,7 @@
 
 namespace Tests\Integration;
 
-use App\Services\IdentService;
+use App\Services\ProtocolLineIdentService;
 use Tests\TestCase;
 
 class IdentServiceTest extends TestCase
@@ -14,7 +14,7 @@ class IdentServiceTest extends TestCase
      */
     public function testPrepareLine(string $name, string $expectedName): void
     {
-        $this->assertEquals($expectedName, IdentService::prepareLine($name));
+        $this->assertEquals($expectedName, ProtocolLineIdentService::prepareLine($name));
     }
 
     public function prepareLineDataProvider(): array

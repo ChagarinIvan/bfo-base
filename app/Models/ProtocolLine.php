@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Services\IdentService;
+use App\Services\ProtocolLineIdentService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Query\Builder;
@@ -92,23 +92,28 @@ class ProtocolLine extends Model
 
     /**
      * Создаём идентификационную строку из фамилии имени и года
+     *
+     * @param string $lastname
+     * @param string $firstname
+     * @param int|null $year
+     *
      * @return string
      */
-    public function makeIdentLine(): string
+    public static function makeIdentLine(string $lastname, string $firstname, int $year = null): string
     {
         $data = [
-            IdentService::prepareLine(mb_strtolower($this->lastname)),
-            IdentService::prepareLine(mb_strtolower($this->firstname)),
+            ProtocolLineIdentService::prepareLine(mb_strtolower($lastname)),
+            ProtocolLineIdentService::prepareLine(mb_strtolower($firstname)),
         ];
-        if ($this->year !== null) {
-            $data[] = $this->year;
+        if ($year !== null) {
+            $data[] = $year;
         }
         return implode('_', $data);
     }
 
     public function fillProtocolLine(int $distanceId): void
     {
-        $this->prepared_line = $this->makeIdentLine();
+        $this->prepared_line = self::makeIdentLine($this->lastname, $this->firstname, $this->year);
 
         //чистим разряды
         $this->rank = Rank::getRank($this->rank) ?? '';

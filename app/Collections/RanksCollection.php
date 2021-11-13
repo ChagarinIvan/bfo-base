@@ -19,19 +19,6 @@ class RanksCollection
         $this->ranks->each($closure);
     }
 
-    public function transform(\Closure $closure): void
-    {
-        $this->ranks = $this->ranks->transform($closure);
-    }
-
-    /**
-     * @return Rank[]
-     */
-    public function toArray(): array
-    {
-        return $this->ranks->toArray();
-    }
-
     public function getCollection(): Collection
     {
         return $this->ranks;

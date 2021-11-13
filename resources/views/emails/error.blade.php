@@ -8,4 +8,4 @@
 <p>Code: {{ $error->getCode() }}</p>
 <p>Message: {{ $error->getMessage() }}</p>
 <p>Line: {{ $error->getLine() }}</p>
-<p>Trace: {{ $error->getTraceAsString() }}</p>
+<p>Trace: @php var_dump($error->getTrace()) @endphp</p>

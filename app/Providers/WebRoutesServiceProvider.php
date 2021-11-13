@@ -80,7 +80,6 @@ class WebRoutesServiceProvider extends ServiceProvider
                 $this->routeRegistrar->prefix('persons')->group(function () {
                     $this->route->get('', Person\ShowPersonsListAction::class);
                     $this->route->get('{person}/show', Person\ShowPersonAction::class);
-                    $this->route->get('{person}/rank', Person\ShowPersonRanksAction::class);
 
                     $this->middleware(['auth'])->group(function () {
                         $this->route->get( 'create',                  Person\ShowCreatePersonFormAction::class);
@@ -94,7 +93,15 @@ class WebRoutesServiceProvider extends ServiceProvider
                 });
 
                 //ranks
-                $this->route->get('ranks/{rank}', Rank\ShowRanksListAction::class);
+                $this->routeRegistrar->prefix('ranks')->group(function () {
+                    $this->route->get('list/{rank}',     Rank\ShowRanksListAction::class);
+                    $this->route->get('person/{person}', Rank\ShowPersonRanksAction::class);
+
+                    $this->middleware(['auth'])->group(function () {
+                        $this->route->get( 'check', Rank\ShowCheckPersonsRanksFormAction::class);
+                        $this->route->post('check', Rank\CheckPersonsRanksAction::class);
+                    });
+                });
 
                 //clubs
                 $this->routeRegistrar->prefix('club')->group(function () {

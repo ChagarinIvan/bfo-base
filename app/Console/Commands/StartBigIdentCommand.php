@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\ProtocolLine;
-use App\Services\IdentService;
+use App\Services\ProtocolLineIdentService;
 use Illuminate\Console\Command;
 
 /**
@@ -25,7 +25,7 @@ class StartBigIdentCommand extends Command
         $startTime = time();
         $protocolLines = ProtocolLine::whereNull('person_id')->get();
         $this->info("Has {$protocolLines->count()} lines");
-        IdentService::pushIdentLines($protocolLines->pluck('prepared_line'));
+        ProtocolLineIdentService::pushIdentLines($protocolLines->pluck('prepared_line'));
         $time = time() - $startTime;
         $this->info("Time for query: {$time}");
         $this->info("Finish");

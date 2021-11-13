@@ -22,6 +22,20 @@ class PersonsService
         return Person::all();
     }
 
+    public function getPerson(int $personId): Person
+    {
+        $person = Person::find($personId);
+        if ($person) {
+            return $person;
+        }
+        throw new \RuntimeException('Wrong person id.');
+    }
+
+    public function getPersons(Collection $personsIds): Collection
+    {
+        return Person::whereIn('id', $personsIds)->get();
+    }
+
     public function storePerson(Person $person): Person
     {
         $person->save();
@@ -32,13 +46,13 @@ class PersonsService
     public function makePrompts(Person $person): void
     {
         $personData = [
-            IdentService::prepareLine(mb_strtolower($person->lastname)),
-            IdentService::prepareLine(mb_strtolower($person->firstname)),
+            ProtocolLineIdentService::prepareLine(mb_strtolower($person->lastname)),
+            ProtocolLineIdentService::prepareLine(mb_strtolower($person->firstname)),
         ];
 
         $reversPersonData = [
-            IdentService::prepareLine(mb_strtolower($person->firstname)),
-            IdentService::prepareLine(mb_strtolower($person->lastname)),
+            ProtocolLineIdentService::prepareLine(mb_strtolower($person->firstname)),
+            ProtocolLineIdentService::prepareLine(mb_strtolower($person->lastname)),
         ];
 
         $this->promptService->storePrompt(implode('_', $personData), $person->id);

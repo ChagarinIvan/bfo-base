@@ -5,24 +5,20 @@ namespace App\Services;
 use App\Models\IdentLine;
 use App\Models\PersonPrompt;
 use App\Models\ProtocolLine;
-use Illuminate\Database\ConnectionInterface;
-use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Collection;
 
-/**
- * Class IdentService
- *
- * @package App\Services
- */
-class IdentService
+class ProtocolLineIdentService
 {
     private RankService $rankService;
-    private ConnectionInterface $db;
+    private ProtocolLineService $protocolLineService;
+    private static Collection $prompts;
 
-    public function __construct(RankService $rankService, ConnectionInterface $db)
-    {
+    public function __construct(
+        RankService $rankService,
+        ProtocolLineService $protocolLineService,
+    ) {
         $this->rankService = $rankService;
-        $this->db = $db;
+        $this->protocolLineService = $protocolLineService;
     }
 
     /**
@@ -99,22 +95,9 @@ class IdentService
     public function simpleIdent(Collection $protocolLines): Collection
     {
         $linesIds = $protocolLines->pluck('id');
-        $this->db->table('protocol_lines', 'pls')
-            ->join('protocol_lines AS plj', 'plj.prepared_line', '=', 'pls.prepared_line')
-            ->whereNull('pls.person_id')
-            ->whereNotNull('plj.person_id')
-            ->whereIn('pls.id', $linesIds)
-            ->update(['pls.person_id' => new Expression('plj.person_id')]);
+        $this->protocolLineService->fastIdent($linesIds);
 
-        $this->db->table('protocol_lines', 'pl')
-            ->join('persons_prompt AS pp', 'pl.prepared_line', '=', 'pp.prompt')
-            ->whereNull('pl.person_id')
-            ->whereIn('pl.id', $linesIds)
-            ->update(['pl.person_id' => new Expression('pp.person_id')]);
-
-        return ProtocolLine::whereIn('id', $linesIds)
-            ->whereNull('person_id')
-            ->get();
+        return $this->protocolLineService->getProtocolLinesInListWithoutPerson($linesIds);
     }
 
     /**
@@ -123,12 +106,12 @@ class IdentService
      * @param string $searchLine
      * @return int
      */
-    public function identPerson(string $searchLine): int
+    public static function identPerson(string $searchLine): int
     {
-        $prompts = PersonPrompt::all();
-        $ranks = collect();
+        self::$prompts = PersonPrompt::all();
+        $ranks = new Collection();
 
-        foreach ($prompts->pluck('prompt') as $prompt) {
+        foreach (self::$prompts->pluck('prompt') as $prompt) {
             $rank = levenshtein($searchLine, $prompt);
             $ranks->push([
                 'prompt' => $prompt,
@@ -139,7 +122,7 @@ class IdentService
         $minRank = $ranks->sortBy('rank')->first();
         if ($minRank['rank'] <= 5) {
             /** @var PersonPrompt $prompt */
-            $prompt = $prompts->where('prompt', $minRank['prompt'])->first();
+            $prompt = self::$prompts->where('prompt', $minRank['prompt'])->first();
             return $prompt->person_id;
         }
         return 0;
@@ -168,6 +151,7 @@ class IdentService
                 }
             }
         }
+
         return $line;
     }
 

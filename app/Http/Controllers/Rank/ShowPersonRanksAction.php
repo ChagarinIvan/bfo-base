@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Person;
+namespace App\Http\Controllers\Rank;
 
 use App\Models\Person;
 use App\Models\Rank;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 
-class ShowPersonRanksAction extends AbstractPersonAction
+class ShowPersonRanksAction extends AbstractRankAction
 {
     public function __invoke(Person $person): View|RedirectResponse
     {

@@ -60,7 +60,7 @@
                     <tr>
                         <td><a href="{{ action(\App\Http\Controllers\Person\ShowPersonAction::class, [$person]) }}">{{ $person->lastname }} {{ $person->firstname }}</a></td>
                         <td>
-                            <a href="{{ action(\App\Http\Controllers\Person\ShowPersonRanksAction::class, [$person->id]) }}">
+                            <a href="{{ action(\App\Http\Controllers\Rank\ShowPersonRanksAction::class, [$person->id]) }}">
                                 {{ isset($actualRanks[$person->id]) ? $actualRanks[$person->id]->rank : '' }}
                             </a>
                         </td>

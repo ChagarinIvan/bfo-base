@@ -24,7 +24,7 @@
         <div class="collapse navbar-collapse" id="navbarContent">
             <ul class="navbar-nav me-auto my-1">
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle {{ ($isCompetitionsRoute || $isCupsRoute || $isGroupsRoute) ? 'active' : '' }}"
+                    <a class="nav-link dropdown-toggle {{ ($isCompetitionsRoute || $isCupsRoute || $isGroupsRoute || $isFlagsRoute) ? 'active' : '' }}"
                        href="#"
                        id="competitionsDropdown"
                        role="button"

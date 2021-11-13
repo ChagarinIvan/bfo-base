@@ -11,7 +11,7 @@ class ShowCupEventGroupAction extends AbstractCupAction
     public function __invoke(int $cupId, int $cupEventId, int $groupId): View|RedirectResponse
     {
         $group = $this->groupsService->getGroup($groupId);
-        $cup = $this->cupsRepository->getCup($cupId);
+        $cup = $this->cupsService->getCup($cupId);
         $cupEvent = $this->cupEventsService->getCupEvent($cupEventId);
 
         if ($group === null || $cup === null || $cupEvent === null) {

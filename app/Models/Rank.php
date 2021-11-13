@@ -132,7 +132,7 @@ class Rank extends Model
     {
         $rank = mb_strtolower($rank);
         foreach (self::REPLACES as $search => $replace) {
-            $rank = str_replace((string)$search, $replace, $rank);
+            $rank = str_replace($search, $replace, $rank);
         }
         return $rank;
     }

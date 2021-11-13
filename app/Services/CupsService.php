@@ -16,4 +16,13 @@ class CupsService
     {
         $cup->delete();
     }
+
+    public function getCup(int $cupId): Cup
+    {
+        $cup = Cup::find($cupId);
+        if ($cup) {
+            return $cup;
+        }
+        throw new \RuntimeException('Wrong cup id.');
+    }
 }

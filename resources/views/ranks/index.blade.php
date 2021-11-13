@@ -12,6 +12,17 @@
 @section('title', __('app.navbar.ranks'))
 
 @section('content')
+    @auth
+        <div class="row mb-3">
+            <div class="col-12">
+                <x-button text="app.rank.check"
+                          color="info"
+                          icon="bi-patch-question-fill"
+                          url="{{ action(\App\Http\Controllers\Rank\ShowCheckPersonsRanksFormAction::class) }}"
+                />
+            </div>
+        </div>
+    @endauth
     <div class="row">
         <ul class="nav nav-tabs pt-2">
             @foreach(\App\Models\Rank::RANKS as $rank)
@@ -55,7 +66,7 @@
                     @foreach ($ranks as $rank)
                         <tr>
                             <td>
-                                <a href="{{ action(\App\Http\Controllers\Person\ShowPersonRanksAction::class, [$rank->person_id]) }}"
+                                <a href="{{ action(\App\Http\Controllers\Rank\ShowPersonRanksAction::class, [$rank->person_id]) }}"
                                 >{{ $rank->person->lastname }} {{ $rank->person->firstname }}</a>
                             </td>
                             <td>{{ $rank->start_date->format('Y-m-d') }}</td>

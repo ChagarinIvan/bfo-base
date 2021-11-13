@@ -24,12 +24,24 @@ class ParserService
      * @param string $protocol
      * @param bool $needConvert
      * @return Collection
-     * @throw Exception
      */
     public function parserProtocol(string $protocol, bool $needConvert): Collection
     {
-        $parser = ParserFactory::createParser($protocol, $this->groupsService->getAllGroupsWithout()->pluck('name'));
+        $parser = ParserFactory::createProtocolParser($protocol, $this->groupsService->getAllGroupsWithout()->pluck('name'));
         return $parser->parse($protocol, $needConvert);
+    }
+
+    /**
+     * По листу определяет необходимый парсер
+     * Парсер разбирает протокол на сырые массивы данных из строк
+     *
+     * @param string $list
+     * @return Collection
+     */
+    public function parserRankList(string $list): Collection
+    {
+        $parser = ParserFactory::createListParser($list);
+        return $parser->parse($list);
     }
 
     /**

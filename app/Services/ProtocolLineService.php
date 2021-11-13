@@ -87,8 +87,25 @@ class ProtocolLineService
         return $this->protocolLinesRepository->getProtocolLine($id, ['distance.event']);
     }
 
+    /**
+     * @param Collection $linesIds
+     * @return Collection|ProtocolLine[]
+     */
+    public function getProtocolLinesInListWithoutPerson(Collection $linesIds): Collection
+    {
+        return ProtocolLine::whereIn('id', $linesIds)
+            ->whereNull('person_id')
+            ->get();
+    }
+
     public function deleteEventLines(Event $event): void
     {
         $event->protocolLines()->delete();
+    }
+
+    public function fastIdent(Collection $linesIds): void
+    {
+        $this->protocolLinesRepository->identByEqualPreparedLine($linesIds);
+        $this->protocolLinesRepository->identByEqualPersonPrompt($linesIds);
     }
 }

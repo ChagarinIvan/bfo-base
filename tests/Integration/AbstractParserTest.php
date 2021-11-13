@@ -22,7 +22,7 @@ abstract class AbstractParserTest extends TestCase
         $protocolContent = $storageManager->disk('tests')->get($this->getFilePath());
 
         $parserClass = $this->getParser();
-        $parser = ParserFactory::createParser($protocolContent, new Collection());
+        $parser = ParserFactory::createProtocolParser($protocolContent, new Collection());
         self::assertInstanceOf($parserClass, $parser);
 
         $lines = $parser->parse($protocolContent, $this->needConvert());

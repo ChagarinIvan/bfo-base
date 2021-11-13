@@ -31,7 +31,7 @@
             <x-button text="app.ranks"
                       color="info"
                       icon="bi-smartwatch"
-                      url="{{ action(\App\Http\Controllers\Person\ShowPersonRanksAction::class, [$person->id]) }}"
+                      url="{{ action(\App\Http\Controllers\Rank\ShowPersonRanksAction::class, [$person->id]) }}"
             />
             <x-back-button/>
         </div>

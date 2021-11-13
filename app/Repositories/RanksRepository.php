@@ -61,9 +61,11 @@ class RanksRepository
                 )
             "), '=', 0);
         }
+
         if ($filter->with !== null) {
             $ranks->with($filter->with);
         }
+
         return new RanksCollection($ranks->get());
     }
 

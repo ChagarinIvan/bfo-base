@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\ProtocolLine;
-use App\Services\IdentService;
+use App\Services\ProtocolLineIdentService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
@@ -26,7 +26,7 @@ class SimpleIndentCommand extends Command
         $startTime = time();
         $protocolLines = ProtocolLine::whereNull('person_id')->get();
         $this->info("Has {$protocolLines->count()} lines");
-        $identService = app(IdentService::class);
+        $identService = app(ProtocolLineIdentService::class);
         $indentCount = $identService->simpleIdent($protocolLines)->count();
         $this->info("Affected rows count is {$indentCount}");
         $time = time() - $startTime;

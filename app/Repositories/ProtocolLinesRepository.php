@@ -101,4 +101,23 @@ class ProtocolLinesRepository
         return ProtocolLine::where('protocol_lines.distance_id', $distanceId)
             ->get();
     }
+
+    public function identByEqualPreparedLine(Collection $linesIds): void
+    {
+        $this->db->table('protocol_lines', 'pls')
+            ->join('protocol_lines AS plj', 'plj.prepared_line', '=', 'pls.prepared_line')
+            ->whereNull('pls.person_id')
+            ->whereNotNull('plj.person_id')
+            ->whereIn('pls.id', $linesIds)
+            ->update(['pls.person_id' => new Expression('plj.person_id')]);
+    }
+
+    public function identByEqualPersonPrompt(Collection $linesIds): void
+    {
+        $this->db->table('protocol_lines', 'pl')
+            ->join('persons_prompt AS pp', 'pl.prepared_line', '=', 'pp.prompt')
+            ->whereNull('pl.person_id')
+            ->whereIn('pl.id', $linesIds)
+            ->update(['pl.person_id' => new Expression('pp.person_id')]);
+    }
 }
