@@ -13,9 +13,9 @@
 @section('title', $competition->name)
 
 @section('content')
-    @auth
-        <div class="row">
-            <div class="col-12">
+    <div class="row">
+        <div class="col-12">
+            @auth
                 <x-button text="app.competition.add_event"
                           color="success"
                           icon="bi-file-earmark-plus-fill"
@@ -26,10 +26,10 @@
                           icon="bi-stickies"
                           url="{{ action(\App\Http\Controllers\Event\ShowUnitEventsFormAction::class, [$competition->id]) }}"
                 />
-                <x-back-button/>
-            </div>
+            @endauth
+            <x-back-button/>
         </div>
-    @endauth
+    </div>
     @if ($events->count() > 0)
         <div class="row pt-3">
             <table id="table"

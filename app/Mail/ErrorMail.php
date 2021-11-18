@@ -10,10 +10,12 @@ class ErrorMail extends Mailable
      * @var \Throwable
      */
     private \Throwable $error;
+    private string $url;
 
-    public function __construct(\Throwable $exception)
+    public function __construct(\Throwable $exception, string $url)
     {
         $this->error = $exception;
+        $this->url = $url;
     }
 
     public function build(): self
@@ -27,6 +29,7 @@ class ErrorMail extends Mailable
             ->view('emails.error')
             ->with([
                 'error' => $this->error,
+                'url' => $this->url,
             ]);
     }
 }

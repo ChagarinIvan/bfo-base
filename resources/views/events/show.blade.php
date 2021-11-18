@@ -16,20 +16,16 @@
 
 @section('content')
     <div class="row mb-3">
-        <div class="col-12">
-            <a href="{{ action(\App\Http\Controllers\Competition\ShowCompetitionAction::class, [$event->competition_id]) }}">
-                <h4>{{ $event->competition->name }}</h4>
-            </a>
-        </div>
+        <div class="col-12"><h4>{{ $event->competition->name }}</h4></div>
     </div>
-    @auth
     <div class="row mb-3">
         <div class="col-12">
-            <x-edit-button url="{{ action(\App\Http\Controllers\Event\ShowEditEventFormAction::class, [$event]) }}"/>
+            @auth
+                <x-edit-button url="{{ action(\App\Http\Controllers\Event\ShowEditEventFormAction::class, [$event]) }}"/>
+            @endauth
             <x-back-button/>
         </div>
     </div>
-    @endauth
     <div class="row">
         <ul class="nav nav-tabs">
             @foreach($event->distances as $distance)

@@ -1,6 +1,7 @@
 @php
     /**
      * @var \Throwable $error
+     * @var string $url
      */
 @endphp
 
@@ -8,4 +9,4 @@
 <p>Code: {{ $error->getCode() }}</p>
 <p>Message: {{ $error->getMessage() }}</p>
 <p>Line: {{ $error->getLine() }}</p>
-<p>Trace: @php var_dump($error->getTrace()) @endphp</p>
+<p>Url: {{ $url }}</p>

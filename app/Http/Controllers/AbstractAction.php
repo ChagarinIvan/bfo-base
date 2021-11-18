@@ -27,7 +27,7 @@ abstract class AbstractAction extends Controller
         try {
             return $this->{$method}(...array_values($parameters));
         } catch (\Throwable $exception) {
-            $this->viewService->sendErrorMail($exception);
+            $this->viewService->sendErrorMail($exception, request()->url());
             return $this->redirectToError();
         }
     }
