@@ -36,9 +36,13 @@ class GroupsService
         return $this->groupsRepository->getAll($with);
     }
 
-    public function getGroup(int $groupId): ?Group
+    public function getGroup(int $groupId): Group
     {
-        return $this->groupsRepository->getGroup($groupId);
+        $group = $this->groupsRepository->getGroup($groupId);
+        if ($group) {
+            return $group;
+        }
+        throw new \RuntimeException('Wrong group id.');
     }
 
     /**

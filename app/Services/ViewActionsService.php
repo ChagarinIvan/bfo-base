@@ -86,8 +86,8 @@ class ViewActionsService
         return $this->backUrlService->getActualAction();
     }
 
-    public function sendErrorMail(\Throwable $exception, string $url): void
+    public function sendErrorMail(\Throwable $exception, string $url, string $previousUrl): void
     {
-        $this->mailer->send(new ErrorMail($exception, $url));
+        $this->mailer->send(new ErrorMail($exception, $url, $previousUrl));
     }
 }

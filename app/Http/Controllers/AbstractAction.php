@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Error\Show404ErrorAction;
+use App\Http\Controllers\Error\ShowUnexpectedErrorAction;
 use App\Services\ViewActionsService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -27,7 +28,7 @@ abstract class AbstractAction extends Controller
         try {
             return $this->{$method}(...array_values($parameters));
         } catch (\Throwable $exception) {
-            $this->viewService->sendErrorMail($exception, request()->url());
+            $this->viewService->sendErrorMail($exception, request()->url(),  url()->previous()) ;
             return $this->redirectToError();
         }
     }
@@ -73,9 +74,14 @@ abstract class AbstractAction extends Controller
         ];
     }
 
-    protected function redirectToError(): RedirectResponse
+    protected function redirectTo404Error(): RedirectResponse
     {
         return $this->redirector->action(Show404ErrorAction::class);
+    }
+
+    protected function redirectToError(): RedirectResponse
+    {
+        return $this->redirector->action(ShowUnexpectedErrorAction::class);
     }
 
     protected function isCompetitionsRoute(): bool

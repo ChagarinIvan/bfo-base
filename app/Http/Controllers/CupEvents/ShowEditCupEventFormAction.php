@@ -13,10 +13,6 @@ class ShowEditCupEventFormAction extends AbstractCupAction
         $cup = $this->cupsService->getCup($cupId);
         $cupEvent = $this->cupEventsService->getCupEvent($cupEventId);
 
-        if ($cup === null || $cupEvent === null) {
-            return $this->redirectToError();
-        }
-
         $events = $this->eventsRepository->getYearEvents($cup->year);
 
         return $this->view('cup.events.edit', [

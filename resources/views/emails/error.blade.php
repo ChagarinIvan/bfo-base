@@ -2,6 +2,7 @@
     /**
      * @var \Throwable $error
      * @var string $url
+     * @var string $previousUrl
      */
 @endphp
 
@@ -10,3 +11,4 @@
 <p>Message: {{ $error->getMessage() }}</p>
 <p>Line: {{ $error->getLine() }}</p>
 <p>Url: {{ $url }}</p>
+<p>Prev-url: {{ $previousUrl }}</p>

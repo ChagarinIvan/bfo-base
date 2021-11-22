@@ -11,11 +11,13 @@ class ErrorMail extends Mailable
      */
     private \Throwable $error;
     private string $url;
+    private string $previousUrl;
 
-    public function __construct(\Throwable $exception, string $url)
+    public function __construct(\Throwable $exception, string $url, string $previousUrl)
     {
         $this->error = $exception;
         $this->url = $url;
+        $this->previousUrl = $previousUrl;
     }
 
     public function build(): self
@@ -30,6 +32,7 @@ class ErrorMail extends Mailable
             ->with([
                 'error' => $this->error,
                 'url' => $this->url,
+                'previous' => $this->previousUrl,
             ]);
     }
 }

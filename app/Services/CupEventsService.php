@@ -28,9 +28,13 @@ class CupEventsService
         return $cupType->getCupEventParticipatesCount($cupEvent);
     }
 
-    public function getCupEvent(int $cupEventId): ?CupEvent
+    public function getCupEvent(int $cupEventId): CupEvent
     {
-        return CupEvent::find($cupEventId);
+        $cupEvent = CupEvent::find($cupEventId);
+        if ($cupEvent) {
+            return $cupEvent;
+        }
+        throw new \RuntimeException('Wrong cup event id.');
     }
 
     public function storeCupEvent(CupEvent $cupEvent): void

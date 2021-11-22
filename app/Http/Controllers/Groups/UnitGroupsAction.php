@@ -19,10 +19,6 @@ class UnitGroupsAction extends AbstractGroupAction
         $firstGroup = $this->groupsService->getGroup($firstGroupId);
         $secondGroup = $this->groupsService->getGroup((int)$request->get('group_id'));
 
-        if ($firstGroup === null || $secondGroup === null) {
-            return $this->redirectToError();
-        }
-
         foreach ($firstGroup->distances as $distance) {
             $this->distanceService->updateDistanceGroup($distance, $secondGroup->id);
         }

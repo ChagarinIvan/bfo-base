@@ -135,6 +135,7 @@ class WebRoutesServiceProvider extends ServiceProvider
 
                 //errors
                 $this->route->get('/404', Error\Show404ErrorAction::class);
+                $this->route->get('/500', Error\ShowUnexpectedErrorAction::class);
 
                 //cups
                 $this->routeRegistrar->prefix('cups')->group(function () {

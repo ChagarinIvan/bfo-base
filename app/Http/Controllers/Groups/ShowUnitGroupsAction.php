@@ -9,7 +9,11 @@ class ShowUnitGroupsAction extends AbstractGroupAction
 {
     public function __invoke(int $groupId): View|RedirectResponse
     {
-        $group = $this->groupsService->getGroup($groupId);
+        try {
+            $group = $this->groupsService->getGroup($groupId);
+        } catch (\RuntimeException) {
+            $this->redirectTo404Error();
+        }
 
         return $this->view('groups.unit', [
             'unitedGroup' => $group,

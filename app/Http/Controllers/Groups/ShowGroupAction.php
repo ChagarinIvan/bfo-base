@@ -14,9 +14,10 @@ class ShowGroupAction extends AbstractGroupAction
      */
     public function __invoke(int $groupId): View|RedirectResponse
     {
-        $group = $this->groupsService->getGroup($groupId);
-        if ($group === null) {
-            return $this->redirectToError();
+        try {
+            $group = $this->groupsService->getGroup($groupId);
+        } catch (\RuntimeException) {
+            return $this->redirectTo404Error();
         }
 
         return $this->view('groups.show', [
