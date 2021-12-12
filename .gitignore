@@ -6,6 +6,9 @@
 /storage/results
 /.vagrant
 /.idea
+/php
+/nginx
+/mysql
 .env
 .phpstorm.meta.php
 .env.backup
