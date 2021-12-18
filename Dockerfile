@@ -25,6 +25,9 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install -j$(nproc) gd \
     && docker-php-ext-install pdo_mysql mbstring zip exif pcntl
 
+RUN pecl install xdebug-3.1.2 \
+    && docker-php-ext-enable xdebug
+
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 

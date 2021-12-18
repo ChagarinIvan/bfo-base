@@ -17,3 +17,6 @@ Homestead.json
 Homestead.yaml
 npm-debug.log
 yarn-error.log
+/php/local.ini
+/nginx/conf.d/app.conf
+/mysql/my.cnf

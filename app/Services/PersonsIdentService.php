@@ -26,7 +26,7 @@ class PersonsIdentService
      */
     public function identLines(Collection $lines): Collection
     {
-        return $this->cache->store('redis')->remember(
+        return $this->cache->remember(
             md5($lines->implode('prepared_line', '_')),
             36000,
             function () use ($lines) {

@@ -93,7 +93,7 @@ class RankService
 
     public function getActualRanks(Collection $personIds): Collection
     {
-        return $this->cache->store('redis')->remember(
+        return $this->cache->remember(
             md5($personIds->implode('')),
             36000,
             function () use ($personIds) {

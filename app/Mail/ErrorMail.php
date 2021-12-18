@@ -24,7 +24,7 @@ class ErrorMail extends Mailable
     {
         $email = 'Chagarin.Ivan@gmail.com';
 
-        return $this->from('Chagarin_Ivan@tut.by')
+        return $this->from(env('ERROR_EMAIL'))
             ->to($email)
             ->setAddress($email, $email)
             ->subject($this->error->getMessage())

@@ -44,7 +44,7 @@ class CupEventsService
 
     public function calculateCup(Cup $cup, Collection $cupEvents, Group $group): array
     {
-        return $this->cache->store('redis')->remember(
+        return $this->cache->remember(
             "{$cup->id}_{$group->id}",
             1000000,
             function () use ($cup, $cupEvents, $group) {
