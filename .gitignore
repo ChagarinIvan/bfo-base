@@ -19,6 +19,6 @@ Homestead.yaml
 npm-debug.log
 yarn-error.log
 docker-compose.yml
-/enviroment/my.cnf
+/enviroment/mysql/my.cnf
 /enviroment/php/php.ini
 /enviroment/nginx/conf.d/app.conf
