@@ -9,6 +9,7 @@
 /php
 /nginx
 /mysql
+/certs
 .env
 .phpstorm.meta.php
 .env.backup
@@ -17,6 +18,7 @@ Homestead.json
 Homestead.yaml
 npm-debug.log
 yarn-error.log
-/php/local.ini
-/nginx/conf.d/app.conf
-/mysql/my.cnf
+docker-compose.yml
+/enviroment/my.cnf
+/enviroment/php/php.ini
+/enviroment/nginx/conf.d/app.conf
