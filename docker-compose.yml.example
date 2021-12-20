@@ -60,8 +60,6 @@ services:
     environment:
       MYSQL_DATABASE: bfo_base
       MYSQL_ROOT_PASSWORD: root_password
-      MYSQL_USER: bfo-base
-      MYSQL_PASSWORD: bfo-base-password
       SERVICE_TAGS: dev
       SERVICE_NAME: mysql
     networks:

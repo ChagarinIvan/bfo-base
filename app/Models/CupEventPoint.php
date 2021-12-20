@@ -8,9 +8,9 @@ namespace App\Models;
 class CupEventPoint
 {
     public function __construct(
-        public int $eventCupId,
-        public ProtocolLine $protocolLine,
-        public int $points,
+        public readonly int $eventCupId,
+        public readonly ProtocolLine $protocolLine,
+        public readonly int|string $points,
     ) {}
 
     public function equal(self $point): bool
