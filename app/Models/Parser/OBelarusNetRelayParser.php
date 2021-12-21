@@ -68,7 +68,8 @@ class OBelarusNetRelayParser extends AbstractParser
             $groupHeader = preg_replace('#\s+#', ' ', $groupHeader);
             $headers = explode(' ', $groupHeader);
             $groupHeaderIndex = count($headers) - 1;
-            $isOpen = str_contains($groupName, 'OPEN');
+            $isRelay = str_contains($text, 'на этапе') || str_contains($text, 'команды') || str_contains($text, 'Ком. рез-т');
+            $isOpen = !$isRelay || str_contains($groupName, 'OPEN');
 
             for ($index = 1; $index < $linesCount; $index++) {
                 $line = trim($lines[$index]);
