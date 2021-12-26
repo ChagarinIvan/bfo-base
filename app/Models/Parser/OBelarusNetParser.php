@@ -47,7 +47,11 @@ class OBelarusNetParser extends AbstractParser
                 continue;
             }
             $groupHeader = $lines[2];
+            if (empty(trim($groupHeader, '-'))) {
+                $groupHeader = $lines[3];
+            }
             $groupHeader = preg_replace('#\s+#', ' ', $groupHeader);
+
             $groupHeaderData = explode(' ', $groupHeader);
             $groupHeaderIndex = count($groupHeaderData) - 1;
 
@@ -63,7 +67,11 @@ class OBelarusNetParser extends AbstractParser
                 $line = trim($lines[$index]);
 
                 if (empty(trim($line, '-'))) {
-                    break;
+                    if ($index > 4) {
+                        break;
+                    } else {
+                        continue;
+                    }
                 }
                 $preparedLine = preg_replace('#=#', ' ', $line);
                 $preparedLine = preg_replace('#\s+#', ' ', $preparedLine);
@@ -80,6 +88,9 @@ class OBelarusNetParser extends AbstractParser
                 for ($i = $groupHeaderIndex; $i > 2; $i--) {
                     $columnName = $this->getColumn($groupHeaderData[$i]);
                     if ($columnName === '') {
+                        if ($groupHeaderData[$i] === 'КП') {
+                            $indent++;
+                        }
                         continue;
                     }
                     $protocolLine[$columnName] = $this->getValue($columnName, $lineData, $fieldsCount, $indent, $protocolLine);
@@ -113,7 +124,7 @@ class OBelarusNetParser extends AbstractParser
         if (str_contains($field, 'есто')) {
             return 'place';
         }
-        if (str_contains($field, 'зультат')) {
+        if (str_contains($field, 'зультат') || str_contains($field, 'ремя')) {
             return 'time';
         }
         if ($field ==='гр' || $field === 'г.р.') {
