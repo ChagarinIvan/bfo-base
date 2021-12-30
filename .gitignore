@@ -22,3 +22,4 @@ docker-compose.yml
 /enviroment/mysql/my.cnf
 /enviroment/php/php.ini
 /enviroment/nginx/conf.d/app.conf
+composer.phar

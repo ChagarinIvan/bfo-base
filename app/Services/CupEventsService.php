@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Models\Cup;
 use App\Models\CupEvent;
 use App\Models\Group;
-use Illuminate\Cache\CacheManager;
+use Illuminate\Cache\Repository as CacheManager;
 use Illuminate\Support\Collection;
 
 class CupEventsService
@@ -40,11 +40,12 @@ class CupEventsService
     public function storeCupEvent(CupEvent $cupEvent): void
     {
         $cupEvent->save();
+        $this->cache->tags(['cups', $cupEvent->cup_id])->flush();
     }
 
     public function calculateCup(Cup $cup, Collection $cupEvents, Group $group): array
     {
-        return $this->cache->remember(
+        return $this->cache->tags(['cups', $cup->id])->remember(
             "{$cup->id}_{$group->id}",
             1000000,
             function () use ($cup, $cupEvents, $group) {

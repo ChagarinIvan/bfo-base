@@ -170,8 +170,6 @@ return [
          * Application Service Providers...
          */
         App\Providers\AppServiceProvider::class,
-        Barryvdh\Debugbar\ServiceProvider::class,
-        Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
 
         //routes
         App\Providers\WebRoutesServiceProvider::class,

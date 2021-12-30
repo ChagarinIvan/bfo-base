@@ -9,6 +9,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller;
 use Illuminate\Routing\Redirector;
+use Illuminate\Validation\ValidationException;
 
 abstract class AbstractAction extends Controller
 {
@@ -28,8 +29,12 @@ abstract class AbstractAction extends Controller
         try {
             return $this->{$method}(...array_values($parameters));
         } catch (\Throwable $exception) {
-            $this->viewService->sendErrorMail($exception, request()->url(),  url()->previous()) ;
-            return $this->redirectToError();
+            if ($exception instanceof ValidationException) {
+                throw $exception;
+            } else {
+                $this->viewService->sendErrorMail($exception, request()->url(),  url()->previous()) ;
+                return $this->redirectToError();
+            }
         }
     }
 

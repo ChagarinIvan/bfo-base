@@ -44,8 +44,8 @@
                 <label for="event">{{ __('app.event.title') }}</label>
             </div>
             <div class="form-floating mb-3">
-                <input class="form-control" id="points" name="points" value="{{ $cupEvent->points }}">
-                <label for="points">{{ __('app.common.points') }}</label>
+                <input class="form-control @error('points') is-invalid @enderror" id="points" name="points" value="{{ $cupEvent->points }}">
+                <label for="points">@error('points') {{ __($message) }} @else {{ __('app.common.points') }} @enderror</label>
             </div>
             <div class="col-12">
                 <input type="submit" class="btn btn-outline-primary btn-sm" value="{{ __('app.common.update') }}">
