@@ -17,6 +17,7 @@ class ParserFactory
         WinOrientHtmlParser::class,
         SimplyParser::class,
         OParser::class,
+        HrodnoParser::class,
         OBelarusNetParser::class,
     ];
 
