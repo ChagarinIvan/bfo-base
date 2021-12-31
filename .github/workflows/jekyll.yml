@@ -25,15 +25,6 @@ jobs:
           cp .env.example .env
           php artisan key:generate
 
-      - name: Init psalm
-        run: ./vendor/bin/psalm --init
-
-      - name: Init laravel psalm-plugin
-        run: ./vendor/bin/psalm-plugin enable psalm/plugin-laravel
-
-      - name: Run psalm
-        run: ./vendor/bin/psalm
-
       - name: Run tests
         run: php artisan test
         env:
