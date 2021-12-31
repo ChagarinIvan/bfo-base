@@ -44,6 +44,19 @@ class AlbatrosTimingParser2Test extends AbstractParserTest
                 '-',
                 null
             ],
+            5 => [
+                'Саванович',
+                'Мария',
+                'КСО «Эридан»',
+                2011,
+                'б/р',
+                183,
+                '0:41:54',
+                null,
+                '-',
+                null,
+                true,
+            ],
         ];
     }
 

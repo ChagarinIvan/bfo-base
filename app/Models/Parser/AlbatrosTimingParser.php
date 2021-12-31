@@ -66,7 +66,7 @@ class AlbatrosTimingParser extends AbstractParser
                     ],
                 ];
                 $indent = 1;
-                if ($withComment && (str_contains($lineData[$fieldsCount - $indent], 'ично') || str_contains($lineData[$fieldsCount - $indent], '-'))) {
+                if ($withComment && str_contains($lineData[$fieldsCount - $indent], 'ично')) {
                     $indent++;
                 }
                 if ($withPoints) {
@@ -86,8 +86,15 @@ class AlbatrosTimingParser extends AbstractParser
                     }
                 }
 
+                $protocolLine['place'] = null;
                 $place = $lineData[$fieldsCount - $indent++];
-                $protocolLine['place'] = is_numeric($place) ? (int)$place : null;
+                if (is_numeric($place)) {
+                    $protocolLine['place'] = (int)$place;
+                } elseif ($place === 'в/к') {
+                    $protocolLine['vk'] = true;
+                    $protocolLine['place'] = null;
+                }
+
                 $time = null;
                 try {
                     $number = $lineData[$fieldsCount - ($indent + 1)];
