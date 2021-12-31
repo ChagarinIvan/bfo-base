@@ -8,16 +8,10 @@ use Illuminate\Support\Collection;
 
 class PersonsIdentService
 {
-    private PersonPromptService $promptService;
-    private CacheManager $cache;
-
     public function __construct(
-        PersonPromptService $promptService,
-        CacheManager $cache,
-    ) {
-        $this->promptService = $promptService;
-        $this->cache = $cache;
-    }
+        private PersonPromptService $promptService,
+        private CacheManager $cache,
+    ) {}
 
     /**
      * В ответе [prepared_line => person_id, ] для найденных людей

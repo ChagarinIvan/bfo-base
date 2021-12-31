@@ -9,12 +9,8 @@ use Illuminate\Support\Collection;
 
 class ParserService
 {
-    private GroupsService $groupsService;
-
-    public function __construct(GroupsService $groupsService)
-    {
-        $this->groupsService = $groupsService;
-    }
+    public function __construct(private GroupsService $groupsService)
+    {}
 
     /**
      * По протоколу определяет необходимый парсер

@@ -22,7 +22,7 @@ class StoreCupEventAction extends AbstractCupAction
         $cupEvent->event_id = $formData['event'];
         $cupEvent->cup_id = $cup->id;
         $cupEvent->points = $formData['points'];
-        $cupEvent->save();
+        $this->cupEventsService->storeCupEvent($cupEvent);
 
         return $this->redirector->action(ShowCupAction::class, [$cup]);
     }

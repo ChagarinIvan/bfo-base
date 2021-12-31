@@ -10,12 +10,8 @@ use Illuminate\Support\Collection;
 
 class CupEventsService
 {
-    private CacheManager $cache;
-
-    public function __construct(CacheManager $cache)
-    {
-        $this->cache = $cache;
-    }
+    public function __construct(private CacheManager $cache)
+    {}
 
     public function getCupEvents(Cup $cup): Collection
     {

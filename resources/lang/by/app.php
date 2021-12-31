@@ -86,6 +86,7 @@ return [
         'average' => 'Сярэдняе',
         'is_equal' => 'Супадзенне',
         'has_in_base' => 'Ёсць у базе',
+        'vk' => 'Па-за конкурсам',
     ],
 
     'competition' => [

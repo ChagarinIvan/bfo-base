@@ -3,22 +3,16 @@
 namespace App\Services;
 
 use App\Models\Event;
+use Illuminate\Cache\Repository as CacheManager;
 
 class EventService
 {
-    private RankService $ranksService;
-    private ProtocolLineService $protocolLineService;
-    private DistanceService $distanceService;
-
     public function __construct(
-        RankService $ranksService,
-        ProtocolLineService $protocolLineService,
-        DistanceService $distanceService
-    ) {
-        $this->ranksService = $ranksService;
-        $this->protocolLineService = $protocolLineService;
-        $this->distanceService = $distanceService;
-    }
+        private RankService $ranksService,
+        private ProtocolLineService $protocolLineService,
+        private DistanceService $distanceService,
+        private CacheManager $cache
+    ) {}
 
     public function deleteEvent(Event $event): void
     {
@@ -31,5 +25,8 @@ class EventService
     public function storeEvent(Event $event): void
     {
         $event->save();
+        foreach ($event->cups as $cup) {
+            $this->cache->tags(['cups', $cup->id])->flush();
+        }
     }
 }

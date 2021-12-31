@@ -9,17 +9,12 @@ use Illuminate\Support\Collection;
 
 class ProtocolLineIdentService
 {
-    private RankService $rankService;
-    private ProtocolLineService $protocolLineService;
     private static Collection $prompts;
 
     public function __construct(
-        RankService $rankService,
-        ProtocolLineService $protocolLineService,
-    ) {
-        $this->rankService = $rankService;
-        $this->protocolLineService = $protocolLineService;
-    }
+        private RankService $rankService,
+        private ProtocolLineService $protocolLineService,
+    ) {}
 
     /**
      * карта исправления имён, разные сокращения и формы аналоги

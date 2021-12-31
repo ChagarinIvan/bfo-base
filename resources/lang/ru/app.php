@@ -73,6 +73,7 @@ return [
         'average' => 'Среднее',
         'is_equal' => 'Совпадение',
         'has_in_base' => 'Есть в базе',
+        'vk' => 'Вне конкурса',
     ],
     'protocol' => 'Протокол',
     'competition' => [

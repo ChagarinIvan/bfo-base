@@ -11,25 +11,13 @@ use Illuminate\Contracts\View\View;
 
 class ViewActionsService
 {
-    private ViewFactory $viewFactory;
-    private UserService $userService;
-    private BackUrlService $backUrlService;
-    private UrlGenerator $urlGenerator;
-    private Mailer $mailer;
-
     public function __construct(
-        ViewFactory $viewFactory,
-        UserService $userService,
-        BackUrlService $backUrlService,
-        UrlGenerator $urlGenerator,
-        Mailer $mailer,
-    ) {
-        $this->viewFactory = $viewFactory;
-        $this->userService = $userService;
-        $this->backUrlService = $backUrlService;
-        $this->urlGenerator = $urlGenerator;
-        $this->mailer = $mailer;
-    }
+        private ViewFactory $viewFactory,
+        private UserService $userService,
+        private BackUrlService $backUrlService,
+        private UrlGenerator $urlGenerator,
+        private Mailer $mailer,
+    ) {}
 
     public function cleanBackUrls(): void
     {

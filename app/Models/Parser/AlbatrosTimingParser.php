@@ -66,17 +66,24 @@ class AlbatrosTimingParser extends AbstractParser
                     ],
                 ];
                 $indent = 1;
-                if ($withComment && str_contains($lineData[$fieldsCount - $indent], 'ично')) {
+                if ($withComment && (str_contains($lineData[$fieldsCount - $indent], 'ично') || str_contains($lineData[$fieldsCount - $indent], '-'))) {
                     $indent++;
                 }
                 if ($withPoints) {
                     $points = $lineData[$fieldsCount - $indent++];
+                    if ($points === 'в/к') {
+                        $protocolLine['vk'] = true;
+                    }
                     $protocolLine['points'] = is_numeric($points) ? (int)$points : null;
                 }
                 $completeRank = $lineData[$fieldsCount - $indent];
                 if (Rank::validateRank($completeRank) || $completeRank === '-') {
                     $protocolLine['complete_rank'] = $completeRank;
                     $indent++;
+                } else {
+                    if ($completeRank === 'в/к') {
+                        $protocolLine['vk'] = true;
+                    }
                 }
 
                 $place = $lineData[$fieldsCount - $indent++];

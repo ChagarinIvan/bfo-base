@@ -29,7 +29,7 @@ abstract class AbstractAction extends Controller
         try {
             return $this->{$method}(...array_values($parameters));
         } catch (\Throwable $exception) {
-            if ($exception instanceof ValidationException) {
+            if ($exception instanceof ValidationException || env('APP_ENV', 'dev') === 'dev') {
                 throw $exception;
             } else {
                 $this->viewService->sendErrorMail($exception, request()->url(),  url()->previous()) ;

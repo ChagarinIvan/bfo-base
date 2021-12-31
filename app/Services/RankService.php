@@ -14,19 +14,11 @@ use Illuminate\Support\Collection;
 
 class RankService
 {
-    private RanksRepository $ranksRepository;
-    private ProtocolLineService $protocolLineService;
-    private CacheManager $cache;
-
     public function __construct(
-        RanksRepository $ranksRepository,
-        ProtocolLineService $protocolLineService,
-        CacheManager $cache
-    ) {
-        $this->ranksRepository = $ranksRepository;
-        $this->protocolLineService = $protocolLineService;
-        $this->cache = $cache;
-    }
+        private RanksRepository $ranksRepository,
+        private ProtocolLineService $protocolLineService,
+        private CacheManager $cache
+    ) {}
 
     public const RANKS_POWER = [
         Rank::WITHOUT_RANK => 0,

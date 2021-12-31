@@ -10,12 +10,8 @@ use Illuminate\Support\Collection;
 
 class GroupsService
 {
-    private GroupsRepository $groupsRepository;
-
-    public function __construct(GroupsRepository $groupsRepository)
-    {
-        $this->groupsRepository = $groupsRepository;
-    }
+    public function __construct(private GroupsRepository $groupsRepository)
+    {}
 
     public function deleteEventDistances(Event $event): void
     {

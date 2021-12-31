@@ -7,12 +7,8 @@ use Illuminate\Support\Collection;
 
 class PersonsService
 {
-    private PersonPromptService $promptService;
-
-    public function __construct(PersonPromptService $promptService)
-    {
-        $this->promptService = $promptService;
-    }
+    public function __construct(private PersonPromptService $promptService)
+    {}
 
     /**
      * @return Person[]|Collection

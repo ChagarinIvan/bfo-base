@@ -7,11 +7,8 @@ use Illuminate\Support\Collection;
 
 class CompetitionService
 {
-    private EventService $eventService;
-
-    public function __construct(EventService $eventService) {
-        $this->eventService = $eventService;
-    }
+    public function __construct(private EventService $eventService)
+    {}
 
     public function deleteCompetition(Competition $competition): void
     {

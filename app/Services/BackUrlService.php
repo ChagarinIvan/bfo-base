@@ -11,12 +11,8 @@ class BackUrlService
     private const BACK = 'back';
     private const ACTION = 'actions';
 
-    private Session $sessionManager;
-
-    public function __construct(Session $sessionManager)
-    {
-        $this->sessionManager = $sessionManager;
-    }
+    public function __construct(private Session $sessionManager)
+    {}
 
     public function pop(): string
     {

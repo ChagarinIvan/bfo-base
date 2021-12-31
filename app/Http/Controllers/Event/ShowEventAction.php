@@ -12,19 +12,22 @@ class ShowEventAction extends AbstractEventAction
     public function __invoke(Event $event, Distance $distance): View|RedirectResponse
     {
         $withPoints = false;
-        $protocolLines = $event->protocolLines()->where('distance_id', $distance->id)->get();
+        $withVk = false;
+        $protocolLines = $distance->protocolLines;
 
         foreach ($protocolLines as $protocolLine) {
-            $withPoints = $protocolLine->points !== null;
-            if ($withPoints) {
+            $withPoints = $withPoints || $protocolLine->points !== null;
+            $withVk = $withVk || $protocolLine->vk;
+            if ($withPoints && $withVk) {
                 break;
             }
         }
 
-        return $this->view('events.show_others', [
+        return $this->view('events.show', [
             'event' => $event,
             'lines' => $protocolLines,
             'withPoints' => $withPoints,
+            'withVk' => $withVk,
             'selectedDistance' => $distance,
         ]);
     }

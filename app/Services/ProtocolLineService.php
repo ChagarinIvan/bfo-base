@@ -13,16 +13,10 @@ use Illuminate\Support\Collection;
 
 class ProtocolLineService
 {
-    private ProtocolLinesRepository $protocolLinesRepository;
-    private GroupsRepository $groupsRepository;
-
     public function __construct(
-        ProtocolLinesRepository $protocolLinesRepository,
-        GroupsRepository $groupsRepository
-    ) {
-        $this->protocolLinesRepository = $protocolLinesRepository;
-        $this->groupsRepository = $groupsRepository;
-    }
+        private ProtocolLinesRepository $protocolLinesRepository,
+        private GroupsRepository $groupsRepository
+    ) {}
 
     /**
      * Коллекция сырых данных линий протокола, из каждой

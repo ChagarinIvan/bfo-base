@@ -10,12 +10,8 @@ use Illuminate\Support\Collection;
 
 class DistanceService
 {
-    private DistanceRepository $distanceRepository;
-
-    public function __construct(DistanceRepository $distanceRepository)
-    {
-        $this->distanceRepository = $distanceRepository;
-    }
+    public function __construct(private DistanceRepository $distanceRepository)
+    {}
 
     public function getCupEventDistancesByGroups(CupEvent $cupEvent, Collection $groups, Collection $groupNames): Collection
     {

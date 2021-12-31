@@ -7,6 +7,9 @@
      * @var Event $event
      * @var Collection|Group[] $groupAnchors
      * @var Distance $selectedDistance
+     * @var Collection $lines;
+     * @var bool $withPoints;
+     * @var bool $withVk;
      */
 @endphp
 
@@ -38,6 +41,9 @@
                 </li>
             @endforeach
         </ul>
+        @if ($selectedDistance->length > 0 || $selectedDistance->points > 0)
+            <div><p><b>{{ $selectedDistance->length }}</b> м, <b>{{ $selectedDistance->points }}</b> КП.</p></div>
+        @endif
         <div class="tab-content">
             <div class="tab-pane fade show active">
                 <table id="table"
@@ -69,10 +75,59 @@
                             <th data-sortable="true">{{ __('app.common.place') }}</th>
                             <th data-sortable="true">{{ __('app.common.complete') }}</th>
                             @if($withPoints)<th data-sortable="true">{{ __('app.common.points') }}</th>@endif
+                            @if($withVk)<th data-sortable="true">{{ __('app.common.vk') }}</th>@endif
                         </tr>
                     </thead>
                     <tbody>
-                        @yield('groups')
+                    @foreach($lines as $line)
+                        @php
+                            /** @var \App\Models\ProtocolLine $line */
+                         @endphp
+                        <tr id="{{ $line->id }}">
+                            @php
+                                $hasPerson = $line->person_id !== null;
+                            @endphp
+                            <td>{{ $line->serial_number }}</td>
+                            @if($hasPerson)
+                                @php
+                                    $link = action(\App\Http\Controllers\Person\ShowPersonAction::class, [$line->person_id]);
+                                @endphp
+                                <td><a href="{{ $link }}">{{ $line->lastname }}</a>&nbsp;
+                                    @auth
+                                        <a href="{{ action(\App\Http\Controllers\Person\ShowSetPersonToProtocolLineAction::class, [$line]) }}">
+                                            <span class="badge rounded-pill bg-warning">{{ __('app.common.edit') }}</span>
+                                        </a>
+                                    @endauth
+                                </td>
+                                <td><a href="{{ $link }}">{{ $line->firstname }}</a></td>
+                            @else
+                                <td>{{ $line->lastname }}&nbsp;
+                                    @auth
+                                        <a href="{{ action(\App\Http\Controllers\Person\ShowSetPersonToProtocolLineAction::class, [$line]) }}">
+                                            <span class="badge rounded-pill bg-danger">{{ __('app.common.new') }}</span>
+                                        </a>
+                                    @endauth
+                                </td>
+                                <td>{{ $line->firstname }}</td>
+                            @endif
+                            @if($hasPerson && $line->club === ($line->person->club->name ?? '') && $line->person->club_id !== null)
+                                <td>
+                                    <a href="{{ action(\App\Http\Controllers\Club\ShowClubAction::class, [$line->person->club_id]) }}">
+                                        {{ ($line->club) }}
+                                    </a>
+                                </td>
+                            @else
+                                <td><span class="">{{ ($line->club) }}</span></td>
+                            @endif
+                            <td>{{ $line->year }}</td>
+                            <td>{{ $line->rank }}</td>
+                            <td>{{ $line->time ? $line->time->format('H:i:s') : '-' }}</td>
+                            <td>{{ $line->place ?: '-' }}</td>
+                            <td>{{ $line->complete_rank }}</td>
+                            @if($withPoints)<td>{{ $line->points ?: '-'}}</td>@endif
+                            @if($withVk)<td>{{ $line->vk ? 'в/к' : '-' }}</td>@endif
+                        </tr>
+                    @endforeach
                     </tbody>
                 </table>
             </div>

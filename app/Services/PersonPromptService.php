@@ -9,12 +9,8 @@ use Illuminate\Support\Collection;
 
 class PersonPromptService
 {
-    private PersonPromptRepository $repository;
-
-    public function __construct(PersonPromptRepository $repository)
-    {
-        $this->repository = $repository;
-    }
+    public function __construct(private PersonPromptRepository $repository)
+    {}
 
     public function storePrompt(string $personLine, int $personId): PersonPrompt
     {

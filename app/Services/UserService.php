@@ -12,16 +12,11 @@ class UserService
     public const BY_LOCALE = 'by';
     public const RU_LOCALE = 'ru';
 
-    private Session $sessionManager;
-    private Application $application;
-    private AuthManager $authManager;
-
-    public function __construct(Session $sessionManager, Application $application, AuthManager $authManager)
-    {
-        $this->sessionManager = $sessionManager;
-        $this->application = $application;
-        $this->authManager = $authManager;
-    }
+    public function __construct(
+        private Session $sessionManager,
+        private Application $application,
+        private AuthManager $authManager
+    ) {}
 
     public function setLocale(string $locale): void
     {
