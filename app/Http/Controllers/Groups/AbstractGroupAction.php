@@ -10,18 +10,13 @@ use Illuminate\Routing\Redirector;
 
 abstract class AbstractGroupAction extends AbstractAction
 {
-    protected GroupsService $groupsService;
-    protected DistanceService $distanceService;
-
     public function __construct(
-        ViewActionsService $viewActionsService,
-        Redirector $redirector,
-        GroupsService $groupsService,
-        DistanceService $distanceService,
+        protected ViewActionsService $viewActionsService,
+        protected Redirector $redirector,
+        protected GroupsService $groupsService,
+        protected DistanceService $distanceService,
     ) {
         parent::__construct($viewActionsService, $redirector);
-        $this->groupsService = $groupsService;
-        $this->distanceService = $distanceService;
     }
 
     protected function isGroupsRoute(): bool

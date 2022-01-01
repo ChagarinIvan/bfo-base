@@ -141,6 +141,7 @@ class WebRoutesServiceProvider extends ServiceProvider
                 $this->routeRegistrar->prefix('cups')->group(function () {
                     $this->route->get('{year}',                     Cups\ShowCupsListAction::class);
                     $this->route->get('{cup}/show',                 Cups\ShowCupAction::class);
+                    $this->route->get('{cup}/cache',                Cups\ClearCacheAction::class);
                     $this->route->get('{cup}/{group}/table',        Cups\ShowCupTableAction::class);
                     $this->route->get('{cup}/{event}/{group}/show', CupEvents\ShowCupEventGroupAction::class);
 

@@ -6,6 +6,7 @@ use App\Models\Club;
 use App\Models\IdentLine;
 use App\Models\Person;
 use App\Models\ProtocolLine;
+use App\Services\ClubsService;
 use App\Services\PersonsService;
 use App\Services\ProtocolLineIdentService;
 use App\Services\RankService;
@@ -65,7 +66,7 @@ class IdentProtocolLineCommand extends Command
                 }
             } catch (InvalidFormatException) {}
 
-            $club = Club::whereName($protocolLine->club)->get();
+            $club = Club::whereNormalizeName(ClubsService::normalizeName($protocolLine->club))->get();
             if ($club->count() > 0) {
                 $person->club_id = $club->first()->id;
             }

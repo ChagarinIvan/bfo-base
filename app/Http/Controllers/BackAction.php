@@ -9,14 +9,8 @@ use Illuminate\Routing\Redirector;
 
 class BackAction extends Controller
 {
-    protected Redirector $redirector;
-    private BackUrlService $backUrlService;
-
-    public function __construct(Redirector $redirector, BackUrlService $backUrlService)
-    {
-        $this->redirector = $redirector;
-        $this->backUrlService = $backUrlService;
-    }
+    public function __construct(protected Redirector $redirector, protected BackUrlService $backUrlService)
+    {}
 
     public function __invoke(): RedirectResponse
     {

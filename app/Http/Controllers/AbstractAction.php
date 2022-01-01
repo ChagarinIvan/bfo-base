@@ -13,16 +13,10 @@ use Illuminate\Validation\ValidationException;
 
 abstract class AbstractAction extends Controller
 {
-    private ViewActionsService $viewService;
-    protected Redirector $redirector;
-
     public function __construct(
-        ViewActionsService $viewService,
-        Redirector $redirector
-    ) {
-        $this->viewService = $viewService;
-        $this->redirector = $redirector;
-    }
+        protected ViewActionsService $viewService,
+        protected Redirector $redirector
+    ) {}
 
     public function callAction($method, $parameters)
     {

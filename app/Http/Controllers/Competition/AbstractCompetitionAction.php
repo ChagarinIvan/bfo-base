@@ -9,15 +9,12 @@ use Illuminate\Routing\Redirector;
 
 abstract class AbstractCompetitionAction extends AbstractAction
 {
-    protected CompetitionService $competitionService;
-
     public function __construct(
-        ViewActionsService $viewService,
-        Redirector $redirector,
-        CompetitionService $competitionService
+        protected ViewActionsService $viewService,
+        protected Redirector $redirector,
+        protected CompetitionService $competitionService
     ) {
         parent::__construct($viewService, $redirector);
-        $this->competitionService = $competitionService;
     }
 
     protected function isCompetitionsRoute(): bool

@@ -16,7 +16,7 @@ class SignInAction extends AbstractSignAction
             'password' => 'required',
         ]);
 
-        if ($this->authManager->guard('web')->attempt($authData, true)) {
+        if ($this->sessionGuard->guard('web')->attempt($authData, true)) {
             $request->session()->regenerate();
             return $this->redirector->action(ShowCompetitionsListAction::class, Year::actualYear());
         }

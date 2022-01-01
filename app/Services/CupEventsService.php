@@ -36,7 +36,6 @@ class CupEventsService
     public function storeCupEvent(CupEvent $cupEvent): void
     {
         $cupEvent->save();
-        $this->cache->tags(['cups', $cupEvent->cup_id])->flush();
     }
 
     public function calculateCup(Cup $cup, Collection $cupEvents, Group $group): array

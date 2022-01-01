@@ -10,18 +10,13 @@ use Illuminate\Routing\Redirector;
 
 abstract class AbstractClubAction extends AbstractAction
 {
-    protected PersonsService $personsService;
-    protected ClubsService $clubsService;
-
     public function __construct(
-        ViewActionsService $viewService,
-        Redirector $redirector,
-        PersonsService $personsService,
-        ClubsService $clubsService,
+        protected ViewActionsService $viewService,
+        protected Redirector $redirector,
+        protected PersonsService $personsService,
+        protected ClubsService $clubsService,
     ) {
         parent::__construct($viewService, $redirector);
-        $this->personsService = $personsService;
-        $this->clubsService = $clubsService;
     }
 
     protected function isClubsRoute(): bool

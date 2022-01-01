@@ -10,15 +10,12 @@ use Illuminate\Routing\Redirector;
 
 class ChangeLanguageAction extends AbstractAction
 {
-    private UserService $userService;
-
     public function __construct(
-        ViewActionsService $viewService,
-        Redirector $redirector,
-        UserService $userService,
+        protected ViewActionsService $viewService,
+        protected Redirector $redirector,
+        private UserService $userService
     ) {
         parent::__construct($viewService, $redirector);
-        $this->userService = $userService;
     }
 
     public function __invoke(string $locale): RedirectResponse

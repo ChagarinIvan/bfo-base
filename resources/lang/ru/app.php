@@ -75,6 +75,7 @@ return [
         'has_in_base' => 'Есть в базе',
         'vk' => 'Вне конкурса',
         'last_payment' => 'Последняя оплата',
+        'cache_clear' => 'Обновить кеш',
     ],
     'protocol' => 'Протокол',
     'competition' => [

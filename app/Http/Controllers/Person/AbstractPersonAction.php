@@ -10,18 +10,13 @@ use Illuminate\Routing\Redirector;
 
 abstract class AbstractPersonAction extends AbstractAction
 {
-    protected RankService $rankService;
-    protected PersonsService $personsService;
-
     public function __construct(
-        ViewActionsService $viewService,
-        Redirector $redirector,
-        RankService $rankService,
-        PersonsService $personsService,
+        protected ViewActionsService $viewService,
+        protected Redirector $redirector,
+        protected RankService $rankService,
+        protected PersonsService $personsService,
     ) {
         parent::__construct($viewService, $redirector);
-        $this->rankService = $rankService;
-        $this->personsService = $personsService;
     }
 
     protected function isPersonsRoute(): bool

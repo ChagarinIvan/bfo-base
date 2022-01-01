@@ -8,12 +8,8 @@ use Illuminate\Routing\Controller as BaseController;
 
 class PersonsController extends BaseController
 {
-    private PersonsService $personsService;
-
-    public function __construct(PersonsService $personsService)
-    {
-        $this->personsService = $personsService;
-    }
+    public function __construct(private PersonsService $personsService)
+    {}
 
     public function index(): JsonResponse
     {

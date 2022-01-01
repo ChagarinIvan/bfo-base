@@ -17,21 +17,14 @@ use Illuminate\Routing\Redirector;
 
 class SendRegistrationDataAction extends AbstractAction
 {
-    private Encrypter $encrypter;
-    private Mailer $mailer;
-    private UrlGenerator $urlGenerator;
-
     public function __construct(
-        ViewActionsService $viewService,
-        Redirector $redirector,
-        Encrypter $encrypter,
-        Mailer $mailer,
-        UrlGenerator $urlGenerator
+        protected ViewActionsService $viewService,
+        protected Redirector $redirector,
+        protected Encrypter $encrypter,
+        protected Mailer $mailer,
+        protected UrlGenerator $urlGenerator
     ) {
         parent::__construct($viewService, $redirector);
-        $this->encrypter = $encrypter;
-        $this->mailer = $mailer;
-        $this->urlGenerator = $urlGenerator;
     }
 
     public function __invoke(Request $request): RedirectResponse

@@ -23,6 +23,11 @@
                           icon="bi-file-earmark-plus-fill"
                           url="{{ action(\App\Http\Controllers\CupEvents\ShowCreateCupEventFormAction::class, [$cup]) }}"
                 />
+                <x-button text="app.common.cache_clear"
+                          color="warning"
+                          icon="bi-arrow-clockwise"
+                          url="{{ action(\App\Http\Controllers\Cups\ClearCacheAction::class, [$cup]) }}"
+                />
             @endauth
             <x-button text="app.cup.table"
                       color="secondary"

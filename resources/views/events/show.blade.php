@@ -110,7 +110,11 @@
                                 </td>
                                 <td>{{ $line->firstname }}</td>
                             @endif
-                            @if($hasPerson && $line->club === ($line->person->club->name ?? '') && $line->person->club_id !== null)
+                            @if(
+                                $hasPerson
+                                && $line->person->club_id !== null
+                                && \App\Services\ClubsService::normalizeName($line->club) ===  $line->person->club->normalize_name
+                            )
                                 <td>
                                     <a href="{{ action(\App\Http\Controllers\Club\ShowClubAction::class, [$line->person->club_id]) }}">
                                         {{ ($line->club) }}

@@ -16,24 +16,15 @@ use Illuminate\Validation\Factory as Validator;
 
 class MakeNewPasswordByTokenAction extends AbstractAction
 {
-    private Encrypter $encrypter;
-    private Validator $validator;
-    private HashManager $hashManager;
-    private Mailer $mailer;
-
     public function __construct(
-        ViewActionsService $viewService,
-        Redirector $redirector,
-        Encrypter $encrypter,
-        Validator $validator,
-        HashManager $hashManager,
-        Mailer $mailer,
+        protected ViewActionsService $viewService,
+        protected Redirector $redirector,
+        private Encrypter $encrypter,
+        private Validator $validator,
+        private HashManager $hashManager,
+        private Mailer $mailer
     ) {
         parent::__construct($viewService, $redirector);
-        $this->encrypter = $encrypter;
-        $this->validator = $validator;
-        $this->hashManager = $hashManager;
-        $this->mailer = $mailer;
     }
 
     public function __invoke(string $token): RedirectResponse

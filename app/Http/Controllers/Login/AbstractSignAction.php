@@ -9,14 +9,11 @@ use Illuminate\Routing\Redirector;
 
 abstract class AbstractSignAction extends AbstractAction
 {
-    protected AuthManager $authManager;
-
     public function __construct(
-        ViewActionsService $viewService,
-        Redirector $redirector,
-        AuthManager $sessionGuard
+        protected ViewActionsService $viewService,
+        protected Redirector $redirector,
+        protected AuthManager $sessionGuard
     ) {
         parent::__construct($viewService, $redirector);
-        $this->authManager = $sessionGuard;
     }
 }

@@ -8,7 +8,7 @@ class SignOutAction extends AbstractSignAction
 {
     public function __invoke(): RedirectResponse
     {
-        $this->authManager->guard('web')->logout();
+        $this->sessionGuard->guard('web')->logout();
         return $this->redirector->back();
     }
 }

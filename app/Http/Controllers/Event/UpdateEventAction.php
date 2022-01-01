@@ -43,6 +43,11 @@ class UpdateEventAction extends AbstractEventAction
         // то можно удалить старые строки и разряды, перед сохранением новых
         $this->eventService->deleteEvent($event);
         $this->eventService->storeEvent($event);
+        //почистим кеш кубков
+        foreach ($event->cups as $cup) {
+            $this->cupsService->clearCupCache($cup->id);
+        }
+
         $lineList = $this->protocolLineService->fillProtocolLines($event->id, $lineList);
 
         // заполняем event_id и сохраняем
