@@ -1,11 +1,13 @@
 @php
     use App\Models\Person;
+    use App\Models\PersonPayment;
     use App\Models\Rank;
     use Illuminate\Support\Collection;
     /**
      * @var Person $person
      * @var Collection $groupedProtocolLines
      * @var Rank $rank
+     * @var ?PersonPayment $personPayment
      */
 @endphp
 
@@ -19,6 +21,11 @@
             <div class="col-12">
                 <h4>{{ $rank->rank }} {{ __('app.common.do') }} {{ $rank->finish_date->format('Y-m-d') }}</h4>
             </div>
+            @if ($personPayment)
+                <div class="col-12">
+                    <h4>{{ __('app.common.last_payment') }}: {{ $personPayment->date->format('Y-m-d') }}</h4>
+                </div>
+            @endif
         </div>
     @endif
     <div class="row mb-3">

@@ -2,17 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
 /**
  * Class Year
- *
- * @package App\Models
  */
-class Year extends Model
+class Year
 {
     public const YEARS = [
+        2022,
         2021,
         2020,
         2019,

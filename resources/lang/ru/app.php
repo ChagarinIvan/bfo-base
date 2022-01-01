@@ -74,6 +74,7 @@ return [
         'is_equal' => 'Совпадение',
         'has_in_base' => 'Есть в базе',
         'vk' => 'Вне конкурса',
+        'last_payment' => 'Последняя оплата',
     ],
     'protocol' => 'Протокол',
     'competition' => [

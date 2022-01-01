@@ -87,6 +87,7 @@ return [
         'is_equal' => 'Супадзенне',
         'has_in_base' => 'Ёсць у базе',
         'vk' => 'Па-за конкурсам',
+        'last_payment' => 'Апошняя аплата',
     ],
 
     'competition' => [
