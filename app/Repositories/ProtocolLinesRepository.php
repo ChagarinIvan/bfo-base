@@ -50,6 +50,7 @@ class ProtocolLinesRepository
             ->join('persons_payments', 'person.id', '=', 'persons_payments.person_id')
             ->where('persons_payments.year', '=', $cupEvent->cup->year)
             ->where('persons_payments.date', '<=', $cupEvent->event->date)
+            ->where('protocol_lines.vk', false)
             ->whereIn('distance_id', $distances->pluck('id')->unique())
             ->havingRaw(new Expression("`persons_payments`.`date` <= '{$cupEvent->event->date}'"))
             ->get();
@@ -67,6 +68,7 @@ class ProtocolLinesRepository
             ->join('distances', 'distances.id', '=', 'protocol_lines.distance_id')
             ->where('person.birthday', '<=', "{$finishYear}-01-01")
             ->where('person.birthday', '>=', "{$startYear}-01-01")
+            ->where('protocol_lines.vk', false)
             ->where('distances.event_id', $cupEvent->event_id);
 
         if ($withPayments) {
