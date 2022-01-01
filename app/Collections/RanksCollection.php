@@ -46,6 +46,6 @@ class RanksCollection
 
     public function first(): ?Rank
     {
-        $this->ranks->first();
+        return $this->ranks->first();
     }
 }

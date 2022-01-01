@@ -203,8 +203,6 @@ class RankService
     public function getRank(ProtocolLine $protocolLine): ?Rank
     {
         $filter = new RanksFilter();
-        $filter->
-        $nowDate = Carbon::now();
         $filter->eventId = $protocolLine->distance->event_id;
         $filter->personId = $protocolLine->person_id;
         $ranks = $this->ranksRepository->getRanksList($filter);

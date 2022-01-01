@@ -46,7 +46,7 @@
     @if($person->protocolLines->count() > 0)
         <table id="table"
                data-cookie="true"
-               data-cookie-id-table="persons-list"
+               data-cookie-id-table="persons-show"
                data-mobile-responsive="true"
                data-check-on-init="true"
                data-min-width="800"

@@ -23,7 +23,7 @@
     <div class="row">
         <table id="table"
                data-cookie="true"
-               data-cookie-id-table="persons-list"
+               data-cookie-id-table="ranks-check-list"
                data-mobile-responsive="true"
                data-check-on-init="true"
                data-min-width="800"
