@@ -2,6 +2,7 @@
     use App\Models\Distance;
     use App\Models\Event;
     use App\Models\Group;
+    use App\Models\Club;
     use Illuminate\Support\Collection;
     /**
      * @var Event $event
@@ -10,6 +11,7 @@
      * @var Collection $lines;
      * @var bool $withPoints;
      * @var bool $withVk;
+     * @var Collection|Club[] $clubs;
      */
 @endphp
 
@@ -110,13 +112,9 @@
                                 </td>
                                 <td>{{ $line->firstname }}</td>
                             @endif
-                            @if(
-                                $hasPerson
-                                && $line->person->club_id !== null
-                                && \App\Services\ClubsService::normalizeName($line->club) ===  $line->person->club->normalize_name
-                            )
+                            @if($club = $clubs->get(\App\Services\ClubsService::normalizeName($line->club)))
                                 <td>
-                                    <a href="{{ action(\App\Http\Controllers\Club\ShowClubAction::class, [$line->person->club_id]) }}">
+                                    <a href="{{ action(\App\Http\Controllers\Club\ShowClubAction::class, [$club]) }}">
                                         {{ ($line->club) }}
                                     </a>
                                 </td>

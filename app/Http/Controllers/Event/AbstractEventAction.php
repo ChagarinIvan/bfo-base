@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Event;
 
 use App\Http\Controllers\AbstractAction;
+use App\Services\ClubsService;
 use App\Services\CupsService;
 use App\Services\EventService;
 use App\Services\ParserService;
@@ -20,6 +21,7 @@ class AbstractEventAction extends AbstractAction
         protected EventService $eventService,
         protected ParserService $parserService,
         protected CupsService $cupsService,
+        protected ClubsService $clubsService,
         protected ProtocolLineIdentService $identService,
         protected ProtocolLineService $protocolLineService,
         protected Filesystem $storage,

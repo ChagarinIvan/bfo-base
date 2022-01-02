@@ -14,6 +14,7 @@ class ShowEventAction extends AbstractEventAction
         $withPoints = false;
         $withVk = false;
         $protocolLines = $distance->protocolLines;
+        $clubs = $this->clubsService->getAllClubs()->keyBy('normalize_name');
 
         foreach ($protocolLines as $protocolLine) {
             $withPoints = $withPoints || $protocolLine->points !== null;
@@ -29,6 +30,7 @@ class ShowEventAction extends AbstractEventAction
             'withPoints' => $withPoints,
             'withVk' => $withVk,
             'selectedDistance' => $distance,
+            'clubs' => $clubs,
         ]);
     }
 }
