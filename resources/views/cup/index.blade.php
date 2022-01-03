@@ -79,7 +79,11 @@
                                         @endforeach
                                     </td>
                                     <td>
-                                        <x-button text="app.cup.table" color="secondary" icon="bi-table"/>
+                                        <x-button text="app.cup.table"
+                                                  color="secondary"
+                                                  icon="bi-table"
+                                                  url="{{ action(\App\Http\Controllers\Cups\ShowCupTableAction::class, [$cup, $cup->getCupType()->getGroups()->first()]) }}"
+                                        />
                                         @auth
                                             <x-edit-button url="{{ action(\App\Http\Controllers\Cups\ShowEditCupFormAction::class, [$cup]) }}"/>
                                             <x-delete-button modal-id="deleteModal{{ $cup->id }}"/>
