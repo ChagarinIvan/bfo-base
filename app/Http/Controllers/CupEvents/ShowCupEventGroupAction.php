@@ -3,15 +3,16 @@
 namespace App\Http\Controllers\CupEvents;
 
 use App\Http\Controllers\Cups\AbstractCupAction;
+use App\Models\Group\CupGroupFactory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 
 class ShowCupEventGroupAction extends AbstractCupAction
 {
-    public function __invoke(int $cupId, int $cupEventId, int $groupId): View|RedirectResponse
+    public function __invoke(int $cupId, int $cupEventId, string $cupGroupId): View|RedirectResponse
     {
         try {
-            $group = $this->groupsService->getGroup($groupId);
+            $group = CupGroupFactory::fromId($cupGroupId);
             $cup = $this->cupsService->getCup($cupId);
             $cupEvent = $this->cupEventsService->getCupEvent($cupEventId);
         } catch (\RuntimeException) {

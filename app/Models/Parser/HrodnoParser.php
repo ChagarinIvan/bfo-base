@@ -2,7 +2,6 @@
 
 namespace App\Models\Parser;
 
-use App\Models\Group;
 use App\Models\Rank;
 use DOMDocument;
 use DOMXPath;
@@ -36,7 +35,7 @@ class HrodnoParser extends AbstractParser
                     ($groupNameNode = $groupDescriptionsNodes->item(0))
                     && preg_match('#^Группа\s([^\s]+)\s+\(#', $groupNameNode->nodeValue, $m)
                 ) {
-                    $groupName = Group::FIXING_MAP[$m[1]] ?? $m[1];
+                    $groupName = $m[1];
                 }
 
                 if (

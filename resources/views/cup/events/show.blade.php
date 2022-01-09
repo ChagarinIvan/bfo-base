@@ -6,7 +6,7 @@
      * @var Cup $cup;
      * @var CupEvent $cupEvent;
      * @var array<int, CupEventPoint> $cupEventPoints;
-     * @var int $groupId;
+     * @var string $groupId;
      */
     $index = 0;
 @endphp
@@ -31,10 +31,10 @@
         <ul class="nav nav-tabs">
             @foreach($cup->getCupType()->getGroups() as $group)
                 @php
-                    /** @var \App\Models\Group $group */
+                    /** @var \App\Models\Group\CupGroup $group */
                 @endphp
                 <li class="nav-item">
-                    <a href="{{ action(\App\Http\Controllers\CupEvents\ShowCupEventGroupAction::class, [$cup, $cupEvent, $group]) }}"
+                    <a href="{{ action(\App\Http\Controllers\CupEvents\ShowCupEventGroupAction::class, [$cup, $cupEvent, $group->id]) }}"
                        class="text-decoration-none nav-link {{ $groupId === $group->id ? 'active' : ''}}"
                     >
                         <b>{{ $group->name }}</b>

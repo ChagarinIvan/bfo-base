@@ -4,11 +4,16 @@ namespace App\Models\Cups;
 
 use App\Models\CupEvent;
 use App\Models\CupEventPoint;
-use App\Models\Group;
+use App\Models\Group\CupGroup;
+use App\Models\Group\CupGroupFactory;
+use App\Models\Group\GroupMale;
 use Illuminate\Support\Collection;
 
 class EliteCupType extends AbstractCupType
 {
+    public const MEN_GROUPS = ['М21Е', 'М21E', 'МЕ', 'Мужчины группа Е', 'М21', 'M21E', 'МE', 'М21 Фин Е', 'M21',];
+    public const WOMEN_GROUPS = ['Ж21', 'Ж21Е', 'W21', 'ЖЕ', 'ЖE', 'Ж21E', 'W21E', 'Ж21 Фин Е', 'Женщины группа Е',];
+
     public function getId(): string
     {
         return CupType::ELITE;
@@ -21,10 +26,10 @@ class EliteCupType extends AbstractCupType
 
     /**
      * @param CupEvent $cupEvent
-     * @param Group $mainGroup
+     * @param CupGroup $mainGroup
      * @return Collection //array<int, CupEventPoint>
      */
-    public function calculateEvent(CupEvent $cupEvent, Group $mainGroup): Collection
+    public function calculateEvent(CupEvent $cupEvent, CupGroup $mainGroup): Collection
     {
         $cupEventProtocolLines = $this->getGroupProtocolLines($cupEvent, $mainGroup);
         $results = $this->calculateLines($cupEvent, $cupEventProtocolLines);
@@ -32,9 +37,9 @@ class EliteCupType extends AbstractCupType
         return $results->sortByDesc(fn (CupEventPoint $cupEventResult) => $cupEventResult->points);
     }
 
-    protected function getGroupProtocolLines(CupEvent $cupEvent, Group $group): Collection
+    protected function getGroupProtocolLines(CupEvent $cupEvent, CupGroup $group): Collection
     {
-        $mainDistance = $this->distanceService->findDistance($group->id, $cupEvent->event_id);
+        $mainDistance = $this->distanceService->findDistance($this->getGroupsMap($group), $cupEvent->event_id);
         if ($mainDistance === null) {
             return new Collection();
         }
@@ -45,6 +50,16 @@ class EliteCupType extends AbstractCupType
 
     public function getGroups(): Collection
     {
-        return $this->groupsService->getGroups([Group::M21E, Group::W21E]);
+        return CupGroupFactory::getAgeTypeGroups();
+    }
+
+    protected function getGroupsMap(CupGroup $group): array
+    {
+        $map = [
+            (new CupGroup(GroupMale::Man))->id => static::MEN_GROUPS,
+            (new CupGroup(GroupMale::Woman))->id => static::WOMEN_GROUPS,
+        ];
+
+        return $map[$group->id] ?? [];
     }
 }

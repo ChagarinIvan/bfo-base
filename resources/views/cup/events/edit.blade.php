@@ -23,7 +23,7 @@
             @foreach($cup->getCupType()->getGroups() as $group)
                 <x-badge color="{{ \App\Facades\Color::getColor($group->name) }}"
                          name="{{ $group->name }}"
-                         url="{{ action(\App\Http\Controllers\Cups\ShowCupTableAction::class, [$cup, $group]) }}"
+                         url="{{ action(\App\Http\Controllers\Cups\ShowCupTableAction::class, [$cup, $group->id]) }}"
                 />
             @endforeach
         </div>

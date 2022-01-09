@@ -2,7 +2,7 @@
     use App\Models\Cup;
     use App\Models\CupEvent;
     use App\Models\CupEventPoint;
-    use App\Models\Group;
+    use App\Models\Group\CupGroup;
     use App\Models\Person;
     use Illuminate\Support\Collection;
     /**
@@ -10,7 +10,7 @@
      * @var CupEvent[] $cupEvents;
      * @var array<int, CupEventPoint[]> $cupPoints;
      * @var Person[]|Collection $persons;
-     * @var Group $activeGroup;
+     * @var CupGroup $activeGroup;
      */
     $place = 1;
 @endphp
@@ -29,10 +29,10 @@
         <ul class="nav nav-tabs">
             @foreach($cup->getCupType()->getGroups() as $group)
                 @php
-                    /** @var \App\Models\Group $group */
+                    /** @var \App\Models\Group\CupGroup $group */
                 @endphp
                 <li class="nav-item">
-                    <a href="{{ action(\App\Http\Controllers\Cups\ShowCupTableAction::class, [$cup, $group]) }}"
+                    <a href="{{ action(\App\Http\Controllers\Cups\ShowCupTableAction::class, [$cup, $group->id]) }}"
                        class="text-decoration-none nav-link {{ $activeGroup->id === $group->id ? 'active' : ''}}"
                     >
                         <b>{{ $group->name }}</b>

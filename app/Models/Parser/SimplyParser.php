@@ -2,7 +2,6 @@
 
 namespace App\Models\Parser;
 
-use App\Models\Group;
 use App\Models\Rank;
 use DOMDocument;
 use DOMElement;
@@ -45,16 +44,15 @@ class SimplyParser extends AbstractParser
                 }
             } elseif (
                 (
-                    ($groupNameLine = trim($line, ' ,')) &&
-                    (isset(Group::FIXING_MAP[$line]) || $this->groups->containsStrict($groupNameLine))
+                    ($groupNameLine = trim($line, ' ,')) && $this->groups->containsStrict($groupNameLine)
                 ) ||
                 (
                     $withSpace &&
                     ($groupNameLine = trim(substr($line, 0, strpos($line, ' ')), ' ,')) &&
-                    (isset(Group::FIXING_MAP[$groupNameLine]) || $this->groups->containsStrict($groupNameLine))
+                    $this->groups->containsStrict($groupNameLine)
                 )
             ) {
-                $groupName = Group::FIXING_MAP[$groupNameLine] ?? $groupNameLine;
+                $groupName = $groupNameLine;
                 $groupHeaderData = [];
             } elseif ($groupHeaderIndex > 0) {
                 $preparedLine = preg_replace('#=#', ' ', $line);

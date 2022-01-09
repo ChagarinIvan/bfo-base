@@ -5,7 +5,7 @@ namespace App\Models\Cups;
 use App\Models\Cup;
 use App\Models\CupEvent;
 use App\Models\CupEventPoint;
-use App\Models\Group;
+use App\Models\Group\CupGroup;
 use App\Models\ProtocolLine;
 use App\Repositories\ProtocolLinesRepository;
 use App\Services\DistanceService;
@@ -14,21 +14,15 @@ use Illuminate\Support\Collection;
 
 abstract class AbstractCupType implements CupTypeInterface
 {
-    protected DistanceService $distanceService;
-    protected ProtocolLinesRepository $protocolLinesRepository;
-    protected GroupsService $groupsService;
-
     public function __construct(
-        DistanceService $distanceService,
-        ProtocolLinesRepository $protocolLinesRepository,
-        GroupsService $groupsService,
-    ) {
-        $this->distanceService = $distanceService;
-        $this->protocolLinesRepository = $protocolLinesRepository;
-        $this->groupsService = $groupsService;
-    }
+        protected readonly DistanceService $distanceService,
+        protected readonly ProtocolLinesRepository $protocolLinesRepository,
+        protected readonly GroupsService $groupsService,
+    ) {}
 
-    public function calculateCup(Cup $cup, Collection $cupEvents, Group $mainGroup): array
+    abstract protected function getGroupProtocolLines(CupEvent $cupEvent, CupGroup $group): Collection;
+
+    public function calculateCup(Cup $cup, Collection $cupEvents, CupGroup $mainGroup): array
     {
         $results = Collection::make();
         foreach ($cupEvents as $cupEvent) {

@@ -6,7 +6,6 @@ use App\Http\Controllers\AbstractAction;
 use App\Repositories\EventsRepository;
 use App\Services\CupEventsService;
 use App\Services\CupsService;
-use App\Services\GroupsService;
 use App\Services\ViewActionsService;
 use Illuminate\Routing\Redirector;
 
@@ -14,7 +13,6 @@ abstract class AbstractCupAction extends AbstractAction
 {
     public function __construct(
         protected ViewActionsService $viewService,
-        protected GroupsService $groupsService,
         protected CupEventsService $cupEventsService,
         protected CupsService $cupsService,
         protected EventsRepository $eventsRepository,

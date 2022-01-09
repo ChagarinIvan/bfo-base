@@ -2,7 +2,6 @@
 
 namespace App\Models\Parser;
 
-use App\Models\Group;
 use App\Models\Rank;
 use DOMDocument;
 use DOMXPath;
@@ -42,7 +41,6 @@ class WinOrientHtmlParser extends AbstractParser
                 }
             }
             $groupName = explode(',', $groupName)[0];
-            $groupName = Group::FIXING_MAP[$groupName] ?? $groupName;
 
             $lines = preg_split('/\n|\r\n?/', $text);
             $linesCount = count($lines);

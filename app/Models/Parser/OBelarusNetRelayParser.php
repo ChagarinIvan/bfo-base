@@ -2,7 +2,6 @@
 
 namespace App\Models\Parser;
 
-use App\Models\Group;
 use App\Models\Rank;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -56,7 +55,6 @@ class OBelarusNetRelayParser extends AbstractParser
                 $groupName = substr($groupName, 0, strpos($groupName, ','));
             }
             $groupName = trim($groupName, '+');
-            $groupName = Group::FIXING_MAP[$groupName] ?? $groupName;
 
             $lines = preg_split('/\n|\r\n?/', $text);
             $linesCount = count($lines);
@@ -69,7 +67,7 @@ class OBelarusNetRelayParser extends AbstractParser
             $headers = explode(' ', $groupHeader);
             $groupHeaderIndex = count($headers) - 1;
             $isRelay = str_contains($text, 'на этапе') || str_contains($text, 'команды') || str_contains($text, 'Ком. рез-т');
-            $isOpen = !$isRelay || str_contains($groupName, 'OPEN');
+            $isOpen = !$isRelay || str_contains($groupName, 'PEN') || str_contains($groupName, 'pen');
 
             for ($index = 1; $index < $linesCount; $index++) {
                 $line = trim($lines[$index]);

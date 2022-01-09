@@ -10,17 +10,18 @@ use Illuminate\Http\RedirectResponse;
 
 class ShowCupTableAction extends AbstractCupAction
 {
-    public function __invoke(Cup $cup, Group $group): View|RedirectResponse
+    public function __invoke(Cup $cup, string $cupGroupId): View|RedirectResponse
     {
         $cupEvents = $this->cupEventsService->getCupEvents($cup)->sortBy('event.date');
-        $cupPoints = $this->cupEventsService->calculateCup($cup, $cupEvents, $group);
+        $cupGroup = Group\CupGroupFactory::fromId($cupGroupId);
+        $cupPoints = $this->cupEventsService->calculateCup($cup, $cupEvents, $cupGroup);
 
         return $this->view('cup.table', [
             'cup' => $cup,
             'cupEvents' => $cupEvents,
             'cupPoints' => $cupPoints,
             'persons' => Person::whereIn('id', array_keys($cupPoints))->get()->keyBy('id'),
-            'activeGroup' => $group,
+            'activeGroup' => $cupGroup,
         ]);
     }
 }

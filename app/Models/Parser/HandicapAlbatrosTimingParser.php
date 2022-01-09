@@ -2,7 +2,6 @@
 
 namespace App\Models\Parser;
 
-use App\Models\Group;
 use App\Models\Rank;
 use DOMDocument;
 use DOMXPath;
@@ -36,7 +35,6 @@ class HandicapAlbatrosTimingParser extends AbstractParser
             if (str_contains($groupName, ',')) {
                 $groupName = substr($groupName, 0, strpos($groupName, ','));
             }
-            $groupName = Group::FIXING_MAP[$groupName] ?? $groupName;
 
             $lines = preg_split('/\n|\r\n?/', $text);
             $linesCount = count($lines);
@@ -57,7 +55,7 @@ class HandicapAlbatrosTimingParser extends AbstractParser
             $withPoints = str_contains($groupHeader, 'Oчки');
             $withComment = str_contains($groupHeader, 'Прим');
             $withCompletedRank = str_contains($groupHeader, 'Вып');
-            $isOpen = str_contains($groupName, 'OPEN');
+            $isOpen = str_contains($groupName, 'PEN') || str_contains($groupName, 'pen');
             for ($index = 4; $index < $linesCount; $index++) {
                 $line = trim($lines[$index]);
                 if (empty(trim($line, '-'))) {

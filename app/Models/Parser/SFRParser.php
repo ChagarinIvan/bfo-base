@@ -2,7 +2,6 @@
 
 namespace App\Models\Parser;
 
-use App\Models\Group;
 use App\Models\Rank;
 use Exception;
 use Illuminate\Support\Carbon;
@@ -33,7 +32,6 @@ class SFRParser extends AbstractParser
             if (str_contains($groupName, ',')) {
                 $groupName = substr($groupName, 0, strpos($groupName, ','));
             }
-            $groupName = Group::FIXING_MAP[$groupName] ?? $groupName;
 
             preg_match_all('#<tr[^>]*>(.+?)</tr>#msi', $text, $linesMatch);
             $linesCount = count($linesMatch[0]);

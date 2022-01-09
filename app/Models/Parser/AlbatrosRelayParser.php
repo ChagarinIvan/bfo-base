@@ -2,7 +2,6 @@
 
 namespace App\Models\Parser;
 
-use App\Models\Group;
 use App\Models\Rank;
 use DOMDocument;
 use DOMXPath;
@@ -29,7 +28,6 @@ class AlbatrosRelayParser extends AbstractParser
             if (str_contains($groupName, ',')) {
                 $groupName = substr($groupName, 0, strpos($groupName, ','));
             }
-            $groupName = Group::FIXING_MAP[$groupName] ?? $groupName;
 
             $lines = preg_split('/\n|\r\n?/', $text);
             $linesCount = count($lines);

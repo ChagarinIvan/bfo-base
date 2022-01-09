@@ -4,11 +4,14 @@ namespace App\Models\Cups;
 
 use App\Models\CupEvent;
 use App\Models\CupEventPoint;
-use App\Models\Group;
+use App\Models\Group\CupGroup;
 use Illuminate\Support\Collection;
 
 class BikeCupType extends EliteCupType
 {
+    public const MEN_GROUPS = ['М21_МТВО', 'М21 МТВО', 'М21Е', 'М21E', 'МЕ', 'Мужчины группа Е', 'М21', 'M21E', 'МE', 'М21 Фин Е', 'M21',];
+    public const WOMEN_GROUPS = ['Ж21_МТВО', 'Ж21 МТВО', 'Ж21', 'Ж21Е', 'W21', 'ЖЕ', 'ЖE', 'Ж21E', 'W21E', 'Ж21 Фин Е', 'Женщины группа Е',];
+
     public function getId(): string
     {
         return CupType::BIKE;
@@ -21,45 +24,14 @@ class BikeCupType extends EliteCupType
 
     /**
      * @param CupEvent $cupEvent
-     * @param Group $mainGroup
+     * @param CupGroup $mainGroup
      * @return Collection //array<int, CupEventPoint>
      */
-    public function calculateEvent(CupEvent $cupEvent, Group $mainGroup): Collection
+    public function calculateEvent(CupEvent $cupEvent, CupGroup $mainGroup): Collection
     {
-        $cupEventProtocolLines = $this->getGroupProtocolLines($cupEvent, $this->getGetRealGroup($cupEvent, $mainGroup));
+        $cupEventProtocolLines = $this->getGroupProtocolLines($cupEvent, $mainGroup);
         $results = $this->calculateLines($cupEvent, $cupEventProtocolLines);
 
         return $results->sortByDesc(fn (CupEventPoint $cupEventResult) => $cupEventResult->points);
-    }
-
-    protected function getGroupProtocolLines(CupEvent $cupEvent, Group $group): Collection
-    {
-        $realGroup = $this->getGetRealGroup($cupEvent, $group);
-        if ($realGroup === null) {
-            return Collection::empty();
-        }
-        return parent::getGroupProtocolLines($cupEvent, $realGroup);
-    }
-
-    private function getGetRealGroup(CupEvent $cupEvent, Group $mainGroup): ?Group
-    {
-        $eventGroups = $this->groupsService->getCupEventGroups($cupEvent)->keyBy('name');
-        $maleGroups = $mainGroup->maleGroups()->flip();
-        $cupGroups = $this->groupsService->getGroups([Group::M21E, Group::W21E, Group::M21_MTBO, Group::W21_MTBO])
-            ->keyBy('name');
-
-        $cupGroups = $cupGroups->intersectByKeys($maleGroups);
-        $cupGroups = $cupGroups->intersectByKeys($eventGroups);
-
-        if ($cupGroups->count() > 1) {
-            throw new \RuntimeException('Many groups');
-        }
-
-        return $cupGroups->first();
-    }
-
-    public function getGroups(): Collection
-    {
-        return $this->groupsService->getGroups([Group::M21E, Group::W21E]);
     }
 }

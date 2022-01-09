@@ -2,7 +2,6 @@
 
 namespace App\Models\Parser;
 
-use App\Models\Group;
 use App\Models\Rank;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -38,8 +37,7 @@ class OParser extends AbstractParser
             }
 
             if (preg_match('#<h2>([^\d]\d\d[^\d]?|[]^\d]{5,6})</h2>#uism', $line, $match)) {
-                $groupLine = $match[1];
-                $groupName = Group::FIXING_MAP[$groupLine] ?? $groupLine;
+                $groupName = $match[1];
                 $distanceLength = 0;
                 $distancePoints = 0;
                 if (preg_match('#:\s+(\d+)\s+[^\d]+,\s+(\d+,\d+)\s+[^\d]+#s', $line, $match)) {

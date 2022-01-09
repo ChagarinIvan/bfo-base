@@ -4,7 +4,10 @@ namespace App\Models\Cups;
 
 use App\Models\CupEvent;
 use App\Models\CupEventPoint;
-use App\Models\Group;
+use App\Models\Group\CupGroup;
+use App\Models\Group\CupGroupFactory;
+use App\Models\Group\GroupAge;
+use App\Models\Group\GroupMale;
 use Illuminate\Support\Collection;
 
 /**
@@ -31,15 +34,16 @@ class JuniorCupType extends MasterCupType
 
     public function getGroups(): Collection
     {
-        return $this->groupsService->getGroups([Group::M20, Group::W20]);
+        return CupGroupFactory::getAgeTypeGroups([GroupAge::a20]);
     }
 
-    protected function getGroupProtocolLines(CupEvent $cupEvent, Group $group): Collection
+    protected function getGroupProtocolLines(CupEvent $cupEvent, CupGroup $group): Collection
     {
         $year = $cupEvent->cup->year;
-        $startYear = $year - $group->years();
-        $eliteGroup = $group->isMale() ? Group::M21E : Group::W21E;
-        $groups = $this->groupsService->getGroups([$eliteGroup]);
+        $startYear = $year - $group->age ?->value ?? 0;
+        $eliteGroups = $group->male === GroupMale::Man ? EliteCupType::MEN_GROUPS : EliteCupType::WOMEN_GROUPS;
+
+        $groups = $this->groupsService->getGroups($eliteGroups);
         $groups->push($group);
 
         return $this->protocolLinesRepository->getCupEventProtocolLinesForPersonsCertainAge(
@@ -53,10 +57,10 @@ class JuniorCupType extends MasterCupType
 
     /**
      * @param CupEvent $cupEvent
-     * @param Group $mainGroup
+     * @param CupGroup $mainGroup
      * @return Collection //array<int, CupEventPoint>
      */
-    public function calculateEvent(CupEvent $cupEvent, Group $mainGroup): Collection
+    public function calculateEvent(CupEvent $cupEvent, CupGroup $mainGroup): Collection
     {
         $results = new Collection();
         $cupEventProtocolLines = $this->getGroupProtocolLines($cupEvent, $mainGroup);

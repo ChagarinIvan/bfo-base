@@ -9,11 +9,32 @@ use Illuminate\Support\Collection;
 
 class DistanceRepository
 {
-    public function findDistance(int $groupId, int $eventId): ?Distance
+    /**
+     * @param string[] $groupNames
+     * @param int $eventId
+     * @return Distance|null
+     */
+    public function findDistance(array $groupNames, int $eventId): ?Distance
     {
-        return Distance::whereGroupId($groupId)
+        return Distance::selectRaw(new Expression('distances.*'))
+            ->join('groups', 'groups.id', '=', 'distances.group_id')
+            ->whereIn('groups.name', $groupNames)
             ->whereEventId($eventId)
             ->first();
+    }
+
+    /**
+     * @param string[] $groupNames
+     * @param int $eventId
+     * @return Distance[]|Collection
+     */
+    public function findDistances(array $groupNames, int $eventId): array|Collection
+    {
+        return Distance::selectRaw(new Expression('distances.*'))
+            ->join('groups', 'groups.id', '=', 'distances.group_id')
+            ->whereIn('groups.name', $groupNames)
+            ->whereEventId($eventId)
+            ->get();
     }
 
     public function getEqualDistances(Distance $distance): Collection
@@ -21,19 +42,17 @@ class DistanceRepository
        return Distance::selectRaw(new Expression('distances.*'))
             ->whereEventId($distance->event_id)
             ->join('groups', 'groups.id', '=', 'distances.group_id')
-            ->whereIn('groups.name', $distance->group->maleGroups())
             ->where('distances.id', '!=', $distance->id)
             ->whereLength($distance->length)
             ->wherePoints($distance->points)
             ->get();
     }
 
-    public function getCupEventDistancesByGroups(CupEvent $cupEvent, Collection $groups, Collection $groupNames): Collection
+    public function getCupEventDistancesByGroups(CupEvent $cupEvent, Collection $groups): Collection
     {
         return Distance::selectRaw(new Expression('distances.*'))
             ->join('groups', 'groups.id', '=', 'distances.group_id')
             ->whereIn('group_id', $groups)
-            ->whereIn('groups.name', $groupNames)
             ->whereEventId($cupEvent->event_id)
             ->get();
     }

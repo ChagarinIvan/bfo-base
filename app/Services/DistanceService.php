@@ -13,14 +13,29 @@ class DistanceService
     public function __construct(private DistanceRepository $distanceRepository)
     {}
 
-    public function getCupEventDistancesByGroups(CupEvent $cupEvent, Collection $groups, Collection $groupNames): Collection
+    public function getCupEventDistancesByGroups(CupEvent $cupEvent, Collection $groups): Collection
     {
-        return $this->distanceRepository->getCupEventDistancesByGroups($cupEvent, $groups, $groupNames);
+        return $this->distanceRepository->getCupEventDistancesByGroups($cupEvent, $groups);
     }
 
-    public function findDistance(int $groupId, int $eventId): ?Distance
+    /**
+     * @param string[] $groupNames
+     * @param int $eventId
+     * @return Distance|null
+     */
+    public function findDistance(array $groupNames, int $eventId): ?Distance
     {
-        return $this->distanceRepository->findDistance($groupId, $eventId);
+        return $this->distanceRepository->findDistance($groupNames, $eventId);
+    }
+
+    /**
+     * @param string[] $groupNames
+     * @param int $eventId
+     * @return Collection|Distance[]
+     */
+    public function findDistances(array $groupNames, int $eventId): array|Collection
+    {
+        return $this->distanceRepository->findDistances($groupNames, $eventId);
     }
 
     public function deleteEventDistances(Event $event): void
@@ -32,7 +47,7 @@ class DistanceService
      * @param Distance $mainDistance
      * @return Collection|Distance[]
      */
-    public function getEqualDistances(Distance $mainDistance): Collection
+    public function getEqualDistances(Distance $mainDistance): array|Collection
     {
         return $this->distanceRepository->getEqualDistances($mainDistance);
     }

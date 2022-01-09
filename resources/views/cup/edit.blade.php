@@ -1,10 +1,7 @@
 @php
     use App\Models\Cup;
-    use App\Models\Group;
     use Carbon\Carbon;
-    use Illuminate\Support\Collection;
     /**
-     * @var Group[]|Collection $groups;
      * @var Cup $cup;
      */
     $year = Carbon::now()->year;

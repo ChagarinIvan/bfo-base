@@ -70,20 +70,16 @@
                                     <td>
                                         @foreach($cup->getCupType()->getGroups() as $group)
                                             @php
-                                                /** @var \App\Models\Group $group */
+                                                /** @var \App\Models\Group\CupGroup $group */
                                             @endphp
                                             <x-badge color="{{ \App\Facades\Color::getColor($group->name) }}"
                                                      name="{{ $group->name }}"
-                                                     url="{{ action(\App\Http\Controllers\Cups\ShowCupTableAction::class, [$cup, $group]) }}"
+                                                     url="{{ action(\App\Http\Controllers\Cups\ShowCupTableAction::class, [$cup, $group->id]) }}"
                                             />
                                         @endforeach
                                     </td>
                                     <td>
-                                        <x-button text="app.cup.table"
-                                                  color="secondary"
-                                                  icon="bi-table"
-                                                  url="{{ action(\App\Http\Controllers\Cups\ShowCupTableAction::class, [$cup, $cup->getCupType()->getGroups()->first()]) }}"
-                                        />
+                                        <x-button text="app.cup.table" color="secondary" icon="bi-table" url="{{ action(\App\Http\Controllers\Cups\ShowCupTableAction::class, [$cup, $cup->getCupType()->getGroups()->first()->id]) }}"/>
                                         @auth
                                             <x-edit-button url="{{ action(\App\Http\Controllers\Cups\ShowEditCupFormAction::class, [$cup]) }}"/>
                                             <x-delete-button modal-id="deleteModal{{ $cup->id }}"/>

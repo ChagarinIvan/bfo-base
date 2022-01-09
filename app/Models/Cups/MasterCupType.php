@@ -4,31 +4,36 @@ namespace App\Models\Cups;
 
 use App\Models\CupEvent;
 use App\Models\CupEventPoint;
-use App\Models\Group;
+use App\Models\Group\CupGroup;
+use App\Models\Group\CupGroupFactory;
+use App\Models\Group\GroupAge;
+use App\Models\Group\GroupMale;
 use App\Models\ProtocolLine;
 use Illuminate\Support\Collection;
 
 class MasterCupType extends AbstractCupType
 {
-    public const NEXT_GROUPS = [
-        Group::M40 => Group::M35,
-        Group::M45 => Group::M40,
-        Group::M50 => Group::M45,
-        Group::M55 => Group::M50,
-        Group::M60 => Group::M55,
-        Group::M65 => Group::M60,
-        Group::M70 => Group::M65,
-        Group::M75 => Group::M70,
-        Group::M80 => Group::M75,
-        Group::W40 => Group::W35,
-        Group::W45 => Group::W40,
-        Group::W50 => Group::W45,
-        Group::W55 => Group::W50,
-        Group::W60 => Group::W55,
-        Group::W65 => Group::W60 ,
-        Group::W70 => Group::W65,
-        Group::W75 => Group::W70,
-        Group::W80 => Group::W75,
+    protected const GROUPS_MAP = [
+        'M_35' => ['M35', 'М35'],
+        'M_40' => ['M40', 'М40'],
+        'M_45' => ['M45', 'М45'],
+        'M_50' => ['M50', 'М50'],
+        'M_55' => ['M55', 'М55'],
+        'M_60' => ['M60', 'М60'],
+        'M_65' => ['M65', 'М65'],
+        'M_70' => ['M70', 'М70'],
+        'M_75' => ['M75', 'М75'],
+        'M_80' => ['M80', 'М80'],
+        'W_35' => ['Ж35', 'W35'],
+        'W_40' => ['Ж40', 'W40'],
+        'W_45' => ['Ж45', 'W45'],
+        'W_50' => ['Ж50', 'W50'],
+        'W_55' => ['Ж55', 'W55'],
+        'W_60' => ['Ж60', 'W60'],
+        'W_65' => ['Ж65', 'W65'],
+        'W_70' => ['Ж70', 'W70'],
+        'W_75' => ['Ж75', 'W75'],
+        'W_80' => ['Ж80', 'W80'],
     ];
 
     public function getId(): string
@@ -41,19 +46,13 @@ class MasterCupType extends AbstractCupType
         return 'app.cup.type.master';
     }
 
-    /**
-     * @param CupEvent $cupEvent
-     * @param Group $mainGroup
-     * @return Collection //array<int, CupEventPoint>
-     */
-    public function calculateEvent(CupEvent $cupEvent, Group $mainGroup): Collection
+    public function calculateEvent(CupEvent $cupEvent, CupGroup $mainGroup): Collection
     {
         $results = new Collection();
         $cupEventProtocolLines = $this->getGroupProtocolLines($cupEvent, $mainGroup);
-        $eventGroupsId = $this->getGroups()->pluck('id');
+        $eventGroupsId = $this->getEventGroups($mainGroup->male)->pluck('id');
 
-        $groupsName = $mainGroup->maleGroups();
-        $eventDistances = $this->distanceService->getCupEventDistancesByGroups($cupEvent, $eventGroupsId, $groupsName)
+        $eventDistances = $this->distanceService->getCupEventDistancesByGroups($cupEvent, $eventGroupsId)
             ->pluck('id')
             ->toArray();
 
@@ -65,11 +64,11 @@ class MasterCupType extends AbstractCupType
         $validGroups = $eventGroupsId->flip();
         $cupEventProtocolLines = $cupEventProtocolLines->intersectByKeys($validGroups);
         $groups = $this->groupsService->getCupEventGroups($cupEvent);
-        $hasGroupOnEvent = $groups->pluck('id')->flip()->has($mainGroup->id);
+        $hasGroupOnEvent = $groups->pluck('name')->intersect(self::GROUPS_MAP[$mainGroup->id])->count() > 0;
 
         foreach ($cupEventProtocolLines as $groupId => $groupProtocolLines) {
             $group = $this->groupsService->getGroup($groupId);
-            $needDivideGroup = !$hasGroupOnEvent && self::NEXT_GROUPS[$mainGroup->name] === $group->name;
+            $needDivideGroup = !$hasGroupOnEvent && in_array($group->name, self::GROUPS_MAP[$mainGroup->prev()->id], true);
             if ($needDivideGroup) {
                 $eventGroupResults = $this->calculateLines($cupEvent, $groupProtocolLines);
             } else {
@@ -94,10 +93,10 @@ class MasterCupType extends AbstractCupType
         );
     }
 
-    protected function getGroupProtocolLines(CupEvent $cupEvent, Group $group): Collection
+    protected function getGroupProtocolLines(CupEvent $cupEvent, CupGroup $group): Collection
     {
         $year = $cupEvent->cup->year;
-        $startYear = $year - $group->years();
+        $startYear = $year - $group->age ?->value ?? 0;
         $finishYear = $startYear - 5;
 
         return $this->protocolLinesRepository->getCupEventProtocolLinesForPersonsCertainAge(
@@ -108,29 +107,33 @@ class MasterCupType extends AbstractCupType
         );
     }
 
+    protected function getEventGroups(GroupMale $male): Collection
+    {
+        $groups = Collection::make();
+        foreach ($this->getGroups() as $cupGroup) {
+            if ($cupGroup->male === $male) {
+                $groups = $groups->merge($this->groupsService->getGroups(static::GROUPS_MAP[$cupGroup->id]));
+            }
+        }
+        return $groups;
+    }
+
+    /**
+     * @return Collection|CupGroup[]
+     */
     public function getGroups(): Collection
     {
-        return $this->groupsService->getGroups([
-            Group::M35,
-            Group::M40,
-            Group::M45,
-            Group::M50,
-            Group::M55,
-            Group::M60,
-            Group::M65,
-            Group::M70,
-            Group::M75,
-            Group::M80,
-            Group::W35,
-            Group::W40,
-            Group::W45,
-            Group::W50,
-            Group::W55,
-            Group::W60,
-            Group::W65,
-            Group::W70,
-            Group::W75,
-            Group::W80,
+        return CupGroupFactory::getAgeTypeGroups([
+            GroupAge::a35,
+            GroupAge::a40,
+            GroupAge::a45,
+            GroupAge::a50,
+            GroupAge::a55,
+            GroupAge::a60,
+            GroupAge::a65,
+            GroupAge::a70,
+            GroupAge::a75,
+            GroupAge::a80,
         ]);
     }
 }

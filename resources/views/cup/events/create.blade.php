@@ -19,7 +19,7 @@
     <div class="row mb-3">
         <div class="col-12">
             @foreach($cup->getCupType()->getGroups() as $group)
-                <x-badge color="{{ \App\Facades\Color::getColor($group->name) }}"
+                <x-badge color="{{ $group->getColor() }}"
                          name="{{ $group->name }}"
                 />
             @endforeach

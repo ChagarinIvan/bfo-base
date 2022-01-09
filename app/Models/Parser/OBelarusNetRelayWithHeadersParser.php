@@ -2,7 +2,6 @@
 
 namespace App\Models\Parser;
 
-use App\Models\Group;
 use App\Models\Rank;
 use DOMDocument;
 use DOMXPath;
@@ -36,7 +35,6 @@ class OBelarusNetRelayWithHeadersParser extends AbstractParser
                 $groupName = substr($groupName, 0, strpos($groupName, ','));
             }
             $groupName = trim($groupName, '+');
-            $groupName = Group::FIXING_MAP[$groupName] ?? $groupName;
 
             $lines = preg_split('/\n|\r\n?/', $text);
             $linesCount = count($lines);
