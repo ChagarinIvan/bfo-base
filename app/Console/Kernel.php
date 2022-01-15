@@ -38,10 +38,10 @@ class Kernel extends ConsoleKernel
         $schedule->command(RankValidationCommand::class)->weekly()->at('02:00')->runInBackground();
         $schedule->command(SyncPersonsCommand::class)->weekly()->runInBackground();
 
-        for ($i = 0; $i < 3; $i++) {
+        for ($i = 0; $i < 4; $i++) {
             $schedule->command(IdentProtocolLineCommand::class)
                 ->everyMinute()
-                ->before(function() use ($i) {sleep($i * 10);})
+                ->before(function() use ($i) {sleep($i * 15);})
                 ->runInBackground();
         }
     }

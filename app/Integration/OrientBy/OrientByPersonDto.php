@@ -41,7 +41,7 @@ class OrientByPersonDto
     public function getLastPaymentDate(): ?Carbon
     {
         if ($this->bfopaydate) {
-            $date = Carbon::createFromFormat('d.m.Y', (string)$this->bfopaydate);
+            $date = Carbon::createFromFormat('d.m.Y', substr((string)$this->bfopaydate, 0, 10));
             return $date === false ? null : $date->startOfDay();
         } else {
             return null;
