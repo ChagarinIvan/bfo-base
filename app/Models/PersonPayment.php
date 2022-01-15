@@ -2,18 +2,21 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 
 /**
- * Class PersonPayment
- *
- * @package App\Models
  * @property int $person_id
  * @property int $year
  * @property Carbon $date
- * @property Person $person
+ *
+ * @property-read Person $person
+ *
+ * @method static PersonPayment|Builder where(string $column, int $year)
+ * @method static PersonPayment|Builder wherePersonId(int $personId)
+ * @method static PersonPayment|null first()
  */
 class PersonPayment extends Model
 {

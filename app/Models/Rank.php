@@ -2,32 +2,30 @@
 
 namespace App\Models;
 
+use App\Collections\RanksCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Collection;
 
 /**
- * Class Rank
- *
- * @package App\Models
  * @property int $id
  * @property int $person_id
  * @property int|null $event_id
- * @property null|string $rank
+ * @property string $rank
  * @property Carbon $start_date
  * @property Carbon $finish_date
+ *
  * @property-read Event|null $event
  * @property-read Person $person
+ *
  * @method static Rank|Builder where(string $column, string|null $operator, string|int|Carbon $value = null)
  * @method static Rank|Builder selectRaw(Expression $expression)
- * @method static Rank|Builder whereIn(string $column, array|Collection $list)
  * @method static Rank|Builder with(array|string $relations)
  * @method static Rank|Builder orderByRaw(Expression $expression)
  * @method static Rank|Builder join(string $table, string $foreignColumn, string $operator, string $selfColumn)
- * @method static Rank[]|Collection get()
+ * @method static RanksCollection get()
  */
 class Rank extends Model
 {

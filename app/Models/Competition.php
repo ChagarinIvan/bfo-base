@@ -9,9 +9,6 @@ use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 
 /**
- * Class Competition
- *
- * @package App\Models
  * @property int $id
  * @property int $name
  * @property string $description
@@ -19,10 +16,11 @@ use Illuminate\Support\Collection;
  * @property Carbon $to
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ *
  * @property-read Collection|Event[] $events
- * @property-read int|null $events_count
- * @method static Builder|Competition|null find(mixed $ids)
- * @method static Builder|Competition where(string $column, string $operator, string|int $value)
+ *
+ * @method static Competition|null find(mixed $ids)
+ * @method static Competition|Builder where(string $column, string $operator, string $value)
  */
 class Competition extends Model
 {

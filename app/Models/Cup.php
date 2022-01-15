@@ -10,18 +10,18 @@ use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 
 /**
- * Class Cup
- *
- * @package App\Models
  * @property int $id
  * @property string $name
  * @property int $events_count
  * @property int $year
  * @property string $type
+ *
  * @property-read Collection|CupEvent[] $events
+ *
+ * @method static void delete()
  * @method static Builder|Cup find(mixed $ids)
- * @method static Builder|Cup with(mixed $ids)
  * @method static Builder|Cup where(string $column, int|string $value)
+ * @method static Collection get()
  */
 class Cup extends Model
 {

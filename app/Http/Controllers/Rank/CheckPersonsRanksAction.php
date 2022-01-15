@@ -2,9 +2,14 @@
 
 namespace App\Http\Controllers\Rank;
 
+use App\Services\PersonsIdentService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 
+/**
+ * Проверка разрядов базы будущих соревнований на основе csv файла
+ */
 class CheckPersonsRanksAction extends AbstractRankAction
 {
     public function __invoke(Request $request): View
@@ -12,8 +17,9 @@ class CheckPersonsRanksAction extends AbstractRankAction
         $list = $request->file('list');
         $list = $list->getContent();
         $list = $this->parserService->parserRankList($list);
-        $list = $this->personsIdentService->preparedLines($list);
-        $personsList = $this->personsIdentService->identLines($list);
+        $list = $this->preparedLines($list);
+        $personsList = $this->identService->identLines($list->keys()->toArray());
+        $personsList = Collection::make($personsList);
         $persons = $this->personsService->getPersons($personsList->values())->keyBy('id');
         $ranks = $this->rankService->getActualRanks($personsList->values());
 
@@ -21,5 +27,20 @@ class CheckPersonsRanksAction extends AbstractRankAction
             'ranks.check-list',
             compact('list', 'ranks', 'personsList', 'persons')
         );
+    }
+
+    public function preparedLines(Collection $lines): Collection
+    {
+        return $lines->transform(function(array $line) {
+            [$lastname, $firstname] = explode(' ', $line['name']);
+            $line['prepared_line'] = PersonsIdentService::makeIdentLine(
+                $lastname,
+                $firstname,
+                empty($line['year']) ? null : (int)$line['year']
+            );
+
+            return $line;
+        })
+            ->keyBy('prepared_line');
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Models\Person;
@@ -41,6 +43,9 @@ class PersonsService
 
     public function makePrompts(Person $person): void
     {
+        $existPrompts = $person->prompts->pluck('prompt')->toArray();
+        $prompts = [];
+
         $personData = [
             ProtocolLineIdentService::prepareLine(mb_strtolower($person->lastname)),
             ProtocolLineIdentService::prepareLine(mb_strtolower($person->firstname)),
@@ -51,14 +56,19 @@ class PersonsService
             ProtocolLineIdentService::prepareLine(mb_strtolower($person->lastname)),
         ];
 
-        $this->promptService->storePrompt(implode('_', $personData), $person->id);
-        $this->promptService->storePrompt(implode('_', $reversPersonData), $person->id);
+        $prompts[] = implode('_', $personData);
+        $prompts[] = implode('_', $reversPersonData);
 
         if ($person->birthday !== null) {
             $personData[] = $person->birthday->format('Y');
             $reversPersonData[] = $person->birthday->format('Y');
-            $this->promptService->storePrompt(implode('_', $personData), $person->id);
-            $this->promptService->storePrompt(implode('_', $reversPersonData), $person->id);
+            $prompts[] = implode('_', $personData);
+            $prompts[] = implode('_', $reversPersonData);
+        }
+
+        $prompts = array_diff($prompts, $existPrompts);
+        foreach ($prompts as $prompt) {
+            $this->promptService->storePrompt($prompt, $person->id);
         }
     }
 

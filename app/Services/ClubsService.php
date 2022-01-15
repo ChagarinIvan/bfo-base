@@ -3,10 +3,14 @@
 namespace App\Services;
 
 use App\Models\Club;
+use App\Repositories\ClubsRepository;
 use Illuminate\Support\Collection;
 
 class ClubsService
 {
+    public function __construct(private readonly ClubsRepository $repository)
+    {}
+
     private const EDIT_MAP = [
         'ко ' => ['ка ', 'oc '],
         'ксо ' => ['кса '],
@@ -36,5 +40,10 @@ class ClubsService
         }
 
         return $clubName;
+    }
+
+    public function findClub(string $clubName): ?Club
+    {
+        return $this->repository->findByNormalizeName(self::normalizeName($clubName));
     }
 }

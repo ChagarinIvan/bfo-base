@@ -5,47 +5,13 @@ namespace App\Collections;
 use App\Models\Rank;
 use Illuminate\Support\Collection;
 
-class RanksCollection
+/**
+ * @method void each(\Closure $closure)
+ * @method static merge(static $collection)
+ * @method Collection keys()
+ * @method Rank|null first()
+ * @method void put(int $personId, ?Rank $actualRank)
+ */
+class RanksCollection extends Collection
 {
-    private Collection $ranks;
-
-    public function __construct(Collection $ranks)
-    {
-        $this->ranks = $ranks;
-    }
-
-    public function each(\Closure $closure): void
-    {
-        $this->ranks->each($closure);
-    }
-
-    public function getCollection(): Collection
-    {
-        return $this->ranks;
-    }
-
-    public function groupByPerson(): void
-    {
-        $this->ranks = $this->ranks->groupBy('person_id');
-    }
-
-    public function merge(RanksCollection $previousRanks): void
-    {
-        $this->ranks = $this->ranks->merge($previousRanks->getCollection());
-    }
-
-    public function getKeys(): Collection
-    {
-        return $this->ranks->keys();
-    }
-
-    public function put(int $personId, ?Rank $actualRank): void
-    {
-        $this->ranks->put($personId, $actualRank);
-    }
-
-    public function first(): ?Rank
-    {
-        return $this->ranks->first();
-    }
 }

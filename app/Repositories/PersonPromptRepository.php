@@ -14,7 +14,10 @@ class PersonPromptRepository
         $this->db = $db;
     }
 
-    public function findPersonsPrompts(Collection $preparedLines): Collection
+    /**
+     * @param string[] $preparedLines
+     */
+    public function findPersonsPrompts(array $preparedLines): Collection
     {
         return $this->db->table('persons_prompt')
             ->whereIn('prompt', $preparedLines)

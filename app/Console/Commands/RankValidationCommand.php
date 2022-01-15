@@ -7,10 +7,7 @@ use App\Models\Rank;
 use Illuminate\Console\Command;
 
 /**
- * Команда для проверки разрядов и из выправления.
- *
- * Class RankValidationCommand
- * @package App\Console\Commands
+ * Команда для проверки разрядов и их выправления.
  */
 class RankValidationCommand extends Command
 {

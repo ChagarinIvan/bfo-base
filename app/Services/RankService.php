@@ -33,7 +33,10 @@ class RankService
         Rank::WSM_RANK => 9,
     ];
 
-    public function getPersonRanks(int $personId): RanksCollection
+    /**
+     * @return RanksCollection
+     */
+    public function getPersonRanks(int $personId): Collection
     {
         $filter = new RanksFilter();
         $filter->personId = $personId;
@@ -57,12 +60,12 @@ class RankService
             $filter->rank = Rank::NEXT_RANKS[$rank];
             $filter->haveNoNextRank = true;
             $previousRanks = $this->ranksRepository->getRanksList($filter);
-            $ranks->merge($previousRanks);
+            $ranks = $ranks->merge($previousRanks);
         }
 
-        $ranks->groupByPerson();
-        $personsIds = $ranks->getKeys();
-        $ranks = new RanksCollection(Collection::empty());
+        $personsIds = $ranks->groupBy('person_id')->keys();
+        $ranks = RanksCollection::empty();
+
         foreach ($personsIds as $personId) {
             $ranks->put($personId, $this->getActualRank($personId, $nowDate));
         }
@@ -212,5 +215,10 @@ class RankService
     public function deleteEventRanks(Event $event): void
     {
         $event->ranks()->delete();
+    }
+
+    public function storeRank(Rank $rank): void
+    {
+        $rank->save();
     }
 }

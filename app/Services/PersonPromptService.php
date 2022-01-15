@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Models\Person;
 use App\Models\PersonPrompt;
 use App\Repositories\PersonPromptRepository;
-use Illuminate\Support\Collection;
 
 class PersonPromptService
 {
@@ -28,12 +27,12 @@ class PersonPromptService
 
     /**
      * В ответе [prepared_line => person_id, ]
-     * @param Collection $preparedLines
-     * @return Collection
+     *
+     * @return array<string, int>
      */
-    public function identPersonsByPrompts(Collection $preparedLines): Collection
+    public function identPersonsByPrompts(array $preparedLines): array
     {
          $prompts = $this->repository->findPersonsPrompts($preparedLines);
-         return $prompts->pluck('person_id', 'prompt');
+         return $prompts->pluck('person_id', 'prompt')->toArray();
     }
 }

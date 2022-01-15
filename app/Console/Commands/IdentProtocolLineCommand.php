@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Club;
 use App\Models\IdentLine;
 use App\Models\Person;
 use App\Models\ProtocolLine;
@@ -16,21 +15,15 @@ use Illuminate\Support\Carbon;
 
 /**
  * Будем определять людей из очереди на определение.
- * 3 человека в минуту
+ * Запуск несколько раз в неделю
  * независимо от результата запись удаляется из очереди
- *
- * * * * * php /var/www/blog/artisan protocol-lines:queue-ident
- * * * * * (sleep 20; php /var/www/blog/artisan protocol-lines:queue-ident)
- *
- * Class IdentProtocolLineCommand
- * @package App\Console\Commands
  */
 class IdentProtocolLineCommand extends Command
 {
     protected $signature = 'protocol-lines:queue-ident';
 
     //стартует каждую минуту
-    public function handle(): void
+    public function handle(RankService $rankService, PersonsService $personsService, ClubsService $clubsService): void
     {
         $identLine = IdentLine::first();
         if ($identLine) {
@@ -38,9 +31,6 @@ class IdentProtocolLineCommand extends Command
         } else {
             return;
         }
-
-        $rankService = app(RankService::class);
-        $personsService = app(PersonsService::class);
 
         $personId = ProtocolLineIdentService::identPerson($identLine->ident_line);
         $protocolLines = ProtocolLine::wherePreparedLine($identLine->ident_line)->get();
@@ -66,9 +56,9 @@ class IdentProtocolLineCommand extends Command
                 }
             } catch (InvalidFormatException) {}
 
-            $club = Club::whereNormalizeName(ClubsService::normalizeName($protocolLine->club))->get();
-            if ($club->count() > 0) {
-                $person->club_id = $club->first()->id;
+            $club = $clubsService->findClub($protocolLine->club);
+            if ($club) {
+                $person->club_id = $club->id;
             }
 
             $person = $personsService->storePerson($person);

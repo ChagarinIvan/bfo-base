@@ -7,19 +7,15 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Query\Builder;
 
 /**
- * Class CupEvent
- *
- * @package App\Models
  * @property int $id
  * @property int $cup_id
  * @property int $event_id
  * @property float $points
+ *
  * @property-read Cup $cup
  * @property-read Event $event
+ *
  * @method static Builder|CupEvent find(mixed $ids)
- * @method static Builder|CupEvent with(mixed $params)
- * @method static Builder|CupEvent whereCupId(int $id)
- * @method static Builder|CupEvent whereEventId(int $id)
  */
 class CupEvent extends Model
 {

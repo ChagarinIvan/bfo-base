@@ -9,11 +9,6 @@ use Illuminate\Console\Command;
 /**
  * Команда для добавленія в очередь на определение всех не опознанных людей.
  * Запускаем раз в месяц
- *
- * 1 1 1 * * php artisan protocol-lines:big-ident
- *
- * Class SimpleIndentCommand
- * @package App\Console\Commands
  */
 class StartBigIdentCommand extends Command
 {

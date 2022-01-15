@@ -2,9 +2,6 @@
 
 namespace App\Models;
 
-/**
- * Class CupEventPoint
- */
 class CupEventPoint
 {
     public function __construct(

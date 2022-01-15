@@ -9,12 +9,10 @@ use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Collection;
 
 /**
- * Class Group
- *
- * @package App\Models
  * @property int $id
  * @property string $name
- * @property Distance[]|Collection $distances
+ *
+ * @property-read Distance[]|Collection $distances
  *
  * @method static Group|null find(int $id)
  * @method static Builder|Group whereName(string $value)

@@ -8,13 +8,12 @@ use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 
 /**
- * Class PersonPrompt
- *
- * @package App\Models
  * @property int $id
  * @property int $person_id
  * @property string $prompt
- * @property Person $person
+ *
+ * @property-read Person $person
+ *
  * @method static Builder|PersonPrompt wherePrompt(string $line)
  * @method static Builder|PersonPrompt where(...$value)
  * @method static Builder|PersonPrompt selectRaw(string $row)

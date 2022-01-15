@@ -6,6 +6,7 @@ use App\Console\Commands\IdentProtocolLineCommand;
 use App\Console\Commands\RankValidationCommand;
 use App\Console\Commands\SimpleIndentCommand;
 use App\Console\Commands\StartBigIdentCommand;
+use App\Console\Commands\SyncPersonsCommand;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -21,6 +22,7 @@ class Kernel extends ConsoleKernel
         SimpleIndentCommand::class,
         StartBigIdentCommand::class,
         RankValidationCommand::class,
+        SyncPersonsCommand::class,
     ];
 
     /**
@@ -31,7 +33,18 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-//        $schedule->command('protocol-lines:queue-ident')->everyMinute();
+        $schedule->command(SimpleIndentCommand::class)->dailyAt('01:00')->runInBackground();
+        $schedule->command(StartBigIdentCommand::class)->monthly()->at('03:00')->runInBackground();
+        $schedule->command(RankValidationCommand::class)->weekly()->at('02:00')->runInBackground();
+        $schedule->command(IdentProtocolLineCommand::class)->everyMinute()->runInBackground();
+        $schedule->command(SyncPersonsCommand::class)->weekly()->runInBackground();
+
+        for ($i = 0; $i < 6; $i++) {
+            $schedule->command(IdentProtocolLineCommand::class)
+                ->everyMinute()
+                ->before(function() use ($i) {sleep($i * 10);})
+                ->runInBackground();
+        }
     }
 
     /**

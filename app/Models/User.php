@@ -8,11 +8,10 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 /**
- * Class User
- * @package App\Models
  * @property int $id
  * @property string $email
  * @property string $password
+ *
  * @method static Builder|User whereEmail(string $email)
  */
 class User extends Authenticatable

@@ -8,6 +8,7 @@ use App\Models\Rank;
 use Carbon\Carbon;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Query\Expression;
+use Illuminate\Support\Collection;
 
 class RanksRepository
 {
@@ -22,8 +23,10 @@ class RanksRepository
 
     /**
      * Выборка действующих актуальных разрядов с фильтром по типу разряда
+     *
+     * @return RanksCollection
      */
-    public function getRanksList(RanksFilter $filter): RanksCollection
+    public function getRanksList(RanksFilter $filter): Collection
     {
         $ranks = Rank::selectRaw(new Expression('ranks.*'))
             ->leftJoin('events', 'events.id', '=', 'ranks.event_id');
@@ -66,7 +69,7 @@ class RanksRepository
             $ranks->with($filter->with);
         }
 
-        return new RanksCollection($ranks->get());
+        return $ranks->get();
     }
 
     public function getDateRank(int $personId, Carbon $date = null): ?Rank

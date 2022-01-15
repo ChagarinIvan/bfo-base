@@ -13,7 +13,7 @@ class ShowRanksListAction extends AbstractRankAction
 
         return $this->view('ranks.index', [
             'selectedRank' => $selectedRank,
-            'ranks' => $ranks->getCollection(),
+            'ranks' => $ranks,
         ]);
     }
 

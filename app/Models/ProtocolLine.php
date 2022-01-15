@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Services\ProtocolLineIdentService;
+use App\Services\PersonsIdentService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Query\Builder;
@@ -11,9 +11,6 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
 /**
- * Class ProtocolLine
- *
- * @package App\Models
  * @property int $id
  * @property int $serial_number
  * @property string $lastname
@@ -30,9 +27,11 @@ use Illuminate\Support\Collection;
  * @property int $person_id
  * @property string $prepared_line
  * @property bool $vk
+ *
  * @property-read Event $event
  * @property-read Distance $distance
  * @property-read Person|null $person
+ *
  * @method static Collection find(mixed $ids)
  * @method static ProtocolLine[]|Collection get(array $columns = ['*'])
  * @method static Builder|ProtocolLine whereDistanceId(int $distanceId)
@@ -90,30 +89,9 @@ class ProtocolLine extends Model
         return $this->BelongsTo(Person::class, 'person_id', 'id');
     }
 
-    /**
-     * Создаём идентификационную строку из фамилии имени и года
-     *
-     * @param string $lastname
-     * @param string $firstname
-     * @param int|null $year
-     *
-     * @return string
-     */
-    public static function makeIdentLine(string $lastname, string $firstname, int $year = null): string
-    {
-        $data = [
-            ProtocolLineIdentService::prepareLine(mb_strtolower($lastname)),
-            ProtocolLineIdentService::prepareLine(mb_strtolower($firstname)),
-        ];
-        if ($year !== null) {
-            $data[] = $year;
-        }
-        return implode('_', $data);
-    }
-
     public function fillProtocolLine(int $distanceId): void
     {
-        $this->prepared_line = self::makeIdentLine($this->lastname, $this->firstname, $this->year);
+        $this->prepared_line = PersonsIdentService::makeIdentLine($this->lastname, $this->firstname, $this->year);
 
         //чистим разряды
         $this->rank = Rank::getRank($this->rank) ?? '';

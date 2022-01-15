@@ -8,13 +8,12 @@ use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 
 /**
- * Class EventFlag
- *
- * @package App\Models
  * @property int $id
  * @property string $name
  * @property string $color
+ *
  * @property-read Collection|Event[] $events
+ *
  * @method static Builder|Flag find(mixed $ids)
  * @method static Builder|Flag with(mixed $params)
  */
