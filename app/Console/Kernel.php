@@ -33,13 +33,12 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-//        $schedule->command(SimpleIndentCommand::class)->dailyAt('01:00')->runInBackground();
-//        $schedule->command(StartBigIdentCommand::class)->monthly()->at('03:00')->runInBackground();
-//        $schedule->command(RankValidationCommand::class)->weekly()->at('02:00')->runInBackground();
-//        $schedule->command(IdentProtocolLineCommand::class)->everyMinute()->runInBackground();
-//        $schedule->command(SyncPersonsCommand::class)->weekly()->runInBackground();
+        $schedule->command(SimpleIndentCommand::class)->dailyAt('01:00')->runInBackground();
+        $schedule->command(StartBigIdentCommand::class)->monthly()->at('03:00')->runInBackground();
+        $schedule->command(RankValidationCommand::class)->weekly()->at('02:00')->runInBackground();
+        $schedule->command(SyncPersonsCommand::class)->weekly()->runInBackground();
 
-        for ($i = 0; $i < 1; $i++) {
+        for ($i = 0; $i < 3; $i++) {
             $schedule->command(IdentProtocolLineCommand::class)
                 ->everyMinute()
                 ->before(function() use ($i) {sleep($i * 10);})

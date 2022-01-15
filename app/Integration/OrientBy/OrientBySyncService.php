@@ -36,8 +36,6 @@ class OrientBySyncService
     {
         $persons = $this->apiClient->getPersons();
 
-        $persons = array_slice($persons, 200, 100);
-
         $personsPrompts = [];
         foreach ($persons as $personDto) {
             $personsPrompts[self::makePromptFromPersonDto($personDto)] = $personDto;
