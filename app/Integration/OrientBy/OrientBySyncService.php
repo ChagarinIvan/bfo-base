@@ -47,7 +47,6 @@ class OrientBySyncService
         foreach ($personsPrompts as $personsPrompt => $personDto) {
             if (isset($indicatedPersons[$personsPrompt])) {
                 $personId = (int)$indicatedPersons[$personsPrompt];
-                $this->logger->withContext();
                 $person = $this->personsService->getPerson($personId);
                 $logPerson = $person->replicate();
 
@@ -95,14 +94,14 @@ class OrientBySyncService
                     $this->paymentService->addPayment($person->id, $personDto->getLastPaymentDate());
                 }
 
-                $rank = $this->rankService->getActualRank($personId);
-                if ($rank && ($rank->rank !== Rank::getRank($personDto->rank))) {
-                    $this->logger->info(
-                        "update rank: {$rank->rank} => {$personDto->rank}",
-                        ['person_id' => $personId]
-                    );
-                    $this->setRank($person->id, $personDto->rank);
-                }
+//                $rank = $this->rankService->getActualRank($personId);
+//                if ($rank && ($rank->rank !== Rank::getRank($personDto->rank))) {
+//                    $this->logger->info(
+//                        "update rank: {$rank->rank} => {$personDto->rank}",
+//                        ['person_id' => $personId]
+//                    );
+//                    $this->setRank($person->id, $personDto->rank);
+//                }
 
                 if ($this->setClub($person, $personDto)) {
                     $this->logger->info(
