@@ -10,10 +10,9 @@ class PersonsIdentService
      * Поиск соответствующих людей в базе по предварительно подготовленным строкам (makeIdentLine).
      * В ответе [prepared_line => person_id, ] для найденных людей
      *
-     * @param string[] $lines
      * @return array<string, int>
      */
-    public function identLines(array $lines): array
+    public function identLines(array $lines, int $identLevel = 5): array
     {
         //ищем людей по прямому совпадению подготовленный имён
         $linePersons = $this->promptService->identPersonsByPrompts($lines);
@@ -21,7 +20,7 @@ class PersonsIdentService
         //определяем у кого нет совпадения и прогоняем их через identPerson
         foreach ($lines as $preparedLine) {
             if (!isset($linePersons[$preparedLine])) {
-                $personId = ProtocolLineIdentService::identPerson($preparedLine);
+                $personId = ProtocolLineIdentService::identPerson($preparedLine, $identLevel);
                 if ($personId > 0) {
                     $linePersons[$preparedLine] = $personId;
                 }

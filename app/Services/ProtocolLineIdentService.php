@@ -97,11 +97,8 @@ class ProtocolLineIdentService
 
     /**
      * Определяем людей по идентификаторам с использованием расстояния левенштайна.
-     *
-     * @param string $searchLine
-     * @return int
      */
-    public static function identPerson(string $searchLine): int
+    public static function identPerson(string $searchLine, int $identLevel = 5): int
     {
         self::$prompts = PersonPrompt::all();
         $ranks = new Collection();
@@ -115,7 +112,7 @@ class ProtocolLineIdentService
         }
 
         $minRank = $ranks->sortBy('rank')->first();
-        if ($minRank['rank'] <= 5) {
+        if ($minRank['rank'] <= $identLevel) {
             /** @var PersonPrompt $prompt */
             $prompt = self::$prompts->where('prompt', $minRank['prompt'])->first();
             return $prompt->person_id;

@@ -41,7 +41,7 @@ class OrientBySyncService
             $personsPrompts[self::makePromptFromPersonDto($personDto)] = $personDto;
         }
 
-        $indicatedPersons = $this->identService->identLines(array_keys($personsPrompts));
+        $indicatedPersons = $this->identService->identLines(array_keys($personsPrompts), 2);
         foreach ($personsPrompts as $personsPrompt => $personDto) {
             if (isset($indicatedPersons[$personsPrompt])) {
                 $personId = (int)$indicatedPersons[$personsPrompt];
@@ -69,9 +69,9 @@ class OrientBySyncService
                 }
 
                 $date = $personDto->getYear();
-                if (!$person->birthday->eq($date) && $date) {
+                if ($date && (($person->birthday && !$person->birthday->eq($date)) || $person->birthday === null)) {
                     $this->logger->info(
-                        "update birthday: {$logPerson->birthday->format('Y')} => {$date->format('Y')}",
+                        "update birthday: ".($logPerson->birthday ? $logPerson->birthday->format('Y') : '')." => {$date->format('Y')}",
                         ['person_id' => $personId]
                     );
                     $person->birthday = $date;
@@ -91,15 +91,6 @@ class OrientBySyncService
                     );
                     $this->paymentService->addPayment($person->id, $personDto->getLastPaymentDate());
                 }
-
-//                $rank = $this->rankService->getActualRank($personId);
-//                if ($rank && ($rank->rank !== Rank::getRank($personDto->rank))) {
-//                    $this->logger->info(
-//                        "update rank: {$rank->rank} => {$personDto->rank}",
-//                        ['person_id' => $personId]
-//                    );
-//                    $this->setRank($person->id, $personDto->rank);
-//                }
 
                 if ($this->setClub($person, $personDto)) {
                     $this->logger->info(
@@ -150,11 +141,13 @@ class OrientBySyncService
 
     private function setRank(int $personId, ?string $rankData): void
     {
-        $rank = new Rank();
-        $rank->person_id = $personId;
-        $rank->rank = Rank::getRank($rankData);
-        $rank->start_date = Carbon::now();
-        $rank->finish_date = $rank->start_date->clone()->addYears(2);
-        $this->rankService->storeRank($rank);
+        if (Rank::getRank($rankData)) {
+            $rank = new Rank();
+            $rank->person_id = $personId;
+            $rank->rank = Rank::getRank($rankData);
+            $rank->start_date = Carbon::now();
+            $rank->finish_date = $rank->start_date->clone()->addYears(2);
+            $this->rankService->storeRank($rank);
+        }
     }
 }
