@@ -34,7 +34,9 @@ class OrientBySyncService
 
     public function synchronize(): void
     {
+        $this->logger->info('Start synchronisation.');
         $persons = $this->apiClient->getPersons();
+        $this->logger->info(sprintf("Need process %d persons.", count($persons)));
 
         $personsPrompts = [];
         foreach ($persons as $personDto) {
@@ -118,6 +120,7 @@ class OrientBySyncService
                 }
             }
         }
+        $this->logger->info('Finish synchronisation.');
     }
 
     private function makePromptFromPersonDto(OrientByPersonDto $personDto): string
