@@ -25,6 +25,12 @@ class PersonPromptService
         $person->prompts()->delete();
     }
 
+
+    public function deletePrompt(string $prompt): void
+    {
+        PersonPrompt::wherePrompt($prompt)->delete();
+    }
+
     /**
      * В ответе [prepared_line => person_id, ]
      *

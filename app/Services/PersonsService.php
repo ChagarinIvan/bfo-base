@@ -46,6 +46,8 @@ class PersonsService
         $existPrompts = $person->prompts->pluck('prompt')->toArray();
         $prompts = [];
 
+        $hasNameSake = Person::whereFirstname($person->firstname)->whereLastname($person->lastname)->count() > 1;
+
         $personData = [
             ProtocolLineIdentService::prepareLine(mb_strtolower($person->lastname)),
             ProtocolLineIdentService::prepareLine(mb_strtolower($person->firstname)),
@@ -56,8 +58,13 @@ class PersonsService
             ProtocolLineIdentService::prepareLine(mb_strtolower($person->lastname)),
         ];
 
-        $prompts[] = implode('_', $personData);
-        $prompts[] = implode('_', $reversPersonData);
+        if ($hasNameSake) {
+            $this->promptService->deletePrompt(implode('_', $personData));
+            $this->promptService->deletePrompt(implode('_', $reversPersonData));
+        } else {
+            $prompts[] = implode('_', $personData);
+            $prompts[] = implode('_', $reversPersonData);
+        }
 
         if ($person->birthday !== null) {
             $personData[] = $person->birthday->format('Y');
