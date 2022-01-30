@@ -31,7 +31,16 @@
                 <label for="to">{{ __('app.competition.to_date') }}</label>
             </div>
             <div class="col-12">
-                <input type="submit" class="btn btn-outline-primary btn-sm" value="{{ __('app.common.create') }}">
+                <button type="submit"
+                        class="btn btn-sm btn-outline-primary me-1"
+                >
+                    <i class="bi bi-clipboard-check me-1"
+                       data-bs-toggle="tooltip"
+                       data-bs-placement="top"
+                       title="{{ __('app.common.create') }}"
+                    ></i>
+                    <span class="d-none d-xl-inline">{{ __('app.common.create') }}</span>
+                </button>
                 <x-back-button/>
             </div>
         </form>

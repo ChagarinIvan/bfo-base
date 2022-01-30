@@ -39,7 +39,16 @@
                 <label for="club_id">{{ __('app.club.name') }}</label>
             </div>
             <div class="col-12">
-                <input type="submit" class="btn btn-outline-primary btn-sm" value="{{ __('app.common.edit') }}">
+                <button type="submit"
+                        class="btn btn-sm btn-outline-primary me-1"
+                >
+                    <i class="bi bi-clipboard-check me-1"
+                       data-bs-toggle="tooltip"
+                       data-bs-placement="top"
+                       title="{{ __('app.common.edit') }}"
+                    ></i>
+                    <span class="d-none d-xl-inline">{{ __('app.common.edit') }}</span>
+                </button>
                 <x-back-button/>
             </div>
         </form>

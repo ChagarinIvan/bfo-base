@@ -11,12 +11,8 @@ use Illuminate\Support\Collection;
 
 class ProtocolLinesRepository
 {
-    private ConnectionInterface $db;
-
-    public function __construct(ConnectionInterface $db)
-    {
-        $this->db = $db;
-    }
+    public function __construct(private readonly ConnectionInterface $db)
+    {}
 
     public function getProtocolLine(int $id, array $with): ProtocolLine
     {

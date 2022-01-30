@@ -5,12 +5,24 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Models\Person;
+use App\Models\ProtocolLine;
+use App\Repositories\PersonsRepository;
+use App\Repositories\QueryResult;
 use Illuminate\Support\Collection;
 
 class PersonsService
 {
-    public function __construct(private PersonPromptService $promptService)
-    {}
+    private const SORT_BY_COLUMNS = [
+        'fio',
+        'events_count',
+        'club_name',
+        'birthday',
+    ];
+
+    public function __construct(
+        private readonly PersonPromptService $promptService,
+        private readonly PersonsRepository $repository,
+    ) {}
 
     /**
      * @return Person[]|Collection
@@ -32,6 +44,24 @@ class PersonsService
     public function getPersons(Collection $personsIds): Collection
     {
         return Person::whereIn('id', $personsIds)->get();
+    }
+
+    /**
+     * Выборка для страницы спортсменов для фронтенд апи с пагинацией и уже преобразованными полями.
+     *
+     * @param int $limit
+     * @param int $offset
+     * @param string $sortBy
+     * @param int $sortMode
+     * @param string $search
+     *
+     * @return QueryResult
+     */
+    public function getPersonsList(int $limit, int $offset, string $sortBy, int $sortMode, string $search): QueryResult
+    {
+        $sortBy = in_array($sortBy, self::SORT_BY_COLUMNS, true) ? $sortBy : 'fio';
+        $sortMode = $sortMode === 1 ? 'DESC' : 'ASC';
+        return $this->repository->getPersonsList($limit, $offset, $sortBy, $sortMode, $search);
     }
 
     public function storePerson(Person $person): Person
@@ -102,5 +132,15 @@ class PersonsService
     public function getClubPersons(int $clubId): Collection
     {
         return Person::whereClubId($clubId)->get();
+    }
+
+    public function deletePerson(Person $person): void
+    {
+        $protocolLines = ProtocolLine::wherePersonId($person->id)->get();
+        $protocolLines->each(function (ProtocolLine $line) {
+            $line->person_id = null;
+            $line->save();
+        });
+        $person->delete();
     }
 }
