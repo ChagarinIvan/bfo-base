@@ -5,7 +5,7 @@
     /**
      * @var Rank[]|Collection $ranks;
      * @var Person $person;
-     * @var Rank $actualRank;
+     * @var Rank|null $actualRank;
      * @var array $protocolLinesIds;
      */
 @endphp
@@ -16,7 +16,11 @@
 
 @section('content')
     <div class="row"><h4>{{ $person->lastname }} {{ $person->firstname }}</h4></div>
-    <div class="row"><h4>{{ $actualRank->rank }} {{ __('app.common.do') }} {{ $actualRank->finish_date->format('Y-m-d') }}</h4></div>
+    @if ($actualRank)
+        <div class="row"><h4>{{ $actualRank ? $actualRank->rank : '' }} {{ __('app.common.do') }} {{ $actualRank->finish_date->format('Y-m-d') }}</h4></div>
+    @else
+        <div class="row"><h4>{{ \App\Models\Rank::WITHOUT_RANK }}</h4></div>
+    @endif
     <div class="row mb-3">
         <div class="col-12">
             <x-back-button/>
@@ -37,8 +41,8 @@
                data-page-list="[10,25,50,100,All]"
                data-resizable="true"
                data-custom-sort="customSort"
-               data-pagination-next-text="{{ __('pagination.next') }}"
-               data-pagination-pre-text="{{ __('pagination.previous') }}"
+               data-pagination-next-text="{{ __('app.pagination.nex') }}"
+               data-pagination-pre-text="{{ __('app.pagination.previous') }}"
         >
             <thead class="table-dark">
                 <tr>

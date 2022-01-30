@@ -11,7 +11,9 @@ use App\Http\Controllers\Error;
 use App\Http\Controllers\Event;
 use App\Http\Controllers\Faq;
 use App\Http\Controllers\Flags;
+use App\Http\Controllers\FrontendApi;
 use App\Http\Controllers\Groups;
+use App\Http\Controllers\Layout\ShowLayoutAction;
 use App\Http\Controllers\Localization;
 use App\Http\Controllers\Login;
 use App\Http\Controllers\Person;
@@ -177,6 +179,13 @@ class WebRoutesServiceProvider extends ServiceProvider
                 $this->routeRegistrar->middleware(['auth'])->prefix('registration')->group(function () {
                     $this->route->get( '',      Registration\ShowRegistrationFormAction::class);
                     $this->route->post('/data', Registration\SendRegistrationDataAction::class);
+                });
+
+                $this->routeRegistrar->prefix('frontend-api')->group(function () {
+                    $this->routeRegistrar->prefix('person')->group(function() {
+                        $this->route->get(   '',          FrontendApi\GetPersonsListAction::class);
+                        $this->route->delete('/{person}', FrontendApi\DeletePersonAction::class);
+                    });
                 });
             });
         });

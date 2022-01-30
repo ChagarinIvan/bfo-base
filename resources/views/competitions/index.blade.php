@@ -50,8 +50,8 @@
                        data-page-list="[10,25,50,100,All]"
                        data-resizable="true"
                        data-custom-sort="customSort"
-                       data-pagination-next-text="{{ __('pagination.next') }}"
-                       data-pagination-pre-text="{{ __('pagination.previous') }}"
+                       data-pagination-next-text="{{ __('app.pagination.nex') }}"
+                       data-pagination-pre-text="{{ __('app.pagination.previous') }}"
                 >
                     <thead class="table-dark">
                         <tr>

@@ -2,20 +2,26 @@
 
 namespace App\Http\Controllers\Person;
 
+use App\Http\Controllers\AbstractAction;
 use App\Models\Person;
-use App\Models\ProtocolLine;
+use App\Services\PersonsService;
+use App\Services\ViewActionsService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Routing\Redirector;
 
-class DeletePersonAction extends AbstractPersonAction
+class DeletePersonAction extends AbstractAction
 {
+    public function __construct(
+        protected ViewActionsService $viewService,
+        protected Redirector $redirector,
+        private readonly PersonsService $personsService
+    ) {
+        parent::__construct($viewService, $redirector);
+    }
+
     public function __invoke(Person $person): RedirectResponse
     {
-        $protocolLines = ProtocolLine::wherePersonId($person->id)->get();
-        $protocolLines->each(function (ProtocolLine $line) {
-            $line->person_id = null;
-            $line->save();
-        });
-        $person->delete();
+        $this->personsService->deletePerson($person);
         return $this->redirector->action(ShowPersonsListAction::class);
     }
 }

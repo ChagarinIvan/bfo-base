@@ -48,9 +48,3 @@
         </form>
     </div>
 @endsection
-
-@section('script')
-    <script>
-        $('#groups').selectpicker();
-    </script>
-@endsection
