@@ -260,7 +260,7 @@ export default {
                 && text !== ''
                 && (text + '').toLowerCase().includes(this.search.toLowerCase())
             ) {
-                return text.replaceAll(this.search, '<mark>' + this.search + '</mark>')
+                return (text + '').replaceAll(this.search, '<mark>' + this.search + '</mark>')
                     .replaceAll(this.search.toLowerCase(), '<mark>' + this.search.toLowerCase() + '</mark>');
             }
 
