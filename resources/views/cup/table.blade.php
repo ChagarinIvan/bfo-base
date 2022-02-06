@@ -56,7 +56,7 @@
                        data-search-highlight="true"
                        data-resizable="true"
                        data-custom-sort="customSort"
-                       data-pagination-next-text="{{ __('app.pagination.nex') }}"
+                       data-pagination-next-text="{{ __('app.pagination.next') }}"
                        data-pagination-pre-text="{{ __('app.pagination.previous') }}"
                 >
                     <thead class="table-dark">
