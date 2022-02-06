@@ -18,6 +18,7 @@ class ParserFactory
         SimplyParser::class,
         OParser::class,
         HrodnoParser::class,
+        OBelarusSpanParser::class,
         OBelarusNetParser::class,
     ];
 

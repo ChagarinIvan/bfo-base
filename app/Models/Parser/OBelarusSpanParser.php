@@ -6,14 +6,8 @@ use App\Models\Rank;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
-class OBelarusNetRelayParser extends AbstractParser
+class OBelarusSpanParser extends AbstractParser
 {
-    private ?int $commandPlace = null;
-    private ?int $commandPoints = null;
-    private ?string $commandRank = null;
-    private int $commandCounter = 1;
-    private int $commandSerial;
-
     public function parse(string $file, bool $needConvert = true): Collection
     {
         if ($needConvert) {
@@ -25,11 +19,6 @@ class OBelarusNetRelayParser extends AbstractParser
 
         preg_match_all('#<h2>(.+?)</h2>.*?<pre>(.+?)</pre#msi', $file, $nodesMatch);
         foreach ($nodesMatch[2] as $nodeIndex => $node) {
-            $this->commandCounter = 1;
-            $this->commandPoints = null;
-            $this->commandPlace = null;
-            $this->commandRank = null;
-
             $text = trim($node, '-');
             $text = strip_tags($text);
             $text = trim($text);
@@ -39,18 +28,11 @@ class OBelarusNetRelayParser extends AbstractParser
 
             $groupName = $nodesMatch[1][$nodeIndex];
             $groupName = strip_tags($groupName);
-            if (preg_match('#(\d+)\s+[^\d]+,\s+((\d+([,.])\d+)\s+[^\d]+|(\d+)\s+[^\d])#s', $groupName, $match)) {
+            if (preg_match('#(\d+)\s+[^\d]+,\s+(\d+\.?\d*?)\s+[^\d]#s', $groupName, $match)) {
                 $distancePoints = (int)$match[1];
-                if (str_contains($match[3], ',') || str_contains($match[3], '.')) {
-                    if (str_contains($match[3], ',')) {
-                        $distanceLength = floatval(str_replace(',', '.', $match[3])) * 1000;
-                    } else {
-                        $distanceLength = (float)$match[3] * 1000;
-                    }
-                } else {
-                    $distanceLength = floatval($match[3]);
-                }
+                $distanceLength = $match[2] * 1000;
             }
+
             if (str_contains($groupName, ',')) {
                 $groupName = substr($groupName, 0, strpos($groupName, ','));
             }
@@ -63,11 +45,8 @@ class OBelarusNetRelayParser extends AbstractParser
             }
             $groupHeader = $lines[0];
             $groupHeader = trim($groupHeader);
-            $groupHeader = preg_replace('#\s+#', ' ', $groupHeader);
-            $headers = explode(' ', $groupHeader);
-            $groupHeaderIndex = count($headers) - 1;
-            $isRelay = str_contains($text, 'на этапе') || str_contains($text, 'команды') || str_contains($text, 'Ком. рез-т');
-            $isOpen = !$isRelay || str_contains($groupName, 'PEN') || str_contains($groupName, 'pen');
+            $groupHeader = preg_split('#\s+#', $groupHeader);
+            $groupHeaderIndex = count($groupHeader) - 1;
 
             for ($index = 1; $index < $linesCount; $index++) {
                 $line = trim($lines[$index]);
@@ -77,23 +56,9 @@ class OBelarusNetRelayParser extends AbstractParser
                 if (str_contains($line, 'ласс дистан') || str_contains($line, 'лавный судь')) {
                     break;
                 }
-                if (!preg_match('#\d#', $line)) {
-                    continue;
-                }
-                if (is_numeric($line) || $isOpen) {
-                    $this->commandCounter = 1;
-                    $this->commandSerial = (int)$line;
-                    $this->commandPoints = null;
-                    $this->commandPlace = null;
-                    $this->commandRank = null;
-                    if (!$isOpen) {
-                        continue;
-                    }
-                }
 
                 $preparedLine = preg_replace('#=#', ' ', $line);
-                $preparedLine = preg_replace('#\s+#', ' ', $preparedLine);
-                $lineData = explode(' ', $preparedLine);
+                $lineData = preg_split('#\s+#', $preparedLine);
                 $fieldsCount = count($lineData);
 
                 $protocolLine = [
@@ -106,12 +71,8 @@ class OBelarusNetRelayParser extends AbstractParser
 
                 $indent = 1;
 
-                $number = false;
                 for ($i = $groupHeaderIndex; $i > 2; $i--) {
-                    $columnName = $this->getColumn($headers[$i]);
-                    if ($columnName === 'runner_number') {
-                        $number = true;
-                    }
+                    $columnName = $this->getColumn($groupHeader[$i]);
                     if ($columnName === '') {
                         break;
                     }
@@ -121,24 +82,11 @@ class OBelarusNetRelayParser extends AbstractParser
                     $protocolLine = $this->getValue($columnName, $lineData, $fieldsCount, $indent, $protocolLine);
                 }
 
-                $protocolLine['points'] = $this->commandPoints;
-                $protocolLine['place'] = $this->commandPlace;
-                $protocolLine['complete_rank'] = $this->commandRank;
-
-                $nameIndex = $isOpen ? 1 : 0;
-                if (!$number) {
-                    $nameIndex++;
-                }
-                $protocolLine['lastname'] = $lineData[$nameIndex++];
-                $protocolLine['firstname'] = $lineData[$nameIndex++];
-                if ($number === false) {
-                    $protocolLine['runner_number'] = $lineData[$isOpen ? 1 : 0];
-                }
-
-                $protocolLine['serial_number'] = $isOpen ? $lineData[0] : $this->commandSerial;
-                $protocolLine['club'] = implode(' ', array_slice($lineData, $nameIndex, $fieldsCount - $indent - $nameIndex + 1));
+                $protocolLine['serial_number'] = $lineData[0];
+                $protocolLine['lastname'] = $lineData[1];
+                $protocolLine['firstname'] = $lineData[2];
+                $protocolLine['club'] = implode(' ', array_slice($lineData, 3, $fieldsCount - $indent - 2));
                 $linesList->push($protocolLine);
-                $this->commandCounter++;
             }
         }
         return $linesList;
@@ -146,7 +94,8 @@ class OBelarusNetRelayParser extends AbstractParser
 
     public function check(string $file): bool
     {
-        return (bool)preg_match('#<b>\d[^<]*[^\d^\s]#', $file);
+        //этот паттерн срабатывает на ОбеларусЭстафеты..поэтому он позже в проверказ парсеров
+        return (bool)preg_match('#<span\sid="m\d\d?"></span>[^<]+,#', $file);
     }
 
     private function getColumn(string $field): string
@@ -186,6 +135,7 @@ class OBelarusNetRelayParser extends AbstractParser
             if ($place === 'в/к' || $place === 'лично') {
                 $indent++;
                 $protocolLine['vk'] = true;
+                $protocolLine['place'] = null;
                 return $protocolLine;
             }
             if ($place === '-') {
@@ -193,15 +143,21 @@ class OBelarusNetRelayParser extends AbstractParser
                 $protocolLine['place'] = null;
                 return $protocolLine;
             }
+            if (str_contains($place, 'ДИСКВ')) {
+                $protocolLine['place'] = null;
+                return $protocolLine;
+            }
             if (preg_match('#^\d+$#', $place) && preg_match('#\d\d:\d\d:\d\d#', implode('', $lineData))) {
                 $indent++;
-                $this->commandPlace = (int)$place;
+                $protocolLine['place'] = $place;
+                return $protocolLine;
             }
         } elseif ($column === 'points') {
             $column = $lineData[$fieldsCount - $indent];
-            if (is_numeric($column) && $this->commandPoints === null && $this->commandSerial != $column) {
+            if (is_numeric($column)) {
                 $indent++;
-                $this->commandPoints = (int)$column;
+                $protocolLine['points'] = (int)$column;
+                return $protocolLine;
             }
         } elseif ($column === 'runner_number') {
             $column = $lineData[$fieldsCount - $indent];
@@ -209,43 +165,17 @@ class OBelarusNetRelayParser extends AbstractParser
                 $indent++;
                 $protocolLine['runner_number'] = $column;
             }
-        } elseif ($column === 'complete_rank') {
-            $column = $lineData[$fieldsCount - $indent];
-            if (Rank::validateRank($column) || $column === '-') {
-                $indent++;
-                $this->commandRank = $column;
-            }
-        } elseif ($column === 'info') {
-            $column = $lineData[$fieldsCount - $indent];
-            if ($column === 'в/к') {
-                $indent++;
-                $protocolLine['vk'] = true;
-            }
         } elseif ($column === 'time') {
             $column1 = $lineData[$fieldsCount - $indent];
             $column2 = $lineData[$fieldsCount - $indent - 1];
-            if (preg_match('#\d\d:\d\d:\d\d#', $column1) && preg_match('#\d\d:\d\d:\d\d#', $column2)) {
-                $indent += 2;
-                $timeColumn = $column2;
-            } elseif (preg_match('#\d\d:\d\d:\d\d#', $column1) && !preg_match('#\d\d:\d\d:\d\d#', $column2)) {
+            if (preg_match('#\d\d:\d\d:\d\d#', $column1) && !preg_match('#\d\d:\d\d:\d\d#', $column2)) {
                 $indent++;
                 $timeColumn = $column1;
-            } elseif ($column1 === '20.10' || $column1 === '24.4' || $column1 === 'DSQ') {
-                $column3 = $lineData[$fieldsCount - $indent - 2];
-                if (preg_match('#\d\d:\d\d:\d\d#', $column3)) {
-                    $indent += 3;
-                    $timeColumn = $column3;
-                } elseif ($column1 === '20.10' || $column1 === '24.4') {
-                    $indent += 2;
-                    $protocolLine['time'] = null;
-                    return $protocolLine;
-                } else {
-                    $indent += 1;
-                    $protocolLine['time'] = null;
-                    return $protocolLine;
-                }
             } else {
                 $protocolLine['time'] = null;
+                if (str_contains($column1, 'ДИСКВ')) {
+                    $indent++;
+                }
                 return $protocolLine;
             }
             $protocolLine['time'] = Carbon::createFromTimeString($timeColumn);

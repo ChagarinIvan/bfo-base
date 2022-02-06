@@ -73,9 +73,6 @@ class WinOrientHtmlParser extends AbstractParser
                     }
                     continue;
                 }
-                if (str_contains($line, 'Барановский')) {
-//                        sleep(1);
-                }
                 $isFirst = false;
                 $preparedLine = str_replace('=', '', $line);
                 $preparedLine = preg_replace('#\s+#', ' ', $preparedLine);
