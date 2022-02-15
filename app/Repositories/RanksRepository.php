@@ -96,7 +96,7 @@ class RanksRepository
         $this->db->table(self::TABLE)->truncate();
     }
 
-    public function deleteRanks(RanksCollection $ranks): void
+    public function deleteRanks(Collection $ranks): void
     {
         $ranks->each(fn(Rank $rank) => $rank->delete());
     }

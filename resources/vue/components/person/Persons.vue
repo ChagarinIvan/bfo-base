@@ -1,11 +1,11 @@
 <template>
     <div class="row mb-3" v-if="this.auth">
         <div class="col-12">
-            <ui-button :color="'success'"
-                       :url="'/persons/create'"
-                       :icon="'bi-file-earmark-plus-fill'"
-                       :text="'app.person.create_button'"
-            ></ui-button>
+            <ui-route-link-button :color="'success'"
+                                  :icon="'bi-file-earmark-plus-fill'"
+                                  :url="'/create'"
+                                  :text="'app.person.create_button'"
+            ></ui-route-link-button>
         </div>
     </div>
     <div class="row">
@@ -31,14 +31,14 @@
                 </thead>
                 <tbody>
                 <tr v-for="person in this.persons">
-                    <td><a :href="'/persons/' + person.id + '/show'"><span v-html="markedText(person.fio)"></span></a></td>
+                    <td><a :href="'/persons/' + person.id + '/show'"><span v-html="markedText(person.lastname + ' ' + person.firstname)"></span></a></td>
                     <td><a :href="'/ranks/person/' + person.id"><span v-html="markedText(person.rank)"></span></a></td>
                     <td><span v-html="markedText(person.events_count)"></span></td>
                     <td v-if="person.club_id > 0"><a :href="'/club/' + person.club_id + '/show'"><span v-html="markedText(person.club_name)"></span></a></td>
                     <td v-else><span v-html="markedText(person.club_name)"></span></td>
-                    <td><span v-html="markedText(person.birthday)"></span></td>
+                    <td><span v-html="markedText(year(person.birthday))"></span></td>
                     <td v-if="auth">
-                        <ui-button :url="'/persons/' + person.id + '/edit'"></ui-button>
+                        <ui-route-link-button :url="'/edit/' + person.id"></ui-route-link-button>
                         <button type="button"
                                 class="btn btn-outline-danger btn-sm me-1"
                                 @click="clickDeleteButton(person.id)"
@@ -150,22 +150,18 @@
 
 <script>
 
-import UiButton from "./UiButton.vue";
+import UiButton from "../UiButton.vue";
+import UiRouteLinkButton from "../UiRouteLinkButton.vue";
 import {trans} from 'laravel-vue-i18n'
 
 export default {
     components: {
+        UiRouteLinkButton,
         UiButton,
-    },
-    props: {
-        initAuth: {
-            type: Boolean,
-            default: false
-        },
     },
     data() {
         return {
-            auth: this.initAuth,
+            auth: false,
             persons: [],
             maxCount: 0,
             perPage: 10,
@@ -189,10 +185,10 @@ export default {
             return this.page * this.perPage;
         },
         personsUrl() {
-            return '/frontend-api/person?limit=' + this.perPage
-                + '&offset=' + ((this.page - 1) * this.perPage)
-                + '&sort-by=' + this.sortBy
-                + '&sort-mode=' + this.sortMode
+            return '/api/frontend/person?per_page=' + this.perPage
+                + '&page=' + this.page
+                + '&sort_by=' + this.sortBy
+                + '&sort_mode=' + this.sortMode
                 + '&search=' + this.search;
         },
         lastPage() {
@@ -205,9 +201,13 @@ export default {
         }
     },
     mounted() {
+        this.auth = $('#app').data('auth') == '1';
         this.getPersons();
     },
     methods: {
+        year(date) {
+            return date === null ? '' : new Date(date).getFullYear();
+        },
         clickDeleteButton(id) {
             this.deletedPerson = id;
         },
@@ -218,16 +218,16 @@ export default {
             return trans(key);
         },
         deletePerson() {
-            axios.delete('/frontend-api/person/' + this.deletedPerson).then((response) => {
-                $('#modal').toggle();
+            axios.delete('/api/frontend/person/' + this.deletedPerson).then(() => {
+                $('#modal').modal('hide');
                 this.getPersons();
             });
         },
         getPersons() {
             axios.get(this.personsUrl)
                 .then((response) => {
-                    this.persons = response.data.rows;
-                    this.maxCount = response.data.count;
+                    this.persons = response.data.data;
+                    this.maxCount = response.data.meta.total;
 
                     if (this.maxCount === 0) {
                         this.page = 1;

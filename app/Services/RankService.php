@@ -75,34 +75,34 @@ class RankService
 
     public function getActualRank(int $personId, Carbon $date = null): ?Rank
     {
-        $rank = $this->ranksRepository->getDateRank($personId, $date);
-        if ($rank === null) {
-            $rank = $this->ranksRepository->getDateRank($personId);
-        }
+        return $this->cache->remember(
+            "actual_rank_{$personId}_{$date?->format('Y-m-d')}",
+            86400, //сутки
+            function () use ($personId, $date) {
+                $rank = $this->ranksRepository->getDateRank($personId, $date);
+                if ($rank === null) {
+                    $rank = $this->ranksRepository->getDateRank($personId);
+                }
 
-        if ($rank !== null) {
-            $rank = $this->createPreviousRank($rank, $date);
-        }
-        return $rank;
+                if ($rank !== null) {
+                    $rank = $this->createPreviousRank($rank, $date);
+                }
+                return $rank;
+            }
+        );
     }
 
     public function getActualRanks(Collection $personIds): Collection
     {
-        return $this->cache->remember(
-            md5($personIds->implode('')),
-            36000,
-            function () use ($personIds) {
-                $actualRanks = new Collection();
-                foreach ($personIds as $personId) {
-                    $rank = $this->getActualRank($personId);
-                    if ($rank) {
-                        $actualRanks->put($personId, $rank);
-                    }
-                }
-
-                return $actualRanks;
+        $actualRanks = new Collection();
+        foreach ($personIds as $personId) {
+            $rank = $this->getActualRank($personId);
+            if ($rank) {
+                $actualRanks->put($personId, $rank);
             }
-        );
+        }
+
+        return $actualRanks;
     }
 
     /**

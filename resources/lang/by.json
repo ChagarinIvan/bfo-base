@@ -155,5 +155,6 @@
     "app.pagination.previous" : "Папярдняя",
     "app.pagination.first" : "Першая",
     "app.pagination.last" : "Апошняя",
-    "app.validation.numeric" : "Толькі лічба, дробная праз кропку"
+    "app.validation.numeric" : "Толькі лічба, дробная праз кропку",
+    "validation.required" : "Абавязковае поле"
 }

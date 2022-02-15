@@ -152,5 +152,6 @@
     "app.pagination.previous" : "Предыдущая",
     "app.pagination.first" : "Первая",
     "app.pagination.last" : "Последняя",
-    "app.validation.numeric" : "Только число, дробное через точку"
+    "app.validation.numeric" : "Только число, дробное через точку",
+    "validation.required" : "Обязательное поле"
 }

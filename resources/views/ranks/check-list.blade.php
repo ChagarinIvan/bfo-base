@@ -52,7 +52,6 @@
             <tbody>
                 @foreach($list as $preparedLine => $lineData)
                     @php
-                        $equalGroup = false;
                         $equalYear = false;
                         $equalClub = false;
                         $equalRank = false;
@@ -70,18 +69,13 @@
                                 $equalName = "{$person->lastname} {$person->firstname}" === trim($lineData['name']);
                                 $equalRank = ($ranks->has($personId) && $ranks->get($personId)->rank === \App\Models\Rank::getRank($lineData['rank'])) ||
                                     (!$ranks->has($personId) && \App\Models\Rank::getRank($lineData['rank']) === \App\Models\Rank::WITHOUT_RANK);
-                                if ($person->birthday) {
-                                    \App\Services\GroupsService::$preparedLine;
-                                }
                             }
                         };
                     @endphp
                     <tr>
                     {{-- group --}}
-                        @if ($hasPerson && $equalGroup)
-                            <td><b>{{ $lineData['group'] }}</b></td>
-                        @elseif ($hasPerson)
-                            <td><del>{{ $lineData['group'] }}</del>(<b class="text-success">{{ "{$person->lastname} {$person->firstname}" }}</b>)</td>
+                        @if ($hasPerson)
+                            <td>{{ $lineData['group'] }}</td>
                         @else
                             <td>{{ $lineData['group'] }}</td>
                         @endif

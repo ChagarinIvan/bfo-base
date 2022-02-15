@@ -40,7 +40,6 @@
                     <th data-sortable="true">{{ __('app.common.lastname') }}</th>
                     <th data-sortable="true">{{ __('app.common.name') }}</th>
                     <th data-sortable="true">{{ __('app.common.birthday') }}</th>
-                    @auth<th></th>@endauth
                 </tr>
             </thead>
             <tbody>
@@ -52,22 +51,11 @@
                         <td><a href="{{ $link }}">{{ $person->lastname }}</a></td>
                         <td><a href="{{ $link }}">{{ $person->firstname }}</a></td>
                         <td>{{ $person->birthday ? $person->birthday->format('Y') : '' }}</td>
-                        @auth
-                            <td>
-                                <x-edit-button url="{{ action(\App\Http\Controllers\Person\ShowEditPersonFormAction::class, [$person->id]) }}"/>
-                                <x-delete-button modal-id="deleteModal{{ $person->id }}"/>
-                            </td>
-                        @endauth
                     </tr>
                 @endforeach
             </tbody>
         </table>
     </div>
-    @foreach ($persons as $person)
-        <x-modal modal-id="deleteModal{{ $person->id }}"
-                 url="{{ action(\App\Http\Controllers\Person\DeletePersonAction::class, [$person->id]) }}"
-        />
-    @endforeach
 @endsection
 
 @section('table_extracted_columns', '[0, 1]')

@@ -11,7 +11,6 @@ use App\Http\Controllers\Error;
 use App\Http\Controllers\Event;
 use App\Http\Controllers\Faq;
 use App\Http\Controllers\Flags;
-use App\Http\Controllers\FrontendApi;
 use App\Http\Controllers\Groups;
 use App\Http\Controllers\Localization;
 use App\Http\Controllers\Login;
@@ -45,14 +44,6 @@ class WebRoutesServiceProvider extends ServiceProvider
             $this->routeRegistrar->middleware('web')->group(function () {
                 $this->route->get('', fn() => $this->redirector->action(Competition\ShowCompetitionsListAction::class, [Year::actualYear()]));
                 $this->route->get('back', BackAction:: class);
-
-                //frontend-api
-                $this->routeRegistrar->prefix('frontend-api')->group(function () {
-                    $this->routeRegistrar->prefix('person')->group(function() {
-                        $this->route->get(   '',          FrontendApi\GetPersonsListAction::class);
-                        $this->route->delete('/{person}', FrontendApi\DeletePersonAction::class);
-                    });
-                });
 
                 //competitions
                 $this->routeRegistrar->prefix('competitions')->group(function () {
@@ -91,11 +82,6 @@ class WebRoutesServiceProvider extends ServiceProvider
                     $this->route->get('{person}/show', Person\ShowPersonAction::class);
 
                     $this->middleware(['auth'])->group(function () {
-                        $this->route->get( 'create',                  Person\ShowCreatePersonFormAction::class);
-                        $this->route->post('store',                   Person\StorePersonAction::class);
-                        $this->route->get( '{person}/edit',           Person\ShowEditPersonFormAction::class);
-                        $this->route->post('{person}/update',         Person\UpdatePersonAction::class);
-                        $this->route->get( '{person}/delete',         Person\DeletePersonAction::class);
                         $this->route->get( 'person/{protocol}/show',  Person\ShowSetPersonToProtocolLineAction::class);
                         $this->route->get( '{person}/{protocol}/set', Person\SetProtocolLinePersonAction::class);
                     });

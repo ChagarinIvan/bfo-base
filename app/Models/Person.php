@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -31,6 +32,7 @@ use Illuminate\Support\Collection;
  * @method static Person|Builder whereFirstname(string $firstname)
  * @method static Person|Builder whereLastname(string $lastname)
  * @method static Person|Builder whereBirthday(Carbon $date)
+ * @method static Paginator paginate()
  */
 class Person extends Model
 {

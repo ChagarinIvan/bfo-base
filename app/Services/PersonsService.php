@@ -6,8 +6,7 @@ namespace App\Services;
 
 use App\Models\Person;
 use App\Models\ProtocolLine;
-use App\Repositories\PersonsRepository;
-use App\Repositories\QueryResult;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
 class PersonsService
@@ -20,8 +19,7 @@ class PersonsService
     ];
 
     public function __construct(
-        private readonly PersonPromptService $promptService,
-        private readonly PersonsRepository $repository,
+        private readonly PersonPromptService $promptService
     ) {}
 
     /**
@@ -48,20 +46,31 @@ class PersonsService
 
     /**
      * Выборка для страницы спортсменов для фронтенд апи с пагинацией и уже преобразованными полями.
-     *
-     * @param int $limit
-     * @param int $offset
-     * @param string $sortBy
-     * @param int $sortMode
-     * @param string $search
-     *
-     * @return QueryResult
      */
-    public function getPersonsList(int $limit, int $offset, string $sortBy, int $sortMode, string $search): QueryResult
+    public function getPersonsList(string $sortBy, int $sortMode, string $search): Builder
     {
         $sortBy = in_array($sortBy, self::SORT_BY_COLUMNS, true) ? $sortBy : 'fio';
         $sortMode = $sortMode === 1 ? 'DESC' : 'ASC';
-        return $this->repository->getPersonsList($limit, $offset, $sortBy, $sortMode, $search);
+
+        $persons = Person::withCount('protocolLines')->with('club');
+
+        $persons = match ($sortBy) {
+            'fio' => $persons->orderBy('lastname', $sortMode)->orderBy('firstname', $sortMode),
+            'club_name' => $persons->join('club', 'person.club_id', '=', 'club.id')->orderBy('club.name', $sortMode),
+            'events_count' => $persons->orderBy('protocol_lines_count', $sortMode),
+            'birthday' => $persons->orderBy('birthday', $sortMode),
+        };
+
+        if ($search) {
+            $persons = $persons->where('firstname', 'like', "%{$search}%")
+                ->orWhere('lastname', 'like', "%{$search}%")
+                ->orWhereHas('club', function ($query) use ($search) {
+                    $query->where('name', 'like', "%{$search}%");
+                })
+                ->orWhere('birthday', 'like', "%{$search}%");
+        }
+
+        return $persons;
     }
 
     public function storePerson(Person $person): Person
