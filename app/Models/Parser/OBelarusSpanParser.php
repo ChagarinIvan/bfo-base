@@ -17,7 +17,7 @@ class OBelarusSpanParser extends AbstractParser
         $distancePoints = 0;
         $distanceLength = 0;
 
-        preg_match_all('#<h2>(.+?)</h2>.*?<pre>(.+?)</pre#msi', $file, $nodesMatch);
+        preg_match_all('#<h2[^>]*>(.+?)</h2>.*?<pre>(.+?)</pre#msi', $file, $nodesMatch);
         foreach ($nodesMatch[2] as $nodeIndex => $node) {
             $text = trim($node, '-');
             $text = strip_tags($text);
@@ -73,6 +73,10 @@ class OBelarusSpanParser extends AbstractParser
 
                 for ($i = $groupHeaderIndex; $i > 2; $i--) {
                     $columnName = $this->getColumn($groupHeader[$i]);
+                    if (str_contains($groupHeader[$i], 'тставани')) {
+                        $indent++;
+                        continue;
+                    }
                     if ($columnName === '') {
                         break;
                     }

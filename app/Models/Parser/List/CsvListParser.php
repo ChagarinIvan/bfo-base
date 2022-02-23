@@ -12,8 +12,31 @@ class CsvListParser implements ParserInterface
         $list = new Collection();
         $content = mb_convert_encoding($file, 'utf-8', 'windows-1251');
         $result = preg_split('#\r\n#', $content);
+        $headers = [
+            'group',
+            'name',
+            'club',
+            'rank',
+            'number',
+            'year',
+        ];
+
         foreach ($result as $index => $line) {
-            if ($index === 0 || empty($line)) {
+            if ($index === 0) {
+                $values = explode(';', $line);
+
+                if (count($values) === 5) {
+                    $headers = [
+                        'group',
+                        'name',
+                        'club',
+                        'rank',
+                        'year',
+                    ];
+                }
+
+                continue;
+            } elseif (empty($line)) {
                 continue;
             }
             $values = explode(';', $line);
@@ -22,14 +45,7 @@ class CsvListParser implements ParserInterface
                 continue;
             }
 
-            $list->push([
-                'group' => $values[0],
-                'name' => $values[1],
-                'club' => $values[2],
-                'rank' => $values[3],
-                'number' => $values[4],
-                'year' => $values[5],
-            ]);
+            $list->push(array_combine($headers, $values));
         }
 
         return $list;

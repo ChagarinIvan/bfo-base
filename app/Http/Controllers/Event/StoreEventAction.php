@@ -38,7 +38,7 @@ class StoreEventAction extends AbstractEventAction
         $protocolPath = "{$year}/{$event->date->format('Y-m-d')}_".Str::snake($event->name).'.html';
         $event->file = $protocolPath;
 
-        $lineList = $this->parserService->parserProtocol($protocol, $needConvert);
+        $lineList = $this->parserService->parseProtocol($protocol, $needConvert);
         $event->save();
         $lineList = $this->protocolLineService->fillProtocolLines($event->id, $lineList);
         $this->identService->identPersons($lineList);

@@ -92,10 +92,8 @@ class WebRoutesServiceProvider extends ServiceProvider
                     $this->route->get('list/{rank}',     Rank\ShowRanksListAction::class);
                     $this->route->get('person/{person}', Rank\ShowPersonRanksAction::class);
 
-                    $this->middleware(['auth'])->group(function () {
-                        $this->route->get( 'check', Rank\ShowCheckPersonsRanksFormAction::class);
-                        $this->route->post('check', Rank\CheckPersonsRanksAction::class);
-                    });
+                    $this->route->get( 'check', Rank\ShowCheckPersonsRanksFormAction::class);
+                    $this->route->post('check', Rank\CheckPersonsRanksAction::class);
                 });
 
                 //clubs
