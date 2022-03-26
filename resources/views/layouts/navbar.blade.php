@@ -34,12 +34,12 @@
                     <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="competitionsDropdown">
                         <li>
                             <a class="dropdown-item {{ $isCompetitionsRoute ? 'active' : '' }}"
-                               href="{{ action(\App\Http\Controllers\Competition\ShowCompetitionsListAction::class, [App\Models\Year::actualYear()->value]) }}"
+                               href="{{ action(\App\Http\Controllers\Competition\ShowCompetitionsListAction::class, [(string)App\Models\Year::actualYear()->value]) }}"
                             >{{ __('app.navbar.competitions') }}</a>
                         </li>
                         <li>
                             <a class="dropdown-item {{ $isCupsRoute ? 'active' : '' }}"
-                               href="{{ action(\App\Http\Controllers\Cups\ShowCupsListAction::class, [App\Models\Year::actualYear()->value]) }}"
+                               href="{{ action(\App\Http\Controllers\Cups\ShowCupsListAction::class, [(string)App\Models\Year::actualYear()->value]) }}"
                             >{{ __('app.navbar.cups') }}</a>
                         </li>
                         @auth
