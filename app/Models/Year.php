@@ -6,21 +6,21 @@ namespace App\Models;
 
 use Illuminate\Support\Carbon;
 
-/**
- * Class Year
- */
-class Year
+enum Year: int
 {
-    public const YEARS = [
-        2022,
-        2021,
-        2020,
-        2019,
-        2018
-    ];
+    case y2022 = 2022;
+    case y2021 = 2021;
+    case y2020 = 2020;
+    case y2019 = 2019;
+    case y2018 = 2018;
 
-    public static function actualYear(): int
+    public static function actualYear(): self
     {
-        return Carbon::now()->year;
+        return self::fromDate(Carbon::now());
+    }
+
+    public static function fromDate(Carbon $date): self
+    {
+        return self::from($date->year);
     }
 }

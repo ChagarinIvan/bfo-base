@@ -7,6 +7,7 @@ use App\Models\Event;
 use App\Models\Group;
 use App\Models\ProtocolLine;
 use App\Models\Rank;
+use App\Models\Year;
 use App\Repositories\GroupsRepository;
 use App\Repositories\ProtocolLinesRepository;
 use Illuminate\Support\Collection;
@@ -79,6 +80,11 @@ class ProtocolLineService
     public function getProtocolLineWithEvent(int $id): ProtocolLine
     {
         return $this->protocolLinesRepository->getProtocolLine($id, ['distance.event']);
+    }
+
+    public function getPersonProtocolLines(int $personId, Year $year): Collection
+    {
+        return $this->protocolLinesRepository->getProtocolLines($personId, $year);
     }
 
     /**

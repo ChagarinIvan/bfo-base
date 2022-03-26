@@ -37,6 +37,6 @@ class SendRegistrationDataAction extends AbstractAction
         $token = $this->encrypter->encrypt($email);
         $this->mailer->send(new RegistrationUrlMail($email, $this->urlGenerator->action(MakeNewPasswordByTokenAction::class, ['token' => $token])));
 
-        return $this->redirector->action(ShowCompetitionsListAction::class, [Year::actualYear()]);
+        return $this->redirector->action(ShowCompetitionsListAction::class, [Year::actualYear()->value]);
     }
 }

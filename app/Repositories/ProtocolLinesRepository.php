@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Models\CupEvent;
 use App\Models\Distance;
 use App\Models\ProtocolLine;
+use App\Models\Year;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Collection;
@@ -117,5 +118,15 @@ class ProtocolLinesRepository
             ->whereNull('pl.person_id')
             ->whereIn('pl.id', $linesIds)
             ->update(['pl.person_id' => new Expression('pp.person_id')]);
+    }
+
+    public function getProtocolLines(int $personId, Year $year): Collection
+    {
+        return ProtocolLine::selectRaw(new Expression('protocol_lines.*'))
+            ->join('distances', 'distances.id', '=', 'protocol_lines.distance_id')
+            ->join('events', 'events.id', '=', 'distances.event_id')
+            ->where('protocol_lines.person_id', $personId)
+            ->where('events.date', 'LIKE', "{$year->value}-%")
+            ->get();
     }
 }

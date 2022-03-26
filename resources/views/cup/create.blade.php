@@ -30,7 +30,7 @@
             </div>
             <div class="form-floating mb-3">
                 <select class="form-select" id="year" name="year">
-                    @foreach(App\Models\Year::YEARS as $year)
+                        @foreach(App\Models\Year::cases() as $year)
                         <option value="{{ $year }}" {{ $year === $selectedYear ? 'selected' : '' }}>{{ $year }}</option>
                     @endforeach
                 </select>

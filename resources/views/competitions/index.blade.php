@@ -24,7 +24,7 @@
     @endauth
     <div class="row">
         <ul class="nav nav-tabs">
-            @foreach(\App\Models\Year::YEARS as $year)
+            @foreach(\App\Models\Year::cases() as $year)
                 <li class="nav-item">
                     <a href="{{ action(\App\Http\Controllers\Competition\ShowCompetitionsListAction::class, [$year]) }}"
                        class="text-decoration-none nav-link {{ $year === $selectedYear ? 'active' : '' }}"
