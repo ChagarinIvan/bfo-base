@@ -26,10 +26,10 @@
         <ul class="nav nav-tabs">
             @foreach(\App\Models\Year::cases() as $year)
                 <li class="nav-item">
-                    <a href="{{ action(\App\Http\Controllers\Competition\ShowCompetitionsListAction::class, [$year]) }}"
-                       class="text-decoration-none nav-link {{ $year === $selectedYear ? 'active' : '' }}"
+                    <a href="{{ action(\App\Http\Controllers\Competition\ShowCompetitionsListAction::class, [$year->value]) }}"
+                       class="text-decoration-none nav-link {{ $year->value === $selectedYear ? 'active' : '' }}"
                     >
-                        <b>{{ $year }}</b>
+                        <b>{{ $year->value }}</b>
                     </a>
                 </li>
             @endforeach
