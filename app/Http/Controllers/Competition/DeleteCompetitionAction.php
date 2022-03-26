@@ -11,6 +11,6 @@ class DeleteCompetitionAction extends AbstractCompetitionAction
         $competition = $this->competitionService->getCompetition($competitionId);
         $this->competitionService->deleteCompetition($competition);
 
-        return $this->redirector->action(ShowCompetitionsListAction::class, ['year' => $year]);
+        return $this->redirector->action(ShowCompetitionsListAction::class, [$year]);
     }
 }

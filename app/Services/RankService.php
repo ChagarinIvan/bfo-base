@@ -89,7 +89,12 @@ class RankService
                     $rank = $this->createPreviousRank($rank, $date);
                 }
                 if ($rank === null) {
-                    $rank = $this->checkThirdRank($personId, $date === null ? Year::actualYear() : Year::fromDate($date));
+                    $rank = $this->checkThirdRank(
+                        $personId,
+                        $date === null
+                            ? Year::actualYear()
+                            : Year::fromDate($date)
+                    );
                 }
                 return $rank;
             }
