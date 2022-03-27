@@ -89,12 +89,7 @@ class RankService
                     $rank = $this->createPreviousRank($rank, $date);
                 }
                 if ($rank === null) {
-                    $rank = $this->checkThirdRank(
-                        $personId,
-                        $date === null
-                            ? Year::actualYear()
-                            : Year::fromDate($date)
-                    );
+                    $rank = $this->checkThirdRank($personId);
                 }
                 return $rank;
             }
@@ -231,18 +226,20 @@ class RankService
         $rank->save();
     }
 
-    private function checkThirdRank(int $personId, Year $year): ?Rank
+    private function checkThirdRank(int $personId): ?Rank
     {
-        $results = $this->protocolLineService->getPersonProtocolLines($personId, $year);
-        $results = $results->filter(fn(ProtocolLine $line) => $line->time !== null && !$line->vk);
-        if ($results->count() >= 3) {
-            $results = $results->sortBy(fn(ProtocolLine $line) => $line->event->date)
-                ->slice(0, 3)
-                ->values();
-            $rank = $this->createNewRank($results->get(2));
-            $rank->rank = Rank::UNIOR_THIRD_RANK;
-            $rank->save();
-            return $rank;
+        foreach(Year::cases() as $year) {
+            $results = $this->protocolLineService->getPersonProtocolLines($personId, $year);
+            $results = $results->filter(fn(ProtocolLine $line) => $line->time !== null && !$line->vk);
+            if ($results->count() >= 3) {
+                $results = $results->sortBy(fn(ProtocolLine $line) => $line->event->date)
+                    ->slice(0, 3)
+                    ->values();
+                $rank = $this->createNewRank($results->get(2));
+                $rank->rank = Rank::UNIOR_THIRD_RANK;
+                $rank->save();
+                return $rank;
+            }
         }
 
         return null;
