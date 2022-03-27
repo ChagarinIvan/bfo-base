@@ -4,6 +4,8 @@ namespace App\Repositories;
 
 use App\Collections\RanksCollection;
 use App\Filters\RanksFilter;
+use App\Models\Person;
+use App\Models\ProtocolLine;
 use App\Models\Rank;
 use Carbon\Carbon;
 use Illuminate\Database\ConnectionInterface;
@@ -99,5 +101,11 @@ class RanksRepository
     public function deleteRanks(Collection $ranks): void
     {
         $ranks->each(fn(Rank $rank) => $rank->delete());
+    }
+
+    public function getPersonsIdsWithoutRanks(): Collection
+    {
+        return Person::selectRow(new Expression('person.id'))
+            ->join('ranks', 'ranks.person_id', '=', 'person.id', 'left outer');
     }
 }

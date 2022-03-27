@@ -65,10 +65,15 @@ class RankService
         }
 
         $personsIds = $ranks->groupBy('person_id')->keys();
+        if ($rank === Rank::THIRD_RANK) {
+            $personsIds = $personsIds->merge($this->ranksRepository->getPersonsIdsWithoutRanks()->pluck('id'));
+        }
         $ranks = RanksCollection::empty();
 
         foreach ($personsIds as $personId) {
-            $ranks->put($personId, $this->getActualRank($personId, $nowDate));
+            $actualRank = $this->getActualRank($personId, $nowDate);
+            if ($actualRank->rank === $rank)
+            $ranks->put($personId, $actualRank);
         }
 
         return $ranks;
@@ -85,12 +90,14 @@ class RankService
                     $rank = $this->ranksRepository->getDateRank($personId);
                 }
 
-                if ($rank !== null) {
-                    $rank = $this->createPreviousRank($rank, $date);
-                }
                 if ($rank === null) {
                     $rank = $this->checkThirdRank($personId);
                 }
+
+                if ($rank !== null) {
+                    $rank = $this->createPreviousRank($rank, $date);
+                }
+
                 return $rank;
             }
         );
