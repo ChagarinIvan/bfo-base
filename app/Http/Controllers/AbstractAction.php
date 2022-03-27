@@ -20,16 +20,16 @@ abstract class AbstractAction extends Controller
 
     public function callAction($method, $parameters)
     {
-        try {
+//        try {
             return $this->{$method}(...array_values($parameters));
-        } catch (\Throwable $exception) {
-            if ($exception instanceof ValidationException || env('APP_ENV', 'dev') === 'dev') {
-                throw $exception;
-            } else {
-                $this->viewService->sendErrorMail($exception, request()->url(),  url()->previous()) ;
-                return $this->redirectToError();
-            }
-        }
+//        } catch (\Throwable $exception) {
+//            if ($exception instanceof ValidationException || env('APP_ENV', 'dev') === 'dev') {
+//                throw $exception;
+//            } else {
+//                $this->viewService->sendErrorMail($exception, request()->url(),  url()->previous()) ;
+//                return $this->redirectToError();
+//            }
+//        }
     }
 
     protected function view(string $template, array $data = []): View

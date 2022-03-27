@@ -65,7 +65,7 @@ class RankService
         }
 
         $personsIds = $ranks->groupBy('person_id')->keys();
-        if ($rank === Rank::THIRD_RANK) {
+        if ($rank === Rank::UNIOR_THIRD_RANK) {
             $personsIds = $personsIds->merge($this->ranksRepository->getPersonsIdsWithoutRanks()->pluck('id'));
         }
         $ranks = RanksCollection::empty();
