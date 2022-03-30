@@ -72,7 +72,7 @@ class RankService
 
         foreach ($personsIds as $personId) {
             $actualRank = $this->getActualRank($personId, $nowDate);
-            if ($actualRank->rank === $rank)
+            if ($actualRank && $actualRank->rank === $rank)
             $ranks->put($personId, $actualRank);
         }
 
