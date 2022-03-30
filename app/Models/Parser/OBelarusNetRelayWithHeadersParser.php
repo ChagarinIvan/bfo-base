@@ -22,6 +22,7 @@ class OBelarusNetRelayWithHeadersParser extends AbstractParser
             $commandPoints = 0;
             $commandPlace = 0;
             $commandRank = '';
+            $commandVk = false;
 
             $text = trim($node->nodeValue);
             $text = trim($text, '-');
@@ -44,7 +45,9 @@ class OBelarusNetRelayWithHeadersParser extends AbstractParser
 
             for ($index = 2; $index < $linesCount; $index++) {
                 $line = trim($lines[$index]);
-                if (empty($line)) {
+                if (preg_match('#^\d+$#', $line)) {
+                    continue;
+                } elseif (empty($line)) {
                     break;
                 }
                 $preparedLine = preg_replace('#=#', ' ', $line);
@@ -53,8 +56,11 @@ class OBelarusNetRelayWithHeadersParser extends AbstractParser
                 $fieldsCount = count($lineData);
                 if (($fieldsCount === 4 || $fieldsCount === 3) && is_numeric($lineData[0])) {
                     $commandCounter = 0;
-                    $commandPoints = is_numeric($lineData[3]) ? (int)$lineData[3] : null;
+                    if ($fieldsCount > 3) {
+                        $commandPoints = is_numeric($lineData[3]) ? (int)$lineData[3] : null;
+                    }
                     $commandPlace = is_numeric($lineData[1]) ? (int)$lineData[1] : null;
+                    $commandVk = $lineData[1] === 'в/к';
                     $commandRank = $lineData[2] !== '-' ? $lineData[2] : null;
                     continue;
                 }
@@ -91,6 +97,7 @@ class OBelarusNetRelayWithHeadersParser extends AbstractParser
                     $protocolLine['complete_rank'] = $commandRank;
                 }
                 $protocolLine['points'] = $commandPoints;
+                $protocolLine['vk'] = $commandVk;
 
                 $linesList->push($protocolLine);
                 $commandCounter++;

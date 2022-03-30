@@ -28,7 +28,7 @@ class OBelarusNetRelayWithHeadersParser2Test extends AbstractParserTest
                 149,
                 '00:13:26',
                 1,
-                '-',
+                null,
                 null,
             ],
             4 => [
@@ -36,15 +36,15 @@ class OBelarusNetRelayWithHeadersParser2Test extends AbstractParserTest
                 'София',
                 'Минск',
                 null,
-                'IIю',
+                null,
                 153,
                 '00:13:11',
-                2,
-                '-',
+                null,
+                null,
                 null,
                 true
             ],
-            42 => [
+            38 => [
                 'Синчикова',
                 'Виктория',
                 'Гомельская область',
@@ -54,9 +54,9 @@ class OBelarusNetRelayWithHeadersParser2Test extends AbstractParserTest
                 '00:13:29',
                 1,
                 'Iю',
-                null,
+                291,
             ],
-            70 => [
+            66 => [
                 'Вольщук',
                 'Максим',
                 'ГОЦТиК КСО "Верас"',
@@ -65,10 +65,10 @@ class OBelarusNetRelayWithHeadersParser2Test extends AbstractParserTest
                 146,
                 '00:18:23',
                 null,
-                '-',
+                null,
                 null,
             ],
-            71 => [
+            67 => [
                 'Лебецкий',
                 'Назар',
                 'ГОЦТиК КСО "Верас"',
@@ -77,7 +77,7 @@ class OBelarusNetRelayWithHeadersParser2Test extends AbstractParserTest
                 246,
                 null,
                 null,
-                '-',
+                null,
                 null,
             ],
         ];
@@ -85,6 +85,6 @@ class OBelarusNetRelayWithHeadersParser2Test extends AbstractParserTest
 
     protected function geLinesCount(): int
     {
-        return 277;
+        return 272;
     }
 }
