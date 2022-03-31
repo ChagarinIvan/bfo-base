@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Rank;
 
+use App\Models\Rank;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 
@@ -14,7 +15,7 @@ class ShowRanksListAction extends AbstractRankAction
         return $this->view('ranks.index', [
             'selectedRank' => $selectedRank,
             'ranks' => $ranks,
-        ]);
+        ], $selectedRank === Rank::SM_RANK);
     }
 
     protected function isNavbarRoute(): bool

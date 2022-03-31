@@ -1,9 +1,10 @@
 @php
     use App\Models\Cup;
+    use App\Models\Year;
     use Illuminate\Support\Collection;
     /**
      * @var Collection|Cup[] $cups;
-     * @var int $selectedYear;
+     * @var Year $selectedYear;
      */
 @endphp
 
@@ -28,7 +29,7 @@
             @foreach(\App\Models\Year::cases() as $year)
                 <li class="nav-item">
                     <a href="{{ action(\App\Http\Controllers\Cups\ShowCupsListAction::class, [$year->value]) }}"
-                       class="text-decoration-none nav-link {{ $year->value === $selectedYear ? 'active' : '' }}"
+                       class="text-decoration-none nav-link {{ $year === $selectedYear ? 'active' : '' }}"
                     >
                         <b>{{ $year->value }}</b>
                     </a>
@@ -40,7 +41,7 @@
                 @if ($cups->count() > 0)
                     <table id="table"
                            data-cookie="true"
-                           data-cookie-id-table="cups-list-{{ $selectedYear }}"
+                           data-cookie-id-table="cups-list-{{ $selectedYear->value }}"
                            data-mobile-responsive="true"
                            data-check-on-init="true"
                            data-min-width="800"

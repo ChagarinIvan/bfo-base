@@ -32,9 +32,9 @@ abstract class AbstractAction extends Controller
 //        }
     }
 
-    protected function view(string $template, array $data = []): View
+    protected function view(string $template, array $data = [], bool $isMainTab = true): View
     {
-        if ($this->isNavbarRoute()) {
+        if ($this->isNavbarRoute() && $isMainTab) {
             $this->viewService->cleanBackUrls();
         } else {
             if ($this::class !== $this->viewService->getActualAction()) {

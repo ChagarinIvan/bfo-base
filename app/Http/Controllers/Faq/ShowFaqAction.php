@@ -3,14 +3,12 @@
 namespace App\Http\Controllers\Faq;
 
 use App\Http\Controllers\AbstractAction;
-use App\Models\Club;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 
 class ShowFaqAction extends AbstractAction
 {
-    public function __invoke(Request $request, Club $club): View|RedirectResponse
+    public function __invoke(): View|RedirectResponse
     {
        return $this->view('faq.index');
     }

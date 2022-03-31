@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Cup;
+use App\Models\Year;
 use Illuminate\Cache\Repository as CacheManager;
 use Illuminate\Support\Collection;
 
@@ -11,9 +12,9 @@ class CupsService
     public function __construct(private CacheManager $cache)
     {}
 
-    public function getYearCups(int $year): Collection
+    public function getYearCups(Year $year): Collection
     {
-        return Cup::where('year', $year)->get();
+        return Cup::whereYear($year)->get();
     }
 
     public function deleteCup(Cup $cup): void

@@ -1,8 +1,9 @@
 @php
+    use App\Models\Year;
     use Illuminate\Support\Collection;
     /**
      * @var Collection $competitions;
-     * @var int $selectedYear;
+     * @var Year $selectedYear;
      */
 @endphp
 
@@ -27,7 +28,7 @@
             @foreach(\App\Models\Year::cases() as $year)
                 <li class="nav-item">
                     <a href="{{ action(\App\Http\Controllers\Competition\ShowCompetitionsListAction::class, [$year->value]) }}"
-                       class="text-decoration-none nav-link {{ $year->value === $selectedYear ? 'active' : '' }}"
+                       class="text-decoration-none nav-link {{ $year === $selectedYear ? 'active' : '' }}"
                     >
                         <b>{{ $year->value }}</b>
                     </a>
@@ -38,7 +39,7 @@
             <div class="tab-pane fade show active">
                 <table id="table"
                        data-cookie="true"
-                       data-cookie-id-table="competition-list-{{ $selectedYear }}"
+                       data-cookie-id-table="competition-list-{{ $selectedYear->value }}"
                        data-mobile-responsive="true"
                        data-check-on-init="true"
                        data-min-width="800"

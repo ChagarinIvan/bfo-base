@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Competition;
+use App\Models\Year;
 use Illuminate\Support\Collection;
 
 class CompetitionService
@@ -27,14 +28,10 @@ class CompetitionService
         throw new \RuntimeException('Wrong competition id.');
     }
 
-    /**
-     * @param int $year
-     * @return Collection|Competition[]
-     */
-    public function getYearCompetitions(int $year): Collection
+    public function getYearCompetitions(Year $year): Collection
     {
-        return Competition::where('from', '>=', "{$year}-01-01")
-            ->where('to', '<=', "{$year}-12-31")
+        return Competition::where('from', '>=', "{$year->value}-01-01")
+            ->where('to', '<=', "{$year->value}-12-31")
             ->orderByDesc('from')
             ->get();
     }
