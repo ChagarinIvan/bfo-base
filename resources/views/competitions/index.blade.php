@@ -18,7 +18,7 @@
                 <x-button text="app.competition.add_competition"
                           color="success"
                           icon="bi-file-earmark-plus-fill"
-                          url="{{ action(\App\Http\Controllers\Competition\ShowCreateCompetitionFormAction::class, [$selectedYear]) }}"
+                          url="{{ action(\App\Http\Controllers\Competition\ShowCreateCompetitionFormAction::class, [$selectedYear->value]) }}"
                 />
             </div>
         </div>
@@ -85,7 +85,7 @@
     </div>
     @foreach ($competitions as $competition)
         <x-modal modal-id="deleteModal{{ $competition->id }}"
-                 url="{{ action(\App\Http\Controllers\Competition\DeleteCompetitionAction::class, [$selectedYear, $competition->id]) }}"
+                 url="{{ action(\App\Http\Controllers\Competition\DeleteCompetitionAction::class, [$selectedYear->value    , $competition->id]) }}"
         />
     @endforeach
 @endsection

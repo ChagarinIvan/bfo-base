@@ -19,7 +19,7 @@
                 <x-button text="app.common.new"
                           color="success"
                           icon="bi-file-earmark-plus-fill"
-                          url="{{ action(\App\Http\Controllers\Cups\ShowCreateCupFormAction::class, [$selectedYear]) }}"
+                          url="{{ action(\App\Http\Controllers\Cups\ShowCreateCupFormAction::class, [$selectedYear->value]) }}"
                 />
             </div>
         </div>
