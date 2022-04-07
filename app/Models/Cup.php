@@ -20,8 +20,7 @@ use Illuminate\Support\Collection;
  *
  * @method static void delete()
  * @method static Builder|Cup find(mixed $ids)
- * @method static Builder|Cup where(string $column, int|string $value)
- * @method static Builder|Cup whereYear(Year $year)
+ * @method static Builder|Cup where(string $column, int|string|Year $value)
  * @method static Collection get()
  */
 class Cup extends Model

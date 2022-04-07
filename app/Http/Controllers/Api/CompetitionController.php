@@ -11,7 +11,6 @@ class CompetitionController extends BaseController
     public function index(): JsonResponse
     {
         $allCompetitions = Competition::all()->makeHidden(['created_at', 'updated_at']);
-
         $groupedCompetitions = $allCompetitions->sortByDesc(fn (Competition $competition) => $competition->from->format('Y-m-d'));
 
         return response()->json($groupedCompetitions);

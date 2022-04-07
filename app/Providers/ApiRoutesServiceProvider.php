@@ -25,7 +25,6 @@ class ApiRoutesServiceProvider extends ServiceProvider
         $rateLimiter = $this->app->make(RateLimiter::class);
         $rateLimiter->for('api', fn (Request $request) => Limit::perMinute(60));
 
-
         $this->routes(function () {
             $this->route->middleware('api')
                 ->prefix('api')

@@ -14,7 +14,7 @@ class CupsService
 
     public function getYearCups(Year $year): Collection
     {
-        return Cup::whereYear($year)->get();
+        return Cup::where('year', $year)->get();
     }
 
     public function deleteCup(Cup $cup): void

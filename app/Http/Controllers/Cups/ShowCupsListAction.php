@@ -10,10 +10,10 @@ class ShowCupsListAction extends AbstractCupAction
 {
     public function __invoke(int $year): View|RedirectResponse
     {
-        $year = Year::from($year);
-        $cups = $this->cupsService->getYearCups($year);
+        $selectedYear = Year::from($year);
+        $cups = $this->cupsService->getYearCups($selectedYear);
 
-        return $this->view('cup.index', compact('year', 'cups'), Year::actualYear() === $year);
+        return $this->view('cup.index', compact('selectedYear', 'cups'), Year::actualYear() === $selectedYear);
     }
 
     protected function isNavbarRoute(): bool

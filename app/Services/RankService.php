@@ -15,9 +15,12 @@ use Illuminate\Support\Collection;
 
 class RankService
 {
+    private const MAX_JUNIOR_RANK_AGE = 20;
+
     public function __construct(
         private RanksRepository $ranksRepository,
         private ProtocolLineService $protocolLineService,
+        private PersonsService $personsService,
         private CacheManager $cache
     ) {}
 
@@ -236,6 +239,11 @@ class RankService
     private function checkThirdRank(int $personId): ?Rank
     {
         foreach(Year::cases() as $year) {
+            $person = $this->personsService->getPerson($personId);
+            $age = Year::actualYear()->value - $person->birthday->year;
+            if ($age >= self::MAX_JUNIOR_RANK_AGE)  {
+                continue;
+            }
             $results = $this->protocolLineService->getPersonProtocolLines($personId, $year);
             $results = $results->filter(fn(ProtocolLine $line) => $line->time !== null && !$line->vk);
             if ($results->count() >= 3) {
