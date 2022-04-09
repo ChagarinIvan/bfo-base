@@ -24,14 +24,12 @@ class ApiRoutesServiceProvider extends ServiceProvider
 
         $this->routes(function () {
             $this->route
-                ->prefix('api')
                 ->group(function () {
-                    $this->route->get('competitions',                        [Api\CompetitionController::class, 'index']);
-                    $this->route->get('competition/{competition_id}/events', [Api\EventsController::class, 'index']);
-                    $this->route->get('event/{event_id}/results',            [Api\ResultsController::class, 'index']);
-
-                    $this->route->resource('person', Api\PersonController::class)->only(['index']);
-                    $this->route->resource('club',   Api\ClubController::class,)->only(['index']);
+                    $this->route->get('/api/competitions',                        [Api\CompetitionController::class, 'index']);
+                    $this->route->get('/api/competition/{competition_id}/events', [Api\EventsController::class, 'index']);
+                    $this->route->get('/api/event/{event_id}/results',            [Api\ResultsController::class, 'index']);
+                    $this->route->get('/api/person', [Api\PersonController::class, 'index']);
+                    $this->route->get('/api/club',   [Api\ClubController::class, 'index']);
                 })
             ;
         });
