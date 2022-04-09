@@ -73,6 +73,7 @@
                             <td><small>{{ \Illuminate\Support\Str::limit($competition->description) }}</small></td>
                             @auth
                                 <td>
+                                    <x-edit-button url="{{ action(\App\Http\Controllers\Competition\ShowEditCompetitionFormAction::class, [$year, $competition->id]) }}"/>
                                     <x-delete-button modal-id="deleteModal{{ $competition->id }}"/>
                                 </td>
                             @endauth

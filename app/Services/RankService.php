@@ -240,7 +240,7 @@ class RankService
     {
         foreach(Year::cases() as $year) {
             $person = $this->personsService->getPerson($personId);
-            $age = Year::actualYear()->value - $person->birthday->year;
+            $age = Year::actualYear()->value - $person->birthday?->year;
             if ($age >= self::MAX_JUNIOR_RANK_AGE)  {
                 continue;
             }

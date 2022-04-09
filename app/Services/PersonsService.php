@@ -77,6 +77,7 @@ class PersonsService
     {
         $person->save();
         $this->makePrompts($person);
+
         return $person;
     }
 
@@ -118,10 +119,12 @@ class PersonsService
         }
     }
 
-    public function updatePerson(Person $person, array $personData): Person
+    public function updatePerson(int $personId, array $personData): Person
     {
+        $person = $this->getPerson($personId);
         $this->promptService->deletePrompts($person);
         $person = $this->fillPerson($person, $personData);
+
         return $this->storePerson($person);
     }
 
@@ -143,9 +146,10 @@ class PersonsService
         return Person::whereClubId($clubId)->get();
     }
 
-    public function deletePerson(Person $person): void
+    public function deletePerson(int $personId): void
     {
-        $protocolLines = ProtocolLine::wherePersonId($person->id)->get();
+        $person = $this->getPerson($personId);
+        $protocolLines = ProtocolLine::wherePersonId($personId)->get();
         $protocolLines->each(function (ProtocolLine $line) {
             $line->person_id = null;
             $line->save();

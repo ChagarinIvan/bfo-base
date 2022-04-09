@@ -3,7 +3,7 @@
         <div class="col-12">
             <ui-route-link-button :color="'success'"
                                   :icon="'bi-file-earmark-plus-fill'"
-                                  :url="'/create'"
+                                  :url="'/persons/create'"
                                   :text="'app.person.create_button'"
             ></ui-route-link-button>
         </div>
@@ -38,7 +38,7 @@
                     <td v-else><span v-html="markedText(person.club_name)"></span></td>
                     <td><span v-html="markedText(year(person.birthday))"></span></td>
                     <td v-if="auth">
-                        <ui-route-link-button :url="'/edit/' + person.id"></ui-route-link-button>
+                        <ui-route-link-button :url="'/persons/' + person.id + '/edit'"></ui-route-link-button>
                         <button type="button"
                                 class="btn btn-outline-danger btn-sm me-1"
                                 @click="clickDeleteButton(person.id)"
@@ -130,10 +130,11 @@
                 </div>
                 <div class="modal-body">{{ $t('app.common.delete_warn') }}</div>
                 <div class="modal-footer">
-                    <button class="btn btn-sm btn-outline-danger me-1"
-                            type="button"
-                            data-bs-dismiss="modal"
-                            @click="deletePerson"
+                    <a
+                        class="btn btn-sm btn-outline-danger me-1"
+                        href="/persons/{{ this.deletedPersonId }}/person"
+                        type="button"
+                        data-bs-dismiss="modal"
                     >
                         <i class="bi bi-trash-fill me-1"
                            data-bs-toggle="tooltip"
@@ -141,7 +142,7 @@
                            :title="translate('app.common.delete')"
                         ></i>
                         <span class="d-none d-xl-inline">{{ $t('app.common.delete') }}</span>
-                    </button>
+                    </a>
                 </div>
             </div>
         </div>
@@ -152,7 +153,7 @@
 
 import UiButton from "../UiButton.vue";
 import UiRouteLinkButton from "../UiRouteLinkButton.vue";
-import {trans} from 'laravel-vue-i18n'
+import { trans } from 'laravel-vue-i18n'
 
 export default {
     components: {
@@ -166,7 +167,7 @@ export default {
             maxCount: 0,
             perPage: 10,
             page: 1,
-            deletedPerson: 0,
+            deletedPersonId: 0,
             sortBy: 'fio',
             search: '',
             sortMode: 0, // 0 = ASC, 1 = DESC
@@ -185,7 +186,7 @@ export default {
             return this.page * this.perPage;
         },
         personsUrl() {
-            return '/api/frontend/person?per_page=' + this.perPage
+            return '/api/person?per_page=' + this.perPage
                 + '&page=' + this.page
                 + '&sort_by=' + this.sortBy
                 + '&sort_mode=' + this.sortMode
@@ -201,7 +202,6 @@ export default {
         }
     },
     mounted() {
-        this.auth = $('#app').data('auth') == '1';
         this.getPersons();
     },
     methods: {
@@ -209,19 +209,13 @@ export default {
             return date === null ? '' : new Date(date).getFullYear();
         },
         clickDeleteButton(id) {
-            this.deletedPerson = id;
+            this.deletedPersonId = id;
         },
         activePerPage(perPage) {
             return this.perPage === perPage;
         },
         translate(key) {
             return trans(key);
-        },
-        deletePerson() {
-            axios.delete('/api/frontend/person/' + this.deletedPerson).then(() => {
-                $('#modal').modal('hide');
-                this.getPersons();
-            });
         },
         getPersons() {
             axios.get(this.personsUrl)

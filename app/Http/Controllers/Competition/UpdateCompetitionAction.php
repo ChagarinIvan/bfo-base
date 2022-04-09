@@ -6,9 +6,9 @@ use App\Models\Competition;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
-class StoreCompetitionAction extends AbstractCompetitionAction
+class UpdateCompetitionAction extends AbstractCompetitionAction
 {
-    public function __invoke(Request $request): RedirectResponse
+    public function __invoke(int $year, Competition $competition, Request $request): RedirectResponse
     {
         $formParams = $request->validate([
             'name' => 'required|max:255',
@@ -17,7 +17,6 @@ class StoreCompetitionAction extends AbstractCompetitionAction
             'to' => 'required|date',
         ]);
 
-        $competition = new Competition();
         $competition = $this->competitionService->fillAndStore($competition, $formParams);
 
         return $this->redirector->action(ShowCompetitionAction::class, [$competition->id]);

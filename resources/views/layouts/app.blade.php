@@ -13,7 +13,7 @@
     <main>
         <div class="container-fluid">
             <h2 id="up">@yield('title')</h2>
-            <div id="app" data-auth=@auth"1"@else"0"@endauth>
+            <div id="app">
                 @yield('content')
             </div>
         </div>

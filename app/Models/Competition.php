@@ -26,10 +26,6 @@ class Competition extends Model
 {
     protected $table = 'competitions';
 
-    protected $fillable = [
-        'name', 'description', 'from', 'to'
-    ];
-
     protected $dates = ['from', 'to'];
 
     public function events(): HasMany

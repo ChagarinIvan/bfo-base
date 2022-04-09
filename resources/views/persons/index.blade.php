@@ -3,5 +3,5 @@
 @section('title', __('app.navbar.persons'))
 
 @section('content')
-    <router-view></router-view>
+    <persons :auth=@auth"1"@else"0"@endauth></persons>
 @endsection

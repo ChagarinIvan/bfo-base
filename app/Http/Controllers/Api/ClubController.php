@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\FrontendApi;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Resources\ClubResource;
 use App\Services\ClubsService;

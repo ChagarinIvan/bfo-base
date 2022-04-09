@@ -35,6 +35,9 @@
     </div>
     <div class="row mb-3">
         <div class="col-12">
+            @auth
+                <x-edit-button url="{{ action(\App\Http\Controllers\Person\ShowEditPersonAction::class, [$personId]) }}"/>
+            @endauth
             <x-button text="app.ranks"
                       color="info"
                       icon="bi-smartwatch"
@@ -68,6 +71,7 @@
                     <th data-sortable="true">{{ __('app.common.lastname') }} {{ __('app.common.name') }}</th>
                     <th data-sortable="true">{{ __('app.common.date') }}</th>
                     <th data-sortable="true">{{ __('app.common.group') }}</th>
+                    <th data-sortable="true">{{ __('app.common.birthday') }}</th>
                     <th data-sortable="true">{{ __('app.common.result') }}</th>
                     <th data-sortable="true">{{ __('app.common.place') }}</th>
                     <th data-sortable="true">{{ __('app.common.points') }}</th>
@@ -97,6 +101,7 @@
                             <td>{{ $line->lastname }} {{ $line->firstname }}</td>
                             <td>{{ $line->distance->event->date->format('Y-m-d') }}</td>
                             <td>{{ $line->distance->group ? $line->distance->group->name : '' }}</td>
+                            <td>{{ $line->year ?: '' }}</td>
                             <td>{{ $line->time ? $line->time->format('H:i:s') : '-' }}</td>
                             <td>{{ $line->place }}</td>
                             <td>{{ $line->points }}</td>
