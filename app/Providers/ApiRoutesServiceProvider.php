@@ -21,11 +21,10 @@ class ApiRoutesServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->route = $this->app->make(RouteRegistrar::class);
-        $rateLimiter = $this->app->make(RateLimiter::class);
-        $rateLimiter->for('api', fn (Request $request) => Limit::perMinute(60));
 
         $this->routes(function () {
-            $this->route->middleware('api')
+            $this->route
+                ->prefix('api')
                 ->group(function () {
                     $this->route->get('competitions',                        [Api\CompetitionController::class, 'index']);
                     $this->route->get('competition/{competition_id}/events', [Api\EventsController::class, 'index']);
@@ -33,7 +32,8 @@ class ApiRoutesServiceProvider extends ServiceProvider
 
                     $this->route->resource('person', Api\PersonController::class)->only(['index']);
                     $this->route->resource('club',   Api\ClubController::class,)->only(['index']);
-                });
+                })
+            ;
         });
     }
 }

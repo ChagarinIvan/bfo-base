@@ -13,7 +13,7 @@
 @section('content')
     <div class="row">
         <form method="POST"
-              action="{{ action(\App\Http\Controllers\Competition\UpdateCompetitionAction::class) }}"
+              action="{{ action(\App\Http\Controllers\Competition\UpdateCompetitionAction::class, [$year, $competition->id]) }}"
         >
             @csrf
             <div class="form-floating mb-3">

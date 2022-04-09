@@ -51,10 +51,11 @@ class WebRoutesServiceProvider extends ServiceProvider
                     $this->route->get('{competition}/show', Competition\ShowCompetitionAction::class);
 
                     $this->middleware(['auth'])->group(function () {
-                        $this->route->get( '{year}/create',               Competition\ShowCreateCompetitionFormAction::class);
-                        $this->route->get( '{year}/{competition}/edit',   Competition\ShowEditCompetitionFormAction::class);
-                        $this->route->get( '{year}/{competition}/delete', Competition\DeleteCompetitionAction::class);
-                        $this->route->post( 'store',                      Competition\StoreCompetitionAction::class);
+                        $this->route->get( '{year}/create',                Competition\ShowCreateCompetitionFormAction::class);
+                        $this->route->get( '{year}/{competition}/edit',    Competition\ShowEditCompetitionFormAction::class);
+                        $this->route->get( '{year}/{competition}/delete',  Competition\DeleteCompetitionAction::class);
+                        $this->route->post( 'store',                       Competition\StoreCompetitionAction::class);
+                        $this->route->post( '{year}/{competition}/update', Competition\UpdateCompetitionAction::class);
                     });
                 });
 
@@ -83,11 +84,11 @@ class WebRoutesServiceProvider extends ServiceProvider
                     $this->route->get('{person}/show', Person\ShowEditPersonAction::class);
 
                     $this->middleware(['auth'])->group(function () {
-                        $this->route->get( 'create',           Person\ShowCreatePersonAction::class);
-                        $this->route->get( 'store',            Person\StorePersonAction::class);
-                        $this->route->get( '/{person}/edit',   Person\ShowEditPersonAction::class);
-                        $this->route->get( '/{person}/update', Person\UpdatePersonAction::class);
-                        $this->route->get( '/{person}/delete', Person\DeletePersonAction::class);
+                        $this->route->get(  'create',           Person\ShowCreatePersonAction::class);
+                        $this->route->post( 'store',            Person\StorePersonAction::class);
+                        $this->route->get(  '/{person}/edit',   Person\ShowEditPersonAction::class);
+                        $this->route->post( '/{person}/update', Person\UpdatePersonAction::class);
+                        $this->route->get(  '/{person}/delete', Person\DeletePersonAction::class);
 
                         $this->route->get( 'person/{protocol}/show',  Person\ShowSetPersonToProtocolLineAction::class);
                         $this->route->get( '{person}/{protocol}/set', Person\SetProtocolLinePersonAction::class);
@@ -104,8 +105,8 @@ class WebRoutesServiceProvider extends ServiceProvider
                 });
 
                 //clubs
-                $this->routeRegistrar->prefix('club')->group(function () {
-                    $this->route->get('',            Club\ShowClubsListAction::class);
+                $this->routeRegistrar->prefix('clubs')->group(function () {
+                    $this->route->get('/',           Club\ShowClubsListAction::class);
                     $this->route->get('{club}/show', Club\ShowClubAction::class);
                 });
 
