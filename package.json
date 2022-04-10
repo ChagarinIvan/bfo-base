@@ -30,7 +30,6 @@
         "jquery": "^3.6.0",
         "jquery-resizable-columns": "^0.2.3",
         "laravel-vue-i18n": "^1.0.0",
-        "vue": "^3.2.23",
-        "vue-router": "^4.0.12"
+        "vue": "^3.2.23"
     }
 }

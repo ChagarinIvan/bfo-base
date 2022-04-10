@@ -3,7 +3,6 @@
        class="btn btn-sm me-1"
        :class=this.getClass
        type="button"
-       @click="clickEvent"
     >
         <i class="bi me-1"
            :class=this.icon
@@ -17,7 +16,7 @@
 
 <script>
 
-import {trans} from 'laravel-vue-i18n';
+import { trans } from 'laravel-vue-i18n';
 
 export default {
     props: {
@@ -46,10 +45,5 @@ export default {
             return trans(this.text);
         },
     },
-    methods: {
-        clickEvent() {
-            this.$emit('clickEvent');
-        }
-    }
 };
 </script>

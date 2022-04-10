@@ -1,11 +1,11 @@
 <template>
     <div class="row mb-3" v-if="this.isAuth">
         <div class="col-12">
-            <ui-route-link-button :color="'success'"
-                                  :icon="'bi-file-earmark-plus-fill'"
-                                  :url="'/persons/create'"
-                                  :text="'app.person.create_button'"
-            ></ui-route-link-button>
+            <ui-button :color="'success'"
+                       :icon="'bi-file-earmark-plus-fill'"
+                       :url="'/persons/create'"
+                       :text="'app.person.create_button'"
+            ></ui-button>
         </div>
     </div>
     <div class="row">
@@ -38,7 +38,7 @@
                     <td v-else><span v-html="markedText(person.club_name)"></span></td>
                     <td><span v-html="markedText(year(person.birthday))"></span></td>
                     <td v-if="isAuth">
-                        <ui-route-link-button :url="'/persons/' + person.id + '/edit'"></ui-route-link-button>
+                        <ui-button :url="'/persons/' + person.id + '/edit'"></ui-button>
                         <button type="button"
                                 class="btn btn-outline-danger btn-sm me-1"
                                 @click="clickDeleteButton(person.id)"

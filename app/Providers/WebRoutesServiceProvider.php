@@ -81,7 +81,7 @@ class WebRoutesServiceProvider extends ServiceProvider
                 //persons
                 $this->routeRegistrar->prefix('persons')->group(function () {
                     $this->route->get('', Person\ShowPersonsListAction::class);
-                    $this->route->get('{person}/show', Person\ShowEditPersonAction::class);
+                    $this->route->get('{person}/show', Person\ShowPersonAction::class);
 
                     $this->middleware(['auth'])->group(function () {
                         $this->route->get(  'create',           Person\ShowCreatePersonAction::class);
