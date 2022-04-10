@@ -15,11 +15,11 @@
 @section('content')
     <div class="row">
         <form method="POST"
-              action="{{ action(\App\Http\Controllers\Person\UpdatePersonAction::class) }}"
+              action="{{ action(\App\Http\Controllers\Person\UpdatePersonAction::class, [$person->id]) }}"
         >
             @csrf
             <div class="form-floating mb-3">
-                <input class="form-control @error('lastname') is-invalid @endError"
+                <input class="form-control @error('lastname') is-invalid @enderror"
                        id="lastname"
                        name="lastname"
                        value="{{ $person->lastname }}"
@@ -27,7 +27,7 @@
                 <label for="lastname">{{ __('app.common.lastname') }}</label>
             </div>
             <div class="form-floating mb-3">
-                <input class="form-control @error('firstname') is-invalid @endError"
+                <input class="form-control @error('firstname') is-invalid @enderror"
                        id="firstname"
                        name="firstname"
                        value="{{ $person->firstname }}"
@@ -35,7 +35,7 @@
                 <label for="firstname">{{ __('app.common.name') }}</label>
             </div>
             <div class="form-floating mb-3">
-                <input class="form-control @error('birthday') is-invalid @endError"
+                <input class="form-control @error('birthday') is-invalid @enderror"
                        type="date"
                        id="birthday"
                        name="birthday"
@@ -44,16 +44,22 @@
                 <label for="birthday">{{ __('app.common.birthday') }}</label>
             </div>
             <div class="form-floating mb-3">
-                <select class="form-control @error('club_id') is-invalid @endError"
+                <select class="form-control @error('club_id') is-invalid @enderror"
                         id="club_id"
                         name="club_id"
                 >
-                    <option value="0" @if($person->club_id === 0)selected@endIf></option>
+                    <option value="0"
+                            @if($person->club_id === 0)
+                                selected
+                            @endif
+                    ></option>
                     @foreach($clubs as $club)
                         <option value="{{ $club->id }}"
-                                @if($club->id === $person->club_id)selected@endIf
+                                @if($club->id === $person->club_id)
+                                    selected
+                                @endif
                         >{{ $club->name }}</option>
-                    @endForeach
+                    @endforeach
                 </select>
                 <label for="club_id">{{ __('app.club.name') }}</label>
             </div>

@@ -1,5 +1,5 @@
 <template>
-    <div class="row mb-3" v-if="this.auth">
+    <div class="row mb-3" v-if="this.isAuth">
         <div class="col-12">
             <ui-route-link-button :color="'success'"
                                   :icon="'bi-file-earmark-plus-fill'"
@@ -26,7 +26,7 @@
                     <th @click="sort('events_count')">{{ $t('app.common.events_count') }} <i class="fas float-end" :class="sortColumn('events_count')"></i></th>
                     <th @click="sort('club_name')">{{ $t('app.club.name') }} <i class="fas float-end" :class="sortColumn('club_name')"></i></th>
                     <th @click="sort('birthday')">{{ $t('app.common.birthday_year') }} <i class="fas float-end" :class="sortColumn('birthday')"></i></th>
-                    <th v-if="auth"></th>
+                    <th v-if="isAuth"></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -37,7 +37,7 @@
                     <td v-if="person.club_id > 0"><a :href="'/club/' + person.club_id + '/show'"><span v-html="markedText(person.club_name)"></span></a></td>
                     <td v-else><span v-html="markedText(person.club_name)"></span></td>
                     <td><span v-html="markedText(year(person.birthday))"></span></td>
-                    <td v-if="auth">
+                    <td v-if="isAuth">
                         <ui-route-link-button :url="'/persons/' + person.id + '/edit'"></ui-route-link-button>
                         <button type="button"
                                 class="btn btn-outline-danger btn-sm me-1"
@@ -160,9 +160,12 @@ export default {
         UiRouteLinkButton,
         UiButton,
     },
+    props: {
+        auth: Boolean,
+    },
     data() {
         return {
-            auth: false,
+            isAuth: this.auth,
             persons: [],
             maxCount: 0,
             perPage: 10,

@@ -33,6 +33,16 @@
             <h4>{{ $person->birthday ? $person->birthday->format('Y') : '' }}</h4>
         </div>
     </div>
+    @auth
+        <div class="row mb-3">
+            <div class="col-12">
+                <h4>{{ __('app.common.prompt') }}</h4>
+                @foreach($person->prompts as $prompt)
+                    <p>{{ $prompt->prompt }}</p>
+                @endforeach
+            </div>
+        </div>
+    @endauth
     <div class="row mb-3">
         <div class="col-12">
             @auth

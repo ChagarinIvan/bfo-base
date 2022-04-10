@@ -22,6 +22,7 @@
     "app.rank.check_button" : "Праверыць",
     "app.rank.list" : "Спіс",
     "app.common.name" : "Імя",
+    "app.common.prompt" : "строкі пошуку",
     "app.common.lastname" : "Прозвішча",
     "app.common.fio" : "Прозвішча, Імя",
     "app.common.events_count" : "Колькасць стартаў",

@@ -17,21 +17,21 @@
         >
             @csrf
             <div class="form-floating mb-3">
-                <input class="form-control @error('lastname') is-invalid @endError"
+                <input class="form-control @error('lastname') is-invalid @enderror"
                        id="lastname"
                        name="lastname"
                 />
                 <label for="lastname">{{ __('app.common.lastname') }}</label>
             </div>
             <div class="form-floating mb-3">
-                <input class="form-control @error('firstname') is-invalid @endError"
+                <input class="form-control @error('firstname') is-invalid @enderror"
                        id="firstname"
                        name="firstname"
                 />
                 <label for="firstname">{{ __('app.common.name') }}</label>
             </div>
             <div class="form-floating mb-3">
-                <input class="form-control @error('birthday') is-invalid @endError"
+                <input class="form-control @error('birthday') is-invalid @enderror"
                        type="date"
                        id="birthday"
                        name="birthday"
@@ -46,7 +46,7 @@
                     <option value="0"></option>
                     @foreach($clubs as $club)
                         <option value="{{ $club->id }}">{{ $club->name }}</option>
-                    @endForeach
+                    @endforeach
                 </select>
                 <label for="club_id">{{ __('app.club.name') }}</label>
             </div>
