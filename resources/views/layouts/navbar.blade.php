@@ -37,12 +37,12 @@
                                href="{{ action(\App\Http\Controllers\Competition\ShowCompetitionsListAction::class, [(string)App\Models\Year::actualYear()->value]) }}"
                             >{{ __('app.navbar.competitions') }}</a>
                         </li>
+                        <li>
+                            <a class="dropdown-item {{ $isCupsRoute ? 'active' : '' }}"
+                               href="{{ action(\App\Http\Controllers\Cups\ShowCupsListAction::class, [(string)App\Models\Year::actualYear()->value]) }}"
+                            >{{ __('app.navbar.cups') }}</a>
+                        </li>
                         @auth
-                            <li>
-                                <a class="dropdown-item {{ $isCupsRoute ? 'active' : '' }}"
-                                   href="{{ action(\App\Http\Controllers\Cups\ShowCupsListAction::class, [(string)App\Models\Year::actualYear()->value]) }}"
-                                >{{ __('app.navbar.cups') }}</a>
-                            </li>
                             <li>
                                 <a class="dropdown-item {{ $isGroupsRoute ? 'active' : '' }}"
                                    href="{{ action(\App\Http\Controllers\Groups\ShowGroupsListAction::class) }}"

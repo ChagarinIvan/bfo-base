@@ -46,7 +46,7 @@
     <div class="row mb-3">
         <div class="col-12">
             @auth
-                <x-edit-button url="{{ action(\App\Http\Controllers\Person\ShowEditPersonAction::class, [$personId]) }}"/>
+                <x-edit-button url="{{ action(\App\Http\Controllers\Person\ShowEditPersonAction::class, [$person->id]) }}"/>
             @endauth
             <x-button text="app.ranks"
                       color="info"

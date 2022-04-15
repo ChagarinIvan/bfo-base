@@ -64,6 +64,7 @@
     "app.common.last_payment" : "Последняя оплата",
     "app.common.cache_clear" : "Обновить кеш",
     "app.common.prompt" : "Поисковые строки",
+    "app.common.disqual" : "Результаты группы аннулированы",
     "app.protocol" : "Протокол",
     "app.competition.title" : "Соревнование",
     "app.competition.add" : "Добавление соревнивания",

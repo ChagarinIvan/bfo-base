@@ -43,6 +43,9 @@
                 </li>
             @endforeach
         </ul>
+        @if ($selectedDistance->disqual)
+            <div><p><b class="text-danger">{{ __('app.common.disqual') }}</b></p></div>
+        @endif
         @if ($selectedDistance->length > 0 || $selectedDistance->points > 0)
             <div><p><b>{{ $selectedDistance->length }}</b> м, <b>{{ $selectedDistance->points }}</b> КП.</p></div>
         @endif

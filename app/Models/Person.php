@@ -42,6 +42,7 @@ class Person extends Model
     protected $table = 'person';
     protected $dates = ['birthday'];
     protected $casts = ['prompt' => 'array'];
+    protected $fillable = ['lastname', 'firstname', 'birthday', 'club_id'];
 
     public function protocolLines(): HasMany
     {

@@ -152,12 +152,10 @@
 <script>
 
 import UiButton from "../UiButton.vue";
-import UiRouteLinkButton from "../UiRouteLinkButton.vue";
 import { trans } from 'laravel-vue-i18n'
 
 export default {
     components: {
-        UiRouteLinkButton,
         UiButton,
     },
     props: {

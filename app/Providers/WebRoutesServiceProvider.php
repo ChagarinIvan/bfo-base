@@ -139,7 +139,7 @@ class WebRoutesServiceProvider extends ServiceProvider
                 $this->route->get('/500', Error\ShowUnexpectedErrorAction::class);
 
                 //cups
-                $this->routeRegistrar->prefix('cups')->middleware(['auth'])->group(function () {
+                $this->routeRegistrar->prefix('cups')->group(function () {
                     $this->route->get('{year}',                     Cups\ShowCupsListAction::class);
                     $this->route->get('{cup}/show',                 Cups\ShowCupAction::class);
                     $this->route->get('{cup}/cache',                Cups\ClearCacheAction::class);
@@ -147,16 +147,18 @@ class WebRoutesServiceProvider extends ServiceProvider
                     $this->route->get('{cup}/{event}/{group}/show', CupEvents\ShowCupEventGroupAction::class);
 
                     //old auth
-                    $this->route->get( '{year}/create',        Cups\ShowCreateCupFormAction::class);
-                    $this->route->post('store',                Cups\StoreCupAction::class);
-                    $this->route->get( '{cup}/edit',           Cups\ShowEditCupFormAction::class);
-                    $this->route->post('{cup}/update',         Cups\UpdateCupAction::class);
-                    $this->route->get( '{cup}/delete',         Cups\DeleteCupAction::class);
-                    $this->route->get( '{cup}/event/create',   CupEvents\ShowCreateCupEventFormAction::class);
-                    $this->route->post('{cup}/event/store',    CupEvents\StoreCupEventAction::class);
-                    $this->route->get( '{cup}/{event}/delete', CupEvents\DeleteCupEventAction::class);
-                    $this->route->get( '{cup}/{event}/edit',   CupEvents\ShowEditCupEventFormAction::class);
-                    $this->route->post('{cup}/{event}/update', CupEvents\UpdateCupEventAction::class);
+                    $this->middleware(['auth'])->group(function () {
+                        $this->route->get('{year}/create', Cups\ShowCreateCupFormAction::class);
+                        $this->route->post('store', Cups\StoreCupAction::class);
+                        $this->route->get('{cup}/edit', Cups\ShowEditCupFormAction::class);
+                        $this->route->post('{cup}/update', Cups\UpdateCupAction::class);
+                        $this->route->get('{cup}/delete', Cups\DeleteCupAction::class);
+                        $this->route->get('{cup}/event/create', CupEvents\ShowCreateCupEventFormAction::class);
+                        $this->route->post('{cup}/event/store', CupEvents\StoreCupEventAction::class);
+                        $this->route->get('{cup}/{event}/delete', CupEvents\DeleteCupEventAction::class);
+                        $this->route->get('{cup}/{event}/edit', CupEvents\ShowEditCupEventFormAction::class);
+                        $this->route->post('{cup}/{event}/update', CupEvents\UpdateCupEventAction::class);
+                    });
                 });
 
                 //groups

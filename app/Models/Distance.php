@@ -15,6 +15,7 @@ use Illuminate\Support\Collection;
  * @property int $event_id
  * @property int $length
  * @property int $points
+ * @property false $disqual
  *
  * @property-read Group $group
  * @property-read Event $event
