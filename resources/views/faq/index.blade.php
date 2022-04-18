@@ -24,4 +24,11 @@
         <li>{{ __('app.faq.dev_contact_us') }}.</li>
         <li>{{ __('app.faq.dev_exports') }}.</li>
     </ol>
+
+    <h5>{{ __('app.faq.check') }}</h5>
+    <ol>
+        <li>{{ __('app.faq.check_1') }}</li>
+        <li>{!! __('app.faq.check_2') !!}</li>
+        <li>{!! __('app.faq.check_3') !!}</li>
+    </ol>
 @endsection

@@ -36,7 +36,6 @@ class CheckPersonsRanksAction extends AbstractRankAction
                 $line['name'] = str_replace(' ', ' ', $line['name']);
                 [$lastname, $firstname] = preg_split('#\s#', $line['name']);
             } catch (\Exception $e) {
-                sleep(1);
             }
             $line['prepared_line'] = PersonsIdentService::makeIdentLine(
                 $lastname,

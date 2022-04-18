@@ -70,15 +70,11 @@
                                 $equalRank = ($ranks->has($personId) && $ranks->get($personId)->rank === \App\Models\Rank::getRank($lineData['rank'])) ||
                                     (!$ranks->has($personId) && \App\Models\Rank::getRank($lineData['rank']) === \App\Models\Rank::WITHOUT_RANK);
                             }
-                        };
+                        }
                     @endphp
                     <tr>
                     {{-- group --}}
-                        @if ($hasPerson)
-                            <td>{{ $lineData['group'] }}</td>
-                        @else
-                            <td>{{ $lineData['group'] }}</td>
-                        @endif
+                        <td>{{ $lineData['group'] }}</td>
                     {{-- name --}}
                         @if ($hasPerson && $equalName)
                             <td><b><a class="text-success" href="{{ action(\App\Http\Controllers\Person\ShowPersonAction::class, $person) }}">{{ $lineData['name'] }}</a></b></td>
@@ -122,7 +118,7 @@
                         @endif
                     {{-- year --}}
                         @if ($hasPerson && $equalYear)
-                            <td><b>{{ $lineData['year'] }}</b></td>
+                            <td><b class="text-success">{{ $lineData['year'] }}</b></td>
                         @elseif ($hasPerson)
                             <td><del>{{ $lineData['year'] }}</del>(<b class="text-success">{{ $person->birthday?->format('Y') }}</b>)</td>
                         @else
