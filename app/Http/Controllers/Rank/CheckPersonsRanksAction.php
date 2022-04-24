@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Rank;
 
+use App\Models\Rank;
 use App\Services\PersonsIdentService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
@@ -31,7 +32,7 @@ class CheckPersonsRanksAction extends AbstractRankAction
 
     public function preparedLines(Collection $lines): Collection
     {
-        return $lines->transform(function(array $line) {
+        return $lines->transform(function(array $line): array {
             try {
                 $line['name'] = str_replace(' ', ' ', $line['name']);
                 [$lastname, $firstname] = preg_split('#\s#', $line['name']);
@@ -42,6 +43,10 @@ class CheckPersonsRanksAction extends AbstractRankAction
                 $firstname,
                 empty($line['year']) ? null : (int)$line['year']
             );
+
+            $line['rank'] = isset($line['rank']) && ! empty($line['rank'])
+                ? Rank::getRank($line['rank'])
+                : null;
 
             return $line;
         })

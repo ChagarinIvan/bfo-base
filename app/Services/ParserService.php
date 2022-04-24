@@ -9,7 +9,7 @@ use Illuminate\Support\Collection;
 
 class ParserService
 {
-    public function __construct(private GroupsService $groupsService)
+    public function __construct(private readonly GroupsService $groupsService)
     {}
 
     /**

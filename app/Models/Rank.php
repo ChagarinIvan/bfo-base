@@ -69,7 +69,7 @@ class Rank extends Model
         self::THIRD_RANK => self::SECOND_RANK,
     ];
 
-    private const REPLACES = [
+    private const PART_REPLACES = [
         'к' => 'к',
         '1ю' => 'iю',
         '2ю' => 'iiю',
@@ -82,6 +82,12 @@ class Rank extends Model
         'c' => 'с',
         '/' => '',
         '\\' => '',
+    ];
+
+    private const FULL_REPLACES = [
+        '1' => 'i',
+        '2' => 'ii',
+        '3' => 'iii',
     ];
 
     public $timestamps = false;
@@ -121,7 +127,7 @@ class Rank extends Model
     private static function getPreparedRanks(): array
     {
         if (count(self::$preparedRanks) === 0) {
-            self::$preparedRanks = array_map(fn(string $rank) => self::prepareRank($rank), self::RANKS);
+            self::$preparedRanks = array_map(fn(string $rank): string => self::prepareRank($rank), self::RANKS);
         }
         return self::$preparedRanks;
     }
@@ -129,8 +135,13 @@ class Rank extends Model
     private static function prepareRank(string $rank): string
     {
         $rank = mb_strtolower($rank);
-        foreach (self::REPLACES as $search => $replace) {
+        foreach (self::PART_REPLACES as $search => $replace) {
             $rank = str_replace($search, $replace, $rank);
+        }
+        foreach (self::FULL_REPLACES as $search => $replace) {
+            if ($search === $rank) {
+                $rank = $replace;
+            }
         }
         return $rank;
     }

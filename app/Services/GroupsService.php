@@ -3,20 +3,14 @@
 namespace App\Services;
 
 use App\Models\CupEvent;
-use App\Models\Event;
 use App\Models\Group;
 use App\Repositories\GroupsRepository;
 use Illuminate\Support\Collection;
 
 class GroupsService
 {
-    public function __construct(private GroupsRepository $groupsRepository)
+    public function __construct(private readonly GroupsRepository $groupsRepository)
     {}
-
-    public function deleteEventDistances(Event $event): void
-    {
-        $event->distances()->delete();
-    }
 
     /**
      * @param CupEvent $cupEvent

@@ -69,7 +69,7 @@
                                 />
                             @endforeach
                             @foreach($event->flags as $flag)
-                                <x-badge color="{{ \App\Facades\Color::getColor($flag->color) }}"
+                                <x-badge color="{{ $flag->color }}"
                                          name="{{ $flag->name }}"
                                          url="{{ action(\App\Http\Controllers\Flags\ShowFlagEventsAction::class, [$flag]) }}"
                                 />

@@ -8,7 +8,7 @@ use App\Repositories\PersonPromptRepository;
 
 class PersonPromptService
 {
-    public function __construct(private PersonPromptRepository $repository)
+    public function __construct(private readonly PersonPromptRepository $repository)
     {}
 
     public function storePrompt(string $personLine, int $personId): PersonPrompt

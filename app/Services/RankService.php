@@ -18,10 +18,10 @@ class RankService
     private const MAX_JUNIOR_RANK_AGE = 20;
 
     public function __construct(
-        private RanksRepository $ranksRepository,
-        private ProtocolLineService $protocolLineService,
-        private PersonsService $personsService,
-        private CacheManager $cache
+        private readonly RanksRepository $ranksRepository,
+        private readonly ProtocolLineService $protocolLineService,
+        private readonly PersonsService $personsService,
+        private readonly CacheManager $cache
     ) {}
 
     public const RANKS_POWER = [

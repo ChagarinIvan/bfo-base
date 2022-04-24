@@ -73,7 +73,7 @@
                                 <x-button text="app.common.delete"
                                           color="danger"
                                           icon="bi-trash-fill"
-                                          url="{{ action(\App\Http\Controllers\Event\ShowAddFlagToEventFormAction::class, [$event]) }}"
+                                          url="{{ action(\App\Http\Controllers\Event\DeleteEventFlagAction::class, [$event, $flag->id]) }}"
                                 />
                             @endif
                         </td>

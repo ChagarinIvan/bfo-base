@@ -15,8 +15,8 @@ use Illuminate\Support\Collection;
 class ProtocolLineService
 {
     public function __construct(
-        private ProtocolLinesRepository $protocolLinesRepository,
-        private GroupsRepository $groupsRepository
+        private readonly ProtocolLinesRepository $protocolLinesRepository,
+        private readonly GroupsRepository $groupsRepository
     ) {}
 
     /**

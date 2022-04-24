@@ -62,6 +62,7 @@
                     ></i>
                     <span class="d-none d-xl-inline">{{ __('app.common.create') }}</span>
                 </button>
+                <x-back-button/>
             </div>
         </form>
     </div>
