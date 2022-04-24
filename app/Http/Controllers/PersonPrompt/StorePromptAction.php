@@ -15,7 +15,7 @@ class StorePromptAction extends AbstractPersonPromptAction
             'prompt' => 'required',
         ]);
 
-        $prompt = $this->promptService->fillPrompt(new PersonPrompt(), $formParams);
+        $prompt = $this->promptService->fillPrompt(new PersonPrompt(), $formParams, $personId);
         $this->promptService->storePersonPrompt($prompt);
 
         return $this->redirector->action(ShowPersonPromptsListAction::class, [$personId]);

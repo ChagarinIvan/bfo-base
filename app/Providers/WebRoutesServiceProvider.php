@@ -99,11 +99,11 @@ class WebRoutesServiceProvider extends ServiceProvider
                         $this->routeRegistrar
                             ->prefix('prompt')
                             ->group(function () {
-                                $this->route->get('{person}/create',          PersonPrompt\ShowCreatePromptAction::class);
-                                $this->route->get('{person}/store',           PersonPrompt\StorePromptAction::class);
-                                $this->route->get('{person}/{prompt}/edit',   PersonPrompt\ShowEditPromptAction::class);
-                                $this->route->get('{person}/{prompt}/update', PersonPrompt\UpdatePromptAction::class);
-                                $this->route->get('{person}/{prompt}/delete', PersonPrompt\DeletePromptAction::class);
+                                $this->route->get(  '{person}/create',          PersonPrompt\ShowCreatePromptAction::class);
+                                $this->route->post( '{person}/store',           PersonPrompt\StorePromptAction::class);
+                                $this->route->get(  '{person}/{prompt}/edit',   PersonPrompt\ShowEditPromptAction::class);
+                                $this->route->post( '{person}/{prompt}/update', PersonPrompt\UpdatePromptAction::class);
+                                $this->route->get(  '{person}/{prompt}/delete', PersonPrompt\DeletePromptAction::class);
                             });
                     });
                 });

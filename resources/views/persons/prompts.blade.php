@@ -13,7 +13,11 @@
     <div class="row mb-3">
         <div class="col-12">
             @auth
-                <x-edit-button url="{{ action(\App\Http\Controllers\PersonPrompt\ShowCreatePromptAction::class, [$person->id]) }}"/>
+                <x-button text="app.common.new"
+                          color="success"
+                          icon="bi-file-earmark-plus-fill"
+                          url="{{ action(\App\Http\Controllers\PersonPrompt\ShowCreatePromptAction::class, [$person->id]) }}"
+                />
             @endauth
             <x-back-button/>
         </div>
@@ -41,19 +45,19 @@
                 @foreach ($person->prompts as $prompt)
                     <tr>
                         <td>{{ $prompt->prompt }}</td>
+                        @auth
+                            <td>
+                                <x-edit-button url="{{ action(\App\Http\Controllers\PersonPrompt\ShowEditPromptAction::class, [$prompt->person_id, $prompt->id]) }}"/>
+                                <x-delete-button modal-id="deleteModal{{ $prompt->id }}"/>
+                            </td>
+                        @endauth
                     </tr>
-                    @auth
-                        <td>
-                            <x-edit-button url="{{ action(\App\Http\Controllers\PersonPrompt\ShowEditPromptAction::class, [$prompt->person_id, $prompt->id]) }}"/>
-                            <x-delete-button modal-id="deleteModal{{ $prompt->id }}"/>
-                        </td>
-                    @endauth
                 @endforeach
             </tbody>
         </table>
         @foreach ($person->prompts as $prompt)
             <x-modal modal-id="deleteModal{{ $prompt->id }}"
-                     url="{{ action(\App\Http\Controllers\PersonPrompt\DeletePromptAction::class, [$prompt->id]) }}"
+                     url="{{ action(\App\Http\Controllers\PersonPrompt\DeletePromptAction::class, [$prompt->person_id, $prompt->id]) }}"
             />
         @endforeach
     @endif
