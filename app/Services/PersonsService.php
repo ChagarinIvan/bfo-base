@@ -22,14 +22,6 @@ class PersonsService
         private readonly PersonPromptService $promptService
     ) {}
 
-    /**
-     * @return Person[]|Collection
-     */
-    public function allPersons(): Collection
-    {
-        return Person::all();
-    }
-
     public function getPerson(int $personId): Person
     {
         $person = Person::find($personId);

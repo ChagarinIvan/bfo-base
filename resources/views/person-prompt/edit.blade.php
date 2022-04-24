@@ -13,7 +13,7 @@
 @section('content')
     <div class="row">
         <form method="POST"
-              action="{{ action(\App\Http\Controllers\PersonPrompt\UpdatePromptAction::class, [$personId]) }}"
+              action="{{ action(\App\Http\Controllers\PersonPrompt\UpdatePromptAction::class, [$personId, $prompt->id]) }}"
         >
             @csrf
             <div class="form-floating mb-3">

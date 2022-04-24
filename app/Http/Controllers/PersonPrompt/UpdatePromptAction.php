@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class UpdatePromptAction extends AbstractPersonPromptAction
 {
-    public function __invoke(Request $request, int $promptId, int $personId): RedirectResponse
+    public function __invoke(int $personId, int $promptId, Request $request): RedirectResponse
     {
         $formParams = $request->validate([
             'prompt' => 'required',
