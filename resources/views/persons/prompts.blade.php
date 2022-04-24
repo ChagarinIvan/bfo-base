@@ -44,7 +44,7 @@
                     </tr>
                     @auth
                         <td>
-                            <x-edit-button url="{{ action(\App\Http\Controllers\Competition\ShowEditCompetitionFormAction::class, [$year->value, $competition->id]) }}"/>
+                            <x-edit-button url="{{ action(\App\Http\Controllers\PersonPrompt\ShowEditPromptAction::class, [$prompt->person_id, $prompt->id]) }}"/>
                             <x-delete-button modal-id="deleteModal{{ $prompt->id }}"/>
                         </td>
                     @endauth

@@ -5,9 +5,9 @@ namespace App\Http\Controllers\PersonPrompt;
 use App\Http\Controllers\AbstractAction;
 use Illuminate\Contracts\View\View;
 
-class EditPromptAction extends AbstractAction
+class ShowCreatePromptAction extends AbstractAction
 {
-    public function __invoke(int $personId, int $promptId): View
+    public function __invoke(int $personId): View
     {
         return $this->view('person-prompt.create', compact('personId'));
     }
