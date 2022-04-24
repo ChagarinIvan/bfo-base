@@ -63,7 +63,8 @@
     "app.common.vk" : "Вне конкурса",
     "app.common.last_payment" : "Последняя оплата",
     "app.common.cache_clear" : "Обновить кеш",
-    "app.common.prompt" : "Поисковые строки",
+    "app.common.prompts" : "Поисковые строки",
+    "app.common.prompt" : "Поисковая строка",
     "app.common.disqual" : "Результаты группы аннулированы",
     "app.protocol" : "Протокол",
     "app.competition.title" : "Соревнование",
@@ -160,5 +161,7 @@
     "app.pagination.first" : "Первая",
     "app.pagination.last" : "Последняя",
     "app.validation.numeric" : "Только число, дробное через точку",
+    "app.prompt.create" : "Создание строки поиска",
+    "app.prompt.edit" : "Редактирование строки поиска",
     "validation.required" : "Обязательное поле"
 }

@@ -25,6 +25,10 @@ class PersonPromptService
         $person->prompts()->delete();
     }
 
+    public function deletePersonPrompt(int $promptId): void
+    {
+        PersonPrompt::destroy($promptId);
+    }
 
     public function deletePrompt(string $prompt): void
     {
@@ -40,5 +44,31 @@ class PersonPromptService
     {
          $prompts = $this->repository->findPersonsPrompts($preparedLines);
          return $prompts->pluck('person_id', 'prompt')->toArray();
+    }
+
+    public function fillPrompt(PersonPrompt $prompt, array $formParams, int $personId = null): PersonPrompt
+    {
+        $prompt->fill($formParams);
+        if ($personId) {
+            $prompt->person_id = $personId;
+        }
+
+        return $prompt;
+    }
+
+    public function storePersonPrompt(PersonPrompt $prompt): PersonPrompt
+    {
+        $prompt->save();
+
+        return $prompt;
+    }
+
+    public function getPrompt(int $promptId): PersonPrompt
+    {
+        $prompt = PersonPrompt::find($promptId);
+        if ($prompt) {
+            return $prompt;
+        }
+        throw new \RuntimeException('Wrong prompt id.');
     }
 }

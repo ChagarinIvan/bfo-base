@@ -23,7 +23,8 @@
     "app.rank.list" : "Спіс",
     "app.common.name" : "Імя",
     "app.common.disqual" : "Вынікі группы ануляваны",
-    "app.common.prompt" : "строкі пошуку",
+    "app.common.prompts" : "радкі пошуку",
+    "app.common.prompt" : "радок пошуку",
     "app.common.lastname" : "Прозвішча",
     "app.common.fio" : "Прозвішча, Імя",
     "app.common.events_count" : "Колькасць стартаў",
@@ -163,5 +164,7 @@
     "app.pagination.first" : "Першая",
     "app.pagination.last" : "Апошняя",
     "app.validation.numeric" : "Толькі лічба, дробная праз кропку",
+    "app.prompt.create" : "Стварэнне радка пошука",
+    "app.prompt.edit" : "Рэдагаванне радка пошука",
     "validation.required" : "Абавязковае поле"
 }

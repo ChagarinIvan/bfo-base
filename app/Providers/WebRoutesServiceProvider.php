@@ -15,6 +15,7 @@ use App\Http\Controllers\Groups;
 use App\Http\Controllers\Localization;
 use App\Http\Controllers\Login;
 use App\Http\Controllers\Person;
+use App\Http\Controllers\PersonPrompt;
 use App\Http\Controllers\Rank;
 use App\Http\Controllers\Registration;
 use App\Models\Year;
@@ -90,8 +91,20 @@ class WebRoutesServiceProvider extends ServiceProvider
                         $this->route->post( '/{person}/update', Person\UpdatePersonAction::class);
                         $this->route->get(  '/{person}/delete', Person\DeletePersonAction::class);
 
+                        $this->route->get( '{person}/prompts',        Person\ShowPersonPromptsListAction::class);
                         $this->route->get( 'person/{protocol}/show',  Person\ShowSetPersonToProtocolLineAction::class);
                         $this->route->get( '{person}/{protocol}/set', Person\SetProtocolLinePersonAction::class);
+
+                        //person prompts
+                        $this->routeRegistrar
+                            ->prefix('prompt')
+                            ->group(function () {
+                                $this->route->get('{person}/create',          PersonPrompt\CreatePromptAction::class);
+                                $this->route->get('{person}/store',           PersonPrompt\StorePromptAction::class);
+                                $this->route->get('{person}/{prompt}/edit',   PersonPrompt\EditPromptAction::class);
+                                $this->route->get('{person}/{prompt}/update', PersonPrompt\UpdatePromptAction::class);
+                                $this->route->get('{person}/{prompt}/delete', PersonPrompt\DeletePromptAction::class);
+                            });
                     });
                 });
 

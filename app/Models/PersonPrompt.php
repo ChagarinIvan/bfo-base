@@ -14,6 +14,7 @@ use Illuminate\Support\Collection;
  *
  * @property-read Person $person
  *
+ * @method static null|PersonPrompt find(int $id)
  * @method static Builder|PersonPrompt wherePrompt(string $line)
  * @method static Builder|PersonPrompt where(...$value)
  * @method static Builder|PersonPrompt selectRaw(string $row)
@@ -23,6 +24,7 @@ class PersonPrompt extends Model
 {
     public $timestamps = false;
     protected $table = 'persons_prompt';
+    protected $fillable = ['prompt'];
 
     public function person(): HasOne
     {

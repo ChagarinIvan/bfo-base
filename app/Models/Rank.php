@@ -139,7 +139,7 @@ class Rank extends Model
             $rank = str_replace($search, $replace, $rank);
         }
         foreach (self::FULL_REPLACES as $search => $replace) {
-            if ($search === $rank) {
+            if ($search == $rank) {
                 $rank = $replace;
             }
         }

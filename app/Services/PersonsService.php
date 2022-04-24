@@ -122,7 +122,7 @@ class PersonsService
     public function updatePerson(int $personId, array $personData): Person
     {
         $person = $this->getPerson($personId);
-        $this->promptService->deletePrompts($person);
+//        $this->promptService->deletePrompts($person);
         $person = $this->fillPerson($person, $personData);
 
         return $this->storePerson($person);
