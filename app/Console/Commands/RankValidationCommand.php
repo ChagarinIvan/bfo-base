@@ -18,7 +18,7 @@ class RankValidationCommand extends Command
         $this->info('Start');
         foreach (ProtocolLine::all() as $protocolLine) {
             if (Rank::validateRank($protocolLine->rank) || $protocolLine->rank === '') {
-                $protocolLine->rank = Rank::getRank($protocolLine->rank) ?? '';
+                $protocolLine->rank = Rank::getRank($protocolLine->rank) ?: '';
             } else {
                 $this->info("no valid rank: {$protocolLine->rank}");
                 $protocolLine->rank = '';

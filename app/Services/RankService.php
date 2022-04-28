@@ -84,10 +84,10 @@ class RankService
 
     public function getActualRank(int $personId, Carbon $date = null): ?Rank
     {
-        return $this->cache->remember(
-            "actual_rank_{$personId}_{$date?->format('Y-m-d')}",
-            86400, //сутки
-            function () use ($personId, $date) {
+//        return $this->cache->remember(
+//            "actual_rank_{$personId}_{$date?->format('Y-m-d')}",
+//            86400, //сутки
+//            function () use ($personId, $date) {
                 $rank = $this->ranksRepository->getDateRank($personId, $date);
                 if ($rank === null) {
                     $rank = $this->ranksRepository->getDateRank($personId);
@@ -102,8 +102,8 @@ class RankService
                 }
 
                 return $rank;
-            }
-        );
+//            }
+//        );
     }
 
     public function getActualRanks(Collection $personIds): Collection
@@ -121,6 +121,7 @@ class RankService
 
     /**
      * Надо добавить логику когда идёт добавление в середину имеющихся разрядов, с исправлением уже имеющихся
+     *
      * @param ProtocolLine $protocolLine
      */
     public function fillRank(ProtocolLine $protocolLine): void

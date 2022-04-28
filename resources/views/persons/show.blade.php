@@ -39,7 +39,7 @@
                 <x-edit-button url="{{ action(\App\Http\Controllers\Person\ShowEditPersonAction::class, [$person->id]) }}"/>
                 <x-button text="app.common.prompts"
                           color="success"
-                          icon="bi-smartwatch"
+                          icon="bi-terminal"
                           url="{{ action(\App\Http\Controllers\Person\ShowPersonPromptsListAction::class, [$person->id]) }}"
                 />
             @endauth

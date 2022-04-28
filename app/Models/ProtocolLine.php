@@ -48,6 +48,7 @@ use Illuminate\Support\Collection;
  * @method static Builder|ProtocolLine selectRaw(Expression $raw)
  * @method static Builder|ProtocolLine addSelect(string $column)
  * @method static Builder|ProtocolLine join(string $table, string $tableId, string $operator, string $joinId)
+ * @method static ProtocolLine[] all()
  */
 class ProtocolLine extends Model
 {
