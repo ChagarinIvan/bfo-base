@@ -8,6 +8,7 @@ use App\Models\ProtocolLine;
 use App\Services\ClubsService;
 use App\Services\PersonsService;
 use App\Services\ProtocolLineIdentService;
+use App\Services\ProtocolLineService;
 use App\Services\RankService;
 use Carbon\Exceptions\InvalidFormatException;
 use Illuminate\Console\Command;
@@ -27,6 +28,7 @@ class IdentProtocolLineCommand extends Command
         RankService $rankService,
         PersonsService $personsService,
         ClubsService $clubsService,
+        ProtocolLineService $protocolLineService,
         ProtocolLineIdentService $protocolLineIdentService
     ): void {
         $identLine = IdentLine::first();
@@ -37,7 +39,7 @@ class IdentProtocolLineCommand extends Command
         }
 
         $personId = $protocolLineIdentService->identPerson($identLine->ident_line);
-        $protocolLines = ProtocolLine::wherePreparedLine($identLine->ident_line)->get();
+        $protocolLines = $protocolLineService->getEqualLines($identLine->ident_line);
 
         if ($personId > 0) {
             $protocolLines->each(function (ProtocolLine $protocolLine) use ($personId, $rankService) {

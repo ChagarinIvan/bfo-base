@@ -48,6 +48,18 @@ class RankService
         return $this->ranksRepository->getRanksList($filter);
     }
 
+    public function replaceRanksToPerson(Collection $lines, int $personId): void
+    {
+        foreach ($lines as $line) {
+            //перекидываем разряд
+            $rank = $this->getRank($line);
+            if ($rank !== null) {
+                $rank->person_id = $personId;
+                $rank->save();
+            }
+        }
+    }
+
     public function getFinishedRanks(string $rank): RanksCollection
     {
         $filter = new RanksFilter();

@@ -3,47 +3,31 @@
 namespace App\Http\Controllers\Person;
 
 use App\Models\Person;
-use App\Models\PersonPrompt;
 use App\Models\ProtocolLine;
+use App\Services\PersonPromptService;
+use App\Services\ProtocolLineService;
+use App\Services\RankService;
 use Illuminate\Http\RedirectResponse;
 
 class SetProtocolLinePersonAction extends AbstractPersonAction
 {
-    public function __invoke(Person $person, int $protocolLineId): RedirectResponse
-    {
+    public function __invoke(
+        Person $person,
+        int $protocolLineId,
+        ProtocolLineService $protocolLineService,
+        PersonPromptService $personPromptService,
+        RankService $rankService
+    ): RedirectResponse {
         /** @var ProtocolLine $protocolLine */
         $protocolLine = ProtocolLine::find($protocolLineId);
         $oldPersonId = $protocolLine->person_id;
         $preparedLine = $protocolLine->prepared_line;
 
         //сохраняем результат для всех строчек с установленным идентификатором
-        $protocolLinesToUpdate = ProtocolLine::wherePreparedLine($preparedLine)->get();
-
-        foreach ($protocolLinesToUpdate as $protocolLine) {
-            //перекидываем разряд
-            $rank = $this->rankService->getRank($protocolLine);
-            if ($rank !== null) {
-                $rank->person_id = $person->id;
-                $rank->save();
-            }
-
-            $protocolLine->person_id = $person->id;
-            $protocolLine->save();
-        }
-
-        //меняем person_id для имеющихся таких же идентификаторов
-        $prompts = PersonPrompt::wherePrompt($preparedLine)->get();
-        if ($prompts->count() > 0) {
-            foreach ($prompts as $prompt) {
-                $prompt->person_id = $person->id;
-                $prompt->save();
-            }
-        } else {
-            //создаём новый промпт
-            $prompt = new PersonPrompt();
-            $prompt->person_id = $person->id;
-            $prompt->prompt = $preparedLine;
-        }
+        $protocolLinesToUpdate = $protocolLineService->getEqualLines($preparedLine);
+        $protocolLinesToUpdate = $protocolLineService->reSetPerson($protocolLinesToUpdate, $person->id);
+        $rankService->replaceRanksToPerson($protocolLinesToUpdate, $person->id);
+        $personPromptService->changePromptForLine($preparedLine, $person->id);
 
         if (ProtocolLine::wherePersonId($oldPersonId)->count() === 0) {
             Person::destroy($oldPersonId);

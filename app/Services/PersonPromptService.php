@@ -24,6 +24,23 @@ class PersonPromptService
         return $prompt;
     }
 
+    public function changePromptForLine(string $preparedLine, int $personId): void
+    {
+        //меняем person_id для имеющихся таких же идентификаторов
+        $prompts = PersonPrompt::wherePrompt($preparedLine)->get();
+        if ($prompts->count() > 0) {
+            foreach ($prompts as $prompt) {
+                $prompt->person_id = $personId;
+                $prompt->save();
+            }
+        } else {
+            //создаём новый промпт
+            $prompt = new PersonPrompt();
+            $prompt->person_id = $personId;
+            $prompt->prompt = $preparedLine;
+        }
+    }
+
     public function deletePersonPrompt(int $promptId): void
     {
         PersonPrompt::destroy($promptId);

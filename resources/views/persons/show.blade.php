@@ -106,12 +106,14 @@
                                 </a>
                             </td>
                             <td>
-                                {{ $lineName }}
-                                @auth
-                                    <a href="{{ action(\App\Http\Controllers\Person\ExtractPersonAction::class, [$line->id]) }}">
-                                        <span class="badge rounded-pill bg-warning">{{ __('app.common.extract') }}</span>
-                                    </a>
-                                @endauth
+                                {{ $line->lastname }} {{ $line->firstname }}
+                                @if($lineName !== $personName)
+                                    @auth
+                                        <a href="{{ action(\App\Http\Controllers\Person\ExtractPersonAction::class, [$line->id]) }}">
+                                            <span class="badge rounded-pill bg-warning">{{ __('app.common.extract') }}</span>
+                                        </a>
+                                    @endauth
+                                @endif
                             </td>
                             <td>{{ $line->distance->event->date->format('Y-m-d') }}</td>
                             <td>{{ $line->distance->group ? $line->distance->group->name : '' }}</td>

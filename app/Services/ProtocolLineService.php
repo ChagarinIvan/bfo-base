@@ -117,4 +117,20 @@ class ProtocolLineService
         $this->protocolLinesRepository->identByEqualPreparedLine($linesIds);
         $this->protocolLinesRepository->identByEqualPersonPrompt($linesIds);
     }
+
+    public function getEqualLines(string $line): Collection
+    {
+        return ProtocolLine::wherePreparedLine($line)->get();
+    }
+
+    public function reSetPerson(Collection $lines, int $personId): Collection
+    {
+        foreach ($lines as $line) {
+            /** @var ProtocolLine $line */
+            $line->person_id = $personId;
+            $line->save();
+        }
+
+        return $lines;
+    }
 }
