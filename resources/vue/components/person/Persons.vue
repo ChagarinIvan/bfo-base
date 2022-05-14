@@ -39,11 +39,11 @@
                     <td><span v-html="markedText(year(person.birthday))"></span></td>
                     <td v-if="isAuth">
                         <ui-button :url="'/persons/' + person.id + '/edit'"></ui-button>
-                        <button type="button"
-                                class="btn btn-outline-danger btn-sm me-1"
-                                @click="clickDeleteButton(person.id)"
-                                data-bs-toggle="modal"
-                                data-bs-target="#modal"
+                        <a type="button"
+                           class="btn btn-outline-danger btn-sm me-1"
+                           :href="'/persons/' + this.deletedPersonId + '/delete'"
+                           data-bs-toggle="modal"
+                           data-bs-target="#modal"
                         >
                             <i class="bi bi-trash-fill"
                                data-bs-toggle="tooltip"
@@ -51,7 +51,7 @@
                                title="{{ $t('app.common.delete') }}"
                             ></i>
                             <span class="d-none d-xl-inline">{{ $t('app.common.delete') }}</span>
-                        </button>
+                        </a>
                     </td>
                 </tr>
                 </tbody>
@@ -116,33 +116,6 @@
                             <a class="page-link" @click="this.pagination(1)">{{ $t('app.pagination.next') }}</a>
                         </li>
                     </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal modal-dark fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalLabel">{{ $t('app.common.warn') }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                            :aria-label="translate('app.common.close')"></button>
-                </div>
-                <div class="modal-body">{{ $t('app.common.delete_warn') }}</div>
-                <div class="modal-footer">
-                    <a
-                        class="btn btn-sm btn-outline-danger me-1"
-                        :href="'/persons/' + this.deletedPersonId + '/delete'"
-                        type="button"
-                        data-bs-dismiss="modal"
-                    >
-                        <i class="bi bi-trash-fill me-1"
-                           data-bs-toggle="tooltip"
-                           data-bs-placement="top"
-                           :title="translate('app.common.delete')"
-                        ></i>
-                        <span class="d-none d-xl-inline">{{ $t('app.common.delete') }}</span>
-                    </a>
                 </div>
             </div>
         </div>
