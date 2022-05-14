@@ -43,7 +43,7 @@ class OrientBySyncService
             $personsPrompts[self::makePromptFromPersonDto($personDto)] = $personDto;
         }
 
-        $indicatedPersons = $this->identService->identLines(array_keys($personsPrompts), 2);
+        $indicatedPersons = $this->identService->identLines(array_keys($personsPrompts));
         foreach ($personsPrompts as $personsPrompt => $personDto) {
             if (isset($indicatedPersons[$personsPrompt])) {
                 $personId = (int)$indicatedPersons[$personsPrompt];

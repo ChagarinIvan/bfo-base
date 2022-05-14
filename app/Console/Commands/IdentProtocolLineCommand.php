@@ -23,8 +23,12 @@ class IdentProtocolLineCommand extends Command
     protected $signature = 'protocol-lines:queue-ident';
 
     //стартует каждую минуту
-    public function handle(RankService $rankService, PersonsService $personsService, ClubsService $clubsService): void
-    {
+    public function handle(
+        RankService $rankService,
+        PersonsService $personsService,
+        ClubsService $clubsService,
+        ProtocolLineIdentService $protocolLineIdentService
+    ): void {
         $identLine = IdentLine::first();
         if ($identLine) {
             $identLine->delete();
@@ -32,7 +36,7 @@ class IdentProtocolLineCommand extends Command
             return;
         }
 
-        $personId = ProtocolLineIdentService::identPerson($identLine->ident_line);
+        $personId = $protocolLineIdentService->identPerson($identLine->ident_line);
         $protocolLines = ProtocolLine::wherePreparedLine($identLine->ident_line)->get();
 
         if ($personId > 0) {

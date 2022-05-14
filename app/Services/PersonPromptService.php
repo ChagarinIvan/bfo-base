@@ -9,8 +9,10 @@ use Mav\Slovo\Phonetics;
 
 class PersonPromptService
 {
-    public function __construct(private readonly PersonPromptRepository $repository)
-    {}
+    public function __construct(
+        private readonly PersonPromptRepository $repository,
+        private readonly Phonetics $phonetics
+    ) {}
 
     public function storePrompt(string $personLine, int $personId): PersonPrompt
     {
@@ -20,13 +22,6 @@ class PersonPromptService
         $this->storePersonPrompt($prompt);
 
         return $prompt;
-    }
-
-    public function makeMetaphone(string $personLine): string
-    {
-        $phonetics = new Phonetics();
-
-        return $phonetics->metaphour($personLine);
     }
 
     public function deletePersonPrompt(int $promptId): void
@@ -71,7 +66,7 @@ class PersonPromptService
 
     public function storePersonPrompt(PersonPrompt $prompt): PersonPrompt
     {
-        $prompt->metaphone = $this->makeMetaphone($prompt->prompt);
+        $prompt->metaphone = $this->phonetics->metaphour($prompt->prompt);
         $prompt->save();
 
         return $prompt;

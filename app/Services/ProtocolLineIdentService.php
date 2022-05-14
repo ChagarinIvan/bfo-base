@@ -6,14 +6,17 @@ use App\Models\IdentLine;
 use App\Models\PersonPrompt;
 use App\Models\ProtocolLine;
 use Illuminate\Support\Collection;
+use Mav\Slovo\Phonetics;
 
 class ProtocolLineIdentService
 {
     private static Collection $prompts;
 
     public function __construct(
-        private RankService $rankService,
-        private ProtocolLineService $protocolLineService,
+        private readonly RankService $rankService,
+        private readonly ProtocolLineService $protocolLineService,
+        private readonly PersonPromptService $personPromptService,
+        private readonly Phonetics $phonetics
     ) {}
 
     /**
@@ -74,7 +77,7 @@ class ProtocolLineIdentService
             $this->rankService->fillRank($line);
         }
 
-        self::pushIdentLines($notIdentedLines->pluck('prepared_line')->unique());
+        $this->pushIdentLines($notIdentedLines->pluck('prepared_line')->unique());
     }
 
     /**
@@ -96,14 +99,42 @@ class ProtocolLineIdentService
     }
 
     /**
-     * Определяем людей по идентификаторам с использованием расстояния левенштайна.
+     * Определяет людей вначале делает короткий список с почти одинаковым звучанием,
+     * а потом уже по идентификатору с использованием расстояния левенштайна.
      */
-    public static function identPerson(string $searchLine, int $identLevel = 5): int
+    public function identPerson(string $searchLine): int
     {
-        self::$prompts = PersonPrompt::all();
+        self::$prompts = $this->personPromptService->all();
+        $metaphone = $this->phonetics->metaphour($searchLine);
         $ranks = new Collection();
 
-        foreach (self::$prompts->pluck('prompt') as $prompt) {
+        foreach (self::$prompts->pluck('metaphone') as $prompt) {
+            $rank = levenshtein($metaphone, $prompt);
+            $ranks->push([
+                'metaphone' => $prompt,
+                'rank' => $rank,
+            ]);
+        }
+
+        $minRank = $ranks->sortBy('rank')->first();
+        if ($minRank['rank'] <= 2) {
+            /** @var PersonPrompt $prompt */
+            $prompts = self::$prompts->where('metaphone', $minRank['metaphone']);
+
+            return $this->identByPersonPrompt($searchLine, $prompts);
+        }
+
+        return 0;
+    }
+
+    /**
+     * Определяем людей по идентификаторам с использованием расстояния левенштайна.
+     */
+    private function identByPersonPrompt(string $searchLine, Collection $prompts): int
+    {
+        $ranks = new Collection();
+
+        foreach ($prompts as $prompt) {
             $rank = levenshtein($searchLine, $prompt);
             $ranks->push([
                 'prompt' => $prompt,
@@ -112,9 +143,10 @@ class ProtocolLineIdentService
         }
 
         $minRank = $ranks->sortBy('rank')->first();
-        if ($minRank['rank'] <= $identLevel) {
+        if ($minRank['rank'] <= 5) {
             /** @var PersonPrompt $prompt */
-            $prompt = self::$prompts->where('prompt', $minRank['prompt'])->first();
+            $prompt = $prompts->where('prompt', $minRank['prompt'])->first();
+
             return $prompt->person_id;
         }
         return 0;
@@ -150,7 +182,7 @@ class ProtocolLineIdentService
     /**
      * @param Collection|string[] $protocolLines
      */
-    public static function pushIdentLines(Collection $protocolLines): void
+    public function pushIdentLines(Collection $protocolLines): void
     {
         foreach ($protocolLines as $line) {
             $identLinesCount = IdentLine::whereIdentLine($line)->count();

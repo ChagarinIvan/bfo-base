@@ -4,7 +4,10 @@ namespace App\Services;
 
 class PersonsIdentService
 {
-    public function __construct(private PersonPromptService $promptService) {}
+    public function __construct(
+        private readonly PersonPromptService $promptService,
+        private readonly ProtocolLineIdentService $protocolLineIdentService
+    ) {}
 
     /**
      * Поиск соответствующих людей в базе по предварительно подготовленным строкам (makeIdentLine).
@@ -12,7 +15,7 @@ class PersonsIdentService
      *
      * @return array<string, int>
      */
-    public function identLines(array $lines, int $identLevel = 5): array
+    public function identLines(array $lines): array
     {
         //ищем людей по прямому совпадению подготовленный имён
         $linePersons = $this->promptService->identPersonsByPrompts($lines);
@@ -20,7 +23,7 @@ class PersonsIdentService
         //определяем у кого нет совпадения и прогоняем их через identPerson
         foreach ($lines as $preparedLine) {
             if (!isset($linePersons[$preparedLine])) {
-                $personId = ProtocolLineIdentService::identPerson($preparedLine, $identLevel);
+                $personId = $this->protocolLineIdentService->identPerson($preparedLine);
                 if ($personId > 0) {
                     $linePersons[$preparedLine] = $personId;
                 }

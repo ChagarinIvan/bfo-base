@@ -14,13 +14,13 @@ class StartBigIdentCommand extends Command
 {
     protected $signature = 'protocol-lines:big-ident';
 
-    public function handle(): void
+    public function handle(ProtocolLineIdentService $service): void
     {
         $this->info('Start');
         $startTime = time();
         $protocolLines = ProtocolLine::whereNull('person_id')->get();
         $this->info("Has {$protocolLines->count()} lines");
-        ProtocolLineIdentService::pushIdentLines($protocolLines->pluck('prepared_line'));
+        $service->pushIdentLines($protocolLines->pluck('prepared_line'));
         $time = time() - $startTime;
         $this->info("Time for query: {$time}");
         $this->info("Finish");
