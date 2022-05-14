@@ -6,6 +6,7 @@ namespace App\Services;
 
 use App\Models\Person;
 use App\Models\ProtocolLine;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
@@ -19,7 +20,8 @@ class PersonsService
     ];
 
     public function __construct(
-        private readonly PersonPromptService $promptService
+        private readonly PersonPromptService $promptService,
+        private readonly ClubsService $clubService
     ) {}
 
     public function getPerson(int $personId): Person
@@ -147,5 +149,17 @@ class PersonsService
             $line->save();
         });
         $person->delete();
+    }
+
+    public function extractPersonFromLine(ProtocolLine $protocolLine): Person
+    {
+        $person = new Person();
+        $person->lastname = $protocolLine->lastname;
+        $person->firstname = $protocolLine->firstname;
+        $person->birthday = Carbon::createFromFormat('Y', (string)$protocolLine->year);
+        $person->club_id = $this->clubService->findClub($protocolLine->club);
+        $person->from_base = 0;
+
+        return $person;
     }
 }

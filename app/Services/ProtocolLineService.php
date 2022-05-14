@@ -77,9 +77,18 @@ class ProtocolLineService
         return $this->protocolLinesRepository->getLineForPersonOnEvent($rank->person_id, $rank->event_id);
     }
 
-    public function getProtocolLineWithEvent(int $id): ProtocolLine
+    public function getProtocolLineWithEvent(int $id): ?ProtocolLine
     {
         return $this->protocolLinesRepository->getProtocolLine($id, ['distance.event']);
+    }
+
+    public function getProtocolLine(int $id): ProtocolLine
+    {
+        $protocolLine = $this->protocolLinesRepository->getProtocolLine($id);
+        if ($protocolLine) {
+            return $protocolLine;
+        }
+        throw new \RuntimeException('Wrong protocolLine id.');
     }
 
     public function getPersonProtocolLines(int $personId, Year $year): Collection

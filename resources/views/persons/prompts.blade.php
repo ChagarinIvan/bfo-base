@@ -19,6 +19,7 @@
                           url="{{ action(\App\Http\Controllers\PersonPrompt\ShowCreatePromptAction::class, [$person->id]) }}"
                 />
             @endauth
+            <x-back-button/>
         </div>
     </div>
     @if($person->prompts->count() > 0)

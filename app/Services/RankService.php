@@ -163,7 +163,10 @@ class RankService
                 $protocolLines = new Collection();
                 $ranks->each(function (Rank $rank) use (&$protocolLines) {
                     $protocolLineId = $this->protocolLineService->getProtocolLineIdForRank($rank);
-                    $protocolLines->push($this->protocolLineService->getProtocolLineWithEvent($protocolLineId));
+                    $protocolLine = $this->protocolLineService->getProtocolLineWithEvent($protocolLineId);
+                    if ($protocolLine) {
+                        $protocolLines->push($protocolLine);
+                    }
                 });
                 $this->ranksRepository->deleteRanks($ranks);
                 $newRank = $this->createNewRank($protocolLine);

@@ -16,7 +16,7 @@ use Illuminate\Support\Collection;
  * @property string $lastname
  * @property string $firstname
  * @property Carbon|null $birthday
- * @property int $club_id
+ * @property int|null $club_id
  * @property bool $from_base
  *
  * @property-read ProtocolLine[]|Collection $protocolLines

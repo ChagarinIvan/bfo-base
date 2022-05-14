@@ -94,6 +94,7 @@ class WebRoutesServiceProvider extends ServiceProvider
                         $this->route->get( '{person}/prompts',        Person\ShowPersonPromptsListAction::class);
                         $this->route->get( 'person/{protocol}/show',  Person\ShowSetPersonToProtocolLineAction::class);
                         $this->route->get( '{person}/{protocol}/set', Person\SetProtocolLinePersonAction::class);
+                        $this->route->get( 'extract/{protocol}/',     Person\ExtractPersonAction::class);
 
                         //person prompts
                         $this->routeRegistrar

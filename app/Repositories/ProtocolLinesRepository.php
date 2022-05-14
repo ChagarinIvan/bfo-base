@@ -15,7 +15,7 @@ class ProtocolLinesRepository
     public function __construct(private readonly ConnectionInterface $db)
     {}
 
-    public function getProtocolLine(int $id, array $with): ProtocolLine
+    public function getProtocolLine(int $id, array $with = []): ?ProtocolLine
     {
         $protocolLineQuery = ProtocolLine::where('id', $id);
         if (count($with) > 0) {

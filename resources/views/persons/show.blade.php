@@ -9,6 +9,8 @@
      * @var Rank $rank
      * @var ?PersonPayment $personPayment
      */
+
+    $personName = "{$person->lastname}_{$person->firstname}";
 @endphp
 
 @extends('layouts.app')
@@ -79,7 +81,6 @@
                     <th data-sortable="true">{{ __('app.common.birthday') }}</th>
                     <th data-sortable="true">{{ __('app.common.result') }}</th>
                     <th data-sortable="true">{{ __('app.common.place') }}</th>
-                    <th data-sortable="true">{{ __('app.common.points') }}</th>
                     <th data-sortable="true">{{ __('app.common.complete_rank') }}</th>
                 </tr>
             </thead>
@@ -91,6 +92,7 @@
                     @foreach($lines as $line)
                         @php
                             /** @var App\Models\ProtocolLine $line */
+                            $lineName = "{$line->lastname}_{$line->firstname}";
                         @endphp
                         <tr>
                             <td>
@@ -103,13 +105,19 @@
                                     {{ \Illuminate\Support\Str::limit($line->distance->event->name, 20, '...') }}
                                 </a>
                             </td>
-                            <td>{{ $line->lastname }} {{ $line->firstname }}</td>
+                            <td>
+                                {{ $lineName }}
+                                @auth
+                                    <a href="{{ action(\App\Http\Controllers\Person\ExtractPersonAction::class, [$line->id]) }}">
+                                        <span class="badge rounded-pill bg-warning">{{ __('app.common.extract') }}</span>
+                                    </a>
+                                @endauth
+                            </td>
                             <td>{{ $line->distance->event->date->format('Y-m-d') }}</td>
                             <td>{{ $line->distance->group ? $line->distance->group->name : '' }}</td>
                             <td>{{ $line->year ?: '' }}</td>
                             <td>{{ $line->time ? $line->time->format('H:i:s') : '-' }}</td>
                             <td>{{ $line->place }}</td>
-                            <td>{{ $line->points }}</td>
                             <td>{{ $line->complete_rank }}</td>
                         </tr>
                     @endforeach
