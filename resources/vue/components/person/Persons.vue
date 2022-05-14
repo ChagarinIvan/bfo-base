@@ -40,9 +40,9 @@
                     <td v-if="isAuth">
                         <ui-button :url="'/persons/' + person.id + '/edit'"></ui-button>
                         <ui-button :url="'/persons/' + person.id + '/delete'"
-                                   :color="outline-danger"
-                                   :icon="trash-fill"
-                                   :text="app.common.delete"
+                                   :color="'outline-danger'"
+                                   :icon="'trash-fill'"
+                                   :text="'app.common.delete'"
                         ></ui-button>
                     </td>
                 </tr>
