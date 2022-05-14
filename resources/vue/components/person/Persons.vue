@@ -41,7 +41,7 @@
                         <ui-button :url="'/persons/' + person.id + '/edit'"></ui-button>
                         <a type="button"
                            class="btn btn-outline-danger btn-sm me-1"
-                           :href="'/persons/' + this.deletedPersonId + '/delete'"
+                           :href="'/persons/' + person.id + '/delete'"
                            data-bs-toggle="modal"
                            data-bs-target="#modal"
                         >
@@ -141,7 +141,6 @@ export default {
             maxCount: 0,
             perPage: 10,
             page: 1,
-            deletedPersonId: 0,
             sortBy: 'fio',
             search: '',
             sortMode: 0, // 0 = ASC, 1 = DESC
@@ -181,9 +180,6 @@ export default {
     methods: {
         year(date) {
             return date === null ? '' : new Date(date).getFullYear();
-        },
-        clickDeleteButton(id) {
-            this.deletedPersonId = id;
         },
         activePerPage(perPage) {
             return this.perPage === perPage;
