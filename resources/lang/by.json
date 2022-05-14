@@ -25,6 +25,7 @@
     "app.common.disqual" : "Вынікі группы ануляваны",
     "app.common.prompts" : "Радкі пошуку",
     "app.common.prompt" : "Радок пошуку",
+    "app.common.metaphone" : "Гучанне",
     "app.common.lastname" : "Прозвішча",
     "app.common.fio" : "Прозвішча, Імя",
     "app.common.events_count" : "Колькасць стартаў",

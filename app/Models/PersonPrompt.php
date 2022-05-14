@@ -11,6 +11,7 @@ use Illuminate\Support\Collection;
  * @property int $id
  * @property int $person_id
  * @property string $prompt
+ * @property string $metaphone
  *
  * @property-read Person $person
  *

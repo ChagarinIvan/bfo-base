@@ -193,13 +193,19 @@ class OBelarusNetRelayParser extends AbstractParser
                 $protocolLine['place'] = null;
                 return $protocolLine;
             }
-            if (preg_match('#^\d+$#', $place) && preg_match('#\d\d:\d\d:\d\d#', implode('', $lineData))) {
+            if (
+                preg_match('#^\d+$#', $place) && preg_match('#\d\d:\d\d:\d\d#', implode('', $lineData))
+                && !preg_match('/^19\d{2}|2\d{3}$/', $column)
+            ) {
                 $indent++;
                 $this->commandPlace = (int)$place;
             }
         } elseif ($column === 'points') {
             $column = $lineData[$fieldsCount - $indent];
-            if (is_numeric($column) && $this->commandPoints === null && $this->commandSerial != $column) {
+            if (
+                is_numeric($column) && $this->commandPoints === null && $this->commandSerial != $column
+                && !preg_match('/^19\d{2}|2\d{3}$/', $column)
+            ) {
                 $indent++;
                 $this->commandPoints = (int)$column;
             }

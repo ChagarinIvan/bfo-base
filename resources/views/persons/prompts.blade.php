@@ -37,6 +37,7 @@
             <thead class="table-dark">
                 <tr>
                     <th data-sortable="true">{{ __('app.common.prompts') }}</th>
+                    <th data-sortable="true">{{ __('app.common.prompts') }}</th>
                     @auth<th></th>@endauth
                 </tr>
             </thead>
@@ -44,6 +45,7 @@
                 @foreach ($person->prompts as $prompt)
                     <tr>
                         <td>{{ $prompt->prompt }}</td>
+                        <td>{{ $prompt->metaphone }}</td>
                         @auth
                             <td>
                                 <x-edit-button url="{{ action(\App\Http\Controllers\PersonPrompt\ShowEditPromptAction::class, [$prompt->person_id, $prompt->id]) }}"/>

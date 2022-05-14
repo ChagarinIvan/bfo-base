@@ -65,6 +65,7 @@
     "app.common.cache_clear" : "Обновить кеш",
     "app.common.prompts" : "Поисковые строки",
     "app.common.prompt" : "Поисковая строка",
+    "app.common.metaphone" : "Звучание",
     "app.common.disqual" : "Результаты группы аннулированы",
     "app.protocol" : "Протокол",
     "app.competition.title" : "Соревнование",

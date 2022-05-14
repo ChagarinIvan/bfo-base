@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2d363b716c69ed83e7dac918d9f067ed",
+    "content-hash": "1b6ea0dfe6e14bcbb7e888e87fe819ef",
     "packages": [
         {
             "name": "brick/math",
@@ -1488,6 +1488,55 @@
                 }
             ],
             "time": "2021-11-21T11:48:40+00:00"
+        },
+        {
+            "name": "mav/slovo",
+            "version": "v0.2.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Suntechnic/slovo.git",
+                "reference": "09c2730061e63ac15a8ffdf6a4817826ce362f14"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Suntechnic/slovo/zipball/09c2730061e63ac15a8ffdf6a4817826ce362f14",
+                "reference": "09c2730061e63ac15a8ffdf6a4817826ce362f14",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^7.0"
+            },
+            "type": "package",
+            "autoload": {
+                "psr-4": {
+                    "Mav\\": "src/Mav"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Alexander Madzhugin (Suntechnic)",
+                    "email": "madzhugin@gmail.com",
+                    "homepage": "https://github.com/Suntechnic/",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Пакет для операций со словами",
+            "keywords": [
+                "metaphone",
+                "soundex"
+            ],
+            "support": {
+                "issues": "https://github.com/Suntechnic/slovo/issues",
+                "source": "https://github.com/Suntechnic/slovo/tree/v0.2.3"
+            },
+            "time": "2021-11-29T17:37:58+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -6695,5 +6744,5 @@
         "ext-dom": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "1.1.0"
+    "plugin-api-version": "2.2.0"
 }
