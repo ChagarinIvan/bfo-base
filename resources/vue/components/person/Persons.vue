@@ -132,7 +132,7 @@
                 <div class="modal-footer">
                     <a
                         class="btn btn-sm btn-outline-danger me-1"
-                        href="/persons/{{ this.deletedPersonId }}/person"
+                        :href="'/persons/' + this.deletedPersonId + '/person'"
                         type="button"
                         data-bs-dismiss="modal"
                     >
