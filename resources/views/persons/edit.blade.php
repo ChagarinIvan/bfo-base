@@ -39,7 +39,7 @@
                        type="date"
                        id="birthday"
                        name="birthday"
-                       value="{{ $person->birthday->format('Y-m-d') }}"
+                       value="{{ $person->birthday ? $person->birthday->format('Y-m-d') : '' }}"
                 />
                 <label for="birthday">{{ __('app.common.birthday') }}</label>
             </div>

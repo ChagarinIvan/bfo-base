@@ -39,19 +39,11 @@
                     <td><span v-html="markedText(year(person.birthday))"></span></td>
                     <td v-if="isAuth">
                         <ui-button :url="'/persons/' + person.id + '/edit'"></ui-button>
-                        <a type="button"
-                           class="btn btn-outline-danger btn-sm me-1"
-                           :href="'/persons/' + person.id + '/delete'"
-                           data-bs-toggle="modal"
-                           data-bs-target="#modal"
-                        >
-                            <i class="bi bi-trash-fill"
-                               data-bs-toggle="tooltip"
-                               data-bs-placement="top"
-                               title="{{ $t('app.common.delete') }}"
-                            ></i>
-                            <span class="d-none d-xl-inline">{{ $t('app.common.delete') }}</span>
-                        </a>
+                        <ui-button :url="'/persons/' + person.id + '/delete'"
+                                   :color="outline-danger"
+                                   :icon="trash-fill"
+                                   :text="app.common.delete"
+                        ></ui-button>
                     </td>
                 </tr>
                 </tbody>
