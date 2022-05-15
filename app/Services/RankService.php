@@ -15,8 +15,6 @@ use Illuminate\Support\Collection;
 
 class RankService
 {
-    private const MAX_JUNIOR_RANK_AGE = 20;
-
     public function __construct(
         private readonly RanksRepository $ranksRepository,
         private readonly ProtocolLineService $protocolLineService,
@@ -26,9 +24,9 @@ class RankService
 
     public const RANKS_POWER = [
         Rank::WITHOUT_RANK => 0,
-        Rank::UNIOR_THIRD_RANK => 1,
-        Rank::UNIOR_SECOND_RANK => 2,
-        Rank::UNIOR_FIRST_RANK => 3,
+        Rank::JUNIOR_THIRD_RANK => 1,
+        Rank::JUNIOR_SECOND_RANK => 2,
+        Rank::JUNIOR_FIRST_RANK => 3,
         Rank::THIRD_RANK => 4,
         Rank::SECOND_RANK => 5,
         Rank::FIRST_RANK => 6,
@@ -80,7 +78,7 @@ class RankService
         }
 
         $personsIds = $ranks->groupBy('person_id')->keys();
-        if ($rank === Rank::UNIOR_THIRD_RANK) {
+        if ($rank === Rank::JUNIOR_THIRD_RANK) {
             $personsIds = $personsIds->merge($this->ranksRepository->getPersonsIdsWithoutRanks()->pluck('id'));
         }
         $ranks = RanksCollection::empty();
@@ -211,10 +209,29 @@ class RankService
             $rank->finish_date = $rank->start_date->addYears(2);
             $rank->event_id = null;
             $rank->rank = Rank::PREVIOUS_RANKS[$rank->rank];
+
+            if (!$this->checkMaxJuniorAge($rank->person_id, $rank->rank)) {
+                return null;
+            }
+
             $rank = $this->ranksRepository->storeRank($rank);
+
             return $this->createPreviousRank($rank, $date);
         }
+
         return $rank;
+    }
+
+    private function checkMaxJuniorAge(int $personId, string $rank): bool
+    {
+        if (!in_array($rank, Rank::JUNIOR_RANKS, true)) {
+            return true;
+        }
+
+        $person = $this->personsService->getPerson($personId);
+        $age = Year::actualYear()->value - $person->birthday?->year;
+
+        return $age <= Rank::MAX_JUNIOR_AGE;
     }
 
     private function createNewRank(ProtocolLine $protocolLine): Rank
@@ -252,14 +269,16 @@ class RankService
         $rank->save();
     }
 
+    /**
+     * Присвоение 3ю разряда за 3 успешных старта
+     */
     private function checkThirdRank(int $personId): ?Rank
     {
         foreach(Year::cases() as $year) {
-            $person = $this->personsService->getPerson($personId);
-            $age = Year::actualYear()->value - $person->birthday?->year;
-            if ($age >= self::MAX_JUNIOR_RANK_AGE)  {
+            if (!$this->checkMaxJuniorAge($personId, Rank::JUNIOR_THIRD_RANK)) {
                 continue;
             }
+
             $results = $this->protocolLineService->getPersonProtocolLines($personId, $year);
             $results = $results->filter(fn(ProtocolLine $line) => $line->time !== null && !$line->vk);
             if ($results->count() >= 3) {
@@ -267,8 +286,9 @@ class RankService
                     ->slice(0, 3)
                     ->values();
                 $rank = $this->createNewRank($results->get(2));
-                $rank->rank = Rank::UNIOR_THIRD_RANK;
+                $rank->rank = Rank::JUNIOR_THIRD_RANK;
                 $rank->save();
+
                 return $rank;
             }
         }

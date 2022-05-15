@@ -90,6 +90,7 @@ class RanksRepository
     public function storeRank(Rank $rank): Rank
     {
         $rank->save();
+
         return $rank;
     }
 

@@ -35,9 +35,9 @@ class Rank extends Model
     public const FIRST_RANK = 'I';
     public const SECOND_RANK = 'II';
     public const THIRD_RANK = 'III';
-    public const UNIOR_FIRST_RANK = 'Iю';
-    public const UNIOR_SECOND_RANK = 'IIю';
-    public const UNIOR_THIRD_RANK = 'IIIю';
+    public const JUNIOR_FIRST_RANK = 'Iю';
+    public const JUNIOR_SECOND_RANK = 'IIю';
+    public const JUNIOR_THIRD_RANK = 'IIIю';
     public const WITHOUT_RANK = 'б/р';
 
     public const RANKS = [
@@ -47,9 +47,9 @@ class Rank extends Model
         self::FIRST_RANK => self::FIRST_RANK,
         self::SECOND_RANK => self::SECOND_RANK,
         self::THIRD_RANK => self::THIRD_RANK,
-        self::UNIOR_FIRST_RANK => self::UNIOR_FIRST_RANK,
-        self::UNIOR_SECOND_RANK => self::UNIOR_SECOND_RANK,
-        self::UNIOR_THIRD_RANK => self::UNIOR_THIRD_RANK,
+        self::JUNIOR_FIRST_RANK => self::JUNIOR_FIRST_RANK,
+        self::JUNIOR_SECOND_RANK => self::JUNIOR_SECOND_RANK,
+        self::JUNIOR_THIRD_RANK => self::JUNIOR_THIRD_RANK,
         self::WITHOUT_RANK => self::WITHOUT_RANK,
     ];
 
@@ -68,6 +68,14 @@ class Rank extends Model
         self::SECOND_RANK => self::FIRST_RANK,
         self::THIRD_RANK => self::SECOND_RANK,
     ];
+
+    public const JUNIOR_RANKS = [
+        self::JUNIOR_FIRST_RANK,
+        self::JUNIOR_SECOND_RANK,
+        self::JUNIOR_THIRD_RANK,
+    ];
+
+    public const MAX_JUNIOR_AGE = 18;
 
     private const PART_REPLACES = [
         'к' => 'к',

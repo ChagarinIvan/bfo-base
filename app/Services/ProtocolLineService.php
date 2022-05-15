@@ -74,7 +74,11 @@ class ProtocolLineService
 
     public function getProtocolLineIdForRank(Rank $rank): int
     {
-        return $this->protocolLinesRepository->getLineForPersonOnEvent($rank->person_id, $rank->event_id);
+        if ($rank->event_id) {
+            return $this->protocolLinesRepository->getLineForPersonOnEvent($rank->person_id, $rank->event_id);
+        }
+
+        return 0;
     }
 
     public function getProtocolLineWithEvent(int $id): ?ProtocolLine
