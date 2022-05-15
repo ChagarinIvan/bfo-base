@@ -25,9 +25,12 @@ class SetProtocolLinePersonAction extends AbstractPersonAction
 
         //сохраняем результат для всех строчек с установленным идентификатором
         $protocolLinesToUpdate = $protocolLineService->getEqualLines($preparedLine);
-        $protocolLinesToUpdate = $protocolLineService->reSetPerson($protocolLinesToUpdate, $person->id);
-        $rankService->replaceRanksToPerson($protocolLinesToUpdate, $person->id);
+        $oldPersons = $protocolLinesToUpdate->pluck('person_id')->unique();
+        $protocolLineService->reSetPerson($protocolLinesToUpdate, $person->id);
         $personPromptService->changePromptForLine($preparedLine, $person->id);
+
+        $rankService->reFillRanksForPerson($person->id);
+        $oldPersons->each(fn(int $personId) => $rankService->reFillRanksForPerson($personId));
 
         if (ProtocolLine::wherePersonId($oldPersonId)->count() === 0) {
             Person::destroy($oldPersonId);

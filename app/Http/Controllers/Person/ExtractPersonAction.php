@@ -22,9 +22,12 @@ class ExtractPersonAction extends AbstractPersonAction
         $person = $personsService->storePerson($person);
 
         $protocolLinesToUpdate = $protocolLineService->getEqualLines($protocolLine->prepared_line);
-        $protocolLinesToUpdate = $protocolLineService->reSetPerson($protocolLinesToUpdate, $person->id);
-        $rankService->replaceRanksToPerson($protocolLinesToUpdate, $person->id);
+        $oldPersons = $protocolLinesToUpdate->pluck('person_id')->unique();
+        $protocolLineService->reSetPerson($protocolLinesToUpdate, $person->id);
         $personPromptService->changePromptForLine($protocolLine->prepared_line, $person->id);
+
+        $rankService->reFillRanksForPerson($person->id);
+        $oldPersons->each(fn(int $personId) => $rankService->reFillRanksForPerson($personId));
 
         return $this->redirector->action(ShowPersonAction::class, [$person->id]);
     }

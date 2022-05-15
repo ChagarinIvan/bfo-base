@@ -46,15 +46,13 @@ class RankService
         return $this->ranksRepository->getRanksList($filter);
     }
 
-    public function replaceRanksToPerson(Collection $lines, int $personId): void
+    public function reFillRanksForPerson(int $personId): void
     {
-        foreach ($lines as $line) {
-            //перекидываем разряд
-            $rank = $this->getRank($line);
-            if ($rank !== null) {
-                $rank->person_id = $personId;
-                $rank->save();
-            }
+        $ranks = $this->getPersonRanks($personId);
+        $this->ranksRepository->deleteRanks($ranks);
+
+        foreach ($this->protocolLineService->getPersonProtocolLines($personId) as $protocolLine) {
+            $this->fillRank($protocolLine);
         }
     }
 
@@ -282,9 +280,11 @@ class RankService
             $results = $this->protocolLineService->getPersonProtocolLines($personId, $year);
             $results = $results->filter(fn(ProtocolLine $line) => $line->time !== null && !$line->vk);
             if ($results->count() >= 3) {
-                $results = $results->sortBy(fn(ProtocolLine $line) => $line->event->date)
+                $results = $results
+                    ->sortBy(fn(ProtocolLine $line) => $line->event->date)
                     ->slice(0, 3)
-                    ->values();
+                    ->values()
+                ;
                 $rank = $this->createNewRank($results->get(2));
                 $rank->rank = Rank::JUNIOR_THIRD_RANK;
                 $rank->save();

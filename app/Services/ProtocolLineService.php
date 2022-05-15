@@ -95,7 +95,7 @@ class ProtocolLineService
         throw new \RuntimeException('Wrong protocolLine id.');
     }
 
-    public function getPersonProtocolLines(int $personId, Year $year): Collection
+    public function getPersonProtocolLines(int $personId, Year $year = null): Collection
     {
         return $this->protocolLinesRepository->getProtocolLines($personId, $year);
     }
@@ -127,14 +127,12 @@ class ProtocolLineService
         return ProtocolLine::wherePreparedLine($line)->get();
     }
 
-    public function reSetPerson(Collection $lines, int $personId): Collection
+    public function reSetPerson(Collection $lines, int $personId): void
     {
         foreach ($lines as $line) {
             /** @var ProtocolLine $line */
             $line->person_id = $personId;
             $line->save();
         }
-
-        return $lines;
     }
 }

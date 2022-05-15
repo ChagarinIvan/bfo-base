@@ -120,13 +120,19 @@ class ProtocolLinesRepository
             ->update(['pl.person_id' => new Expression('pp.person_id')]);
     }
 
-    public function getProtocolLines(int $personId, Year $year): Collection
+    public function getProtocolLines(int $personId, ?Year $year): Collection
     {
-        return ProtocolLine::selectRaw(new Expression('protocol_lines.*'))
+        $query = ProtocolLine::selectRaw(new Expression('protocol_lines.*'))
             ->join('distances', 'distances.id', '=', 'protocol_lines.distance_id')
             ->join('events', 'events.id', '=', 'distances.event_id')
             ->where('protocol_lines.person_id', $personId)
-            ->where('events.date', 'LIKE', "{$year->value}-%")
-            ->get();
+            ->orderBy('event.date')
+        ;
+
+        if ($year) {
+            $query->where('events.date', 'LIKE', "$year->value-%");
+        }
+
+        return $query->get();
     }
 }
