@@ -135,9 +135,9 @@ class ProtocolLineIdentService
         $ranks = new Collection();
 
         foreach ($prompts as $prompt) {
-            $rank = levenshtein($searchLine, $prompt);
+            $rank = levenshtein($searchLine, $prompt->prompt);
             $ranks->push([
-                'prompt' => $prompt,
+                'prompt' => $prompt->prompt,
                 'rank' => $rank,
             ]);
         }
@@ -149,6 +149,7 @@ class ProtocolLineIdentService
 
             return $prompt->person_id;
         }
+
         return 0;
     }
 

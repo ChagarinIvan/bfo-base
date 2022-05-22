@@ -23,7 +23,7 @@ class Kernel extends ConsoleKernel
         SimpleIndentCommand::class,
         StartBigIdentCommand::class,
         RankValidationCommand::class,
-        SyncPersonsCommand::class,
+//        SyncPersonsCommand::class,
         RecalculatingRanks::class,
     ];
 

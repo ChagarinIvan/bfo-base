@@ -126,7 +126,7 @@ class ProtocolLinesRepository
             ->join('distances', 'distances.id', '=', 'protocol_lines.distance_id')
             ->join('events', 'events.id', '=', 'distances.event_id')
             ->where('protocol_lines.person_id', $personId)
-            ->orderBy('event.date')
+            ->orderBy('events.date')
         ;
 
         if ($year) {

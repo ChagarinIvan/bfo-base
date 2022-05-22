@@ -38,7 +38,7 @@
             <thead class="table-dark">
                 <tr>
                     <th data-sortable="true">{{ __('app.common.prompts') }}</th>
-                    <th data-sortable="true">{{ __('app.common.prompts') }}</th>
+                    <th data-sortable="true">{{ __('app.common.metaphone') }}</th>
                     @auth<th></th>@endauth
                 </tr>
             </thead>

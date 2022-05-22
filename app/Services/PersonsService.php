@@ -9,6 +9,8 @@ use App\Models\ProtocolLine;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
+use RuntimeException;
 
 class PersonsService
 {
@@ -30,7 +32,8 @@ class PersonsService
         if ($person) {
             return $person;
         }
-        throw new \RuntimeException('Wrong person id.');
+
+        throw new RuntimeException('Wrong person id.');
     }
 
     public function getPersons(Collection $personsIds): Collection
@@ -56,12 +59,13 @@ class PersonsService
         };
 
         if ($search) {
-            $persons = $persons->where('firstname', 'like', "%{$search}%")
-                ->orWhere('lastname', 'like', "%{$search}%")
+            $persons = $persons->where('firstname', 'like', "%$search%")
+                ->orWhere('lastname', 'like', "%$search%")
+                ->orWhere(DB::raw("CONCAT(`lastname`, ' ', `firstname`)"), 'like', "%$search%")
                 ->orWhereHas('club', function ($query) use ($search) {
-                    $query->where('name', 'like', "%{$search}%");
+                    $query->where('name', 'like', "%$search%");
                 })
-                ->orWhere('birthday', 'like', "%{$search}%");
+                ->orWhere('birthday', 'like', "%$search%");
         }
 
         return $persons;
@@ -157,7 +161,8 @@ class PersonsService
         $person->lastname = $protocolLine->lastname;
         $person->firstname = $protocolLine->firstname;
         $person->birthday = $protocolLine->year ? Carbon::createFromFormat('Y', (string)$protocolLine->year) : null;
-        $person->club_id = $this->clubService->findClub($protocolLine->club);
+        $club = $this->clubService->findClub($protocolLine->club);
+        $person->club_id = $club?->id;
         $person->from_base = 0;
 
         return $person;

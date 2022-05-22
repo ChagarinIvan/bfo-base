@@ -27,6 +27,7 @@ use Illuminate\Support\Collection;
  *
  * @method static Person|Builder find(mixed $ids)
  * @method static Person|Builder with(mixed $ids)
+ * @method static Person|Builder withCount(string $ids)
  * @method static Person|Builder whereIn(string $column, array|Collection $value)
  * @method static Collection get()
  * @method static Person|Builder whereClubId(int $clubId)

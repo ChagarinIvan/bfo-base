@@ -10,7 +10,7 @@
      * @var ?PersonPayment $personPayment
      */
 
-    $personName = "{$person->lastname}_{$person->firstname}";
+    $personName = "{$person->lastname}_$person->firstname";
 @endphp
 
 @extends('layouts.app')
@@ -92,7 +92,7 @@
                     @foreach($lines as $line)
                         @php
                             /** @var App\Models\ProtocolLine $line */
-                            $lineName = "{$line->lastname}_{$line->firstname}";
+                            $lineName = "{$line->lastname}_$line->firstname";
                         @endphp
                         <tr>
                             <td>

@@ -18,6 +18,6 @@ class SyncPersonsCommand extends Command
 
     public function handle(OrientBySyncService $syncService): void
     {
-        $syncService->synchronize();
+//        $syncService->synchronize();
     }
 }
