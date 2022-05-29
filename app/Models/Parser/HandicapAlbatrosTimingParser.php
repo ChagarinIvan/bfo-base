@@ -126,8 +126,12 @@ class HandicapAlbatrosTimingParser extends AbstractParser
         return $linesList;
     }
 
-    public function check(string $file): bool
+    public function check(string $file, string $extension): bool
     {
+        if ($extension !== 'html') {
+            return false;
+        }
+
         $doc = new DOMDocument();
         if (str_contains($file, 'Albatros-Timing')) {
             @$doc->loadHTML($file);
@@ -140,6 +144,7 @@ class HandicapAlbatrosTimingParser extends AbstractParser
                 }
             }
         }
+
         return  false;
     }
 }

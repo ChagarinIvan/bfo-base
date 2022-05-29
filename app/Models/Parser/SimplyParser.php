@@ -112,9 +112,13 @@ class SimplyParser extends AbstractParser
         return '';
     }
 
-    public function check(string $file): bool
+    public function check(string $file, string $extension): bool
     {
-        return str_contains($file, '<o:p></o:p>');
+        if ($extension === 'html') {
+            return str_contains($file, '<o:p></o:p>');
+        }
+
+        return false;
     }
 
     private function getValue(string $column, array $lineData, int $fieldsCount, int &$indent): mixed

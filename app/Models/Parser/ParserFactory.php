@@ -8,6 +8,7 @@ use Illuminate\Support\Collection;
 class ParserFactory
 {
     private const PROTOCOL_PARSERS = [
+        XlsParser::class,
         SFRParser::class,
         HandicapAlbatrosTimingParser::class,
         AlbatrosRelayParser::class,
@@ -26,11 +27,12 @@ class ParserFactory
         CsvListParser::class,
     ];
 
-    public static function createProtocolParser(string $protocol, Collection $groups): ParserInterface
+    public static function createProtocolParser(string $protocol, Collection $groups, string $extension = 'html'): ParserInterface
     {
         foreach (self::PROTOCOL_PARSERS as $parser) {
+            /** @var ParserInterface $parser */
             $parser = new $parser($groups);
-            if ($parser->check($protocol)) {
+            if ($parser->check($protocol, $extension)) {
                 return $parser;
             }
         }

@@ -170,8 +170,12 @@ class HrodnoParser extends AbstractParser
         return $protocolLine;
     }
 
-    public function check(string $file): bool
+    public function check(string $file, string $extension): bool
     {
-        return str_contains($file, 'www.sportsoftware.de');
+        if ($extension === 'html') {
+            return str_contains($file, 'www.sportsoftware.de');
+        }
+
+        return false;
     }
 }

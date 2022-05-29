@@ -105,7 +105,7 @@ class OBelarusNetParser extends AbstractParser
         return $linesList;
     }
 
-    public function check(string $file): bool
+    public function check(string $file, string $extension): bool
     {
         return true;
     }

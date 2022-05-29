@@ -7,7 +7,7 @@ use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
-class SFRParser extends AbstractParser
+class XlsParser extends AbstractParser
 {
     public function parse(string $file, bool $needConvert = true): Collection
     {
@@ -74,11 +74,7 @@ class SFRParser extends AbstractParser
 
     public function check(string $file, string $extension): bool
     {
-        if ($extension === 'html') {
-            return str_contains($file, "<table class='rezult'>");
-        }
-
-        return false;
+        return str_contains($extension, 'excel');
     }
 
     private function getColumn(string $field): string

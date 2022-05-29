@@ -144,9 +144,13 @@ class OBelarusNetRelayParser extends AbstractParser
         return $linesList;
     }
 
-    public function check(string $file): bool
+    public function check(string $file, string $extension): bool
     {
-        return (bool)preg_match('#<b>\d[^<]*[^\d^\s]#', $file);
+        if ($extension === 'html') {
+            return (bool)preg_match('#<b>\d[^<]*[^\d^\s]#', $file);
+        }
+
+        return false;
     }
 
     private function getColumn(string $field): string

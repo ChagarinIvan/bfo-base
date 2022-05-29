@@ -217,8 +217,12 @@ class OParser extends AbstractParser
         return null;
     }
 
-    public function check(string $file): bool
+    public function check(string $file, string $extension): bool
     {
-        return (bool)preg_match('#<h2>\w{3}</h2><pre>\w+|<br />#u', $file);
+        if ($extension === 'html') {
+            return (bool)preg_match('#<h2>\w{3}</h2><pre>\w+|<br />#u', $file);
+        }
+
+        return false;
     }
 }

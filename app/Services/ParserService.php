@@ -6,6 +6,7 @@ use App\Models\Parser\ParserFactory;
 use DOMDocument;
 use DOMXPath;
 use Illuminate\Support\Collection;
+use RuntimeException;
 
 class ParserService
 {
@@ -16,38 +17,30 @@ class ParserService
      * По протоколу определяет необходимый парсер
      * Парсер разбирает протокол на сырые массивы данных из строк
      * Из сырых строк наполняются модели ProtocolLine
-     *
-     * @param string $protocol
-     * @param bool $needConvert
-     * @return Collection
      */
-    public function parseProtocol(string $protocol, bool $needConvert): Collection
+    public function parseProtocol(string $protocol, bool $needConvert, string $extension): Collection
     {
-        $parser = ParserFactory::createProtocolParser($protocol, $this->groupsService->getAllGroupsWithout()->pluck('name'));
+        $parser = ParserFactory::createProtocolParser($protocol, $this->groupsService->getAllGroupsWithout()->pluck('name'), $extension);
 
+        dd($parser);
         return $parser->parse($protocol, $needConvert);
     }
 
     /**
      * По листу определяет необходимый парсер
      * Парсер разбирает протокол на сырые массивы данных из строк
-     *
-     * @param string $list
-     * @return Collection
      */
     public function parserRankList(string $list): Collection
     {
         $parser = ParserFactory::createListParser($list);
+
         return $parser->parse($list);
     }
 
     /**
      * Скачиваем протокол с сайта обеларусь.нет
      * и делаем из него протокол, который дальше будем парсить
-     *
-     * @param string $url
-     * @return string
-     * @throw Exception
+     * @throw RuntimeException
      */
     public function uploadProtocol(string $url): string
     {
@@ -56,9 +49,11 @@ class ParserService
         @$doc->loadHTML($pageContent);
         $xpath = new DOMXpath($doc);
         $resultNode = $xpath->query('//div[@id="results-body"]');
+
         if ($resultNode->length === 0) {
-            throw new \RuntimeException('Отсутствуют результаты на странице!!');
+            throw new RuntimeException('Отсутствуют результаты на странице!!');
         }
+
         return $doc->saveHTML($resultNode->item(0));
     }
 }

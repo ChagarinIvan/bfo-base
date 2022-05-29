@@ -26,16 +26,18 @@ class UpdateEventAction extends AbstractEventAction
             return $this->redirector->action(ShowEventAction::class, [$event, $event->distances->first()]);
         } elseif ($url !== null) {
             $needConvert = false;
+            $extension = 'html';
             $protocol = $this->parserService->uploadProtocol($url);
         } else {
             $needConvert = true;
+            $extension = $protocol->getExtension();
             $protocol = $protocol->getContent();
         }
 
         $year = $event->date->format('Y');
         $protocolPath = "{$year}/{$event->date->format('Y-m-d')}_".Str::snake($event->name).'.html';
 
-        $lineList = $this->parserService->parseProtocol($protocol, $needConvert);
+        $lineList = $this->parserService->parseProtocol($protocol, $needConvert, $extension);
         $this->storage->delete($event->file);
         $event->file = $protocolPath;
 

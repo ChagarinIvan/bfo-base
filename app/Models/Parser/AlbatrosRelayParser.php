@@ -112,9 +112,13 @@ class AlbatrosRelayParser extends AbstractParser
         return $linesList;
     }
 
-    public function check(string $file): bool
+    public function check(string $file, string $extension): bool
     {
-        return preg_match('#<b>\d+\s+(-|\d+|в/к)\s+(-|[^\s]{1,3})<#', $file);
+        if ($extension === 'html') {
+            return preg_match('#<b>\d+\s+(-|\d+|в/к)\s+(-|[^\s]{1,3})<#', $file);
+        }
+
+        return false;
     }
 
     private function getColumn(string $field): string

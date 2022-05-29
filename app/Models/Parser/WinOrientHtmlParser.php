@@ -221,8 +221,12 @@ class WinOrientHtmlParser extends AbstractParser
         return null;
     }
 
-    public function check(string $file): bool
+    public function check(string $file, string $extension): bool
     {
-        return str_contains($file, '<title>WinOrient');
+        if ($extension === 'html') {
+            return str_contains($file, '<title>WinOrient');
+        }
+
+        return false;
     }
 }

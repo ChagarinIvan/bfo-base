@@ -107,8 +107,12 @@ class OBelarusNetRelayWithHeadersParser extends AbstractParser
         return $linesList;
     }
 
-    public function check(string $file): bool
+    public function check(string $file, string $extension): bool
     {
-        return (bool)preg_match('#<b>\d+\s+(-|\d+|в/к)\s+(-|.{1,4})\s+(-|\d{1,3})?#', $file);
+        if ($extension === 'html') {
+            return (bool)preg_match('#<b>\d+\s+(-|\d+|в/к)\s+(-|.{1,4})\s+(-|\d{1,3})?#', $file);
+        }
+
+        return false;
     }
 }

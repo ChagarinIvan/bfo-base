@@ -96,10 +96,14 @@ class OBelarusSpanParser extends AbstractParser
         return $linesList;
     }
 
-    public function check(string $file): bool
+    public function check(string $file, string $extension): bool
     {
-        //этот паттерн срабатывает на ОбеларусЭстафеты..поэтому он позже в проверказ парсеров
-        return (bool)preg_match('#<span\sid="m\d\d?"></span>[^<]+,#', $file);
+        if ($extension === 'html') {
+            //этот паттерн срабатывает на ОбеларусЭстафеты..поэтому он позже в проверказ парсеров
+            return (bool)preg_match('#<span\sid="m\d\d?"></span>[^<]+,#', $file);
+        }
+
+        return false;
     }
 
     private function getColumn(string $field): string

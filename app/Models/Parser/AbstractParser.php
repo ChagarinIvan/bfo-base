@@ -16,9 +16,10 @@ abstract class AbstractParser implements ParserInterface
     /**
      * @param string $file
      * @param bool $needConvert
+     *
      * @return Collection
      */
     abstract public function parse(string $file, bool $needConvert = true): Collection;
 
-    abstract public function check(string $file): bool;
+    abstract public function check(string $file, string $extension): bool;
 }

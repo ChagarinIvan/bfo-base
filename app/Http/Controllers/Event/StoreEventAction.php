@@ -26,9 +26,11 @@ class StoreEventAction extends AbstractEventAction
             return $this->redirector->action(ShowCreateEventFormAction::class);
         } elseif ($url !== null) {
             $needConvert = false;
+            $extension = 'html';
             $protocol = $this->parserService->uploadProtocol($url);
         } else {
             $needConvert = true;
+            $extension = $protocol->getMimeType();
             $protocol = $protocol->getContent();
         }
 
@@ -38,7 +40,7 @@ class StoreEventAction extends AbstractEventAction
         $protocolPath = "{$year}/{$event->date->format('Y-m-d')}_".Str::snake($event->name).'.html';
         $event->file = $protocolPath;
 
-        $lineList = $this->parserService->parseProtocol($protocol, $needConvert);
+        $lineList = $this->parserService->parseProtocol($protocol, $needConvert, $extension);
         $event->save();
         $lineList = $this->protocolLineService->fillProtocolLines($event->id, $lineList);
         $this->identService->identPersons($lineList);

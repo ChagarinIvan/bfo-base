@@ -129,8 +129,12 @@ class AlbatrosTimingParser extends AbstractParser
         return $linesList;
     }
 
-    public function check(string $file): bool
+    public function check(string $file, string $extension): bool
     {
+        if ($extension !== 'html') {
+            return false;
+        }
+
         $doc = new DOMDocument();
         if (str_contains($file, 'Albatros-Timing')) {
             return true;
@@ -144,6 +148,7 @@ class AlbatrosTimingParser extends AbstractParser
             $firstItem = $preNodes->item(0);
             return str_contains($firstItem->nodeValue, 'Параметры дистанции');
         }
+
         return  false;
     }
 }
