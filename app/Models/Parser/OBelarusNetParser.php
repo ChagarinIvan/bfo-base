@@ -48,7 +48,7 @@ class OBelarusNetParser extends AbstractParser
             if (empty(trim($groupHeader, '-'))) {
                 $groupHeader = $lines[3];
             }
-            $groupHeader = preg_replace('#\s+#', ' ', $groupHeader);
+            $groupHeader = preg_replace('#\s+#u', ' ', $groupHeader);
 
             $groupHeaderData = explode(' ', $groupHeader);
             $groupHeaderIndex = count($groupHeaderData) - 1;
@@ -71,8 +71,8 @@ class OBelarusNetParser extends AbstractParser
                         continue;
                     }
                 }
-                $preparedLine = preg_replace('#=#', ' ', $line);
-                $preparedLine = preg_replace('#\s+#', ' ', $preparedLine);
+                $preparedLine = preg_replace('#=#u', ' ', $line);
+                $preparedLine = preg_replace('#\s+#u', ' ', $preparedLine);
                 $lineData = explode(' ', $preparedLine);
                 $fieldsCount = count($lineData);
                 $protocolLine = [

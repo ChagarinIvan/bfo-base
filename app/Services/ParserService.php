@@ -24,6 +24,7 @@ class ParserService
     public function parseProtocol(string $protocol, bool $needConvert): Collection
     {
         $parser = ParserFactory::createProtocolParser($protocol, $this->groupsService->getAllGroupsWithout()->pluck('name'));
+
         return $parser->parse($protocol, $needConvert);
     }
 
