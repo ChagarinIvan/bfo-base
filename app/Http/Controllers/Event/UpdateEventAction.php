@@ -30,7 +30,7 @@ class UpdateEventAction extends AbstractEventAction
             $protocol = $this->parserService->uploadProtocol($url);
         } else {
             $needConvert = true;
-            $extension = $protocol->getExtension();
+            $extension = $protocol->getMimeType();
             $protocol = $protocol->getContent();
         }
 
@@ -38,6 +38,7 @@ class UpdateEventAction extends AbstractEventAction
         $protocolPath = "{$year}/{$event->date->format('Y-m-d')}_".Str::snake($event->name).'.html';
 
         $lineList = $this->parserService->parseProtocol($protocol, $needConvert, $extension);
+
         $this->storage->delete($event->file);
         $event->file = $protocolPath;
 

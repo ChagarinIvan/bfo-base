@@ -16,7 +16,7 @@ use Illuminate\Support\Collection;
  * @property string $lastname
  * @property string $firstname
  * @property string $club
- * @property int $year
+ * @property int|null $year
  * @property string $rank
  * @property int $runner_number
  * @property null|Carbon $time

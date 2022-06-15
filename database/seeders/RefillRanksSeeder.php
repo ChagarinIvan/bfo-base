@@ -32,7 +32,7 @@ class RefillRanksSeeder extends Seeder
         foreach ($protocolLinesGroupedByPersons as $protocolLines) {
             foreach ($protocolLines as $protocolLine) {
                 /** @var ProtocolLine $protocolLine */
-                $this->rankService->fillRank($protocolLine);
+                $this->rankService->reFillRanksForPerson($protocolLine->person_id);
             }
         }
     }

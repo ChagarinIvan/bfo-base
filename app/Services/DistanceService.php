@@ -10,7 +10,7 @@ use Illuminate\Support\Collection;
 
 class DistanceService
 {
-    public function __construct(private DistanceRepository $distanceRepository)
+    public function __construct(private readonly DistanceRepository $distanceRepository)
     {}
 
     public function getCupEventDistancesByGroups(CupEvent $cupEvent, Collection $groups): Collection
@@ -26,16 +26,6 @@ class DistanceService
     public function findDistance(array $groupNames, int $eventId): ?Distance
     {
         return $this->distanceRepository->findDistance($groupNames, $eventId);
-    }
-
-    /**
-     * @param string[] $groupNames
-     * @param int $eventId
-     * @return Collection|Distance[]
-     */
-    public function findDistances(array $groupNames, int $eventId): array|Collection
-    {
-        return $this->distanceRepository->findDistances($groupNames, $eventId);
     }
 
     public function deleteEventDistances(Event $event): void

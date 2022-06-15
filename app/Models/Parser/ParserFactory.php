@@ -39,11 +39,12 @@ class ParserFactory
         throw new \RuntimeException('нету подходящего парсера!!');
     }
 
-    public static function createListParser(string $list): ParserInterface
+    public static function createListParser(string $list, string $extension = 'csv'): ParserInterface
     {
         foreach (self::LIST_PARSERS as $parser) {
+            /** @var ParserInterface $parser */
             $parser = new $parser();
-            if ($parser->check($list)) {
+            if ($parser->check($list, $extension)) {
                 return $parser;
             }
         }

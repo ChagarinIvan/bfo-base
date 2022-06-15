@@ -6,67 +6,87 @@ use App\Models\Rank;
 use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use PhpOffice\PhpSpreadsheet\Reader\Xls;
 
 class XlsParser extends AbstractParser
 {
     public function parse(string $file, bool $needConvert = true): Collection
     {
-        $content = $file;
-        if ($needConvert) {
-            $content = mb_convert_encoding($content, 'utf-8', 'windows-1251');
-        }
+        $fileName = tempnam(sys_get_temp_dir(), 'TMP_');
+        file_put_contents($fileName, $file);
+        $xls = new Xls();
+        $spreadsheet = $xls->load($fileName);
+        $sheet = $spreadsheet->getActiveSheet();
 
         $linesList = new Collection();
-        preg_match_all('#<h2>(.+?)</h2>.*?<table class=\'rezult\'>(.+?)</table#msi', $content, $nodesMatch);
-        foreach ($nodesMatch[2] as $nodeIndex => $node) {
-            $text = trim($node);
-            $text = trim($text,'-');
-            $text = trim($text);
-            if (!str_contains($text, 'амилия')) {
+        $lines = $sheet->toArray();
+        $linesCount = count($lines);
+        for ($i = 0; $i < $linesCount; $i++) {
+            if (empty($lines[$i][0])) {
                 continue;
             }
-            $distanceLength = 0;
-            $distancePoints = 0;
-            $groupName = $nodesMatch[1][$nodeIndex];
-            $groupName = strip_tags($groupName);
-            if (str_contains($groupName, ',')) {
-                $groupName = substr($groupName, 0, strpos($groupName, ','));
-            }
 
-            preg_match_all('#<tr[^>]*>(.+?)</tr>#msi', $text, $linesMatch);
-            $linesCount = count($linesMatch[0]);
-            if ($linesCount === 0) {
-                continue;
-            }
-            $groupHeader = $linesMatch[1][0];
-            preg_match_all('#<th[^>]*>(.*?)</th>#msi', $groupHeader, $headerMatch);
-            $groupHeaderData = $headerMatch[1];
-
-            //Ж21, 8,7 км, 14 КП, Контрольное время 120 мин.
-            if (preg_match('#(\d+,\d+)\s+[^\d]+,\s+(\d+)\s+[^\d]#s', $nodesMatch[1][$nodeIndex], $match)) {
-                $distancePoints = (int)$match[2];
-                $distanceLength = floatval(str_replace(',', '.', $match[1])) * 1000;
-            }
-            for ($index = 1; $index < $linesCount; $index++) {
-                $line = trim($linesMatch[1][$index]);
-                preg_match_all('#<td[^>]*><nobr>(.*?)</td>#msi', $line, $lineMatch);
-                $protocolLine = [
-                    'group' => $groupName,
-                    'distance' => [
-                        'length' => $distanceLength,
-                        'points' => $distancePoints,
-                    ],
-                ];
-
-                foreach ($groupHeaderData as $headerIndex => $headerData) {
-                    $columnName = $this->getColumn($headerData);
-                    if ($columnName === '') {
-                        continue;
-                    }
-                    $protocolLine[$columnName] = $this->getValue($columnName, $lineMatch[1][$headerIndex]);
+            if ($this->groups->containsStrict($lines[$i][0])) {
+                $groupName = $lines[$i++][0];
+                preg_match('#(\d+) КП, (\d+\.\d+) м#msi', $lines[$i++][0], $linesMatch);
+                $distancePoints = (int)$linesMatch[1];
+                $distanceLength = floatval($linesMatch[2]) * 1000;
+                $groupHeader = [];
+                $lines[$i] = array_filter($lines[$i], fn($item) => $item !== null);
+                if (empty($lines[$i])) {
+                    $i++;
+                    $lines[$i] = array_filter($lines[$i], fn($item) => $item !== null);
                 }
-                $linesList->push($protocolLine);
+                $index = 0;
+                foreach ($lines[$i++] as $header) {
+                    $header = trim($header);
+                    if (str_contains($header, ' ')) {
+                        $headers = explode(' ', $header);
+                        $valid = true;
+                        foreach ($headers as $header) {
+                            $column = $this->getColumn($header);
+                            if ($column === '') {
+                                $valid = false;
+                                break;
+                            }
+                        }
+                        if ($valid) {
+                            foreach ($headers as $header) {
+                                $groupHeader[$index++] = $header;
+                            }
+                        }
+                    } else {
+                        $groupHeader[$index++] = $header;
+                    }
+                }
+                for ($n = $i; $n < $linesCount; $n++) {
+                    $line = $lines[$n];
+                    if (!is_numeric($line[0])) {
+                        break;
+                    }
+
+                    $protocolLine = [
+                        'group' => $groupName,
+                        'distance' => [
+                            'length' => $distanceLength,
+                            'points' => $distancePoints,
+                        ],
+                    ];
+
+                    foreach ($groupHeader as $headerIndex => $headerData) {
+                        $columnName = $this->getColumn($headerData);
+                        if ($columnName === '') {
+                            continue;
+                        }
+                        $protocolLine[$columnName] = $this->getValue($columnName, $line[$headerIndex]);
+                    }
+                    if (!isset($protocolLine['runner_number'])) {
+                        $protocolLine['runner_number'] = $protocolLine['serial_number'];
+                    }
+                    $linesList->push($protocolLine);
+                }
             }
+
         }
 
         return $linesList;
@@ -77,7 +97,7 @@ class XlsParser extends AbstractParser
         return str_contains($extension, 'excel');
     }
 
-    private function getColumn(string $field): string
+    private function getColumn(?string $field): string
     {
         $field = mb_strtolower($field);
         if (str_contains($field, '№')) {
@@ -88,23 +108,23 @@ class XlsParser extends AbstractParser
             return 'lastname';
         } elseif (str_contains($field, 'мя')) {
             return 'firstname';
-        } elseif (str_contains($field, '.р.')) {
+        } elseif (str_contains($field, '.р.') || $field === 'гр') {
             return 'year';
-        } elseif (str_contains($field, 'азр.')) {
+        } elseif (str_contains($field, 'азр.') || str_contains($field, 'квал')) {
             return 'rank';
-        } elseif (str_contains($field, 'оманда')) {
+        } elseif (str_contains($field, 'оманда') || str_contains($field, 'ллектив')) {
             return 'club';
         } elseif (str_contains($field, 'езультат')) {
             return 'time';
         } elseif (str_contains($field, 'есто')) {
             return 'place';
-        } elseif (str_contains($field, 'ып.')) {
+        } elseif (str_contains($field, 'ып.') || $field === 'вып') {
             return 'complete_rank';
         }
         return '';
     }
 
-    private function getValue(string $column, string $columnData): mixed
+    private function getValue(string $column, ?string $columnData): mixed
     {
         $columnData = trim($columnData);
         switch ($column) {

@@ -53,6 +53,6 @@ class CsvListParser implements ParserInterface
 
     public function check(string $file, string $extension): bool
     {
-        return false;
+        return $extension === 'csv';
     }
 }

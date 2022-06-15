@@ -10,7 +10,6 @@ use App\Models\Rank;
 use App\Models\Year;
 use App\Repositories\RanksRepository;
 use Carbon\Carbon;
-use Illuminate\Cache\CacheManager;
 use Illuminate\Support\Collection;
 
 class RankService
@@ -18,8 +17,7 @@ class RankService
     public function __construct(
         private readonly RanksRepository $ranksRepository,
         private readonly ProtocolLineService $protocolLineService,
-        private readonly PersonsService $personsService,
-        private readonly CacheManager $cache
+        private readonly PersonsService $personsService
     ) {}
 
     public const RANKS_POWER = [
@@ -92,26 +90,20 @@ class RankService
 
     public function getActualRank(int $personId, Carbon $date = null): ?Rank
     {
-//        return $this->cache->remember(
-//            "actual_rank_{$personId}_{$date?->format('Y-m-d')}",
-//            86400, //сутки
-//            function () use ($personId, $date) {
-                $rank = $this->ranksRepository->getDateRank($personId, $date);
-                if ($rank === null) {
-                    $rank = $this->ranksRepository->getDateRank($personId);
-                }
+        $rank = $this->ranksRepository->getDateRank($personId, $date);
+        if ($rank === null) {
+            $rank = $this->ranksRepository->getDateRank($personId);
+        }
 
-                if ($rank === null) {
-                    $rank = $this->checkThirdRank($personId);
-                }
+        if ($rank === null) {
+            $rank = $this->checkThirdRank($personId);
+        }
 
-                if ($rank !== null) {
-                    $rank = $this->createPreviousRank($rank, $date);
-                }
+        if ($rank !== null) {
+            $rank = $this->createPreviousRank($rank, $date);
+        }
 
-                return $rank;
-//            }
-//        );
+        return $rank;
     }
 
     public function getActualRanks(Collection $personIds): Collection
@@ -246,15 +238,6 @@ class RankService
     public function cleanAll(): void
     {
         $this->ranksRepository->cleanAll();
-    }
-
-    public function getRank(ProtocolLine $protocolLine): ?Rank
-    {
-        $filter = new RanksFilter();
-        $filter->eventId = $protocolLine->distance->event_id;
-        $filter->personId = $protocolLine->person_id;
-        $ranks = $this->ranksRepository->getRanksList($filter);
-        return $ranks->first();
     }
 
     public function deleteEventRanks(Event $event): void

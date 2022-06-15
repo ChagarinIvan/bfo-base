@@ -23,7 +23,7 @@ class OBelarusNetRelayParser extends AbstractParser
         $distancePoints = 0;
         $distanceLength = 0;
 
-        preg_match_all('#<h2>(.+?)</h2>.*?<pre>(.+?)</pre#msi', $file, $nodesMatch);
+        preg_match_all('#<h2>(.+?)</h2>.*?<pre>(<b>.+?)</pre>#msi', $file, $nodesMatch);
         foreach ($nodesMatch[2] as $nodeIndex => $node) {
             $this->commandCounter = 1;
             $this->commandPoints = null;
@@ -141,6 +141,7 @@ class OBelarusNetRelayParser extends AbstractParser
                 $this->commandCounter++;
             }
         }
+
         return $linesList;
     }
 

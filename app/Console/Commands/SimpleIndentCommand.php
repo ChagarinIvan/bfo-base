@@ -21,8 +21,8 @@ class SimpleIndentCommand extends Command
         $startTime = time();
         $protocolLines = ProtocolLine::whereNull('person_id')->get();
         $this->info("Has {$protocolLines->count()} lines");
-        $indentCount = $identService->simpleIdent($protocolLines)->count();
-        $this->info("Affected rows count is {$indentCount}");
+        $notIndentCount = $identService->simpleIdent($protocolLines)->count();
+        $this->info('Affected rows count is ' . ($protocolLines->count() - $notIndentCount));
         $time = time() - $startTime;
         $this->info("Time for query: {$time}");
         //Почистим людей у которых 0 протокольных линий

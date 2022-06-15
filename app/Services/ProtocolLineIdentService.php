@@ -74,7 +74,8 @@ class ProtocolLineIdentService
         $identedLines = ProtocolLine::find($protocolLines->diffKeys($notIdentedLines)->keys());
         // надо для определившихся добавить разряды
         foreach ($identedLines as $line) {
-            $this->rankService->fillRank($line);
+            /** @var ProtocolLine $line */
+            $this->rankService->reFillRanksForPerson($line->person_id);
         }
 
         $this->pushIdentLines($notIdentedLines->pluck('prepared_line')->unique());

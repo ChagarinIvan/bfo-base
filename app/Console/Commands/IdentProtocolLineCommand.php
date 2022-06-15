@@ -16,7 +16,7 @@ use Illuminate\Support\Carbon;
 
 /**
  * Будем определять людей из очереди на определение.
- * Запуск несколько раз в неделю
+ * Запуск 4 раза в минуту
  * независимо от результата запись удаляется из очереди
  */
 class IdentProtocolLineCommand extends Command
@@ -45,8 +45,23 @@ class IdentProtocolLineCommand extends Command
             $protocolLines->each(function (ProtocolLine $protocolLine) use ($personId, $rankService) {
                 $protocolLine->person_id = $personId;
                 $protocolLine->save();
-                $rankService->fillRank($protocolLine);
             });
+
+            $rankService->reFillRanksForPerson($personId);
+
+            //пытаемся выставить человеку год рождения из протокола
+            $person = $personsService->getPerson($personId);
+            if ($person->birthday === null) {
+                /** @var ProtocolLine|null $protocolLine */
+                $protocolLine = $protocolLines
+                    ->filter(fn(ProtocolLine $line) => $line->year !== null)
+                    ->first()
+                ;
+
+                if ($protocolLine) {
+                    $person->birthday = Carbon::createFromFormat('Y', $protocolLine->year);
+                }
+            }
         } else {
             if ($protocolLines->isEmpty()) {
                 return;
@@ -72,8 +87,9 @@ class IdentProtocolLineCommand extends Command
             $protocolLines->each(function (ProtocolLine $protocolLine) use ($person, $rankService) {
                 $protocolLine->person_id = $person->id;
                 $protocolLine->save();
-                $rankService->fillRank($protocolLine);
             });
+
+            $rankService->reFillRanksForPerson($personId);
         }
     }
 }
