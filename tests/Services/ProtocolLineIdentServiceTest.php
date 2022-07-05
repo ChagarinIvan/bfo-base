@@ -1,11 +1,11 @@
 <?php
 
-namespace Tests\Integration;
+namespace Tests\Services;
 
 use App\Services\ProtocolLineIdentService;
 use Tests\TestCase;
 
-class IdentServiceTest extends TestCase
+class ProtocolLineIdentServiceTest extends TestCase
 {
     /**
      * @param string $name
