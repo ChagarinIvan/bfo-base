@@ -142,9 +142,4 @@ class OBelarusNetRelayParserTest extends AbstractParserTest
             ]
         ];
     }
-
-    protected function needConvert(): bool
-    {
-        return true;
-    }
 }

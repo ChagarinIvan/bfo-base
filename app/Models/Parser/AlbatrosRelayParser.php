@@ -68,17 +68,9 @@ class AlbatrosRelayParser extends AbstractParser
                 }
                 $preparedLine = preg_replace('#\s+#', ' ', $line);
                 $lineData = explode(' ', $preparedLine);
+
                 if (isset($lineData[1]) && $lineData[1] === '0') {
                     continue;
-                }
-                if (!empty($lastProtocolLine)) {
-                    $unClubedLine = str_replace([$lastProtocolLine['club'], 'не старт'], '', $line);
-                    $unClubedLine = preg_replace('#\s+#', ' ', $unClubedLine);
-                    $unClubedLine = trim($unClubedLine);
-                    $unClubedLineData = explode(' ', $unClubedLine);
-                    if (count($unClubedLineData) === 1) {
-                        continue;
-                    }
                 }
 
                 $fieldsCount = count($lineData);
@@ -97,7 +89,18 @@ class AlbatrosRelayParser extends AbstractParser
                         $commandRank = null;
                     }
                     continue;
+                } else {
+                    if (!empty($lastProtocolLine)) {
+                        $unClubedLine = str_replace([$lastProtocolLine['club'], 'не старт'], '', $line);
+                        $unClubedLine = preg_replace('#\s+#', ' ', $unClubedLine);
+                        $unClubedLine = trim($unClubedLine);
+                        $unClubedLineData = explode(' ', $unClubedLine);
+                        if (count($unClubedLineData) === 1) {
+                            continue;
+                        }
+                    }
                 }
+
                 $protocolLine = [
                     'group' => $groupName,
                     'complete_rank' => $commandRank,

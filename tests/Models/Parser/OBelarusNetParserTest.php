@@ -79,7 +79,8 @@ class OBelarusNetParserTest extends AbstractParserTest
                         '-',
                         null,
                     ],
-                ]
+                ],
+                true
             ],
             [
                 '2020/20201202.html',
@@ -154,10 +155,5 @@ class OBelarusNetParserTest extends AbstractParserTest
                 ]
             ]
         ];
-    }
-
-    protected function needConvert(): bool
-    {
-        return true;
     }
 }

@@ -17,16 +17,16 @@ abstract class AbstractParserTest extends TestCase
     /**
      * @dataProvider dataProvider
      */
-    public function testParse(string $filePath, int $linesCount, array $expectedResults): void
+    public function testParse(string $filePath, int $linesCount, array $expectedResults, bool $needConvert = false): void
     {
         $storageManager = new FilesystemManager($this->app);
-        $protocolContent = $storageManager->disk('tests')->get($filePath, );
+        $protocolContent = $storageManager->disk('tests')->get($filePath);
 
         $parserClass = $this->getParser();
         $parser = ParserFactory::createProtocolParser($protocolContent, new Collection());
         self::assertInstanceOf($parserClass, $parser);
 
-        $lines = $parser->parse($protocolContent, $this->needConvert());
+        $lines = $parser->parse($protocolContent, $needConvert);
         self::assertCount($linesCount, $lines);
 
         foreach ($expectedResults as $index => $expectedResult) {
@@ -38,7 +38,7 @@ abstract class AbstractParserTest extends TestCase
             self::assertEquals($expectedResult[3], $line['year'] ?? null, 'year');
             self::assertEquals($expectedResult[4], $line['rank'] ?? null, 'rank');
             self::assertEquals($expectedResult[5], $line['runner_number'], 'runner_number');
-            self::assertEquals($expectedResult[6] === null ? null : Carbon::createFromTimeString($expectedResult[6]), $line['time'], 'time');
+            self::assertEquals($expectedResult[6] === null ? null : Carbon::createFromTimeString($expectedResult[6]), $line['time'] ?? null, 'time');
             self::assertEquals($expectedResult[7], $line['place'], 'place');
             self::assertEquals($expectedResult[8] ?? null, $line['complete_rank'] ?? null, 'complete_rank');
             self::assertEquals($expectedResult[9] ?? null, $line['points'] ?? null, 'points');
@@ -49,10 +49,5 @@ abstract class AbstractParserTest extends TestCase
                 self::assertEquals($expectedResult[11], $line['group'], 'group');
             }
         }
-    }
-
-    protected function needConvert(): bool
-    {
-        return false;
     }
 }

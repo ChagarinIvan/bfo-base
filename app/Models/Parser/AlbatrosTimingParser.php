@@ -75,7 +75,7 @@ class AlbatrosTimingParser extends AbstractParser
                     $protocolLine['points'] = is_numeric($points) ? (int)$points : null;
                 }
                 $completeRank = $lineData[$fieldsCount - $indent];
-                if (Rank::validateRank($completeRank) || $completeRank === '-') {
+                if ((Rank::validateRank($completeRank) || $completeRank === '-') && !in_array($completeRank, ['1', '2', '3'], true)) {
                     $protocolLine['complete_rank'] = $completeRank;
                     $indent++;
                 } else {
