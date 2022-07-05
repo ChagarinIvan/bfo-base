@@ -12,10 +12,10 @@ use Tests\TestCase;
 abstract class AbstractParserTest extends TestCase
 {
     abstract protected function getParser(): string;
-    abstract public function testData(): array;
+    abstract public function dataProvider(): array;
 
     /**
-     * @dataProvider testData
+     * @dataProvider dataProvider
      */
     public function testParse(string $filePath, int $linesCount, array $expectedResults): void
     {

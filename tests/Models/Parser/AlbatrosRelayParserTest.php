@@ -11,7 +11,7 @@ class AlbatrosRelayParserTest extends AbstractParserTest
         return AlbatrosRelayParser::class;
     }
 
-    public function testData(): array
+    public function dataProvider(): array
     {
         return [
             [

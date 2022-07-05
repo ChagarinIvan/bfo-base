@@ -11,7 +11,7 @@ class OBelarusNetRelayWithHeadersParserTest extends AbstractParserTest
         return OBelarusNetRelayWithHeadersParser::class;
     }
 
-    public function testData(): array
+    public function dataProvider(): array
     {
         return [
             [

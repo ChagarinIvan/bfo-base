@@ -11,7 +11,7 @@ class OParserTest extends AbstractParserTest
         return OParser::class;
     }
 
-    protected function getResults(): array
+    public function dataProvider(): array
     {
         return [
             [

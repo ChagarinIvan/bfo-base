@@ -11,7 +11,7 @@ class HandicapTimingParserTest extends AbstractParserTest
         return HandicapAlbatrosTimingParser::class;
     }
 
-    public function testData(): array
+    public function dataProvider(): array
     {
         return [
             [

@@ -11,7 +11,7 @@ class WinOrientParserTest extends AbstractParserTest
         return WinOrientHtmlParser::class;
     }
 
-    public function testData(): array
+    public function dataProvider(): array
     {
         return [
             [

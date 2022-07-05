@@ -11,7 +11,7 @@ class AlbatrosTimingParserTest extends AbstractParserTest
         return AlbatrosTimingParser::class;
     }
 
-    public function testData(): array
+    public function dataProvider(): array
     {
         return [
             [
