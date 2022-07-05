@@ -21,7 +21,11 @@
 
 @section('content')
     <div class="row mb-3">
-        <div class="col-12"><h4>{{ $event->competition->name }}</h4></div>
+        <div class="col-12">
+            <h4>
+                <a href="{{ action(\App\Http\Controllers\Competition\ShowCompetitionAction::class, [$event->competition]) }}">{{ $event->competition->name }}</a>
+            </h4>
+        </div>
     </div>
     <div class="row mb-3">
         <div class="col-12">

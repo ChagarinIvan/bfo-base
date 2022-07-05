@@ -135,7 +135,7 @@ class OBelarusNetRelayParser extends AbstractParser
                     $protocolLine['runner_number'] = $lineData[$isOpen ? 1 : 0];
                 }
 
-                $protocolLine['serial_number'] = $isOpen ? $lineData[0] : $this->commandSerial;
+                $protocolLine['serial_number'] = $isOpen ? $lineData[0] : ($this->commandSerial ?? 0);
                 $protocolLine['club'] = implode(' ', array_slice($lineData, $nameIndex, $fieldsCount - $indent - $nameIndex + 1));
                 $linesList->push($protocolLine);
                 $this->commandCounter++;

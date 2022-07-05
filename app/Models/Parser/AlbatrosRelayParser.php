@@ -13,6 +13,9 @@ class AlbatrosRelayParser extends AbstractParser
     public function parse(string $file, bool $needConvert = true): Collection
     {
         $doc = new DOMDocument();
+        if (!str_starts_with($file, '<html lang="ru">')) {
+            $file = '<?xml encoding="UTF-8">'.$file.'</xml>';
+        }
         @$doc->loadHTML($file);
         $xpath = new DOMXpath($doc);
         $preNodes = $xpath->query('//pre');
@@ -25,6 +28,7 @@ class AlbatrosRelayParser extends AbstractParser
 
             $groupNode = $xpath->query('preceding::h2[1]', $node);
             $groupName = $groupNode[0]->nodeValue;
+
             if (str_contains($groupName, ',')) {
                 $groupName = substr($groupName, 0, strpos($groupName, ','));
             }
@@ -44,19 +48,39 @@ class AlbatrosRelayParser extends AbstractParser
             } elseif (count($lines) < 4) {
                 continue;
             }
+            $withLines = false;
             $groupHeader = $lines[2];
+            if (!str_contains($groupHeader, 'Фамилия')) {
+                $withLines = true;
+                $groupHeader = $lines[0];
+            }
             $groupHeaderLine = preg_replace('#\s+#', ' ', $groupHeader);
             $groupHeaderLine = trim($groupHeaderLine);
             $groupHeaderData = explode(' ', $groupHeaderLine);
             $groupHeaderIndex = count($groupHeaderData) - 1;
+            $lastProtocolLine = [];
 
-            for ($index = 5; $index < $linesCount; $index++) {
+            for ($index = ($withLines ? 2 : 5) ; $index < $linesCount; $index++) {
                 $line = trim($lines[$index]);
+
                 if (empty(trim($line, '-'))) {
                     break;
                 }
                 $preparedLine = preg_replace('#\s+#', ' ', $line);
                 $lineData = explode(' ', $preparedLine);
+                if (isset($lineData[1]) && $lineData[1] === '0') {
+                    continue;
+                }
+                if (!empty($lastProtocolLine)) {
+                    $unClubedLine = str_replace([$lastProtocolLine['club'], 'не старт'], '', $line);
+                    $unClubedLine = preg_replace('#\s+#', ' ', $unClubedLine);
+                    $unClubedLine = trim($unClubedLine);
+                    $unClubedLineData = explode(' ', $unClubedLine);
+                    if (count($unClubedLineData) === 1) {
+                        continue;
+                    }
+                }
+
                 $fieldsCount = count($lineData);
                 if ($fieldsCount <= 3 && is_numeric($lineData[0])) {
                     $commandCounter = 0;
@@ -105,6 +129,7 @@ class AlbatrosRelayParser extends AbstractParser
                 $protocolLine['club'] = implode(' ', array_slice($lineData, 3, $fieldsCount - $indent - 2));
 
                 $linesList->push($protocolLine);
+                $lastProtocolLine = $protocolLine;
                 $commandCounter++;
             }
         }
@@ -173,6 +198,12 @@ class AlbatrosRelayParser extends AbstractParser
             } elseif (preg_match('#\d\d:\d\d:\d\d#', $column1) && !preg_match('#\d\d:\d\d:\d\d#', $column2)) {
                 $indent++;
                 $timeColumn = $column1;
+            } elseif (preg_match('#\d\d\.\d\d#', $column1)) {
+                $indent++;
+                return $protocolLine;
+            } elseif (str_contains($column1, 'старт')) {
+                $indent += 2;
+                return $protocolLine;
             } else {
                 return $protocolLine;
             }

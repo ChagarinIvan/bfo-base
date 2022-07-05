@@ -1,6 +1,6 @@
 <?php
 
-namespace Models;
+namespace Tests\Unit\Models;
 
 use App\Models\Rank;
 use PHPUnit\Framework\TestCase;
@@ -35,7 +35,7 @@ class RankTest extends TestCase
             12 => [true, 'МС'],
             13 => [false, '-'],
             14 => [false, ''],
-            15 => [false, '1'],
+            15 => [true, '1'],
             16 => [true, '1ю'],
         ];
     }
