@@ -42,7 +42,8 @@ class OBelarusNetRelayParserTest extends AbstractParserTest
                         '-',
                         null,
                     ],
-                ]
+                ],
+                true
             ],
             [
                 '2021/210905_res.htm',
@@ -108,7 +109,8 @@ class OBelarusNetRelayParserTest extends AbstractParserTest
                         null,
                         null,
                     ],
-                ]
+                ],
+                true
             ],
             [
                 '2021/20210717.html',

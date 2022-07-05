@@ -23,7 +23,8 @@ class OBelarusNetRelayParser extends AbstractParser
         $distancePoints = 0;
         $distanceLength = 0;
 
-        preg_match_all('#<h2>(.+?)</h2>.*?<pre>(<b>.+?)</pre>#msi', $file, $nodesMatch);
+        preg_match_all('#<h2>(.+?)<\/h2>.*?<pre>[^b]*(<b>.+?)<\/pre>#msi', $file, $nodesMatch);
+
         foreach ($nodesMatch[2] as $nodeIndex => $node) {
             $this->commandCounter = 1;
             $this->commandPoints = null;
@@ -118,6 +119,7 @@ class OBelarusNetRelayParser extends AbstractParser
                     if ($columnName === 'time' && array_key_exists('time', $protocolLine)) {
                         continue;
                     }
+
                     $protocolLine = $this->getValue($columnName, $lineData, $fieldsCount, $indent, $protocolLine);
                 }
 
@@ -222,7 +224,7 @@ class OBelarusNetRelayParser extends AbstractParser
             }
         } elseif ($column === 'complete_rank') {
             $column = $lineData[$fieldsCount - $indent];
-            if (Rank::validateRank($column) || $column === '-') {
+            if ((Rank::validateRank($column) || $column === '-') && !in_array($column, ['1', '2', '3'], true)) {
                 $indent++;
                 $this->commandRank = $column;
             }
@@ -273,6 +275,7 @@ class OBelarusNetRelayParser extends AbstractParser
                 $protocolLine['year'] = $year;
             }
         }
+
         return $protocolLine;
     }
 }
