@@ -7,7 +7,6 @@ use Carbon\Carbon;
 class RanksFilter
 {
     public ?int $personId = null;
-    public ?int $eventId = null;
     public ?string $rank = null;
     public ?Carbon $startDateLess = null;
     public ?Carbon $startDateMore = null;

@@ -10,12 +10,17 @@ use Illuminate\Support\Collection;
 
 class CupEventsService
 {
-    public function __construct(private CacheManager $cache)
+    public function __construct(private readonly CacheManager $cache)
     {}
 
     public function getCupEvents(Cup $cup): Collection
     {
         return $cup->events()->with('event')->get();
+    }
+
+    public function deleteCupEvent(CupEvent $cupEvent): void
+    {
+        $cupEvent->delete();
     }
 
     public function getCupEventPersonsCount(CupEvent $cupEvent): int
@@ -41,7 +46,7 @@ class CupEventsService
     public function calculateCup(Cup $cup, Collection $cupEvents, CupGroup $group): array
     {
         return $this->cache->tags(['cups', $cup->id])->remember(
-            "{$cup->id}_{$group->id}",
+            "{$cup->id}_$group->id",
             1000000,
             function () use ($cup, $cupEvents, $group) {
                 $cupType = $cup->getCupType();

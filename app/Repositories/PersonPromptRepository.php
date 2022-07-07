@@ -7,12 +7,8 @@ use Illuminate\Support\Collection;
 
 class PersonPromptRepository
 {
-    private ConnectionInterface $db;
-
-    public function __construct(ConnectionInterface $db)
-    {
-        $this->db = $db;
-    }
+    public function __construct(private readonly ConnectionInterface $db)
+    {}
 
     /**
      * @param string[] $preparedLines

@@ -9,8 +9,8 @@ class DeleteCupAction extends AbstractCupAction
 {
     public function __invoke(Cup $cup): RedirectResponse
     {
-        $year = $cup->year;
         $this->cupsService->deleteCup($cup);
-        return $this->redirector->action(ShowCupsListAction::class, [$year]);
+
+        return $this->redirector->action(ShowCupsListAction::class, [$cup->year]);
     }
 }

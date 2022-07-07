@@ -2,10 +2,8 @@
 
 namespace App\Repositories;
 
-use App\Collections\RanksCollection;
 use App\Filters\RanksFilter;
 use App\Models\Person;
-use App\Models\ProtocolLine;
 use App\Models\Rank;
 use Carbon\Carbon;
 use Illuminate\Database\ConnectionInterface;
@@ -25,8 +23,6 @@ class RanksRepository
 
     /**
      * Выборка действующих актуальных разрядов с фильтром по типу разряда
-     *
-     * @return RanksCollection
      */
     public function getRanksList(RanksFilter $filter): Collection
     {
