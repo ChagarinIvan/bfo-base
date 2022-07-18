@@ -214,7 +214,10 @@ class OBelarusSpanParser extends AbstractParser
                 $protocolLine['time'] = null;
                 if (str_contains($column1, 'ДИСКВ') || $column1 === 'н.старт' || $column1 === 'снят') {
                     $indent++;
-                } elseif ($column1 === 'кв' && $column2 === 'снят') {
+                } elseif (
+                    ($column1 === 'кв' && $column2 === 'снят')
+                    || ($column1 === '20.10' && $column2 === 'пп')
+                ) {
                     $indent += 2;
                 }
                 return $protocolLine;
