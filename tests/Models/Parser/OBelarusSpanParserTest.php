@@ -70,7 +70,7 @@ class OBelarusSpanParserTest extends AbstractParserTest
                 ]
             ],
             [
-                '2022-07-09.htm',
+                '2022/2022-07-09.htm',
                 76,
                 [
                     0 => [
@@ -83,6 +83,17 @@ class OBelarusSpanParserTest extends AbstractParserTest
                         '01:03:02',
                         1,
                     ],
+                    //"group" => "Ж21E"
+                    //      "distance" => array:2 [▶]
+                    //      "complete_rank" => null
+                    //      "time" => null
+                    //      "year" => "1990"
+                    //      "runner_number" => "23"
+                    //      "rank" => "МС"
+                    //      "serial_number" => "5"
+                    //      "lastname" => "Буякова"
+                    //      "firstname" => "Оксана"
+                    //      "club" => "КО «Сильван люкс»"
                     4 => [
                         'Буякова',
                         'Оксана',
