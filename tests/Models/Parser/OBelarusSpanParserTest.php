@@ -99,7 +99,7 @@ class OBelarusSpanParserTest extends AbstractParserTest
                         'Оксана',
                         'КО «Сильван люкс»',
                         1990,
-                        'MC',
+                        'МС',
                         23,
                         null,
                         null,
