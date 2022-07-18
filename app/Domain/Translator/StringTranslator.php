@@ -5,11 +5,9 @@ namespace App\Domain\Translator;
 use App\Domain\Cache\Cache;
 use App\Domain\Hasher\Hasher;
 
-final class CacheableTranslator implements Translator
+final class StringTranslator implements Translator
 {
     public function __construct(
-        private readonly Cache $cache,
-        private readonly Hasher $hasher,
         private readonly Translator $decorated,
     ) {}
 
