@@ -96,6 +96,34 @@ class OBelarusSpanParserTest extends AbstractParserTest
                         null
                     ],
                 ]
+            ],
+            [
+                '2022/2022-07-16.html',
+                192,
+                [
+                    12 => [
+                        'Бондарев',
+                        'Владислав',
+                        'Локомотив',
+                        null,
+                        'б/р',
+                        38,
+                        '01:03:01',
+                        13,
+                    ],
+                    37 => [
+                        'Кириенков',     //lastname
+                        'Родион',        //firstname
+                        'Лагерь Волобо', //club
+                        2009,            //year
+                        'б/р',           //rank
+                        189,             //runner_number
+                        null,            //time
+                        null,            //place
+                        null,            //complete_rank
+                        null,            //points
+                    ],
+                ]
             ]
         ];
     }
