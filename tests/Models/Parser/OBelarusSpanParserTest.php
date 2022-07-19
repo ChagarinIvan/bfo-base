@@ -112,16 +112,16 @@ class OBelarusSpanParserTest extends AbstractParserTest
                         13,
                     ],
                     37 => [
-                        'Кириенков',
-                        'Родион',
-                        'Лагерь Волобо',
-                        2009,
-                        'б/р',
-                        189,
-                        null,
-                        19,
-                        null,
-                        null
+                        'Кириенков',     //lastname
+                        'Родион',        //firstname
+                        'Лагерь Волобо', //club
+                        2009,            //year
+                        'б/р',           //rank
+                        189,             //runner_number
+                        null,            //time
+                        null,            //place
+                        null,            //complete_rank
+                        null,            //points
                     ],
                 ]
             ]
