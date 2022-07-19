@@ -211,7 +211,12 @@ class OBelarusSpanParser extends AbstractParser
                 $timeColumn = $column1;
             } else {
                 $protocolLine['time'] = null;
-                if (str_contains($column1, 'ДИСКВ') || $column1 === 'н.старт' || $column1 === 'снят') {
+                if (
+                    str_contains($column1, 'ДИСКВ')
+                    || $column1 === 'н.старт'
+                    || $column1 === 'снят'
+                    || $column1 === 'Сошел'
+                ) {
                     $indent++;
                 } elseif (
                     ($column1 === 'кв' && $column2 === 'снят')
@@ -230,9 +235,11 @@ class OBelarusSpanParser extends AbstractParser
             }
         } elseif ($column === 'year') {
             $year = $lineData[$fieldsCount - $indent];
-            if (is_numeric($year)) {
+            if (is_numeric($year) && preg_match('#\d{4}#', $year)) {
                 $indent++;
                 $protocolLine['year'] = $year;
+            } else {
+                $protocolLine['year'] = null;
             }
         }
         return $protocolLine;
