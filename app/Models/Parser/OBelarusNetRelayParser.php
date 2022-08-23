@@ -131,17 +131,22 @@ class OBelarusNetRelayParser extends AbstractParser
                 if (!$number) {
                     $nameIndex++;
                 }
-                if (str_contains($headers[$nameIndex - 1] ?? '', 'амилия')) {
+                if (str_contains($headers[$nameIndex] ?? '', 'амилия')) {
                     $nameIndex--;
                 }
 
-                $protocolLine['lastname'] = $lineData[$nameIndex++];
-                $protocolLine['firstname'] = $lineData[$nameIndex++];
-                if ($number === false) {
+                $lastname = $lineData[$nameIndex++];
+                if (is_numeric($lastname)) {
+                    $protocolLine['runner_number'] = $lastname;
+                    $lastname = $lineData[$nameIndex++];
+                } elseif ($number === false) {
                     $protocolLine['runner_number'] = $lineData[
-                        $isOpen ? ($headers[0] === '№' ? 0 : 1) : 0
+                    $isOpen ? ($headers[0] === '№' ? 0 : 1) : 0
                     ];
                 }
+                $protocolLine['lastname'] = $lastname;
+                $protocolLine['firstname'] = $lineData[$nameIndex++];
+
 
                 $protocolLine['serial_number'] = $isOpen ? $lineData[0] : ($this->commandSerial ?? 0);
                 $protocolLine['club'] = implode(' ', array_slice($lineData, $nameIndex, $fieldsCount - $indent - $nameIndex + 1));

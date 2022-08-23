@@ -144,7 +144,7 @@ class OBelarusNetRelayParserTest extends AbstractParserTest
             ],
             [
                 '2022/220821_res.htm',
-                133,
+                134,
                 [
                     //1001  Жаховский Евгений  КСО «Эридан»  МС  00:41:43  00:41:43  1  МС  291
                     0 => [
