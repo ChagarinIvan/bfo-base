@@ -131,7 +131,7 @@ class OBelarusNetRelayParser extends AbstractParser
                 if (!$number) {
                     $nameIndex++;
                 }
-                if (!str_contains($headers[$nameIndex], 'амилия')) {
+                if (str_contains($headers[$nameIndex + 1], 'амилия')) {
                     $nameIndex--;
                 }
 
