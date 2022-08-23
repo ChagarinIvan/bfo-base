@@ -34,6 +34,7 @@ class OBelarusNetRelayParser extends AbstractParser
             $text = trim($node, '-');
             $text = strip_tags($text);
             $text = trim($text);
+
             if (!str_contains($text, 'амилия')) {
                 continue;
             }
@@ -127,26 +128,18 @@ class OBelarusNetRelayParser extends AbstractParser
                 $protocolLine['place'] = $this->commandPlace;
                 $protocolLine['complete_rank'] = $this->commandRank;
 
-                $nameIndex = $isOpen ? 1 : 0;
+                for ($nameIndex = 0; $nameIndex <= $fieldsCount - $indent; $nameIndex++) {
+                    $value = $lineData[$nameIndex];
+                    if (!is_numeric($value)) {
+                        break;
+                    }
+                }
+
                 if (!$number) {
-                    $nameIndex++;
+                    $protocolLine['runner_number'] = $lineData[$nameIndex - 1];
                 }
-                if (str_contains($headers[$nameIndex] ?? '', 'амилия')) {
-                    $nameIndex--;
-                }
-
-                $lastname = $lineData[$nameIndex++];
-                if (is_numeric($lastname)) {
-                    $protocolLine['runner_number'] = $lastname;
-                    $lastname = $lineData[$nameIndex++];
-                } elseif ($number === false) {
-                    $protocolLine['runner_number'] = $lineData[
-                        $isOpen ? (is_numeric($lineData[1]) ? 1 : 0) : 0
-                    ];
-                }
-                $protocolLine['lastname'] = $lastname;
+                $protocolLine['lastname'] = $lineData[$nameIndex++];
                 $protocolLine['firstname'] = $lineData[$nameIndex++];
-
 
                 $protocolLine['serial_number'] = $isOpen ? $lineData[0] : ($this->commandSerial ?? 0);
                 $protocolLine['club'] = implode(' ', array_slice($lineData, $nameIndex, $fieldsCount - $indent - $nameIndex + 1));

@@ -158,8 +158,8 @@ class OBelarusNetRelayParserTest extends AbstractParserTest
                         '1001',         //номер
                         '00:41:43',     //время
                         1,              //место
-                        291,            //очки
                         'МС',           //выполненный разряд
+                        291,            //очки
                     ],
                     //3012  Кондратьев Артем  лично RUS  01:05:25  02:42:50 в/к  -  -
                     8 => [
@@ -170,9 +170,9 @@ class OBelarusNetRelayParserTest extends AbstractParserTest
                         null,           //разряд
                         '3012',         //номер
                         '01:05:25',     //время
-                        null,              //место
-                        null,            //очки
-                        null,           //выполненный разряд
+                        null,           //место
+                        '-',            //выполненный разряд
+                        null,           //очки
                         true            //в/к
                     ],
                     //1  Амеличкин Василий  КСО «Белая Русь»  I  00:46:45  1
@@ -185,10 +185,11 @@ class OBelarusNetRelayParserTest extends AbstractParserTest
                         '1',                //номер
                         '00:46:45',         //время
                         1,                  //место
+                        null,                //выполненный разряд
                         null,               //очки
-                        null,               //выполненный разряд
                     ],
-                ]
+                ],
+                true
             ],
         ];
     }
