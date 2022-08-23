@@ -141,7 +141,7 @@ class OBelarusNetRelayParser extends AbstractParser
                     $lastname = $lineData[$nameIndex++];
                 } elseif ($number === false) {
                     $protocolLine['runner_number'] = $lineData[
-                    $isOpen ? ($headers[0] === '№' ? 0 : 1) : 0
+                        $isOpen ? (is_numeric($lineData[1]) ? 1 : 0) : 0
                     ];
                 }
                 $protocolLine['lastname'] = $lastname;
