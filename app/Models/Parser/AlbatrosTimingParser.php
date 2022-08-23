@@ -131,7 +131,7 @@ class AlbatrosTimingParser extends AbstractParser
 
     public function check(string $file, string $extension): bool
     {
-        if ($extension !== 'html') {
+        if (!str_contains($extension, 'htm')) {
             return false;
         }
 
