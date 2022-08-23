@@ -114,6 +114,7 @@ class OBelarusNetRelayParser extends AbstractParser
                     if ($columnName === 'runner_number') {
                         $number = true;
                     }
+
                     if ($columnName === '') {
                         break;
                     }
@@ -219,6 +220,9 @@ class OBelarusNetRelayParser extends AbstractParser
             ) {
                 $indent++;
                 $this->commandPoints = (int)$column;
+            } elseif ($column === '-') {
+                $indent++;
+                $this->commandPoints = null;
             }
         } elseif ($column === 'runner_number') {
             $column = $lineData[$fieldsCount - $indent];

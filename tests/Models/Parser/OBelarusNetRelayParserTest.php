@@ -58,7 +58,7 @@ class OBelarusNetRelayParserTest extends AbstractParserTest
                         1117,
                         null,
                         null,
-                        '-',
+                        null,
                         null,
                     ],
                     27 => [
@@ -160,6 +160,20 @@ class OBelarusNetRelayParserTest extends AbstractParserTest
                         1,              //место
                         'МС',           //выполненный разряд
                         291,            //очки
+                    ],
+                    //1012  Жихарев Вячеслав  Тульская обл. RUS  00:46:11  00:46:11 в/к  -  -  -
+                    6 => [
+                        'Жихарев',    //фамилия
+                        'Вячеслав',      //имя
+                        'Тульская обл. RUS', //клуб
+                        null,           //год
+                        null,           //разряд
+                        '1012',         //номер
+                        '00:46:11',     //время
+                        null,              //место
+                        '-',           //выполненный разряд
+                        null,            //очки
+                        true
                     ],
                     //3012  Кондратьев Артем  лично RUS  01:05:25  02:42:50 в/к  -  -
                     8 => [
