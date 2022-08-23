@@ -131,10 +131,16 @@ class OBelarusNetRelayParser extends AbstractParser
                 if (!$number) {
                     $nameIndex++;
                 }
+                if (!str_contains($headers[$nameIndex], 'амилия')) {
+                    $nameIndex--;
+                }
+
                 $protocolLine['lastname'] = $lineData[$nameIndex++];
                 $protocolLine['firstname'] = $lineData[$nameIndex++];
                 if ($number === false) {
-                    $protocolLine['runner_number'] = $lineData[$isOpen ? 1 : 0];
+                    $protocolLine['runner_number'] = $lineData[
+                        $isOpen ? ($headers[0] === '№' ? 0 : 1) : 0
+                    ];
                 }
 
                 $protocolLine['serial_number'] = $isOpen ? $lineData[0] : ($this->commandSerial ?? 0);
@@ -149,7 +155,7 @@ class OBelarusNetRelayParser extends AbstractParser
 
     public function check(string $file, string $extension): bool
     {
-        if ($extension === 'html') {
+        if (str_contains($extension, 'htm')) {
             return (bool)preg_match('#<b>\d[^<]*[^\d^\s]#', $file);
         }
 
