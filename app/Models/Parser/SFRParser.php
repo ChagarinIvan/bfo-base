@@ -65,7 +65,7 @@ class SFRParser extends AbstractParser
                     }
                     $value = $lineMatch[1][$headerIndex];
                     if (str_ends_with($value, '</nobr>')) {
-                        $value = substr($value, 0, strlen($value) - 7);
+                        $value = substr($value, 0, -7);
                     }
                     $protocolLine[$columnName] = $this->getValue($columnName, $value);
                 }
@@ -79,7 +79,9 @@ class SFRParser extends AbstractParser
     public function check(string $file, string $extension): bool
     {
         if (str_contains($extension, 'htm')) {
-            return str_contains($file, '<table class="rezult">');
+            return str_contains($file, '<table class="rezult">')
+                || str_contains($file, '<table class=\'rezult\'>')
+            ;
         }
 
         return false;
