@@ -32,10 +32,10 @@
                     /** @var \App\Models\Group\CupGroup $group */
                 @endphp
                 <li class="nav-item">
-                    <a href="{{ action(\App\Http\Controllers\Cups\ShowCupTableAction::class, [$cup, $group->id]) }}"
-                       class="text-decoration-none nav-link {{ $activeGroup->id === $group->id ? 'active' : ''}}"
+                    <a href="{{ action(\App\Http\Controllers\Cups\ShowCupTableAction::class, [$cup, $group->id()]) }}"
+                       class="text-decoration-none nav-link {{ $activeGroup->equal($group) ? 'active' : ''}}"
                     >
-                        <b>{{ $group->name }}</b>
+                        <b>{{ $group->name() }}</b>
                     </a>
                 </li>
             @endforeach
@@ -65,7 +65,7 @@
                             <th data-sortable="true">{{ __('app.common.fio') }}</th>
                             @foreach($cupEvents as $cupEvent)
                                 <th data-sortable="true">
-                                    <a href="{{ action(\App\Http\Controllers\CupEvents\ShowCupEventGroupAction::class, [$cup->id, $cupEvent->id, $activeGroup->id]) }}"
+                                    <a href="{{ action(\App\Http\Controllers\CupEvents\ShowCupEventGroupAction::class, [$cup->id, $cupEvent->id, $activeGroup->id()]) }}"
                                         class="text-white">
                                         {{ $cupEvent->event->date->format('m-d') }}
                                     </a>

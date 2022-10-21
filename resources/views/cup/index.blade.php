@@ -73,9 +73,8 @@
                                             @php
                                                 /** @var \App\Models\Group\CupGroup $group */
                                             @endphp
-                                            <x-badge color="{{ \App\Facades\Color::getColor($group->name) }}"
-                                                     name="{{ $group->name }}"
-                                                     url="{{ action(\App\Http\Controllers\Cups\ShowCupTableAction::class, [$cup, $group->id]) }}"
+                                            <x-badge name="{{ $group->name() }}"
+                                                     url="{{ action(\App\Http\Controllers\Cups\ShowCupTableAction::class, [$cup, $group->id()]) }}"
                                             />
                                         @endforeach
                                     </td>

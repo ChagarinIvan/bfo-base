@@ -24,6 +24,11 @@ class CupGroup
         return "{$this->male->value}_".($this->age->value ?? 0);
     }
 
+    public function name(): string
+    {
+        return ($this->male === GroupMale::Man ? 'М' : 'Ж').$this->age->toString();
+    }
+
     public function next(): self
     {
         return new self($this->male, $this->age->next());

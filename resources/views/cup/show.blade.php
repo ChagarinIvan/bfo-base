@@ -40,9 +40,8 @@
     <div class="row mb-3">
         <div class="col-12">
             @foreach($cup->getCupType()->getGroups() as $group)
-                <x-badge color="{{ \App\Facades\Color::getColor($group->name) }}"
-                         name="{{ $group->name }}"
-                         url="{{ action(\App\Http\Controllers\Cups\ShowCupTableAction::class, [$cup, $group->id]) }}"/>
+                <x-badge name="{{ $group->name() }}"
+                         url="{{ action(\App\Http\Controllers\Cups\ShowCupTableAction::class, [$cup, $group->id()]) }}"/>
             @endforeach
         </div>
     </div>

@@ -40,8 +40,7 @@
                 @foreach ($groups as $group)
                     <tr>
                         <td>
-                            <x-badge color="{{ \App\Facades\Color::getColor($group->name) }}"
-                                     name="{{ $group->name }}"
+                            <x-badge name="{{ $group->name }}"
                                      url="{{ action(\App\Http\Controllers\Groups\ShowGroupAction::class, [$group->id]) }}"
                             />
                         </td>

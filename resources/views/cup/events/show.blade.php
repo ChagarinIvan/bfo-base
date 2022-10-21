@@ -34,10 +34,10 @@
                     /** @var \App\Models\Group\CupGroup $group */
                 @endphp
                 <li class="nav-item">
-                    <a href="{{ action(\App\Http\Controllers\CupEvents\ShowCupEventGroupAction::class, [$cup, $cupEvent, $group->id]) }}"
-                       class="text-decoration-none nav-link {{ $groupId === $group->id ? 'active' : ''}}"
+                    <a href="{{ action(\App\Http\Controllers\CupEvents\ShowCupEventGroupAction::class, [$cup, $cupEvent, $group->id()]) }}"
+                       class="text-decoration-none nav-link {{ $groupId === $group->id() ? 'active' : ''}}"
                     >
-                        <b>{{ $group->name }}</b>
+                        <b>{{ $group->name() }}</b>
                     </a>
                 </li>
             @endforeach

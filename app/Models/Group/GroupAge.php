@@ -62,4 +62,9 @@ enum GroupAge: int
             default => self::a12,
         };
     }
+
+    public function toString(): string
+    {
+        return (string)($this->age->value ?? '');
+    }
 }

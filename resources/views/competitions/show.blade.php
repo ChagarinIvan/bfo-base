@@ -63,8 +63,7 @@
                         </td>
                         <td>
                             @foreach($event->cups as $cupEvent)
-                                <x-badge color="{{ \App\Facades\Color::getColor($cupEvent->cup->name) }}"
-                                         name="{{ $cupEvent->cup->name }} {{ $cupEvent->cup->year }}"
+                                <x-badge name="{{ $cupEvent->cup->name }} {{ $cupEvent->cup->year }}"
                                          url="{{ action(\App\Http\Controllers\Cups\ShowCupAction::class, [$cupEvent->cup]) }}"
                                 />
                             @endforeach
