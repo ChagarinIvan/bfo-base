@@ -32,9 +32,10 @@ class EliteCupType extends AbstractCupType
     public function calculateEvent(CupEvent $cupEvent, CupGroup $mainGroup): Collection
     {
         $cupEventProtocolLines = $this->getGroupProtocolLines($cupEvent, $mainGroup);
-        $results = $this->calculateLines($cupEvent, $cupEventProtocolLines);
 
-        return $results->sortByDesc(fn (CupEventPoint $cupEventResult) => $cupEventResult->points);
+        return $this->calculateLines($cupEvent, $cupEventProtocolLines)
+            ->sortByDesc(fn (CupEventPoint $cupEventResult) => $cupEventResult->points)
+        ;
     }
 
     protected function getGroupProtocolLines(CupEvent $cupEvent, CupGroup $group): Collection
@@ -56,10 +57,10 @@ class EliteCupType extends AbstractCupType
     protected function getGroupsMap(CupGroup $group): array
     {
         $map = [
-            (new CupGroup(GroupMale::Man))->id => static::MEN_GROUPS,
-            (new CupGroup(GroupMale::Woman))->id => static::WOMEN_GROUPS,
+            (new CupGroup(GroupMale::Man))->id() => static::MEN_GROUPS,
+            (new CupGroup(GroupMale::Woman))->id() => static::WOMEN_GROUPS,
         ];
 
-        return $map[$group->id] ?? [];
+        return $map[$group->id()] ?? [];
     }
 }

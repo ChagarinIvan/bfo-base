@@ -32,15 +32,15 @@ abstract class AbstractCupType implements CupTypeInterface
         $results = $results->groupBy('protocolLine.person_id');
         $results = $results->toArray();
         foreach ($results as &$cupEventPoints) {
-            uasort($cupEventPoints, function (CupEventPoint $a, CupEventPoint $b) {
+            uasort($cupEventPoints, static function (CupEventPoint $a, CupEventPoint $b) {
                 if ($a->points === $b->points) {
                     return 0;
                 }
-                return ($a->points != '-' ? $a->points : 0) > ($b->points != '-' ? $b->points : 0) ? -1 : 1;
+                return ($a->points !== '-' ? $a->points : 0) > ($b->points !== '-' ? $b->points : 0) ? -1 : 1;
             });
         }
 
-        uasort($results, function (array $person1Results, array $person2Results) use ($cup) {
+        uasort($results, static function (array $person1Results, array $person2Results) use ($cup) {
             $person1Points = 0;
             foreach (array_slice($person1Results, 0, $cup->events_count) as $cupEventPoints) {
                 /** @var CupEventPoint $cupEventPoints */

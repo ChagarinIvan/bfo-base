@@ -50,7 +50,7 @@ class MasterCupType extends AbstractCupType
     {
         $results = new Collection();
         $cupEventProtocolLines = $this->getGroupProtocolLines($cupEvent, $mainGroup);
-        $eventGroupsId = $this->getEventGroups($mainGroup->male)->pluck('id');
+        $eventGroupsId = $this->getEventGroups($mainGroup->male())->pluck('id');
 
         $eventDistances = $this->distanceService->getCupEventDistancesByGroups($cupEvent, $eventGroupsId)
             ->pluck('id')
@@ -64,12 +64,16 @@ class MasterCupType extends AbstractCupType
         $validGroups = $eventGroupsId->flip();
         $cupEventProtocolLines = $cupEventProtocolLines->intersectByKeys($validGroups);
         $groups = $this->groupsService->getCupEventGroups($cupEvent);
-        $hasGroupOnEvent = $groups->pluck('name')->intersect(self::GROUPS_MAP[$mainGroup->id])->count() > 0;
+        $count = $groups->pluck('name')
+            ->intersect(self::GROUPS_MAP[$mainGroup->id()])
+            ->count();
 
         foreach ($cupEventProtocolLines as $groupId => $groupProtocolLines) {
             $group = $this->groupsService->getGroup($groupId);
-            $needDivideGroup = !$hasGroupOnEvent && in_array($group->name, self::GROUPS_MAP[$mainGroup->prev()->id], true);
-            if ($needDivideGroup) {
+            if (
+                $count === 0
+                && in_array($group->name, self::GROUPS_MAP[$mainGroup->prev()->id()], true)
+            ) {
                 $eventGroupResults = $this->calculateLines($cupEvent, $groupProtocolLines);
             } else {
                 $eventGroupResults = $this->calculateGroup($cupEvent, $groupId);
@@ -96,7 +100,7 @@ class MasterCupType extends AbstractCupType
     protected function getGroupProtocolLines(CupEvent $cupEvent, CupGroup $group): Collection
     {
         $year = $cupEvent->cup->year;
-        $startYear = $year - $group->age ?->value ?? 0;
+        $startYear = $year - $group->age() ?->value ?? 0;
         $finishYear = $startYear - 5;
 
         return $this->protocolLinesRepository->getCupEventProtocolLinesForPersonsCertainAge(
@@ -111,8 +115,8 @@ class MasterCupType extends AbstractCupType
     {
         $groups = Collection::make();
         foreach ($this->getGroups() as $cupGroup) {
-            if ($cupGroup->male === $male) {
-                $groups = $groups->merge($this->groupsService->getGroups(static::GROUPS_MAP[$cupGroup->id]));
+            if ($cupGroup->male() === $male) {
+                $groups = $groups->merge($this->groupsService->getGroups(static::GROUPS_MAP[$cupGroup->id()]));
             }
         }
         return $groups;

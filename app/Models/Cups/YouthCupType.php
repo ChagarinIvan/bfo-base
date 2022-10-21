@@ -7,6 +7,7 @@ use App\Models\CupEventPoint;
 use App\Models\Group\CupGroup;
 use App\Models\Group\CupGroupFactory;
 use App\Models\Group\GroupAge;
+use App\Models\Group\GroupMale;
 use App\Models\ProtocolLine;
 use Illuminate\Support\Collection;
 
@@ -126,7 +127,7 @@ class YouthCupType extends MasterCupType
         $ageParticipants = $this->getGroupProtocolLines($cupEvent, $mainGroup);
         $ageParticipants = $ageParticipants->groupBy('distance_id');
 
-        $eventGroupsId = $this->getEventGroups($mainGroup->male)->pluck('id');
+        $eventGroupsId = $this->getEventGroups($mainGroup->male())->pluck('id');
         $eventDistances = $this->distanceService->getCupEventDistancesByGroups($cupEvent, $eventGroupsId)
             ->keyBy('id');
 
@@ -156,8 +157,10 @@ class YouthCupType extends MasterCupType
     protected function getGroupProtocolLines(CupEvent $cupEvent, CupGroup $group): Collection
     {
         $year = $cupEvent->cup->year;
-        $startYear = $year - $group->age ?->value ?? 0;
-        $finishYear = $startYear + 1;
+        $startYear = $year - $group->age() ?->value ?? 0;
+        $finishYear = $group->equal(CupGroup::create(GroupMale::Man, GroupAge::a12))
+            ? $year
+            : $startYear + 1;
 
         return $this->protocolLinesRepository->getCupEventProtocolLinesForPersonsCertainAge(
             $cupEvent,
