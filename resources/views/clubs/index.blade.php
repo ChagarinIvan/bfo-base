@@ -1,4 +1,5 @@
 @php
+    use App\Http\Controllers\Club\ShowClubAction;
     use App\Models\Club;
     /**
      * @var Club[] $clubs;
@@ -29,22 +30,22 @@
                data-pagination-pre-text="{{ __('app.pagination.previous') }}"
         >
             <thead class="table-dark">
-                <tr>
-                    <th data-sortable="true">{{ __('app.common.title') }}</th>
-                    <th data-sortable="true">{{ __('app.club.persons_count') }}</th>
-                </tr>
+            <tr>
+                <th data-sortable="true">{{ __('app.common.title') }}</th>
+                <th data-sortable="true">{{ __('app.club.persons_count') }}</th>
+            </tr>
             </thead>
             <tbody>
-                @foreach ($clubs as $club)
-                    <tr>
-                        <td>
-                            <a href="{{ action(\App\Http\Controllers\Club\ShowClubAction::class, [$club->id]) }}">
-                                {{ $club->name }}
-                            </a>
-                        </td>
-                        <td>{{ $club->persons->count() }}</td>
-                    </tr>
-                @endforeach
+            @foreach ($clubs as $club)
+                <tr>
+                    <td>
+                        <a href="{{ action(ShowClubAction::class, [$club->id]) }}">
+                            {{ $club->name }}
+                        </a>
+                    </td>
+                    <td>{{ $club->persons->count() }}</td>
+                </tr>
+            @endforeach
             </tbody>
         </table>
     </div>

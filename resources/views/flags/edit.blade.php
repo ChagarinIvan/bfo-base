@@ -1,4 +1,5 @@
 @php
+    use App\Http\Controllers\Flags\UpdateFlagAction;
     use App\Models\Flag;
     /**
      * @var Flag $flag;
@@ -11,7 +12,7 @@
 @section('content')
     <div class="row">
         <form method="POST"
-              action="{{ action(\App\Http\Controllers\Flags\UpdateFlagAction::class, [$flag]) }}"
+              action="{{ action(UpdateFlagAction::class, [$flag]) }}"
               enctype="multipart/form-data"
         >
             @csrf

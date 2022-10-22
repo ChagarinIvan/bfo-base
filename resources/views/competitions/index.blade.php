@@ -1,6 +1,12 @@
 @php
+    use App\Http\Controllers\Competition\DeleteCompetitionAction;
+    use App\Http\Controllers\Competition\ShowCompetitionAction;
+    use App\Http\Controllers\Competition\ShowCompetitionsListAction;
+    use App\Http\Controllers\Competition\ShowCreateCompetitionFormAction;
+    use App\Http\Controllers\Competition\ShowEditCompetitionFormAction;
     use App\Models\Year;
     use Illuminate\Support\Collection;
+    use Illuminate\Support\Str;
     /**
      * @var Collection $competitions;
      * @var Year $selectedYear;
@@ -18,7 +24,7 @@
                 <x-button text="app.competition.add_competition"
                           color="success"
                           icon="bi-file-earmark-plus-fill"
-                          url="{{ action(\App\Http\Controllers\Competition\ShowCreateCompetitionFormAction::class, [$selectedYear->value]) }}"
+                          url="{{ action(ShowCreateCompetitionFormAction::class, [$selectedYear->value]) }}"
                 />
             </div>
         </div>
@@ -27,7 +33,7 @@
         <ul class="nav nav-tabs">
             @foreach(\App\Models\Year::cases() as $year)
                 <li class="nav-item">
-                    <a href="{{ action(\App\Http\Controllers\Competition\ShowCompetitionsListAction::class, [$year->value]) }}"
+                    <a href="{{ action(ShowCompetitionsListAction::class, [$year->value]) }}"
                        class="text-decoration-none nav-link {{ $year === $selectedYear ? 'active' : '' }}"
                     >
                         <b>{{ $year->value }}</b>
@@ -55,25 +61,27 @@
                        data-pagination-pre-text="{{ __('app.pagination.previous') }}"
                 >
                     <thead class="table-dark">
-                        <tr>
-                            <th data-sortable="true">{{ __('app.common.title') }}</th>
-                            <th data-sortable="true">{{ __('app.common.dates') }}</th>
-                            <th data-sortable="true">{{ __('app.common.description') }}</th>
-                            @auth<th></th>@endauth
-                        </tr>
+                    <tr>
+                        <th data-sortable="true">{{ __('app.common.title') }}</th>
+                        <th data-sortable="true">{{ __('app.common.dates') }}</th>
+                        <th data-sortable="true">{{ __('app.common.description') }}</th>
+                        @auth
+                            <th></th>
+                        @endauth
+                    </tr>
                     </thead>
                     <tbody>
                     @foreach ($competitions as $competition)
                         <tr>
                             <td>
-                                <a href="{{ action(\App\Http\Controllers\Competition\ShowCompetitionAction::class, [$competition->id]) }}"
-                                >{{ \Illuminate\Support\Str::limit($competition->name, 50) }}</a>
+                                <a href="{{ action(ShowCompetitionAction::class, [$competition->id]) }}"
+                                >{{ Str::limit($competition->name, 50) }}</a>
                             </td>
                             <td>{{ $competition->from->format('Y-m-d') }} / {{ $competition->to->format('Y-m-d') }}</td>
-                            <td><small>{{ \Illuminate\Support\Str::limit($competition->description) }}</small></td>
+                            <td><small>{{ Str::limit($competition->description) }}</small></td>
                             @auth
                                 <td>
-                                    <x-edit-button url="{{ action(\App\Http\Controllers\Competition\ShowEditCompetitionFormAction::class, [$year->value, $competition->id]) }}"/>
+                                    <x-edit-button url="{{ action(ShowEditCompetitionFormAction::class, [$year->value, $competition->id]) }}"/>
                                     <x-delete-button modal-id="deleteModal{{ $competition->id }}"/>
                                 </td>
                             @endauth
@@ -86,7 +94,7 @@
     </div>
     @foreach ($competitions as $competition)
         <x-modal modal-id="deleteModal{{ $competition->id }}"
-                 url="{{ action(\App\Http\Controllers\Competition\DeleteCompetitionAction::class, [$selectedYear->value    , $competition->id]) }}"
+                 url="{{ action(DeleteCompetitionAction::class, [$selectedYear->value    , $competition->id]) }}"
         />
     @endforeach
 @endsection

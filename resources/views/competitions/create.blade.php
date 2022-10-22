@@ -1,4 +1,5 @@
 @php
+    use App\Http\Controllers\Competition\StoreCompetitionAction;
     /**
      * @var int $year;
      */
@@ -11,7 +12,7 @@
 @section('content')
     <div class="row">
         <form method="POST"
-              action="{{ action(\App\Http\Controllers\Competition\StoreCompetitionAction::class) }}"
+              action="{{ action(StoreCompetitionAction::class) }}"
         >
             @csrf
             <div class="form-floating mb-3">

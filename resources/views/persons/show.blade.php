@@ -1,8 +1,14 @@
 @php
+    use App\Http\Controllers\Competition\ShowCompetitionAction;
+    use App\Http\Controllers\Event\ShowEventAction;
+    use App\Http\Controllers\Person\ExtractPersonAction;
+    use App\Http\Controllers\Person\ShowEditPersonAction;
+    use App\Http\Controllers\Person\ShowPersonPromptsListAction;
+    use App\Http\Controllers\Rank\ShowPersonRanksAction;
     use App\Models\Person;
     use App\Models\PersonPayment;
     use App\Models\Rank;
-    use Illuminate\Support\Collection;
+    use Illuminate\Support\Collection;use Illuminate\Support\Str;
     /**
      * @var Person $person
      * @var Collection $groupedProtocolLines
@@ -38,17 +44,17 @@
     <div class="row mb-3">
         <div class="col-12">
             @auth
-                <x-edit-button url="{{ action(\App\Http\Controllers\Person\ShowEditPersonAction::class, [$person->id]) }}"/>
+                <x-edit-button url="{{ action(ShowEditPersonAction::class, [$person->id]) }}"/>
                 <x-button text="app.common.prompts"
                           color="success"
                           icon="bi-terminal"
-                          url="{{ action(\App\Http\Controllers\Person\ShowPersonPromptsListAction::class, [$person->id]) }}"
+                          url="{{ action(ShowPersonPromptsListAction::class, [$person->id]) }}"
                 />
             @endauth
             <x-button text="app.ranks"
                       color="info"
                       icon="bi-smartwatch"
-                      url="{{ action(\App\Http\Controllers\Rank\ShowPersonRanksAction::class, [$person->id]) }}"
+                      url="{{ action(ShowPersonRanksAction::class, [$person->id]) }}"
             />
             <x-back-button/>
         </div>
@@ -72,58 +78,58 @@
                data-pagination-pre-text="{{ __('app.pagination.previous') }}"
         >
             <thead class="table-dark">
-                <tr>
-                    <th data-sortable="true">{{ __('app.competition.title') }}</th>
-                    <th data-sortable="true">{{ __('app.event.title') }}</th>
-                    <th data-sortable="true">{{ __('app.common.lastname') }} {{ __('app.common.name') }}</th>
-                    <th data-sortable="true">{{ __('app.common.date') }}</th>
-                    <th data-sortable="true">{{ __('app.common.group') }}</th>
-                    <th data-sortable="true">{{ __('app.common.birthday') }}</th>
-                    <th data-sortable="true">{{ __('app.common.result') }}</th>
-                    <th data-sortable="true">{{ __('app.common.place') }}</th>
-                    <th data-sortable="true">{{ __('app.common.complete_rank') }}</th>
-                </tr>
+            <tr>
+                <th data-sortable="true">{{ __('app.competition.title') }}</th>
+                <th data-sortable="true">{{ __('app.event.title') }}</th>
+                <th data-sortable="true">{{ __('app.common.lastname') }} {{ __('app.common.name') }}</th>
+                <th data-sortable="true">{{ __('app.common.date') }}</th>
+                <th data-sortable="true">{{ __('app.common.group') }}</th>
+                <th data-sortable="true">{{ __('app.common.birthday') }}</th>
+                <th data-sortable="true">{{ __('app.common.result') }}</th>
+                <th data-sortable="true">{{ __('app.common.place') }}</th>
+                <th data-sortable="true">{{ __('app.common.complete_rank') }}</th>
+            </tr>
             </thead>
             <tbody>
-                @foreach ($groupedProtocolLines as $year => $lines)
+            @foreach ($groupedProtocolLines as $year => $lines)
+                <tr>
+                    <td class="text-center" colspan="9"><b id="{{ $year }}">{{ $year }}</b></td>
+                </tr>
+                @foreach($lines as $line)
+                    @php
+                        /** @var App\Models\ProtocolLine $line */
+                        $lineName = "{$line->lastname}_$line->firstname";
+                    @endphp
                     <tr>
-                        <td class="text-center" colspan="9"><b id="{{ $year }}">{{ $year }}</b></td>
+                        <td>
+                            <a href="{{ action(ShowCompetitionAction::class, [$line->distance->event->competition_id]) }}">
+                                {{ Str::limit($line->distance->event->competition->name, 20, '...') }}
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{{ action(ShowEventAction::class, [$line->distance->event_id, $line->distance_id]) }}#{{ $line->id }}">
+                                {{ Str::limit($line->distance->event->name, 20, '...') }}
+                            </a>
+                        </td>
+                        <td>
+                            {{ $line->lastname }} {{ $line->firstname }}
+                            @if($lineName !== $personName)
+                                @auth
+                                    <a href="{{ action(ExtractPersonAction::class, [$line->id]) }}">
+                                        <span class="badge rounded-pill bg-warning">{{ __('app.common.extract') }}</span>
+                                    </a>
+                                @endauth
+                            @endif
+                        </td>
+                        <td>{{ $line->distance->event->date->format('Y-m-d') }}</td>
+                        <td>{{ $line->distance->group->name ?? '' }}</td>
+                        <td>{{ $line->year ?: '' }}</td>
+                        <td>{{ $line->time ? $line->time->format('H:i:s') : '-' }}</td>
+                        <td>{{ $line->place }}</td>
+                        <td>{{ $line->complete_rank }}</td>
                     </tr>
-                    @foreach($lines as $line)
-                        @php
-                            /** @var App\Models\ProtocolLine $line */
-                            $lineName = "{$line->lastname}_$line->firstname";
-                        @endphp
-                        <tr>
-                            <td>
-                                <a href="{{ action(\App\Http\Controllers\Competition\ShowCompetitionAction::class, [$line->distance->event->competition_id]) }}">
-                                    {{ \Illuminate\Support\Str::limit($line->distance->event->competition->name, 20, '...') }}
-                                </a>
-                            </td>
-                            <td>
-                                <a href="{{ action(\App\Http\Controllers\Event\ShowEventAction::class, [$line->distance->event_id, $line->distance_id]) }}#{{ $line->id }}">
-                                    {{ \Illuminate\Support\Str::limit($line->distance->event->name, 20, '...') }}
-                                </a>
-                            </td>
-                            <td>
-                                {{ $line->lastname }} {{ $line->firstname }}
-                                @if($lineName !== $personName)
-                                    @auth
-                                        <a href="{{ action(\App\Http\Controllers\Person\ExtractPersonAction::class, [$line->id]) }}">
-                                            <span class="badge rounded-pill bg-warning">{{ __('app.common.extract') }}</span>
-                                        </a>
-                                    @endauth
-                                @endif
-                            </td>
-                            <td>{{ $line->distance->event->date->format('Y-m-d') }}</td>
-                            <td>{{ $line->distance->group ? $line->distance->group->name : '' }}</td>
-                            <td>{{ $line->year ?: '' }}</td>
-                            <td>{{ $line->time ? $line->time->format('H:i:s') : '-' }}</td>
-                            <td>{{ $line->place }}</td>
-                            <td>{{ $line->complete_rank }}</td>
-                        </tr>
-                    @endforeach
                 @endforeach
+            @endforeach
             </tbody>
         </table>
     @endif

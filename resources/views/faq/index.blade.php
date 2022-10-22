@@ -1,3 +1,7 @@
+@php
+    use App\Http\Controllers\Faq\ShowApiFaqAction;
+@endphp
+
 @extends('layouts.app')
 
 @section('title', __('app.navbar.faq'))
@@ -13,7 +17,7 @@
         <li>{{ __('app.faq.relation_faq') }}.</li>
         <li>{{ __('app.faq.relation_edit') }}.</li>
         <li>{{ __('app.faq.flags_adding') }}.</li>
-        <li>{{ __('app.faq.api_link') }} <a href="{{ action(\App\Http\Controllers\Faq\ShowApiFaqAction::class) }}">API</a>.</li>
+        <li>{{ __('app.faq.api_link') }} <a href="{{ action(ShowApiFaqAction::class) }}">API</a>.</li>
     </ul>
 
     <h5>{{ __('app.faq.dev_plan') }}:</h5>
