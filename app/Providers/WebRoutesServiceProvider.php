@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use App\Bridge\Laravel\Controller\Club\ShowClubAction;
 use App\Http\Controllers\BackAction;
 use App\Http\Controllers\Club;
 use App\Http\Controllers\Competition;
@@ -122,7 +121,7 @@ class WebRoutesServiceProvider extends ServiceProvider
                 //clubs
                 $this->routeRegistrar->prefix('clubs')->group(function () {
                     $this->route->get('/',           Club\ShowClubsListAction::class);
-                    $this->route->get('{club}/show', ShowClubAction::class);
+                    $this->route->get('{club}/show', Club\ShowClubAction::class);
                 });
 
                 //localization
@@ -165,7 +164,7 @@ class WebRoutesServiceProvider extends ServiceProvider
                     $this->middleware(['auth'])->group(function () {
                         $this->route->get('{year}/create', Cups\ShowCreateCupFormAction::class);
                         $this->route->post('store', Cups\StoreCupAction::class);
-                        $this->route->get('{cup}/edit', Cups\ShowEditCupFormAction::class)->action('test');
+                        $this->route->get('{cup}/edit', Cups\ShowEditCupFormAction::class);
                         $this->route->post('{cup}/update', Cups\UpdateCupAction::class);
                         $this->route->get('{cup}/delete', Cups\DeleteCupAction::class);
                         $this->route->get('{cup}/event/create', CupEvents\ShowCreateCupEventFormAction::class);
