@@ -4,7 +4,7 @@
     use App\Models\Club;
     /**
      * @var Club $club;
-//     * @var Person[] $persons;
+     * @var Person[] $persons;
      */
 @endphp
 
@@ -44,16 +44,16 @@
             </tr>
             </thead>
             <tbody>
-{{--            @foreach ($persons as $person)--}}
-{{--                @php--}}
-{{--                    $link = action(ShowPersonAction::class, [$person]);--}}
-{{--                @endphp--}}
-{{--                <tr>--}}
-{{--                    <td><a href="{{ $link }}">{{ $person->lastname }}</a></td>--}}
-{{--                    <td><a href="{{ $link }}">{{ $person->firstname }}</a></td>--}}
-{{--                    <td>{{ $person->birthday ? $person->birthday->format('Y') : '' }}</td>--}}
-{{--                </tr>--}}
-{{--            @endforeach--}}
+            @foreach ($persons as $person)
+                @php
+                    $link = action(ShowPersonAction::class, [$person]);
+                @endphp
+                <tr>
+                    <td><a href="{{ $link }}">{{ $person->lastname }}</a></td>
+                    <td><a href="{{ $link }}">{{ $person->firstname }}</a></td>
+                    <td>{{ $person->birthday ? $person->birthday->format('Y') : '' }}</td>
+                </tr>
+            @endforeach
             </tbody>
         </table>
     </div>
