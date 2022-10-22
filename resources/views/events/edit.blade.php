@@ -1,4 +1,5 @@
 @php
+    use App\Http\Controllers\Event\UpdateEventAction;
     use App\Models\Event;
     use App\Models\Flag;
     use Illuminate\Support\Collection;
@@ -15,7 +16,7 @@
 @section('content')
     <div class="row">
         <form method="POST"
-              action="{{ action(\App\Http\Controllers\Event\UpdateEventAction::class, [$event]) }}"
+              action="{{ action(UpdateEventAction::class, [$event]) }}"
               enctype="multipart/form-data"
         >
             @csrf
@@ -28,7 +29,8 @@
                 <label for="description">{{ __('app.competition.description') }}</label>
             </div>
             <div class="form-floating mb-3">
-                <input class="form-control" type="date" id="date" name="date" value="{{ $event->date->format('Y-m-d') }}">
+                <input class="form-control" type="date" id="date" name="date"
+                       value="{{ $event->date->format('Y-m-d') }}">
                 <label for="date">{{ __('app.common.date') }}</label>
             </div>
 

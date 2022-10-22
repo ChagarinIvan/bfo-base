@@ -1,4 +1,5 @@
 @php
+    use App\Http\Controllers\Competition\UpdateCompetitionAction;
     use App\Models\Competition;
     /**
      * @var int $year;
@@ -13,7 +14,7 @@
 @section('content')
     <div class="row">
         <form method="POST"
-              action="{{ action(\App\Http\Controllers\Competition\UpdateCompetitionAction::class, [$year, $competition->id]) }}"
+              action="{{ action(UpdateCompetitionAction::class, [$year, $competition->id]) }}"
         >
             @csrf
             <div class="form-floating mb-3">
@@ -25,11 +26,13 @@
                 <label for="description">{{ __('app.competition.description') }}</label>
             </div>
             <div class="form-floating mb-3">
-                <input class="form-control" type="date" id="from" name="from" value="{{ $competition->from->format('Y-m-d') }}">
+                <input class="form-control" type="date" id="from" name="from"
+                       value="{{ $competition->from->format('Y-m-d') }}">
                 <label for="from">{{ __('app.competition.from_date') }}</label>
             </div>
             <div class="form-floating mb-3">
-                <input class="form-control" type="date" id="to" name="to" value="{{ $competition->to->format('Y-m-d') }}">
+                <input class="form-control" type="date" id="to" name="to"
+                       value="{{ $competition->to->format('Y-m-d') }}">
                 <label for="to">{{ __('app.competition.to_date') }}</label>
             </div>
             <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3 col-xxl-2">

@@ -1,4 +1,5 @@
 @php
+    use App\Http\Controllers\Login\SignInAction;
     use App\Models\Club;
     /**
      * @var string $search
@@ -36,8 +37,6 @@
         margin: 40px 8px 10px 8px;
         color: #cccccc;
     }
-
-
 
     /* STRUCTURE */
 
@@ -178,7 +177,7 @@
     <div class="wrapper fadeInDown">
         <div id="formContent">
             <div>{{ __('app.common.sign-in') }}</div>
-            <form method="POST" action="{{ action(\App\Http\Controllers\Login\SignInAction::class) }}">
+            <form method="POST" action="{{ action(SignInAction::class) }}">
                 @csrf
                 <input type="email" id="email" class="fadeIn second" name="email" placeholder="email@email.com">
                 <input type="password" id="password" class="fadeIn third" name="password" placeholder="password">

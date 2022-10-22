@@ -1,10 +1,14 @@
 @php
+    use App\Http\Controllers\CupEvents\ShowCupEventGroupAction;
+    use App\Http\Controllers\Event\ShowEventAction;
+    use App\Http\Controllers\Person\ShowPersonAction;
     use App\Models\Cup;
     use App\Models\CupEvent;
     use App\Models\CupEventPoint;
     use App\Models\Group\CupGroup;
     use App\Models\Person;
     use Illuminate\Support\Collection;
+    use App\Http\Controllers\Cups\ShowCupTableAction;
     /**
      * @var Cup $cup;
      * @var CupEvent[] $cupEvents;
@@ -29,10 +33,10 @@
         <ul class="nav nav-tabs">
             @foreach($cup->getCupType()->getGroups() as $group)
                 @php
-                    /** @var \App\Models\Group\CupGroup $group */
+                    /** @var CupGroup $group */
                 @endphp
                 <li class="nav-item">
-                    <a href="{{ action(\App\Http\Controllers\Cups\ShowCupTableAction::class, [$cup, $group->id()]) }}"
+                    <a href="{{ action(ShowCupTableAction::class, [$cup, $group->id()]) }}"
                        class="text-decoration-none nav-link {{ $activeGroup->equal($group) ? 'active' : ''}}"
                     >
                         <b>{{ $group->name() }}</b>
@@ -60,85 +64,85 @@
                        data-pagination-pre-text="{{ __('app.pagination.previous') }}"
                 >
                     <thead class="table-dark">
-                        <tr>
-                            <th data-sortable="true">№</th>
-                            <th data-sortable="true">{{ __('app.common.fio') }}</th>
-                            @foreach($cupEvents as $cupEvent)
-                                <th data-sortable="true">
-                                    <a href="{{ action(\App\Http\Controllers\CupEvents\ShowCupEventGroupAction::class, [$cup->id, $cupEvent->id, $activeGroup->id()]) }}"
-                                        class="text-white">
-                                        {{ $cupEvent->event->date->format('m-d') }}
-                                    </a>
-                                </th>
-                            @endforeach
-                            <th data-sortable="true">{{ __('app.common.points') }}</th>
-                            <th data-sortable="true">{{ __('app.common.average') }}</th>
-                            <th data-sortable="true">{{ __('app.common.place') }}</th>
-                        </tr>
+                    <tr>
+                        <th data-sortable="true">№</th>
+                        <th data-sortable="true">{{ __('app.common.fio') }}</th>
+                        @foreach($cupEvents as $cupEvent)
+                            <th data-sortable="true">
+                                <a href="{{ action(ShowCupEventGroupAction::class, [$cup->id, $cupEvent->id, $activeGroup->id()]) }}"
+                                   class="text-white">
+                                    {{ $cupEvent->event->date->format('m-d') }}
+                                </a>
+                            </th>
+                        @endforeach
+                        <th data-sortable="true">{{ __('app.common.points') }}</th>
+                        <th data-sortable="true">{{ __('app.common.average') }}</th>
+                        <th data-sortable="true">{{ __('app.common.place') }}</th>
+                    </tr>
                     </thead>
                     <tbody>
-                        @foreach($cupPoints as $personId => $cupEventPoints)
-                            @php
-                                /** @var \App\Models\Person $person */
-                                $person = $persons->get($personId);
-                                $sum = 0;
-                                $count = 0;
-                            @endphp
-                            <tr>
-                                <td>{{ $place }}</td>
-                                <td>
-                                    <b>
-                                        <a href="{{ action(\App\Http\Controllers\Person\ShowPersonAction::class, [$person]) }}">{{ $person->lastname.' '.$person->firstname }}</a>
-                                    </b>
-                                </td>
-                                @foreach($cupEvents as $cupEvent)
+                    @foreach($cupPoints as $personId => $cupEventPoints)
+                        @php
+                            /** @var Person $person */
+                            $person = $persons->get($personId);
+                            $sum = 0;
+                            $count = 0;
+                        @endphp
+                        <tr>
+                            <td>{{ $place }}</td>
+                            <td>
+                                <b>
+                                    <a href="{{ action(ShowPersonAction::class, [$person]) }}">{{ $person->lastname.' '.$person->firstname }}</a>
+                                </b>
+                            </td>
+                            @foreach($cupEvents as $cupEvent)
+                                @php
+                                    $find = false;
+                                    foreach ($cupEventPoints as $cupEventPoint) {
+                                        if ($cupEventPoint->eventCupId === $cupEvent->id) {
+                                            $find = true;
+                                            break;
+                                        }
+                                    }
+                                @endphp
+                                @if($find)
                                     @php
-                                        $find = false;
-                                        foreach ($cupEventPoints as $cupEventPoint) {
-                                            if ($cupEventPoint->eventCupId === $cupEvent->id) {
-                                                $find = true;
+                                        $isBold = false;
+                                        foreach (array_values($cupEventPoints) as $index => $cupEventPointsValue) {
+                                            if ($index >= $cup->events_count) {
                                                 break;
+                                            }
+                                            if ($cupEventPointsValue->equal($cupEventPoint)) {
+                                                $isBold = true;
                                             }
                                         }
                                     @endphp
-                                    @if($find)
+                                    @if ($isBold)
                                         @php
-                                            $isBold = false;
-                                            foreach (array_values($cupEventPoints) as $index => $cupEventPointsValue) {
-                                                if ($index >= $cup->events_count) {
-                                                    break;
-                                                }
-                                                if ($cupEventPointsValue->equal($cupEventPoint)) {
-                                                    $isBold = true;
-                                                }
-                                            }
+                                            $sum += $cupEventPoint->points;
+                                            $count++;
                                         @endphp
-                                        @if ($isBold)
-                                            @php
-                                                $sum += $cupEventPoint->points;
-                                                $count++;
-                                            @endphp
-                                            <td>
-                                                <a href="{{ action(\App\Http\Controllers\Event\ShowEventAction::class, [$cupEvent->event_id, $cupEventPoint->protocolLine->distance_id]) }}#{{ $cupEventPoint->protocolLine->id }}">
-                                                    <b class="text-info">{{ $cupEventPoint->points }}</b>
-                                                </a>
-                                            </td>
-                                        @else
-                                            <td>
-                                                <a href="{{ action(\App\Http\Controllers\Event\ShowEventAction::class,[$cupEvent->event_id, $cupEventPoint->protocolLine->distance_id]) }}#{{ $cupEventPoint->protocolLine->id }}">
-                                                    <b class="text-dark">{{ $cupEventPoint->points }}</b>
-                                                </a>
-                                            </td>
-                                        @endif
+                                        <td>
+                                            <a href="{{ action(ShowEventAction::class, [$cupEvent->event_id, $cupEventPoint->protocolLine->distance_id]) }}#{{ $cupEventPoint->protocolLine->id }}">
+                                                <b class="text-info">{{ $cupEventPoint->points }}</b>
+                                            </a>
+                                        </td>
                                     @else
-                                        <td></td>
+                                        <td>
+                                            <a href="{{ action(ShowEventAction::class,[$cupEvent->event_id, $cupEventPoint->protocolLine->distance_id]) }}#{{ $cupEventPoint->protocolLine->id }}">
+                                                <b class="text-dark">{{ $cupEventPoint->points }}</b>
+                                            </a>
+                                        </td>
                                     @endif
-                                @endforeach
-                                <td><b>{{ $sum }}</b></td>
-                                <td><b>{{ ($count === 0) ? 0 : round($sum / $count) }}</b></td>
-                                <td><b>{{ $place++ }}</b></td>
-                            </tr>
-                        @endforeach
+                                @else
+                                    <td></td>
+                                @endif
+                            @endforeach
+                            <td><b>{{ $sum }}</b></td>
+                            <td><b>{{ ($count === 0) ? 0 : round($sum / $count) }}</b></td>
+                            <td><b>{{ $place++ }}</b></td>
+                        </tr>
+                    @endforeach
                     </tbody>
                 </table>
             </div>

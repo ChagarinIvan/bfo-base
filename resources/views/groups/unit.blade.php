@@ -1,4 +1,6 @@
 @php
+    use App\Facades\Color;
+    use App\Http\Controllers\Groups\UnitGroupsAction;
     use App\Models\Group;
     use Illuminate\Support\Collection;
     /**
@@ -14,15 +16,16 @@
 @section('content')
     <div class="row">
         <form method="POST"
-              action="{{ action(\App\Http\Controllers\Groups\UnitGroupsAction::class, [$unitedGroup->id]) }}"
+              action="{{ action(UnitGroupsAction::class, [$unitedGroup->id]) }}"
               enctype="multipart/form-data"
         >
             @csrf
             <div class="form-group mb-3">
-                <select class="selectpicker form-control" data-live-search="true" id="group_id" name="group_id" title="{{ __('app.common.group') }}">
+                <select class="selectpicker form-control" data-live-search="true" id="group_id" name="group_id"
+                        title="{{ __('app.common.group') }}">
                     @foreach($groups as $group)
                         <option value="{{ $group->id }}"
-                                data-content="<span class='badge' style='background: {{ \App\Facades\Color::getColor($group->name) }}'><b class='text-decoration-none text-dark'>{{ $group->name }} ({{ $group->distances->count() }})</b></span>"
+                                data-content="<span class='badge' style='background: {{ Color::getColor($group->name) }}'><b class='text-decoration-none text-dark'>{{ $group->name }} ({{ $group->distances->count() }})</b></span>"
                         >{{ $group->name }}</option>
                     @endforeach
                 </select>

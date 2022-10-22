@@ -1,4 +1,5 @@
 @php
+    use App\Http\Controllers\Event\ShowEventAction;
     use App\Models\Person;
     use App\Models\Rank;
     use Illuminate\Support\Collection;
@@ -17,9 +18,11 @@
 @section('content')
     <div class="row"><h4>{{ $person->lastname }} {{ $person->firstname }}</h4></div>
     @if ($actualRank)
-        <div class="row"><h4>{{ $actualRank ? $actualRank->rank : '' }} {{ __('app.common.do') }} {{ $actualRank->finish_date->format('Y-m-d') }}</h4></div>
+        <div class="row">
+            <h4>{{ $actualRank->rank ?? '' }} {{ __('app.common.do') }} {{ $actualRank->finish_date->format('Y-m-d') }}</h4>
+        </div>
     @else
-        <div class="row"><h4>{{ \App\Models\Rank::WITHOUT_RANK }}</h4></div>
+        <div class="row"><h4>{{ Rank::WITHOUT_RANK }}</h4></div>
     @endif
     <div class="row mb-3">
         <div class="col-12">
@@ -45,27 +48,27 @@
                data-pagination-pre-text="{{ __('app.pagination.previous') }}"
         >
             <thead class="table-dark">
-                <tr>
-                    <th>{{ __('app.common.rank') }}</th>
-                    <th data-sortable="true">{{ __('app.rank.completed_date') }}</th>
-                    <th data-sortable="true">{{ __('app.rank.finished_date') }}</th>
-                    <th data-sortable="true">{{ __('app.event.title') }}</th>
-                </tr>
+            <tr>
+                <th>{{ __('app.common.rank') }}</th>
+                <th data-sortable="true">{{ __('app.rank.completed_date') }}</th>
+                <th data-sortable="true">{{ __('app.rank.finished_date') }}</th>
+                <th data-sortable="true">{{ __('app.event.title') }}</th>
+            </tr>
             </thead>
             <tbody>
-                @foreach ($ranks as $rank)
-                    <tr>
-                        <td>{{ $rank->rank }}</td>
-                        <td>{{ $rank->event ? $rank->event->date->format('Y-m-d') : $rank->start_date->format('Y-m-d') }}</td>
-                        <td>{{ $rank->finish_date->format('Y-m-d') }}</td>
-                        <td>
-                            @if ($rank->event_id !== null)
-                                <a href="{{ action(\App\Http\Controllers\Event\ShowEventAction::class, [$rank->event->id, $rank->event->distances->first()]) }}#{{ $protocolLinesIds[$rank->id] }}"
-                                >{{ $rank->event->competition->name }} ({{ $rank->event->name }})</a>
-                            @endif
-                        </td>
-                    </tr>
-                @endforeach
+            @foreach ($ranks as $rank)
+                <tr>
+                    <td>{{ $rank->rank }}</td>
+                    <td>{{ $rank->event ? $rank->event->date->format('Y-m-d') : $rank->start_date->format('Y-m-d') }}</td>
+                    <td>{{ $rank->finish_date->format('Y-m-d') }}</td>
+                    <td>
+                        @if ($rank->event_id !== null)
+                            <a href="{{ action(ShowEventAction::class, [$rank->event->id, $rank->event->distances->first()]) }}#{{ $protocolLinesIds[$rank->id] }}"
+                            >{{ $rank->event->competition->name }} ({{ $rank->event->name }})</a>
+                        @endif
+                    </td>
+                </tr>
+            @endforeach
             </tbody>
         </table>
     </div>

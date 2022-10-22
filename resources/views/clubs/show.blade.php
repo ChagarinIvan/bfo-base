@@ -1,9 +1,10 @@
 @php
+    use App\Http\Controllers\Person\ShowPersonAction;
     use App\Models\Person;
     use App\Models\Club;
     /**
      * @var Club $club;
-     * @var Person[] $persons;
+//     * @var Person[] $persons;
      */
 @endphp
 
@@ -36,23 +37,23 @@
                data-pagination-pre-text="{{ __('app.pagination.previous') }}"
         >
             <thead class="table-dark">
-                <tr>
-                    <th data-sortable="true">{{ __('app.common.lastname') }}</th>
-                    <th data-sortable="true">{{ __('app.common.name') }}</th>
-                    <th data-sortable="true">{{ __('app.common.birthday') }}</th>
-                </tr>
+            <tr>
+                <th data-sortable="true">{{ __('app.common.lastname') }}</th>
+                <th data-sortable="true">{{ __('app.common.name') }}</th>
+                <th data-sortable="true">{{ __('app.common.birthday') }}</th>
+            </tr>
             </thead>
             <tbody>
-                @foreach ($persons as $person)
-                    @php
-                        $link = action(\App\Http\Controllers\Person\ShowPersonAction::class, [$person]);
-                    @endphp
-                    <tr>
-                        <td><a href="{{ $link }}">{{ $person->lastname }}</a></td>
-                        <td><a href="{{ $link }}">{{ $person->firstname }}</a></td>
-                        <td>{{ $person->birthday ? $person->birthday->format('Y') : '' }}</td>
-                    </tr>
-                @endforeach
+{{--            @foreach ($persons as $person)--}}
+{{--                @php--}}
+{{--                    $link = action(ShowPersonAction::class, [$person]);--}}
+{{--                @endphp--}}
+{{--                <tr>--}}
+{{--                    <td><a href="{{ $link }}">{{ $person->lastname }}</a></td>--}}
+{{--                    <td><a href="{{ $link }}">{{ $person->firstname }}</a></td>--}}
+{{--                    <td>{{ $person->birthday ? $person->birthday->format('Y') : '' }}</td>--}}
+{{--                </tr>--}}
+{{--            @endforeach--}}
             </tbody>
         </table>
     </div>

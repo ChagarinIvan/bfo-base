@@ -1,5 +1,6 @@
 @php
     use App\Models\Club;
+    use App\Http\Controllers\Registration\SendRegistrationDataAction;
     /**
      * @var string $search
      * @var Club[] $clubs;
@@ -177,7 +178,7 @@
     <div class="wrapper fadeInDown">
         <div id="formContent">
             <div>{{ __('app.common.registration') }}</div>
-            <form method="POST" action="{{ action(\App\Http\Controllers\Registration\SendRegistrationDataAction::class) }}">
+            <form method="POST" action="{{ action(SendRegistrationDataAction::class) }}">
                 @csrf
                 <input type="email" id="email" class="fadeIn second" name="email" placeholder="email@email.com">
                 <input type="submit" class="fadeIn fourth" value="{{ __('app.common.login') }}">

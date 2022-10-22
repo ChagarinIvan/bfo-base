@@ -1,5 +1,7 @@
 @php
+    use App\Http\Controllers\Cups\UpdateCupAction;
     use App\Models\Cup;
+    use App\Models\Cups\CupType;
     use Carbon\Carbon;
     /**
      * @var Cup $cup;
@@ -14,7 +16,7 @@
 @section('content')
     <div class="row">
         <form method="POST"
-              action="{{ action(\App\Http\Controllers\Cups\UpdateCupAction::class, [$cup]) }}"
+              action="{{ action(UpdateCupAction::class, [$cup]) }}"
         >
             @csrf
             <div class="form-floating mb-3">
@@ -23,7 +25,7 @@
             </div>
             <div class="form-floating mb-3">
                 <select class="form-select" id="type" name="type">
-                    @foreach(\App\Models\Cups\CupType::getCupTypes() as $cupType)
+                    @foreach(CupType::getCupTypes() as $cupType)
                         <option value="{{ $cupType->getId() }}" {{ $cup->type === $cupType->getId() ? 'selected' : '' }}>{{ __($cupType->getNameKey()) }}</option>
                     @endforeach
                 </select>

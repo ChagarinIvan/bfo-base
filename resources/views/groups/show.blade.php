@@ -1,4 +1,7 @@
 @php
+    use App\Http\Controllers\Competition\ShowCompetitionAction;
+    use App\Http\Controllers\Event\ShowEventAction;
+    use App\Http\Controllers\Groups\ShowUnitGroupsAction;
     use App\Models\Group;
     /**
      * @var Group $group
@@ -12,7 +15,7 @@
 @section('content')
     <div class="row">
         <div class="col-12">
-            <x-button url="{{ action(\App\Http\Controllers\Groups\ShowUnitGroupsAction::class, [$group->id]) }}"
+            <x-button url="{{ action(ShowUnitGroupsAction::class, [$group->id]) }}"
                       text="app.common.sum"
                       color="info"
                       icon="bi-stickies"
@@ -40,28 +43,29 @@
                data-pagination-pre-text="{{ __('app.pagination.previous') }}"
         >
             <thead class="table-dark">
-                <tr>
-                    <th data-sortable="true">{{ __('app.competition.title') }}</th>
-                    <th data-sortable="true">{{ __('app.event.title') }}</th>
-                    <th data-sortable="true">{{ __('app.common.competitors') }}</th>
-                </tr>
+            <tr>
+                <th data-sortable="true">{{ __('app.competition.title') }}</th>
+                <th data-sortable="true">{{ __('app.event.title') }}</th>
+                <th data-sortable="true">{{ __('app.common.competitors') }}</th>
+            </tr>
             </thead>
             <tbody>
-                @foreach ($group->distances as $distance)
-                    <tr>
-                        <td>
-                            <a href="{{ action(\App\Http\Controllers\Competition\ShowCompetitionAction::class, [$distance->event->competition_id]) }}">
-                                {{ $distance->event->competition->name }} ({{ $distance->event->competition->from->format('Y') }})
-                            </a>
-                        </td>
-                        <td>
-                            <a href="{{ action(\App\Http\Controllers\Event\ShowEventAction::class, [$distance->event_id, $distance]) }}#{{ $group->id }}">
-                                {{ $distance->event->name }}
-                            </a>
-                        </td>
-                        <td>{{ $distance->event->protocolLines->count() }}</td>
-                    </tr>
-                @endforeach
+            @foreach ($group->distances as $distance)
+                <tr>
+                    <td>
+                        <a href="{{ action(ShowCompetitionAction::class, [$distance->event->competition_id]) }}">
+                            {{ $distance->event->competition->name }}
+                            ({{ $distance->event->competition->from->format('Y') }})
+                        </a>
+                    </td>
+                    <td>
+                        <a href="{{ action(ShowEventAction::class, [$distance->event_id, $distance]) }}#{{ $group->id }}">
+                            {{ $distance->event->name }}
+                        </a>
+                    </td>
+                    <td>{{ $distance->event->protocolLines->count() }}</td>
+                </tr>
+            @endforeach
             </tbody>
         </table>
     </div>

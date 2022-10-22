@@ -65,6 +65,6 @@ enum GroupAge: int
 
     public function toString(): string
     {
-        return (string)($this->age->value ?? '');
+        return (string)($this->value ?? '');
     }
 }

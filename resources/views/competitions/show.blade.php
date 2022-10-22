@@ -1,7 +1,15 @@
 @php
+    use App\Http\Controllers\Cups\ShowCupAction;
+    use App\Http\Controllers\Event\DeleteEventAction;
+    use App\Http\Controllers\Event\ShowAddFlagToEventFormAction;
+    use App\Http\Controllers\Event\ShowCreateEventFormAction;
+    use App\Http\Controllers\Event\ShowEditEventFormAction;
+    use App\Http\Controllers\Event\ShowEventAction;
+    use App\Http\Controllers\Event\ShowUnitEventsFormAction;
+    use App\Http\Controllers\Flags\ShowFlagEventsAction;
     use App\Models\Competition;
     use App\Models\Event;
-    use Illuminate\Support\Collection;
+    use Illuminate\Support\Collection;use Illuminate\Support\Str;
     /**
      * @var Competition $competition;
      * @var Event[]|Collection $events;
@@ -19,12 +27,12 @@
                 <x-button text="app.competition.add_event"
                           color="success"
                           icon="bi-file-earmark-plus-fill"
-                          url="{{ action(\App\Http\Controllers\Event\ShowCreateEventFormAction::class, [$competition->id]) }}"
+                          url="{{ action(ShowCreateEventFormAction::class, [$competition->id]) }}"
                 />
                 <x-button text="app.competition.sum"
                           color="info"
                           icon="bi-stickies"
-                          url="{{ action(\App\Http\Controllers\Event\ShowUnitEventsFormAction::class, [$competition->id]) }}"
+                          url="{{ action(ShowUnitEventsFormAction::class, [$competition->id]) }}"
                 />
             @endauth
             <x-back-button/>
@@ -46,35 +54,37 @@
                    data-pagination-pre-text="{{ __('app.pagination.previous') }}"
             >
                 <thead class="table-dark">
-                    <tr>
-                        <th data-sortable="true">{{ __('app.common.title') }}</th>
-                        <th>{{ __('app.event.flags') }}</th>
-                        <th data-sortable="true">{{ __('app.competition.description') }}</th>
-                        <th data-sortable="true">{{ __('app.common.date') }}</th>
-                        <th data-sortable="true">{{ __('app.common.competitors') }}</th>
-                        @auth<th></th>@endauth
-                    </tr>
+                <tr>
+                    <th data-sortable="true">{{ __('app.common.title') }}</th>
+                    <th>{{ __('app.event.flags') }}</th>
+                    <th data-sortable="true">{{ __('app.competition.description') }}</th>
+                    <th data-sortable="true">{{ __('app.common.date') }}</th>
+                    <th data-sortable="true">{{ __('app.common.competitors') }}</th>
+                    @auth
+                        <th></th>
+                    @endauth
+                </tr>
                 </thead>
                 <tbody>
                 @foreach ($events as $event)
                     <tr>
                         <td>
-                            <a href="{{ action(\App\Http\Controllers\Event\ShowEventAction::class, [$event->id, $event->distances->first()]) }}">{{ $event->name }}</a>
+                            <a href="{{ action(ShowEventAction::class, [$event->id, $event->distances->first()]) }}">{{ $event->name }}</a>
                         </td>
                         <td>
                             @foreach($event->cups as $cupEvent)
                                 <x-badge name="{{ $cupEvent->cup->name }} {{ $cupEvent->cup->year }}"
-                                         url="{{ action(\App\Http\Controllers\Cups\ShowCupAction::class, [$cupEvent->cup]) }}"
+                                         url="{{ action(ShowCupAction::class, [$cupEvent->cup]) }}"
                                 />
                             @endforeach
                             @foreach($event->flags as $flag)
                                 <x-badge color="{{ $flag->color }}"
                                          name="{{ $flag->name }}"
-                                         url="{{ action(\App\Http\Controllers\Flags\ShowFlagEventsAction::class, [$flag]) }}"
+                                         url="{{ action(ShowFlagEventsAction::class, [$flag]) }}"
                                 />
                             @endforeach
                         </td>
-                        <td><small>{{ \Illuminate\Support\Str::limit($event->description) }}</small></td>
+                        <td><small>{{ Str::limit($event->description) }}</small></td>
                         <td>{{ $event->date->format('Y-m-d') }}</td>
                         <td>{{ count($event->protocolLines) }}</td>
                         @auth
@@ -82,9 +92,9 @@
                                 <x-button text="app.common.add_flags"
                                           color="info"
                                           icon="bi-flag-fill"
-                                          url="{{ action(\App\Http\Controllers\Event\ShowAddFlagToEventFormAction::class, [$event]) }}"
+                                          url="{{ action(ShowAddFlagToEventFormAction::class, [$event]) }}"
                                 />
-                                <x-edit-button url="{{ action(\App\Http\Controllers\Event\ShowEditEventFormAction::class, [$event]) }}"/>
+                                <x-edit-button url="{{ action(ShowEditEventFormAction::class, [$event]) }}"/>
                                 <x-delete-button modal-id="deleteModal{{ $event->id }}"/>
                             </td>
                         @endauth
@@ -95,7 +105,7 @@
         </div>
         @foreach ($events as $event)
             <x-modal modal-id="deleteModal{{ $event->id }}"
-                     url="{{ action(\App\Http\Controllers\Event\DeleteEventAction::class, [$event->id]) }}"
+                     url="{{ action(DeleteEventAction::class, [$event->id]) }}"
             />
         @endforeach
     @endif

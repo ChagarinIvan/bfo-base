@@ -1,3 +1,6 @@
+@php
+    use App\Http\Controllers\Rank\CheckPersonsRanksAction;
+@endphp
 @extends('layouts.app')
 
 @section('title', __('app.rank.check'))
@@ -5,7 +8,7 @@
 @section('content')
     <div class="row">
         <form method="POST"
-              action="{{ action(\App\Http\Controllers\Rank\CheckPersonsRanksAction::class) }}"
+              action="{{ action(CheckPersonsRanksAction::class) }}"
               enctype="multipart/form-data"
         >
             @csrf

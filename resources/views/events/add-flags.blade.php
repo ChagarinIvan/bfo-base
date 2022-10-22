@@ -1,4 +1,7 @@
 @php
+    use App\Http\Controllers\Event\AddFlagToEventAction;
+    use App\Http\Controllers\Event\DeleteEventFlagAction;
+    use App\Http\Controllers\Flags\ShowFlagEventsAction;
     use App\Models\Flag;
     use App\Models\Event;
     use Illuminate\Support\Collection;
@@ -25,7 +28,7 @@
             @foreach($eventFlags as $flag)
                 <x-badge color="{{ $flag->color }}"
                          name="{{ $flag->name }}"
-                         url="{{ action(\App\Http\Controllers\Flags\ShowFlagEventsAction::class, [$flag]) }}"
+                         url="{{ action(ShowFlagEventsAction::class, [$flag]) }}"
                 />
             @endforeach
         </div>
@@ -49,36 +52,36 @@
                data-pagination-pre-text="{{ __('app.pagination.previous') }}"
         >
             <thead class="table-dark">
-                <tr>
-                    <th data-sortable="true">{{ __('app.common.title') }}</th>
-                    <th></th>
-                </tr>
+            <tr>
+                <th data-sortable="true">{{ __('app.common.title') }}</th>
+                <th></th>
+            </tr>
             </thead>
             <tbody>
-                @foreach ($flags as $flag)
-                    <tr>
-                        <td>
-                            <x-badge color="{{ $flag->color }}"
-                                     name="{{ $flag->name }}"
+            @foreach ($flags as $flag)
+                <tr>
+                    <td>
+                        <x-badge color="{{ $flag->color }}"
+                                 name="{{ $flag->name }}"
+                        />
+                    </td>
+                    <td>
+                        @if(!$eventFlags->has($flag->id))
+                            <x-button text="app.common.new"
+                                      color="info"
+                                      icon="bi-file-earmark-plus-fill"
+                                      url="{{ action(AddFlagToEventAction::class, [$event, $flag->id]) }}"
                             />
-                        </td>
-                        <td>
-                            @if(!$eventFlags->has($flag->id))
-                                <x-button text="app.common.new"
-                                          color="info"
-                                          icon="bi-file-earmark-plus-fill"
-                                          url="{{ action(\App\Http\Controllers\Event\AddFlagToEventAction::class, [$event, $flag->id]) }}"
-                                />
-                            @else
-                                <x-button text="app.common.delete"
-                                          color="danger"
-                                          icon="bi-trash-fill"
-                                          url="{{ action(\App\Http\Controllers\Event\DeleteEventFlagAction::class, [$event, $flag->id]) }}"
-                                />
-                            @endif
-                        </td>
-                    </tr>
-                @endforeach
+                        @else
+                            <x-button text="app.common.delete"
+                                      color="danger"
+                                      icon="bi-trash-fill"
+                                      url="{{ action(DeleteEventFlagAction::class, [$event, $flag->id]) }}"
+                            />
+                        @endif
+                    </td>
+                </tr>
+            @endforeach
             </tbody>
         </table>
     </div>

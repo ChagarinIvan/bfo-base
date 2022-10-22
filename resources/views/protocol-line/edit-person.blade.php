@@ -1,4 +1,5 @@
 @php
+    use App\Http\Controllers\Person\SetProtocolLinePersonAction;
     use App\Models\ProtocolLine;
     use App\Models\Person;
     /**
@@ -43,25 +44,25 @@
                data-pagination-pre-text="{{ __('app.pagination.previous') }}"
         >
             <thead class="table-dark">
-                <tr>
-                    <th data-sortable="true">{{ __('app.common.lastname') }}</th>
-                    <th data-sortable="true">{{ __('app.common.name') }}</th>
-                    <th data-sortable="true">{{ __('app.club.name') }}</th>
-                    <th data-sortable="true">{{ __('app.common.birthday') }}</th>
-                </tr>
+            <tr>
+                <th data-sortable="true">{{ __('app.common.lastname') }}</th>
+                <th data-sortable="true">{{ __('app.common.name') }}</th>
+                <th data-sortable="true">{{ __('app.club.name') }}</th>
+                <th data-sortable="true">{{ __('app.common.birthday') }}</th>
+            </tr>
             </thead>
             <tbody>
-                @foreach ($persons as $person)
-                    @php
-                        $link = action(\App\Http\Controllers\Person\SetProtocolLinePersonAction::class, [$person, $protocolLine->id]);
-                    @endphp
-                    <tr>
-                        <td><a href="{{ $link }}">{{ $person->lastname }}</a></td>
-                        <td><a href="{{ $link }}">{{ $person->firstname }}</a></td>
-                        <td><a href="{{ $link }}">{{ $person->club->name ?? ''}}</a></td>
-                        <td><a href="{{ $link }}">{{ $person->birthday ? $person->birthday->format('Y') : '' }}</a></td>
-                    </tr>
-                @endforeach
+            @foreach ($persons as $person)
+                @php
+                    $link = action(SetProtocolLinePersonAction::class, [$person, $protocolLine->id]);
+                @endphp
+                <tr>
+                    <td><a href="{{ $link }}">{{ $person->lastname }}</a></td>
+                    <td><a href="{{ $link }}">{{ $person->firstname }}</a></td>
+                    <td><a href="{{ $link }}">{{ $person->club->name ?? ''}}</a></td>
+                    <td><a href="{{ $link }}">{{ $person->birthday ? $person->birthday->format('Y') : '' }}</a></td>
+                </tr>
+            @endforeach
             </tbody>
         </table>
     </div>
