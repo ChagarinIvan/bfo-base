@@ -114,7 +114,7 @@ class MasterCupType extends AbstractCupType
     protected function getEventGroups(GroupMale $male): Collection
     {
         $groups = Collection::make();
-        foreach ($this->getGroups() as $cupGroup) {
+        foreach ($this->getCalculatedGroups() as $cupGroup) {
             if ($cupGroup->male() === $male) {
                 $groups = $groups->merge($this->groupsService->getGroups(static::GROUPS_MAP[$cupGroup->id()]));
             }
@@ -139,5 +139,10 @@ class MasterCupType extends AbstractCupType
             GroupAge::a75,
             GroupAge::a80,
         ]);
+    }
+
+    public function getCalculatedGroups(): Collection
+    {
+        return $this->getGroups();
     }
 }
