@@ -8,6 +8,9 @@ if (! function_exists('t')) {
      */
     function t(string $value)
     {
-        return app(TranslateService::class)->translate($value);
+        /** @var TranslateService $service */
+        $service = app(TranslateService::class);
+
+        return $service->translate($value);
     }
 }
