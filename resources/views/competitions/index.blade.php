@@ -31,7 +31,7 @@
     @endauth
     <div class="row">
         <ul class="nav nav-tabs">
-            @foreach(\App\Models\Year::cases() as $year)
+            @foreach(Year::cases() as $year)
                 <li class="nav-item">
                     <a href="{{ action(ShowCompetitionsListAction::class, [$year->value]) }}"
                        class="text-decoration-none nav-link {{ $year === $selectedYear ? 'active' : '' }}"
@@ -74,8 +74,9 @@
                     @foreach ($competitions as $competition)
                         <tr>
                             <td>
-                                <a href="{{ action(ShowCompetitionAction::class, [$competition->id]) }}"
-                                >{{ Str::limit($competition->name, 50) }}</a>
+                                <a
+                                   href="{{ action(ShowCompetitionAction::class, [$competition->id]) }}"
+                                >{{ t(Str::limit($competition->name, 50)) }}</a>
                             </td>
                             <td>{{ $competition->from->format('Y-m-d') }} / {{ $competition->to->format('Y-m-d') }}</td>
                             <td><small>{{ Str::limit($competition->description) }}</small></td>
