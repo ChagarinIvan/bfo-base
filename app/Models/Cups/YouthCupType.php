@@ -7,6 +7,7 @@ use App\Models\CupEventPoint;
 use App\Models\Group\CupGroup;
 use App\Models\Group\CupGroupFactory;
 use App\Models\Group\GroupAge;
+use App\Models\Group\GroupMale;
 use App\Models\ProtocolLine;
 use Illuminate\Support\Collection;
 
@@ -99,10 +100,14 @@ class YouthCupType extends MasterCupType
         'M_14' => ['M14', 'М14'],
         'M_16' => ['M16', 'М16'],
         'M_18' => ['M18', 'М18'],
+        'M_20' => ['M20', 'М20'],
+        'M_21' => ['M21', 'М21'],
         'W_12' => ['Ж12', 'W12'],
         'W_14' => ['Ж14', 'W14'],
         'W_16' => ['Ж16', 'W16'],
         'W_18' => ['Ж18', 'W18'],
+        'W_20' => ['Ж20', 'W20'],
+        'W_21' => ['Ж21', 'W21'],
     ];
 
     public function getId(): string
@@ -126,7 +131,7 @@ class YouthCupType extends MasterCupType
         $ageParticipants = $this->getGroupProtocolLines($cupEvent, $mainGroup);
         $ageParticipants = $ageParticipants->groupBy('distance_id');
 
-        $eventGroupsId = $this->getEventGroups($mainGroup->male)->pluck('id');
+        $eventGroupsId = $this->getEventGroups($mainGroup->male())->pluck('id');
         $eventDistances = $this->distanceService->getCupEventDistancesByGroups($cupEvent, $eventGroupsId)
             ->keyBy('id');
 
@@ -156,8 +161,10 @@ class YouthCupType extends MasterCupType
     protected function getGroupProtocolLines(CupEvent $cupEvent, CupGroup $group): Collection
     {
         $year = $cupEvent->cup->year;
-        $startYear = $year - $group->age ?->value ?? 0;
-        $finishYear = $startYear + 1;
+        $startYear = $year - $group->age() ?->value ?? 0;
+        $finishYear = $group->equal(CupGroup::create(GroupMale::Man, GroupAge::a12))
+            ? $year
+            : $startYear + 1;
 
         return $this->protocolLinesRepository->getCupEventProtocolLinesForPersonsCertainAge(
             $cupEvent,
@@ -222,6 +229,11 @@ class YouthCupType extends MasterCupType
     public function getGroups(): Collection
     {
         return CupGroupFactory::getAgeTypeGroups([GroupAge::a12, GroupAge::a14, GroupAge::a16, GroupAge::a18]);
+    }
+
+    public function getCalculatedGroups(): Collection
+    {
+        return CupGroupFactory::getAgeTypeGroups([GroupAge::a12, GroupAge::a14, GroupAge::a16, GroupAge::a18, GroupAge::a20, GroupAge::a21]);
     }
 
     public function getCupEventParticipatesCount(CupEvent $cupEvent): int

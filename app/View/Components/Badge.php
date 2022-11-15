@@ -2,6 +2,7 @@
 
 namespace App\View\Components;
 
+use App\Facades\Color;
 use Illuminate\View\Component;
 use Illuminate\View\View;
 
@@ -16,7 +17,7 @@ class Badge extends Component
         string $name = '',
         string $url = '',
     ) {
-        $this->color = $color;
+        $this->color = empty($color) ? Color::getColor($name) : $color;
         $this->name = $name;
         $this->url = $url;
     }

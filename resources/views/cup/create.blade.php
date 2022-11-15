@@ -1,4 +1,6 @@
 @php
+    use App\Http\Controllers\Cups\StoreCupAction;
+    use App\Models\Cups\CupType;
     /**
      * @var int $selectedYear;
      */
@@ -10,7 +12,7 @@
 
 @section('content')
     <div class="row">
-        <form method="POST" action="{{ action(\App\Http\Controllers\Cups\StoreCupAction::class) }}">
+        <form method="POST" action="{{ action(StoreCupAction::class) }}">
             @csrf
             <div class="form-floating mb-3">
                 <input class="form-control" id="name" name="name">
@@ -18,7 +20,7 @@
             </div>
             <div class="form-floating mb-3">
                 <select class="form-select" id="type" name="type">
-                    @foreach(\App\Models\Cups\CupType::getCupTypes() as $cupType)
+                    @foreach(CupType::getCupTypes() as $cupType)
                         <option value="{{ $cupType->getId() }}" {{ $loop->first ? 'selected' : '' }}>{{ __($cupType->getNameKey()) }}</option>
                     @endforeach
                 </select>
@@ -30,7 +32,7 @@
             </div>
             <div class="form-floating mb-3">
                 <select class="form-select" id="year" name="year">
-                        @foreach(App\Models\Year::cases() as $year)
+                    @foreach(App\Models\Year::cases() as $year)
                         <option value="{{ $year->value }}"
                                 {{ $year->value === $selectedYear ? 'selected' : '' }}
                         >{{ $year->value }}</option>

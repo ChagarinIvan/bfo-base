@@ -12,11 +12,11 @@ use Illuminate\Contracts\View\View;
 class ViewActionsService
 {
     public function __construct(
-        private ViewFactory $viewFactory,
-        private UserService $userService,
-        private BackUrlService $backUrlService,
-        private UrlGenerator $urlGenerator,
-        private Mailer $mailer,
+        readonly private ViewFactory $viewFactory,
+        readonly private UserService $userService,
+        readonly private BackUrlService $backUrlService,
+        readonly private UrlGenerator $urlGenerator,
+        readonly private Mailer $mailer,
     ) {}
 
     public function cleanBackUrls(): void
@@ -46,12 +46,14 @@ class ViewActionsService
 
     public function isByLocale(): bool
     {
-        return $this->userService->isByLocale();
+//        return $this->userService->isByLocale();
+        return true;
     }
 
     public function isRuLocale(): bool
     {
-        return $this->userService->isRuLocale();
+//        return $this->userService->isRuLocale();
+        return false;
     }
 
     public function isAuth(): bool

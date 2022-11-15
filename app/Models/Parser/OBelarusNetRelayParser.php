@@ -23,7 +23,7 @@ class OBelarusNetRelayParser extends AbstractParser
         $distancePoints = 0;
         $distanceLength = 0;
 
-        preg_match_all('#<h2>(.+?)<\/h2>.*?<pre>[^b]*(<b>.+?)<\/pre>#msi', $file, $nodesMatch);
+        preg_match_all('#<h2>(.+?)</h2>.*?<pre>[^b]*(<b>.+?)</pre>#msi', $file, $nodesMatch);
 
         foreach ($nodesMatch[2] as $nodeIndex => $node) {
             $this->commandCounter = 1;
@@ -34,6 +34,7 @@ class OBelarusNetRelayParser extends AbstractParser
             $text = trim($node, '-');
             $text = strip_tags($text);
             $text = trim($text);
+
             if (!str_contains($text, 'амилия')) {
                 continue;
             }
@@ -44,7 +45,7 @@ class OBelarusNetRelayParser extends AbstractParser
                 $distancePoints = (int)$match[1];
                 if (str_contains($match[3], ',') || str_contains($match[3], '.')) {
                     if (str_contains($match[3], ',')) {
-                        $distanceLength = floatval(str_replace(',', '.', $match[3])) * 1000;
+                        $distanceLength = ((float)str_replace(',', '.', $match[3])) * 1000;
                     } else {
                         $distanceLength = (float)$match[3] * 1000;
                     }
@@ -113,6 +114,7 @@ class OBelarusNetRelayParser extends AbstractParser
                     if ($columnName === 'runner_number') {
                         $number = true;
                     }
+
                     if ($columnName === '') {
                         break;
                     }
@@ -127,15 +129,18 @@ class OBelarusNetRelayParser extends AbstractParser
                 $protocolLine['place'] = $this->commandPlace;
                 $protocolLine['complete_rank'] = $this->commandRank;
 
-                $nameIndex = $isOpen ? 1 : 0;
+                for ($nameIndex = 0; $nameIndex <= $fieldsCount - $indent; $nameIndex++) {
+                    $value = $lineData[$nameIndex];
+                    if (!is_numeric($value)) {
+                        break;
+                    }
+                }
+
                 if (!$number) {
-                    $nameIndex++;
+                    $protocolLine['runner_number'] = $lineData[$nameIndex - 1];
                 }
                 $protocolLine['lastname'] = $lineData[$nameIndex++];
                 $protocolLine['firstname'] = $lineData[$nameIndex++];
-                if ($number === false) {
-                    $protocolLine['runner_number'] = $lineData[$isOpen ? 1 : 0];
-                }
 
                 $protocolLine['serial_number'] = $isOpen ? $lineData[0] : ($this->commandSerial ?? 0);
                 $protocolLine['club'] = implode(' ', array_slice($lineData, $nameIndex, $fieldsCount - $indent - $nameIndex + 1));
@@ -149,7 +154,7 @@ class OBelarusNetRelayParser extends AbstractParser
 
     public function check(string $file, string $extension): bool
     {
-        if ($extension === 'html') {
+        if (str_contains($extension, 'htm')) {
             return (bool)preg_match('#<b>\d[^<]*[^\d^\s]#', $file);
         }
 
@@ -215,6 +220,9 @@ class OBelarusNetRelayParser extends AbstractParser
             ) {
                 $indent++;
                 $this->commandPoints = (int)$column;
+            } elseif ($column === '-') {
+                $indent++;
+                $this->commandPoints = null;
             }
         } elseif ($column === 'runner_number') {
             $column = $lineData[$fieldsCount - $indent];

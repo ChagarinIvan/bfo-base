@@ -1,4 +1,5 @@
 @php
+    use App\Http\Controllers\Event\StoreEventAction;
     use App\Models\Flag;
     use Illuminate\Support\Collection;
     /**
@@ -13,7 +14,7 @@
 @section('content')
     <div class="row">
         <form method="POST"
-              action="{{ action(\App\Http\Controllers\Event\StoreEventAction::class, [$competitionId]) }}"
+              action="{{ action(StoreEventAction::class, [$competitionId]) }}"
               enctype="multipart/form-data"
         >
             @csrf

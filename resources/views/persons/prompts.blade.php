@@ -1,4 +1,7 @@
 @php
+    use App\Http\Controllers\PersonPrompt\DeletePromptAction;
+    use App\Http\Controllers\PersonPrompt\ShowCreatePromptAction;
+    use App\Http\Controllers\PersonPrompt\ShowEditPromptAction;
     use App\Models\Person;
     /**
      * @var Person $person
@@ -16,7 +19,7 @@
                 <x-button text="app.common.new"
                           color="success"
                           icon="bi-file-earmark-plus-fill"
-                          url="{{ action(\App\Http\Controllers\PersonPrompt\ShowCreatePromptAction::class, [$person->id]) }}"
+                          url="{{ action(ShowCreatePromptAction::class, [$person->id]) }}"
                 />
             @endauth
             <x-back-button/>
@@ -36,30 +39,32 @@
                data-resizable="true"
         >
             <thead class="table-dark">
-                <tr>
-                    <th data-sortable="true">{{ __('app.common.prompts') }}</th>
-                    <th data-sortable="true">{{ __('app.common.metaphone') }}</th>
-                    @auth<th></th>@endauth
-                </tr>
+            <tr>
+                <th data-sortable="true">{{ __('app.common.prompts') }}</th>
+                <th data-sortable="true">{{ __('app.common.metaphone') }}</th>
+                @auth
+                    <th></th>
+                @endauth
+            </tr>
             </thead>
             <tbody>
-                @foreach ($person->prompts as $prompt)
-                    <tr>
-                        <td>{{ $prompt->prompt }}</td>
-                        <td>{{ $prompt->metaphone }}</td>
-                        @auth
-                            <td>
-                                <x-edit-button url="{{ action(\App\Http\Controllers\PersonPrompt\ShowEditPromptAction::class, [$prompt->person_id, $prompt->id]) }}"/>
-                                <x-delete-button modal-id="deleteModal{{ $prompt->id }}"/>
-                            </td>
-                        @endauth
-                    </tr>
-                @endforeach
+            @foreach ($person->prompts as $prompt)
+                <tr>
+                    <td>{{ $prompt->prompt }}</td>
+                    <td>{{ $prompt->metaphone }}</td>
+                    @auth
+                        <td>
+                            <x-edit-button url="{{ action(ShowEditPromptAction::class, [$prompt->person_id, $prompt->id]) }}"/>
+                            <x-delete-button modal-id="deleteModal{{ $prompt->id }}"/>
+                        </td>
+                    @endauth
+                </tr>
+            @endforeach
             </tbody>
         </table>
         @foreach ($person->prompts as $prompt)
             <x-modal modal-id="deleteModal{{ $prompt->id }}"
-                     url="{{ action(\App\Http\Controllers\PersonPrompt\DeletePromptAction::class, [$prompt->person_id, $prompt->id]) }}"
+                     url="{{ action(DeletePromptAction::class, [$prompt->person_id, $prompt->id]) }}"
             />
         @endforeach
     @endif

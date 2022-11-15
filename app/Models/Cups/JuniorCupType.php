@@ -40,8 +40,8 @@ class JuniorCupType extends MasterCupType
     protected function getGroupProtocolLines(CupEvent $cupEvent, CupGroup $group): Collection
     {
         $year = $cupEvent->cup->year;
-        $startYear = $year - $group->age ?->value ?? 0;
-        $eliteGroups = $group->male === GroupMale::Man ? EliteCupType::MEN_GROUPS : EliteCupType::WOMEN_GROUPS;
+        $startYear = $year - $group->age() ?->value ?? 0;
+        $eliteGroups = $group->male() === GroupMale::Man ? EliteCupType::MEN_GROUPS : EliteCupType::WOMEN_GROUPS;
 
         $groups = $this->groupsService->getGroups($eliteGroups);
         $groups->push($group);

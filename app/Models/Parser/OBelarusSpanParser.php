@@ -161,20 +161,19 @@ class OBelarusSpanParser extends AbstractParser
                 $protocolLine['vk'] = true;
                 $protocolLine['place'] = null;
                 return $protocolLine;
-            }
-            if ($place === '-') {
+            } elseif ($place === '-') {
                 $indent++;
                 $protocolLine['place'] = null;
                 return $protocolLine;
-            }
-            if (str_contains($place, 'ДИСКВ') || $place === 'н.старт' || $place === 'снят' || $place === 'кв') {
+            } elseif (str_contains($place, 'ДИСКВ') || $place === 'н.старт' || $place === 'снят' || $place === 'кв') {
                 $protocolLine['place'] = null;
                 return $protocolLine;
-            }
-            if (preg_match('#^\d+$#', $place) && preg_match('#\d\d:\d\d:\d\d#', implode('', $lineData))) {
+            } elseif (preg_match('#^\d+$#', $place) && preg_match('#\d\d:\d\d:\d\d#', implode('', $lineData))) {
                 $indent++;
                 $protocolLine['place'] = $place;
                 return $protocolLine;
+            } else {
+                $protocolLine['place'] = null;
             }
         } elseif ($column === 'complete_rank') {
             $rank = $lineData[$fieldsCount - $indent];
@@ -212,9 +211,17 @@ class OBelarusSpanParser extends AbstractParser
                 $timeColumn = $column1;
             } else {
                 $protocolLine['time'] = null;
-                if (str_contains($column1, 'ДИСКВ') || $column1 === 'н.старт' || $column1 === 'снят') {
+                if (
+                    str_contains($column1, 'ДИСКВ')
+                    || $column1 === 'н.старт'
+                    || $column1 === 'снят'
+                    || $column1 === 'Сошел'
+                ) {
                     $indent++;
-                } elseif ($column1 === 'кв' && $column2 === 'снят') {
+                } elseif (
+                    ($column1 === 'кв' && $column2 === 'снят')
+                    || ($column1 === '20.10' && $column2 === 'пп')
+                ) {
                     $indent += 2;
                 }
                 return $protocolLine;
@@ -228,9 +235,11 @@ class OBelarusSpanParser extends AbstractParser
             }
         } elseif ($column === 'year') {
             $year = $lineData[$fieldsCount - $indent];
-            if (is_numeric($year)) {
+            if (is_numeric($year) && preg_match('#\d{4}#', $year)) {
                 $indent++;
                 $protocolLine['year'] = $year;
+            } else {
+                $protocolLine['year'] = null;
             }
         }
         return $protocolLine;

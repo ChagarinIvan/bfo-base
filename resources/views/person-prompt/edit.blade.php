@@ -1,4 +1,5 @@
 @php
+    use App\Http\Controllers\PersonPrompt\UpdatePromptAction;
     use \App\Models\PersonPrompt;
     /**
      * @var int $personId
@@ -13,7 +14,7 @@
 @section('content')
     <div class="row">
         <form method="POST"
-              action="{{ action(\App\Http\Controllers\PersonPrompt\UpdatePromptAction::class, [$personId, $prompt->id]) }}"
+              action="{{ action(UpdatePromptAction::class, [$personId, $prompt->id]) }}"
         >
             @csrf
             <div class="form-floating mb-3">

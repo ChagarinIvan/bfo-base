@@ -1,4 +1,6 @@
 @php
+    use App\Http\Controllers\Person\ShowPersonAction;
+    use App\Http\Controllers\Rank\ShowPersonRanksAction;
     use App\Models\Person;
     use App\Models\Rank;
     use Illuminate\Support\Collection;
@@ -50,97 +52,113 @@
             </tr>
             </thead>
             <tbody>
-                @foreach($list as $preparedLine => $lineData)
-                    @php
-                        $equalYear = false;
-                        $equalClub = false;
-                        $equalRank = false;
-                        $equalName = false;
-                        $hasPerson = false;
+            @foreach($list as $preparedLine => $lineData)
+                @php
+                    $equalYear = false;
+                    $equalClub = false;
+                    $equalRank = false;
+                    $equalName = false;
+                    $hasPerson = false;
 
-                        if ($personsList->has($preparedLine)) {
-                            /** @var App\Models\Person $person */
-                            $personId = $personsList->get($preparedLine);
-                            if ($persons->has($personId)) {
-                                $hasPerson = true;
-                                $person = $persons->get($personId);
-                                $equalClub = (($person->club === null) ? '' : $person->club->name) === $lineData['club'];
-                                $equalYear = (($person->birthday === null) ? '' : $person->birthday->format('Y')) === (string)$lineData['year'];
-                                $equalName = "{$person->lastname} {$person->firstname}" === trim($lineData['name']);
-                                $equalRank = ($ranks->has($personId) && $ranks->get($personId)->rank === \App\Models\Rank::getRank($lineData['rank'])) ||
-                                    (!$ranks->has($personId) && \App\Models\Rank::getRank($lineData['rank']) === \App\Models\Rank::WITHOUT_RANK);
-                            }
+                    if ($personsList->has($preparedLine)) {
+                        /** @var App\Models\Person $person */
+                        $personId = $personsList->get($preparedLine);
+                        if ($persons->has($personId)) {
+                            $hasPerson = true;
+                            $person = $persons->get($personId);
+                            $equalClub = (($person->club === null) ? '' : $person->club->name) === $lineData['club'];
+                            $equalYear = (($person->birthday === null) ? '' : $person->birthday->format('Y')) === (string)$lineData['year'];
+                            $equalName = "{$person->lastname} {$person->firstname}" === trim($lineData['name']);
+                            $equalRank = ($ranks->has($personId) && $ranks->get($personId)->rank === Rank::getRank($lineData['rank'])) ||
+                                (!$ranks->has($personId) && Rank::getRank($lineData['rank']) === Rank::WITHOUT_RANK);
                         }
-                    @endphp
-                    <tr>
+                    }
+                @endphp
+                <tr>
                     {{-- group --}}
-                        <td>{{ $lineData['group'] }}</td>
+                    <td>{{ $lineData['group'] }}</td>
                     {{-- name --}}
-                        @if ($hasPerson && $equalName)
-                            <td><b><a class="text-success" href="{{ action(\App\Http\Controllers\Person\ShowPersonAction::class, $person) }}">{{ $lineData['name'] }}</a></b></td>
-                        @elseif ($hasPerson)
-                            <td><del>{{ $lineData['name'] }}</del>(<b class="text-success">
-                                    <a  class="text-success" href="{{ action(\App\Http\Controllers\Person\ShowPersonAction::class, $person) }}">{{ "{$person->lastname} {$person->firstname}" }}</a>
-                                </b>)</td>
-                        @else
-                            <td>{{ $lineData['name'] }}</td>
-                        @endif
+                    @if ($hasPerson && $equalName)
+                        <td><b><a class="text-success"
+                                  href="{{ action(ShowPersonAction::class, $person) }}">{{ $lineData['name'] }}</a></b>
+                        </td>
+                    @elseif ($hasPerson)
+                        <td>
+                            <del>{{ $lineData['name'] }}</del>
+                            (<b class="text-success">
+                                <a class="text-success"
+                                   href="{{ action(ShowPersonAction::class, $person) }}">{{ "{$person->lastname} {$person->firstname}" }}</a>
+                            </b>)
+                        </td>
+                    @else
+                        <td>{{ $lineData['name'] }}</td>
+                    @endif
                     {{-- club --}}
-                        @if ($hasPerson && $equalClub)
-                            <td><b>{{ $lineData['club'] }}</b></td>
-                        @elseif ($hasPerson)
-                            <td><del>{{ $lineData['club'] }}</del>(<b class="text-success">{{ $person->club ? $person->club->name : '-' }}</b>)</td>
-                        @else
-                            <td>{{ $lineData['club'] }}</td>
-                        @endif
+                    @if ($hasPerson && $equalClub)
+                        <td><b>{{ $lineData['club'] }}</b></td>
+                    @elseif ($hasPerson)
+                        <td>
+                            <del>{{ $lineData['club'] }}</del>
+                            (<b class="text-success">{{ $person->club->name ?? '-' }}</b>)
+                        </td>
+                    @else
+                        <td>{{ $lineData['club'] }}</td>
+                    @endif
                     {{-- rank --}}
-                        @if ($hasPerson && $equalRank)
-                            <td>
-                                <b>
-                                    @if ($ranks->has($person->id))
-                                        <a class="text-success" href="{{ action(\App\Http\Controllers\Rank\ShowPersonRanksAction::class, $person) }}">{{ \App\Models\Rank::getRank($lineData['rank']) }}</a>
-                                    @else
-                                        {{ \App\Models\Rank::getRank($lineData['rank']) }}
-                                    @endif
-                                </b>
-                            </td>
-                        @elseif ($hasPerson)
-                            <td>
-                                <del>{{ \App\Models\Rank::getRank($lineData['rank']) }}</del>(<b class="text-success">
-                                    @if ($ranks->has($person->id))
-                                        <a class="text-success" href="{{ action(\App\Http\Controllers\Rank\ShowPersonRanksAction::class, $person) }}">{{ $ranks->get($person->id)->rank }}</a>
-                                    @else
-                                        {{ \App\Models\Rank::WITHOUT_RANK }}
-                                    @endif
-                                </b>)</td>
-                        @else
-                            <td>{{ $lineData['rank'] }}</td>
-                        @endif
+                    @if ($hasPerson && $equalRank)
+                        <td>
+                            <b>
+                                @if ($ranks->has($person->id))
+                                    <a class="text-success"
+                                       href="{{ action(ShowPersonRanksAction::class, $person) }}">{{ Rank::getRank($lineData['rank']) }}</a>
+                                @else
+                                    {{ Rank::getRank($lineData['rank']) }}
+                                @endif
+                            </b>
+                        </td>
+                    @elseif ($hasPerson)
+                        <td>
+                            <del>{{ Rank::getRank($lineData['rank']) }}</del>
+                            (<b class="text-success">
+                                @if ($ranks->has($person->id))
+                                    <a class="text-success"
+                                       href="{{ action(ShowPersonRanksAction::class, $person) }}">{{ $ranks->get($person->id)->rank }}</a>
+                                @else
+                                    {{ Rank::WITHOUT_RANK }}
+                                @endif
+                            </b>)
+                        </td>
+                    @else
+                        <td>{{ $lineData['rank'] }}</td>
+                    @endif
                     {{-- year --}}
-                        @if ($hasPerson && $equalYear)
-                            <td><b class="text-success">{{ $lineData['year'] }}</b></td>
-                        @elseif ($hasPerson)
-                            <td><del>{{ $lineData['year'] }}</del>(<b class="text-success">{{ $person->birthday?->format('Y') }}</b>)</td>
-                        @else
-                            <td>{{ $lineData['year'] }}</td>
-                        @endif
+                    @if ($hasPerson && $equalYear)
+                        <td><b class="text-success">{{ $lineData['year'] }}</b></td>
+                    @elseif ($hasPerson)
+                        <td>
+                            <del>{{ $lineData['year'] }}</del>
+                            (<b class="text-success">{{ $person->birthday?->format('Y') }}</b>)
+                        </td>
+                    @else
+                        <td>{{ $lineData['year'] }}</td>
+                    @endif
 
-                        <td>
-                            @if ($equalYear && $equalRank && $equalClub && $equalName)
-                                <i class="bi bi-plus-circle text-success"><span hidden>1</span></i>
-                            @else
-                                <i class="bi bi-dash-circle text-danger"><span hidden>0</span></i>
-                            @endif
-                        </td>
-                        <td>
-                            @if ($hasPerson)
-                                <i class="bi bi-plus-circle text-success"><span hidden>1</span></i>
-                            @else
-                                <i class="bi bi-dash-circle text-danger"><span hidden>0</span></i>
-                            @endif
-                        </td>
-                    </tr>
-                @endforeach
+                    <td>
+                        @if ($equalYear && $equalRank && $equalClub && $equalName)
+                            <i class="bi bi-plus-circle text-success"><span hidden>1</span></i>
+                        @else
+                            <i class="bi bi-dash-circle text-danger"><span hidden>0</span></i>
+                        @endif
+                    </td>
+                    <td>
+                        @if ($hasPerson)
+                            <i class="bi bi-plus-circle text-success"><span hidden>1</span></i>
+                        @else
+                            <i class="bi bi-dash-circle text-danger"><span hidden>0</span></i>
+                        @endif
+                    </td>
+                </tr>
+            @endforeach
             </tbody>
         </table>
     </div>

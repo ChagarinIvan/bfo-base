@@ -1,7 +1,9 @@
 @php
+    use App\Http\Controllers\CupEvents\ShowCupEventGroupAction;
+    use App\Http\Controllers\Person\ShowPersonAction;
     use App\Models\Cup;
     use App\Models\CupEvent;
-    use App\Models\CupEventPoint;
+    use App\Models\CupEventPoint;use App\Models\Group\CupGroup;
     /**
      * @var Cup $cup;
      * @var CupEvent $cupEvent;
@@ -31,13 +33,13 @@
         <ul class="nav nav-tabs">
             @foreach($cup->getCupType()->getGroups() as $group)
                 @php
-                    /** @var \App\Models\Group\CupGroup $group */
+                    /** @var CupGroup $group */
                 @endphp
                 <li class="nav-item">
-                    <a href="{{ action(\App\Http\Controllers\CupEvents\ShowCupEventGroupAction::class, [$cup, $cupEvent, $group->id]) }}"
-                       class="text-decoration-none nav-link {{ $groupId === $group->id ? 'active' : ''}}"
+                    <a href="{{ action(ShowCupEventGroupAction::class, [$cup, $cupEvent, $group->id()]) }}"
+                       class="text-decoration-none nav-link {{ $groupId === $group->id() ? 'active' : ''}}"
                     >
-                        <b>{{ $group->name }}</b>
+                        <b>{{ $group->name() }}</b>
                     </a>
                 </li>
             @endforeach
@@ -58,20 +60,20 @@
                        data-custom-sort="customSort"
                 >
                     <thead class="table-dark">
-                        <tr>
-                            <th data-sortable="true">№</th>
-                            <th data-sortable="true">{{ __('app.common.fio') }}</th>
-                            <th data-sortable="true">{{ __('app.common.birthday_year') }}</th>
-                            <th data-sortable="true">{{ __('app.common.time') }}</th>
-                            <th data-sortable="true">{{ __('app.common.points') }}</th>
-                        </tr>
+                    <tr>
+                        <th data-sortable="true">№</th>
+                        <th data-sortable="true">{{ __('app.common.fio') }}</th>
+                        <th data-sortable="true">{{ __('app.common.birthday_year') }}</th>
+                        <th data-sortable="true">{{ __('app.common.time') }}</th>
+                        <th data-sortable="true">{{ __('app.common.points') }}</th>
+                    </tr>
                     </thead>
                     <tbody>
                     @foreach($cupEventPoints as $cupEventPoint)
                         <tr>
                             <td>{{ ++$index }}</td>
                             <td>
-                                <a href="{{ action(\App\Http\Controllers\Person\ShowPersonAction::class, [$cupEventPoint->protocolLine->person_id]) }}">
+                                <a href="{{ action(ShowPersonAction::class, [$cupEventPoint->protocolLine->person_id]) }}">
                                     {{ $cupEventPoint->protocolLine->lastname }} {{ $cupEventPoint->protocolLine->firstname }}
                                 </a>
                             </td>

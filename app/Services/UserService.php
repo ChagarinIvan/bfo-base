@@ -13,21 +13,23 @@ class UserService
     public const RU_LOCALE = 'ru';
 
     public function __construct(
-        private Session $sessionManager,
-        private Application $application,
-        private AuthManager $authManager
+        readonly private Session $sessionManager,
+        readonly private Application $application,
+        readonly private AuthManager $authManager
     ) {}
 
     public function setLocale(string $locale): void
     {
-        if ($locale === self::BY_LOCALE || $locale === self::RU_LOCALE) {
-            $this->sessionManager->put(self::SESSION_LOCALE_PARAM_KEY, $locale);
-        }
+//        if ($locale === self::BY_LOCALE || $locale === self::RU_LOCALE) {
+//            $this->sessionManager->put(self::SESSION_LOCALE_PARAM_KEY, $locale);
+//        }
+        $this->sessionManager->put(self::SESSION_LOCALE_PARAM_KEY, self::BY_LOCALE);
     }
 
     public function getLocale(): string
     {
-        return $this->sessionManager->get(self::SESSION_LOCALE_PARAM_KEY, self::BY_LOCALE);
+//        return $this->sessionManager->get(self::SESSION_LOCALE_PARAM_KEY, self::BY_LOCALE);
+        return self::BY_LOCALE;
     }
 
     public function isByLocale(): bool

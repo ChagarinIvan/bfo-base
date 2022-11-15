@@ -1,3 +1,7 @@
+@php
+    use App\Http\Controllers\Flags\StoreFlagAction;
+@endphp
+
 @extends('layouts.app')
 
 @section('title', __('app.flags.create.title'))
@@ -5,7 +9,7 @@
 @section('content')
     <div class="row">
         <form method="POST"
-              action="{{ action(\App\Http\Controllers\Flags\StoreFlagAction::class) }}"
+              action="{{ action(StoreFlagAction::class) }}"
               enctype="multipart/form-data"
         >
             @csrf

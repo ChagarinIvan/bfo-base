@@ -26,7 +26,7 @@ class ShowCupEventGroupAction extends AbstractCupAction
             'cup' => $cup,
             'cupEvent' => $cupEvent,
             'cupEventPoints' => $cupEventPoints,
-            'groupId' => $group->id,
+            'groupId' => $group->id(),
         ]);
     }
 }

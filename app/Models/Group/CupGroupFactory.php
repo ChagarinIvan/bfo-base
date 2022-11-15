@@ -29,7 +29,7 @@ class CupGroupFactory
 
     public static function fromId(string $id): CupGroup
     {
-        if (preg_match('#([^\d])_(\d+)#', $id, $m)) {
+        if (preg_match('#(\D)_(\d+)#', $id, $m)) {
             return new CupGroup(GroupMale::from($m[1]), ((int)$m[2] > 0) ? GroupAge::from((int)$m[2]) : null);
         }
 

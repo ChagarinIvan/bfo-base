@@ -1,4 +1,8 @@
 @php
+    use App\Http\Controllers\Flags\DeleteFlagAction;
+    use App\Http\Controllers\Flags\ShowCreateFlagFormAction;
+    use App\Http\Controllers\Flags\ShowEditFlagFormAction;
+    use App\Http\Controllers\Flags\ShowFlagEventsAction;
     use App\Models\Flag;
     /**
      * @var Flag[] $flags;
@@ -16,7 +20,7 @@
                 <x-button text="app.common.new"
                           color="success"
                           icon="bi-file-earmark-plus-fill"
-                          url="{{ action(\App\Http\Controllers\Flags\ShowCreateFlagFormAction::class) }}"
+                          url="{{ action(ShowCreateFlagFormAction::class) }}"
                 />
             </div>
         </div>
@@ -40,35 +44,38 @@
                data-pagination-pre-text="{{ __('app.pagination.previous') }}"
         >
             <thead class="table-dark">
-                <tr>
-                    <th data-sortable="true">{{ __('app.flags.name') }}</th>
-                    <th>{{ __('app.flags.color') }}</th>
-                    @auth<th></th>@endauth
-                </tr>
+            <tr>
+                <th data-sortable="true">{{ __('app.flags.name') }}</th>
+                <th>{{ __('app.flags.color') }}</th>
+                @auth
+                    <th></th>
+                @endauth
+            </tr>
             </thead>
             <tbody>
-                @foreach ($flags as $flag)
-                    <tr>
+            @foreach ($flags as $flag)
+                <tr>
+                    <td>
+                        <a href="{{ action(ShowFlagEventsAction::class, [$flag]) }}">
+                            {{ $flag->name }}
+                        </a>
+                    </td>
+                    <td style="background: {{ $flag->color }}">{{ $flag->color }}</td>
+                    @auth
                         <td>
-                            <a href="{{ action(\App\Http\Controllers\Flags\ShowFlagEventsAction::class, [$flag]) }}">
-                                {{ $flag->name }}
-                            </a>
+                            <x-edit-button
+                                    url="{{ action(ShowEditFlagFormAction::class, [$flag]) }}"/>
+                            <x-delete-button modal-id="deleteModal{{ $flag->id }}"/>
                         </td>
-                        <td style="background: {{ $flag->color }}">{{ $flag->color }}</td>
-                        @auth
-                            <td>
-                                <x-edit-button url="{{ action(\App\Http\Controllers\Flags\ShowEditFlagFormAction::class, [$flag]) }}"/>
-                                <x-delete-button modal-id="deleteModal{{ $flag->id }}"/>
-                            </td>
-                        @endauth
-                    </tr>
-                @endforeach
+                    @endauth
+                </tr>
+            @endforeach
             </tbody>
         </table>
     </div>
     @foreach ($flags as $flag)
         <x-modal modal-id="deleteModal{{ $flag->id }}"
-                 url="{{ action(\App\Http\Controllers\Flags\DeleteFlagAction::class, [$flag]) }}"
+                 url="{{ action(DeleteFlagAction::class, [$flag]) }}"
         />
     @endforeach
 @endsection

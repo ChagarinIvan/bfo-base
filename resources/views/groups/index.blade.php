@@ -1,4 +1,7 @@
 @php
+    use App\Http\Controllers\Groups\DeleteGroupAction;
+    use App\Http\Controllers\Groups\ShowGroupAction;
+    use App\Http\Controllers\Groups\ShowUnitGroupsAction;
     use App\Models\Group;
     use Illuminate\Support\Collection;
     /**
@@ -30,39 +33,41 @@
                data-pagination-pre-text="{{ __('app.pagination.previous') }}"
         >
             <thead class="table-dark">
-                <tr>
-                    <th data-sortable="true">{{ __('app.common.title') }}</th>
-                    <th data-sortable="true">{{ __('app.groups.events_count') }}</th>
-                    @auth<th></th>@endauth
-                </tr>
+            <tr>
+                <th data-sortable="true">{{ __('app.common.title') }}</th>
+                <th data-sortable="true">{{ __('app.groups.events_count') }}</th>
+                @auth
+                    <th></th>
+                @endauth
+            </tr>
             </thead>
             <tbody>
-                @foreach ($groups as $group)
-                    <tr>
-                        <td>
-                            <x-badge color="{{ \App\Facades\Color::getColor($group->name) }}"
-                                     name="{{ $group->name }}"
-                                     url="{{ action(\App\Http\Controllers\Groups\ShowGroupAction::class, [$group->id]) }}"
-                            />
-                        </td>
-                        <td>{{ $group->distances->count() }}</td>
-                        <td>
-                            <x-button url="{{ action(\App\Http\Controllers\Groups\ShowUnitGroupsAction::class, [$group->id]) }}"
-                                      text="app.common.sum"
-                                      color="info"
-                                      icon="bi-stickies"
-                            />
-                            <x-edit-button/>
-                            <x-delete-button modal-id="deleteModal{{ $group->id }}"/>
-                        </td>
-                    </tr>
-                @endforeach
+            @foreach ($groups as $group)
+                <tr>
+                    <td>
+                        <x-badge name="{{ $group->name }}"
+                                 url="{{ action(ShowGroupAction::class, [$group->id]) }}"
+                        />
+                    </td>
+                    <td>{{ $group->distances->count() }}</td>
+                    <td>
+                        <x-button
+                                url="{{ action(ShowUnitGroupsAction::class, [$group->id]) }}"
+                                text="app.common.sum"
+                                color="info"
+                                icon="bi-stickies"
+                        />
+                        <x-edit-button/>
+                        <x-delete-button modal-id="deleteModal{{ $group->id }}"/>
+                    </td>
+                </tr>
+            @endforeach
             </tbody>
         </table>
     </div>
     @foreach ($groups as $group)
         <x-modal modal-id="deleteModal{{ $group->id }}"
-                 url="{{ action(\App\Http\Controllers\Groups\DeleteGroupAction::class, [$group->id]) }}"
+                 url="{{ action(DeleteGroupAction::class, [$group->id]) }}"
         />
     @endforeach
 @endsection

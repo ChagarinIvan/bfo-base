@@ -1,4 +1,8 @@
 @php
+    use App\Http\Controllers\Event\ShowEventAction;
+    use App\Http\Controllers\Rank\ShowCheckPersonsRanksFormAction;
+    use App\Http\Controllers\Rank\ShowPersonRanksAction;
+    use App\Http\Controllers\Rank\ShowRanksListAction;
     use App\Models\Rank;
     use Illuminate\Support\Collection;
     /**
@@ -17,16 +21,16 @@
             <x-button text="app.rank.check"
                       color="info"
                       icon="bi-patch-question-fill"
-                      url="{{ action(\App\Http\Controllers\Rank\ShowCheckPersonsRanksFormAction::class) }}"
+                      url="{{ action(ShowCheckPersonsRanksFormAction::class) }}"
             />
         </div>
     </div>
     <div class="row">
         <ul class="nav nav-tabs pt-2">
-            @foreach(\App\Models\Rank::RANKS as $rank)
-                @if($rank !== \App\Models\Rank::WITHOUT_RANK)
+            @foreach(Rank::RANKS as $rank)
+                @if($rank !== Rank::WITHOUT_RANK)
                     <li class="nav-item">
-                        <a href="{{ action(\App\Http\Controllers\Rank\ShowRanksListAction::class, [$rank]) }}"
+                        <a href="{{ action(ShowRanksListAction::class, [$rank]) }}"
                            class="nav-link {{ $rank === $selectedRank ? 'active' : '' }}"
                         >{{ $rank }}</a>
                     </li>
@@ -53,24 +57,24 @@
                        data-pagination-pre-text="{{ __('app.pagination.previous') }}"
                 >
                     <thead class="table-dark">
-                        <tr>
-                            <th data-sortable="true">{{ __('app.common.fio') }}</th>
-                            <th data-sortable="true">{{ __('app.rank.completed_date') }}</th>
-                            <th data-sortable="true">{{ __('app.rank.recompleted_date') }}</th>
-                            <th data-sortable="true">{{ __('app.rank.finished_date') }}</th>
-                        </tr>
+                    <tr>
+                        <th data-sortable="true">{{ __('app.common.fio') }}</th>
+                        <th data-sortable="true">{{ __('app.rank.completed_date') }}</th>
+                        <th data-sortable="true">{{ __('app.rank.recompleted_date') }}</th>
+                        <th data-sortable="true">{{ __('app.rank.finished_date') }}</th>
+                    </tr>
                     </thead>
                     <tbody>
                     @foreach ($ranks as $rank)
                         <tr>
                             <td>
-                                <a href="{{ action(\App\Http\Controllers\Rank\ShowPersonRanksAction::class, [$rank->person_id]) }}"
+                                <a href="{{ action(ShowPersonRanksAction::class, [$rank->person_id]) }}"
                                 >{{ $rank->person->lastname }} {{ $rank->person->firstname }}</a>
                             </td>
                             <td>{{ $rank->start_date->format('Y-m-d') }}</td>
                             <td>
                                 @if ($rank->event_id !== null)
-                                    <a href="{{ action(\App\Http\Controllers\Event\ShowEventAction::class, [$rank->event, $rank->event->distances->first()]) }}"
+                                    <a href="{{ action(ShowEventAction::class, [$rank->event, $rank->event->distances->first()]) }}"
                                     >{{ $rank->event->date->format('Y-m-d') }}</a>
                                 @endif
                             </td>

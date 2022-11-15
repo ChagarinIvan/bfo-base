@@ -1,4 +1,5 @@
 @php
+    use App\Http\Controllers\CupEvents\StoreCupEventAction;
     use App\Models\Cup;
     use App\Models\Event;
     use Illuminate\Support\Collection;
@@ -19,15 +20,13 @@
     <div class="row mb-3">
         <div class="col-12">
             @foreach($cup->getCupType()->getGroups() as $group)
-                <x-badge color="{{ \App\Facades\Color::getColor($group->name) }}"
-                         name="{{ $group->name }}"
-                />
+                <x-badge name="{{ $group->name() }}"/>
             @endforeach
         </div>
     </div>
     <div class="row">
         <form method="POST"
-              action="{{ action(\App\Http\Controllers\CupEvents\StoreCupEventAction::class, [$cup]) }}"
+              action="{{ action(StoreCupEventAction::class, [$cup]) }}"
         >
             @csrf
             <div class="form-floating mb-3">
@@ -39,7 +38,8 @@
                 <label for="event">{{ __('app.event.title') }}</label>
             </div>
             <div class="form-floating mb-3">
-                <input class="form-control @error('points') is-invalid @enderror" id="points" name="points" value="{{ 1000 }}">
+                <input class="form-control @error('points') is-invalid @enderror" id="points" name="points"
+                       value="{{ 1000 }}">
                 <label for="points">@error('points') {{ __($message) }} @else {{ __('app.common.points') }} @enderror</label>
             </div>
             <div class="col-12">

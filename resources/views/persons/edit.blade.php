@@ -1,4 +1,5 @@
 @php
+    use App\Http\Controllers\Person\UpdatePersonAction;
     use App\Models\Person;
     use App\Models\Club;
     use Illuminate\Support\Collection;
@@ -15,7 +16,7 @@
 @section('content')
     <div class="row">
         <form method="POST"
-              action="{{ action(\App\Http\Controllers\Person\UpdatePersonAction::class, [$person->id]) }}"
+              action="{{ action(UpdatePersonAction::class, [$person->id]) }}"
         >
             @csrf
             <div class="form-floating mb-3">

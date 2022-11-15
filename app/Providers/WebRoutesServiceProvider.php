@@ -12,7 +12,6 @@ use App\Http\Controllers\Event;
 use App\Http\Controllers\Faq;
 use App\Http\Controllers\Flags;
 use App\Http\Controllers\Groups;
-use App\Http\Controllers\Localization;
 use App\Http\Controllers\Login;
 use App\Http\Controllers\Person;
 use App\Http\Controllers\PersonPrompt;
@@ -125,7 +124,8 @@ class WebRoutesServiceProvider extends ServiceProvider
                 });
 
                 //localization
-                $this->route->get('/localization/{code}', Localization\ChangeLanguageAction::class);
+                //only by locale
+//                $this->route->get('/localization/{code}', Localization\ChangeLanguageAction::class);
 
                 //flags
                 $this->routeRegistrar->prefix('flags')->group(function () {

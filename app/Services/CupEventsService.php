@@ -18,15 +18,12 @@ class CupEventsService
         return $cup->events()->with('event')->get();
     }
 
-    public function deleteCupEvent(CupEvent $cupEvent): void
-    {
-        $cupEvent->delete();
-    }
-
     public function getCupEventPersonsCount(CupEvent $cupEvent): int
     {
-        $cupType = $cupEvent->cup->getCupType();
-        return $cupType->getCupEventParticipatesCount($cupEvent);
+        return $cupEvent->cup
+            ->getCupType()
+            ->getCupEventParticipatesCount($cupEvent)
+        ;
     }
 
     public function getCupEvent(int $cupEventId): CupEvent
@@ -46,11 +43,10 @@ class CupEventsService
     public function calculateCup(Cup $cup, Collection $cupEvents, CupGroup $group): array
     {
         return $this->cache->tags(['cups', $cup->id])->remember(
-            "{$cup->id}_$group->id",
+            "{$cup->id}_{$group->id()}",
             1000000,
             function () use ($cup, $cupEvents, $group) {
-                $cupType = $cup->getCupType();
-                return $cupType->calculateCup($cup, $cupEvents, $group);
+                return $cup->getCupType()->calculateCup($cup, $cupEvents, $group);
             }
         );
     }

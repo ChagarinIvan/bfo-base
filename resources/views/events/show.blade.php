@@ -1,9 +1,15 @@
 @php
+    use App\Http\Controllers\Club\ShowClubAction;
+    use App\Http\Controllers\Competition\ShowCompetitionAction;
+    use App\Http\Controllers\Event\ShowEditEventFormAction;
+    use App\Http\Controllers\Event\ShowEventAction;
+    use App\Http\Controllers\Person\ShowPersonAction;
+    use App\Http\Controllers\Person\ShowSetPersonToProtocolLineAction;
     use App\Models\Distance;
     use App\Models\Event;
     use App\Models\Group;
     use App\Models\Club;
-    use Illuminate\Support\Collection;
+    use App\Services\ClubsService;use Illuminate\Support\Collection;
     /**
      * @var Event $event
      * @var Collection|Group[] $groupAnchors
@@ -23,14 +29,15 @@
     <div class="row mb-3">
         <div class="col-12">
             <h4>
-                <a href="{{ action(\App\Http\Controllers\Competition\ShowCompetitionAction::class, [$event->competition]) }}">{{ $event->competition->name }}</a>
+                <a href="{{ action(ShowCompetitionAction::class, [$event->competition]) }}">{{ $event->competition->name }}</a>
             </h4>
         </div>
     </div>
     <div class="row mb-3">
         <div class="col-12">
             @auth
-                <x-edit-button url="{{ action(\App\Http\Controllers\Event\ShowEditEventFormAction::class, [$event]) }}"/>
+                <x-edit-button
+                        url="{{ action(ShowEditEventFormAction::class, [$event]) }}"/>
             @endauth
             <x-back-button/>
         </div>
@@ -39,7 +46,7 @@
         <ul class="nav nav-tabs">
             @foreach($event->distances as $distance)
                 <li class="nav-item">
-                    <a href="{{ action(\App\Http\Controllers\Event\ShowEventAction::class, [$event, $distance]) }}"
+                    <a href="{{ action(ShowEventAction::class, [$event, $distance]) }}"
                        class="text-decoration-none nav-link {{ $distance->id === $selectedDistance->id ? 'active' : '' }}"
                     >
                         <b>{{ $distance->group->name }}</b>
@@ -73,25 +80,29 @@
                        data-pagination-pre-text="{{ __('app.pagination.previous') }}"
                 >
                     <thead class="table-dark">
-                        <tr>
-                            <th data-sortable="true">#</th>
-                            <th data-sortable="true">{{ __('app.common.lastname') }}</th>
-                            <th data-sortable="true">{{ __('app.common.name') }}</th>
-                            <th data-sortable="true">{{ __('app.club.name') }}</th>
-                            <th data-sortable="true">{{ __('app.common.year') }}</th>
-                            <th data-sortable="true">{{ __('app.common.rank') }}</th>
-                            <th data-sortable="true">{{ __('app.common.time') }}</th>
-                            <th data-sortable="true">{{ __('app.common.place') }}</th>
-                            <th data-sortable="true">{{ __('app.common.complete') }}</th>
-                            @if($withPoints)<th data-sortable="true">{{ __('app.common.points') }}</th>@endif
-                            @if($withVk)<th data-sortable="true">{{ __('app.common.vk') }}</th>@endif
-                        </tr>
+                    <tr>
+                        <th data-sortable="true">#</th>
+                        <th data-sortable="true">{{ __('app.common.lastname') }}</th>
+                        <th data-sortable="true">{{ __('app.common.name') }}</th>
+                        <th data-sortable="true">{{ __('app.club.name') }}</th>
+                        <th data-sortable="true">{{ __('app.common.year') }}</th>
+                        <th data-sortable="true">{{ __('app.common.rank') }}</th>
+                        <th data-sortable="true">{{ __('app.common.time') }}</th>
+                        <th data-sortable="true">{{ __('app.common.place') }}</th>
+                        <th data-sortable="true">{{ __('app.common.complete') }}</th>
+                        @if($withPoints)
+                            <th data-sortable="true">{{ __('app.common.points') }}</th>
+                        @endif
+                        @if($withVk)
+                            <th data-sortable="true">{{ __('app.common.vk') }}</th>
+                        @endif
+                    </tr>
                     </thead>
                     <tbody>
                     @foreach($lines as $line)
                         @php
                             /** @var \App\Models\ProtocolLine $line */
-                         @endphp
+                        @endphp
                         <tr id="{{ $line->id }}">
                             @php
                                 $hasPerson = $line->person_id !== null;
@@ -99,11 +110,11 @@
                             <td>{{ $line->serial_number }}</td>
                             @if($hasPerson)
                                 @php
-                                    $link = action(\App\Http\Controllers\Person\ShowPersonAction::class, [$line->person_id]);
+                                    $link = action(ShowPersonAction::class, [$line->person_id]);
                                 @endphp
                                 <td><a href="{{ $link }}">{{ $line->lastname }}</a>&nbsp;
                                     @auth
-                                        <a href="{{ action(\App\Http\Controllers\Person\ShowSetPersonToProtocolLineAction::class, [$line]) }}">
+                                        <a href="{{ action(ShowSetPersonToProtocolLineAction::class, [$line]) }}">
                                             <span class="badge rounded-pill bg-warning">{{ __('app.common.edit') }}</span>
                                         </a>
                                     @endauth
@@ -112,16 +123,16 @@
                             @else
                                 <td>{{ $line->lastname }}&nbsp;
                                     @auth
-                                        <a href="{{ action(\App\Http\Controllers\Person\ShowSetPersonToProtocolLineAction::class, [$line]) }}">
+                                        <a href="{{ action(ShowSetPersonToProtocolLineAction::class, [$line]) }}">
                                             <span class="badge rounded-pill bg-danger">{{ __('app.common.new') }}</span>
                                         </a>
                                     @endauth
                                 </td>
                                 <td>{{ $line->firstname }}</td>
                             @endif
-                            @if($club = $clubs->get(\App\Services\ClubsService::normalizeName($line->club)))
+                            @if($club = $clubs->get(ClubsService::normalizeName($line->club)))
                                 <td>
-                                    <a href="{{ action(\App\Http\Controllers\Club\ShowClubAction::class, [$club]) }}">
+                                    <a href="{{ action(ShowClubAction::class, [$club]) }}">
                                         {{ ($line->club) }}
                                     </a>
                                 </td>
@@ -133,8 +144,12 @@
                             <td>{{ $line->time ? $line->time->format('H:i:s') : '-' }}</td>
                             <td>{{ $line->place ?: '-' }}</td>
                             <td>{{ $line->complete_rank }}</td>
-                            @if($withPoints)<td>{{ $line->points ?: '-'}}</td>@endif
-                            @if($withVk)<td>{{ $line->vk ? 'в/к' : '-' }}</td>@endif
+                            @if($withPoints)
+                                <td>{{ $line->points ?: '-'}}</td>
+                            @endif
+                            @if($withVk)
+                                <td>{{ $line->vk ? 'в/к' : '-' }}</td>
+                            @endif
                         </tr>
                     @endforeach
                     </tbody>

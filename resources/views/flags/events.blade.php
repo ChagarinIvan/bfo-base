@@ -1,7 +1,10 @@
 @php
+    use App\Http\Controllers\Competition\ShowCompetitionAction;
+    use App\Http\Controllers\Event\ShowAddFlagToEventFormAction;
+    use App\Http\Controllers\Event\ShowEventAction;
     use App\Models\Event;
     use App\Models\Flag;
-    use Illuminate\Support\Collection;
+    use Illuminate\Support\Collection;use Illuminate\Support\Str;
     /**
      * @var Flag $flag;
      * @var Collection|Event[] $events;
@@ -37,38 +40,43 @@
                data-pagination-pre-text="{{ __('app.pagination.previous') }}"
         >
             <thead class="table-dark">
-                <tr>
-                    <th data-sortable="true">{{ __('app.competition.title') }}</th>
-                    <th data-sortable="true">{{ __('app.common.title') }}</th>
-                    <th data-sortable="true">{{ __('app.common.description') }}</th>
-                    <th data-sortable="true">{{ __('app.common.date') }}</th>
-                    <th data-sortable="true">{{ __('app.common.competitors') }}</th>
-                    @auth<th></th>@endauth
-                </tr>
+            <tr>
+                <th data-sortable="true">{{ __('app.competition.title') }}</th>
+                <th data-sortable="true">{{ __('app.common.title') }}</th>
+                <th data-sortable="true">{{ __('app.common.description') }}</th>
+                <th data-sortable="true">{{ __('app.common.date') }}</th>
+                <th data-sortable="true">{{ __('app.common.competitors') }}</th>
+                @auth
+                    <th></th>
+                @endauth
+            </tr>
             </thead>
             <tbody>
-                @foreach ($events as $event)
-                    <tr>
+            @foreach ($events as $event)
+                <tr>
+                    <td>
+                        <a class="d-none d-md-inline"
+                           href="{{ action(ShowCompetitionAction::class, [$event->competition]) }}">{{ Str::limit($event->competition->name, 30) }}</a>
+                    </td>
+                    <td>
+                        <a href="{{ action(ShowEventAction::class, [$event->id, $event->distances->first()]) }}">{{ Str::limit($event->name, 30) }}</a>
+                    </td>
+                    <td>
+                        <small class="d-none d-xl-inline">{{ Str::limit($event->description, 80) }}</small>
+                    </td>
+                    <td>{{ $event->date->format('Y-m-d') }}</td>
+                    <td>{{ count($event->protocolLines) }}</td>
+                    @auth
                         <td>
-                            <a class="d-none d-md-inline" href="{{ action(\App\Http\Controllers\Competition\ShowCompetitionAction::class, [$event->competition]) }}">{{ \Illuminate\Support\Str::limit($event->competition->name, 30) }}</a>
+                            <x-button text="app.common.add_flags"
+                                      color="info"
+                                      icon="bi-flag-fill"
+                                      url="{{ action(ShowAddFlagToEventFormAction::class, [$event]) }}"
+                            />
                         </td>
-                        <td>
-                            <a href="{{ action(\App\Http\Controllers\Event\ShowEventAction::class, [$event->id, $event->distances->first()]) }}">{{ \Illuminate\Support\Str::limit($event->name, 30) }}</a>
-                        </td>
-                        <td><small class="d-none d-xl-inline">{{ \Illuminate\Support\Str::limit($event->description, 80) }}</small></td>
-                        <td>{{ $event->date->format('Y-m-d') }}</td>
-                        <td>{{ count($event->protocolLines) }}</td>
-                        @auth
-                            <td>
-                                <x-button text="app.common.add_flags"
-                                          color="info"
-                                          icon="bi-flag-fill"
-                                          url="{{ action(\App\Http\Controllers\Event\ShowAddFlagToEventFormAction::class, [$event]) }}"
-                                />
-                            </td>
-                        @endauth
-                    </tr>
-                @endforeach
+                    @endauth
+                </tr>
+            @endforeach
             </tbody>
         </table>
     </div>

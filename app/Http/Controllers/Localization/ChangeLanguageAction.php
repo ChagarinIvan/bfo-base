@@ -13,7 +13,7 @@ class ChangeLanguageAction extends AbstractAction
     public function __construct(
         protected ViewActionsService $viewService,
         protected Redirector $redirector,
-        private UserService $userService
+        readonly private UserService $userService
     ) {
         parent::__construct($viewService, $redirector);
     }
@@ -22,6 +22,7 @@ class ChangeLanguageAction extends AbstractAction
     {
         $this->userService->setLocale($locale);
         $urlGenerator = $this->redirector->getUrlGenerator();
+
         return $this->redirector->to($urlGenerator->previous());
     }
 }
