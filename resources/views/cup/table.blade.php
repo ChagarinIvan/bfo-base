@@ -120,7 +120,7 @@
                                     @if ($isBold)
                                         @php
                                             $sum += $cupEventPoint->points;
-                                            $count++;
+                                            $count = $cupEventPoint->points === 0 ? $count : $count + 1;
                                         @endphp
                                         <td>
                                             <a href="{{ action(ShowEventAction::class, [$cupEvent->event_id, $cupEventPoint->protocolLine->distance_id]) }}#{{ $cupEventPoint->protocolLine->id }}">

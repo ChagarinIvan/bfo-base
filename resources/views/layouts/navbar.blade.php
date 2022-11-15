@@ -123,18 +123,18 @@
                     </li>
                 @endauth
             </ul>
-            <div class="d-flex mx-auto my-1">
-                <div class="btn-group btn-group-sm" role="group" aria-label="Select locale">
-                    <a type="button"
-                       class="btn {{ $isByLocale ? 'btn-outline-danger' : 'btn-outline-secondary' }}"
-                       href="{{ action(ChangeLanguageAction::class, [UserService::BY_LOCALE]) }}"
-                    >{{ __('app.lang.by') }}</a>
-                    <a type="button"
-                       class="btn btn-sm {{ $isRuLocale ? 'btn-outline-danger' : 'btn-outline-secondary' }}"
-                       href="{{ action(ChangeLanguageAction::class, [UserService::RU_LOCALE]) }}"
-                    >{{ __('app.lang.ru') }}</a>
-                </div>
-            </div>
+{{--            <div class="d-flex mx-auto my-1">--}}
+{{--                <div class="btn-group btn-group-sm" role="group" aria-label="Select locale">--}}
+{{--                    <a type="button"--}}
+{{--                       class="btn {{ $isByLocale ? 'btn-outline-danger' : 'btn-outline-secondary' }}"--}}
+{{--                       href="{{ action(ChangeLanguageAction::class, [UserService::BY_LOCALE]) }}"--}}
+{{--                    >{{ __('app.lang.by') }}</a>--}}
+{{--                    <a type="button"--}}
+{{--                       class="btn btn-sm {{ $isRuLocale ? 'btn-outline-danger' : 'btn-outline-secondary' }}"--}}
+{{--                       href="{{ action(ChangeLanguageAction::class, [UserService::RU_LOCALE]) }}"--}}
+{{--                    >{{ __('app.lang.ru') }}</a>--}}
+{{--                </div>--}}
+{{--            </div>--}}
 
             <div class="d-flex ms-auto my-1">
                 @if($isAuth)
