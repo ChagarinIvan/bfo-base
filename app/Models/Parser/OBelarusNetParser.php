@@ -40,6 +40,7 @@ class OBelarusNetParser extends AbstractParser
             }
 
             $lines = preg_split('/\n|\r\n?/', $text);
+
             $linesCount = count($lines);
             if ($linesCount < 3) {
                 continue;
@@ -56,20 +57,21 @@ class OBelarusNetParser extends AbstractParser
             if (preg_match('#(\d+)\s+[^\d]+,\s+((\d+,\d+)\s+[^\d]+|(\d+)\s+[^\d])#s', $lines[0], $match)) {
                 $distancePoints = (int)$match[1];
                 if (str_contains($match[2], ',')) {
-                    $distanceLength = floatval(str_replace(',', '.', $match[3])) * 1000;
+                    $distanceLength = (float)str_replace(',', '.', $match[3]) * 1000;
                 } else {
-                    $distanceLength = floatval($match[3]);
+                    $distanceLength = (float)$match[3];
                 }
             }
+
             for ($index = 4; $index < $linesCount; $index++) {
                 $line = trim($lines[$index]);
 
                 if (empty(trim($line, '-'))) {
                     if ($index > 4) {
                         break;
-                    } else {
-                        continue;
                     }
+
+                    continue;
                 }
                 $preparedLine = preg_replace('#=#u', ' ', $line);
                 $preparedLine = preg_replace('#\s+#u', ' ', $preparedLine);
@@ -193,9 +195,9 @@ class OBelarusNetParser extends AbstractParser
             if (is_numeric($year)) {
                 $indent++;
                 return (int)$year;
-            } else {
-                return null;
             }
+
+            return null;
         }
         if ($column === 'prim') {
             $prim = $lineData[$fieldsCount - $indent];

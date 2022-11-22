@@ -67,6 +67,8 @@
                     <tr>
                         <th data-sortable="true">№</th>
                         <th data-sortable="true">{{ __('app.common.fio') }}</th>
+                        <th data-sortable="true">{{ __('app.common.birthday_year') }}</th>
+                        <th data-sortable="true">{{ __('app.club.name') }}</th>
                         @foreach($cupEvents as $cupEvent)
                             <th data-sortable="true">
                                 <a href="{{ action(ShowCupEventGroupAction::class, [$cup->id, $cupEvent->id, $activeGroup->id()]) }}"
@@ -95,6 +97,8 @@
                                     <a href="{{ action(ShowPersonAction::class, [$person]) }}">{{ $person->lastname.' '.$person->firstname }}</a>
                                 </b>
                             </td>
+                            <td>{{ $person->birthday?->year }}</td>
+                            <td><x-club-link club="{{ $person->club }}"></x-club-link></td>
                             @foreach($cupEvents as $cupEvent)
                                 @php
                                     $find = false;

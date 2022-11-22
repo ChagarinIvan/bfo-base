@@ -9,7 +9,9 @@
     use App\Models\Event;
     use App\Models\Group;
     use App\Models\Club;
-    use App\Services\ClubsService;use Illuminate\Support\Collection;
+    use App\Models\ProtocolLine;
+    use App\Services\ClubsService;
+    use Illuminate\Support\Collection;
     /**
      * @var Event $event
      * @var Collection|Group[] $groupAnchors
@@ -101,7 +103,7 @@
                     <tbody>
                     @foreach($lines as $line)
                         @php
-                            /** @var \App\Models\ProtocolLine $line */
+                            /** @var ProtocolLine $line */
                         @endphp
                         <tr id="{{ $line->id }}">
                             @php

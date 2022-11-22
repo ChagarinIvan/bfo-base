@@ -4,6 +4,8 @@ namespace App\Http\Controllers\CupEvents;
 
 use App\Http\Controllers\Cups\AbstractCupAction;
 use App\Models\Group\CupGroupFactory;
+use App\Services\ClubsService;
+use App\Services\CupsService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 
@@ -27,6 +29,7 @@ class ShowCupEventGroupAction extends AbstractCupAction
             'cupEvent' => $cupEvent,
             'cupEventPoints' => $cupEventPoints,
             'groupId' => $group->id(),
+            'clubs' => $group->id(),
         ]);
     }
 }

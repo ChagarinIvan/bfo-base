@@ -1,5 +1,4 @@
 @php
-    use App\Http\Controllers\Club\ShowClubAction;
     use App\Models\Club;
     /**
      * @var Club[] $clubs;
@@ -38,11 +37,7 @@
             <tbody>
             @foreach ($clubs as $club)
                 <tr>
-                    <td>
-                        <a href="{{ action(ShowClubAction::class, [$club->id]) }}">
-                            {{ $club->name }}
-                        </a>
-                    </td>
+                    <td><x-club-link club="{{ $club }}"></x-club-link></td>
                     <td>{{ $club->persons->count() }}</td>
                 </tr>
             @endforeach

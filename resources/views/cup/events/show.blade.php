@@ -3,7 +3,8 @@
     use App\Http\Controllers\Person\ShowPersonAction;
     use App\Models\Cup;
     use App\Models\CupEvent;
-    use App\Models\CupEventPoint;use App\Models\Group\CupGroup;
+    use App\Models\CupEventPoint;
+    use App\Models\Group\CupGroup;
     /**
      * @var Cup $cup;
      * @var CupEvent $cupEvent;
@@ -64,6 +65,8 @@
                         <th data-sortable="true">№</th>
                         <th data-sortable="true">{{ __('app.common.fio') }}</th>
                         <th data-sortable="true">{{ __('app.common.birthday_year') }}</th>
+                        <th data-sortable="true">{{ __('app.club.name') }}</th>
+                        <th data-sortable="true">{{ __('app.common.club') }}</th>
                         <th data-sortable="true">{{ __('app.common.time') }}</th>
                         <th data-sortable="true">{{ __('app.common.points') }}</th>
                     </tr>
@@ -78,6 +81,7 @@
                                 </a>
                             </td>
                             <td>{{ $cupEventPoint->protocolLine->year }}</td>
+                            <td><x-club-link club="{{ $cupEventPoint->protocolLine->person->club }}"></x-club-link></td>
                             <td>{{ $cupEventPoint->protocolLine->time ? $cupEventPoint->protocolLine->time->format('H:i:s') : '-' }}</td>
                             @if($cupEventPoint->points === $cupEvent->points)
                                 <td><b class="text-info">{{ $cupEventPoint->points }}</b></td>

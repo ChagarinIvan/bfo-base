@@ -10,12 +10,12 @@ use Illuminate\Support\Collection;
 
 /**
  * @property int $id
- * @property int $name
+ * @property string $name
  * @property string $description
  * @property Carbon $from
  * @property Carbon $to
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  *
  * @property-read Collection|Event[] $events
  *
