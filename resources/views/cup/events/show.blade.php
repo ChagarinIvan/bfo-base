@@ -81,7 +81,7 @@
                                 </a>
                             </td>
                             <td>{{ $cupEventPoint->protocolLine->year }}</td>
-                            <td><x-club-link club="{{ $cupEventPoint->protocolLine->person->club }}"></x-club-link></td>
+                            <td><x-club-link :club="$cupEventPoint->protocolLine->person->club"></x-club-link></td>
                             <td>{{ $cupEventPoint->protocolLine->time ? $cupEventPoint->protocolLine->time->format('H:i:s') : '-' }}</td>
                             @if($cupEventPoint->points === $cupEvent->points)
                                 <td><b class="text-info">{{ $cupEventPoint->points }}</b></td>

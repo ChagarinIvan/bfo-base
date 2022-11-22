@@ -98,7 +98,7 @@
                                 </b>
                             </td>
                             <td>{{ $person->birthday?->year }}</td>
-                            <td><x-club-link club="{{ $person->club }}"></x-club-link></td>
+                            <td><x-club-link :club="$person->club"></x-club-link></td>
                             @foreach($cupEvents as $cupEvent)
                                 @php
                                     $find = false;

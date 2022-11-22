@@ -37,7 +37,7 @@
             <tbody>
             @foreach ($clubs as $club)
                 <tr>
-                    <td><x-club-link club="{{ $club }}"></x-club-link></td>
+                    <td><x-club-link :club="$club"></x-club-link></td>
                     <td>{{ $club->persons->count() }}</td>
                 </tr>
             @endforeach
