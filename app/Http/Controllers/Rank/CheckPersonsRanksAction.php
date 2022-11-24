@@ -32,24 +32,24 @@ class CheckPersonsRanksAction extends AbstractRankAction
 
     public function preparedLines(Collection $lines): Collection
     {
-        return $lines->transform(function(array $line): array {
-            try {
+        return $lines
+            ->transform(function(array $line): array {
                 $line['name'] = str_replace(' ', ' ', $line['name']);
-                [$lastname, $firstname] = preg_split('#\s#', $line['name']);
-            } catch (\Exception $e) {
-            }
-            $line['prepared_line'] = PersonsIdentService::makeIdentLine(
-                $lastname,
-                $firstname,
-                empty($line['year']) ? null : (int)$line['year']
-            );
+                [$lastname, $firstname] = preg_split('#\s+#', $line['name']);
 
-            $line['rank'] = isset($line['rank']) && ! empty($line['rank'])
-                ? Rank::getRank($line['rank'])
-                : null;
+                $line['prepared_line'] = PersonsIdentService::makeIdentLine(
+                    $lastname,
+                    $firstname,
+                    empty($line['year']) ? null : (int)$line['year']
+                );
 
-            return $line;
-        })
-            ->keyBy('prepared_line');
+                $line['rank'] = isset($line['rank']) && ! empty($line['rank'])
+                    ? Rank::getRank($line['rank'])
+                    : null;
+
+                return $line;
+            })
+            ->keyBy('prepared_line')
+        ;
     }
 }

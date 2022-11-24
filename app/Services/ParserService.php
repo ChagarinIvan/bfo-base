@@ -20,7 +20,11 @@ class ParserService
      */
     public function parseProtocol(string $protocol, bool $needConvert, string $extension): Collection
     {
-        $parser = ParserFactory::createProtocolParser($protocol, $this->groupsService->getAllGroupsWithout()->pluck('name'), $extension);
+        $parser = ParserFactory::createProtocolParser(
+            $protocol,
+            $this->groupsService->getAllGroupsWithout()->pluck('name'),
+            $extension
+        );
 
         return $parser->parse($protocol, $needConvert);
     }
@@ -31,9 +35,7 @@ class ParserService
      */
     public function parserRankList(string $list): Collection
     {
-        $parser = ParserFactory::createListParser($list);
-
-        return $parser->parse($list);
+        return ParserFactory::createListParser($list)->parse($list);
     }
 
     /**
