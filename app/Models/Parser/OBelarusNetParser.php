@@ -18,6 +18,7 @@ class OBelarusNetParser extends AbstractParser
         if ($needConvert) {
             $content = mb_convert_encoding($content, 'utf-8', 'windows-1251');
         }
+        $content = str_replace("&nbsp;", ' ', $content);
         @$doc->loadHTML($content);
         $xpath = new DOMXpath($doc);
         $preNodes = $xpath->query('//pre');
@@ -88,8 +89,12 @@ class OBelarusNetParser extends AbstractParser
                 for ($i = $groupHeaderIndex; $i > 2; $i--) {
                     $columnName = $this->getColumn($groupHeaderData[$i]);
                     if ($columnName === '') {
-                        if ($groupHeaderData[$i] === 'КП') {
-                            $indent++;
+                        if (in_array($groupHeaderData[$i], ['КП', 'Финиш'], true)) {
+                            $value = $lineData[$fieldsCount - $indent];
+
+                            if (!str_contains($value, 'п.п.')) {
+                                $indent++;
+                            }
                         }
                         continue;
                     }
@@ -104,6 +109,7 @@ class OBelarusNetParser extends AbstractParser
             }
         }
 
+//        dd($linesList);
         return $linesList;
     }
 
@@ -161,14 +167,20 @@ class OBelarusNetParser extends AbstractParser
                 $indent++;
                 return null;
             }
-            if (is_numeric($place) || $place === '-') {
+            if (is_numeric($place)) {
                 $indent++;
                 return  (int)$place;
+            }
+            if ($place === '-') {
+                $indent++;
             }
             return null;
         }
         if ($column === 'time') {
             $time = $lineData[$fieldsCount - $indent++];
+            if (preg_match('#\w\.\w\.\d\d\.\d\d#u', $time)) {
+                return null;
+            }
             if (preg_match('#\d\d\.\d\d#', $time)) {
                 $indent++;
                 return null;
