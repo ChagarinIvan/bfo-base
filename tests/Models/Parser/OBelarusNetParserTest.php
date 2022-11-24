@@ -156,7 +156,7 @@ class OBelarusNetParserTest extends AbstractParserTest
             ],
             [
                 '2022/2022-11-13.html',
-                0,
+                239,
                 [
                     0 => [
                         'Волосевич',
@@ -165,12 +165,12 @@ class OBelarusNetParserTest extends AbstractParserTest
                         2012,
                         'Iю',
                         2,
-                        '5:04:10',
+                        '0:10:45',
                         1,
                         null,
                         100,
                     ],
-                    18 => [
+                    12 => [
                         'Гамезо',
                         'Евгения',
                         'ТЦ Юность',
@@ -178,11 +178,11 @@ class OBelarusNetParserTest extends AbstractParserTest
                         'б/р',
                         260,
                         null,
-                        13,
                         null,
-                        '-',
+                        null,
+                        null,
                     ],
-                    125 => [
+                    124 => [
                         'Сулим',
                         'Илья',
                         'Минский р-н',
@@ -190,11 +190,11 @@ class OBelarusNetParserTest extends AbstractParserTest
                         'IIю',
                         32,
                         '0:26:40',
-                        13,
                         6,
+                        null,
                         87,
                     ],
-                ]
+                ],
             ]
         ];
     }
