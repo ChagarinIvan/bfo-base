@@ -24,6 +24,7 @@ class CsvListParser implements ParserInterface
         foreach ($result as $index => $line) {
             if ($index === 0) {
                 $values = explode(';', $line);
+                $values = array_map('trim', $values);
 
                 if (count($values) === 5) {
                     $headers = [
@@ -36,7 +37,9 @@ class CsvListParser implements ParserInterface
                 }
 
                 continue;
-            } elseif (empty($line)) {
+            }
+
+            if (empty($line)) {
                 continue;
             }
             $values = explode(';', $line);
