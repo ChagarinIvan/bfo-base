@@ -117,6 +117,7 @@
     "app.person.create_title" : "Даданне асобы",
     "app.person.edit_title" : "Рэдагаванне асобы",
     "app.faq.description" : "Апісанне працы сэрвісу",
+    "app.faq.error_notify" : "Па ўсіх пытанная і ў выпадку памылак <a href = \"mailto: orient.bfo.base@gmail.com\">пішыце на email</a>",
     "app.faq.create_competition" : "Ствараем спаборніцтва",
     "app.faq.add_events" : "Дадаем дні спаборніцтва з пратаколамі (бярэм з orient.by або obelarus.net)",
     "app.faq.store_event" : "Пратакол у выглядзе набора строк (нумар, Прозвішча, Імя, вынік, месца..) трапляе у базу",

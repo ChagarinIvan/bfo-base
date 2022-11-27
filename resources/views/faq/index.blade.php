@@ -7,6 +7,7 @@
 @section('title', __('app.navbar.faq'))
 
 @section('content')
+    <h6>{{ __('app.faq.error_notify') }}</h6>
     <h5>{{ __('app.faq.description') }}</h5>
     <ul>
         <li>{{ __('app.faq.create_competition') }}</li>
