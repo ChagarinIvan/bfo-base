@@ -3,7 +3,6 @@
 @section('title', __('app.navbar.faq'))
 
 @section('content')
-    <h3>{{ __('app.navbar.faq') }}</h3>
     <h5>{{ __('app.api.methods') }}</h5>
     <ul>
         <li>{{ __('app.api.competitions_list') }} <a href="">/api/competitions</a></li>

@@ -7,7 +7,6 @@
 @section('title', __('app.navbar.faq'))
 
 @section('content')
-    <h3>{{ __('app.navbar.faq') }}</h3>
     <h5>{{ __('app.faq.description') }}</h5>
     <ul>
         <li>{{ __('app.faq.create_competition') }}</li>
@@ -29,10 +28,12 @@
         <li>{{ __('app.faq.dev_exports') }}.</li>
     </ol>
 
-    <h5>{{ __('app.faq.check') }}</h5>
-    <ol>
-        <li>{{ __('app.faq.check_1') }}</li>
-        <li>{!! __('app.faq.check_2') !!}</li>
-        <li>{!! __('app.faq.check_3') !!}</li>
-    </ol>
+    @auth
+        <h5>{{ __('app.faq.check') }}</h5>
+        <ol>
+            <li>{{ __('app.faq.check_1') }}</li>
+            <li>{!! __('app.faq.check_2') !!}</li>
+            <li>{!! __('app.faq.check_3') !!}</li>
+        </ol>
+    @endauth
 @endsection

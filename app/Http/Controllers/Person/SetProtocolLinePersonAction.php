@@ -25,7 +25,12 @@ class SetProtocolLinePersonAction extends AbstractPersonAction
 
         //сохраняем результат для всех строчек с установленным идентификатором
         $protocolLinesToUpdate = $protocolLineService->getEqualLines($preparedLine);
-        $oldPersons = $protocolLinesToUpdate->pluck('person_id')->unique();
+        $oldPersons = $protocolLinesToUpdate
+            ->pluck('person_id')
+            ->unique()
+            ->filter(fn ($personId) => $personId !== null)
+        ;
+
         $protocolLineService->reSetPerson($protocolLinesToUpdate, $person->id);
         $personPromptService->changePromptForLine($preparedLine, $person->id);
 
