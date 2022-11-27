@@ -1,5 +1,7 @@
 @php
+    use App\Http\Controllers\Competition\ShowCompetitionAction;
     use App\Http\Controllers\CupEvents\ShowCupEventGroupAction;
+    use App\Http\Controllers\Event\ShowEventAction;
     use App\Http\Controllers\Person\ShowPersonAction;
     use App\Models\Cup;
     use App\Models\CupEvent;
@@ -20,10 +22,16 @@
 
 @section('content')
     <div class="row mb-3">
-        <h4>{{ $cupEvent->event->competition->name }}</h4>
+        <h4>
+            <a href="{{ action(ShowCompetitionAction::class, [$cupEvent->event->competition_id]) }}"
+            >{{ $cupEvent->event->competition->name }}</a>
+        </h4>
     </div>
     <div class="row mb-3">
-        <h4>{{ $cupEvent->event->name }} - {{ $cupEvent->event->date->format('Y-m-d') }}</h4>
+        <h5>
+            <a href="{{ action(ShowEventAction::class, [$cupEvent->event_id, $cupEvent->event->distances->first()]) }}"
+            >{{ $cupEvent->event->name }} - {{ $cupEvent->event->date->format('Y-m-d') }}</a>
+        </h5>
     </div>
     <div class="row mb-3">
         <div class="col-12">

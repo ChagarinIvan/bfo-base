@@ -43,11 +43,11 @@ use Illuminate\Support\Collection;
  * @method static Builder|ProtocolLine whereIn(string|Expression $column, array|Collection $list)
  * @method static Builder|ProtocolLine where(string|Expression $column, string|int $operator, int|string $value = '')
  * @method static Builder|ProtocolLine orderBy(string $column)
- * @method static Builder|ProtocolLine with(mixed $ids)
+ * @method Builder|ProtocolLine with(mixed $ids)
  * @method static Builder|ProtocolLine distinct()
  * @method static Builder|ProtocolLine orderByDesc(string $column)
  * @method static Builder|ProtocolLine selectRaw(Expression $raw)
- * @method static Builder|ProtocolLine addSelect(string $column)
+ * @method Builder|ProtocolLine addSelect(string $column)
  * @method static Builder|ProtocolLine join(string $table, string $tableId, string $operator, string $joinId)
  * @method static ProtocolLine[] all()
  */

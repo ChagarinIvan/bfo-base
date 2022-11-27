@@ -33,6 +33,11 @@ class DistanceService
         $event->distances()->delete();
     }
 
+    public function getEventGroupDistance(Event $event, int $groupId): ?Distance
+    {
+        return $this->distanceRepository->getEventGroupDistance($event->id, $groupId);
+    }
+
     /**
      * @param Distance $mainDistance
      * @return Collection|Distance[]

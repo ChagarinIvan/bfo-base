@@ -20,21 +20,8 @@ class DistanceRepository
             ->join('groups', 'groups.id', '=', 'distances.group_id')
             ->whereIn('groups.name', $groupNames)
             ->whereEventId($eventId)
-            ->first();
-    }
-
-    /**
-     * @param string[] $groupNames
-     * @param int $eventId
-     * @return Distance[]|Collection
-     */
-    public function findDistances(array $groupNames, int $eventId): array|Collection
-    {
-        return Distance::selectRaw(new Expression('distances.*'))
-            ->join('groups', 'groups.id', '=', 'distances.group_id')
-            ->whereIn('groups.name', $groupNames)
-            ->whereEventId($eventId)
-            ->get();
+            ->first()
+        ;
     }
 
     public function getEqualDistances(Distance $distance): Collection
@@ -45,7 +32,17 @@ class DistanceRepository
             ->where('distances.id', '!=', $distance->id)
             ->whereLength($distance->length)
             ->wherePoints($distance->points)
-            ->get();
+            ->get()
+       ;
+    }
+
+    public function getEventGroupDistance(int $eventId, int $groupId): ?Distance
+    {
+        return Distance::whereEventId($eventId)
+            ->whereGroupId($groupId)
+            ->get()
+            ->first()
+        ;
     }
 
     public function getCupEventDistancesByGroups(CupEvent $cupEvent, Collection $groups): Collection
@@ -54,6 +51,7 @@ class DistanceRepository
             ->join('groups', 'groups.id', '=', 'distances.group_id')
             ->whereIn('group_id', $groups)
             ->whereEventId($cupEvent->event_id)
-            ->get();
+            ->get()
+        ;
     }
 }

@@ -1,8 +1,10 @@
 @php
     use App\Http\Controllers\Club\ShowClubAction;
     use App\Http\Controllers\Competition\ShowCompetitionAction;
+    use App\Http\Controllers\Cups\ShowCupAction;
     use App\Http\Controllers\Event\ShowEditEventFormAction;
     use App\Http\Controllers\Event\ShowEventAction;
+    use App\Http\Controllers\Flags\ShowFlagEventsAction;
     use App\Http\Controllers\Person\ShowPersonAction;
     use App\Http\Controllers\Person\ShowSetPersonToProtocolLineAction;
     use App\Models\Distance;
@@ -33,6 +35,21 @@
             <h4>
                 <a href="{{ action(ShowCompetitionAction::class, [$event->competition]) }}">{{ $event->competition->name }}</a>
             </h4>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-12">
+            @foreach($event->cups as $cupEvent)
+                <x-badge name="{{ $cupEvent->cup->name }} {{ $cupEvent->cup->year }}"
+                         url="{{ action(ShowCupAction::class, [$cupEvent->cup]) }}"
+                />
+            @endforeach
+            @foreach($event->flags as $flag)
+                <x-badge color="{{ $flag->color }}"
+                         name="{{ $flag->name }}"
+                         url="{{ action(ShowFlagEventsAction::class, [$flag]) }}"
+                />
+            @endforeach
         </div>
     </div>
     <div class="row mb-3">

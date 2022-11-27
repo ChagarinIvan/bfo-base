@@ -133,7 +133,7 @@
                                         </td>
                                     @else
                                         <td>
-                                            <a href="{{ action(ShowEventAction::class,[$cupEvent->event_id, $cupEventPoint->protocolLine->distance_id]) }}#{{ $cupEventPoint->protocolLine->id }}">
+                                            <a href="{{ action(ShowEventAction::class, [$cupEvent->event_id, $cupEventPoint->protocolLine->distance_id]) }}#{{ $cupEventPoint->protocolLine->id }}">
                                                 <b class="text-dark">{{ $cupEventPoint->points }}</b>
                                             </a>
                                         </td>

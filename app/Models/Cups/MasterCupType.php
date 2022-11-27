@@ -52,9 +52,12 @@ class MasterCupType extends AbstractCupType
         $cupEventProtocolLines = $this->getGroupProtocolLines($cupEvent, $mainGroup);
         $eventGroupsId = $this->getEventGroups($mainGroup->male())->pluck('id');
 
-        $eventDistances = $this->distanceService->getCupEventDistancesByGroups($cupEvent, $eventGroupsId)
+        $eventDistances = $this->distanceService
+            ->getCupEventDistancesByGroups($cupEvent, $eventGroupsId)
             ->pluck('id')
-            ->toArray();
+            ->toArray()
+        ;
+
 
         $cupEventProtocolLines = $cupEventProtocolLines->filter(
             fn (ProtocolLine $protocolLine) => in_array($protocolLine->distance_id, $eventDistances, true)
@@ -64,9 +67,12 @@ class MasterCupType extends AbstractCupType
         $validGroups = $eventGroupsId->flip();
         $cupEventProtocolLines = $cupEventProtocolLines->intersectByKeys($validGroups);
         $groups = $this->groupsService->getCupEventGroups($cupEvent);
-        $count = $groups->pluck('name')
+
+        $count = $groups
+            ->pluck('name')
             ->intersect(self::GROUPS_MAP[$mainGroup->id()])
-            ->count();
+            ->count()
+        ;
 
         foreach ($cupEventProtocolLines as $groupId => $groupProtocolLines) {
             $group = $this->groupsService->getGroup($groupId);
@@ -101,7 +107,7 @@ class MasterCupType extends AbstractCupType
     {
         $year = $cupEvent->cup->year;
         $startYear = $year - $group->age() ?->value ?? 0;
-        $finishYear = $startYear - 5;
+        $finishYear = $startYear - 4;
 
         return $this->protocolLinesRepository->getCupEventProtocolLinesForPersonsCertainAge(
             $cupEvent,

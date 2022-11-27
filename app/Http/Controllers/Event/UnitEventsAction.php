@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Event;
 use App\Models\Distance;
 use App\Models\Event;
 use App\Models\ProtocolLine;
+use App\Services\DistanceService;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -12,12 +13,13 @@ use Illuminate\Support\Collection;
 
 class UnitEventsAction extends AbstractEventAction
 {
-    public function __invoke(int $competitionId, Request $request): RedirectResponse
+    public function __invoke(int $competitionId, Request $request, DistanceService $distanceService): RedirectResponse
     {
         $formParams = $request->validate([
             'events' => 'required|array',
         ]);
         $events = Event::find($formParams['events']);
+        /** @var Event $firstEvent */
         $firstEvent = $events->first();
 
         $newEvent = new Event();
@@ -42,13 +44,11 @@ class UnitEventsAction extends AbstractEventAction
 
             foreach ($groupsIds as $groupId) {
                 /** @var Distance $firstEventDistance */
-                $firstEventDistance = Distance::whereEventId($firstEvent->id)->whereGroupId($groupId)->get()->first();
+                $firstEventDistance = $distanceService->getEventGroupDistance($firstEvent, $groupId);;
                 /** @var Distance $eventDistance */
-                $eventDistance = Distance::whereEventId($event->id)->whereGroupId($groupId)->get()->first();
-                $distances = Distance::whereEventId($newEvent->id)->whereGroupId($groupId)->get();
-                if ($distances->isNotEmpty()) {
-                    $distance = $distances->first();
-                } else {
+                $eventDistance = $distanceService->getEventGroupDistance($event, $groupId);
+                $distances = $distanceService->getEventGroupDistance($newEvent, $groupId);
+                if (!$distances) {
                     $distance = new Distance();
                 }
 

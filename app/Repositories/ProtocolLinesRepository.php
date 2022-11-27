@@ -26,11 +26,13 @@ class ProtocolLinesRepository
 
     public function getLineForPersonOnEvent(int $personId, int $eventId): int
     {
-        return (int)$this->db->table('protocol_lines', 'pl')
+        return (int)$this->db
+            ->table('protocol_lines', 'pl')
             ->join('distances AS d', 'd.id', '=', 'pl.distance_id')
             ->where('pl.person_id', $personId)
             ->where('d.event_id', $eventId)
-            ->value('pl.id');
+            ->value('pl.id')
+        ;
     }
 
     /**
@@ -69,10 +71,12 @@ class ProtocolLinesRepository
             ->where('distances.event_id', $cupEvent->event_id);
 
         if ($withPayments) {
-            $protocolLinesQuery->addSelect('persons_payments.date')
+            $protocolLinesQuery
+                ->addSelect('persons_payments.date')
                 ->join('persons_payments', 'person.id', '=', 'persons_payments.person_id')
                 ->where('persons_payments.year', '=', $cupEvent->cup->year)
-                ->havingRaw(new Expression("`persons_payments`.`date` <= '{$cupEvent->event->date}'"));
+                ->havingRaw(new Expression("`persons_payments`.`date` <= '{$cupEvent->event->date}'"))
+            ;
         }
 
         if ($groups) {

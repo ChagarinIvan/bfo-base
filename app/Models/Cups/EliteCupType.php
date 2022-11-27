@@ -4,6 +4,7 @@ namespace App\Models\Cups;
 
 use App\Models\CupEvent;
 use App\Models\CupEventPoint;
+use App\Models\Distance;
 use App\Models\Group\CupGroup;
 use App\Models\Group\CupGroupFactory;
 use App\Models\Group\GroupMale;
@@ -40,12 +41,18 @@ class EliteCupType extends AbstractCupType
 
     protected function getGroupProtocolLines(CupEvent $cupEvent, CupGroup $group): Collection
     {
-        $mainDistance = $this->distanceService->findDistance($this->getGroupsMap($group), $cupEvent->event_id);
+        $groupMap = $this->getGroupsMap($group);
+        $mainDistance = $this->distanceService->findDistance($groupMap, $cupEvent->event_id);
         if ($mainDistance === null) {
             return new Collection();
         }
         $equalDistances = $this->distanceService->getEqualDistances($mainDistance);
-        $distances = $equalDistances->add($mainDistance);
+
+        $distances = $equalDistances
+            ->add($mainDistance)
+            ->filter(fn (Distance $distance) => in_array($distance->group->name, $groupMap, true))
+        ;
+
         return $this->protocolLinesRepository->getCupEventDistancesProtocolLines($distances, $cupEvent);
     }
 

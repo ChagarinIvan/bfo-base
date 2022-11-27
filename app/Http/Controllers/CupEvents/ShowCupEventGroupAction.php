@@ -4,15 +4,18 @@ namespace App\Http\Controllers\CupEvents;
 
 use App\Http\Controllers\Cups\AbstractCupAction;
 use App\Models\Group\CupGroupFactory;
-use App\Services\ClubsService;
-use App\Services\CupsService;
+use App\Services\DistanceService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 
 class ShowCupEventGroupAction extends AbstractCupAction
 {
-    public function __invoke(int $cupId, int $cupEventId, string $cupGroupId): View|RedirectResponse
-    {
+    public function __invoke(
+        int $cupId,
+        int $cupEventId,
+        string $cupGroupId,
+        DistanceService $distanceService
+    ): View|RedirectResponse {
         try {
             $group = CupGroupFactory::fromId($cupGroupId);
             $cup = $this->cupsService->getCup($cupId);
