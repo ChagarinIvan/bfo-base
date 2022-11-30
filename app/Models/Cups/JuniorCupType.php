@@ -22,6 +22,9 @@ use Illuminate\Support\Collection;
  */
 class JuniorCupType extends MasterCupType
 {
+    public const MEN_GROUPS = ['М20', 'M20'];
+    public const WOMEN_GROUPS = ['Ж20', 'W20'];
+
     public function getId(): string
     {
         return CupType::JUNIORS;
@@ -41,10 +44,11 @@ class JuniorCupType extends MasterCupType
     {
         $year = $cupEvent->cup->year;
         $startYear = $year - $group->age() ?->value ?? 0;
+        $mainGroups = $group->male() === GroupMale::Man ? self::MEN_GROUPS : self::WOMEN_GROUPS;
+        $mainGroup = $this->groupsService->getGroups($mainGroups);
         $eliteGroups = $group->male() === GroupMale::Man ? EliteCupType::MEN_GROUPS : EliteCupType::WOMEN_GROUPS;
 
-        $groups = $this->groupsService->getGroups($eliteGroups);
-        $groups->push($group);
+        $groups = $mainGroup->merge($this->groupsService->getGroups($eliteGroups));
 
         return $this->protocolLinesRepository->getCupEventProtocolLinesForPersonsCertainAge(
             $cupEvent,

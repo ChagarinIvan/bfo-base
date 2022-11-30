@@ -11,7 +11,6 @@ class OBelarusNetRelayParser extends AbstractParser
     private ?int $commandPlace = null;
     private ?int $commandPoints = null;
     private ?string $commandRank = null;
-    private int $commandCounter = 1;
     private int $commandSerial;
 
     public function parse(string $file, bool $needConvert = true): Collection
@@ -26,7 +25,6 @@ class OBelarusNetRelayParser extends AbstractParser
         preg_match_all('#<h2>(.+?)</h2>.*?<pre>[^b]*(<b>.+?)</pre>#msi', $file, $nodesMatch);
 
         foreach ($nodesMatch[2] as $nodeIndex => $node) {
-            $this->commandCounter = 1;
             $this->commandPoints = null;
             $this->commandPlace = null;
             $this->commandRank = null;
@@ -50,7 +48,7 @@ class OBelarusNetRelayParser extends AbstractParser
                         $distanceLength = (float)$match[3] * 1000;
                     }
                 } else {
-                    $distanceLength = floatval($match[3]);
+                    $distanceLength = (float)$match[3];
                 }
             }
             if (str_contains($groupName, ',')) {
@@ -83,12 +81,11 @@ class OBelarusNetRelayParser extends AbstractParser
                     continue;
                 }
                 if (is_numeric($line) || $isOpen) {
-                    $this->commandCounter = 1;
                     $this->commandSerial = (int)$line;
                     $this->commandPoints = null;
                     $this->commandPlace = null;
                     $this->commandRank = null;
-                    if (!$isOpen) {
+                    if (!$isOpen || is_numeric($line)) {
                         continue;
                     }
                 }
@@ -145,7 +142,6 @@ class OBelarusNetRelayParser extends AbstractParser
                 $protocolLine['serial_number'] = $isOpen ? $lineData[0] : ($this->commandSerial ?? 0);
                 $protocolLine['club'] = implode(' ', array_slice($lineData, $nameIndex, $fieldsCount - $indent - $nameIndex + 1));
                 $linesList->push($protocolLine);
-                $this->commandCounter++;
             }
         }
 

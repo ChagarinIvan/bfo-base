@@ -8,10 +8,10 @@ use Illuminate\Cache\Repository as CacheManager;
 class EventService
 {
     public function __construct(
-        private readonly private RankService $ranksService,
-        private readonly private ProtocolLineService $protocolLineService,
-        private readonly private DistanceService $distanceService,
-        private readonly private CacheManager $cache
+        private readonly RankService $ranksService,
+        private readonly ProtocolLineService $protocolLineService,
+        private readonly DistanceService $distanceService,
+        private readonly CacheManager $cache
     ) {}
 
     public function deleteEvent(Event $event): void

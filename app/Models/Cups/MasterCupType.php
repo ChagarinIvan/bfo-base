@@ -58,7 +58,6 @@ class MasterCupType extends AbstractCupType
             ->toArray()
         ;
 
-
         $cupEventProtocolLines = $cupEventProtocolLines->filter(
             fn (ProtocolLine $protocolLine) => in_array($protocolLine->distance_id, $eventDistances, true)
         );
