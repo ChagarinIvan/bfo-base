@@ -101,13 +101,62 @@ class YouthCupType extends MasterCupType
         'M_16' => ['M16', 'М16'],
         'M_18' => ['M18', 'М18'],
         'M_20' => ['M20', 'М20'],
-        'M_21' => ['M21', 'М21'],
+        'M_21' => [
+            'М21Е',
+            'М21E',
+            'МЕ',
+            'Мужчины группа Е',
+            'М21',
+            'M21E',
+            'МE',
+            'М21 Фин Е',
+            'M21',
+            'М21А',
+            'М21A',
+            'M21A',
+            'М21 Фин А',
+            'МА',
+            'МA',
+            'Мужчины группа А',
+            'Мужчины группа В',
+            'МB',
+            'M21B',
+            'МВ',
+            'М21B',
+            'М21Б',
+            'М20',
+            'M20',
+        ],
         'W_12' => ['Ж12', 'W12'],
         'W_14' => ['Ж14', 'W14'],
         'W_16' => ['Ж16', 'W16'],
         'W_18' => ['Ж18', 'W18'],
         'W_20' => ['Ж20', 'W20'],
-        'W_21' => ['Ж21', 'W21'],
+        'W_21' => [
+            'Ж21',
+            'Ж21Е',
+            'W21',
+            'ЖЕ',
+            'ЖE',
+            'Ж21E',
+            'W21E',
+            'Ж21 Фин Е',
+            'Женщины группа Е',
+            'Ж21А',
+            'Ж21A',
+            'ЖA',
+            'ЖА',
+            'W21A',
+            'Женщины группа А',
+            'Ж21Б',
+            'Женщины группа В',
+            'Ж21B',
+            'W21B',
+            'ЖB',
+            'ЖВ',
+            'Ж20',
+            'W20',
+        ],
     ];
 
     public function getId(): string
@@ -130,13 +179,12 @@ class YouthCupType extends MasterCupType
         $results = new Collection();
         $ageParticipants = $this->getGroupProtocolLines($cupEvent, $mainGroup);
         $ageParticipants = $ageParticipants->groupBy('distance_id');
-
         $eventGroupsId = $this->getEventGroups($mainGroup->male())->pluck('id');
-        $eventDistances = $this->distanceService->getCupEventDistancesByGroups($cupEvent, $eventGroupsId)
-            ->keyBy('id');
-
+        $eventDistances = $this->distanceService
+            ->getCupEventDistancesByGroups($cupEvent, $eventGroupsId)
+            ->keyBy('id')
+        ;
         $ageParticipants = $ageParticipants->intersectByKeys($eventDistances);
-
         foreach ($ageParticipants as $distanceId => $groupProtocolLines) {
             $eventGroupResults = $this->calculateDistance($cupEvent, $distanceId);
             $results = $results->merge($eventGroupResults->intersectByKeys($groupProtocolLines->keyBy('person_id')));
@@ -161,7 +209,7 @@ class YouthCupType extends MasterCupType
     protected function getGroupProtocolLines(CupEvent $cupEvent, CupGroup $group): Collection
     {
         $year = $cupEvent->cup->year;
-        $startYear = $year - $group->age() ?->value ?? 0;
+        $startYear = $year - $group->age()?->value ?? 0;
         $finishYear = $group->equal(CupGroup::create(GroupMale::Man, GroupAge::a12))
             ? $year
             : $startYear + 1;

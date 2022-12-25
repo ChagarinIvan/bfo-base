@@ -38,15 +38,15 @@ class AlbatrosTimingParser extends AbstractParser
             if (preg_match('#(\d+)\s+[^\d]+,\s+((\d+,\d+)\s+[^\d]+|(\d+)\s+[^\d])#s', $distance, $match)) {
                 $distancePoints = (int)$match[1];
                 if (str_contains($match[2], ',')) {
-                    $distanceLength = floatval(str_replace(',', '.', $match[3])) * 1000;
+                    $distanceLength = (float)str_replace(',', '.', $match[3]) * 1000;
                 } else {
-                    $distanceLength = floatval($match[4]);
+                    $distanceLength = (float)$match[4];
                 }
             } elseif (count($lines) < 4) {
                 continue;
             }
             $groupHeader = $lines[2];
-            $withPoints = str_contains($groupHeader, 'Oчки');
+            $withPoints = str_contains($groupHeader, 'Oчки') || str_contains($groupHeader, 'Очки');
             $withComment = str_contains($groupHeader, 'Прим');
             for ($index = 4; $index < $linesCount; $index++) {
                 $line = trim($lines[$index]);
@@ -78,10 +78,8 @@ class AlbatrosTimingParser extends AbstractParser
                 if ((Rank::validateRank($completeRank) || $completeRank === '-') && !in_array($completeRank, ['1', '2', '3'], true)) {
                     $protocolLine['complete_rank'] = $completeRank;
                     $indent++;
-                } else {
-                    if ($completeRank === 'в/к') {
-                        $protocolLine['vk'] = true;
-                    }
+                } elseif ($completeRank === 'в/к') {
+                    $protocolLine['vk'] = true;
                 }
 
                 $protocolLine['place'] = null;

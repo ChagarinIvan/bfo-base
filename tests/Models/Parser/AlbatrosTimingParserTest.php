@@ -159,6 +159,38 @@ class AlbatrosTimingParserTest extends AbstractParserTest
                         true,
                     ],
                 ]
+            ],
+            [
+                '2022/221211_res.htm',
+                88,
+                [
+                    // 1 Савченко Яна   OC Silwan Liuks  2004 I  5125  0:58:02  1  -  119
+                    0 => [
+                        'Савченко',        //lastname
+                        'Яна',             //firstname
+                        'OC Silwan Liuks', //club
+                        2004,              //year
+                        'I',               //rank
+                        5125,              //runner_number
+                        '0:58:02',         //time
+                        1,                 //place
+                        '-',               //complete_rank
+                        119,               //points
+                    ],
+                    // 1 Лычков Игорь  СКО "Немига-Норд"  1983 МС  13  0:42:42  1  I  120
+                    34 => [
+                        'Лычков',            //lastname
+                        'Игорь',             //firstname
+                        'СКО "Немига-Норд"', //club
+                        1983,                //year
+                        'МС',                //rank
+                        13,                  //runner_number
+                        '0:42:42',           //time
+                        1,                   //place
+                        'I',                 //complete_rank
+                        120,                 //points
+                    ],
+                ]
             ]
         ];
     }
