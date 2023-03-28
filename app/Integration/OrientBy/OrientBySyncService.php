@@ -34,93 +34,90 @@ class OrientBySyncService
 
     public function synchronize(): void
     {
-//        $this->logger->info('Start synchronisation.');
-//        $persons = $this->apiClient->getPersons();
-//        $this->logger->info(sprintf("Need process %d persons.", count($persons)));
-//
-//        $personsPrompts = [];
-//        foreach ($persons as $personDto) {
-//            $personsPrompts[self::makePromptFromPersonDto($personDto)] = $personDto;
-//        }
-//
-//        $indicatedPersons = $this->identService->identLines(array_keys($personsPrompts));
-//        foreach ($personsPrompts as $personsPrompt => $personDto) {
-//            if (isset($indicatedPersons[$personsPrompt])) {
-//                $personId = (int)$indicatedPersons[$personsPrompt];
-//                $person = $this->personsService->getPerson($personId);
-//                $logPerson = $person->replicate();
-//
-//                $person->from_base = true;
-//
-//                $lastname = $personDto->getLastName();
-//                if ($person->lastname !== $lastname) {
-//                    $this->logger->info(
-//                        "update lastname: {$logPerson->lastname} => {$lastname}",
-//                        ['person_id' => $personId]
-//                    );
-//                    $person->lastname = $lastname;
-//                }
-//
-//                $firstname = $personDto->getFirstName();
-//                if ($person->firstname !== $firstname) {
-//                    $this->logger->info(
-//                        "update firstname: {$logPerson->firstname} => {$firstname}",
-//                        ['person_id' => $personId]
-//                    );
-//                    $person->firstname = $firstname;
-//                }
-//
-//                $date = $personDto->getYear();
-//                if ($date && (($person->birthday && !$person->birthday->eq($date)) || $person->birthday === null)) {
-//                    $this->logger->info(
-//                        "update birthday: ".($logPerson->birthday ? $logPerson->birthday->format('Y') : '')." => {$date->format('Y')}",
-//                        ['person_id' => $personId]
-//                    );
-//                    $person->birthday = $date;
-//                }
-//
-//                /** @var PersonPayment $lastPayment */
-//                $lastPayment = $person->payments->last();
-//                $date = $personDto->getLastPaymentDate();
-//                if (
-//                    ($lastPayment === null && $personDto->bfopaydate)
-//                    || ($lastPayment && !$lastPayment->date->eq($date))
-//                    && $date
-//                ) {
-//                    $this->logger->info(
-//                        "update payment: " . ($lastPayment ? $lastPayment->date->format('Y-m-d') : '') . " => {$personDto->bfopaydate}",
-//                        ['person_id' => $personId]
-//                    );
-//                    $this->paymentService->addPayment($person->id, $personDto->getLastPaymentDate());
-//                }
-//
-//                if ($this->setClub($person, $personDto)) {
-//                    $this->logger->info(
-//                        "update club: ".($logPerson->club->name ?? '')." => {$personDto->club}",
-//                        ['person_id' => $personId]
-//                    );
-//                }
-//
-//                $this->personsService->storePerson($person);
-//            } else {
-//                $person = new Person();
-//                $person->from_base = true;
-//                $person->lastname = $personDto->getLastName();
-//                $person->firstname = $personDto->getFirstName();
-//                $person->birthday = $personDto->getYear();
-//                $this->setClub($person, $personDto);
-//                $person = $this->personsService->storePerson($person);
-//
-//                if ($personDto->rank) {
-//                    $this->setRank($person->id, $personDto->rank);
-//                }
-//
-//                if ($personDto->bfopaydate) {
-//                    $this->paymentService->addPayment($person->id, $personDto->getLastPaymentDate());
-//                }
-//            }
-//        }
-//        $this->logger->info('Finish synchronisation.');
+        $this->logger->info('Start synchronisation.');
+        $persons = $this->apiClient->getPersons();
+        $this->logger->info(sprintf("Need process %d persons.", count($persons)));
+        $date = Carbon::createFromFormat('Y-m-d', '2023-01-01');
+
+        $personsPrompts = [];
+        foreach ($persons as $personDto) {
+            $personsPrompts[self::makePromptFromPersonDto($personDto)] = $personDto;
+        }
+
+        $indicatedPersons = $this->identService->identLines(array_keys($personsPrompts));
+        foreach ($personsPrompts as $personsPrompt => $personDto) {
+            if (isset($indicatedPersons[$personsPrompt])) {
+                $personId = (int)$indicatedPersons[$personsPrompt];
+                $person = $this->personsService->getPerson($personId);
+                $logPerson = $person->replicate();
+
+                $person->from_base = true;
+
+                $lastname = $personDto->getLastName();
+                if ($person->lastname !== $lastname) {
+                    $this->logger->info(
+                        "update lastname: {$logPerson->lastname} => {$lastname}",
+                        ['person_id' => $personId]
+                    );
+                    $person->lastname = $lastname;
+                }
+
+                $firstname = $personDto->getFirstName();
+                if ($person->firstname !== $firstname) {
+                    $this->logger->info(
+                        "update firstname: {$logPerson->firstname} => {$firstname}",
+                        ['person_id' => $personId]
+                    );
+                    $person->firstname = $firstname;
+                }
+
+                $date = $personDto->getYear();
+                if ($date && (($person->birthday && !$person->birthday->eq($date)) || $person->birthday === null)) {
+                    $this->logger->info(
+                        "update birthday: ".($logPerson->birthday ? $logPerson->birthday->format('Y') : '')." => {$date->format('Y')}",
+                        ['person_id' => $personId]
+                    );
+                    $person->birthday = $date;
+                }
+
+                /** @var PersonPayment $lastPayment */
+                $lastPayment = $person->payments->last();
+                $date = $personDto->getLastPaymentDate();
+                if ($personDto->paid) {
+                    $this->logger->info(
+                        "update payment: ",
+                        ['person_id' => $personId]
+                    );
+                    $this->paymentService->addPayment($person->id, $date);
+                }
+
+                if ($this->setClub($person, $personDto)) {
+                    $this->logger->info(
+                        "update club: ".($logPerson->club->name ?? '')." => {$personDto->club}",
+                        ['person_id' => $personId]
+                    );
+                }
+
+                $this->personsService->storePerson($person);
+            } else {
+                $person = new Person();
+                $person->from_base = true;
+                $person->lastname = $personDto->getLastName();
+                $person->firstname = $personDto->getFirstName();
+                $person->birthday = $personDto->getYear();
+                $this->setClub($person, $personDto);
+                $person = $this->personsService->storePerson($person);
+
+                if ($personDto->rank) {
+                    $this->setRank($person->id, $personDto->rank);
+                }
+
+                if ($personDto->bfopaydate) {
+                    $this->paymentService->addPayment($person->id, $date);
+                }
+            }
+        }
+        $this->logger->info('Finish synchronisation.');
     }
 
     private function makePromptFromPersonDto(OrientByPersonDto $personDto): string

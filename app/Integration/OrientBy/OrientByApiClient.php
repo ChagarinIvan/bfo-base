@@ -15,17 +15,18 @@ class OrientByApiClient
     {
         $apiResponse = file_get_contents(self::ORIENT_BY_PERSONS_API_URL);
         $personsData = json_decode($apiResponse, true);
-        return array_map('self::extractPersonDto', $personsData);
+
+        return array_map($this->extractPersonDto(...), $personsData);
     }
 
-    private static function extractPersonDto(array $data): OrientByPersonDto
+    private function extractPersonDto(array $data): OrientByPersonDto
     {
         return new OrientByPersonDto(
             $data['name'],
             isset($data['yob']) ? (int)$data['yob'] : null,
             $data['club'] ?? null,
-            $data['bfopaydate'] ?? null,
             $data['rank'] ?? null,
+            (bool)$data['paid'],
         );
     }
 }
