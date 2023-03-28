@@ -18,7 +18,7 @@ class OBelarusNetParser extends AbstractParser
         if ($needConvert) {
             $content = mb_convert_encoding($content, 'utf-8', 'windows-1251');
         }
-        $content = str_replace("&nbsp;", ' ', $content);
+        $content = str_replace(["&nbsp;", " "], ' ', $content);
         @$doc->loadHTML($content);
         $xpath = new DOMXpath($doc);
         $preNodes = $xpath->query('//pre');
