@@ -13,6 +13,7 @@ class OBelarusSpanParser extends AbstractParser
         if ($needConvert) {
             $file = mb_convert_encoding($file, 'utf-8', 'windows-1251');
         }
+        $file = str_replace(["&nbsp;", " "], ' ', $file);
         $linesList = new Collection();
         $distancePoints = 0;
         $distanceLength = 0;
@@ -161,32 +162,39 @@ class OBelarusSpanParser extends AbstractParser
                 $protocolLine['vk'] = true;
                 $protocolLine['place'] = null;
                 return $protocolLine;
-            } elseif ($place === '-') {
+            }
+            if ($place === '-') {
                 $indent++;
                 $protocolLine['place'] = null;
                 return $protocolLine;
-            } elseif (str_contains($place, 'ДИСКВ') || $place === 'н.старт' || $place === 'снят' || $place === 'кв') {
+            }
+            if (str_contains($place, 'ДИСКВ') || $place === 'н.старт' || $place === 'снят' || $place === 'кв') {
                 $protocolLine['place'] = null;
                 return $protocolLine;
-            } elseif (preg_match('#^\d+$#', $place) && preg_match('#\d\d:\d\d:\d\d#', implode('', $lineData))) {
+            }
+            if (preg_match('#^\d+$#', $place) && preg_match('#\d\d:\d\d:\d\d#', implode('', $lineData))) {
                 $indent++;
                 $protocolLine['place'] = $place;
                 return $protocolLine;
-            } else {
-                $protocolLine['place'] = null;
             }
+
+            $protocolLine['place'] = null;
         } elseif ($column === 'complete_rank') {
             $rank = $lineData[$fieldsCount - $indent];
             if (Rank::validateRank($rank)) {
                 $indent++;
                 $protocolLine['complete_rank'] = $rank;
                 return $protocolLine;
-            } elseif ($rank === '-') {
+            }
+
+            if ($rank === '-') {
                 $indent++;
                 $protocolLine['complete_rank'] = null;
                 return $protocolLine;
             }
-        } elseif ($column === 'points') {
+        }
+
+        if ($column === 'points') {
             $column = $lineData[$fieldsCount - $indent];
             if (is_numeric($column)) {
                 $indent++;
@@ -213,9 +221,9 @@ class OBelarusSpanParser extends AbstractParser
                 $protocolLine['time'] = null;
                 if (
                     str_contains($column1, 'ДИСКВ')
+                    || str_contains($column1, 'ошел')
                     || $column1 === 'н.старт'
                     || $column1 === 'снят'
-                    || $column1 === 'Сошел'
                 ) {
                     $indent++;
                 } elseif (
