@@ -109,7 +109,7 @@ class OrientBySyncService
                     $this->setRank($person->id, $personDto->rank);
                 }
 
-                if ($personDto->bfopaydate) {
+                if ($personDto->paid) {
                     $this->paymentService->addPayment($person->id, $date);
                 }
             }
