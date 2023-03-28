@@ -80,9 +80,6 @@ class OrientBySyncService
                     $person->birthday = $date;
                 }
 
-                /** @var PersonPayment $lastPayment */
-                $lastPayment = $person->payments->last();
-                $date = $personDto->getLastPaymentDate();
                 if ($personDto->paid) {
                     $this->logger->info(
                         "update payment: ",
