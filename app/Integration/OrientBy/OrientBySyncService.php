@@ -37,7 +37,7 @@ class OrientBySyncService
         $this->logger->info('Start synchronisation.');
         $persons = $this->apiClient->getPersons();
         $this->logger->info(sprintf("Need process %d persons.", count($persons)));
-        $date = Carbon::createFromFormat('Y-m-d', '2023-01-01');
+        $paymentDate = Carbon::createFromFormat('Y-m-d', '2023-01-10');
 
         $personsPrompts = [];
         foreach ($persons as $personDto) {
@@ -85,7 +85,7 @@ class OrientBySyncService
                         "update payment: ",
                         ['person_id' => $personId]
                     );
-                    $this->paymentService->addPayment($person->id, $date);
+                    $this->paymentService->addPayment($person->id, $paymentDate);
                 }
 
                 if ($this->setClub($person, $personDto)) {
@@ -110,7 +110,7 @@ class OrientBySyncService
                 }
 
                 if ($personDto->paid) {
-                    $this->paymentService->addPayment($person->id, $date);
+                    $this->paymentService->addPayment($person->id, $paymentDate);
                 }
             }
         }
