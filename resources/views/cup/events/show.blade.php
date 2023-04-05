@@ -74,7 +74,6 @@
                         <th data-sortable="true">{{ __('app.common.fio') }}</th>
                         <th data-sortable="true">{{ __('app.common.birthday_year') }}</th>
                         <th data-sortable="true">{{ __('app.club.name') }}</th>
-                        <th data-sortable="true">{{ __('app.common.club') }}</th>
                         <th data-sortable="true">{{ __('app.common.time') }}</th>
                         <th data-sortable="true">{{ __('app.common.points') }}</th>
                     </tr>
