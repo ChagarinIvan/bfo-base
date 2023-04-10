@@ -22,3 +22,5 @@ docker-compose.yml
 /enviroment/php/php.ini
 /enviroment/nginx/conf.d/app.conf
 composer.phar
+.phpunit.cache/*
+.php-cs-fixer.cache
