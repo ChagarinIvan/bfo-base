@@ -11,7 +11,7 @@ class HrodnaParserTest extends AbstractParserTest
         return HrodnoParser::class;
     }
 
-    public function dataProvider(): array
+    public static function dataProvider(): array
     {
         return [
             [

@@ -11,7 +11,7 @@ class SimplyParserTest extends AbstractParserTest
         return SimplyParser::class;
     }
 
-    public function dataProvider(): array
+    public static function dataProvider(): array
     {
         return [
             [

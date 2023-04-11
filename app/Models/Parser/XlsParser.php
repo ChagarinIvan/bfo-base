@@ -28,7 +28,8 @@ class XlsParser extends AbstractParser
 
             if ($this->groups->containsStrict($lines[$i][0])) {
                 $groupName = $lines[$i++][0];
-                preg_match('#(\d+) КП, (\d+\.\d+) м#msi', $lines[$i++][0], $linesMatch);
+                $distance = $lines[$i++][0];
+                preg_match('#(\d+)\s*КП,\s+(\d+\.\d+) м#msi', $distance, $linesMatch);
                 $distancePoints = (int)$linesMatch[1];
                 $distanceLength = floatval($linesMatch[2]) * 1000;
                 $groupHeader = [];

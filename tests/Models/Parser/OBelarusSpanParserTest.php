@@ -13,7 +13,7 @@ class OBelarusSpanParserTest extends AbstractParserTest
         return OBelarusSpanParser::class;
     }
 
-    public function dataProvider(): array
+    public static function dataProvider(): array
     {
         return [
             [
