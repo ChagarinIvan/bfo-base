@@ -2,6 +2,7 @@
 
 namespace Tests\Models\Parser;
 
+use App\Models\Group;
 use App\Models\Parser\ParserFactory;
 use App\Models\ProtocolLine;
 use Carbon\Carbon;
@@ -12,18 +13,35 @@ use Tests\TestCase;
 abstract class AbstractParserTest extends TestCase
 {
     abstract protected function getParser(): string;
-    abstract public function dataProvider(): array;
+    abstract public static function dataProvider(): array;
 
     /**
      * @dataProvider dataProvider
      */
-    public function testParse(string $filePath, int $linesCount, array $expectedResults, bool $needConvert = false): void
+    public function testParse(string $filePath, int $linesCount, array $expectedResults, bool $needConvert = false, string $extension = 'html'): void
     {
         $storageManager = new FilesystemManager($this->app);
         $protocolContent = $storageManager->disk('tests')->get($filePath);
 
         $parserClass = $this->getParser();
-        $parser = ParserFactory::createProtocolParser($protocolContent, new Collection());
+        $group1 = new Group();
+        $group1->name = 'М12';
+        $group2 = new Group();
+        $group2->name = 'Ж12';
+        $group3 = new Group();
+        $group3->name = 'М14';
+        $group4 = new Group();
+        $group4->name = 'Ж14';
+        $group5 = new Group();
+        $group5->name = 'М16';
+        $group6 = new Group();
+        $group6->name = 'Ж16';
+        $group7 = new Group();
+        $group7->name = 'М18';
+        $group8 = new Group();
+        $group8->name = 'Ж18';
+        $groups = [$group1, $group2, $group3, $group4, $group5, $group6, $group7, $group8];
+        $parser = ParserFactory::createProtocolParser($protocolContent, Collection::make($groups)->pluck('name'), $extension);
         self::assertInstanceOf($parserClass, $parser);
 
         $lines = $parser->parse($protocolContent, $needConvert);

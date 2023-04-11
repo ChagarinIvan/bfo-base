@@ -11,7 +11,7 @@ class OBelarusNetParserTest extends AbstractParserTest
         return OBelarusNetParser::class;
     }
 
-    public function dataProvider(): array
+    public static function dataProvider(): array
     {
         return [
             [
