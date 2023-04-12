@@ -14,7 +14,7 @@ use Illuminate\Support\Collection;
 class MasterCupType extends AbstractCupType
 {
     protected const GROUPS_MAP = [
-        'M_35' => ['M35', 'М35'],
+        'M_35' => ['M35', 'М35', 'МE(35)'],
         'M_40' => ['M40', 'М40'],
         'M_45' => ['M45', 'М45'],
         'M_50' => ['M50', 'М50'],
@@ -24,7 +24,7 @@ class MasterCupType extends AbstractCupType
         'M_70' => ['M70', 'М70'],
         'M_75' => ['M75', 'М75'],
         'M_80' => ['M80', 'М80'],
-        'W_35' => ['Ж35', 'W35'],
+        'W_35' => ['Ж35', 'W35', 'ЖE(35)'],
         'W_40' => ['Ж40', 'W40'],
         'W_45' => ['Ж45', 'W45'],
         'W_50' => ['Ж50', 'W50'],
