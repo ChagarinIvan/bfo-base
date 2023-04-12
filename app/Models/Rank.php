@@ -59,6 +59,8 @@ class Rank extends Model
         self::SMC_RANK => self::FIRST_RANK,
         self::FIRST_RANK => self::SECOND_RANK,
         self::SECOND_RANK => self::THIRD_RANK,
+        self::JUNIOR_FIRST_RANK => self::JUNIOR_SECOND_RANK,
+        self::JUNIOR_SECOND_RANK => self::JUNIOR_THIRD_RANK,
     ];
 
     public const NEXT_RANKS = [

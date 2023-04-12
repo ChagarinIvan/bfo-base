@@ -232,6 +232,7 @@ class RankService
         $lastRank->rank = $protocolLine->complete_rank;
         $lastRank->start_date = $protocolLine->event->date;
         $lastRank->finish_date = $protocolLine->event->date->clone()->addYears(2);
+
         return $lastRank;
     }
 
