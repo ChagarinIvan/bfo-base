@@ -130,6 +130,10 @@ class RankService
             return;
         }
 
+        if (!$this->checkMaxJuniorAge($protocolLine->person_id, $protocolLine->complete_rank)) {
+            return;
+        }
+
         $event = $protocolLine->event;
         $actualRank = $this->getActualRank($protocolLine->person_id, $protocolLine->event->date);
 
