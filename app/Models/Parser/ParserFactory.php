@@ -9,6 +9,7 @@ class ParserFactory
 {
     private const PROTOCOL_PARSERS = [
         XlsParser::class,
+        XlsxParser::class,
         SFRParser::class,
         HandicapAlbatrosTimingParser::class,
         AlbatrosRelayParser::class,
