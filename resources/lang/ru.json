@@ -1,6 +1,8 @@
 {
     "app.club.name" : "Клуб",
     "app.club.persons_count" : "Количество членов",
+    "app.clubs.create.title" : "Добавление нового клуба",
+    "app.clubs.name" : "Название",
     "app.navbar.clubs" : "Клубы",
     "app.navbar.cups" : "Кубок",
     "app.navbar.persons" : "Участники",

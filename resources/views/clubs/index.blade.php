@@ -1,5 +1,6 @@
 @php
     use App\Models\Club;
+    use App\Http\Controllers\Club\ShowCreateClubFormAction;
     /**
      * @var Club[] $clubs;
      */
@@ -10,6 +11,17 @@
 @section('title', __('app.navbar.clubs'))
 
 @section('content')
+    @auth
+        <div class="row mb-3">
+            <div class="col-12">
+                <x-button text="app.common.new"
+                          color="success"
+                          icon="bi-file-earmark-plus-fill"
+                          url="{{ action(ShowCreateClubFormAction::class) }}"
+                />
+            </div>
+        </div>
+    @endauth
     <div class="row">
         <table id="table"
                data-cookie="true"
