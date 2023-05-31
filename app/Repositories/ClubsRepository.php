@@ -10,4 +10,9 @@ class ClubsRepository
     {
         return Club::whereNormalizeName($normalizeName)->first();
     }
+
+    public function add(Club $club): void
+    {
+        $club->save();
+    }
 }

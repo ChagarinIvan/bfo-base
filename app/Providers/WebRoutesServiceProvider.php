@@ -123,6 +123,12 @@ class WebRoutesServiceProvider extends ServiceProvider
                 $this->routeRegistrar->prefix('clubs')->group(function () {
                     $this->route->get('/',           Club\ShowClubsListAction::class);
                     $this->route->get('{club}/show', Club\ShowClubAction::class);
+
+                    $this->middleware(['auth'])->group(function () {
+                        $this->route->get( 'create', Club\ShowCreateClubFormAction::class);
+                        $this->route->post('store',  Club\StoreClubsAction::class);
+
+                    });
                 });
 
                 //localization

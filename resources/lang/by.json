@@ -1,6 +1,8 @@
 {
     "app.club.name" : "Клюб",
     "app.club.persons_count" : "Колькасць членаў",
+    "app.clubs.create.title" : "Даданне новага клюба",
+    "app.clubs.name" : "Назва",
     "app.persons.title" : "Члены федэрацыі",
     "app.navbar.clubs" : "Клюбы",
     "app.navbar.cups" : "Кубак",
