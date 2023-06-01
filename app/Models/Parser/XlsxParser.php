@@ -34,7 +34,7 @@ class XlsxParser extends AbstractParser
             ) {
                 $groupNameWithDistance = $lines[$i][0];
                 $group = explode(',', $groupNameWithDistance)[0];
-                preg_match('#(\d+)\s*КП,\s+(\d+\.\d+) км#msi', $groupNameWithDistance, $linesMatch);
+                preg_match('#(\d+)\s*КП,\s+(\d+(.|,)\d+) км#msi', $groupNameWithDistance, $linesMatch);
                 $distancePoints = (int)$linesMatch[1];
                 $distanceLength = floatval($linesMatch[2]) * 1000;
                 $groupHeader = [];
@@ -65,11 +65,12 @@ class XlsxParser extends AbstractParser
 
                     foreach ($groupHeader as $headerIndex => $headerData) {
                         $columnName = $this->getColumn($headerData);
-                        if ($columnName === 'name') {
-                            $protocolLine['lastname'] = explode(' ', $line[$headerIndex])[0];
-                            $protocolLine['firstname'] = explode(' ', $line[$headerIndex])[1];
+                        if ($columnName === 'name_surname') {
+                            $protocolLine['lastname'] = ucwords(explode(' ', $line[$headerIndex])[0]);
+                            $protocolLine['firstname'] = ucwords(explode(' ', $line[$headerIndex])[1]);
                             continue;
                         }
+
                         $protocolLine[$columnName] = $this->getValue($columnName, $line[$headerIndex]);
                     }
                     if (!isset($protocolLine['runner_number'])) {
@@ -96,11 +97,15 @@ class XlsxParser extends AbstractParser
             return 'serial_number';
         } elseif (str_contains($field, 'омер')) {
             return 'runner_number';
+        } elseif (strtolower($field) === 'фамилия') {
+            return 'lastname';
+        } elseif (strtolower($field) === 'имя') {
+            return 'firstname';
         } elseif (str_contains($field, 'амилия')) {
-            return 'name';
+            return 'name_surname';
         } elseif (str_contains($field, '.р.') || $field === 'гр') {
             return 'year';
-        } elseif (str_contains($field, 'азряд') || str_contains($field, 'квал')) {
+        } elseif (str_contains($field, 'азр') || str_contains($field, 'квал')) {
             return 'rank';
         } elseif (str_contains($field, 'оманда') || str_contains($field, 'ллектив')) {
             return 'club';
@@ -143,6 +148,9 @@ class XlsxParser extends AbstractParser
             case 'points':
             case 'year':
                 return $columnData ? (int)$columnData : null;
+            case 'firstname':
+            case 'lastname':
+                return mb_convert_case($columnData, MB_CASE_TITLE);
             case 'club':
                 return $columnData;
         }
