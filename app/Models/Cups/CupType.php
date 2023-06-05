@@ -10,6 +10,7 @@ class CupType
     public const BIKE = 'bike';
     public const JUNIORS = 'juniors';
     public const YOUTH = 'youth';
+    public const SKI = 'ski';
 
     public const CLASS_MAP = [
         self::SPRINT => SprintCupType::class,
@@ -18,6 +19,7 @@ class CupType
         self::BIKE => BikeCupType::class,
         self::JUNIORS => JuniorCupType::class,
         self::YOUTH => YouthCupType::class,
+        self::SKI => YouthCupType::class,
     ];
 
     public static function getCupTypeClass(string $cupType): CupTypeInterface
