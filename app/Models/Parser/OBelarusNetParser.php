@@ -181,7 +181,7 @@ class OBelarusNetParser extends AbstractParser
             if (preg_match('#\w\.\w\.\d\d\.\d\d#u', $time)) {
                 return null;
             }
-            if (preg_match('#\d\d\.\d\d#', $time)) {
+            if (preg_match('#\d\d\.\d{1,2}#', $time)) {
                 $indent++;
                 return null;
             }
