@@ -11,14 +11,15 @@
     "require": {
         "php": "^8.1",
         "ext-dom": "*",
+        "ext-mbstring": "*",
+        "doctrine/dbal": "^3.6",
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/framework": "^9.0",
         "laravel/sanctum": "^2.14",
         "mav/slovo": "^0.2.3",
         "phpoffice/phpspreadsheet": "^1.23",
         "phpunit/phpunit": "^9.5",
-        "predis/predis": "^1.1",
-        "ext-mbstring": "*"
+        "predis/predis": "^1.1"
     },
     "config": {
         "optimize-autoloader": true,
