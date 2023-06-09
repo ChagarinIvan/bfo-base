@@ -13,6 +13,7 @@ class ParserFactory
         SFRParser::class,
         HandicapAlbatrosTimingParser::class,
         AlbatrosRelayParser::class,
+        AlbatrosRelayWithHeadersParser::class,
         AlbatrosTimingParser::class,
         OBelarusNetRelayWithHeadersParser::class,
         OBelarusNetRelayParser::class,
