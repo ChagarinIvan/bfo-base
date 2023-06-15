@@ -16,7 +16,7 @@ class AlbatrosRelayWithHeadersParserTest extends AbstractParserTest
         return [
             [
                 '2023/040623.html',
-                102,
+                96,
                 [
                     0 => [
                         'Бильдюкевич', // фамилия

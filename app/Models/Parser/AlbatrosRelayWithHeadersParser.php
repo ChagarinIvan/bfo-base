@@ -50,12 +50,12 @@ class AlbatrosRelayWithHeadersParser extends AbstractParser
             }
             $groupName = trim($groupName, '+');
 
-            for ($index = 4; $index < $linesCount; $index++) {
+            for ($index = 5; $index < $linesCount; $index++) {
                 $line = trim($lines[$index]);
                 if (preg_match('#^\d+$#', $line)) {
                     continue;
                 } elseif (empty(trim($line, '-'))) {
-                    continue;
+                    break;
                 } elseif (empty($line)) {
                     break;
                 }
