@@ -225,7 +225,7 @@ class OBelarusNetParserTest extends AbstractParserTest
                         null,                  // очки
                     ],
                 ],
-            ]
+            ],
         ];
     }
 }

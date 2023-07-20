@@ -228,6 +228,7 @@ class OBelarusSpanParser extends AbstractParser
                     $indent++;
                 } elseif (
                     ($column1 === 'кв' && $column2 === 'снят')
+                    || ($column1 === 'к.в.' && $column2 === 'снят')
                     || ($column1 === '20.10' && $column2 === 'пп')
                 ) {
                     $indent += 2;
