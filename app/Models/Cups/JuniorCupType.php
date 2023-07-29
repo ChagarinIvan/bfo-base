@@ -106,8 +106,8 @@ class JuniorCupType extends MasterCupType
         } else {
             $differentGroupsNames = $group->male() === GroupMale::Man ? self::MEN_SECOND_GROUPS_NAMES : self::WOMEN_SECOND_GROUPS_NAMES;
             $differentGroupsList = $this->groupsService->getGroups($differentGroupsNames);;
-            $groups = $groups->merge($this->groupsService->getGroups($eliteGroupsList));
-            $groups = $groups->merge($this->groupsService->getGroups($differentGroupsList));
+            $groups = $groups->merge($eliteGroupsList);
+            $groups = $groups->merge($differentGroupsList);
         }
 
         return $this->protocolLinesRepository
