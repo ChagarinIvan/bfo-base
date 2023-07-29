@@ -241,7 +241,7 @@ class JuniorCupType extends MasterCupType
                 $cupEventPoints = new CupEventPoint($cupEvent->id, $protocolLine, $points);
             }
             dump($protocolLine->lastname);
-            dd($cupEventPoints);
+            dump($cupEventPoints);
             $cupEventPointsList->put($cupEventPoints->protocolLine->person_id, $cupEventPoints);
         }
 
