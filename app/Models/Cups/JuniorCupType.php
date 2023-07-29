@@ -203,20 +203,15 @@ class JuniorCupType extends MasterCupType
     {
         $cupEventPointsList = Collection::make();
         $maxPoints = $cupEvent->points;
-
+        dump($maxPoints);
         $protocolLines = $protocolLines->sortByDesc(fn(ProtocolLine $line) => $line->time ? $line->time->diffInSeconds() : 0);
-
         $first = true;
-        // О уч. = К сор. х 500 х К гр. (3 х Т поб. / Т уч. ‑ 1), где:
-        // К сор. – коэффициент соревнований (для соревнований класса «А» = 1, класса «В» = 0,9);
-        // Т поб. – время победителя в группе (время спортсмена, учащегося Республики Беларусь, показавшего лучший результат);
-        // Т уч. – результат участника;
-        // К гр. – коэффициент группы, который равен:
 
 
         foreach ($protocolLines as $protocolLine) {
             /** @var ProtocolLine $protocolLine */
             $koef = self::EVENTS_GROUPS_KOEF[$protocolLine->distance->group->name] ?? 0;
+            dump($koef);
 
             if ($first) {
                 if ($protocolLine->person_id !== null) {
@@ -226,7 +221,7 @@ class JuniorCupType extends MasterCupType
                     $cupEventPoints = new CupEventPoint(
                         $cupEvent->id,
                         $protocolLine,
-                        $firstResult->time === null ? 0 : (int)round($maxPoints * $koef), //К сор. х 500 х К гр. (3 х Т поб. / Т уч. ‑ 1)
+                        $firstResult->time === null ? 0 : (int)round($maxPoints * $koef),
                     );
                     $first = false;
                 } else {
@@ -245,7 +240,8 @@ class JuniorCupType extends MasterCupType
                 }
                 $cupEventPoints = new CupEventPoint($cupEvent->id, $protocolLine, $points);
             }
-
+            dump($protocolLine->lastname);
+            dd($cupEventPoints);
             $cupEventPointsList->put($cupEventPoints->protocolLine->person_id, $cupEventPoints);
         }
 
