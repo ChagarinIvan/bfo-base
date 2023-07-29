@@ -11,6 +11,9 @@ use App\Models\Group\GroupMale;
 use App\Models\ProtocolLine;
 use Illuminate\Support\Collection;
 
+/**
+ * ЮНАЦКІ
+ */
 class YouthCupType extends MasterCupType
 {
     private const EVENTS_GROUPS_KOEF = [
@@ -212,12 +215,13 @@ class YouthCupType extends MasterCupType
         $startYear = $year - $group->age()?->value ?? 0;
         $finishYear = $group->equal(CupGroup::create(GroupMale::Man, GroupAge::a12))
             ? $year
-            : $startYear + 1;
+            : $startYear + 1
+        ;
 
         return $this->protocolLinesRepository->getCupEventProtocolLinesForPersonsCertainAge(
-            $cupEvent,
-            $startYear,
-            $finishYear
+            cupEvent: $cupEvent,
+            startYear: $startYear,
+            finishYear: $finishYear,
         );
     }
 

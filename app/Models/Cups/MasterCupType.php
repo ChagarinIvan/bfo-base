@@ -124,6 +124,7 @@ class MasterCupType extends AbstractCupType
                 $groups = $groups->merge($this->groupsService->getGroups(static::GROUPS_MAP[$cupGroup->id()]));
             }
         }
+
         return $groups;
     }
 
