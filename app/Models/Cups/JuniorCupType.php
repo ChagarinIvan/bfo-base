@@ -155,7 +155,7 @@ class JuniorCupType extends MasterCupType
         return $this->protocolLinesRepository
             ->getCupEventProtocolLinesForPersonsCertainAge(
                 cupEvent: $cupEvent,
-                finishYear: $startYear,
+                startYear: $startYear,
                 withPayments: true,
                 groups: $groups,
             )

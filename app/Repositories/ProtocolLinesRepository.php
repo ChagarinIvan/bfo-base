@@ -65,10 +65,13 @@ class ProtocolLinesRepository
         $protocolLinesQuery = ProtocolLine::selectRaw(new Expression('protocol_lines.*'))
             ->join('person', 'person.id', '=', 'protocol_lines.person_id')
             ->join('distances', 'distances.id', '=', 'protocol_lines.distance_id')
-            ->where('person.birthday', '<=', "$finishYear-01-01")
             ->where('protocol_lines.vk', false)
             ->where('distances.event_id', $cupEvent->event_id)
         ;
+
+        if ($finishYear) {
+            $protocolLinesQuery->where('person.birthday', '<=', "$finishYear-01-01");
+        }
 
         if ($startYear) {
             $protocolLinesQuery->where('person.birthday', '>=', "$startYear-01-01");
