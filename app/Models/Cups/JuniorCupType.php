@@ -203,7 +203,6 @@ class JuniorCupType extends MasterCupType
     {
         $cupEventPointsList = Collection::make();
         $maxPoints = $cupEvent->points;
-        dump($maxPoints);
         $protocolLines = $protocolLines->sortByDesc(fn(ProtocolLine $line) => $line->time ? $line->time->diffInSeconds() : 0);
         $first = true;
 
@@ -211,7 +210,6 @@ class JuniorCupType extends MasterCupType
         foreach ($protocolLines as $protocolLine) {
             /** @var ProtocolLine $protocolLine */
             $koef = self::EVENTS_GROUPS_KOEF[$protocolLine->distance->group->name] ?? 0;
-            dump($koef);
 
             if ($first) {
                 if ($protocolLine->person_id !== null) {
@@ -232,16 +230,13 @@ class JuniorCupType extends MasterCupType
                     $points = '-';
                 } elseif ($protocolLine->time !== null) {
                     $lineTime = $protocolLine->time->secondsSinceMidnight();
-                    //К сор. х 500 х К гр. (3 х Т поб. / Т уч. ‑ 1)
-                    $points = (int)round($maxPoints * $koef * (3 * $firstResultSeconds / $lineTime - 1));
+                    $points = (int)round($maxPoints * (2 * $firstResultSeconds / $lineTime - 1));
                     $points = $points < 0 ? 0 : $points;
                 } else {
                     $points = 0;
                 }
                 $cupEventPoints = new CupEventPoint($cupEvent->id, $protocolLine, $points);
             }
-            dump($protocolLine->lastname);
-            dump($cupEventPoints);
             $cupEventPointsList->put($cupEventPoints->protocolLine->person_id, $cupEventPoints);
         }
 
