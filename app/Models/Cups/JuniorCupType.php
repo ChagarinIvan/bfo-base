@@ -206,7 +206,7 @@ class JuniorCupType extends MasterCupType
         $protocolLines = $protocolLines->sortByDesc(fn(ProtocolLine $line) => $line->time ? $line->time->diffInSeconds() : 0);
         $first = true;
 
-
+        dump($protocolLines);
         foreach ($protocolLines as $protocolLine) {
             /** @var ProtocolLine $protocolLine */
             $koef = self::EVENTS_GROUPS_KOEF[$protocolLine->distance->group->name] ?? 0;
@@ -240,6 +240,7 @@ class JuniorCupType extends MasterCupType
             $cupEventPointsList->put($cupEventPoints->protocolLine->person_id, $cupEventPoints);
         }
 
+        dump($cupEventPointsList);
         return $cupEventPointsList;
     }
 }
