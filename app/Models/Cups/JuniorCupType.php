@@ -202,7 +202,7 @@ class JuniorCupType extends MasterCupType
     protected function calculateLines(CupEvent $cupEvent, Collection $protocolLines): Collection
     {
         $cupEventPointsList = Collection::make();
-        $koef = self::EVENTS_GROUPS_KOEF[$protocolLine->distance->group->name] ?? 0;
+        $koef = self::EVENTS_GROUPS_KOEF[$protocolLines->first()->distance->group->name] ?? 0;
         $maxPoints = $cupEvent->points * $koef;
         $protocolLines = $protocolLines->sortByDesc(fn(ProtocolLine $line) => $line->time ? $line->time->diffInSeconds() : 0);
         $first = true;
