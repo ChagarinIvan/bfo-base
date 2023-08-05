@@ -202,14 +202,13 @@ class JuniorCupType extends MasterCupType
     protected function calculateLines(CupEvent $cupEvent, Collection $protocolLines): Collection
     {
         $cupEventPointsList = Collection::make();
-        $maxPoints = $cupEvent->points;
+        $koef = self::EVENTS_GROUPS_KOEF[$protocolLines->first()->distance->group->name] ?? 0;
+        $maxPoints = $cupEvent->points * $koef;
         $protocolLines = $protocolLines->sortByDesc(fn(ProtocolLine $line) => $line->time ? $line->time->diffInSeconds() : 0);
         $first = true;
 
-
         foreach ($protocolLines as $protocolLine) {
             /** @var ProtocolLine $protocolLine */
-            $koef = self::EVENTS_GROUPS_KOEF[$protocolLine->distance->group->name] ?? 0;
 
             if ($first) {
                 if ($protocolLine->person_id !== null) {
@@ -219,7 +218,7 @@ class JuniorCupType extends MasterCupType
                     $cupEventPoints = new CupEventPoint(
                         $cupEvent->id,
                         $protocolLine,
-                        $firstResult->time === null ? 0 : (int)round($maxPoints * $koef),
+                        $firstResult->time === null ? 0 : (int)round($maxPoints),
                     );
                     $first = false;
                 } else {
