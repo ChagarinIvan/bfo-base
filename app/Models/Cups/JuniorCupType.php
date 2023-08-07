@@ -140,7 +140,7 @@ class JuniorCupType extends MasterCupType
         $startYear = $year - $group->age() ?->value ?? 0;
         $mainGroupsNames = $group->male() === GroupMale::Man ? self::MEN_MAIN_GROUPS_NAMES : self::WOMEN_MAIN_GROUPS_NAMES;
         $groups = $this->groupsService->getGroups($mainGroupsNames);
-        $eliteGroupsNames = $group->male() === GroupMale::Man ? EliteCupType::MEN_GROUPS : EliteCupType::WOMEN_GROUPS;
+        $eliteGroupsNames = $group->male() === GroupMale::Man ? EliteCupType::ELITE_MEN_GROUPS : EliteCupType::ELITE_WOMEN_GROUPS;
         $eliteGroupsList = $this->groupsService->getGroups($eliteGroupsNames);
 
         if ($groups->isEmpty()) {

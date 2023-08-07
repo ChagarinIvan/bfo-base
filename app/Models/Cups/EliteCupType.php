@@ -12,8 +12,11 @@ use Illuminate\Support\Collection;
 
 class EliteCupType extends AbstractCupType
 {
-    public const MEN_GROUPS = ['М21Е', 'М21E', 'МЕ', 'Мужчины группа Е', 'М21', 'M21E', 'МE', 'М21 Фин Е', 'M21', 'МE(35)'];
-    public const WOMEN_GROUPS = ['Ж21', 'Ж21Е', 'W21', 'ЖЕ', 'ЖE', 'Ж21E', 'W21E', 'Ж21 Фин Е', 'Женщины группа Е', 'ЖE(35)'];
+    public const ELITE_MEN_GROUPS = ['М21Е', 'М21E', 'МЕ', 'Мужчины группа Е', 'М21', 'M21E', 'МE', 'М21 Фин Е', 'M21', 'МE(35)'];
+    public const YOUTH_MEN_GROUPS = ['М21Е', 'М21E', 'МЕ', 'Мужчины группа Е', 'М21', 'M21E', 'МE', 'М21 Фин Е', 'M21', 'МE(35)'];
+    public const ELITE_WOMEN_GROUPS = ['Ж21', 'Ж21Е', 'W21', 'ЖЕ', 'ЖE', 'Ж21E', 'W21E', 'Ж21 Фин Е', 'Женщины группа Е', 'ЖE(35)'];
+    public const JUNIOR_WOMEN_GROUPS = ['Ж21', 'Ж21Е', 'W21', 'ЖЕ', 'ЖE', 'Ж21E', 'W21E', 'Ж21 Фин Е', 'Женщины группа Е', 'ЖE(35)'];
+    public const YOUTH_WOMEN_GROUPS = ['Ж21', 'Ж21Е', 'W21', 'ЖЕ', 'ЖE', 'Ж21E', 'W21E', 'Ж21 Фин Е', 'Женщины группа Е', 'ЖE(35)'];
 
     public function getId(): string
     {
@@ -64,8 +67,16 @@ class EliteCupType extends AbstractCupType
     protected function getGroupsMap(CupGroup $group): array
     {
         $map = [
-            (new CupGroup(GroupMale::Man))->id() => static::MEN_GROUPS,
-            (new CupGroup(GroupMale::Woman))->id() => static::WOMEN_GROUPS,
+            (new CupGroup(GroupMale::Man))->id() => array_merge(
+                self::ELITE_MEN_GROUPS,
+                JuniorCupType::MEN_MAIN_GROUPS_NAMES,
+                ['M18', 'М18']
+            ),
+            (new CupGroup(GroupMale::Woman))->id() => array_merge(
+                self::ELITE_WOMEN_GROUPS,
+                JuniorCupType::WOMEN_MAIN_GROUPS_NAMES,
+                ['Ж18', 'W18']
+            )
         ];
 
         return $map[$group->id()] ?? [];
