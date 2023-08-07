@@ -53,7 +53,7 @@ class EliteCupType extends AbstractCupType
 
         $distances = $equalDistances
             ->add($mainDistance)
-            ->filter(fn (Distance $distance) => in_array($distance->group->name, $groupMap, true))
+            ->filter(fn (Distance $distance) => in_array($distance->group->name, $this->getAllGroupsMap($group), true))
         ;
 
         return $this->protocolLinesRepository->getCupEventDistancesProtocolLines($distances, $cupEvent);
@@ -65,6 +65,16 @@ class EliteCupType extends AbstractCupType
     }
 
     protected function getGroupsMap(CupGroup $group): array
+    {
+        $map = [
+            (new CupGroup(GroupMale::Man))->id() => self::ELITE_MEN_GROUPS,
+            (new CupGroup(GroupMale::Woman))->id() => self::ELITE_WOMEN_GROUPS,
+        ];
+
+        return $map[$group->id()] ?? [];
+    }
+
+    protected function getAllGroupsMap(CupGroup $group): array
     {
         $map = [
             (new CupGroup(GroupMale::Man))->id() => array_merge(
