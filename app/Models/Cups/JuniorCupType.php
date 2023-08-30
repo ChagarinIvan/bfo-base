@@ -27,11 +27,11 @@ use Illuminate\Support\Collection;
 class JuniorCupType extends MasterCupType
 {
     public const MEN_MAIN_GROUPS_NAMES = ['М20', 'M20'];
-    public const MEN_SECOND_GROUPS_NAMES = ['М21А', 'М21A', 'M21A', 'М21 Фин А', 'МА', 'МA', 'Мужчины группа А',];
+    public const MEN_SECOND_GROUPS_NAMES = ['М21А', 'М21A', 'M21A', 'М21 Фин А', 'МА', 'МA', 'Мужчины группа А'];
 
     public const WOMEN_MAIN_GROUPS_NAMES = ['Ж20', 'W20'];
 
-    public const WOMEN_SECOND_GROUPS_NAMES = ['Ж21А', 'Ж21A', 'Ж21 Фин A', 'ЖA', 'ЖА', 'W21A', 'Женщины группа А',];
+    public const WOMEN_SECOND_GROUPS_NAMES = ['Ж21А', 'Ж21A', 'Ж21 Фин A', 'ЖA', 'ЖА', 'W21A', 'Женщины группа А'];
 
     private const EVENTS_GROUPS_KOEF = [
         //М21Е
@@ -55,6 +55,9 @@ class JuniorCupType extends MasterCupType
         //М20
         'М20' => 0.9,
         'M20' => 0.9,
+        //M18
+        'М18' => 0.9,
+        'M18' => 0.9,
         //Ж21Е
         'Ж21' => 1,
         'Ж21Е' => 1,
@@ -75,6 +78,9 @@ class JuniorCupType extends MasterCupType
         //Ж20
         'Ж20' => 0.9,
         'W20' => 0.9,
+        //w18
+        'Ж18' => 0.9,
+        'W18' => 0.9,
     ];
 
     protected const GROUPS_MAP = [
@@ -140,6 +146,9 @@ class JuniorCupType extends MasterCupType
         $startYear = $year - $group->age() ?->value ?? 0;
         $mainGroupsNames = $group->male() === GroupMale::Man ? self::MEN_MAIN_GROUPS_NAMES : self::WOMEN_MAIN_GROUPS_NAMES;
         $groups = $this->groupsService->getGroups($mainGroupsNames);
+        $mainDistance = $this->distanceService->findDistance($groups, $cupEvent->event_id);
+        $equalDistances = $this->distanceService->getEqualDistances($mainDistance);
+
         $eliteGroupsNames = $group->male() === GroupMale::Man ? EliteCupType::ELITE_MEN_GROUPS : EliteCupType::ELITE_WOMEN_GROUPS;
         $eliteGroupsList = $this->groupsService->getGroups($eliteGroupsNames);
 
