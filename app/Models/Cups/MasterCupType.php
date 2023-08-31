@@ -49,31 +49,24 @@ class MasterCupType extends AbstractCupType
     public function calculateEvent(CupEvent $cupEvent, CupGroup $mainGroup): Collection
     {
         $results = new Collection();
-        // берём стоки протокола по возрасту
         $cupEventProtocolLines = $this->getGroupProtocolLines($cupEvent, $mainGroup);
-        // просто id-шки всех ветеранских групп из БД нужного пола (тут прям список)
         $eventGroupsId = $this->getEventGroups($mainGroup->male())->pluck('id');
-        // здесь непосредственно id-шки дистанций под эти группы в рамках нужного ивента
+
         $eventDistances = $this->distanceService
             ->getCupEventDistancesByGroups($cupEvent, $eventGroupsId)
             ->pluck('id')
             ->toArray()
         ;
 
-        // просто фильтруем все строки (которые у нас по возрасту) чтобы у них были дистанции из полученного выше списка
         $cupEventProtocolLines = $cupEventProtocolLines->filter(
             fn (ProtocolLine $protocolLine) => in_array($protocolLine->distance_id, $eventDistances, true)
         );
 
-        // группируем по id группы
         $cupEventProtocolLines = $cupEventProtocolLines->groupBy('distance.group_id');
         $validGroups = $eventGroupsId->flip();
-        // ещё раз отфильтровываем, только по группам
         $cupEventProtocolLines = $cupEventProtocolLines->intersectByKeys($validGroups);
-        // список всех групп
         $groups = $this->groupsService->getCupEventGroups($cupEvent);
 
-        // количество групп совпадающих с конфигом групп
         $count = $groups
             ->pluck('name')
             ->intersect(self::GROUPS_MAP[$mainGroup->id()])
@@ -86,10 +79,8 @@ class MasterCupType extends AbstractCupType
                 $count === 0
                 && in_array($group->name, self::GROUPS_MAP[$mainGroup->prev()->id()], true)
             ) {
-                // если такой группы нет, но есть предыдущая (это когда например 50 бежит по 45 тогда мы вычлиняем этих челов из предыдущей и считаем их на основаниия возраста
                 $eventGroupResults = $this->calculateLines($cupEvent, $groupProtocolLines);
             } else {
-                // группа есть и мы просто её считаем
                 $eventGroupResults = $this->calculateGroup($cupEvent, $groupId);
             }
             $results = $results->merge($eventGroupResults->intersectByKeys($groupProtocolLines->keyBy('person_id')));

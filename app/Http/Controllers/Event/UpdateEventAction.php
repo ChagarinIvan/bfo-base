@@ -26,7 +26,7 @@ class UpdateEventAction extends AbstractEventAction
             return $this->redirector->action(ShowEventAction::class, [$event, $event->distances->first()]);
         }
 
-        if ($url) {
+        if ($url !== null) {
             $needConvert = false;
             $extension = 'html';
             $protocol = $this->parserService->uploadProtocol($url);

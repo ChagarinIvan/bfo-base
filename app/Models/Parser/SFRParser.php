@@ -48,7 +48,6 @@ class SFRParser extends AbstractParser
                 $distanceLength = (float)str_replace(',', '.', $match[1]) * 1000;
             }
             for ($index = 1; $index < $linesCount; $index++) {
-                $skip = false;
                 $line = trim($linesMatch[1][$index]);
                 preg_match_all('#<td[^>]*><nobr>(.*?)</td>#msi', $line, $lineMatch);
                 $protocolLine = [
@@ -69,19 +68,8 @@ class SFRParser extends AbstractParser
                         $value = substr($value, 0, -7);
                     }
                     $protocolLine[$columnName] = $this->getValue($columnName, $value);
-                    if ($columnName === 'lastname') {
-                        if (empty($protocolLine[$columnName])) {
-                            $skip = true;
-                            break;
-                        }
-                        if (str_contains($headerData, 'амилия, Имя')) {
-                            [$protocolLine['lastname'], $protocolLine['firstname']] = explode(' ', $protocolLine[$columnName]);
-                        }
-                    }
                 }
-                if (!$skip) {
-                    $linesList->push($protocolLine);
-                }
+                $linesList->push($protocolLine);
             }
         }
 
@@ -171,7 +159,6 @@ class SFRParser extends AbstractParser
             case 'year':
                 return (int)$columnData;
             case 'lastname':
-
             case 'club':
             case 'firstname':
                 return $columnData;
