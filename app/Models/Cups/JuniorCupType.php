@@ -184,10 +184,11 @@ class JuniorCupType extends MasterCupType
         dump($ageParticipants);
         foreach ($ageParticipants as $distanceId => $groupProtocolLines) {
             $eventGroupResults = $this->calculateDistance($cupEvent, $distanceId);
+            dump($eventGroupResults);
             $results = $results->merge($eventGroupResults->intersectByKeys($groupProtocolLines->keyBy('person_id')));
         }
 
-        dd($results);
+        dump($results);
         return $results->sortByDesc(fn(CupEventPoint $cupEventResult) => $cupEventResult->points);
     }
 
@@ -206,6 +207,7 @@ class JuniorCupType extends MasterCupType
 
     protected function calculateLines(CupEvent $cupEvent, Collection $protocolLines): Collection
     {
+        dump($protocolLines);
         $cupEventPointsList = Collection::make();
         $koef = self::EVENTS_GROUPS_KOEF[$protocolLines->first()->distance->group->name] ?? 0;
         $maxPoints = $cupEvent->points * $koef;
