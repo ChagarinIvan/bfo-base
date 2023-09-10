@@ -109,7 +109,9 @@ class ProtocolLinesRepository
     public function getCupEventDistanceProtocolLines(int $distanceId): Collection
     {
         return ProtocolLine::where('protocol_lines.distance_id', $distanceId)
-            ->get();
+            ->where('protocol_lines.vk', false)
+            ->get()
+        ;
     }
 
     public function identByEqualPreparedLine(Collection $linesIds): void
