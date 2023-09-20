@@ -262,7 +262,7 @@ class OBelarusNetRelayParser extends AbstractParser
             } elseif (preg_match('#\d\d:\d\d:\d\d#', $column1) && !preg_match('#\d\d:\d\d:\d\d#', $column2)) {
                 $indent++;
                 $timeColumn = $column1;
-            } elseif ($column1 === '20.10' || $column1 === '24.4' || $column1 === 'DSQ') {
+            } elseif ($column1 === '20.10' || $column1 === '24.4' || $column1 === 'DSQ' || $column1 === 'пп.20.10') {
                 $column3 = $lineData[$fieldsCount - $indent - 2];
                 if (preg_match('#\d\d:\d\d:\d\d#', $column3)) {
                     $indent += 3;
