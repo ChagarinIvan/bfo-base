@@ -9,7 +9,7 @@ use Illuminate\Support\Collection;
 class OBelarusNetRelayParser extends AbstractParser
 {
     private ?int $commandPlace = null;
-    private ?bool $commandVk = null;
+    private bool $commandVk = false;
     private ?int $commandPoints = null;
     private ?string $commandRank = null;
     private int $commandSerial = 0;
@@ -30,7 +30,7 @@ class OBelarusNetRelayParser extends AbstractParser
             $this->commandPlace = null;
             $this->commandRank = null;
             $this->commandSerial = 0;
-            $this->commandVk = null;
+            $this->commandVk = false;
 
             $text = trim($node, '-');
             $text = strip_tags($text);
@@ -88,7 +88,7 @@ class OBelarusNetRelayParser extends AbstractParser
                     $this->commandPoints = null;
                     $this->commandPlace = null;
                     $this->commandRank = null;
-                    $this->commandVk = null;
+                    $this->commandVk = false;
 
                     if (!$isOpen || is_numeric($line)) {
                         continue;
