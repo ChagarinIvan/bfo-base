@@ -276,6 +276,10 @@ class OBelarusNetRelayParser extends AbstractParser
                     $protocolLine['time'] = null;
                     return $protocolLine;
                 }
+            } elseif ($column1 === 'старт' && $column2 === 'не') {
+                $indent += 2;
+                $protocolLine['time'] = null;
+                return $protocolLine;
             } else {
                 $protocolLine['time'] = null;
                 return $protocolLine;
