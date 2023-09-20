@@ -9,9 +9,10 @@ use Illuminate\Support\Collection;
 class OBelarusNetRelayParser extends AbstractParser
 {
     private ?int $commandPlace = null;
+    private ?bool $commandVk = null;
     private ?int $commandPoints = null;
     private ?string $commandRank = null;
-    private int $commandSerial;
+    private int $commandSerial = 0;
 
     public function parse(string $file, bool $needConvert = true): Collection
     {
@@ -28,6 +29,8 @@ class OBelarusNetRelayParser extends AbstractParser
             $this->commandPoints = null;
             $this->commandPlace = null;
             $this->commandRank = null;
+            $this->commandSerial = 0;
+            $this->commandVk = null;
 
             $text = trim($node, '-');
             $text = strip_tags($text);
@@ -85,9 +88,20 @@ class OBelarusNetRelayParser extends AbstractParser
                     $this->commandPoints = null;
                     $this->commandPlace = null;
                     $this->commandRank = null;
+                    $this->commandVk = null;
+
                     if (!$isOpen || is_numeric($line)) {
                         continue;
                     }
+                } elseif (preg_match('#^(\d+)\s+(\d+|-|в/к)\s+([^\d\s]+|-)+\s+(\d+|-)#u', $line, $match)) {
+                    $this->commandSerial = (int)$match[1];
+                    $this->commandPoints = is_numeric($match[4]) ? (int)$match[4] : null;
+                    $this->commandPlace = is_numeric($match[2]) ? (int)$match[2] : null;
+                    if ($match[2] === 'в/к') {
+                        $this->commandVk = true;
+                    }
+                    $this->commandRank = $match[3];
+                    continue;
                 }
 
                 $preparedLine = preg_replace('#=#', ' ', $line);
@@ -125,6 +139,7 @@ class OBelarusNetRelayParser extends AbstractParser
                 $protocolLine['points'] = $this->commandPoints;
                 $protocolLine['place'] = $this->commandPlace;
                 $protocolLine['complete_rank'] = $this->commandRank;
+                $protocolLine['vk'] = $protocolLine['vk'] ?? $this->commandVk;
 
                 for ($nameIndex = 0; $nameIndex <= $fieldsCount - $indent; $nameIndex++) {
                     $value = $lineData[$nameIndex];
