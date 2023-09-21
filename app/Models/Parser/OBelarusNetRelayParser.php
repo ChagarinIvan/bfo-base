@@ -9,9 +9,10 @@ use Illuminate\Support\Collection;
 class OBelarusNetRelayParser extends AbstractParser
 {
     private ?int $commandPlace = null;
+    private bool $commandVk = false;
     private ?int $commandPoints = null;
     private ?string $commandRank = null;
-    private int $commandSerial;
+    private int $commandSerial = 0;
 
     public function parse(string $file, bool $needConvert = true): Collection
     {
@@ -28,6 +29,8 @@ class OBelarusNetRelayParser extends AbstractParser
             $this->commandPoints = null;
             $this->commandPlace = null;
             $this->commandRank = null;
+            $this->commandSerial = 0;
+            $this->commandVk = false;
 
             $text = trim($node, '-');
             $text = strip_tags($text);
@@ -85,9 +88,20 @@ class OBelarusNetRelayParser extends AbstractParser
                     $this->commandPoints = null;
                     $this->commandPlace = null;
                     $this->commandRank = null;
+                    $this->commandVk = false;
+
                     if (!$isOpen || is_numeric($line)) {
                         continue;
                     }
+                } elseif (preg_match('#^(\d+)\s+(\d+|-|в/к)\s+([^\d\s]+|-)+\s+(\d+|-)#u', $line, $match)) {
+                    $this->commandSerial = (int)$match[1];
+                    $this->commandPoints = is_numeric($match[4]) ? (int)$match[4] : null;
+                    $this->commandPlace = is_numeric($match[2]) ? (int)$match[2] : null;
+                    if ($match[2] === 'в/к') {
+                        $this->commandVk = true;
+                    }
+                    $this->commandRank = $match[3];
+                    continue;
                 }
 
                 $preparedLine = preg_replace('#=#', ' ', $line);
@@ -125,6 +139,7 @@ class OBelarusNetRelayParser extends AbstractParser
                 $protocolLine['points'] = $this->commandPoints;
                 $protocolLine['place'] = $this->commandPlace;
                 $protocolLine['complete_rank'] = $this->commandRank;
+                $protocolLine['vk'] = $protocolLine['vk'] ?? $this->commandVk;
 
                 for ($nameIndex = 0; $nameIndex <= $fieldsCount - $indent; $nameIndex++) {
                     $value = $lineData[$nameIndex];
@@ -247,7 +262,7 @@ class OBelarusNetRelayParser extends AbstractParser
             } elseif (preg_match('#\d\d:\d\d:\d\d#', $column1) && !preg_match('#\d\d:\d\d:\d\d#', $column2)) {
                 $indent++;
                 $timeColumn = $column1;
-            } elseif ($column1 === '20.10' || $column1 === '24.4' || $column1 === 'DSQ') {
+            } elseif ($column1 === '20.10' || $column1 === '24.4' || $column1 === 'DSQ' || $column1 === 'пп.20.10') {
                 $column3 = $lineData[$fieldsCount - $indent - 2];
                 if (preg_match('#\d\d:\d\d:\d\d#', $column3)) {
                     $indent += 3;
@@ -261,6 +276,10 @@ class OBelarusNetRelayParser extends AbstractParser
                     $protocolLine['time'] = null;
                     return $protocolLine;
                 }
+            } elseif ($column1 === 'старт' && $column2 === 'не') {
+                $indent += 2;
+                $protocolLine['time'] = null;
+                return $protocolLine;
             } else {
                 $protocolLine['time'] = null;
                 return $protocolLine;
