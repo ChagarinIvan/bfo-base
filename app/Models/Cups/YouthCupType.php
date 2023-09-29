@@ -213,10 +213,7 @@ class YouthCupType extends MasterCupType
     {
         $year = $cupEvent->cup->year;
         $startYear = $year - $group->age()?->value ?? 0;
-        $finishYear = $group->age() === GroupAge::a12
-            ? $year
-            : $startYear + 1
-        ;
+        $finishYear = $year;
 
         return $this->protocolLinesRepository->getCupEventProtocolLinesForPersonsCertainAge(
             cupEvent: $cupEvent,
