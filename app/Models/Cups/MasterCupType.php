@@ -67,22 +67,37 @@ class MasterCupType extends AbstractCupType
         $cupEventProtocolLines = $cupEventProtocolLines->intersectByKeys($validGroups);
         $groups = $this->groupsService->getCupEventGroups($cupEvent);
 
-        $count = $groups
+        $mainGroupExist = $groups
             ->pluck('name')
             ->intersect(self::GROUPS_MAP[$mainGroup->id()])
-            ->count()
+            ->count() > 0
+        ;
+
+        $previousGroupExist = $groups
+            ->pluck('name')
+            ->intersect(self::GROUPS_MAP[$mainGroup->prev()->id()])
+            ->count() > 0
+        ;
+
+        $nextGroupExist = $groups
+            ->pluck('name')
+            ->intersect(self::GROUPS_MAP[$mainGroup->next()->id()])
+            ->count() > 0
         ;
 
         foreach ($cupEventProtocolLines as $groupId => $groupProtocolLines) {
             $group = $this->groupsService->getGroup($groupId);
             if (
-                $count === 0
-                && in_array($group->name, self::GROUPS_MAP[$mainGroup->prev()->id()], true)
+                // это объединение групп
+                // тут надо разделять
+                ($mainGroupExist && !$nextGroupExist)
+                || (!$mainGroupExist && $previousGroupExist)
             ) {
                 $eventGroupResults = $this->calculateLines($cupEvent, $groupProtocolLines);
             } else {
                 $eventGroupResults = $this->calculateGroup($cupEvent, $groupId);
             }
+
             $results = $results->merge($eventGroupResults->intersectByKeys($groupProtocolLines->keyBy('person_id')));
         }
 
