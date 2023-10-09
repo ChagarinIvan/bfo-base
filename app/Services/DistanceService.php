@@ -13,9 +13,9 @@ class DistanceService
     public function __construct(private readonly DistanceRepository $distanceRepository)
     {}
 
-    public function getCupEventDistancesByGroups(CupEvent $cupEvent, Collection $groups): Collection
+    public function getCupEventDistancesByGroups(CupEvent $cupEvent, Collection $groups, bool $withEquals = false): Collection
     {
-        return $this->distanceRepository->getCupEventDistancesByGroups($cupEvent, $groups);
+        return $this->distanceRepository->getCupEventDistancesByGroups($cupEvent, $groups, $withEquals);
     }
 
     /**

@@ -45,13 +45,25 @@ class DistanceRepository
         ;
     }
 
-    public function getCupEventDistancesByGroups(CupEvent $cupEvent, Collection $groups): Collection
+    public function getCupEventDistancesByGroups(CupEvent $cupEvent, Collection $groups, bool $withEquals = false): Collection
     {
-        return Distance::selectRaw(new Expression('distances.*'))
+        $distances = Distance::selectRaw(new Expression('distances.*'))
             ->join('groups', 'groups.id', '=', 'distances.group_id')
             ->whereIn('group_id', $groups)
             ->whereEventId($cupEvent->event_id)
             ->get()
         ;
+
+        if (!$withEquals) {
+            return $distances;
+        }
+
+        $result = Collection::empty();
+
+        foreach ($distances as $distance) {
+            $result->push($this->getEqualDistances($distance));
+        }
+
+        return $result->unique();
     }
 }
