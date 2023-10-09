@@ -182,11 +182,13 @@ class YouthCupType extends MasterCupType
         $results = new Collection();
         $ageParticipants = $this->getGroupProtocolLines($cupEvent, $mainGroup);
         $ageParticipants = $ageParticipants->groupBy('distance_id');
+        dump($ageParticipants);
         $mailGroups = $this->getEventGroups($mainGroup->male())->pluck('id');
         $eventDistances = $this->distanceService
             ->getCupEventDistancesByGroups($cupEvent, $mailGroups, true)
             ->keyBy('id')
         ;
+        dump($eventDistances);
         $ageParticipants = $ageParticipants->intersectByKeys($eventDistances);
         foreach ($ageParticipants as $distanceId => $groupProtocolLines) {
             $eventGroupResults = $this->calculateDistance($cupEvent, $distanceId);
