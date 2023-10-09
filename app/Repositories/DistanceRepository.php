@@ -62,7 +62,7 @@ class DistanceRepository
 
         foreach ($distances as $distance) {
             $result->add($distance);
-            $result->push($this->getEqualDistances($distance)->values());
+            $result->push(...$this->getEqualDistances($distance)->values());
         }
 
         return $result->unique();
