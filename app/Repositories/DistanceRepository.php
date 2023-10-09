@@ -61,7 +61,7 @@ class DistanceRepository
         $result = Collection::empty();
 
         foreach ($distances as $distance) {
-            $result->push($this->getEqualDistances($distance));
+            $result->push($this->getEqualDistances($distance)->values());
         }
 
         return $result->unique();
