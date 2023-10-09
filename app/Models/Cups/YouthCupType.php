@@ -187,7 +187,6 @@ class YouthCupType extends MasterCupType
             ->getCupEventDistancesByGroups($cupEvent, $mailGroups, true)
             ->keyBy('id')
         ;
-        dd($eventDistances);
         $ageParticipants = $ageParticipants->intersectByKeys($eventDistances);
         foreach ($ageParticipants as $distanceId => $groupProtocolLines) {
             $eventGroupResults = $this->calculateDistance($cupEvent, $distanceId);
