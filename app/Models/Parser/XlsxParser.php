@@ -34,9 +34,15 @@ class XlsxParser extends AbstractParser
             ) {
                 $groupNameWithDistance = $lines[$i][0];
                 $group = explode(',', $groupNameWithDistance)[0];
-                preg_match('#(\d+)\s*КП,\s+(\d+(.|,)\d+) км#msi', $groupNameWithDistance, $linesMatch);
-                $distancePoints = (int)$linesMatch[1];
-                $distanceLength = floatval($linesMatch[2]) * 1000;
+
+                $distancePoints = 0;
+                $distanceLength = 0;
+
+                if (preg_match('#(\d+)\s*КП,\s+(\d+(.|,)\d+) км#msi', $groupNameWithDistance, $linesMatch)) {
+                    $distancePoints = (int)$linesMatch[1];
+                    $distanceLength = (float)$linesMatch[2] * 1000;
+                }
+
                 $groupHeader = [];
                 $lines[++$i] = array_filter($lines[$i], fn($item) => $item !== null);
                 if (empty($lines[$i])) {
