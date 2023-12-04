@@ -16,7 +16,6 @@ class UpdateCupAction extends AbstractCupAction
             'year' => 'required|digits:4',
             'type' => 'required',
             'events_count' => 'required|numeric',
-            'visible' => 'required|boolean',
         ]);
 
         $cup->name = $formParams['name'];
