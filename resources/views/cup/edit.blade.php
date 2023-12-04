@@ -45,7 +45,7 @@
             </div>
             <div class="form-floating mb-5 form-check form-switch">
                 <input class="form-check-input" type="checkbox" id="visible" name="visible" {{ $cup->visible ? 'checked' : '' }}>
-                <label class="form-check-label" for="visible">{{ __('$formParams') }}</label>
+                <label class="form-check-label" for="visible">{{ __('app.common.visible') }}</label>
             </div>
             <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3 col-xxl-2">
                 <input type="submit" class="btn btn-outline-primary btn-sm" value="{{ __('app.common.update') }}">
