@@ -18,7 +18,7 @@ class StoreCupAction extends AbstractCupAction
             'events_count' => 'required|numeric',
             'visible' => 'required|boolean',
         ]);
-        dd($formParams);
+
         $cup = new Cup();
         $cup->name = $formParams['name'];
         $cup->year = $formParams['year'];
