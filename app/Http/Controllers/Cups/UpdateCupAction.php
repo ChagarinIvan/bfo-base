@@ -23,7 +23,7 @@ class UpdateCupAction extends AbstractCupAction
         $cup->year = $formParams['year'];
         $cup->type = $formParams['type'];
         $cup->events_count = $formParams['events_count'];
-        $cup->visible = (bool) $formParams['visible'];
+        $cup->visible = ($formParams['visible'] ?? 'off') === 'on';
 
         if (!array_key_exists($cup->type, CupType::CLASS_MAP)) {
             $cup->type = CupType::ELITE;
