@@ -6,6 +6,7 @@
     use App\Http\Controllers\Cups\ClearCacheAction;
     use App\Http\Controllers\Cups\ShowCupTableAction;
     use App\Http\Controllers\Cups\ShowEditCupFormAction;
+    use App\Http\Controllers\Cups\DeleteCupAction;
     use App\Models\Cup;
     use App\Models\CupEvent;
     use Illuminate\Support\Collection;use Illuminate\Support\Str;
