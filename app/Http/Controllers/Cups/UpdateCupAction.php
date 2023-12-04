@@ -20,7 +20,6 @@ class UpdateCupAction extends AbstractCupAction
             'visible' => 'in:on',
         ]);
 
-        Log::info();
         $cup->name = $formParams['name'];
         $cup->year = $formParams['year'];
         $cup->type = $formParams['type'];
