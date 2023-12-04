@@ -35,6 +35,7 @@
                           icon="bi-arrow-clockwise"
                           url="{{ action(ClearCacheAction::class, [$cup]) }}"
                 />
+                <x-delete-button modal-id="deleteModalCup{{ $cup->id }}"/>
             @endauth
             <x-button text="app.cup.table"
                       color="secondary"
@@ -109,6 +110,9 @@
                  url="{{ action(DeleteCupEventAction::class, [$cup, $cupEvent]) }}"
         />
     @endforeach
+    <x-modal modal-id="deleteModalCup{{ $cup->id }}"
+             url="{{ action(DeleteCupAction::class, [$cup]) }}"
+    />
 @endsection
 
 @section('table_extracted_columns', '[1]')

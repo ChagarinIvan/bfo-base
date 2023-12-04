@@ -6,6 +6,7 @@ use App\Models\Cup;
 use App\Models\Cups\CupType;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class StoreCupAction extends AbstractCupAction
 {
@@ -17,7 +18,7 @@ class StoreCupAction extends AbstractCupAction
             'type' => 'required',
             'events_count' => 'required|numeric',
         ]);
-
+        Log::info($request);
         $cup = new Cup();
         $cup->name = $formParams['name'];
         $cup->year = $formParams['year'];
