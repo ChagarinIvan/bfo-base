@@ -6,7 +6,6 @@ use App\Models\Cup;
 use App\Models\Cups\CupType;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class StoreCupAction extends AbstractCupAction
 {
@@ -17,6 +16,7 @@ class StoreCupAction extends AbstractCupAction
             'year' => 'required|digits:4',
             'type' => 'required',
             'events_count' => 'required|numeric',
+            'visible' => 'in:on',
         ]);
 
         $cup = new Cup();
