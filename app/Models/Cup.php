@@ -15,6 +15,7 @@ use Illuminate\Support\Collection;
  * @property int $events_count
  * @property int $year
  * @property string $type
+ * @property bool $visible
  *
  * @property-read Collection|CupEvent[] $events
  *

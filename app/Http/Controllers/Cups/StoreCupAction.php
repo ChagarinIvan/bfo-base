@@ -16,6 +16,7 @@ class StoreCupAction extends AbstractCupAction
             'year' => 'required|digits:4',
             'type' => 'required',
             'events_count' => 'required|numeric',
+            'visible' => 'in:on',
         ]);
 
         $cup = new Cup();
@@ -23,8 +24,9 @@ class StoreCupAction extends AbstractCupAction
         $cup->year = $formParams['year'];
         $cup->type = $formParams['type'];
         $cup->events_count = $formParams['events_count'];
+        $cup->visible = ($formParams['visible'] ?? 'off') === 'on';
 
-        if (!in_array($cup->type, array_keys(CupType::CLASS_MAP), true)) {
+        if (!array_key_exists($cup->type, CupType::CLASS_MAP)) {
             $cup->type = CupType::ELITE;
         }
 

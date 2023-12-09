@@ -6,6 +6,7 @@
     use App\Http\Controllers\Cups\ClearCacheAction;
     use App\Http\Controllers\Cups\ShowCupTableAction;
     use App\Http\Controllers\Cups\ShowEditCupFormAction;
+    use App\Http\Controllers\Cups\DeleteCupAction;
     use App\Models\Cup;
     use App\Models\CupEvent;
     use Illuminate\Support\Collection;use Illuminate\Support\Str;
@@ -35,6 +36,7 @@
                           icon="bi-arrow-clockwise"
                           url="{{ action(ClearCacheAction::class, [$cup]) }}"
                 />
+                <x-delete-button modal-id="deleteModalCup{{ $cup->id }}"/>
             @endauth
             <x-button text="app.cup.table"
                       color="secondary"
@@ -109,6 +111,9 @@
                  url="{{ action(DeleteCupEventAction::class, [$cup, $cupEvent]) }}"
         />
     @endforeach
+    <x-modal modal-id="deleteModalCup{{ $cup->id }}"
+             url="{{ action(DeleteCupAction::class, [$cup]) }}"
+    />
 @endsection
 
 @section('table_extracted_columns', '[1]')
