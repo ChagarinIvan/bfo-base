@@ -69,7 +69,7 @@
                 @foreach ($events as $event)
                     <tr>
                         <td>
-                            <a href="{{ action(ShowEventAction::class, [$event->id, $event->distances->first()]) }}">{{ $event->name }}</a>
+                            <a href="{{ action(ShowEventAction::class, [$event->id, $event->distances->first() ?? 0]) }}">{{ $event->name }}</a>
                         </td>
                         <td>
                             @foreach($event->cups as $cupEvent)
