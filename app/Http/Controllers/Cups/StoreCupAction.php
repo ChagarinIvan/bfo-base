@@ -29,7 +29,7 @@ class StoreCupAction extends AbstractCupAction
         if (!array_key_exists($cup->type, CupType::CLASS_MAP)) {
             $cup->type = CupType::ELITE;
         }
-
+dd($cup);
         $cup->save();
 
         return $this->redirector->action(ShowCupAction::class, [$cup]);
