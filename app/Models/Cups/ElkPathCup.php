@@ -30,7 +30,7 @@ class ElkPathCup extends EliteCupType
         return $map[$group->id()] ?? [];
     }
 
-    protected function withPayments(): bool
+    protected static function withPayments(): bool
     {
         return false;
     }

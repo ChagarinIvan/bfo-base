@@ -49,10 +49,10 @@ class EliteCupType extends AbstractCupType
             ->filter(fn (Distance $distance) => in_array($distance->group->name, $this->getAllGroupsMap($group), true))
         ;
 
-        return $this->protocolLinesRepository->getCupEventDistancesProtocolLines($distances, $cupEvent, $this->withPayments());
+        return $this->protocolLinesRepository->getCupEventDistancesProtocolLines($distances, $cupEvent, static::withPayments());
     }
 
-    protected function withPayments(): bool
+    protected static function withPayments(): bool
     {
         return true;
     }

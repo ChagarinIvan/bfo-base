@@ -46,13 +46,13 @@ class ProtocolLinesRepository
     {
         $query = ProtocolLine::selectRaw(new Expression('`protocol_lines`.*, `persons_payments`.`date`'))
             ->join('person', 'person.id', '=', 'protocol_lines.person_id')
+            ->join('persons_payments', 'person.id', '=', 'persons_payments.person_id')
             ->where('protocol_lines.vk', false)
             ->whereIn('distance_id', $distances->pluck('id')->unique())
         ;
 
         if ($withPayments) {
             $query
-                ->join('persons_payments', 'person.id', '=', 'persons_payments.person_id')
                 ->where('persons_payments.year', '=', $cupEvent->cup->year)
                 ->where('persons_payments.date', '<=', $cupEvent->event->date)
                 ->havingRaw(new Expression("`persons_payments`.`date` <= '{$cupEvent->event->date}'"))
