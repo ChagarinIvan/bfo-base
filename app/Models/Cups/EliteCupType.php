@@ -25,16 +25,12 @@ class EliteCupType extends AbstractCupType
         return 'app.cup.type.elite';
     }
 
-    /**
-     * @param CupEvent $cupEvent
-     * @param CupGroup $mainGroup
-     * @return Collection //array<int, CupEventPoint>
-     */
     public function calculateEvent(CupEvent $cupEvent, CupGroup $mainGroup): Collection
     {
         $cupEventProtocolLines = $this->getGroupProtocolLines($cupEvent, $mainGroup);
 
-        return $this->calculateLines($cupEvent, $cupEventProtocolLines)
+        return $this
+            ->calculateLines($cupEvent, $cupEventProtocolLines)
             ->sortByDesc(fn (CupEventPoint $cupEventResult) => $cupEventResult->points)
         ;
     }
@@ -53,7 +49,12 @@ class EliteCupType extends AbstractCupType
             ->filter(fn (Distance $distance) => in_array($distance->group->name, $this->getAllGroupsMap($group), true))
         ;
 
-        return $this->protocolLinesRepository->getCupEventDistancesProtocolLines($distances, $cupEvent);
+        return $this->protocolLinesRepository->getCupEventDistancesProtocolLines($distances, $cupEvent, $this->withPayments());
+    }
+
+    protected function withPayments(): bool
+    {
+        return true;
     }
 
     public function getGroups(): Collection

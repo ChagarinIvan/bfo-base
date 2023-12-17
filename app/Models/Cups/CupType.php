@@ -12,6 +12,8 @@ class CupType
     public const YOUTH = 'youth';
     public const SKI = 'ski';
 
+    public const ELK_PATH = 'elk_path';
+
     public const CLASS_MAP = [
         self::SPRINT => SprintCupType::class,
         self::ELITE => EliteCupType::class,
@@ -20,6 +22,7 @@ class CupType
         self::JUNIORS => JuniorCupType::class,
         self::YOUTH => YouthCupType::class,
         self::SKI => SkiCupType::class,
+        self::ELK_PATH => SkiCupType::class,
     ];
 
     public static function getCupTypeClass(string $cupType): CupTypeInterface
