@@ -51,14 +51,15 @@ class ProtocolLinesRepository
         ;
 
         if ($withPayments) {
-            $query::join('persons_payments', 'person.id', '=', 'persons_payments.person_id')
+            $query
+                ->join('persons_payments', 'person.id', '=', 'persons_payments.person_id')
                 ->where('persons_payments.year', '=', $cupEvent->cup->year)
                 ->where('persons_payments.date', '<=', $cupEvent->event->date)
                 ->havingRaw(new Expression("`persons_payments`.`date` <= '{$cupEvent->event->date}'"))
             ;
         }
 
-        return $query::get();
+        return $query->get();
     }
 
     public function getCupEventProtocolLinesForPersonsCertainAge(
