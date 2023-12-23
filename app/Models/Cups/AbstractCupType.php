@@ -114,7 +114,6 @@ abstract class AbstractCupType implements CupTypeInterface
 
         foreach ($groups as $group) {
             $lines = $lines->merge($this->getGroupProtocolLines($cupEvent, $group));
-            dump($lines);
         }
 
         return $lines->pluck('id')->unique()->count();

@@ -31,7 +31,7 @@ class ElkPathCup extends EliteCupType
         if ($mainDistance === null) {
             return new Collection();
         }
-        dump($mainDistance);
+
         return $this->protocolLinesRepository->getCupEventDistancesProtocolLines(collect([$mainDistance]), $cupEvent, static::withPayments());
     }
 
