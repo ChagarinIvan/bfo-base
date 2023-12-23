@@ -44,6 +44,7 @@ class ProtocolLinesRepository
      */
     public function getCupEventDistancesProtocolLines(Collection|array $distances, CupEvent $cupEvent, bool $withPayments): Collection
     {
+        dump($withPayments);
         $query = ProtocolLine::selectRaw(new Expression('`protocol_lines`.*, `persons_payments`.`date`'))
             ->join('person', 'person.id', '=', 'protocol_lines.person_id')
             ->join('persons_payments', 'person.id', '=', 'persons_payments.person_id')
