@@ -22,7 +22,7 @@ class CupGroup
 
     public function id(): string
     {
-        return "{$this->male->value}_".($this->age->value ?? 0).$this->name ?: '';
+        return "{$this->male->value}_".($this->age->value ?? 0).'_'.$this->name ?: '';
     }
 
     public function name(): string
