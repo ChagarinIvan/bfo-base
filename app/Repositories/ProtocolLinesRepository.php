@@ -47,7 +47,7 @@ class ProtocolLinesRepository
         dump($distances);
         $query = ProtocolLine::selectRaw(new Expression('`protocol_lines`.*, `persons_payments`.`date`'))
             ->join('person', 'person.id', '=', 'protocol_lines.person_id')
-            ->join('persons_payments', 'person.id', '=', 'persons_payments.person_id')
+            ->leftJoin('persons_payments', 'person.id', '=', 'persons_payments.person_id')
             ->where('protocol_lines.vk', false)
             ->whereIn('distance_id', $distances->pluck('id')->unique())
         ;
