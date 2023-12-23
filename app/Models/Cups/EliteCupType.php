@@ -38,6 +38,7 @@ class EliteCupType extends AbstractCupType
     protected function getGroupProtocolLines(CupEvent $cupEvent, CupGroup $group): Collection
     {
         $groupMap = $this->getGroupsMap($group);
+        dump($groupMap);
         $mainDistance = $this->distanceService->findDistance($groupMap, $cupEvent->event_id);
         if ($mainDistance === null) {
             return new Collection();
