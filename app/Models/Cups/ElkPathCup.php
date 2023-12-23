@@ -32,7 +32,7 @@ class ElkPathCup extends EliteCupType
             return new Collection();
         }
         dump($mainDistance);
-        return $this->protocolLinesRepository->getCupEventDistancesProtocolLines(collect($mainDistance), $cupEvent, static::withPayments());
+        return $this->protocolLinesRepository->getCupEventDistancesProtocolLines(collect([$mainDistance]), $cupEvent, static::withPayments());
     }
 
     protected function getGroupsMap(CupGroup $group): array
