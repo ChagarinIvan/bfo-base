@@ -3,16 +3,12 @@
 namespace App\Models\Cups;
 
 use App\Models\CupEvent;
-use App\Models\Distance;
 use App\Models\Group\CupGroup;
 use App\Models\Group\GroupMale;
 use Illuminate\Support\Collection;
 
 class ElkPathCup extends EliteCupType
 {
-    public const ELITE_MEN_GROUPS = ['Elite–Mужчыны'];
-    public const ELITE_WOMEN_GROUPS = ['Elite–Жанчыны'];
-
     public function getId(): string
     {
         return CupType::ELK_PATH;
@@ -21,6 +17,22 @@ class ElkPathCup extends EliteCupType
     public function getNameKey(): string
     {
         return 'app.cup.type.elk_path';
+    }
+
+    public function getGroups(): Collection
+    {
+        $groups = Collection::make();
+
+        $groups->push(new CupGroup(GroupMale::Man, name: 'Elite–Mужчыны'));
+        $groups->push(new CupGroup(GroupMale::Woman, name: 'Elite–Жанчыны'));
+        $groups->push(new CupGroup(GroupMale::Man, name: 'Short–Mужчыны'));
+        $groups->push(new CupGroup(GroupMale::Woman, name: 'Short–Mужчыны'));
+        $groups->push(new CupGroup(GroupMale::Man, name: 'Kids–Хлопцы'));
+        $groups->push(new CupGroup(GroupMale::Woman, name: 'Kids–Дзяўчыны'));
+        $groups->push(new CupGroup(GroupMale::Man, name: 'Youth–Хлопцы'));
+        $groups->push(new CupGroup(GroupMale::Woman, name: 'Youth–Дзяўчыны'));
+
+        return $groups;
     }
 
     protected function getGroupProtocolLines(CupEvent $cupEvent, CupGroup $group): Collection
@@ -37,12 +49,14 @@ class ElkPathCup extends EliteCupType
 
     protected function getGroupsMap(CupGroup $group): array
     {
-        $map = [
-            (new CupGroup(GroupMale::Man))->id() => static::ELITE_MEN_GROUPS,
-            (new CupGroup(GroupMale::Woman))->id() => static::ELITE_WOMEN_GROUPS,
-        ];
+        $map = [];
+        foreach ($this->getGroups() as $cupGroup) {
+            if ($cupGroup->equal($group)) {
+                return [$cupGroup->name()];
+            }
+        }
 
-        return $map[$group->id()] ?? [];
+        return [];
     }
 
     protected static function withPayments(): bool
