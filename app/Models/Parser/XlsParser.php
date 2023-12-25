@@ -92,7 +92,7 @@ class XlsParser extends AbstractParser
                         if ($columnName === '') {
                             continue;
                         }
-                        $protocolLine[$columnName] = $this->getValue($columnName, $line[$headerIndex]);
+                        $protocolLine[$columnName] = $this->getValue($columnName, $line[$headerIndex] ?? '');
                     }
                     if (!isset($protocolLine['runner_number'])) {
                         $protocolLine['runner_number'] = $protocolLine['serial_number'];
@@ -137,7 +137,7 @@ class XlsParser extends AbstractParser
         return '';
     }
 
-    private function getValue(string $column, ?string $columnData): mixed
+    private function getValue(string $column, string $columnData): mixed
     {
         $columnData = trim($columnData);
         switch ($column) {

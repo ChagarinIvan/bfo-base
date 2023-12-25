@@ -56,7 +56,7 @@ class AlbatrosRelayWithHeadersParser extends AbstractParser
 
             $paramsLine = $lines[0];
             [,$distance] = explode(':', $paramsLine);
-            preg_match('#(\d+)\s*КП,\s+(\d+(.|,)\d+) м#msi', $distance, $linesMatch);
+            preg_match('#(\d+)\s*КП,\s+(\d+(.|,)\d+) м#msiu', $distance, $linesMatch);
             $distancePoints = (int)$linesMatch[1];
             $distanceLength = (float) ($linesMatch[2]) * 1000;
             if (str_contains($groupName, ',')) {
@@ -151,7 +151,7 @@ class AlbatrosRelayWithHeadersParser extends AbstractParser
             $firstItem = $preNodes->item(0);
 
             if (str_contains($firstItem->nodeValue, 'Параметры дистанции')) {
-                return (bool)preg_match('#<b>\d+\s+(-|\d+|в/к)\s+(-|.{1,4})\s+(-|\d{1,3})?#', $file);
+                return (bool) preg_match('#<b>\d+\s+(-|\d+|в/к)\s+(-|.{1,4})\s+(-|\d{1,3})?#', $file);
             }
         }
 

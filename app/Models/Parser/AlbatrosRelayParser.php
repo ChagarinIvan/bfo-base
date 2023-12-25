@@ -158,7 +158,7 @@ class AlbatrosRelayParser extends AbstractParser
     public function check(string $file, string $extension): bool
     {
         if ($extension === 'html') {
-            return preg_match('#<b>\d+\s+(-|\d+|в/к)\s+(-|[^\s]{1,3})<#', $file);
+            return (bool) preg_match(pattern: '#<b>\d+\s+(-|\d+|в/к)\s+(-|\S{1,3})<#', subject: $file);
         }
 
         return false;
