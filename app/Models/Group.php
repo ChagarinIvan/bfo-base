@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Models;
@@ -17,7 +18,7 @@ use Illuminate\Support\Collection;
  *
  * @method static Group|null find(int $id)
  * @method static Builder|Group whereName(string $value)
- * @method static Builder|Group where(string $column, string $operator, string $value)
+ * @method static Builder|Group where(string $column, string $operator, string|int $value)
  * @method static Collection get()
  * @method static Collection all()
  * @method static Group|null first()

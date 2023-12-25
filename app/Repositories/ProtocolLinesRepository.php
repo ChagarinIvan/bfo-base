@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Repositories;
@@ -55,10 +56,11 @@ class ProtocolLinesRepository
         ;
 
         if ($withPayments) {
+            $expression = new Expression("`persons_payments`.`date` <= '{$cupEvent->event->date}'");
             $query
                 ->where('persons_payments.year', '=', $cupEvent->cup->year)
                 ->where('persons_payments.date', '<=', $cupEvent->event->date)
-                ->havingRaw(new Expression("`persons_payments`.`date` <= '{$cupEvent->event->date}'"))
+                ->havingRaw($expression->getValue())
             ;
         }
 

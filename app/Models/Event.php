@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Models;
@@ -28,10 +29,11 @@ use Illuminate\Support\Collection;
  * @property-read Collection|CupEvent[] $cups
  * @property-read Collection|Flag[] $flags
  *
- * @method static Builder|Event find(mixed $ids)
+ * @method static Builder|Event find(Collection|int $ids)
  * @method static Builder|Event with(mixed $params)
  * @method static Builder|Event where(mixed ... $args)
  * @method static Builder|Event whereCompetitionId($value)
+ * @method Builder|Event orderByDesc(string $column)
  */
 class Event extends Model
 {

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Console\Commands;
@@ -60,7 +61,7 @@ class IdentProtocolLineCommand extends Command
                 ;
 
                 if ($protocolLine) {
-                    $person->birthday = Carbon::createFromFormat('Y', (string) ($protocolLine->year ?? 0);
+                    $person->birthday = Carbon::createFromFormat('Y', (string) ($protocolLine->year ?? 0));
                 }
             }
         } else {

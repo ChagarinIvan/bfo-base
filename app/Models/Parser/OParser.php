@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Models\Parser;
@@ -114,9 +115,13 @@ class OParser extends AbstractParser
                     $columnName = $this->getColumn($groupHeaderData[$i]);
                     if ($columnName === null) {
                         break;
-                    } elseif ($columnName === '' && $lineData[$fieldsCount - $indent] === 'снят') {
+                    }
+
+                    if ($columnName === '' && $lineData[$fieldsCount - $indent] === 'снят') {
                         continue;
-                    } elseif ($columnName === '') {
+                    }
+
+                    if ($columnName === '') {
                         $indent++;
                         continue;
                     }

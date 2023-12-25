@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Models\Cups;
@@ -68,6 +69,7 @@ class MasterCupType extends AbstractCupType
 
         $cupEventProtocolLines = $cupEventProtocolLines->groupBy('distance.group_id');
         $validGroups = $eventGroupsId->flip();
+        /** @var Collection<string, mixed> $validGroups */
         $cupEventProtocolLines = $cupEventProtocolLines->intersectByKeys($validGroups);
         $groups = $this->groupsService->getCupEventGroups($cupEvent);
 
@@ -90,7 +92,7 @@ class MasterCupType extends AbstractCupType
         ;
 
         foreach ($cupEventProtocolLines as $groupId => $groupProtocolLines) {
-            $group = $this->groupsService->getGroup($groupId);
+            $this->groupsService->getGroup($groupId);
             if (
                 // это объединение групп
                 // тут надо разделять

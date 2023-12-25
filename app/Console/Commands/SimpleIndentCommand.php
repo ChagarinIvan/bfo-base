@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Console\Commands;
@@ -28,7 +29,8 @@ class SimpleIndentCommand extends Command
         $time = time() - $startTime;
         $this->info("Time for query: {$time}");
         //Почистим людей у которых 0 протокольных линий
-        DB::delete(DB::raw('DELETE FROM person WHERE id NOT IN (SELECT ANY_VALUE(person_id) FROM protocol_lines WHERE person_id IS NOT NULL GROUP BY person_id);'));
+        $expression = DB::raw('DELETE FROM person WHERE id NOT IN (SELECT ANY_VALUE(person_id) FROM protocol_lines WHERE person_id IS NOT NULL GROUP BY person_id);');
+        DB::delete($expression->getValue());
         $this->info("Finish");
     }
 }

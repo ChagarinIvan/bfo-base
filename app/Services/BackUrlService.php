@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Services;
@@ -20,10 +21,12 @@ class BackUrlService
     {
         $urls = $this->sessionManager->pull(self::BACK_URLS_KEY, []);
         $urls = new Collection($urls);
+        /** @var null|string $url */
         $url = $urls->pop();
         $urls->push(self::BACK);
         $this->set($urls);
-        return $url === null ? '' : $url;
+
+        return $url ?? '';
     }
 
     public function push(string $url): void

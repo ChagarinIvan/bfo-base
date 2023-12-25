@@ -13,6 +13,7 @@ return $config->setRules([
     'method_argument_space' => [
         'keep_multiple_spaces_after_comma' => false,
     ],
+    'blank_line_after_opening_tag' => true,
     'static_lambda' => true,
     'global_namespace_import' => [
         'import_classes' => true,

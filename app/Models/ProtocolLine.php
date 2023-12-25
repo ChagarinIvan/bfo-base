@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Models;
@@ -42,7 +43,7 @@ use Illuminate\Support\Collection;
  * @method static Builder|ProtocolLine havingRaw(Expression $expression)
  * @method static Builder|ProtocolLine whereNull(string $column)
  * @method static Builder|ProtocolLine whereIn(string|Expression $column, array|Collection $list)
- * @method static Builder|ProtocolLine where(string|Expression $column, string|int|bool $operator, int|string $value = '')
+ * @method static Builder|ProtocolLine where(string|Expression $column, string|int|bool $operator, int|string|Carbon $value = '')
  * @method static Builder|ProtocolLine orderBy(string $column)
  * @method Builder|ProtocolLine with(mixed $ids)
  * @method static Builder|ProtocolLine distinct()

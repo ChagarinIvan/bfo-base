@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Http\Controllers\Event;
@@ -25,7 +26,9 @@ class StoreEventAction extends AbstractEventAction
 
         if ($protocol === null && $url === null) {
             return $this->redirector->action(ShowCreateEventFormAction::class);
-        } elseif ($url !== null) {
+        }
+
+        if ($url !== null) {
             $needConvert = false;
             $extension = 'html';
             $protocol = $this->parserService->uploadProtocol($url);

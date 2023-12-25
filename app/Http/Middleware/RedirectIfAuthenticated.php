@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Http\Middleware;
@@ -26,13 +27,14 @@ class RedirectIfAuthenticated
      * @param Request $request
      * @param Closure $next
      * @param string|null ...$guards
+     *
      * @return mixed
      */
-    public function handle(Request $request, Closure $next, ...$guards)
+    public function handle(Request $request, Closure $next, ...$guards): mixed
     {
-        $guards = empty($guards) ? [null] : $guards;
+        $otherGuards = empty($guards) ? [null] : $guards;
 
-        foreach ($guards as $guard) {
+        foreach ($otherGuards as $guard) {
             if ($this->authService->guard($guard)->check()) {
                 return  $this->redirector->action(ShowLoginFormAction::class);
             }

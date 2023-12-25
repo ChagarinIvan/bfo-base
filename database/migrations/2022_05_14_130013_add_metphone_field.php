@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 use Illuminate\Database\Migrations\Migration;
@@ -14,7 +15,7 @@ class AddMetphoneField extends Migration
                 ->string('metaphone')
                 ->nullable(false)
                 ->default('')
-                ->index(false)
+                ->index()
             ;
         });
     }

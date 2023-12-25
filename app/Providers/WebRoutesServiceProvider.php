@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Providers;
@@ -30,11 +31,6 @@ class WebRoutesServiceProvider extends ServiceProvider
     private Registrar $route;
     private RouteRegistrar $routeRegistrar;
 
-    /**
-     * Define your route model bindings, pattern filters, etc.
-     *
-     * @return void
-     */
     public function boot(): void
     {
         $this->redirector = $this->app->make(Redirector::class);

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Http\Controllers\Competition;
@@ -9,9 +10,9 @@ use Illuminate\Http\RedirectResponse;
 
 class ShowCompetitionsListAction extends AbstractCompetitionAction
 {
-    public function __invoke(int $year): View|RedirectResponse
+    public function __invoke(int $yearInput): View|RedirectResponse
     {
-        $year = Year::from($year);
+        $year = Year::from($yearInput);
         return $this->view('competitions.index', [
             'competitions' => $this->competitionService->getYearCompetitions($year),
             'selectedYear' => $year,
