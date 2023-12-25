@@ -109,9 +109,7 @@ return $config->setRules([
     'is_null' => true,
     'modernize_types_casting' => true,
     'dir_constant' => true,
-    'non_printable_character' => [
-        'use_escape_sequences_in_strings' => false,
-    ],
+    'non_printable_character' => false,
     'self_accessor' => true,
     'no_alias_functions' => true,
     'function_to_constant' => true,

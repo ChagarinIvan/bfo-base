@@ -31,7 +31,7 @@ class SimplyParser extends AbstractParser
     {
         $doc = new DOMDocument();
         $content = mb_convert_encoding($file, 'utf-8', 'windows-1251');
-        $content = str_replace(["&laquo;", "&raquo;", " "], ['«', '»', ' '], $content);
+        $content = str_replace(["&laquo;", "&raquo;", " "], ['«', '»', ' '], $content);
         @$doc->loadHTML($content);
         $xpath = new DOMXpath($doc);
         $nodes = $xpath->query('//h2|//p[not(./b)]|//p/b|//pre[not(./p[@class])]');
