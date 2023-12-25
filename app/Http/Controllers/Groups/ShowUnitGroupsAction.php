@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Groups;
 
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\View\View;
 use RuntimeException;
 
 class ShowUnitGroupsAction extends AbstractGroupAction

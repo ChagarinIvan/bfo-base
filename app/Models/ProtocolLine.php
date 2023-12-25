@@ -25,7 +25,7 @@ use Illuminate\Support\Collection;
  * @property string $complete_rank
  * @property null|int $points
  * @property int $distance_id
- * @property int $person_id
+ * @property null|int $person_id
  * @property string $prepared_line
  * @property bool $vk
  *

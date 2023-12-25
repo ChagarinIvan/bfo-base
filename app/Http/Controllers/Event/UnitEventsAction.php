@@ -19,6 +19,8 @@ class UnitEventsAction extends AbstractEventAction
         $formParams = $request->validate([
             'events' => 'required|array',
         ]);
+
+        /** @var Collection $events */
         $events = Event::find($formParams['events']);
         /** @var Event $firstEvent */
         $firstEvent = $events->first();

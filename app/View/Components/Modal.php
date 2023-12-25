@@ -3,18 +3,17 @@ declare(strict_types=1);
 
 namespace App\View\Components;
 
+use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
-use Illuminate\View\View;
 
-class Modal extends Component
+final class Modal extends Component
 {
-    public string $modalId;
-    public Button $button;
-    public string $content;
-    public string $header;
+    public readonly Button $button;
+    public readonly string $content;
+    public readonly string $header;
 
     public function __construct(
-        string $modalId,
+        public readonly string $modalId,
         string $url = '#',
         string $header = 'app.common.warn',
         string $content = 'app.common.delete_warn',
@@ -23,7 +22,6 @@ class Modal extends Component
         string $icon = 'bi-trash-fill',
     ) {
         $this->button = new Button($text, $color, $icon, $url);
-        $this->modalId = $modalId;
         $this->header = __($header);
         $this->content = __($content);
     }

@@ -3,17 +3,14 @@ declare(strict_types=1);
 
 namespace App\View\Components;
 
-use Illuminate\View\View;
+use Illuminate\Contracts\View\View;
 
-class DeleteButton extends Button
+final class DeleteButton extends Button
 {
-    public string $modalId;
-
     public function __construct(
-        string $modalId,
+        public readonly string $modalId,
     ) {
         parent::__construct('app.common.delete', 'danger', 'bi-trash-fill');
-        $this->modalId = $modalId;
     }
 
     public function render(): View

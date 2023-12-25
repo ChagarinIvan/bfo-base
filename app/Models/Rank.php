@@ -4,11 +4,11 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Collections\RanksCollection;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Query\Expression;
-use Illuminate\Support\Carbon;
 use function array_flip;
 use function array_key_exists;
 use function array_map;

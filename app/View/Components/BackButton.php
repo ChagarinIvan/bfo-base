@@ -5,7 +5,7 @@ namespace App\View\Components;
 
 use App\Http\Controllers\BackAction;
 
-class BackButton extends Button
+final class BackButton extends Button
 {
     public function __construct()
     {

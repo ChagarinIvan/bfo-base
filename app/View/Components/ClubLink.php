@@ -4,12 +4,12 @@ declare(strict_types=1);
 namespace App\View\Components;
 
 use App\Models\Club;
+use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
-use Illuminate\View\View;
 
-class ClubLink extends Component
+final class ClubLink extends Component
 {
-    public function __construct(private readonly ?Club $club)
+    public function __construct(public readonly ?Club $club)
     {
     }
 

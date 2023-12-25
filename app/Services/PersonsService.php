@@ -168,7 +168,7 @@ class PersonsService
         $person->birthday = $protocolLine->year ? Carbon::createFromFormat('Y', (string)$protocolLine->year) : null;
         $club = $this->clubService->findClub($protocolLine->club);
         $person->club_id = $club?->id;
-        $person->from_base = 0;
+        $person->from_base = false;
 
         return $person;
     }

@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\View\Components;
 
-class EditButton extends Button
+final class EditButton extends Button
 {
     public function __construct(
         string $url = '#',

@@ -148,6 +148,7 @@ class ProtocolLineIdentService
             ]);
         }
 
+        /** @var Collection $minRank */
         $minRank = $ranks->sortBy('rank')->first();
         if ($minRank['rank'] <= 2) {
             /** @var PersonPrompt $prompt */
@@ -190,6 +191,7 @@ class ProtocolLineIdentService
             ]);
         }
 
+        /** @var Collection $minRank */
         $minRank = $ranks->sortBy('rank')->first();
         if ($minRank['rank'] <= 5) {
             /** @var PersonPrompt $prompt */

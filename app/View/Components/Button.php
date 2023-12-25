@@ -3,26 +3,20 @@ declare(strict_types=1);
 
 namespace App\View\Components;
 
+use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
-use Illuminate\View\View;
 
 class Button extends Component
 {
     public string $text;
-    public string $color;
-    public string $icon;
-    public string $url;
 
     public function __construct(
         string $text = '',
-        string $color = '',
-        string $icon = '',
-        string $url = '',
+        public readonly string $color = '',
+        public readonly string $icon = '',
+        public readonly string $url = '',
     ) {
         $this->text = __($text);
-        $this->color = $color;
-        $this->icon = $icon;
-        $this->url = $url;
     }
 
     public function render(): View
