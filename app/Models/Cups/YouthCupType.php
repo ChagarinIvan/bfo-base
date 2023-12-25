@@ -221,7 +221,7 @@ class YouthCupType extends MasterCupType
     protected function getGroupProtocolLines(CupEvent $cupEvent, CupGroup $group): Collection
     {
         $year = $cupEvent->cup->year;
-        $startYear = $year - $group->age()?->value ?? 0;
+        $startYear = $year - ($group->age()?->value ?: 0);
         $finishYear = $group->age() === GroupAge::a12
             ? $year
             : $startYear + 1

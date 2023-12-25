@@ -11,7 +11,7 @@ use Illuminate\Database\Query\Builder;
  * @property string $ident_line
  *
  * @method static Builder|IdentLine whereIdentLine(string $preparedLine)
- * @method static IdentLine first()
+ * @method static IdentLine|null first()
  */
 class IdentLine extends Model
 {

@@ -31,11 +31,7 @@ final readonly class CupEventsService
 
     public function getCupEvent(int $cupEventId): CupEvent
     {
-        $cupEvent = CupEvent::find($cupEventId);
-        if ($cupEvent) {
-            return $cupEvent;
-        }
-        throw new RuntimeException('Wrong cup event id.');
+        return CupEvent::find($cupEventId) ?? throw new RuntimeException('Wrong cup event id.');
     }
 
     public function storeCupEvent(CupEvent $cupEvent): void

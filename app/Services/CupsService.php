@@ -9,7 +9,7 @@ use Illuminate\Cache\Repository as CacheManager;
 use Illuminate\Support\Collection;
 use RuntimeException;
 
-class CupsService
+final readonly class CupsService
 {
     public function __construct(private CacheManager $cache)
     {
@@ -35,10 +35,6 @@ class CupsService
 
     public function getCup(int $cupId): Cup
     {
-        $cup = Cup::find($cupId);
-        if ($cup) {
-            return $cup;
-        }
-        throw new RuntimeException('Wrong cup id.');
+        return Cup::find($cupId) ?? throw new RuntimeException('Wrong cup id.');
     }
 }

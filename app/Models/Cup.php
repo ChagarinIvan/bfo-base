@@ -21,8 +21,8 @@ use Illuminate\Support\Collection;
  * @property-read Collection|CupEvent[] $events
  *
  * @method static void delete()
- * @method static Builder|Cup find(mixed $ids)
- * @method static Builder|Cup where(string $column, int|string|Year $value)
+ * @method static Builder|Cup|null find(mixed $ids)
+ * @method static Builder|Cup where(string $column, int|string|Year|bool $value)
  * @method static Collection get()
  */
 class Cup extends Model

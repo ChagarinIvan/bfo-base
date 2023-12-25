@@ -104,7 +104,7 @@ class OBelarusNetRelayParser extends AbstractParser
                     continue;
                 }
                 if (is_numeric($line) || $isOpen) {
-                    $this->commandSerial = (int)$line;
+                    $this->commandSerial = (int) $line;
                     $this->commandPoints = null;
                     $this->commandPlace = null;
                     $this->commandRank = null;
@@ -174,7 +174,7 @@ class OBelarusNetRelayParser extends AbstractParser
                 $protocolLine['lastname'] = $lineData[$nameIndex++];
                 $protocolLine['firstname'] = $lineData[$nameIndex++];
 
-                $protocolLine['serial_number'] = $isOpen ? $lineData[0] : ($this->commandSerial ?? 0);
+                $protocolLine['serial_number'] = $isOpen ? $lineData[0] : $this->commandSerial;
                 $protocolLine['club'] = implode(' ', array_slice($lineData, $nameIndex, $fieldsCount - $indent - $nameIndex + 1));
                 $linesList->push($protocolLine);
             }

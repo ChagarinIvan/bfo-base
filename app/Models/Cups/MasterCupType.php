@@ -148,13 +148,13 @@ class MasterCupType extends AbstractCupType
     protected function getGroupProtocolLines(CupEvent $cupEvent, CupGroup $group): Collection
     {
         $year = $cupEvent->cup->year;
-        $startYear = $year - $group->age() ?->value ?? 0;
+        $startYear = $year - ($group->age()?->value ?: 0);
         $finishYear = $startYear - 4;
 
         return $this->protocolLinesRepository->getCupEventProtocolLinesForPersonsCertainAge(
             $cupEvent,
-            $finishYear,
-            $startYear,
+            (string) $finishYear,
+            (string) $startYear,
             true
         );
     }

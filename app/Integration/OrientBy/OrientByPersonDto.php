@@ -7,14 +7,14 @@ namespace App\Integration\OrientBy;
 use Carbon\Carbon;
 use function preg_split;
 
-class OrientByPersonDto
+final readonly class OrientByPersonDto
 {
     public function __construct(
-        private readonly string $name, //Фамилия Имя             "Ванькевич Дмитрий"
-        public readonly ?int $yob,    //год рождения            "1973
-        public readonly ?string $club, //клуб                    "КСО «Березино»"
-        public readonly ?string $rank, //разряд                  "I"
-        public readonly bool $paid     //оплачен ли взнос        "true"
+        private string $name, //Фамилия Имя             "Ванькевич Дмитрий"
+        public ?int $yob,    //год рождения            "1973
+        public ?string $club, //клуб                    "КСО «Березино»"
+        public ?string $rank, //разряд                  "I"
+        public bool $paid     //оплачен ли взнос        "true"
     ) {
     }
 
@@ -35,10 +35,12 @@ class OrientByPersonDto
     public function getYear(): ?Carbon
     {
         if ($this->yob) {
+            /** @var Carbon|false $date */
             $date = Carbon::createFromFormat('Y', (string)$this->yob)->startOfYear();
+
             return $date === false ? null : $date;
-        } else {
-            return null;
         }
+
+        return null;
     }
 }

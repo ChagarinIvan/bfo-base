@@ -33,12 +33,7 @@ class PersonsService
 
     public function getPerson(int $personId): Person
     {
-        $person = Person::find($personId);
-        if ($person) {
-            return $person;
-        }
-
-        throw new RuntimeException('Wrong person id.');
+        return Person::find($personId) ?? throw new RuntimeException('Wrong person id.');
     }
 
     public function getPersons(Collection $personsIds): Collection

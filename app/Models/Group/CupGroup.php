@@ -3,16 +3,16 @@ declare(strict_types=1);
 
 namespace App\Models\Group;
 
-class CupGroup
+final readonly class CupGroup
 {
     public static function create(GroupMale $male, GroupAge $age): self
     {
         return new self($male, $age);
     }
     public function __construct(
-        private readonly GroupMale $male,
-        private readonly ?GroupAge $age = null,
-        private readonly ?string $name = null,
+        private GroupMale $male,
+        private ?GroupAge $age = null,
+        private ?string $name = null,
     ) {
     }
 
@@ -28,7 +28,7 @@ class CupGroup
 
     public function id(): string
     {
-        return "{$this->male->value}_" . ($this->age->value ?? 0) . '_' . $this->name ?: '';
+        return "{$this->male->value}_" . ($this->age?->value ?: 0) . '_' . ($this->name ?: '');
     }
 
     public function name(): string

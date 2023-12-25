@@ -16,7 +16,7 @@ use Illuminate\Database\Query\Builder;
  * @property-read Cup $cup
  * @property-read Event $event
  *
- * @method static Builder|CupEvent find(mixed $ids)
+ * @method static Builder|CupEvent|null find(mixed $ids)
  */
 class CupEvent extends Model
 {

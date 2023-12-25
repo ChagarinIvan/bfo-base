@@ -30,7 +30,7 @@ class IdentProtocolLineCommand extends Command
         PersonsService $personsService,
         ClubsService $clubsService,
         ProtocolLineService $protocolLineService,
-        ProtocolLineIdentService $protocolLineIdentService
+        ProtocolLineIdentService $protocolLineIdentService,
     ): void {
         $identLine = IdentLine::first();
         if ($identLine) {
@@ -60,7 +60,7 @@ class IdentProtocolLineCommand extends Command
                 ;
 
                 if ($protocolLine) {
-                    $person->birthday = Carbon::createFromFormat('Y', $protocolLine->year);
+                    $person->birthday = Carbon::createFromFormat('Y', (string) ($protocolLine->year ?? 0);
                 }
             }
         } else {
@@ -73,7 +73,7 @@ class IdentProtocolLineCommand extends Command
             $person->lastname = $protocolLine->lastname;
             $person->firstname = $protocolLine->firstname;
             try {
-                if ($birthday = Carbon::createFromFormat('Y', $protocolLine->year)) {
+                if ($birthday = Carbon::createFromFormat('Y', (string) $protocolLine->year)) {
                     $person->birthday = $birthday->startOfYear();
                 }
             } catch (InvalidFormatException) {

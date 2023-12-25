@@ -27,4 +27,4 @@ jobs:
     - name: Execute tests (Unit and Feature tests) via PHPUnit
       run: vendor/bin/phpunit tests/
     - name: Execute stan
-      run: vendor/bin/phpstan analyse -l 2 app tests config
+      run: vendor/bin/phpstan analyse -l 4 app tests config

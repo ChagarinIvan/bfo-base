@@ -46,10 +46,10 @@ class UnitEventsAction extends AbstractEventAction
             $groupsIds = $firstEventProtocolLines->keys()->merge($eventsProtocolLines->keys())->unique();
 
             foreach ($groupsIds as $groupId) {
-                /** @var Distance $firstEventDistance */
+                /** @var null|Distance $firstEventDistance */
                 $firstEventDistance = $distanceService->getEventGroupDistance($firstEvent, $groupId);
 
-                /** @var Distance $eventDistance */
+                /** @var null|Distance $eventDistance */
                 $eventDistance = $distanceService->getEventGroupDistance($event, $groupId);
                 $distance = $distanceService->getEventGroupDistance($newEvent, $groupId) ?? new Distance();
 
@@ -79,9 +79,9 @@ class UnitEventsAction extends AbstractEventAction
                 $personIds = $firstEventGroupProtocolLines->keys()->merge($eventGroupProtocolLines->keys())->unique();
 
                 foreach ($personIds as $personId) {
-                    /** @var ProtocolLine $firstEventProtocolLine */
+                    /** @var ProtocolLine|null $firstEventProtocolLine */
                     $firstEventProtocolLine = $firstEventGroupProtocolLines->get($personId);
-                    /** @var ProtocolLine $eventProtocolLine */
+                    /** @var ProtocolLine|null $eventProtocolLine */
                     $eventProtocolLine = $eventGroupProtocolLines->get($personId);
 
                     if ($firstEventProtocolLine !== null) {

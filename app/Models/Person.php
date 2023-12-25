@@ -22,12 +22,12 @@ use Illuminate\Support\Collection;
  * @property int $protocol_lines_count
  *
  * @property-read ProtocolLine[]|Collection $protocolLines
- * @property-read Club $club
+ * @property-read null|Club $club
  * @property-read PersonPrompt[]|Collection $prompts
  * @property-read PersonPayment[]|Collection $payments
  * @property-read Rank[]|Collection $ranks
  *
- * @method static Person|Builder find(mixed $ids)
+ * @method static Person|Builder|null find(mixed $ids)
  * @method static Person|Builder with(mixed $ids)
  * @method static Person|Builder withCount(string $ids)
  * @method static Person|Builder whereIn(string $column, array|Collection $value)
