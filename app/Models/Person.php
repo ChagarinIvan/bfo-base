@@ -19,6 +19,7 @@ use Illuminate\Support\Collection;
  * @property Carbon|null $birthday
  * @property int|null $club_id
  * @property bool $from_base
+ * @property int $protocol_lines_count
  *
  * @property-read ProtocolLine[]|Collection $protocolLines
  * @property-read Club $club
@@ -30,12 +31,16 @@ use Illuminate\Support\Collection;
  * @method static Person|Builder with(mixed $ids)
  * @method static Person|Builder withCount(string $ids)
  * @method static Person|Builder whereIn(string $column, array|Collection $value)
+ * @method Person|Builder where(string $column, string $operator, string $value)
+ * @method Person|Builder orWhere(string|Expression $column, string $operator, string $value)
+ * @method Person|Builder orWhereHas(string $column, callable $callable)
  * @method static Collection get()
  * @method static Person|Builder whereClubId(int $clubId)
  * @method static Person|Builder whereFirstname(string $firstname)
  * @method static Person|Builder whereLastname(string $lastname)
  * @method static Person|Builder whereBirthday(Carbon $date)
- * @method static \Illuminate\Database\Query\Builder|Person selectRaw(Expression $raw)
+ * @method static Person|Builder selectRaw(Expression $raw)
+ * @method Person|Builder orderBy(string $column, string $sortMode)
  * @method static Paginator paginate()
  */
 class Person extends Model

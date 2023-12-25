@@ -66,12 +66,14 @@ class GroupsService
     }
 
     /**
-     * @param array $groupIdList
-     * @return Collection
+     * @param int[] $groupIdList
      */
     public function getAllGroupsWithout(array $groupIdList = []): Collection
     {
-        $groups = $this->groupsRepository->getAll();
-        return $groups->filter(static fn (Group $group) => !in_array($group->id, $groupIdList, true));
+        return $this
+            ->groupsRepository
+            ->getAll()
+            ->filter(static fn (Group $group) => !in_array($group->id, $groupIdList, true))
+        ;
     }
 }

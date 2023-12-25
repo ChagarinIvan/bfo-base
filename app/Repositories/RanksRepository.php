@@ -10,18 +10,16 @@ use App\Models\ProtocolLine;
 use App\Models\Rank;
 use Carbon\Carbon;
 use Illuminate\Database\ConnectionInterface;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Collection;
 
-class RanksRepository
+final readonly class RanksRepository
 {
     private const TABLE = 'ranks';
 
-    private ConnectionInterface $db;
-
-    public function __construct(ConnectionInterface $db)
+    public function __construct(private ConnectionInterface $db)
     {
-        $this->db = $db;
     }
 
     /**
@@ -31,6 +29,7 @@ class RanksRepository
      */
     public function getRanksList(RanksFilter $filter): Collection
     {
+        /** @var Rank|Builder $ranks */
         $ranks = Rank::selectRaw(new Expression('ranks.*'))
             ->leftJoin('events', 'events.id', '=', 'ranks.event_id');
 

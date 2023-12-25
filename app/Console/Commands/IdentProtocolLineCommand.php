@@ -43,7 +43,7 @@ class IdentProtocolLineCommand extends Command
         $protocolLines = $protocolLineService->getEqualLines($identLine->ident_line);
 
         if ($personId > 0) {
-            $protocolLines->each(static function (ProtocolLine $protocolLine) use ($personId, $rankService): void {
+            $protocolLines->each(static function (ProtocolLine $protocolLine) use ($personId): void {
                 $protocolLine->person_id = $personId;
                 $protocolLine->save();
             });
@@ -86,7 +86,7 @@ class IdentProtocolLineCommand extends Command
 
             $person = $personsService->storePerson($person);
 
-            $protocolLines->each(static function (ProtocolLine $protocolLine) use ($person, $rankService): void {
+            $protocolLines->each(static function (ProtocolLine $protocolLine) use ($person): void {
                 $protocolLine->person_id = $person->id;
                 $protocolLine->save();
             });

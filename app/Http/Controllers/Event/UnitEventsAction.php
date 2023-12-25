@@ -46,13 +46,10 @@ class UnitEventsAction extends AbstractEventAction
             foreach ($groupsIds as $groupId) {
                 /** @var Distance $firstEventDistance */
                 $firstEventDistance = $distanceService->getEventGroupDistance($firstEvent, $groupId);
-                ;
+
                 /** @var Distance $eventDistance */
                 $eventDistance = $distanceService->getEventGroupDistance($event, $groupId);
-                $distances = $distanceService->getEventGroupDistance($newEvent, $groupId);
-                if (!$distances) {
-                    $distance = new Distance();
-                }
+                $distance = $distanceService->getEventGroupDistance($newEvent, $groupId) ?? new Distance();
 
                 if ($firstEventDistance) {
                     $distance->points += $firstEventDistance->points;

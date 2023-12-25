@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Login;
 
 use App\Http\Controllers\Competition\ShowCompetitionsListAction;
 use App\Models\Year;
+use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -17,7 +18,9 @@ class SignInAction extends AbstractSignAction
             'password' => 'required',
         ]);
 
-        if ($this->sessionGuard->guard('web')->attempt($authData, true)) {
+        /** @var StatefulGuard $guard */
+        $guard = $this->sessionGuard->guard('web');
+        if ($guard->attempt($authData, true)) {
             $request->session()->regenerate();
             return $this->redirector->action(ShowCompetitionsListAction::class, [(string)Year::actualYear()->value]);
         }

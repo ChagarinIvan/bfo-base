@@ -48,12 +48,12 @@ class Event extends Model
         return $this->hasOne(Competition::class, 'id', 'competition_id');
     }
 
-    public function protocolLines(): HasManyThrough
+    public function protocolLines(): HasManyThrough|Builder
     {
         return $this->hasManyThrough(ProtocolLine::class, Distance::class, 'event_id', 'distance_id', 'id', 'id');
     }
 
-    public function distances(): HasMany
+    public function distances(): HasMany|Builder
     {
         return $this->hasMany(Distance::class, 'event_id', 'id');
     }
@@ -68,7 +68,7 @@ class Event extends Model
         return $this->belongsToMany(Flag::class, 'event_flags');
     }
 
-    public function ranks(): HasMany
+    public function ranks(): HasMany|Builder
     {
         return $this->hasMany(Rank::class);
     }

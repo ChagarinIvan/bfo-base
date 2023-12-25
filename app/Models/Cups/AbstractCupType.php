@@ -109,7 +109,7 @@ abstract class AbstractCupType implements CupTypeInterface
                     $points = '-';
                 } elseif ($protocolLine->time !== null) {
                     $diff = $protocolLine->time->secondsSinceMidnight();
-                    $points = (int)round($maxPoints * (2 * $firstResultSeconds / $diff - 1));
+                    $points = (int)round($maxPoints * (2 * ($firstResultSeconds ?? 0) / $diff - 1));
                     $points = $points < 0 ? 0 : $points;
                 } else {
                     $points = 0;

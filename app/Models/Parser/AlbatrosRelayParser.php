@@ -91,7 +91,6 @@ class AlbatrosRelayParser extends AbstractParser
 
                 $fieldsCount = count($lineData);
                 if ($fieldsCount <= 3 && is_numeric($lineData[0])) {
-                    $commandCounter = 0;
                     if (isset($lineData[1])) {
                         $commandPoints = is_numeric($lineData[1]) ? (int)$lineData[1] : null;
                     } else {
@@ -119,9 +118,9 @@ class AlbatrosRelayParser extends AbstractParser
 
                 $protocolLine = [
                     'group' => $groupName,
-                    'complete_rank' => $commandRank,
-                    'place' => $commandPlace,
-                    'points' => $commandPoints,
+                    'complete_rank' => $commandRank ?? null,
+                    'place' => $commandPlace ?? 0,
+                    'points' => $commandPoints ?? 0,
                     'distance' => [
                         'length' => $distanceLength,
                         'points' => $distancePoints,
@@ -148,7 +147,6 @@ class AlbatrosRelayParser extends AbstractParser
 
                 $linesList->push($protocolLine);
                 $lastProtocolLine = $protocolLine;
-                $commandCounter++;
             }
         }
 

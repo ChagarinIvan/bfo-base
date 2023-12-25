@@ -30,7 +30,7 @@ class Group extends Model
     public $timestamps = false;
     protected $table = 'groups';
 
-    public function distances(): HasMany
+    public function distances(): HasMany|Builder
     {
         return $this->hasMany(Distance::class, 'group_id', 'id');
     }

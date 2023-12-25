@@ -10,9 +10,7 @@ use RuntimeException;
 class ShowGroupAction extends AbstractGroupAction
 {
     /**
-     * @param int $groupId
-     * @return View|RedirectResponse
-     * @template resources/views/groups/show.blade.php
+     * @see resources/views/groups/show.blade.php
      */
     public function __invoke(int $groupId): View|RedirectResponse
     {

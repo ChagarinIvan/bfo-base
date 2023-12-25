@@ -5,17 +5,15 @@ namespace App\Http\Controllers\Groups;
 
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
 
 class UnitGroupsAction extends AbstractGroupAction
 {
     /**
-     * @param Request $request
      * @param int $firstGroupId //которую объединяем, в итоге она удаляется.
-     * @return View|RedirectResponse
-     * @template resources/views/groups/show.blade.php
+     *
+     * @see resources/views/groups/show.blade.php
      */
-    public function __invoke(Request $request, int $firstGroupId): View|RedirectResponse
+    public function __invoke(Request $request, int $firstGroupId): RedirectResponse
     {
         $firstGroup = $this->groupsService->getGroup($firstGroupId);
         $secondGroup = $this->groupsService->getGroup((int)$request->get('group_id'));

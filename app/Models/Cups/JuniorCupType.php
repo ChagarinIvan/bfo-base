@@ -174,7 +174,6 @@ class JuniorCupType extends MasterCupType
         } else {
             $differentGroupsNames = $group->male() === GroupMale::Man ? self::MEN_SECOND_GROUPS_NAMES : self::WOMEN_SECOND_GROUPS_NAMES;
             $differentGroupsList = $this->groupsService->getGroups($differentGroupsNames);
-            ;
             $groups = $groups->merge($eliteGroupsList);
             $groups = $groups->merge($differentGroupsList);
         }
@@ -182,7 +181,7 @@ class JuniorCupType extends MasterCupType
         return $this->protocolLinesRepository
             ->getCupEventProtocolLinesForPersonsCertainAge(
                 cupEvent: $cupEvent,
-                startYear: $startYear,
+                startYear: (string) $startYear,
                 withPayments: true,
                 groups: $groups,
             )
@@ -219,7 +218,7 @@ class JuniorCupType extends MasterCupType
                     $points = '-';
                 } elseif ($protocolLine->time !== null) {
                     $lineTime = $protocolLine->time->secondsSinceMidnight();
-                    $points = (int)round($maxPoints * (2 * $firstResultSeconds / $lineTime - 1));
+                    $points = (int)round($maxPoints * (2 * ($firstResultSeconds ?? 0) / $lineTime - 1));
                     $points = $points < 0 ? 0 : $points;
                 } else {
                     $points = 0;

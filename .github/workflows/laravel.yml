@@ -26,5 +26,5 @@ jobs:
       run: chmod -R 777 storage bootstrap/cache
     - name: Execute tests (Unit and Feature tests) via PHPUnit
       run: vendor/bin/phpunit tests/
-    - name: Execute code standard
-      run: vendor/bin/php-cs-fixer fix --allow-risky=yes
+    - name: Execute stan
+      run: vendor/bin/phpstan analyse -l 2 app tests config

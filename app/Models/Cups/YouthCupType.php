@@ -5,11 +5,9 @@ namespace App\Models\Cups;
 
 use App\Models\CupEvent;
 use App\Models\CupEventPoint;
-use App\Models\Distance;
 use App\Models\Group\CupGroup;
 use App\Models\Group\CupGroupFactory;
 use App\Models\Group\GroupAge;
-use App\Models\Group\GroupMale;
 use App\Models\ProtocolLine;
 use Illuminate\Support\Collection;
 use function round;
@@ -231,8 +229,8 @@ class YouthCupType extends MasterCupType
 
         return $this->protocolLinesRepository->getCupEventProtocolLinesForPersonsCertainAge(
             cupEvent: $cupEvent,
-            startYear: $startYear,
-            finishYear: $finishYear,
+            startYear: (string) $startYear,
+            finishYear: (string) $finishYear,
         );
     }
 
@@ -274,7 +272,7 @@ class YouthCupType extends MasterCupType
                 } elseif ($protocolLine->time !== null) {
                     $lineTime = $protocolLine->time->secondsSinceMidnight();
                     //К сор. х 500 х К гр. (3 х Т поб. / Т уч. ‑ 1)
-                    $points = (int)round($maxPoints * 500 * $koef * (3 * $firstResultSeconds / $lineTime - 1));
+                    $points = (int)round($maxPoints * 500 * $koef * (3 * ($firstResultSeconds ?? 0) / $lineTime - 1));
                     $points = $points < 0 ? 0 : $points;
                 } else {
                     $points = 0;

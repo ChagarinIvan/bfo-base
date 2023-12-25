@@ -14,7 +14,7 @@ class ShowUnitGroupsAction extends AbstractGroupAction
         try {
             $group = $this->groupsService->getGroup($groupId);
         } catch (RuntimeException) {
-            $this->redirectTo404Error();
+            return $this->redirectTo404Error();
         }
 
         return $this->view('groups.unit', [

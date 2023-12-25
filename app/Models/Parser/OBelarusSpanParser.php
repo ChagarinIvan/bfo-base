@@ -48,8 +48,8 @@ class OBelarusSpanParser extends AbstractParser
             $groupName = $nodesMatch[1][$nodeIndex];
             $groupName = strip_tags($groupName);
             if (preg_match('#(\d+)\s+[^\d]+,\s+(\d+\.?\d*?)\s+[^\d]#s', $groupName, $match)) {
-                $distancePoints = (int)$match[1];
-                $distanceLength = $match[2] * 1000;
+                $distancePoints = (int) $match[1];
+                $distanceLength = ((int) $match[2]) * 1000;
             }
 
             if (str_contains($groupName, ',')) {

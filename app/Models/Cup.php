@@ -5,9 +5,9 @@ namespace App\Models;
 
 use App\Models\Cups\CupType;
 use App\Models\Cups\CupTypeInterface;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 
 /**
@@ -27,7 +27,7 @@ use Illuminate\Support\Collection;
  */
 class Cup extends Model
 {
-    public function events(): HasMany
+    public function events(): HasMany|Builder
     {
         return $this->hasMany(CupEvent::class);
     }

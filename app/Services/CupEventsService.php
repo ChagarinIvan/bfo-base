@@ -10,9 +10,9 @@ use Illuminate\Cache\Repository as CacheManager;
 use Illuminate\Support\Collection;
 use RuntimeException;
 
-class CupEventsService
+final readonly class CupEventsService
 {
-    public function __construct(private readonly CacheManager $cache)
+    public function __construct(private CacheManager $cache)
     {
     }
 

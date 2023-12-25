@@ -52,15 +52,15 @@ class PersonsService
     public function getPersonsList(string $sortBy, int $sortMode, string $search): Builder
     {
         $sortBy = in_array($sortBy, self::SORT_BY_COLUMNS, true) ? $sortBy : 'fio';
-        $sortMode = $sortMode === 1 ? 'DESC' : 'ASC';
+        $sort = $sortMode === 1 ? 'DESC' : 'ASC';
 
         $persons = Person::withCount('protocolLines')->with('club');
 
         $persons = match ($sortBy) {
-            'fio' => $persons->orderBy('lastname', $sortMode)->orderBy('firstname', $sortMode),
-            'club_name' => $persons->join('club', 'person.club_id', '=', 'club.id')->orderBy('club.name', $sortMode),
-            'events_count' => $persons->orderBy('protocol_lines_count', $sortMode),
-            'birthday' => $persons->orderBy('birthday', $sortMode),
+            'fio' => $persons->orderBy('lastname', $sort)->orderBy('firstname', $sort),
+            'club_name' => $persons->join('club', 'person.club_id', '=', 'club.id')->orderBy('club.name', $sort),
+            'events_count' => $persons->orderBy('protocol_lines_count', $sort),
+            'birthday' => $persons->orderBy('birthday', $sort),
         };
 
         if ($search) {

@@ -4,9 +4,9 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Collections\RanksCollection;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Carbon;
 use function array_flip;
@@ -28,12 +28,13 @@ use function str_replace;
  * @property-read Event|null $event
  * @property-read Person $person
  *
- * @method static Rank|Builder where(string $column, string|null $operator, string|int|Carbon $value = null)
+ * @method static Rank|Builder where(string|Expression $column, string|null $operator, string|int|Carbon $value = null)
  * @method static Rank|Builder selectRaw(Expression $expression)
  * @method static Rank|Builder with(array|string $relations)
  * @method static Rank|Builder orderByRaw(Expression $expression)
  * @method static Rank|Builder join(string $table, string $foreignColumn, string $operator, string $selfColumn)
  * @method static RanksCollection get()
+ * @method static void truncate()
  */
 class Rank extends Model
 {
