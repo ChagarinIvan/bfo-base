@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Services;
 
@@ -11,15 +12,10 @@ use App\Models\Year;
 use App\Repositories\RanksRepository;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use function in_array;
 
 class RankService
 {
-    public function __construct(
-        private readonly RanksRepository $ranksRepository,
-        private readonly ProtocolLineService $protocolLineService,
-        private readonly PersonsService $personsService
-    ) {}
-
     public const RANKS_POWER = [
         Rank::WITHOUT_RANK => 0,
         Rank::JUNIOR_THIRD_RANK => 1,
@@ -32,6 +28,12 @@ class RankService
         Rank::SM_RANK => 8,
         Rank::WSM_RANK => 9,
     ];
+    public function __construct(
+        private readonly RanksRepository $ranksRepository,
+        private readonly ProtocolLineService $protocolLineService,
+        private readonly PersonsService $personsService
+    ) {
+    }
 
     /**
      * @return RanksCollection
@@ -81,8 +83,9 @@ class RankService
 
         foreach ($personsIds as $personId) {
             $actualRank = $this->getActualRank($personId, $nowDate);
-            if ($actualRank && $actualRank->rank === $rank)
-            $ranks->put($personId, $actualRank);
+            if ($actualRank && $actualRank->rank === $rank) {
+                $ranks->put($personId, $actualRank);
+            }
         }
 
         return $ranks;
@@ -153,7 +156,7 @@ class RankService
                 $ranks = $this->ranksRepository->getRanksList($ranksFilter);
                 $finishDate = $event->date->clone()->addDays(-1);
 
-                $ranks->each(function (Rank $rank) use ($finishDate) {
+                $ranks->each(function (Rank $rank) use ($finishDate): void {
                     $rank->finish_date = $finishDate;
                     $this->ranksRepository->storeRank($rank);
                 });
@@ -165,7 +168,7 @@ class RankService
                 $ranksFilter->startDateMore = $event->date;
                 $ranks = $this->ranksRepository->getRanksList($ranksFilter);
                 $protocolLines = new Collection();
-                $ranks->each(function (Rank $rank) use (&$protocolLines) {
+                $ranks->each(function (Rank $rank) use (&$protocolLines): void {
                     $protocolLineId = $this->protocolLineService->getProtocolLineIdForRank($rank);
                     $protocolLine = $this->protocolLineService->getProtocolLineWithEvent($protocolLineId);
                     if ($protocolLine) {
@@ -186,6 +189,21 @@ class RankService
             $newRank = $this->createNewRank($protocolLine);
             $this->ranksRepository->storeRank($newRank);
         }
+    }
+
+    public function cleanAll(): void
+    {
+        $this->ranksRepository->cleanAll();
+    }
+
+    public function deleteEventRanks(Event $event): void
+    {
+        $event->ranks()->delete();
+    }
+
+    public function storeRank(Rank $rank): void
+    {
+        $rank->save();
     }
 
     //еслі разряд просрочілся то создаётся новый с более низким разрядом
@@ -240,21 +258,6 @@ class RankService
         return $lastRank;
     }
 
-    public function cleanAll(): void
-    {
-        $this->ranksRepository->cleanAll();
-    }
-
-    public function deleteEventRanks(Event $event): void
-    {
-        $event->ranks()->delete();
-    }
-
-    public function storeRank(Rank $rank): void
-    {
-        $rank->save();
-    }
-
     /**
      * Присвоение 3ю разряда за 3 успешных старта
      */
@@ -266,10 +269,10 @@ class RankService
             }
 
             $results = $this->protocolLineService->getPersonProtocolLines($personId, $year);
-            $results = $results->filter(fn(ProtocolLine $line) => $line->time !== null && !$line->vk);
+            $results = $results->filter(static fn (ProtocolLine $line) => $line->time !== null && !$line->vk);
             if ($results->count() >= 3) {
                 $results = $results
-                    ->sortBy(fn(ProtocolLine $line) => $line->event->date)
+                    ->sortBy(static fn (ProtocolLine $line) => $line->event->date)
                     ->slice(0, 3)
                     ->values()
                 ;

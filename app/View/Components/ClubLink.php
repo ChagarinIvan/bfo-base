@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\View\Components;
 
@@ -8,7 +9,9 @@ use Illuminate\View\View;
 
 class ClubLink extends Component
 {
-    public function __construct(private readonly ?Club $club) {}
+    public function __construct(private readonly ?Club $club)
+    {
+    }
 
     public function render(): View
     {

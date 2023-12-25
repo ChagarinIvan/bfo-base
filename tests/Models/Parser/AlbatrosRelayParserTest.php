@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Tests\Models\Parser;
 
@@ -6,11 +7,6 @@ use App\Models\Parser\AlbatrosRelayParser;
 
 class AlbatrosRelayParserTest extends AbstractParserTest
 {
-    protected function getParser(): string
-    {
-        return AlbatrosRelayParser::class;
-    }
-
     public static function dataProvider(): array
     {
         return [
@@ -100,5 +96,9 @@ class AlbatrosRelayParserTest extends AbstractParserTest
                 ]
             ]
         ];
+    }
+    protected function getParser(): string
+    {
+        return AlbatrosRelayParser::class;
     }
 }

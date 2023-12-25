@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Models\Parser;
 
@@ -7,6 +8,17 @@ use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use PhpOffice\PhpSpreadsheet\Reader\Xls;
+use function array_filter;
+use function count;
+use function explode;
+use function file_put_contents;
+use function is_numeric;
+use function mb_strtolower;
+use function preg_match;
+use function str_contains;
+use function sys_get_temp_dir;
+use function tempnam;
+use function trim;
 
 class XlsParser extends AbstractParser
 {
@@ -32,12 +44,12 @@ class XlsParser extends AbstractParser
                 $hasDistance = preg_match('#(\d+)\s*КП,\s+(\d+\.\d+) м#msi', $distance, $linesMatch);
                 $i = $hasDistance ? $i : $i - 1;
                 $distancePoints = $hasDistance ? (int)$linesMatch[1] : 0;
-                $distanceLength = $hasDistance ? floatval($linesMatch[2]) * 1000 : 0;
+                $distanceLength = $hasDistance ? (float) ($linesMatch[2]) * 1000 : 0;
                 $groupHeader = [];
-                $lines[$i] = array_filter($lines[$i], fn($item) => $item !== null);
+                $lines[$i] = array_filter($lines[$i], static fn ($item) => $item !== null);
                 if (empty($lines[$i])) {
                     $i++;
-                    $lines[$i] = array_filter($lines[$i], fn($item) => $item !== null);
+                    $lines[$i] = array_filter($lines[$i], static fn ($item) => $item !== null);
                 }
                 $index = 0;
                 foreach ($lines[$i++] as $header) {
@@ -88,7 +100,6 @@ class XlsParser extends AbstractParser
                     $linesList->push($protocolLine);
                 }
             }
-
         }
 
         return $linesList;

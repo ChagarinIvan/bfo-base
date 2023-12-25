@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Models\Cups;
 
@@ -11,16 +12,19 @@ use App\Repositories\ProtocolLinesRepository;
 use App\Services\DistanceService;
 use App\Services\GroupsService;
 use Illuminate\Support\Collection;
+use function array_slice;
+use function round;
+use function uasort;
 
 abstract class AbstractCupType implements CupTypeInterface
 {
+    abstract protected function getGroupProtocolLines(CupEvent $cupEvent, CupGroup $group): Collection;
     public function __construct(
         protected readonly DistanceService $distanceService,
         protected readonly ProtocolLinesRepository $protocolLinesRepository,
         protected readonly GroupsService $groupsService,
-    ) {}
-
-    abstract protected function getGroupProtocolLines(CupEvent $cupEvent, CupGroup $group): Collection;
+    ) {
+    }
 
     public function calculateCup(Cup $cup, Collection $cupEvents, CupGroup $mainGroup): array
     {
@@ -60,12 +64,24 @@ abstract class AbstractCupType implements CupTypeInterface
         return $results;
     }
 
+    public function getCupEventParticipatesCount(CupEvent $cupEvent): int
+    {
+        $groups = $cupEvent->cup->getCupType()->getGroups();
+        $lines = Collection::empty();
+
+        foreach ($groups as $group) {
+            $lines = $lines->merge($this->getGroupProtocolLines($cupEvent, $group));
+        }
+
+        return $lines->pluck('id')->unique()->count();
+    }
+
     protected function calculateLines(CupEvent $cupEvent, Collection $protocolLines): Collection
     {
         $cupEventPointsList = Collection::make();
         $maxPoints = $cupEvent->points;
 
-        $protocolLines = $protocolLines->sortByDesc(fn (ProtocolLine $line) => $line->time ? $line->time->diffInSeconds() : 0);
+        $protocolLines = $protocolLines->sortByDesc(static fn (ProtocolLine $line) => $line->time ? $line->time->diffInSeconds() : 0);
 
         $first = true;
         //а этапах Кубков Федерации очки начисляются по формуле:
@@ -105,17 +121,5 @@ abstract class AbstractCupType implements CupTypeInterface
         }
 
         return $cupEventPointsList;
-    }
-
-    public function getCupEventParticipatesCount(CupEvent $cupEvent): int
-    {
-        $groups = $cupEvent->cup->getCupType()->getGroups();
-        $lines = Collection::empty();
-
-        foreach ($groups as $group) {
-            $lines = $lines->merge($this->getGroupProtocolLines($cupEvent, $group));
-        }
-
-        return $lines->pluck('id')->unique()->count();
     }
 }

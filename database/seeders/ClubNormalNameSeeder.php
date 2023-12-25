@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Database\Seeders;
 
@@ -8,14 +9,15 @@ use Illuminate\Database\Seeder;
 class ClubNormalNameSeeder extends Seeder
 {
     public function __construct(private ClubsService $service)
-    {}
+    {
+    }
 
     /**
      * Seed the application's database.
      *
      * @return void
      */
-    public function run()
+    public function run(): void
     {
         $clubs = $this->service->getAllClubs();
         foreach ($clubs as $club) {

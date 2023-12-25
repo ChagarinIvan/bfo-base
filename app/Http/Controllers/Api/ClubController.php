@@ -12,7 +12,8 @@ use Illuminate\Routing\Controller;
 class ClubController extends Controller
 {
     public function __construct(private readonly ClubsService $clubsService)
-    {}
+    {
+    }
 
     public function index(): ResourceCollection
     {

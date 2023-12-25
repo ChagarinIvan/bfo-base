@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Services;
 
@@ -11,7 +12,8 @@ use Illuminate\Support\Collection;
 class DistanceService
 {
     public function __construct(private readonly DistanceRepository $distanceRepository)
-    {}
+    {
+    }
 
     public function getCupEventDistancesByGroups(CupEvent $cupEvent, Collection $groups, bool $withEquals = false): Collection
     {

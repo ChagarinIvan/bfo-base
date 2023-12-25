@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Http\Controllers\Rank;
 
@@ -7,6 +8,9 @@ use App\Services\PersonsIdentService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use function compact;
+use function preg_split;
+use function str_replace;
 
 /**
  * Проверка разрядов базы будущих соревнований на основе csv файла
@@ -33,8 +37,8 @@ class CheckPersonsRanksAction extends AbstractRankAction
     public function preparedLines(Collection $lines): Collection
     {
         return $lines
-            ->transform(function(array $line): array {
-                $line['name'] = str_replace(' ', ' ', $line['name']);
+            ->transform(static function (array $line): array {
+                $line['name'] = str_replace(' ', ' ', $line['name']);
                 [$lastname, $firstname] = preg_split('#\s+#', $line['name']);
 
                 $line['prepared_line'] = PersonsIdentService::makeIdentLine(
@@ -43,7 +47,7 @@ class CheckPersonsRanksAction extends AbstractRankAction
                     empty($line['year']) ? null : (int)$line['year']
                 );
 
-                $line['rank'] = isset($line['rank']) && ! empty($line['rank'])
+                $line['rank'] = isset($line['rank']) && !empty($line['rank'])
                     ? Rank::getRank($line['rank'])
                     : null;
 

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Models\Cups;
 
@@ -9,6 +10,10 @@ use Illuminate\Support\Collection;
 
 class ElkPathCup extends EliteCupType
 {
+    protected static function withPayments(): bool
+    {
+        return false;
+    }
     public function getId(): string
     {
         return CupType::ELK_PATH;
@@ -57,10 +62,5 @@ class ElkPathCup extends EliteCupType
         }
 
         return [];
-    }
-
-    protected static function withPayments(): bool
-    {
-        return false;
     }
 }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Models\Cups;
 
@@ -10,6 +11,7 @@ use App\Models\Group\GroupAge;
 use App\Models\Group\GroupMale;
 use App\Models\ProtocolLine;
 use Illuminate\Support\Collection;
+use function in_array;
 
 class MasterCupType extends AbstractCupType
 {
@@ -61,7 +63,7 @@ class MasterCupType extends AbstractCupType
         ;
 
         $cupEventProtocolLines = $cupEventProtocolLines->filter(
-            fn (ProtocolLine $protocolLine) => in_array($protocolLine->distance_id, $eventDistances, true)
+            static fn (ProtocolLine $protocolLine) => in_array($protocolLine->distance_id, $eventDistances, true)
         );
 
         $cupEventProtocolLines = $cupEventProtocolLines->groupBy('distance.group_id');
@@ -103,7 +105,31 @@ class MasterCupType extends AbstractCupType
             $results = $results->merge($eventGroupResults->intersectByKeys($groupProtocolLines->keyBy('person_id')));
         }
 
-        return $results->sortByDesc(fn (CupEventPoint $cupEventResult) => $cupEventResult->points);
+        return $results->sortByDesc(static fn (CupEventPoint $cupEventResult) => $cupEventResult->points);
+    }
+
+    /**
+     * @return Collection|CupGroup[]
+     */
+    public function getGroups(): Collection
+    {
+        return CupGroupFactory::getAgeTypeGroups([
+            GroupAge::a35,
+            GroupAge::a40,
+            GroupAge::a45,
+            GroupAge::a50,
+            GroupAge::a55,
+            GroupAge::a60,
+            GroupAge::a65,
+            GroupAge::a70,
+            GroupAge::a75,
+            GroupAge::a80,
+        ]);
+    }
+
+    public function getCalculatedGroups(): Collection
+    {
+        return $this->getGroups();
     }
 
     /**
@@ -143,29 +169,5 @@ class MasterCupType extends AbstractCupType
         }
 
         return $groups;
-    }
-
-    /**
-     * @return Collection|CupGroup[]
-     */
-    public function getGroups(): Collection
-    {
-        return CupGroupFactory::getAgeTypeGroups([
-            GroupAge::a35,
-            GroupAge::a40,
-            GroupAge::a45,
-            GroupAge::a50,
-            GroupAge::a55,
-            GroupAge::a60,
-            GroupAge::a65,
-            GroupAge::a70,
-            GroupAge::a75,
-            GroupAge::a80,
-        ]);
-    }
-
-    public function getCalculatedGroups(): Collection
-    {
-        return $this->getGroups();
     }
 }

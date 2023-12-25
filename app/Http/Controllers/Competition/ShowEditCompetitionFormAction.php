@@ -1,9 +1,11 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Http\Controllers\Competition;
 
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use function compact;
 
 class ShowEditCompetitionFormAction extends AbstractCompetitionAction
 {

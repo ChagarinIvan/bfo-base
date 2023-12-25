@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Tests\Models\Parser;
 
@@ -12,13 +13,15 @@ use Tests\TestCase;
 
 abstract class AbstractParserTest extends TestCase
 {
-    abstract protected function getParser(): string;
     abstract public static function dataProvider(): array;
+    abstract protected function getParser(): string;
 
     /**
      * @dataProvider dataProvider
+     *
+     * @test
      */
-    public function testParse(string $filePath, int $linesCount, array $expectedResults, bool $needConvert = false, string $extension = 'html'): void
+    public function parse(string $filePath, int $linesCount, array $expectedResults, bool $needConvert = false, string $extension = 'html'): void
     {
         $storageManager = new FilesystemManager($this->app);
         $protocolContent = $storageManager->disk('tests')->get($filePath);

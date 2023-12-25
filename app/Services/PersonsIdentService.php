@@ -1,13 +1,37 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Services;
+use function implode;
+use function mb_strtolower;
 
 class PersonsIdentService
 {
+    /**
+     * Создаём идентификационную строку из фамилии имени и года
+     *
+     * @param string $lastname
+     * @param string $firstname
+     * @param int|null $year
+     *
+     * @return string
+     */
+    public static function makeIdentLine(string $lastname, string $firstname, ?int $year): string
+    {
+        $data = [
+            ProtocolLineIdentService::prepareLine(mb_strtolower($lastname)),
+            ProtocolLineIdentService::prepareLine(mb_strtolower($firstname)),
+        ];
+        if ($year !== null) {
+            $data[] = $year;
+        }
+        return implode('_', $data);
+    }
     public function __construct(
         private readonly PersonPromptService $promptService,
         private readonly ProtocolLineIdentService $protocolLineIdentService
-    ) {}
+    ) {
+    }
 
     /**
      * Поиск соответствующих людей в базе по предварительно подготовленным строкам (makeIdentLine).
@@ -31,26 +55,5 @@ class PersonsIdentService
         }
 
         return $linePersons;
-    }
-
-    /**
-     * Создаём идентификационную строку из фамилии имени и года
-     *
-     * @param string $lastname
-     * @param string $firstname
-     * @param int|null $year
-     *
-     * @return string
-     */
-    public static function makeIdentLine(string $lastname, string $firstname, ?int $year): string
-    {
-        $data = [
-            ProtocolLineIdentService::prepareLine(mb_strtolower($lastname)),
-            ProtocolLineIdentService::prepareLine(mb_strtolower($firstname)),
-        ];
-        if ($year !== null) {
-            $data[] = $year;
-        }
-        return implode('_', $data);
     }
 }

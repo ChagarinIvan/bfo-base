@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Services;
 
@@ -7,11 +8,13 @@ use DOMDocument;
 use DOMXPath;
 use Illuminate\Support\Collection;
 use RuntimeException;
+use function file_get_contents;
 
 class ParserService
 {
     public function __construct(private readonly GroupsService $groupsService)
-    {}
+    {
+    }
 
     /**
      * По протоколу определяет необходимый парсер
@@ -26,11 +29,11 @@ class ParserService
             $extension
         );
 
-//        dump($parser);
-//        dump($needConvert);
-//        dump($extension);
+        //        dump($parser);
+        //        dump($needConvert);
+        //        dump($extension);
         $res = $parser->parse($protocol, $needConvert);
-//        dd($res);
+        //        dd($res);
         return $res;
     }
 

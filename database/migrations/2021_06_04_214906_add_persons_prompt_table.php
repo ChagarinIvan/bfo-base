@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -11,9 +12,9 @@ class AddPersonsPromptTable extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('persons_prompt', function (Blueprint $table) {
+        Schema::create('persons_prompt', static function (Blueprint $table): void {
             $table->integer('person_id')->index();
             $table->string('prompt')->nullable(false)->index();
         });
@@ -24,7 +25,7 @@ class AddPersonsPromptTable extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('persons_prompt');
     }

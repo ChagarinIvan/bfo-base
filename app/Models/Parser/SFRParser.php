@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Models\Parser;
 
@@ -6,6 +7,20 @@ use App\Models\Rank;
 use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use function count;
+use function explode;
+use function is_numeric;
+use function mb_convert_encoding;
+use function mb_strtolower;
+use function preg_match;
+use function preg_match_all;
+use function str_contains;
+use function str_ends_with;
+use function str_replace;
+use function strip_tags;
+use function strpos;
+use function substr;
+use function trim;
 
 class SFRParser extends AbstractParser
 {
@@ -20,7 +35,7 @@ class SFRParser extends AbstractParser
         preg_match_all('#<h2>(.+?)</h2>.*?<table\s+class=.rezult.>(.+?)</table#msi', $content, $nodesMatch);
         foreach ($nodesMatch[2] as $nodeIndex => $node) {
             $text = trim($node);
-            $text = trim($text,'-');
+            $text = trim($text, '-');
             $text = trim($text);
             if (!str_contains($text, 'амилия')) {
                 continue;

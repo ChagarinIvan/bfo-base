@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Database\Seeders;
 
@@ -6,6 +7,10 @@ use App\Models\Club;
 use App\Models\Person;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Database\Seeder;
+use function explode;
+use function mb_convert_encoding;
+use function preg_match;
+use function str_getcsv;
 
 class ClubSeeder extends Seeder
 {
@@ -21,7 +26,7 @@ class ClubSeeder extends Seeder
      *
      * @return void
      */
-    public function run()
+    public function run(): void
     {
         $personsList = $this->storage->get('bfo.csv');
         $clubs = Club::all();

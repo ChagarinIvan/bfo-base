@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Models\Parser;
 
@@ -8,6 +9,20 @@ use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
+use function array_filter;
+use function count;
+use function explode;
+use function file_put_contents;
+use function is_numeric;
+use function mb_convert_case;
+use function mb_strtolower;
+use function preg_match;
+use function str_contains;
+use function strtolower;
+use function sys_get_temp_dir;
+use function tempnam;
+use function trim;
+use function ucwords;
 
 class XlsxParser extends AbstractParser
 {
@@ -29,7 +44,7 @@ class XlsxParser extends AbstractParser
 
             if (
                 $this->groups
-                ->filter(fn(string $groupName) => str_contains($lines[$i][0], $groupName))
+                ->filter(static fn (string $groupName) => str_contains($lines[$i][0], $groupName))
                 ->count() >= 1
             ) {
                 $groupNameWithDistance = $lines[$i][0];
@@ -44,10 +59,10 @@ class XlsxParser extends AbstractParser
                 }
 
                 $groupHeader = [];
-                $lines[++$i] = array_filter($lines[$i], fn($item) => $item !== null);
+                $lines[++$i] = array_filter($lines[$i], static fn ($item) => $item !== null);
                 if (empty($lines[$i])) {
                     $i++;
-                    $lines[$i] = array_filter($lines[$i], fn($item) => $item !== null);
+                    $lines[$i] = array_filter($lines[$i], static fn ($item) => $item !== null);
                 }
                 $index = 0;
 
@@ -85,7 +100,6 @@ class XlsxParser extends AbstractParser
                     $linesList->push($protocolLine);
                 }
             }
-
         }
 
         return $linesList;

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Models\Parser;
 
@@ -7,6 +8,21 @@ use DOMDocument;
 use DOMXPath;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use function array_slice;
+use function count;
+use function explode;
+use function implode;
+use function is_numeric;
+use function mb_strtolower;
+use function preg_match;
+use function preg_replace;
+use function preg_split;
+use function str_contains;
+use function str_replace;
+use function str_starts_with;
+use function strpos;
+use function substr;
+use function trim;
 
 class AlbatrosRelayParser extends AbstractParser
 {
@@ -14,7 +30,7 @@ class AlbatrosRelayParser extends AbstractParser
     {
         $doc = new DOMDocument();
         if (!str_starts_with($file, '<html lang="ru">')) {
-            $file = '<?xml encoding="UTF-8">'.$file.'</xml>';
+            $file = '<?xml encoding="UTF-8">' . $file . '</xml>';
         }
         @$doc->loadHTML($file);
         $xpath = new DOMXpath($doc);
@@ -41,9 +57,9 @@ class AlbatrosRelayParser extends AbstractParser
             if (preg_match('#(\d+)\s+[^\d]+,\s+((\d+,\d+)\s+[^\d]+|(\d+)\s+[^\d])#s', $distance, $match)) {
                 $distancePoints = (int)$match[1];
                 if (str_contains($match[2], ',')) {
-                    $distanceLength = floatval(str_replace(',', '.', $match[3])) * 1000;
+                    $distanceLength = (float) (str_replace(',', '.', $match[3])) * 1000;
                 } else {
-                    $distanceLength = floatval($match[4]);
+                    $distanceLength = (float) ($match[4]);
                 }
             } elseif (count($lines) < 4) {
                 continue;
@@ -124,7 +140,6 @@ class AlbatrosRelayParser extends AbstractParser
                     $protocolLine = $this->getValue($columnName, $lineData, $fieldsCount, $indent, $protocolLine);
                 }
 
-
                 $protocolLine['serial_number'] = (int)$lineData[0];
                 $protocolLine['runner_number'] = (int)$lineData[0];
                 $protocolLine['lastname'] = $lineData[1];
@@ -164,7 +179,7 @@ class AlbatrosRelayParser extends AbstractParser
         if (str_contains($field, 'ремя')) {
             return 'time';
         }
-        if ($field ==='гр' || $field === 'г.р.') {
+        if ($field === 'гр' || $field === 'г.р.') {
             return 'year';
         }
         if (str_contains($field, 'омер')) {

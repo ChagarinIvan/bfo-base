@@ -11,6 +11,10 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
+use function array_diff;
+use function implode;
+use function in_array;
+use function mb_strtolower;
 
 class PersonsService
 {
@@ -24,7 +28,8 @@ class PersonsService
     public function __construct(
         private readonly PersonPromptService $promptService,
         private readonly ClubsService $clubService
-    ) {}
+    ) {
+    }
 
     public function getPerson(int $personId): Person
     {
@@ -62,7 +67,7 @@ class PersonsService
             $persons = $persons->where('firstname', 'like', "%$search%")
                 ->orWhere('lastname', 'like', "%$search%")
                 ->orWhere(DB::raw("CONCAT(`lastname`, ' ', `firstname`)"), 'like', "%$search%")
-                ->orWhereHas('club', function ($query) use ($search) {
+                ->orWhereHas('club', static function ($query) use ($search): void {
                     $query->where('name', 'like', "%$search%");
                 })
                 ->orWhere('birthday', 'like', "%$search%");
@@ -120,7 +125,7 @@ class PersonsService
     public function updatePerson(int $personId, array $personData): Person
     {
         $person = $this->getPerson($personId);
-//        $this->promptService->deletePrompts($person);
+        //        $this->promptService->deletePrompts($person);
         $person = $this->fillPerson($person, $personData);
 
         return $this->storePerson($person);
@@ -148,7 +153,7 @@ class PersonsService
     {
         $person = $this->getPerson($personId);
         $protocolLines = ProtocolLine::wherePersonId($personId)->get();
-        $protocolLines->each(function (ProtocolLine $line) {
+        $protocolLines->each(static function (ProtocolLine $line): void {
             $line->person_id = null;
             $line->save();
         });

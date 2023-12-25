@@ -1,12 +1,17 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Models\Parser;
 
 use App\Models\Parser\List\CsvListParser;
 use Illuminate\Support\Collection;
+use RuntimeException;
 
 class ParserFactory
 {
+    public const LIST_PARSERS = [
+        CsvListParser::class,
+    ];
     private const PROTOCOL_PARSERS = [
         XlsParser::class,
         XlsxParser::class,
@@ -25,10 +30,6 @@ class ParserFactory
         OBelarusNetParser::class,
     ];
 
-    public const LIST_PARSERS = [
-        CsvListParser::class,
-    ];
-
     public static function createProtocolParser(string $protocol, Collection $groups, string $extension = 'html'): ParserInterface
     {
         foreach (self::PROTOCOL_PARSERS as $parser) {
@@ -38,7 +39,7 @@ class ParserFactory
                 return $parser;
             }
         }
-        throw new \RuntimeException('нету подходящего парсера!!');
+        throw new RuntimeException('нету подходящего парсера!!');
     }
 
     public static function createListParser(string $list, string $extension = 'csv'): ParserInterface
@@ -50,6 +51,6 @@ class ParserFactory
                 return $parser;
             }
         }
-        throw new \RuntimeException('нету подходящего парсера!!');
+        throw new RuntimeException('нету подходящего парсера!!');
     }
 }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Console;
 
@@ -10,6 +11,7 @@ use App\Console\Commands\StartBigIdentCommand;
 use App\Console\Commands\SyncPersonsCommand;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use function sleep;
 
 class Kernel extends ConsoleKernel
 {
@@ -33,17 +35,17 @@ class Kernel extends ConsoleKernel
      * @param Schedule $schedule
      * @return void
      */
-    protected function schedule(Schedule $schedule)
+    protected function schedule(Schedule $schedule): void
     {
         $schedule->command(SimpleIndentCommand::class)->dailyAt('01:00')->runInBackground();
         $schedule->command(StartBigIdentCommand::class)->monthly()->at('03:00')->runInBackground();
         $schedule->command(RankValidationCommand::class)->weekly()->at('02:00')->runInBackground();
-//        $schedule->command(SyncPersonsCommand::class)->weekly()->runInBackground();
+        //        $schedule->command(SyncPersonsCommand::class)->weekly()->runInBackground();
 
         for ($i = 0; $i < 4; $i++) {
             $schedule->command(IdentProtocolLineCommand::class)
                 ->everyMinute()
-                ->before(function() use ($i) {sleep($i * 15);})
+                ->before(static function () use ($i): void {sleep($i * 15);})
                 ->runInBackground();
         }
     }
@@ -53,8 +55,8 @@ class Kernel extends ConsoleKernel
      *
      * @return void
      */
-    protected function commands()
+    protected function commands(): void
     {
-        $this->load(__DIR__.'/Commands');
+        $this->load(__DIR__ . '/Commands');
     }
 }

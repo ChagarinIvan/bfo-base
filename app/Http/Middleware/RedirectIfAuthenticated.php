@@ -1,12 +1,13 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
 use App\Http\Controllers\Login\ShowLoginFormAction;
 use Closure;
+use Illuminate\Contracts\Auth\Factory as AuthService;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
-use Illuminate\Contracts\Auth\Factory as AuthService;
 
 class RedirectIfAuthenticated
 {
@@ -22,9 +23,9 @@ class RedirectIfAuthenticated
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @param  string|null  ...$guards
+     * @param \Illuminate\Http\Request $request
+     * @param Closure $next
+     * @param string|null ...$guards
      * @return mixed
      */
     public function handle(Request $request, Closure $next, ...$guards)

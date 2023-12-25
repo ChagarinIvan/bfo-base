@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Repositories;
 
@@ -9,11 +10,13 @@ use App\Models\Year;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Collection;
+use function count;
 
 class ProtocolLinesRepository
 {
     public function __construct(private readonly ConnectionInterface $db)
-    {}
+    {
+    }
 
     public function getProtocolLine(int $id, array $with = []): ?ProtocolLine
     {

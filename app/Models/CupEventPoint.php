@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Models;
 
@@ -8,7 +9,8 @@ class CupEventPoint
         public readonly int $eventCupId,
         public readonly ProtocolLine $protocolLine,
         public readonly int|string $points,
-    ) {}
+    ) {
+    }
 
     public function equal(self $point): bool
     {

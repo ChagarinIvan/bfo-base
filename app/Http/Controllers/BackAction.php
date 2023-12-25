@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
@@ -10,7 +11,8 @@ use Illuminate\Routing\Redirector;
 class BackAction extends Controller
 {
     public function __construct(protected Redirector $redirector, protected BackUrlService $backUrlService)
-    {}
+    {
+    }
 
     public function __invoke(): RedirectResponse
     {

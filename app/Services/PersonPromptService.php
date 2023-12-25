@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Services;
 
@@ -6,13 +7,15 @@ use App\Models\PersonPrompt;
 use App\Repositories\PersonPromptRepository;
 use Illuminate\Support\Collection;
 use Mav\Slovo\Phonetics;
+use RuntimeException;
 
 class PersonPromptService
 {
     public function __construct(
         private readonly PersonPromptRepository $repository,
         private readonly Phonetics $phonetics
-    ) {}
+    ) {
+    }
 
     public function storePrompt(string $personLine, int $personId): PersonPrompt
     {
@@ -58,9 +61,9 @@ class PersonPromptService
      */
     public function identPersonsByPrompts(array $preparedLines): array
     {
-         $prompts = $this->repository->findPersonsPrompts($preparedLines);
+        $prompts = $this->repository->findPersonsPrompts($preparedLines);
 
-         return $prompts->pluck('person_id', 'prompt')->toArray();
+        return $prompts->pluck('person_id', 'prompt')->toArray();
     }
 
     /**
@@ -95,6 +98,6 @@ class PersonPromptService
         if ($prompt) {
             return $prompt;
         }
-        throw new \RuntimeException('Wrong prompt id.');
+        throw new RuntimeException('Wrong prompt id.');
     }
 }

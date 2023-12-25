@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Tests\Models\Parser;
 
@@ -6,11 +7,6 @@ use App\Models\Parser\AlbatrosTimingParser;
 
 class AlbatrosTimingParserTest extends AbstractParserTest
 {
-    protected function getParser(): string
-    {
-        return AlbatrosTimingParser::class;
-    }
-
     public static function dataProvider(): array
     {
         return [
@@ -193,5 +189,9 @@ class AlbatrosTimingParserTest extends AbstractParserTest
                 ]
             ]
         ];
+    }
+    protected function getParser(): string
+    {
+        return AlbatrosTimingParser::class;
     }
 }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Http\Controllers\Event;
 
@@ -37,7 +38,7 @@ class UpdateEventAction extends AbstractEventAction
         }
 
         $year = $event->date->format('Y');
-        $protocolPath = "{$year}/{$event->date->format('Y-m-d')}_".Str::snake($event->name).'.html';
+        $protocolPath = "{$year}/{$event->date->format('Y-m-d')}_" . Str::snake($event->name) . '.html';
 
         $lineList = $this->parserService->parseProtocol($protocol, $needConvert, $extension);
 

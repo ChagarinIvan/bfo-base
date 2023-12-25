@@ -1,10 +1,28 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Models\Parser;
 
 use App\Models\Rank;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use function array_key_exists;
+use function array_slice;
+use function count;
+use function implode;
+use function is_numeric;
+use function mb_convert_encoding;
+use function mb_strtolower;
+use function preg_match;
+use function preg_match_all;
+use function preg_replace;
+use function preg_split;
+use function str_contains;
+use function str_replace;
+use function strip_tags;
+use function strpos;
+use function substr;
+use function trim;
 
 class OBelarusSpanParser extends AbstractParser
 {
@@ -13,7 +31,7 @@ class OBelarusSpanParser extends AbstractParser
         if ($needConvert) {
             $file = mb_convert_encoding($file, 'utf-8', 'windows-1251');
         }
-        $file = str_replace(["&nbsp;", " "], ' ', $file);
+        $file = str_replace(["&nbsp;", " "], ' ', $file);
         $linesList = new Collection();
         $distancePoints = 0;
         $distanceLength = 0;
@@ -135,7 +153,7 @@ class OBelarusSpanParser extends AbstractParser
         if (str_contains($field, 'ремя') || str_contains($field, 'рез') || $field === 'ком.') {
             return 'time';
         }
-        if ($field ==='гр' || $field === 'г.р.') {
+        if ($field === 'гр' || $field === 'г.р.') {
             return 'year';
         }
         if (str_contains($field, 'омер')) {

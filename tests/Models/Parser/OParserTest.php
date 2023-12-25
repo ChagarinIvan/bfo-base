@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Tests\Models\Parser;
 
@@ -6,11 +7,6 @@ use App\Models\Parser\OParser;
 
 class OParserTest extends AbstractParserTest
 {
-    protected function getParser(): string
-    {
-        return OParser::class;
-    }
-
     public static function dataProvider(): array
     {
         return [
@@ -145,5 +141,9 @@ class OParserTest extends AbstractParserTest
                 ]
             ]
         ];
+    }
+    protected function getParser(): string
+    {
+        return OParser::class;
     }
 }

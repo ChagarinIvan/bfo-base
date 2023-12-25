@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Tests\Models\Parser;
 
@@ -6,11 +7,6 @@ use App\Models\Parser\WinOrientHtmlParser;
 
 class WinOrientParserTest extends AbstractParserTest
 {
-    protected function getParser(): string
-    {
-        return WinOrientHtmlParser::class;
-    }
-
     public static function dataProvider(): array
     {
         return [
@@ -196,5 +192,9 @@ class WinOrientParserTest extends AbstractParserTest
                 ]
             ]
         ];
+    }
+    protected function getParser(): string
+    {
+        return WinOrientHtmlParser::class;
     }
 }

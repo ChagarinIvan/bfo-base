@@ -8,11 +8,6 @@ use App\Models\Parser\OBelarusSpanParser;
 
 class OBelarusSpanParserTest extends AbstractParserTest
 {
-    protected function getParser(): string
-    {
-        return OBelarusSpanParser::class;
-    }
-
     public static function dataProvider(): array
     {
         return [
@@ -157,5 +152,9 @@ class OBelarusSpanParserTest extends AbstractParserTest
                 true
             ],
         ];
+    }
+    protected function getParser(): string
+    {
+        return OBelarusSpanParser::class;
     }
 }

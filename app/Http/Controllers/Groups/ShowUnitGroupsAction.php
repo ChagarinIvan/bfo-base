@@ -1,9 +1,11 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Http\Controllers\Groups;
 
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
+use RuntimeException;
 
 class ShowUnitGroupsAction extends AbstractGroupAction
 {
@@ -11,7 +13,7 @@ class ShowUnitGroupsAction extends AbstractGroupAction
     {
         try {
             $group = $this->groupsService->getGroup($groupId);
-        } catch (\RuntimeException) {
+        } catch (RuntimeException) {
             $this->redirectTo404Error();
         }
 

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Tests\Models;
 
@@ -11,8 +12,10 @@ class RankTest extends TestCase
      * @param bool $expectedValidationResult
      * @param string $rank
      * @dataProvider ranksProvider
+     *
+     * @test
      */
-    public function testValidateRank(bool $expectedValidationResult, string $rank): void
+    public function validate_rank(bool $expectedValidationResult, string $rank): void
     {
         $this->assertEquals($expectedValidationResult, Rank::validateRank($rank));
     }

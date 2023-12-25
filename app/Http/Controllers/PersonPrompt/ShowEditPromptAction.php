@@ -1,8 +1,10 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Http\Controllers\PersonPrompt;
 
 use Illuminate\Contracts\View\View;
+use function compact;
 
 class ShowEditPromptAction extends AbstractPersonPromptAction
 {

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -11,9 +12,9 @@ class AddPersonsPaymentsTable extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('persons_payments', function (Blueprint $table) {
+        Schema::create('persons_payments', static function (Blueprint $table): void {
             $table->bigInteger('person_id')->unsigned()->nullable(false)->index();
             $table->integer('year')->nullable(false)->index();
             $table->date('date')->nullable(false);
@@ -29,7 +30,7 @@ class AddPersonsPaymentsTable extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::drop('persons_payments');
     }

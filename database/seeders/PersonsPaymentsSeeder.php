@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Database\Seeders;
 
@@ -8,6 +9,9 @@ use App\Services\PersonsService;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
+use function explode;
+use function str_getcsv;
+use function substr;
 
 class PersonsPaymentsSeeder extends Seeder
 {
@@ -25,7 +29,7 @@ class PersonsPaymentsSeeder extends Seeder
      *
      * @return void
      */
-    public function run()
+    public function run(): void
     {
         $this->executeBase(2021, 10);
         $this->executeBase(2020, 12);
@@ -34,7 +38,7 @@ class PersonsPaymentsSeeder extends Seeder
     private function executeBase(int $year, int $column): void
     {
         $payments = [];
-        echo "Start sync {$year} year!".PHP_EOL;
+        echo "Start sync {$year} year!" . PHP_EOL;
 
         $csvBase = $this->storage->get("{$year}.csv");
         $list = explode(PHP_EOL, $csvBase);
@@ -63,21 +67,21 @@ class PersonsPaymentsSeeder extends Seeder
                 continue;
             }
 
-            echo $paymentDate.PHP_EOL;
+            echo $paymentDate . PHP_EOL;
             $paymentDate = Carbon::createFromFormat('d.m.Y', substr($paymentDate, 0, 10));
             $persons = Person::whereLastname($lastname)->whereFirstname($firstname)->whereBirthday($birthday)->get();
 
             if ($persons->isEmpty()) {
-                echo 'newscomer:'.PHP_EOL;
-                echo $lastname.' '.$firstname.PHP_EOL;
+                echo 'newscomer:' . PHP_EOL;
+                echo $lastname . ' ' . $firstname . PHP_EOL;
                 $person = new Person();
                 $person->lastname = $lastname;
                 $person->firstname = $firstname;
                 $person->birthday = $birthday;
                 $this->personService->storePerson($person);
             } elseif ($persons->count() > 1) {
-                echo 'ALARM!!!!'.PHP_EOL;
-                echo $lastname.' '.$firstname.PHP_EOL;
+                echo 'ALARM!!!!' . PHP_EOL;
+                echo $lastname . ' ' . $firstname . PHP_EOL;
             } else {
                 $person = $persons->first();
             }

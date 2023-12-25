@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Http\Controllers\CupEvents;
 
@@ -7,6 +8,7 @@ use App\Models\Group\CupGroupFactory;
 use App\Services\DistanceService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use RuntimeException;
 
 class ShowCupEventGroupAction extends AbstractCupAction
 {
@@ -20,7 +22,7 @@ class ShowCupEventGroupAction extends AbstractCupAction
             $group = CupGroupFactory::fromId($cupGroupId);
             $cup = $this->cupsService->getCup($cupId);
             $cupEvent = $this->cupEventsService->getCupEvent($cupEventId);
-        } catch (\RuntimeException) {
+        } catch (RuntimeException) {
             return $this->redirectTo404Error();
         }
 

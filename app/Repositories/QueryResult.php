@@ -12,7 +12,8 @@ class QueryResult
     public function __construct(
         public Collection $entities,
         private readonly int $count
-    ) {}
+    ) {
+    }
 
     #[ArrayShape(['rows' => "array", 'count' => "int"])]
     public function toArray(): array

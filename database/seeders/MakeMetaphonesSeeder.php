@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Database\Seeders;
 
@@ -11,7 +12,8 @@ use Illuminate\Database\Seeder;
 class MakeMetaphonesSeeder extends Seeder
 {
     public function __construct(private readonly PersonPromptService $service)
-    {}
+    {
+    }
 
     public function run(): void
     {

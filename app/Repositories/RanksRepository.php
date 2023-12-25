@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Repositories;
 
@@ -101,7 +102,7 @@ class RanksRepository
 
     public function deleteRanks(Collection $ranks): void
     {
-        $ranks->each(fn(Rank $rank) => $rank->delete());
+        $ranks->each(static fn (Rank $rank) => $rank->delete());
     }
 
     public function getPersonsIdsWithoutRanks(): Collection

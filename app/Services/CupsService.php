@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Services;
 
@@ -6,11 +7,13 @@ use App\Models\Cup;
 use App\Models\Year;
 use Illuminate\Cache\Repository as CacheManager;
 use Illuminate\Support\Collection;
+use RuntimeException;
 
 class CupsService
 {
     public function __construct(private CacheManager $cache)
-    {}
+    {
+    }
 
     public function getYearCups(Year $year): Collection
     {
@@ -36,6 +39,6 @@ class CupsService
         if ($cup) {
             return $cup;
         }
-        throw new \RuntimeException('Wrong cup id.');
+        throw new RuntimeException('Wrong cup id.');
     }
 }

@@ -1,9 +1,16 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Models\Parser\List;
 
 use App\Models\Parser\ParserInterface;
 use Illuminate\Support\Collection;
+use function array_combine;
+use function array_map;
+use function count;
+use function explode;
+use function mb_convert_encoding;
+use function preg_split;
 
 class CsvListParser implements ParserInterface
 {

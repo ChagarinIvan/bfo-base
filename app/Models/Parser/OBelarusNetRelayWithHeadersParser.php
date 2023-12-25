@@ -1,12 +1,26 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Models\Parser;
 
 use App\Models\Rank;
 use DOMDocument;
 use DOMXPath;
+use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use function array_slice;
+use function count;
+use function explode;
+use function implode;
+use function is_numeric;
+use function preg_match;
+use function preg_replace;
+use function preg_split;
+use function str_contains;
+use function strpos;
+use function substr;
+use function trim;
 
 class OBelarusNetRelayWithHeadersParser extends AbstractParser
 {
@@ -76,10 +90,10 @@ class OBelarusNetRelayWithHeadersParser extends AbstractParser
                     try {
                         $protocolLine['time'] = Carbon::createFromTimeString($value);
                         $indent++;
-                    } catch (\Exception $e) {
+                    } catch (Exception $e) {
                         $protocolLine['time'] = $time;
                     }
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     $protocolLine['time'] = null;
                 }
                 $protocolLine['runner_number'] = (int)$lineData[0];

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Models\Cups;
 
@@ -10,6 +11,7 @@ use App\Models\Group\GroupAge;
 use App\Models\Group\GroupMale;
 use App\Models\ProtocolLine;
 use Illuminate\Support\Collection;
+use function round;
 
 /**
  * Юніёрскі
@@ -32,6 +34,48 @@ class JuniorCupType extends MasterCupType
     public const WOMEN_MAIN_GROUPS_NAMES = ['Ж20', 'W20'];
 
     public const WOMEN_SECOND_GROUPS_NAMES = ['Ж21А', 'Ж21A', 'Ж21 Фин A', 'ЖA', 'ЖА', 'W21A', 'Женщины группа А',];
+
+    protected const GROUPS_MAP = [
+        'M_20' => [
+            'М21Е',
+            'М21E',
+            'МЕ',
+            'Мужчины группа Е',
+            'М21',
+            'M21E',
+            'МE',
+            'М21 Фин Е',
+            'M21',
+            'М21А',
+            'М21A',
+            'M21A',
+            'М21 Фин А',
+            'МА',
+            'МA',
+            'Мужчины группа А',
+            'М20',
+            'M20',
+        ],
+        'W_20' => [
+            'Ж21',
+            'Ж21Е',
+            'W21',
+            'ЖЕ',
+            'ЖE',
+            'Ж21E',
+            'W21E',
+            'Ж21 Фин Е',
+            'Женщины группа Е',
+            'Ж21А',
+            'Ж21A',
+            'ЖA',
+            'ЖА',
+            'W21A',
+            'Женщины группа А',
+            'Ж20',
+            'W20',
+        ],
+    ];
 
     private const EVENTS_GROUPS_KOEF = [
         //М21Е
@@ -77,48 +121,6 @@ class JuniorCupType extends MasterCupType
         'W20' => 0.9,
     ];
 
-    protected const GROUPS_MAP = [
-        'M_20' => [
-            'М21Е',
-            'М21E',
-            'МЕ',
-            'Мужчины группа Е',
-            'М21',
-            'M21E',
-            'МE',
-            'М21 Фин Е',
-            'M21',
-            'М21А',
-            'М21A',
-            'M21A',
-            'М21 Фин А',
-            'МА',
-            'МA',
-            'Мужчины группа А',
-            'М20',
-            'M20',
-        ],
-        'W_20' => [
-            'Ж21',
-            'Ж21Е',
-            'W21',
-            'ЖЕ',
-            'ЖE',
-            'Ж21E',
-            'W21E',
-            'Ж21 Фин Е',
-            'Женщины группа Е',
-            'Ж21А',
-            'Ж21A',
-            'ЖA',
-            'ЖА',
-            'W21A',
-            'Женщины группа А',
-            'Ж20',
-            'W20',
-        ],
-    ];
-
     public function getId(): string
     {
         return CupType::JUNIORS;
@@ -132,34 +134,6 @@ class JuniorCupType extends MasterCupType
     public function getGroups(): Collection
     {
         return CupGroupFactory::getAgeTypeGroups([GroupAge::a20]);
-    }
-
-    protected function getGroupProtocolLines(CupEvent $cupEvent, CupGroup $group): Collection
-    {
-        $year = $cupEvent->cup->year;
-        $startYear = $year - $group->age() ?->value ?? 0;
-        $mainGroupsNames = $group->male() === GroupMale::Man ? self::MEN_MAIN_GROUPS_NAMES : self::WOMEN_MAIN_GROUPS_NAMES;
-        $groups = $this->groupsService->getGroups($mainGroupsNames);
-        $eliteGroupsNames = $group->male() === GroupMale::Man ? EliteCupType::ELITE_MEN_GROUPS : EliteCupType::ELITE_WOMEN_GROUPS;
-        $eliteGroupsList = $this->groupsService->getGroups($eliteGroupsNames);
-
-        if ($groups->isEmpty()) {
-            $groups = $eliteGroupsList;
-        } else {
-            $differentGroupsNames = $group->male() === GroupMale::Man ? self::MEN_SECOND_GROUPS_NAMES : self::WOMEN_SECOND_GROUPS_NAMES;
-            $differentGroupsList = $this->groupsService->getGroups($differentGroupsNames);;
-            $groups = $groups->merge($eliteGroupsList);
-            $groups = $groups->merge($differentGroupsList);
-        }
-
-        return $this->protocolLinesRepository
-            ->getCupEventProtocolLinesForPersonsCertainAge(
-                cupEvent: $cupEvent,
-                startYear: $startYear,
-                withPayments: true,
-                groups: $groups,
-            )
-        ;
     }
 
     /**
@@ -183,20 +157,36 @@ class JuniorCupType extends MasterCupType
             $results = $results->merge($eventGroupResults->intersectByKeys($groupProtocolLines->keyBy('person_id')));
         }
 
-        return $results->sortByDesc(fn(CupEventPoint $cupEventResult) => $cupEventResult->points);
+        return $results->sortByDesc(static fn (CupEventPoint $cupEventResult) => $cupEventResult->points);
     }
 
-    /**
-     * @param CupEvent $cupEvent
-     * @param int $distanceId
-     * @return Collection
-     */
-    private function calculateDistance(CupEvent $cupEvent, int $distanceId): Collection
+    protected function getGroupProtocolLines(CupEvent $cupEvent, CupGroup $group): Collection
     {
-        return $this->calculateLines(
-            $cupEvent,
-            $this->protocolLinesRepository->getCupEventDistanceProtocolLines($distanceId),
-        );
+        $year = $cupEvent->cup->year;
+        $startYear = $year - $group->age() ?->value ?? 0;
+        $mainGroupsNames = $group->male() === GroupMale::Man ? self::MEN_MAIN_GROUPS_NAMES : self::WOMEN_MAIN_GROUPS_NAMES;
+        $groups = $this->groupsService->getGroups($mainGroupsNames);
+        $eliteGroupsNames = $group->male() === GroupMale::Man ? EliteCupType::ELITE_MEN_GROUPS : EliteCupType::ELITE_WOMEN_GROUPS;
+        $eliteGroupsList = $this->groupsService->getGroups($eliteGroupsNames);
+
+        if ($groups->isEmpty()) {
+            $groups = $eliteGroupsList;
+        } else {
+            $differentGroupsNames = $group->male() === GroupMale::Man ? self::MEN_SECOND_GROUPS_NAMES : self::WOMEN_SECOND_GROUPS_NAMES;
+            $differentGroupsList = $this->groupsService->getGroups($differentGroupsNames);
+            ;
+            $groups = $groups->merge($eliteGroupsList);
+            $groups = $groups->merge($differentGroupsList);
+        }
+
+        return $this->protocolLinesRepository
+            ->getCupEventProtocolLinesForPersonsCertainAge(
+                cupEvent: $cupEvent,
+                startYear: $startYear,
+                withPayments: true,
+                groups: $groups,
+            )
+        ;
     }
 
     protected function calculateLines(CupEvent $cupEvent, Collection $protocolLines): Collection
@@ -204,7 +194,7 @@ class JuniorCupType extends MasterCupType
         $cupEventPointsList = Collection::make();
         $koef = self::EVENTS_GROUPS_KOEF[$protocolLines->first()->distance->group->name] ?? 0;
         $maxPoints = $cupEvent->points * $koef;
-        $protocolLines = $protocolLines->sortByDesc(fn(ProtocolLine $line) => $line->time ? $line->time->diffInSeconds() : 0);
+        $protocolLines = $protocolLines->sortByDesc(static fn (ProtocolLine $line) => $line->time ? $line->time->diffInSeconds() : 0);
         $first = true;
 
         foreach ($protocolLines as $protocolLine) {
@@ -240,5 +230,18 @@ class JuniorCupType extends MasterCupType
         }
 
         return $cupEventPointsList;
+    }
+
+    /**
+     * @param CupEvent $cupEvent
+     * @param int $distanceId
+     * @return Collection
+     */
+    private function calculateDistance(CupEvent $cupEvent, int $distanceId): Collection
+    {
+        return $this->calculateLines(
+            $cupEvent,
+            $this->protocolLinesRepository->getCupEventDistanceProtocolLines($distanceId),
+        );
     }
 }

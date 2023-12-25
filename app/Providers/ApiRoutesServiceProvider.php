@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Providers;
 
@@ -22,14 +23,14 @@ class ApiRoutesServiceProvider extends ServiceProvider
     {
         $this->route = $this->app->make(RouteRegistrar::class);
 
-        $this->routes(function () {
+        $this->routes(function (): void {
             $this->route
-                ->group(function () {
-                    $this->route->get('/api/competitions',                        [Api\CompetitionController::class, 'index']);
+                ->group(function (): void {
+                    $this->route->get('/api/competitions', [Api\CompetitionController::class, 'index']);
                     $this->route->get('/api/competition/{competition_id}/events', [Api\EventsController::class, 'index']);
-                    $this->route->get('/api/event/{event_id}/results',            [Api\ResultsController::class, 'index']);
+                    $this->route->get('/api/event/{event_id}/results', [Api\ResultsController::class, 'index']);
                     $this->route->get('/api/person', [Api\PersonController::class, 'index']);
-                    $this->route->get('/api/club',   [Api\ClubController::class, 'index']);
+                    $this->route->get('/api/club', [Api\ClubController::class, 'index']);
                 })
             ;
         });

@@ -3,6 +3,9 @@
 declare(strict_types=1);
 
 namespace App\Integration\OrientBy;
+use function array_map;
+use function file_get_contents;
+use function json_decode;
 
 class OrientByApiClient
 {

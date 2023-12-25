@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Services;
 
@@ -11,13 +12,16 @@ use App\Models\Year;
 use App\Repositories\GroupsRepository;
 use App\Repositories\ProtocolLinesRepository;
 use Illuminate\Support\Collection;
+use RuntimeException;
+use function str_replace;
 
 class ProtocolLineService
 {
     public function __construct(
         private readonly ProtocolLinesRepository $protocolLinesRepository,
         private readonly GroupsRepository $groupsRepository
-    ) {}
+    ) {
+    }
 
     /**
      * Коллекция сырых данных линий протокола, из каждой
@@ -50,28 +54,6 @@ class ProtocolLineService
         });
     }
 
-    private function findDistance(int $groupId, int $eventId, int $length, int $points): Distance
-    {
-        $distances = Distance::whereGroupId($groupId)
-            ->whereEventId($eventId)
-            ->whereLength($length)
-            ->wherePoints($points)
-            ->get();
-
-        if ($distances->count() === 0) {
-            $distance = new Distance();
-            $distance->group_id = $groupId;
-            $distance->event_id = $eventId;
-            $distance->length = $length;
-            $distance->points = $points;
-            $distance->save();
-        } else {
-            $distance = $distances->first();
-        }
-
-        return $distance;
-    }
-
     public function getProtocolLineIdForRank(Rank $rank): int
     {
         if ($rank->event_id) {
@@ -92,7 +74,7 @@ class ProtocolLineService
         if ($protocolLine) {
             return $protocolLine;
         }
-        throw new \RuntimeException('Wrong protocolLine id.');
+        throw new RuntimeException('Wrong protocolLine id.');
     }
 
     public function getPersonProtocolLines(int $personId, Year $year = null): Collection
@@ -134,5 +116,27 @@ class ProtocolLineService
             $line->person_id = $personId;
             $line->save();
         }
+    }
+
+    private function findDistance(int $groupId, int $eventId, int $length, int $points): Distance
+    {
+        $distances = Distance::whereGroupId($groupId)
+            ->whereEventId($eventId)
+            ->whereLength($length)
+            ->wherePoints($points)
+            ->get();
+
+        if ($distances->count() === 0) {
+            $distance = new Distance();
+            $distance->group_id = $groupId;
+            $distance->event_id = $eventId;
+            $distance->length = $length;
+            $distance->points = $points;
+            $distance->save();
+        } else {
+            $distance = $distances->first();
+        }
+
+        return $distance;
     }
 }

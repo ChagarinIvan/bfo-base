@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Services;
 
@@ -6,11 +7,14 @@ use App\Models\CupEvent;
 use App\Models\Group;
 use App\Repositories\GroupsRepository;
 use Illuminate\Support\Collection;
+use RuntimeException;
+use function in_array;
 
 class GroupsService
 {
     public function __construct(private readonly GroupsRepository $groupsRepository)
-    {}
+    {
+    }
 
     /**
      * @param CupEvent $cupEvent
@@ -32,7 +36,7 @@ class GroupsService
         if ($group) {
             return $group;
         }
-        throw new \RuntimeException('Wrong group id.');
+        throw new RuntimeException('Wrong group id.');
     }
 
     /**
@@ -68,6 +72,6 @@ class GroupsService
     public function getAllGroupsWithout(array $groupIdList = []): Collection
     {
         $groups = $this->groupsRepository->getAll();
-        return $groups->filter(fn(Group $group) => !in_array($group->id, $groupIdList, true));
+        return $groups->filter(static fn (Group $group) => !in_array($group->id, $groupIdList, true));
     }
 }

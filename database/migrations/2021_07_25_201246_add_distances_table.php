@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 use App\Models\Distance;
 use App\Models\ProtocolLine;
@@ -14,9 +15,9 @@ class AddDistancesTable extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('distances', function (Blueprint $table) {
+        Schema::create('distances', static function (Blueprint $table): void {
             $table->id();
             $table->bigInteger('event_id')->unsigned()->nullable(false)->index();
             $table->integer('group_id')->nullable(false)->index();
@@ -44,7 +45,7 @@ class AddDistancesTable extends Migration
             }
         }
 
-        Schema::table('protocol_lines', function (Blueprint $table) {
+        Schema::table('protocol_lines', static function (Blueprint $table): void {
             $table->dropForeign('fk_event_id');
             $table->dropColumn('event_id');
             $table->dropColumn('group_id');
@@ -68,9 +69,9 @@ class AddDistancesTable extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
-        Schema::table('protocol_lines', function (Blueprint $table) {
+        Schema::table('protocol_lines', static function (Blueprint $table): void {
             $table->dropColumn('distance_id');
             $table->dropForeign('fk_protocol_line_distance_id');
 

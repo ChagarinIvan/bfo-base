@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Models\Cups;
 
@@ -33,7 +34,7 @@ class BikeCupType extends EliteCupType
         $cupEventProtocolLines = $this->getGroupProtocolLines($cupEvent, $mainGroup);
         $results = $this->calculateLines($cupEvent, $cupEventProtocolLines);
 
-        return $results->sortByDesc(fn (CupEventPoint $cupEventResult) => $cupEventResult->points);
+        return $results->sortByDesc(static fn (CupEventPoint $cupEventResult) => $cupEventResult->points);
     }
 
     protected function getGroupsMap(CupGroup $group): array

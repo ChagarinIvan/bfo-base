@@ -1,7 +1,7 @@
 <?php
+declare(strict_types=1);
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Filename & Format
@@ -141,7 +141,6 @@ return [
     */
 
     'ignored_models' => [
-
     ],
 
     /*
@@ -171,7 +170,6 @@ return [
     */
 
     'interfaces' => [
-
     ],
 
     /*
@@ -201,7 +199,6 @@ return [
     |
     */
     'custom_db_types' => [
-
     ],
 
     /*
@@ -277,5 +274,4 @@ return [
     |
     */
     'additional_relation_types' => [],
-
 ];

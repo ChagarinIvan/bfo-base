@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 use App\Models\Person;
 use Illuminate\Database\Migrations\Migration;
@@ -13,7 +14,7 @@ class AddPersonForeingKeyOnProtocolLinesTable extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         $personsIds = Person::all('id');
 
@@ -25,7 +26,7 @@ class AddPersonForeingKeyOnProtocolLinesTable extends Migration
             ->whereNotIn('person_id', $personsIds)
             ->delete();
 
-        Schema::table('protocol_lines', function (Blueprint $table) {
+        Schema::table('protocol_lines', static function (Blueprint $table): void {
             $table->unsignedBigInteger('person_id')->nullable(true)->change();
             $table->foreign('person_id', 'fk_protocol_person_id')
                 ->references('id')->on('person')
@@ -38,13 +39,13 @@ class AddPersonForeingKeyOnProtocolLinesTable extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
-        Schema::table('protocol_lines', function (Blueprint $table) {
+        Schema::table('protocol_lines', static function (Blueprint $table): void {
             $table->dropForeign('fk_protocol_person_id');
         });
 
-        Schema::table('protocol_lines', function (Blueprint $table) {
+        Schema::table('protocol_lines', static function (Blueprint $table): void {
             $table->integer('person_id')->nullable(true)->change();
         });
     }

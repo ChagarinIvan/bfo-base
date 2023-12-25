@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Services;
 
@@ -8,6 +9,7 @@ use Illuminate\Contracts\Mail\Mailer;
 use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Contracts\View\Factory as ViewFactory;
 use Illuminate\Contracts\View\View;
+use Throwable;
 
 class ViewActionsService
 {
@@ -17,7 +19,8 @@ class ViewActionsService
         readonly private BackUrlService $backUrlService,
         readonly private UrlGenerator $urlGenerator,
         readonly private Mailer $mailer,
-    ) {}
+    ) {
+    }
 
     public function cleanBackUrls(): void
     {
@@ -46,13 +49,13 @@ class ViewActionsService
 
     public function isByLocale(): bool
     {
-//        return $this->userService->isByLocale();
+        //        return $this->userService->isByLocale();
         return true;
     }
 
     public function isRuLocale(): bool
     {
-//        return $this->userService->isRuLocale();
+        //        return $this->userService->isRuLocale();
         return false;
     }
 
@@ -76,7 +79,7 @@ class ViewActionsService
         return $this->backUrlService->getActualAction();
     }
 
-    public function sendErrorMail(\Throwable $exception, string $url, string $previousUrl): void
+    public function sendErrorMail(Throwable $exception, string $url, string $previousUrl): void
     {
         $this->mailer->send(new ErrorMail($exception, $url, $previousUrl));
     }

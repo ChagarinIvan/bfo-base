@@ -1,29 +1,22 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Services;
 
 use App\Models\Club;
 use App\Repositories\ClubsRepository;
 use Illuminate\Support\Collection;
+use function mb_strtolower;
+use function preg_replace;
+use function str_replace;
 
 class ClubsService
 {
-    public function __construct(private readonly ClubsRepository $repository)
-    {}
-
     private const EDIT_MAP = [
         'ко ' => ['ка ', 'oc '],
         'ксо ' => ['кса '],
         'бгу' => ['бду', 'bsu'],
     ];
-
-    /**
-     * @return Collection|Club[]
-     */
-    public function getAllClubs(): Collection
-    {
-        return Club::all();
-    }
 
     public static function normalizeName(string $clubName): string
     {
@@ -40,6 +33,17 @@ class ClubsService
         }
 
         return $clubName;
+    }
+    public function __construct(private readonly ClubsRepository $repository)
+    {
+    }
+
+    /**
+     * @return Collection|Club[]
+     */
+    public function getAllClubs(): Collection
+    {
+        return Club::all();
     }
 
     public function findClub(string $clubName): ?Club

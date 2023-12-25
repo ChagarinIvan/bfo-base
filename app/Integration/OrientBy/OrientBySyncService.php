@@ -15,6 +15,9 @@ use App\Services\RankService;
 use Carbon\Carbon;
 use Illuminate\Log\LogManager;
 use Psr\Log\LoggerInterface;
+use function array_keys;
+use function count;
+use function sprintf;
 
 class OrientBySyncService
 {
@@ -74,7 +77,7 @@ class OrientBySyncService
                 $date = $personDto->getYear();
                 if ($date && (($person->birthday && !$person->birthday->eq($date)) || $person->birthday === null)) {
                     $this->logger->info(
-                        "update birthday: ".($logPerson->birthday ? $logPerson->birthday->format('Y') : '')." => {$date->format('Y')}",
+                        "update birthday: " . ($logPerson->birthday ? $logPerson->birthday->format('Y') : '') . " => {$date->format('Y')}",
                         ['person_id' => $personId]
                     );
                     $person->birthday = $date;
@@ -90,7 +93,7 @@ class OrientBySyncService
 
                 if ($this->setClub($person, $personDto)) {
                     $this->logger->info(
-                        "update club: ".($logPerson->club->name ?? '')." => {$personDto->club}",
+                        "update club: " . ($logPerson->club->name ?? '') . " => {$personDto->club}",
                         ['person_id' => $personId]
                     );
                 }

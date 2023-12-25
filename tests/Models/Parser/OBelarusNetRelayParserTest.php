@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Tests\Models\Parser;
 
@@ -6,11 +7,6 @@ use App\Models\Parser\OBelarusNetRelayParser;
 
 class OBelarusNetRelayParserTest extends AbstractParserTest
 {
-    protected function getParser(): string
-    {
-        return OBelarusNetRelayParser::class;
-    }
-
     public static function dataProvider(): array
     {
         return [
@@ -266,5 +262,9 @@ class OBelarusNetRelayParserTest extends AbstractParserTest
                 'htm'
             ],
         ];
+    }
+    protected function getParser(): string
+    {
+        return OBelarusNetRelayParser::class;
     }
 }

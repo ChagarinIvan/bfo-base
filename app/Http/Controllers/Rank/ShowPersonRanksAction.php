@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Http\Controllers\Rank;
 
@@ -13,7 +14,7 @@ class ShowPersonRanksAction extends AbstractRankAction
     {
         $ranks = $this->rankService->getPersonRanks($person->id);
         $protocolLinesIds = [];
-        $ranks->each(function (Rank $rank) use (&$protocolLinesIds) {
+        $ranks->each(function (Rank $rank) use (&$protocolLinesIds): void {
             $protocolLinesIds[$rank->id] = $rank->event_id ? $this->protocolLinesService->getProtocolLineIdForRank($rank) : null;
         });
 

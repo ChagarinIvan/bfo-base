@@ -1,10 +1,25 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Models\Parser;
 
 use App\Models\Rank;
+use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use function array_slice;
+use function count;
+use function explode;
+use function implode;
+use function is_numeric;
+use function mb_strtolower;
+use function preg_match;
+use function preg_replace;
+use function preg_split;
+use function str_contains;
+use function str_replace;
+use function strip_tags;
+use function trim;
 
 /**
  * Class OParser
@@ -42,14 +57,14 @@ class OParser extends AbstractParser
                 $distancePoints = 0;
                 if (preg_match('#:\s+(\d+)\s+[^\d]+,\s+(\d+,\d+)\s+[^\d]+#s', $line, $match)) {
                     $distancePoints = (int)$match[1];
-                    $distanceLength = floatval(str_replace(',', '.', $match[2])) * 1000;
+                    $distanceLength = (float) (str_replace(',', '.', $match[2])) * 1000;
                 }
                 continue;
             }
 
             if (preg_match('#:\s+(\d+)\s+[^\d]+,\s+(\d+,\d+)\s+[^\d]+#s', $line, $match)) {
                 $distancePoints = (int)$match[1];
-                $distanceLength = floatval(str_replace(',', '.', $match[2])) * 1000;
+                $distanceLength = (float) (str_replace(',', '.', $match[2])) * 1000;
                 continue;
             }
 
@@ -126,6 +141,15 @@ class OParser extends AbstractParser
         return $linesList;
     }
 
+    public function check(string $file, string $extension): bool
+    {
+        if ($extension === 'html') {
+            return (bool)preg_match('#<h2>\w{3}</h2><pre>\w+|<br />#u', $file);
+        }
+
+        return false;
+    }
+
     private function getValue(string $column, array $lineData, int $fieldsCount, int &$indent): mixed
     {
         if ($column === 'points') {
@@ -151,7 +175,7 @@ class OParser extends AbstractParser
             if (preg_match('#:\d\d:\d\d#', $time)) {
                 try {
                     $time = Carbon::createFromTimeString($time);
-                } catch (\Exception) {
+                } catch (Exception) {
                     $time = null;
                 }
             } elseif (preg_match('#\d\d.\d\d#', $time)) {
@@ -202,7 +226,7 @@ class OParser extends AbstractParser
         if (str_contains($field, 'зультат')) {
             return 'time';
         }
-        if ($field ==='гр' || $field === 'г.р.') {
+        if ($field === 'гр' || $field === 'г.р.') {
             return 'year';
         }
         if (str_contains($field, 'омер')) {
@@ -215,14 +239,5 @@ class OParser extends AbstractParser
             return '';
         }
         return null;
-    }
-
-    public function check(string $file, string $extension): bool
-    {
-        if ($extension === 'html') {
-            return (bool)preg_match('#<h2>\w{3}</h2><pre>\w+|<br />#u', $file);
-        }
-
-        return false;
     }
 }

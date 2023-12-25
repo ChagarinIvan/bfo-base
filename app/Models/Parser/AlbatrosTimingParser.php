@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Models\Parser;
 
@@ -9,6 +10,20 @@ use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use RuntimeException;
+use function array_slice;
+use function count;
+use function explode;
+use function implode;
+use function in_array;
+use function is_numeric;
+use function preg_match;
+use function preg_replace;
+use function preg_split;
+use function str_contains;
+use function str_replace;
+use function strpos;
+use function substr;
+use function trim;
 
 class AlbatrosTimingParser extends AbstractParser
 {

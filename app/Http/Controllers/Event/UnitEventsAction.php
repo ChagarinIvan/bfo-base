@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Http\Controllers\Event;
 
@@ -44,7 +45,8 @@ class UnitEventsAction extends AbstractEventAction
 
             foreach ($groupsIds as $groupId) {
                 /** @var Distance $firstEventDistance */
-                $firstEventDistance = $distanceService->getEventGroupDistance($firstEvent, $groupId);;
+                $firstEventDistance = $distanceService->getEventGroupDistance($firstEvent, $groupId);
+                ;
                 /** @var Distance $eventDistance */
                 $eventDistance = $distanceService->getEventGroupDistance($event, $groupId);
                 $distances = $distanceService->getEventGroupDistance($newEvent, $groupId);
@@ -115,7 +117,7 @@ class UnitEventsAction extends AbstractEventAction
         $number = 1;
         foreach ($firstEventProtocolLines as $groupProtocolLines) {
             /** @var Collection $groupProtocolLines */
-            $groupProtocolLines = $groupProtocolLines->transform(function (ProtocolLine $line) use (&$number) {
+            $groupProtocolLines = $groupProtocolLines->transform(static function (ProtocolLine $line) use (&$number) {
                 $line->runner_number = $number++;
                 $line->time = $line->time === null ?
                     null :
@@ -123,7 +125,7 @@ class UnitEventsAction extends AbstractEventAction
                 return $line;
             });
 
-            $groupProtocolLines = $groupProtocolLines->sortBy(fn (ProtocolLine $line) => $line->time ? $line->time->secondsSinceMidnight() : 86400);
+            $groupProtocolLines = $groupProtocolLines->sortBy(static fn (ProtocolLine $line) => $line->time ? $line->time->secondsSinceMidnight() : 86400);
 
             $place = 1;
             foreach ($groupProtocolLines as $line) {

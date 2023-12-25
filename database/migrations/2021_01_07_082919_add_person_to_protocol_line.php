@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -11,9 +12,9 @@ class AddPersonToProtocolLine extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::table('protocol_lines', function (Blueprint $table) {
+        Schema::table('protocol_lines', static function (Blueprint $table): void {
             $table->integer('person_id')->nullable(true);
         });
     }
@@ -23,9 +24,9 @@ class AddPersonToProtocolLine extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
-        Schema::table('protocol_lines', function (Blueprint $table) {
+        Schema::table('protocol_lines', static function (Blueprint $table): void {
             $table->dropColumn('person_id');
         });
     }

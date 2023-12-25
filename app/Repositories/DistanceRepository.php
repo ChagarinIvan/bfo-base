@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Repositories;
 
@@ -26,14 +27,14 @@ class DistanceRepository
 
     public function getEqualDistances(Distance $distance): Collection
     {
-       return Distance::selectRaw(new Expression('distances.*'))
-            ->whereEventId($distance->event_id)
-            ->join('groups', 'groups.id', '=', 'distances.group_id')
-            ->where('distances.id', '!=', $distance->id)
-            ->whereLength($distance->length)
-            ->wherePoints($distance->points)
-            ->get()
-       ;
+        return Distance::selectRaw(new Expression('distances.*'))
+             ->whereEventId($distance->event_id)
+             ->join('groups', 'groups.id', '=', 'distances.group_id')
+             ->where('distances.id', '!=', $distance->id)
+             ->whereLength($distance->length)
+             ->wherePoints($distance->points)
+             ->get()
+        ;
     }
 
     public function getEventGroupDistance(int $eventId, int $groupId): ?Distance

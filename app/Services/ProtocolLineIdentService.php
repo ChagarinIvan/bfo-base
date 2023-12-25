@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Services;
 
@@ -7,17 +8,24 @@ use App\Models\PersonPrompt;
 use App\Models\ProtocolLine;
 use Illuminate\Support\Collection;
 use Mav\Slovo\Phonetics;
+use function in_array;
+use function levenshtein;
+use function str_replace;
 
 class ProtocolLineIdentService
 {
-    private static Collection $prompts;
-
-    public function __construct(
-        private readonly RankService $rankService,
-        private readonly ProtocolLineService $protocolLineService,
-        private readonly PersonPromptService $personPromptService,
-        private readonly Phonetics $phonetics
-    ) {}
+    /**
+     * карта исправления символов, например случайно поставленные английские символы совпадающие по написанию с русскими
+     */
+    public const SYMBOL_MAP = [
+        'с' => ['c'],
+        'а' => ['a'],
+        'о' => ['o'],
+        'у' => ['y'],
+        'р' => ['p'],
+        'х' => ['x'],
+        'е' => ['e', 'ё'],
+    ];
 
     /**
      * карта исправления имён, разные сокращения и формы аналоги
@@ -43,19 +51,42 @@ class ProtocolLineIdentService
         'анна' => ['аня'],
         'елена' => ['лена'],
     ];
+    private static Collection $prompts;
 
     /**
-     * карта исправления символов, например случайно поставленные английские символы совпадающие по написанию с русскими
+     * Процесс нормализации фамилии имени (везде идёт замена неверных символов, заменяются формы имени)
+     *
+     * @param string $line
+     * @return string
      */
-    public const SYMBOL_MAP = [
-        'с' => ['c'],
-        'а' => ['a'],
-        'о' => ['o'],
-        'у' => ['y'],
-        'р' => ['p'],
-        'х' => ['x'],
-        'е' => ['e', 'ё'],
-    ];
+    public static function prepareLine(string $line): string
+    {
+        //Исправляем символы
+        foreach (self::SYMBOL_MAP as $symbol => $analogs) {
+            $line = str_replace($analogs, $symbol, $line);
+        }
+
+        //Заменяем формы имён
+        foreach (self::EDIT_MAP as $name => $analogs) {
+            if (in_array($line, $analogs, true)) {
+                foreach ($analogs as $analog) {
+                    if ($line === $analog) {
+                        return $name;
+                    }
+                }
+            }
+        }
+
+        return $line;
+    }
+
+    public function __construct(
+        private readonly RankService $rankService,
+        private readonly ProtocolLineService $protocolLineService,
+        private readonly PersonPromptService $personPromptService,
+        private readonly Phonetics $phonetics
+    ) {
+    }
 
     /**
      * Запускаем процесс идентификации людей в строчках протокола
@@ -129,6 +160,22 @@ class ProtocolLineIdentService
     }
 
     /**
+     * @param Collection|string[] $protocolLines
+     */
+    public function pushIdentLines(Collection $protocolLines): void
+    {
+        foreach ($protocolLines as $line) {
+            $identLinesCount = IdentLine::whereIdentLine($line)->count();
+
+            if ($identLinesCount === 0) {
+                $ident = new IdentLine();
+                $ident->ident_line = $line;
+                $ident->save();
+            }
+        }
+    }
+
+    /**
      * Определяем людей по идентификаторам с использованием расстояния левенштайна.
      */
     private function identByPersonPrompt(string $searchLine, Collection $prompts): int
@@ -152,48 +199,5 @@ class ProtocolLineIdentService
         }
 
         return 0;
-    }
-
-    /**
-     * Процесс нормализации фамилии имени (везде идёт замена неверных символов, заменяются формы имени)
-     *
-     * @param string $line
-     * @return string
-     */
-    public static function prepareLine(string $line): string
-    {
-        //Исправляем символы
-        foreach (self::SYMBOL_MAP as $symbol => $analogs) {
-            $line = str_replace($analogs, $symbol, $line);
-        }
-
-        //Заменяем формы имён
-        foreach (self::EDIT_MAP as $name => $analogs) {
-            if (in_array($line, $analogs, true)) {
-                foreach ($analogs as $analog) {
-                    if ($line === $analog) {
-                        return $name;
-                    }
-                }
-            }
-        }
-
-        return $line;
-    }
-
-    /**
-     * @param Collection|string[] $protocolLines
-     */
-    public function pushIdentLines(Collection $protocolLines): void
-    {
-        foreach ($protocolLines as $line) {
-            $identLinesCount = IdentLine::whereIdentLine($line)->count();
-
-            if ($identLinesCount === 0) {
-                $ident = new IdentLine();
-                $ident->ident_line = $line;
-                $ident->save();
-            }
-        }
     }
 }

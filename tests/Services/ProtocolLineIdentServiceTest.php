@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Tests\Services;
 
@@ -11,8 +12,10 @@ class ProtocolLineIdentServiceTest extends TestCase
      * @param string $name
      * @param string $expectedName
      * @dataProvider prepareLineDataProvider
+     *
+     * @test
      */
-    public function testPrepareLine(string $name, string $expectedName): void
+    public function prepare_line(string $name, string $expectedName): void
     {
         $this->assertEquals($expectedName, ProtocolLineIdentService::prepareLine($name));
     }

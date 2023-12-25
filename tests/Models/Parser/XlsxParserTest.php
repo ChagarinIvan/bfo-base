@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Tests\Models\Parser;
 
@@ -6,11 +7,6 @@ use App\Models\Parser\XlsxParser;
 
 class XlsxParserTest extends AbstractParserTest
 {
-    protected function getParser(): string
-    {
-        return XlsxParser::class;
-    }
-
     public static function dataProvider(): array
     {
         return [
@@ -91,5 +87,9 @@ class XlsxParserTest extends AbstractParserTest
                 'openxmlformats'
             ]
         ];
+    }
+    protected function getParser(): string
+    {
+        return XlsxParser::class;
     }
 }

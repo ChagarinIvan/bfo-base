@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Http\Controllers\Person;
 
@@ -27,7 +28,7 @@ class ExtractPersonAction extends AbstractPersonAction
         $personPromptService->changePromptForLine($protocolLine->prepared_line, $person->id);
 
         $rankService->reFillRanksForPerson($person->id);
-        $oldPersons->each(fn(int $personId) => $rankService->reFillRanksForPerson($personId));
+        $oldPersons->each(static fn (int $personId) => $rankService->reFillRanksForPerson($personId));
 
         return $this->redirector->action(ShowPersonAction::class, [$person->id]);
     }

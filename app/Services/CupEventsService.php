@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Services;
 
@@ -7,11 +8,13 @@ use App\Models\CupEvent;
 use App\Models\Group\CupGroup;
 use Illuminate\Cache\Repository as CacheManager;
 use Illuminate\Support\Collection;
+use RuntimeException;
 
 class CupEventsService
 {
     public function __construct(private readonly CacheManager $cache)
-    {}
+    {
+    }
 
     public function getCupEvents(Cup $cup): Collection
     {
@@ -32,7 +35,7 @@ class CupEventsService
         if ($cupEvent) {
             return $cupEvent;
         }
-        throw new \RuntimeException('Wrong cup event id.');
+        throw new RuntimeException('Wrong cup event id.');
     }
 
     public function storeCupEvent(CupEvent $cupEvent): void
@@ -45,7 +48,7 @@ class CupEventsService
         return $this->cache->tags(['cups', $cup->id])->remember(
             "{$cup->id}_{$group->id()}",
             1000000,
-            function () use ($cup, $cupEvents, $group) {
+            static function () use ($cup, $cupEvents, $group) {
                 return $cup->getCupType()->calculateCup($cup, $cupEvents, $group);
             }
         );

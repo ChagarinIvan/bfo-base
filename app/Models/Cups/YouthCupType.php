@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Models\Cups;
 
@@ -11,12 +12,76 @@ use App\Models\Group\GroupAge;
 use App\Models\Group\GroupMale;
 use App\Models\ProtocolLine;
 use Illuminate\Support\Collection;
+use function round;
 
 /**
  * ЮНАЦКІ
  */
 class YouthCupType extends MasterCupType
 {
+    protected const GROUPS_MAP = [
+        'M_12' => ['M12', 'М12'],
+        'M_14' => ['M14', 'М14'],
+        'M_16' => ['M16', 'М16'],
+        'M_18' => ['M18', 'М18'],
+        'M_20' => ['M20', 'М20'],
+        'M_21' => [
+            'М21Е',
+            'М21E',
+            'МЕ',
+            'Мужчины группа Е',
+            'М21',
+            'M21E',
+            'МE',
+            'М21 Фин Е',
+            'M21',
+            'М21А',
+            'М21A',
+            'M21A',
+            'М21 Фин А',
+            'МА',
+            'МA',
+            'Мужчины группа А',
+            'Мужчины группа В',
+            'МB',
+            'M21B',
+            'МВ',
+            'М21B',
+            'М21Б',
+            'М20',
+            'M20',
+        ],
+        'W_12' => ['Ж12', 'W12'],
+        'W_14' => ['Ж14', 'W14'],
+        'W_16' => ['Ж16', 'W16'],
+        'W_18' => ['Ж18', 'W18'],
+        'W_20' => ['Ж20', 'W20'],
+        'W_21' => [
+            'Ж21',
+            'Ж21Е',
+            'W21',
+            'ЖЕ',
+            'ЖE',
+            'Ж21E',
+            'W21E',
+            'Ж21 Фин Е',
+            'Женщины группа Е',
+            'Ж21А',
+            'Ж21A',
+            'ЖA',
+            'ЖА',
+            'W21A',
+            'Женщины группа А',
+            'Ж21Б',
+            'Женщины группа В',
+            'Ж21B',
+            'W21B',
+            'ЖB',
+            'ЖВ',
+            'Ж20',
+            'W20',
+        ],
+    ];
     private const EVENTS_GROUPS_KOEF = [
         //М21Е
         'М21Е' => 1,
@@ -99,70 +164,6 @@ class YouthCupType extends MasterCupType
         'W12' => 0.75,
     ];
 
-    protected const GROUPS_MAP = [
-        'M_12' => ['M12', 'М12'],
-        'M_14' => ['M14', 'М14'],
-        'M_16' => ['M16', 'М16'],
-        'M_18' => ['M18', 'М18'],
-        'M_20' => ['M20', 'М20'],
-        'M_21' => [
-            'М21Е',
-            'М21E',
-            'МЕ',
-            'Мужчины группа Е',
-            'М21',
-            'M21E',
-            'МE',
-            'М21 Фин Е',
-            'M21',
-            'М21А',
-            'М21A',
-            'M21A',
-            'М21 Фин А',
-            'МА',
-            'МA',
-            'Мужчины группа А',
-            'Мужчины группа В',
-            'МB',
-            'M21B',
-            'МВ',
-            'М21B',
-            'М21Б',
-            'М20',
-            'M20',
-        ],
-        'W_12' => ['Ж12', 'W12'],
-        'W_14' => ['Ж14', 'W14'],
-        'W_16' => ['Ж16', 'W16'],
-        'W_18' => ['Ж18', 'W18'],
-        'W_20' => ['Ж20', 'W20'],
-        'W_21' => [
-            'Ж21',
-            'Ж21Е',
-            'W21',
-            'ЖЕ',
-            'ЖE',
-            'Ж21E',
-            'W21E',
-            'Ж21 Фин Е',
-            'Женщины группа Е',
-            'Ж21А',
-            'Ж21A',
-            'ЖA',
-            'ЖА',
-            'W21A',
-            'Женщины группа А',
-            'Ж21Б',
-            'Женщины группа В',
-            'Ж21B',
-            'W21B',
-            'ЖB',
-            'ЖВ',
-            'Ж20',
-            'W20',
-        ],
-    ];
-
     public function getId(): string
     {
         return CupType::YOUTH;
@@ -194,20 +195,29 @@ class YouthCupType extends MasterCupType
             $results = $results->merge($eventGroupResults->intersectByKeys($groupProtocolLines->keyBy('person_id')));
         }
 
-        return $results->sortByDesc(fn(CupEventPoint $cupEventResult) => $cupEventResult->points);
+        return $results->sortByDesc(static fn (CupEventPoint $cupEventResult) => $cupEventResult->points);
     }
 
-    /**
-     * @param CupEvent $cupEvent
-     * @param int $distanceId
-     * @return Collection
-     */
-    private function calculateDistance(CupEvent $cupEvent, int $distanceId): Collection
+    public function getGroups(): Collection
     {
-        return $this->calculateLines(
-            $cupEvent,
-            $this->protocolLinesRepository->getCupEventDistanceProtocolLines($distanceId),
-        );
+        return CupGroupFactory::getAgeTypeGroups([GroupAge::a12, GroupAge::a14, GroupAge::a16, GroupAge::a18]);
+    }
+
+    public function getCalculatedGroups(): Collection
+    {
+        return CupGroupFactory::getAgeTypeGroups([GroupAge::a12, GroupAge::a14, GroupAge::a16, GroupAge::a18, GroupAge::a20, GroupAge::a21]);
+    }
+
+    public function getCupEventParticipatesCount(CupEvent $cupEvent): int
+    {
+        $groups = $this->getGroups();
+        $lines = Collection::empty();
+
+        foreach ($groups as $group) {
+            $lines = $lines->merge($this->getGroupProtocolLines($cupEvent, $group));
+        }
+
+        return $lines->unique()->count();
     }
 
     protected function getGroupProtocolLines(CupEvent $cupEvent, CupGroup $group): Collection
@@ -231,7 +241,7 @@ class YouthCupType extends MasterCupType
         $cupEventPointsList = Collection::make();
         $maxPoints = $cupEvent->points;
 
-        $protocolLines = $protocolLines->sortByDesc(fn(ProtocolLine $line) => $line->time ? $line->time->diffInSeconds() : 0);
+        $protocolLines = $protocolLines->sortByDesc(static fn (ProtocolLine $line) => $line->time ? $line->time->diffInSeconds() : 0);
 
         $first = true;
         // О уч. = К сор. х 500 х К гр. (3 х Т поб. / Т уч. ‑ 1), где:
@@ -239,7 +249,6 @@ class YouthCupType extends MasterCupType
         // Т поб. – время победителя в группе (время спортсмена, учащегося Республики Беларусь, показавшего лучший результат);
         // Т уч. – результат участника;
         // К гр. – коэффициент группы, который равен:
-
 
         foreach ($protocolLines as $protocolLine) {
             /** @var ProtocolLine $protocolLine */
@@ -279,25 +288,16 @@ class YouthCupType extends MasterCupType
         return $cupEventPointsList;
     }
 
-    public function getGroups(): Collection
+    /**
+     * @param CupEvent $cupEvent
+     * @param int $distanceId
+     * @return Collection
+     */
+    private function calculateDistance(CupEvent $cupEvent, int $distanceId): Collection
     {
-        return CupGroupFactory::getAgeTypeGroups([GroupAge::a12, GroupAge::a14, GroupAge::a16, GroupAge::a18]);
-    }
-
-    public function getCalculatedGroups(): Collection
-    {
-        return CupGroupFactory::getAgeTypeGroups([GroupAge::a12, GroupAge::a14, GroupAge::a16, GroupAge::a18, GroupAge::a20, GroupAge::a21]);
-    }
-
-    public function getCupEventParticipatesCount(CupEvent $cupEvent): int
-    {
-        $groups = $this->getGroups();
-        $lines = Collection::empty();
-
-        foreach ($groups as $group) {
-            $lines = $lines->merge($this->getGroupProtocolLines($cupEvent, $group));
-        }
-
-        return $lines->unique()->count();
+        return $this->calculateLines(
+            $cupEvent,
+            $this->protocolLinesRepository->getCupEventDistanceProtocolLines($distanceId),
+        );
     }
 }

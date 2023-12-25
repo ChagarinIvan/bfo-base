@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Models\Parser;
 
@@ -9,6 +10,20 @@ use DOMXPath;
 use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use function array_slice;
+use function count;
+use function explode;
+use function implode;
+use function is_numeric;
+use function mb_convert_encoding;
+use function mb_strtolower;
+use function preg_match;
+use function preg_replace;
+use function str_contains;
+use function str_replace;
+use function strpos;
+use function substr;
+use function trim;
 
 class SimplyParser extends AbstractParser
 {
@@ -28,7 +43,7 @@ class SimplyParser extends AbstractParser
         foreach ($nodes as $node) {
             /** @var DOMElement $node */
             $line = mb_convert_encoding($node->nodeValue, 'iso-8859-1', 'utf-8');
-            $line = str_replace(" ", ' ', $line);
+            $line = str_replace(" ", ' ', $line);
             if (empty($line)) {
                 continue;
             }
@@ -85,6 +100,15 @@ class SimplyParser extends AbstractParser
         return $linesList;
     }
 
+    public function check(string $file, string $extension): bool
+    {
+        if ($extension === 'html') {
+            return str_contains($file, '<o:p></o:p>');
+        }
+
+        return false;
+    }
+
     private function getColumn(string $field): string
     {
         $field = mb_strtolower($field);
@@ -100,7 +124,7 @@ class SimplyParser extends AbstractParser
         if (str_contains($field, 'зультат')) {
             return 'time';
         }
-        if ($field ==='гр' || $field === 'г.р.') {
+        if ($field === 'гр' || $field === 'г.р.') {
             return 'year';
         }
         if (str_contains($field, 'омер')) {
@@ -110,15 +134,6 @@ class SimplyParser extends AbstractParser
             return 'rank';
         }
         return '';
-    }
-
-    public function check(string $file, string $extension): bool
-    {
-        if ($extension === 'html') {
-            return str_contains($file, '<o:p></o:p>');
-        }
-
-        return false;
     }
 
     private function getValue(string $column, array $lineData, int $fieldsCount, int &$indent): mixed

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Services;
 
@@ -12,7 +13,8 @@ class BackUrlService
     private const ACTION = 'actions';
 
     public function __construct(private Session $sessionManager)
-    {}
+    {
+    }
 
     public function pop(): string
     {
@@ -41,11 +43,6 @@ class BackUrlService
         $this->set(new Collection());
     }
 
-    private function set(Collection $urls): void
-    {
-        $this->sessionManager->put(self::BACK_URLS_KEY, $urls->toArray());
-    }
-
     public function setActualAction(string $action): void
     {
         $this->sessionManager->put(self::ACTION, $action);
@@ -54,5 +51,10 @@ class BackUrlService
     public function getActualAction(): string
     {
         return $this->sessionManager->get(self::ACTION, '');
+    }
+
+    private function set(Collection $urls): void
+    {
+        $this->sessionManager->put(self::BACK_URLS_KEY, $urls->toArray());
     }
 }

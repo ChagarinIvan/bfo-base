@@ -1,8 +1,12 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Facades;
 
 use Illuminate\Support\Facades\Facade;
+use function crc32;
+use function dechex;
+use function substr;
 
 class Color extends Facade
 {
@@ -10,6 +14,6 @@ class Color extends Facade
     {
         $code = dechex(crc32($color));
         $code = substr($code, 0, 6);
-        return '#'.$code;
+        return '#' . $code;
     }
 }

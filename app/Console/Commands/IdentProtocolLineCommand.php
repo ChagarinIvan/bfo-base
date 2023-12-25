@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Console\Commands;
 
@@ -42,7 +43,7 @@ class IdentProtocolLineCommand extends Command
         $protocolLines = $protocolLineService->getEqualLines($identLine->ident_line);
 
         if ($personId > 0) {
-            $protocolLines->each(function (ProtocolLine $protocolLine) use ($personId, $rankService) {
+            $protocolLines->each(static function (ProtocolLine $protocolLine) use ($personId, $rankService): void {
                 $protocolLine->person_id = $personId;
                 $protocolLine->save();
             });
@@ -54,7 +55,7 @@ class IdentProtocolLineCommand extends Command
             if ($person->birthday === null) {
                 /** @var ProtocolLine|null $protocolLine */
                 $protocolLine = $protocolLines
-                    ->filter(fn(ProtocolLine $line) => $line->year !== null)
+                    ->filter(static fn (ProtocolLine $line) => $line->year !== null)
                     ->first()
                 ;
 
@@ -75,7 +76,8 @@ class IdentProtocolLineCommand extends Command
                 if ($birthday = Carbon::createFromFormat('Y', $protocolLine->year)) {
                     $person->birthday = $birthday->startOfYear();
                 }
-            } catch (InvalidFormatException) {}
+            } catch (InvalidFormatException) {
+            }
 
             $club = $clubsService->findClub($protocolLine->club);
             if ($club) {
@@ -84,7 +86,7 @@ class IdentProtocolLineCommand extends Command
 
             $person = $personsService->storePerson($person);
 
-            $protocolLines->each(function (ProtocolLine $protocolLine) use ($person, $rankService) {
+            $protocolLines->each(static function (ProtocolLine $protocolLine) use ($person, $rankService): void {
                 $protocolLine->person_id = $person->id;
                 $protocolLine->save();
             });

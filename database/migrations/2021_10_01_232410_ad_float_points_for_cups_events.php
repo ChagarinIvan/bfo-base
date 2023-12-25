@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -11,9 +12,9 @@ class AdFloatPointsForCupsEvents extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::table('cup_events', function (Blueprint $table) {
+        Schema::table('cup_events', static function (Blueprint $table): void {
             $table->float('points')->nullable(false)->change();
         });
     }
@@ -23,9 +24,9 @@ class AdFloatPointsForCupsEvents extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
-        Schema::table('cup_events', function (Blueprint $table) {
+        Schema::table('cup_events', static function (Blueprint $table): void {
             $table->integer('points')->nullable(false)->change();
         });
     }

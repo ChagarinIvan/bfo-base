@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Tests\Models\Parser;
 
@@ -6,11 +7,6 @@ use App\Models\Parser\HrodnoParser;
 
 class HrodnaParserTest extends AbstractParserTest
 {
-    protected function getParser(): string
-    {
-        return HrodnoParser::class;
-    }
-
     public static function dataProvider(): array
     {
         return [
@@ -45,5 +41,9 @@ class HrodnaParserTest extends AbstractParserTest
                 ]
             ]
         ];
+    }
+    protected function getParser(): string
+    {
+        return HrodnoParser::class;
     }
 }

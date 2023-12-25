@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Http\Controllers\Person;
 
@@ -28,14 +29,14 @@ class SetProtocolLinePersonAction extends AbstractPersonAction
         $oldPersons = $protocolLinesToUpdate
             ->pluck('person_id')
             ->unique()
-            ->filter(fn ($personId) => $personId !== null)
+            ->filter(static fn ($personId) => $personId !== null)
         ;
 
         $protocolLineService->reSetPerson($protocolLinesToUpdate, $person->id);
         $personPromptService->changePromptForLine($preparedLine, $person->id);
 
         $rankService->reFillRanksForPerson($person->id);
-        $oldPersons->each(fn(int $personId) => $rankService->reFillRanksForPerson($personId));
+        $oldPersons->each(static fn (int $personId) => $rankService->reFillRanksForPerson($personId));
 
         if (ProtocolLine::wherePersonId($oldPersonId)->count() === 0) {
             Person::destroy($oldPersonId);

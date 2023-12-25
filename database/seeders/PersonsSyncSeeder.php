@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Database\Seeders;
 
@@ -7,6 +8,8 @@ use App\Services\PersonsService;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
+use function explode;
+use function str_getcsv;
 
 class PersonsSyncSeeder extends Seeder
 {
@@ -24,7 +27,7 @@ class PersonsSyncSeeder extends Seeder
      *
      * @return void
      */
-    public function run()
+    public function run(): void
     {
         $personsList = $this->storage->get('base.csv');
         $list = explode(PHP_EOL, $personsList);
@@ -53,16 +56,16 @@ class PersonsSyncSeeder extends Seeder
 
             $persons = Person::whereLastname($lastname)->whereFirstname($firstname)->whereBirthday($birthday)->get();
             if ($persons->isEmpty()) {
-                echo 'newscomer:'.PHP_EOL;
-                echo $lastname.' '.$firstname.PHP_EOL;
+                echo 'newscomer:' . PHP_EOL;
+                echo $lastname . ' ' . $firstname . PHP_EOL;
                 $person = new Person();
                 $person->lastname = $lastname;
                 $person->firstname = $firstname;
                 $person->birthday = $birthday;
                 $this->personService->storePerson($person);
             } elseif ($persons->count() > 1) {
-                echo 'ALARM!!!!'.PHP_EOL;
-                echo $lastname.' '.$firstname.PHP_EOL;
+                echo 'ALARM!!!!' . PHP_EOL;
+                echo $lastname . ' ' . $firstname . PHP_EOL;
             }
         }
     }

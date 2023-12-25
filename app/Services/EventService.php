@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Services;
 
@@ -12,7 +13,8 @@ class EventService
         private readonly ProtocolLineService $protocolLineService,
         private readonly DistanceService $distanceService,
         private readonly CacheManager $cache
-    ) {}
+    ) {
+    }
 
     public function deleteEvent(Event $event): void
     {

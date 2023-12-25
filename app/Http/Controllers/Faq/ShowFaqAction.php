@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Http\Controllers\Faq;
 
@@ -10,7 +11,7 @@ class ShowFaqAction extends AbstractAction
 {
     public function __invoke(): View|RedirectResponse
     {
-       return $this->view('faq.index');
+        return $this->view('faq.index');
     }
 
     protected function isFaqRoute(): bool

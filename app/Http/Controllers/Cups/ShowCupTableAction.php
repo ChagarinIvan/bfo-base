@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Http\Controllers\Cups;
 
@@ -7,6 +8,7 @@ use App\Models\Group;
 use App\Models\Person;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use function array_keys;
 
 class ShowCupTableAction extends AbstractCupAction
 {

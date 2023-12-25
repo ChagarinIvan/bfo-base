@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Tests\Models\Parser;
 
@@ -6,11 +7,6 @@ use App\Models\Parser\SimplyParser;
 
 class SimplyParserTest extends AbstractParserTest
 {
-    protected function getParser(): string
-    {
-        return SimplyParser::class;
-    }
-
     public static function dataProvider(): array
     {
         return [
@@ -135,5 +131,9 @@ class SimplyParserTest extends AbstractParserTest
                 ]
             ]
         ];
+    }
+    protected function getParser(): string
+    {
+        return SimplyParser::class;
     }
 }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 use App\Models\Cups\CupType;
 use Illuminate\Database\Migrations\Migration;
@@ -12,9 +13,9 @@ class AddCupEventField extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::table('cups', function (Blueprint $table) {
+        Schema::table('cups', static function (Blueprint $table): void {
             $table->enum('type', [
                 CupType::SPRINT,
                 CupType::ELITE,
@@ -31,9 +32,9 @@ class AddCupEventField extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
-        Schema::table('cups', function (Blueprint $table) {
+        Schema::table('cups', static function (Blueprint $table): void {
             $table->dropColumn('type');
         });
     }

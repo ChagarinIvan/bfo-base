@@ -13,7 +13,8 @@ use Symfony\Component\HttpFoundation\Request;
 class PersonController extends Controller
 {
     public function __construct(private readonly PersonsService $personsService)
-    {}
+    {
+    }
 
     public function index(Request $request): ResourceCollection
     {

@@ -1,12 +1,26 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Models\Parser;
 
 use App\Models\Rank;
 use DOMDocument;
 use DOMXPath;
+use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use function array_slice;
+use function count;
+use function explode;
+use function implode;
+use function is_numeric;
+use function preg_match;
+use function preg_replace;
+use function preg_split;
+use function str_contains;
+use function strpos;
+use function substr;
+use function trim;
 
 class AlbatrosRelayWithHeadersParser extends AbstractParser
 {
@@ -44,7 +58,7 @@ class AlbatrosRelayWithHeadersParser extends AbstractParser
             [,$distance] = explode(':', $paramsLine);
             preg_match('#(\d+)\s*КП,\s+(\d+(.|,)\d+) м#msi', $distance, $linesMatch);
             $distancePoints = (int)$linesMatch[1];
-            $distanceLength = floatval($linesMatch[2]) * 1000;
+            $distanceLength = (float) ($linesMatch[2]) * 1000;
             if (str_contains($groupName, ',')) {
                 $groupName = substr($groupName, 0, strpos($groupName, ','));
             }
@@ -92,10 +106,10 @@ class AlbatrosRelayWithHeadersParser extends AbstractParser
                     try {
                         $protocolLine['time'] = Carbon::createFromTimeString($value);
                         $indent++;
-                    } catch (\Exception $e) {
+                    } catch (Exception $e) {
                         $protocolLine['time'] = $time;
                     }
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     $protocolLine['time'] = null;
                 }
                 $protocolLine['runner_number'] = (int)$lineData[0];

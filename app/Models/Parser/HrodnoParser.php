@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Models\Parser;
 
@@ -8,6 +9,14 @@ use DOMXPath;
 use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use function explode;
+use function is_numeric;
+use function mb_strtolower;
+use function preg_match;
+use function str_contains;
+use function str_replace;
+use function strlen;
+use function trim;
 
 class HrodnoParser extends AbstractParser
 {
@@ -42,7 +51,7 @@ class HrodnoParser extends AbstractParser
                     ($distanceNode = $groupDescriptionsNodes->item(1))
                     && preg_match('#^([^\s]+)\s+km\s+([^\s])\s+m#', $distanceNode->nodeValue, $m)
                 ) {
-                    $distanceLength = floatval(str_replace(',', '.', $m[1])) * 1000;
+                    $distanceLength = (float) (str_replace(',', '.', $m[1])) * 1000;
                 }
 
                 if (
@@ -70,7 +79,7 @@ class HrodnoParser extends AbstractParser
                     if ($columnName === null) {
                         continue;
                     }
-                    $valueNode = @$xpath->query('td['.($index + 1).']', $lineNode);
+                    $valueNode = @$xpath->query('td[' . ($index + 1) . ']', $lineNode);
                     if ($valueNode->length === 0) {
                         $empty = true;
                         break;
@@ -92,6 +101,15 @@ class HrodnoParser extends AbstractParser
         return $linesList;
     }
 
+    public function check(string $file, string $extension): bool
+    {
+        if ($extension === 'html') {
+            return str_contains($file, 'www.sportsoftware.de');
+        }
+
+        return false;
+    }
+
     private function getColumn(string $columnNode): ?string
     {
         $field = mb_strtolower($columnNode);
@@ -110,7 +128,7 @@ class HrodnoParser extends AbstractParser
         if (str_contains($field, 'ремя')) {
             return 'time';
         }
-        if ($field ==='гр' || $field === 'г.р.') {
+        if ($field === 'гр' || $field === 'г.р.') {
             return 'year';
         }
         if (str_contains($field, 'омер')) {
@@ -131,7 +149,7 @@ class HrodnoParser extends AbstractParser
         switch ($column) {
             case 'place':
             case 'points':
-                $value = is_numeric($lineData) ? (int)$lineData: $value;
+                $value = is_numeric($lineData) ? (int)$lineData : $value;
                 break;
             case 'rank':
             case 'complete_rank':
@@ -162,20 +180,12 @@ class HrodnoParser extends AbstractParser
                     }
 
                     $value = Carbon::createFromTimeString($lineData);
-                } catch (Exception) {}
+                } catch (Exception) {
+                }
                 break;
         }
 
         $protocolLine[$column] = $value;
         return $protocolLine;
-    }
-
-    public function check(string $file, string $extension): bool
-    {
-        if ($extension === 'html') {
-            return str_contains($file, 'www.sportsoftware.de');
-        }
-
-        return false;
     }
 }

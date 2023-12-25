@@ -1,10 +1,12 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Console\Commands;
 
 use App\Models\ProtocolLine;
 use App\Services\ProtocolLineIdentService;
 use Illuminate\Console\Command;
+use function time;
 
 /**
  * Команда для добавленія в очередь на определение всех не опознанных людей.

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Models\Parser;
 
@@ -8,6 +9,18 @@ use DOMXPath;
 use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use function array_slice;
+use function count;
+use function explode;
+use function implode;
+use function is_numeric;
+use function mb_strtolower;
+use function preg_match;
+use function preg_replace;
+use function preg_split;
+use function str_contains;
+use function str_replace;
+use function trim;
 
 class WinOrientHtmlParser extends AbstractParser
 {
@@ -35,9 +48,9 @@ class WinOrientHtmlParser extends AbstractParser
             if (preg_match('#(\d+)\s+[^\d]+,\s+((\d+[,.]\d+)\s+[^\d]+|(\d+)\s+[^\d])#s', $groupName, $match)) {
                 $distancePoints = (int)$match[1];
                 if (str_contains($match[2], ',')) {
-                    $distanceLength = floatval(str_replace(',', '.', $match[3])) * 1000;
+                    $distanceLength = (float) (str_replace(',', '.', $match[3])) * 1000;
                 } else {
-                    $distanceLength = floatval($match[3]) * 1000;
+                    $distanceLength = (float) ($match[3]) * 1000;
                 }
             }
             $groupName = explode(',', $groupName)[0];
@@ -117,6 +130,15 @@ class WinOrientHtmlParser extends AbstractParser
         return $linesList;
     }
 
+    public function check(string $file, string $extension): bool
+    {
+        if ($extension === 'html' || $extension === 'text/html') {
+            return str_contains($file, '<title>WinOrient');
+        }
+
+        return false;
+    }
+
     private function getColumn(string $field): ?string
     {
         $field = mb_strtolower($field);
@@ -132,7 +154,7 @@ class WinOrientHtmlParser extends AbstractParser
         if (str_contains($field, 'зультат')) {
             return 'time';
         }
-        if ($field ==='гр' || $field === 'г.р.') {
+        if ($field === 'гр' || $field === 'г.р.') {
             return 'year';
         }
         if (str_contains($field, 'омер')) {
@@ -219,14 +241,5 @@ class WinOrientHtmlParser extends AbstractParser
             }
         }
         return null;
-    }
-
-    public function check(string $file, string $extension): bool
-    {
-        if ($extension === 'html' || $extension === 'text/html') {
-            return str_contains($file, '<title>WinOrient');
-        }
-
-        return false;
     }
 }

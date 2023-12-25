@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Models;
 
@@ -19,13 +20,12 @@ use Illuminate\Support\Collection;
  */
 class Flag extends Model
 {
+    public $timestamps = false;
     protected $table = 'flags';
 
     protected $fillable = [
         'name', 'color'
     ];
-
-    public $timestamps = false;
 
     public function events(): BelongsToMany
     {

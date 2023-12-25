@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Models\Parser;
 
@@ -8,6 +9,22 @@ use DOMXPath;
 use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use function array_slice;
+use function count;
+use function explode;
+use function implode;
+use function in_array;
+use function is_numeric;
+use function mb_convert_encoding;
+use function mb_strtolower;
+use function preg_match;
+use function preg_replace;
+use function preg_split;
+use function str_contains;
+use function str_replace;
+use function strpos;
+use function substr;
+use function trim;
 
 class OBelarusNetParser extends AbstractParser
 {
@@ -18,14 +35,14 @@ class OBelarusNetParser extends AbstractParser
         if ($needConvert) {
             $content = mb_convert_encoding($content, 'utf-8', 'windows-1251');
         }
-        $content = str_replace(["&nbsp;", " "], ' ', $content);
+        $content = str_replace(["&nbsp;", " "], ' ', $content);
         @$doc->loadHTML($content);
         $xpath = new DOMXpath($doc);
         $preNodes = $xpath->query('//pre');
         $linesList = new Collection();
         foreach ($preNodes as $node) {
             $text = trim($node->nodeValue);
-            $text = trim($text,'-');
+            $text = trim($text, '-');
             $text = mb_convert_encoding($text, 'iso-8859-1', 'utf-8');
             $text = trim($text);
             if (!str_contains($text, 'амилия')) {
@@ -109,7 +126,7 @@ class OBelarusNetParser extends AbstractParser
             }
         }
 
-//        dd($linesList);
+        //        dd($linesList);
         return $linesList;
     }
 
@@ -133,7 +150,7 @@ class OBelarusNetParser extends AbstractParser
         if (str_contains($field, 'зультат') || str_contains($field, 'ремя')) {
             return 'time';
         }
-        if ($field ==='гр' || $field === 'г.р.') {
+        if ($field === 'гр' || $field === 'г.р.') {
             return 'year';
         }
         if (str_contains($field, 'омер')) {

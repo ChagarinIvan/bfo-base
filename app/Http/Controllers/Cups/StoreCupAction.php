@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Http\Controllers\Cups;
 
@@ -6,6 +7,7 @@ use App\Models\Cup;
 use App\Models\Cups\CupType;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use function array_key_exists;
 
 class StoreCupAction extends AbstractCupAction
 {

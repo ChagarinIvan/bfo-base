@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Models;
 
@@ -8,6 +9,13 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Carbon;
+use function array_flip;
+use function array_key_exists;
+use function array_map;
+use function count;
+use function in_array;
+use function mb_strtolower;
+use function str_replace;
 
 /**
  * @property int $id
@@ -106,16 +114,6 @@ class Rank extends Model
 
     private static array $preparedRanks = [];
 
-    public function event(): HasOne
-    {
-        return $this->hasOne(Event::class, 'id', 'event_id');
-    }
-
-    public function person(): HasOne
-    {
-        return $this->hasOne(Person::class, 'id', 'person_id');
-    }
-
     public static function validateRank(string $rank): bool
     {
         return in_array(self::prepareRank($rank), self::getPreparedRanks(), true);
@@ -137,7 +135,7 @@ class Rank extends Model
     private static function getPreparedRanks(): array
     {
         if (count(self::$preparedRanks) === 0) {
-            self::$preparedRanks = array_map(fn(string $rank): string => self::prepareRank($rank), self::RANKS);
+            self::$preparedRanks = array_map(static fn (string $rank): string => self::prepareRank($rank), self::RANKS);
         }
         return self::$preparedRanks;
     }
@@ -154,5 +152,15 @@ class Rank extends Model
             }
         }
         return $rank;
+    }
+
+    public function event(): HasOne
+    {
+        return $this->hasOne(Event::class, 'id', 'event_id');
+    }
+
+    public function person(): HasOne
+    {
+        return $this->hasOne(Person::class, 'id', 'person_id');
     }
 }

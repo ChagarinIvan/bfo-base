@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Database\Seeders;
 
@@ -28,7 +29,7 @@ class RefillRanksSeeder extends Seeder
             ->get();
 
         $protocolLinesGroupedByPersons = $protocolLines->groupBy('person_id');
-        $protocolLinesGroupedByPersons = $protocolLinesGroupedByPersons->transform(fn (Collection $protocolLines) => $protocolLines->sortBy('distance.event.date'));
+        $protocolLinesGroupedByPersons = $protocolLinesGroupedByPersons->transform(static fn (Collection $protocolLines) => $protocolLines->sortBy('distance.event.date'));
         foreach ($protocolLinesGroupedByPersons as $protocolLines) {
             foreach ($protocolLines as $protocolLine) {
                 /** @var ProtocolLine $protocolLine */

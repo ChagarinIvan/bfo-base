@@ -1,19 +1,21 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Mail;
 
 use Illuminate\Mail\Mailable;
+use Throwable;
 
 class ErrorMail extends Mailable
 {
     /**
-     * @var \Throwable
+     * @var Throwable
      */
-    private \Throwable $error;
+    private Throwable $error;
     private string $url;
     private string $previousUrl;
 
-    public function __construct(\Throwable $exception, string $url, string $previousUrl)
+    public function __construct(Throwable $exception, string $url, string $previousUrl)
     {
         $this->error = $exception;
         $this->url = $url;

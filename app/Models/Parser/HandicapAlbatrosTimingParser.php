@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Models\Parser;
 
@@ -9,6 +10,19 @@ use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use RuntimeException;
+use function array_slice;
+use function count;
+use function explode;
+use function implode;
+use function is_numeric;
+use function preg_match;
+use function preg_replace;
+use function preg_split;
+use function str_contains;
+use function str_replace;
+use function strpos;
+use function substr;
+use function trim;
 
 /**
  * Class HandicapAlbatrosTimingParser
@@ -44,9 +58,9 @@ class HandicapAlbatrosTimingParser extends AbstractParser
             if (preg_match('#(\d+)\s+[^\d]+,\s+((\d+,\d+)\s+[^\d]+|(\d+)\s+[^\d])#s', $distance, $match)) {
                 $distancePoints = (int)$match[1];
                 if (str_contains($match[2], ',')) {
-                    $distanceLength = floatval(str_replace(',', '.', $match[3])) * 1000;
+                    $distanceLength = (float) (str_replace(',', '.', $match[3])) * 1000;
                 } else {
-                    $distanceLength = floatval($match[4]);
+                    $distanceLength = (float) ($match[4]);
                 }
             } elseif (count($lines) < 4) {
                 continue;

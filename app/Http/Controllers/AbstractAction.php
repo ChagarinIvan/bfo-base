@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
@@ -10,26 +11,28 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller;
 use Illuminate\Routing\Redirector;
 use Illuminate\Validation\ValidationException;
+use function array_values;
 
 abstract class AbstractAction extends Controller
 {
     public function __construct(
         protected ViewActionsService $viewService,
         protected Redirector $redirector
-    ) {}
+    ) {
+    }
 
     public function callAction($method, $parameters)
     {
-//        try {
-            return $this->{$method}(...array_values($parameters));
-//        } catch (\Throwable $exception) {
-//            if ($exception instanceof ValidationException || env('APP_ENV', 'dev') === 'dev') {
-//                throw $exception;
-//            } else {
-//                $this->viewService->sendErrorMail($exception, request()->url(),  url()->previous()) ;
-//                return $this->redirectToError();
-//            }
-//        }
+        //        try {
+        return $this->{$method}(...array_values($parameters));
+        //        } catch (\Throwable $exception) {
+        //            if ($exception instanceof ValidationException || env('APP_ENV', 'dev') === 'dev') {
+        //                throw $exception;
+        //            } else {
+        //                $this->viewService->sendErrorMail($exception, request()->url(),  url()->previous()) ;
+        //                return $this->redirectToError();
+        //            }
+        //        }
     }
 
     protected function view(string $template, array $data = [], bool $isMainTab = true): View
@@ -53,24 +56,6 @@ abstract class AbstractAction extends Controller
     protected function removeLastBackUrl(): string
     {
         return $this->viewService->getLastBackUrl();
-    }
-
-    private function navbarData(): array
-    {
-        return [
-            'isAuth' => $this->viewService->isAuth(),
-            'isByLocale' => $this->viewService->isByLocale(),
-            'isRuLocale' => $this->viewService->isRuLocale(),
-            'isCompetitionsRoute' => $this->isCompetitionsRoute(),
-            'isCupsRoute' => $this->isCupsRoute(),
-            'isPersonsRoute' => $this->isPersonsRoute(),
-            'isClubsRoute' => $this->isClubsRoute(),
-            'isRanksRoute' => $this->isRanksRoute(),
-            'isFlagsRoute' => $this->isFlagsRoute(),
-            'isFaqRoute' => $this->isFaqRoute(),
-            'isFaqApiRoute' => $this->isFaqApiRoute(),
-            'isGroupsRoute' => $this->isGroupsRoute(),
-        ];
     }
 
     protected function redirectTo404Error(): RedirectResponse
@@ -131,5 +116,23 @@ abstract class AbstractAction extends Controller
     protected function isNavbarRoute(): bool
     {
         return false;
+    }
+
+    private function navbarData(): array
+    {
+        return [
+            'isAuth' => $this->viewService->isAuth(),
+            'isByLocale' => $this->viewService->isByLocale(),
+            'isRuLocale' => $this->viewService->isRuLocale(),
+            'isCompetitionsRoute' => $this->isCompetitionsRoute(),
+            'isCupsRoute' => $this->isCupsRoute(),
+            'isPersonsRoute' => $this->isPersonsRoute(),
+            'isClubsRoute' => $this->isClubsRoute(),
+            'isRanksRoute' => $this->isRanksRoute(),
+            'isFlagsRoute' => $this->isFlagsRoute(),
+            'isFaqRoute' => $this->isFaqRoute(),
+            'isFaqApiRoute' => $this->isFaqApiRoute(),
+            'isGroupsRoute' => $this->isGroupsRoute(),
+        ];
     }
 }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Http\Controllers\Person;
 
@@ -13,10 +14,10 @@ class ShowPersonAction extends AbstractPersonAction
     public function __invoke(int $personId): View|RedirectResponse
     {
         $person = $this->personsService->getPerson($personId);
-        $payments = $person->payments->sortByDesc(fn(PersonPayment $payment) => $payment->date);
-        $groupedProtocolLines = $person->protocolLines->groupBy(fn (ProtocolLine $line) => $line->distance->event->date->format('Y'));
-        $groupedProtocolLines->transform(function (Collection $protocolLines) {
-            return $protocolLines->sortByDesc(fn(ProtocolLine $line) => $line->distance->event->date);
+        $payments = $person->payments->sortByDesc(static fn (PersonPayment $payment) => $payment->date);
+        $groupedProtocolLines = $person->protocolLines->groupBy(static fn (ProtocolLine $line) => $line->distance->event->date->format('Y'));
+        $groupedProtocolLines->transform(static function (Collection $protocolLines) {
+            return $protocolLines->sortByDesc(static fn (ProtocolLine $line) => $line->distance->event->date);
         });
         $groupedProtocolLines = $groupedProtocolLines->sortKeysDesc();
 

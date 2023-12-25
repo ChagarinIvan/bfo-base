@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Http\Controllers\Faq;
 
@@ -10,7 +11,7 @@ class ShowApiFaqAction extends AbstractAction
 {
     public function __invoke(): View|RedirectResponse
     {
-       return $this->view('faq.api');
+        return $this->view('faq.api');
     }
 
     protected function isFaqApiRoute(): bool

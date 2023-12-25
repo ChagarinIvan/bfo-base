@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Console\Commands;
 
@@ -6,6 +7,7 @@ use App\Models\ProtocolLine;
 use App\Services\ProtocolLineIdentService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use function time;
 
 /**
  * Команда для определения людей с помощью прямого совпадения идентификатора.

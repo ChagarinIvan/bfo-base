@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Tests\Models\Parser;
 
@@ -6,11 +7,6 @@ use App\Models\Parser\SFRParser;
 
 class SfrParserTest extends AbstractParserTest
 {
-    protected function getParser(): string
-    {
-        return SFRParser::class;
-    }
-
     public static function dataProvider(): array
     {
         return [
@@ -34,5 +30,9 @@ class SfrParserTest extends AbstractParserTest
                 true
             ],
         ];
+    }
+    protected function getParser(): string
+    {
+        return SFRParser::class;
     }
 }

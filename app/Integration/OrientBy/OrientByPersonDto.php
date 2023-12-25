@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Integration\OrientBy;
 
 use Carbon\Carbon;
+use function preg_split;
 
 class OrientByPersonDto
 {
@@ -14,7 +15,8 @@ class OrientByPersonDto
         public readonly ?string $club, //клуб                    "КСО «Березино»"
         public readonly ?string $rank, //разряд                  "I"
         public readonly bool $paid     //оплачен ли взнос        "true"
-    ) {}
+    ) {
+    }
 
     public function getFirstName(): string
     {
