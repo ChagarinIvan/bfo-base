@@ -141,6 +141,7 @@
     "app.cup.type.junior" : "Юниорский",
     "app.cup.type.youth" : "Юношеский",
     "app.cup.type.ski" : "Лыжный",
+    "app.cup.type.elk_path" : "Ласіная сцежка",
     "app.errors.title" : "Ошибочка",
     "app.errors.error" : "Произошла непредвиденная ошибка",
     "app.errors.description" : "Подробное описание ошибки отправленно разработчику",
