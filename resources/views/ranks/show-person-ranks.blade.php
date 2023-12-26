@@ -1,5 +1,6 @@
 @php
     use App\Http\Controllers\Event\ShowEventAction;
+    use App\Http\Controllers\Rank\ActivatePersonRankAction;
     use App\Models\Person;
     use App\Models\Rank;
     use Illuminate\Support\Collection;
@@ -53,11 +54,12 @@
                 <th data-sortable="true">{{ __('app.rank.completed_date') }}</th>
                 <th data-sortable="true">{{ __('app.rank.finished_date') }}</th>
                 <th data-sortable="true">{{ __('app.event.title') }}</th>
+                <th></th>
             </tr>
             </thead>
             <tbody>
             @foreach ($ranks as $rank)
-                <tr>
+                <tr @if($rank->active) class="table-info" @else class="table-secondary" @endif>
                     <td>{{ $rank->rank }}</td>
                     <td>{{ $rank->event ? $rank->event->date->format('Y-m-d') : $rank->start_date->format('Y-m-d') }}</td>
                     <td>{{ $rank->finish_date->format('Y-m-d') }}</td>
@@ -67,7 +69,36 @@
                             >{{ $rank->event->competition->name }} ({{ $rank->event->name }})</a>
                         @endif
                     </td>
+                    <td>
+                        @if($rank->active)
+                            <x-modal-button modal-id="activateRank{{ $rank->id }}" text="app.common.edit" color="success" icon="radioactive" />
+                        @endif
+                    </td>
                 </tr>
+                <div class="modal modal-dark fade" id="activateRank{{ $rank->id }}" tabindex="-1" aria-labelledby="activateRank{{ $rank->id }}Label" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <form method="POST"
+                                  action="{{ action(ActivatePersonRankAction::class, [$person, $rank]) }}"
+                                  enctype="multipart/form-data"
+                            >
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="activateRank{{ $rank->id }}Label">{{ __('app.rank.activate') }}</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('app.common.close') }}"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-floating mb-3">
+                                        <input class="form-control" type="date" id="start_date" name="start_date">
+                                        <label for="start_date">{{ __('app.common.date') }}</label>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <input type="submit" class="btn btn-outline-primary btn-sm" value="{{ __('app.rank.submit') }}">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             @endforeach
             </tbody>
         </table>

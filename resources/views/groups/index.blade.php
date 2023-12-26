@@ -58,7 +58,7 @@
                                 icon="bi-stickies"
                         />
                         <x-edit-button/>
-                        <x-delete-button modal-id="deleteModal{{ $group->id }}"/>
+                        <x-modal-button modal-id="deleteModal{{ $group->id }}"/>
                     </td>
                 </tr>
             @endforeach

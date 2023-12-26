@@ -95,7 +95,7 @@
                                           url="{{ action(ShowAddFlagToEventFormAction::class, [$event]) }}"
                                 />
                                 <x-edit-button url="{{ action(ShowEditEventFormAction::class, [$event]) }}"/>
-                                <x-delete-button modal-id="deleteModal{{ $event->id }}"/>
+                                <x-modal-button modal-id="deleteModal{{ $event->id }}"/>
                             </td>
                         @endauth
                     </tr>

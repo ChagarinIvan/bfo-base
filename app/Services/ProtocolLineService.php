@@ -12,15 +12,16 @@ use App\Models\Rank;
 use App\Models\Year;
 use App\Repositories\GroupsRepository;
 use App\Repositories\ProtocolLinesRepository;
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use RuntimeException;
 use function str_replace;
 
-class ProtocolLineService
+final readonly class ProtocolLineService
 {
     public function __construct(
-        private readonly ProtocolLinesRepository $protocolLinesRepository,
-        private readonly GroupsRepository $groupsRepository
+        private ProtocolLinesRepository $protocolLinesRepository,
+        private GroupsRepository $groupsRepository
     ) {
     }
 
@@ -37,8 +38,12 @@ class ProtocolLineService
      */
     public function fillProtocolLines(int $eventId, Collection $lineList): Collection
     {
-        return $lineList->transform(function (array $lineData) use ($eventId) {
+        $date = Carbon::now();
+
+        return $lineList->transform(function (array $lineData) use ($eventId, $date) {
             $protocolLine = new ProtocolLine($lineData);
+            $protocolLine->activate_rank = Rank::autoActivation($protocolLine->complete_rank) ? $date : null;
+
             $groupName = str_replace(' ', '', $lineData['group']);
             $group = $this->groupsRepository->searchGroup($groupName);
 
@@ -51,6 +56,7 @@ class ProtocolLineService
             $distance = $this->findDistance($group->id, $eventId, (int)($lineData['distance']['length'] ?? 0), (int)($lineData['distance']['points'] ?? 0));
             $protocolLine->fillProtocolLine($distance->id);
             $protocolLine->save();
+
             return $protocolLine;
         });
     }

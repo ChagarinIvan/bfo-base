@@ -36,7 +36,7 @@
                           icon="bi-arrow-clockwise"
                           url="{{ action(ClearCacheAction::class, [$cup]) }}"
                 />
-                <x-delete-button modal-id="deleteModalCup{{ $cup->id }}"/>
+                <x-modal-button modal-id="deleteModalCup{{ $cup->id }}"/>
             @endauth
             <x-button text="app.cup.table"
                       color="secondary"
@@ -98,7 +98,7 @@
                         <td>
                             <x-edit-button
                                     url="{{ action(ShowEditCupEventFormAction::class, [$cup, $cupEvent]) }}"/>
-                            <x-delete-button modal-id="deleteModal{{ $cupEvent->id }}"/>
+                            <x-modal-button modal-id="deleteModal{{ $cupEvent->id }}"/>
                         </td>
                     @endauth
                 </tr>

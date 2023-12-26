@@ -25,11 +25,12 @@ use function str_replace;
  * @property string $rank
  * @property Carbon $start_date
  * @property Carbon $finish_date
+ * @property bool $active
  *
  * @property-read Event|null $event
  * @property-read Person $person
  *
- * @method static Rank|Builder where(string|Expression $column, string|null $operator, string|int|Carbon $value = null)
+ * @method static Rank|Builder where(string|Expression $column, string|null|bool $operator, string|int|Carbon $value = null)
  * @method static Rank|Builder selectRaw(Expression $expression)
  * @method static Rank|Builder with(array|string $relations)
  * @method static Rank|Builder orderByRaw(Expression $expression)
@@ -132,6 +133,11 @@ class Rank extends Model
             return $ranks[$rank];
         }
         return null;
+    }
+
+    public static function autoActivation(string $rank): bool
+    {
+        return !in_array($rank, [self::SM_RANK, self::WSM_RANK], true);
     }
 
     private static function getPreparedRanks(): array

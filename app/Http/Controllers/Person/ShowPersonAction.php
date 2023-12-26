@@ -25,7 +25,7 @@ class ShowPersonAction extends AbstractPersonAction
         return $this->view('persons.show', [
             'person' => $person,
             'groupedProtocolLines' => $groupedProtocolLines,
-            'rank' => $this->rankService->getActualRank($person->id),
+            'rank' => $this->rankService->getActiveRank($person->id),
             'personPayment' => $payments->first(),
         ]);
     }

@@ -82,7 +82,7 @@
                             @auth
                                 <td>
                                     <x-edit-button url="{{ action(ShowEditCompetitionFormAction::class, [$year->value, $competition->id]) }}"/>
-                                    <x-delete-button modal-id="deleteModal{{ $competition->id }}"/>
+                                    <x-modal-button modal-id="deleteModal{{ $competition->id }}"/>
                                 </td>
                             @endauth
                         </tr>

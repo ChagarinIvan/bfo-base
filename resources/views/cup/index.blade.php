@@ -90,7 +90,7 @@
                                     @auth
                                         <x-edit-button
                                                 url="{{ action(ShowEditCupFormAction::class, [$cup]) }}"/>
-                                        <x-delete-button modal-id="deleteModal{{ $cup->id }}"/>
+                                        <x-modal-button modal-id="deleteModal{{ $cup->id }}"/>
                                     @endauth
                                 </td>
                             </tr>

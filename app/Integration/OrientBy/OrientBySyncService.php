@@ -44,7 +44,7 @@ class OrientBySyncService
 
         $personsPrompts = [];
         foreach ($persons as $personDto) {
-            $personsPrompts[self::makePromptFromPersonDto($personDto)] = $personDto;
+            $personsPrompts[$this->makePromptFromPersonDto($personDto)] = $personDto;
         }
 
         $indicatedPersons = $this->identService->identLines(array_keys($personsPrompts));
@@ -129,11 +129,9 @@ class OrientBySyncService
     {
         if ($personDto->club) {
             $club = $this->clubsService->findClub($personDto->club);
-            if ($club) {
-                if ($person->club_id !== $club->id) {
-                    $person->club_id = $club->id;
-                    return true;
-                }
+            if ($club && $person->club_id !== $club->id) {
+                $person->club_id = $club->id;
+                return true;
             }
         }
         return false;
@@ -147,6 +145,7 @@ class OrientBySyncService
             $rank->rank = Rank::getRank($rankData);
             $rank->start_date = Carbon::now();
             $rank->finish_date = $rank->start_date->clone()->addYears(2);
+            $rank->active = true;
             $this->rankService->storeRank($rank);
         }
     }
