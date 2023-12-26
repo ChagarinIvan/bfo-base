@@ -71,7 +71,7 @@
                     </td>
                     <td>
                         @if(!$rank->active)
-                            <x-modal-button modal-id="activateRank{{ $rank->id }}" text=app.rank.submit" color="success" icon="radioactive" />
+                            <x-modal-button modal-id="activateRank{{ $rank->id }}" text="app.rank.submit" color="success" icon="radioactive" />
                         @endif
                     </td>
                 </tr>
