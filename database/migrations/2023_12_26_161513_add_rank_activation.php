@@ -18,11 +18,6 @@ return new class extends Migration
         Schema::table('protocol_lines', static function (Blueprint $table): void {
             $table->date('activate_rank')->nullable()->default(null);
         });
-
-        foreach (ProtocolLine::all() as $line) {
-            $line->activate_rank = $line->event->date;
-            $line->save();
-        }
     }
 
     public function down(): void

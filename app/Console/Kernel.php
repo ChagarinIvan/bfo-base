@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Console;
 
+use App\Console\Commands\FixRankCommand;
 use App\Console\Commands\IdentProtocolLineCommand;
 use App\Console\Commands\RankValidationCommand;
 use App\Console\Commands\RecalculatingRanks;
@@ -26,6 +27,7 @@ class Kernel extends ConsoleKernel
         RankValidationCommand::class,
         SyncPersonsCommand::class,
         RecalculatingRanks::class,
+        FixRankCommand::class,
     ];
 
     /**
