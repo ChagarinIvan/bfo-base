@@ -279,7 +279,7 @@ class RankService
         $lastRank->rank = $protocolLine->complete_rank;
         $lastRank->start_date = $protocolLine->activate_rank ?: $protocolLine->event->date;
         $lastRank->finish_date = $lastRank->start_date->clone()->addYears(2);
-        $lastRank->active = $protocolLine->activate_rank ?: false;
+        $lastRank->active = (bool) $protocolLine->activate_rank;
 
         return $lastRank;
     }
