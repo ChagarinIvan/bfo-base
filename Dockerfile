@@ -1,80 +1,58 @@
-# From
 FROM php:8.2.12-fpm-alpine3.18
 
-# Labels
-LABEL creatorName="Vagner dos Santos Cardoso"
-LABEL creatorEmail="vagnercardosoweb@gmail.com"
+# Copy composer.lock and composer.json
+COPY composer.lock composer.json /var/www/
 
-# Install non-dev dependencies
-RUN set -eux \
-  && apk add --no-cache \
-  git vim zip unzip bash curl tzdata icu-libs \
-  c-client make ca-certificates imap gmp gettext libssh2 \
-  libintl libxslt libpng libwebp libjpeg-turbo freetype imap \
-  linux-headers oniguruma libxslt libpq vips \
-  gmp libzip libxml2 freetds
+# Set working directory
+WORKDIR /var/www
 
 # Install dependencies
-RUN set -eux \
-  && apk add --no-cache --virtual .build_deps \
-  libpng-dev libwebp-dev libjpeg-turbo-dev freetype-dev imap-dev \
-  linux-headers oniguruma-dev libxslt-dev postgresql-dev vips-dev \
-  libssh2-dev gmp-dev libzip-dev libxml2-dev freetds-dev \
-  $PHPIZE_DEPS \
-  \
-  # Php extensions
-  && docker-php-ext-install \
-  mysqli \
-  pdo_mysql \
-  pdo_pgsql \
-  pgsql\
-  bcmath \
-  mbstring \
-  xml \
-  gd \
-  exif \
-  zip \
-  soap \
-  intl \
-  xsl \
-  pcntl \
-  sockets \
-  sysvmsg \
-  sysvsem \
-  sysvshm \
-  opcache \
-  imap \
-  gmp \
-  \
-  # Install xdebug
-  && pecl install -o -f xdebug \
-  && docker-php-ext-enable xdebug \
-  \
-  # Install redis
-  && pecl install -o -f redis \
-  && docker-php-ext-enable redis \
-  \
-  # Install apcu
-  && pecl install -o -f apcu \
-  && docker-php-ext-enable apcu \
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libpng-dev \
+    libzip-dev \
+    libonig-dev \
+    libjpeg62-turbo-dev \
+    libfreetype6-dev \
+    locales \
+    zip \
+    jpegoptim optipng pngquant gifsicle \
+    vim \
+    unzip \
+    git \
+    curl \
+    && docker-php-ext-configure gd \
+    && docker-php-ext-install -j$(nproc) gd \
+    && docker-php-ext-install pdo_mysql mbstring zip exif pcntl
+
+RUN pecl install xdebug-3.1.2 \
+    && docker-php-ext-enable xdebug
+
+# Clear cache
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Install extensions
+#RUN docker-php-ext-install pdo_mysql mbstring zip exif pcntl
+#RUN docker-php-ext-configure gd --with-gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-png-dir=/usr/include/
+#RUN docker-php-ext-install gd
 
 # Install composer
-COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Copy php settings
-COPY ./php.ini ${PHP_INI_DIR}/conf.d/99-php.ini
+# Add user for laravel application
+RUN groupadd -g 1000 www
+RUN useradd -u 1000 -ms /bin/bash -g www www
 
-# Copy entrypoint
-COPY ./entrypoint /usr/local/bin/docker-entrypoint
-RUN chmod +x /usr/local/bin/docker-entrypoint
+# Copy existing application directory contents
+COPY . /var/www
 
-# Workdir
-ENV WORKDIR=/var/www/app
-RUN mkdir -p ${WORKDIR}
-WORKDIR ${WORKDIR}
+# Copy existing application directory permissions
+COPY --chown=www:www . /var/www
 
-# Expose port
+# Change current user to www
+USER www
+
+# Expose port 9000 and start php-fpm server
 EXPOSE 9000
+CMD ["php-fpm"]
 
-# Run entrypoint
-CMD ["docker-entrypoint"]
