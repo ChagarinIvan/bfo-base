@@ -1,4 +1,4 @@
-FROM php:8.2.12-fpm-alpine3.18
+FROM php:8.2-fpm
 
 # Copy composer.lock and composer.json
 COPY composer.lock composer.json /var/www/
@@ -7,42 +7,41 @@ COPY composer.lock composer.json /var/www/
 WORKDIR /var/www
 
 # Install dependencies
-RUN apk update && apk add --no-cache \
-    build-base \
+RUN apt-get update && apt-get install -y \
+    build-essential \
     libpng-dev \
     libzip-dev \
-    libjpeg-turbo-dev \
-    freetype-dev \
-    libpng \
-    libjpeg \
-    libzip \
-    freetype \
-    zlib \
-    jpegoptim \
-    optipng \
-    pngquant \
-    gifsicle \
+    libonig-dev \
+    libjpeg62-turbo-dev \
+    libfreetype6-dev \
+    locales \
+    zip \
+    jpegoptim optipng pngquant gifsicle \
     vim \
     unzip \
     git \
     curl \
-    icu-dev \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-configure gd \
     && docker-php-ext-install -j$(nproc) gd \
-    && docker-php-ext-install pdo_mysql mbstring zip exif pcntl intl
+    && docker-php-ext-install pdo_mysql mbstring zip exif pcntl
 
 RUN pecl install xdebug-3.1.2 \
     && docker-php-ext-enable xdebug
 
 # Clear cache
-RUN rm -rf /var/cache/apk/*
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Install extensions
+#RUN docker-php-ext-install pdo_mysql mbstring zip exif pcntl
+#RUN docker-php-ext-configure gd --with-gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-png-dir=/usr/include/
+#RUN docker-php-ext-install gd
 
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Add user for laravel application
-RUN addgroup -g 1000 www \
-    && adduser -u 1000 -D -G www www
+RUN groupadd -g 1000 www
+RUN useradd -u 1000 -ms /bin/bash -g www www
 
 # Copy existing application directory contents
 COPY . /var/www
@@ -56,3 +55,4 @@ USER www
 # Expose port 9000 and start php-fpm server
 EXPOSE 9000
 CMD ["php-fpm"]
+
