@@ -11,8 +11,8 @@ final class ModalButton extends Button
     public function __construct(
         public readonly string $modalId,
         public string $text = 'app.common.delete',
-        public readonly string $color = 'danger',
-        public readonly string $icon = 'bi-trash-fill',
+        public string $color = 'danger',
+        public string $icon = 'bi-trash-fill',
     ) {
         parent::__construct($text, $color, $icon);
     }
