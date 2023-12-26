@@ -13,9 +13,10 @@ class FixRankCommand extends Command
 
     public function handle(): void
     {
-        foreach (ProtocolLine::all() as $line) {
+        foreach (ProtocolLine::cursor() as $line) {
             $line->activate_rank = $line->event->date;
             $line->save();
+            $this->info($line->id);
         }
     }
 }
