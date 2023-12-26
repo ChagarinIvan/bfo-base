@@ -9,9 +9,9 @@ use Illuminate\Http\RedirectResponse;
 
 class ShowEditPersonAction extends AbstractPersonAction
 {
-    public function __invoke(int $personId): View|RedirectResponse
+    public function __invoke(string $personId): View|RedirectResponse
     {
-        $person = $this->personsService->getPerson($personId);
+        $person = $this->personsService->getPerson((int) $personId);
 
         return $this->view('persons.edit', [
             'person' => $person,

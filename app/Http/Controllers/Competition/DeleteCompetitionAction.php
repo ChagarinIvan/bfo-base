@@ -8,7 +8,7 @@ use Illuminate\Http\RedirectResponse;
 
 class DeleteCompetitionAction extends AbstractCompetitionAction
 {
-    public function __invoke(int $year, int $competitionId): RedirectResponse
+    public function __invoke(string $year, int $competitionId): RedirectResponse
     {
         $competition = $this->competitionService->getCompetition($competitionId);
         $this->competitionService->deleteCompetition($competition);

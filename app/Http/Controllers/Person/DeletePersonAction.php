@@ -9,9 +9,9 @@ use Illuminate\Http\RedirectResponse;
 
 class DeletePersonAction extends AbstractPersonAction
 {
-    public function __invoke(int $personId): View|RedirectResponse
+    public function __invoke(string $personId): View|RedirectResponse
     {
-        $this->personsService->deletePerson($personId);
+        $this->personsService->deletePerson((int) $personId);
 
         return $this->redirector->action(ShowPersonsListAction::class);
     }

@@ -10,7 +10,7 @@ use Illuminate\Http\RedirectResponse;
 
 class ShowCreateEventFormAction extends AbstractEventAction
 {
-    public function __invoke(int $competitionId): View|RedirectResponse
+    public function __invoke(string $competitionId): View|RedirectResponse
     {
         return $this->view('events.create', [
             'competitionId' => $competitionId,

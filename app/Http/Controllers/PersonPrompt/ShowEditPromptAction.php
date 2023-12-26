@@ -9,7 +9,7 @@ use function compact;
 
 class ShowEditPromptAction extends AbstractPersonPromptAction
 {
-    public function __invoke(int $personId, int $promptId): View
+    public function __invoke(string $personId, int $promptId): View
     {
         $prompt = $this->promptService->getPrompt($promptId);
 

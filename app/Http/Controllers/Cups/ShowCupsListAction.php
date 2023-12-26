@@ -11,9 +11,9 @@ use function compact;
 
 class ShowCupsListAction extends AbstractCupAction
 {
-    public function __invoke(int $year): View|RedirectResponse
+    public function __invoke(string $year): View|RedirectResponse
     {
-        $selectedYear = Year::from($year);
+        $selectedYear = Year::from((int) $year);
         $cups = $this->cupsService->getYearCups($selectedYear);
 
         return $this->view('cup.index', compact('selectedYear', 'cups'), Year::actualYear() === $selectedYear);

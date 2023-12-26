@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 class UpdateCompetitionAction extends AbstractCompetitionAction
 {
-    public function __invoke(int $year, int $competitionId, Request $request): RedirectResponse
+    public function __invoke(string $year, int $competitionId, Request $request): RedirectResponse
     {
         $formParams = $request->validate([
             'name' => 'required|max:255',

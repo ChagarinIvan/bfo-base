@@ -10,9 +10,9 @@ use function compact;
 
 class ShowEditCompetitionFormAction extends AbstractCompetitionAction
 {
-    public function __invoke(int $year, int $competitionId): View|RedirectResponse
+    public function __invoke(string $year, string $competitionId): View|RedirectResponse
     {
-        $competition = $this->competitionService->getCompetition($competitionId);
+        $competition = $this->competitionService->getCompetition((int) $competitionId);
 
         return $this->view('competitions.edit', compact('year', 'competition'));
     }

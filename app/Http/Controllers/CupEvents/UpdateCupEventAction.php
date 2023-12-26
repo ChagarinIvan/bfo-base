@@ -11,16 +11,16 @@ use Illuminate\Http\Request;
 
 class UpdateCupEventAction extends AbstractCupAction
 {
-    public function __invoke(int $cupId, int $cupEventId, Request $request): RedirectResponse
+    public function __invoke(string $cupId, string $cupEventId, Request $request): RedirectResponse
     {
         $formData = $request->validate([
             'event' => 'required|numeric',
             'points' => 'required|numeric',
         ]);
 
-        $cupEvent = $this->cupEventsService->getCupEvent($cupEventId);
+        $cupEvent = $this->cupEventsService->getCupEvent((int) $cupEventId);
         $cupEvent->event_id = $formData['event'];
-        $cupEvent->cup_id = $cupId;
+        $cupEvent->cup_id = (int) $cupId;
         $cupEvent->points = $formData['points'];
         $this->cupEventsService->storeCupEvent($cupEvent);
 

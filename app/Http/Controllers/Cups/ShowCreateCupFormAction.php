@@ -9,7 +9,7 @@ use Illuminate\Http\RedirectResponse;
 
 class ShowCreateCupFormAction extends AbstractCupAction
 {
-    public function __invoke(int $year): View|RedirectResponse
+    public function __invoke(string $year): View|RedirectResponse
     {
         return $this->view('cup.create', ['selectedYear' => $year,]);
     }

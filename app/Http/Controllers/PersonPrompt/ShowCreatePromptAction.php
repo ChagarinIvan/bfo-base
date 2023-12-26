@@ -10,7 +10,7 @@ use function compact;
 
 class ShowCreatePromptAction extends AbstractAction
 {
-    public function __invoke(int $personId): View
+    public function __invoke(string $personId): View
     {
         return $this->view('person-prompt.create', compact('personId'));
     }

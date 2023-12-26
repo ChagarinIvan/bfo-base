@@ -10,9 +10,9 @@ use Illuminate\Http\RedirectResponse;
 
 class ShowEditCupEventFormAction extends AbstractCupAction
 {
-    public function __invoke(int $cupId, int $cupEventId): View|RedirectResponse
+    public function __invoke(string $cupId, int $cupEventId): View|RedirectResponse
     {
-        $cup = $this->cupsService->getCup($cupId);
+        $cup = $this->cupsService->getCup((int) $cupId);
         $cupEvent = $this->cupEventsService->getCupEvent($cupEventId);
 
         $events = $this->eventsRepository->getYearEvents($cup->year);
