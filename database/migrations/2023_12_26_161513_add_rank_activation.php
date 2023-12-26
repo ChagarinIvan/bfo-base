@@ -16,7 +16,7 @@ return new class extends Migration
         });
 
         Schema::table('protocol_lines', static function (Blueprint $table): void {
-            $table->boolean('activate_rank')->nullable()->default(null);
+            $table->date('activate_rank')->nullable()->default(null);
         });
 
         foreach (ProtocolLine::all() as $line) {

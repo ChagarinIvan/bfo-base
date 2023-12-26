@@ -42,7 +42,9 @@ final readonly class ProtocolLineService
 
         return $lineList->transform(function (array $lineData) use ($eventId, $date) {
             $protocolLine = new ProtocolLine($lineData);
-            $protocolLine->activate_rank = Rank::autoActivation($protocolLine->complete_rank) ? $date : null;
+            $protocolLine->activate_rank = Rank::autoActivation($protocolLine->complete_rank)
+                ? $protocolLine->event->date
+                : null;
 
             $groupName = str_replace(' ', '', $lineData['group']);
             $group = $this->groupsRepository->searchGroup($groupName);
