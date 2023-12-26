@@ -38,13 +38,8 @@ final readonly class ProtocolLineService
      */
     public function fillProtocolLines(int $eventId, Collection $lineList): Collection
     {
-        $date = Carbon::now();
-
-        return $lineList->transform(function (array $lineData) use ($eventId, $date) {
+        return $lineList->transform(function (array $lineData) use ($eventId) {
             $protocolLine = new ProtocolLine($lineData);
-            $protocolLine->activate_rank = Rank::autoActivation($protocolLine->complete_rank)
-                ? $protocolLine->event->date
-                : null;
 
             $groupName = str_replace(' ', '', $lineData['group']);
             $group = $this->groupsRepository->searchGroup($groupName);
@@ -57,6 +52,10 @@ final readonly class ProtocolLineService
 
             $distance = $this->findDistance($group->id, $eventId, (int)($lineData['distance']['length'] ?? 0), (int)($lineData['distance']['points'] ?? 0));
             $protocolLine->fillProtocolLine($distance->id);
+            $protocolLine->save();
+            $protocolLine->activate_rank = Rank::autoActivation($protocolLine->complete_rank)
+                ? $protocolLine->event->date
+                : null;
             $protocolLine->save();
 
             return $protocolLine;
