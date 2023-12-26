@@ -13,13 +13,13 @@ use Illuminate\Http\RedirectResponse;
 class ExtractPersonAction extends AbstractPersonAction
 {
     public function __invoke(
-        int $protocolLineId,
+        string $protocolLineId,
         ProtocolLineService $protocolLineService,
         PersonsService $personsService,
         PersonPromptService $personPromptService,
         RankService $rankService
     ): RedirectResponse {
-        $protocolLine = $protocolLineService->getProtocolLine($protocolLineId);
+        $protocolLine = $protocolLineService->getProtocolLine((int) $protocolLineId);
         $person = $personsService->extractPersonFromLine($protocolLine);
         $person = $personsService->storePerson($person);
 
