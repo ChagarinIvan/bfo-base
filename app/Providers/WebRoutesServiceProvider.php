@@ -39,7 +39,7 @@ class WebRoutesServiceProvider extends ServiceProvider
 
         $this->routes(function (): void {
             $this->routeRegistrar->middleware('web')->group(function (): void {
-                $this->route->get('', fn () => $this->redirector->action(Competition\ShowCompetitionsListAction::class, [Year::actualYear()->value]));
+                $this->route->get('', fn () => $this->redirector->action(Competition\ShowCompetitionsListAction::class, [(string) Year::actualYear()->value]));
                 $this->route->get('back', BackAction::class);
 
                 //competitions
