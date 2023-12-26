@@ -70,7 +70,7 @@
                         @endif
                     </td>
                     <td>
-                        @if($rank->active)
+                        @if(!$rank->active)
                             <x-modal-button modal-id="activateRank{{ $rank->id }}" text="app.common.edit" color="success" icon="radioactive" />
                         @endif
                     </td>
