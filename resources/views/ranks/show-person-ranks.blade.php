@@ -71,7 +71,7 @@
                     </td>
                     <td>
                         @if(!$rank->active)
-                            <x-modal-button modal-id="activateRank{{ $rank->id }}" text="app.common.edit" color="success" icon="radioactive" />
+                            <x-modal-button modal-id="activateRank{{ $rank->id }}" text=app.rank.submit" color="success" icon="radioactive" />
                         @endif
                     </td>
                 </tr>
@@ -82,6 +82,7 @@
                                   action="{{ action(ActivatePersonRankAction::class, [$person, $rank]) }}"
                                   enctype="multipart/form-data"
                             >
+                                @csrf
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="activateRank{{ $rank->id }}Label">{{ __('app.rank.activate') }}</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('app.common.close') }}"></button>
