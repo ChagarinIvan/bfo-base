@@ -108,7 +108,7 @@ class WebRoutesServiceProvider extends ServiceProvider
                 $this->routeRegistrar->prefix('ranks')->group(function (): void {
                     $this->route->get('list/{rank}', Rank\ShowRanksListAction::class);
                     $this->route->get('person/{person}', Rank\ShowPersonRanksAction::class);
-                    $this->route->put('person/{person}', Rank\ActivatePersonRankAction::class);
+                    $this->route->post('person/{person}', Rank\ActivatePersonRankAction::class);
 
                     $this->middleware(['auth'])->group(function (): void {
                         $this->route->get('check', Rank\ShowCheckPersonsRanksFormAction::class);
