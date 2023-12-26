@@ -93,9 +93,7 @@
                                         <label for="start_date">{{ __('app.common.date') }}</label>
                                     </div>
                                 </div>
-                                <div class="modal-footer">
-                                    <input type="submit" class="btn btn-outline-primary btn-sm" value="{{ __('app.rank.submit') }}">
-                                </div>
+                                <input type="submit" class="btn btn-outline-primary btn-sm" value="{{ __('app.rank.submit') }}">
                             </form>
                         </div>
                     </div>
