@@ -9,7 +9,7 @@ class CupEventPoint
     public function __construct(
         public readonly int $eventCupId,
         public readonly ProtocolLine $protocolLine,
-        public readonly int|string $points,
+        public readonly int|string|float $points,
     ) {
     }
 
