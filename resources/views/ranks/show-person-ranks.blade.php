@@ -78,24 +78,24 @@
                 <div class="modal modal-dark fade" id="activateRank{{ $rank->id }}" tabindex="-1" aria-labelledby="activateRank{{ $rank->id }}Label" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
-                            <form method="POST"
-                                  action="{{ action(ActivatePersonRankAction::class, [$person, $rank]) }}"
-                            >
-                                @csrf
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="activateRank{{ $rank->id }}Label">{{ __('app.rank.activate') }}</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('app.common.close') }}"></button>
-                                </div>
-                                <div class="modal-body">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="activateRank{{ $rank->id }}Label">{{ __('app.rank.activate') }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('app.common.close') }}"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form method="POST"
+                                      action="{{ action(ActivatePersonRankAction::class, [$person, $rank]) }}"
+                                >
+                                    @csrf
                                     <div class="form-floating mb-3">
                                         <input class="form-control" type="date" id="start_date" name="start_date">
                                         <label for="start_date">{{ __('app.common.date') }}</label>
                                     </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <input type="submit" class="btn btn-outline-primary btn-sm" value="{{ __('app.rank.submit') }}">
-                                </div>
-                            </form>
+                                    <div class="form-floating mb-3">
+                                        <input type="submit" class="btn btn-outline-primary btn-sm" value="{{ __('app.rank.submit') }}">
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
