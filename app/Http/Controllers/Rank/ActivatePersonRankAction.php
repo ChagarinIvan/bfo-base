@@ -14,8 +14,8 @@ class ActivatePersonRankAction extends AbstractRankAction
 {
     public function __invoke(Person $person, Rank $rank, Request $request): RedirectResponse
     {
-        dd($rank);
         if ($rank->active) {
+            dd($rank);
             return $this->redirector->action(ShowPersonRanksAction::class, [$person]);
         }
 
