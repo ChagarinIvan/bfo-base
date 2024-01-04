@@ -14,6 +14,7 @@ class ActivatePersonRankAction extends AbstractRankAction
 {
     public function __invoke(Person $person, Rank $rank, Request $request): RedirectResponse
     {
+        dump($rank);
         if ($rank->active) {
             return $this->redirector->action(ShowPersonRanksAction::class, [$person]);
         }
@@ -24,7 +25,7 @@ class ActivatePersonRankAction extends AbstractRankAction
 
         dump($formParams);
         $this->rankService->activateRank($rank, Carbon::createFromFormat('Y-m-d', $formParams['start_date']));
-
+        dd();
         return $this->redirector->action(ShowPersonRanksAction::class, [$person]);
     }
 }

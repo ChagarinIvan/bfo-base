@@ -54,7 +54,7 @@ class RankService
         $protocolLineId = $this->protocolLineService->getProtocolLineIdForRank($rank);
         dump($protocolLineId);
         $protocolLine = $this->protocolLineService->getProtocolLineWithEvent($protocolLineId);
-        dump($protocolLine);
+        dd($protocolLine);
         if (!$protocolLine) {
             return;
         }
