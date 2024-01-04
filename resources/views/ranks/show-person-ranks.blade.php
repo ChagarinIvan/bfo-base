@@ -54,7 +54,9 @@
                 <th data-sortable="true">{{ __('app.rank.completed_date') }}</th>
                 <th data-sortable="true">{{ __('app.rank.finished_date') }}</th>
                 <th data-sortable="true">{{ __('app.event.title') }}</th>
-                <th></th>
+                @auth
+                    <th></th>
+                @endauth
             </tr>
             </thead>
             <tbody>
@@ -69,36 +71,18 @@
                             >{{ $rank->event->competition->name }} ({{ $rank->event->name }})</a>
                         @endif
                     </td>
-                    <td>
-                        @if(!$rank->active)
-                            <x-modal-button modal-id="activateRank{{ $rank->id }}" text="app.rank.submit" color="success" icon="radioactive" />
-                        @endif
-                    </td>
+                    @auth
+                        <td>
+                            @if(!$rank->active)
+                                <x-button text="app.rank.submit"
+                                          color="success"
+                                          icon="radioactive"
+                                          url="{{ action(ActivatePersonRankAction::class, [$person, $rank]) }}"
+                                />
+                            @endif
+                        </td>
+                    @endauth
                 </tr>
-                <div class="modal modal-dark fade" id="activateRank{{ $rank->id }}" tabindex="-1" aria-labelledby="activateRank{{ $rank->id }}Label" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="activateRank{{ $rank->id }}Label">{{ __('app.rank.activate') }}</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('app.common.close') }}"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form method="POST"
-                                      action="{{ action(ActivatePersonRankAction::class, [$person, $rank]) }}"
-                                >
-                                    @csrf
-                                    <div class="form-floating mb-3">
-                                        <input class="form-control" type="date" id="start_date" name="start_date">
-                                        <label for="start_date">{{ __('app.common.date') }}</label>
-                                    </div>
-                                    <div class="form-floating mb-3">
-                                        <input type="submit" class="btn btn-outline-primary btn-sm" value="{{ __('app.rank.submit') }}">
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             @endforeach
             </tbody>
         </table>
