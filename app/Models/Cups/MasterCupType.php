@@ -17,28 +17,28 @@ use function in_array;
 class MasterCupType extends AbstractCupType
 {
     protected const GROUPS_MAP = [
-        'M_21' => [],
-        'M_35' => ['M35', 'М35', 'МE(35)'],
-        'M_40' => ['M40', 'М40'],
-        'M_45' => ['M45', 'М45'],
-        'M_50' => ['M50', 'М50'],
-        'M_55' => ['M55', 'М55'],
-        'M_60' => ['M60', 'М60'],
-        'M_65' => ['M65', 'М65'],
-        'M_70' => ['M70', 'М70'],
-        'M_75' => ['M75', 'М75'],
-        'M_80' => ['M80', 'М80'],
-        'W_21' => [],
-        'W_35' => ['Ж35', 'W35', 'ЖE(35)'],
-        'W_40' => ['Ж40', 'W40'],
-        'W_45' => ['Ж45', 'W45'],
-        'W_50' => ['Ж50', 'W50'],
-        'W_55' => ['Ж55', 'W55'],
-        'W_60' => ['Ж60', 'W60'],
-        'W_65' => ['Ж65', 'W65'],
-        'W_70' => ['Ж70', 'W70'],
-        'W_75' => ['Ж75', 'W75'],
-        'W_80' => ['Ж80', 'W80'],
+        'M_21_' => [],
+        'M_35_' => ['M35', 'М35', 'МE(35)'],
+        'M_40_' => ['M40', 'М40'],
+        'M_45_' => ['M45', 'М45'],
+        'M_50_' => ['M50', 'М50'],
+        'M_55_' => ['M55', 'М55'],
+        'M_60_' => ['M60', 'М60'],
+        'M_65_' => ['M65', 'М65'],
+        'M_70_' => ['M70', 'М70'],
+        'M_75_' => ['M75', 'М75'],
+        'M_80_' => ['M80', 'М80'],
+        'W_21_' => [],
+        'W_35_' => ['Ж35', 'W35', 'ЖE(35)'],
+        'W_40_' => ['Ж40', 'W40'],
+        'W_45_' => ['Ж45', 'W45'],
+        'W_50_' => ['Ж50', 'W50'],
+        'W_55_' => ['Ж55', 'W55'],
+        'W_60_' => ['Ж60', 'W60'],
+        'W_65_' => ['Ж65', 'W65'],
+        'W_70_' => ['Ж70', 'W70'],
+        'W_75_' => ['Ж75', 'W75'],
+        'W_80_' => ['Ж80', 'W80'],
     ];
 
     public function getId(): string
@@ -164,6 +164,8 @@ class MasterCupType extends AbstractCupType
     protected function getEventGroups(GroupMale $male): Collection
     {
         $groups = Collection::make();
+
+        /** @var CupGroup $cupGroup */
         foreach ($this->getCalculatedGroups() as $cupGroup) {
             if ($cupGroup->male() === $male) {
                 $groups = $groups->merge($this->groupsService->getGroups(static::GROUPS_MAP[$cupGroup->id()]));

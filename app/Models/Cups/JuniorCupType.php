@@ -37,7 +37,7 @@ class JuniorCupType extends MasterCupType
     public const WOMEN_SECOND_GROUPS_NAMES = ['Ж21А', 'Ж21A', 'Ж21 Фин A', 'ЖA', 'ЖА', 'W21A', 'Женщины группа А',];
 
     protected const GROUPS_MAP = [
-        'M_20' => [
+        'M_20_' => [
             'М21Е',
             'М21E',
             'МЕ',
@@ -57,7 +57,7 @@ class JuniorCupType extends MasterCupType
             'М20',
             'M20',
         ],
-        'W_20' => [
+        'W_20_' => [
             'Ж21',
             'Ж21Е',
             'W21',
