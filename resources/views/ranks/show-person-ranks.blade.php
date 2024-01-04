@@ -80,7 +80,6 @@
                         <div class="modal-content">
                             <form method="POST"
                                   action="{{ action(ActivatePersonRankAction::class, [$person, $rank]) }}"
-                                  enctype="multipart/form-data"
                             >
                                 @csrf
                                 <div class="modal-header">
@@ -93,10 +92,9 @@
                                         <label for="start_date">{{ __('app.common.date') }}</label>
                                     </div>
                                 </div>
-                                <input type="submit" class="btn btn-outline-primary btn-sm" value="{{ __('app.rank.submit') }}">
-
-{{--                                <div class="modal-footer">--}}
-{{--                                </div>--}}
+                                <div class="modal-footer">
+                                    <input type="submit" class="btn btn-outline-primary btn-sm" value="{{ __('app.rank.submit') }}">
+                                </div>
                             </form>
                         </div>
                     </div>
