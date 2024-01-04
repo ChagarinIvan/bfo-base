@@ -74,11 +74,11 @@
                     @auth
                         <td>
                             @if(!$rank->active)
-                                <x-button text="app.rank.submit"
-                                          color="success"
-                                          icon="radioactive"
-                                          url="{{ action(ActivatePersonRankAction::class, [$person, $rank]) }}"
-                                />
+{{--                                <x-button text="app.rank.submit"--}}
+{{--                                          color="success"--}}
+{{--                                          icon="radioactive"--}}
+{{--                                          url="{{ action(ActivatePersonRankAction::class, [$person, $rank]) }}"--}}
+{{--                                />--}}
                             @endif
                         </td>
                     @endauth

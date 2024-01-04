@@ -52,9 +52,7 @@ class RankService
     public function activateRank(Rank $rank, Carbon $startDate): void
     {
         $protocolLineId = $this->protocolLineService->getProtocolLineIdForRank($rank);
-        dump($protocolLineId);
         $protocolLine = $this->protocolLineService->getProtocolLineWithEvent($protocolLineId);
-        dd($protocolLine);
         if (!$protocolLine) {
             return;
         }

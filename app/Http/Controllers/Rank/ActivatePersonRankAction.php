@@ -18,14 +18,12 @@ class ActivatePersonRankAction extends AbstractRankAction
             return $this->redirector->action(ShowPersonRanksAction::class, [$person]);
         }
 
-        dd($request);
         $formParams = $request->validate([
             'start_date' => 'required|date',
         ]);
 
-        dump($formParams);
         $this->rankService->activateRank($rank, Carbon::createFromFormat('Y-m-d', $formParams['start_date']));
-        dd();
+
         return $this->redirector->action(ShowPersonRanksAction::class, [$person]);
     }
 }
