@@ -15,10 +15,10 @@ class ActivatePersonRankAction extends AbstractRankAction
     public function __invoke(Person $person, Rank $rank, Request $request): RedirectResponse
     {
         if ($rank->active) {
-            dd($rank);
             return $this->redirector->action(ShowPersonRanksAction::class, [$person]);
         }
 
+        dd($request);
         $formParams = $request->validate([
             'start_date' => 'required|date',
         ]);
