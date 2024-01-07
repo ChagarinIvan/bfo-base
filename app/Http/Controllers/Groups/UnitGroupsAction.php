@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 class UnitGroupsAction extends AbstractGroupAction
 {
     /**
-     * @param int $firstGroupId //которую объединяем, в итоге она удаляется.
+     * @param string $firstGroupId // которую объединяем, в итоге она удаляется.
      *
      * @see resources/views/groups/show.blade.php
      */

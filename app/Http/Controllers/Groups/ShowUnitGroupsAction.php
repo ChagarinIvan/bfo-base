@@ -20,7 +20,7 @@ class ShowUnitGroupsAction extends AbstractGroupAction
 
         return $this->view('groups.unit', [
             'unitedGroup' => $group,
-            'groups' => $this->groupsService->getAllGroupsWithout([$groupId]),
+            'groups' => $this->groupsService->getAllGroupsWithout([(int) $groupId]),
         ]);
     }
 }

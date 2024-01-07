@@ -16,7 +16,7 @@ class FixRankCommand extends Command
         foreach (ProtocolLine::cursor() as $line) {
             $line->activate_rank = $line->event->date;
             $line->save();
-            $this->info($line->id);
+            $this->info((string) $line->id);
         }
     }
 }
