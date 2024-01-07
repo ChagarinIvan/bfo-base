@@ -9,7 +9,7 @@ use Illuminate\Http\RedirectResponse;
 
 class ShowCreateCompetitionFormAction extends AbstractCompetitionAction
 {
-    public function __invoke(string $year): View|RedirectResponse
+    public function __invoke(string $year): View
     {
         return $this->view('competitions.create', ['year' => $year,]);
     }
