@@ -8,9 +8,9 @@ use Illuminate\Http\RedirectResponse;
 
 class DeleteGroupAction extends AbstractGroupAction
 {
-    public function __invoke(int $groupId): RedirectResponse
+    public function __invoke(string $groupId): RedirectResponse
     {
-        $group = $this->groupsService->getGroup($groupId);
+        $group = $this->groupsService->getGroup((int) $groupId);
         $this->groupsService->deleteGroup($group);
         return $this->redirector->back();
     }

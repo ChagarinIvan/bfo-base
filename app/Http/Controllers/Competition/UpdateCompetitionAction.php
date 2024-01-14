@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 class UpdateCompetitionAction extends AbstractCompetitionAction
 {
-    public function __invoke(int $year, int $competitionId, Request $request): RedirectResponse
+    public function __invoke(string $year, string $competitionId, Request $request): RedirectResponse
     {
         $formParams = $request->validate([
             'name' => 'required|max:255',
@@ -18,7 +18,7 @@ class UpdateCompetitionAction extends AbstractCompetitionAction
             'to' => 'required|date',
         ]);
 
-        $competition = $this->competitionService->getCompetition($competitionId);
+        $competition = $this->competitionService->getCompetition((int) $competitionId);
         $competition = $this->competitionService->fillAndStore($competition, $formParams);
 
         return $this->redirector->action(ShowCompetitionAction::class, [$competition->id]);

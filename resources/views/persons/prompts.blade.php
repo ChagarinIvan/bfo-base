@@ -55,7 +55,7 @@
                     @auth
                         <td>
                             <x-edit-button url="{{ action(ShowEditPromptAction::class, [$prompt->person_id, $prompt->id]) }}"/>
-                            <x-delete-button modal-id="deleteModal{{ $prompt->id }}"/>
+                            <x-modal-button modal-id="deleteModal{{ $prompt->id }}"/>
                         </td>
                     @endauth
                 </tr>

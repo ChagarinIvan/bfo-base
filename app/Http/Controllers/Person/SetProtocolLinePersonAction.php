@@ -15,7 +15,7 @@ class SetProtocolLinePersonAction extends AbstractPersonAction
 {
     public function __invoke(
         Person $person,
-        int $protocolLineId,
+        string $protocolLineId,
         ProtocolLineService $protocolLineService,
         PersonPromptService $personPromptService,
         RankService $rankService

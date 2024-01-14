@@ -10,9 +10,9 @@ use Illuminate\Routing\Controller as BaseController;
 
 class ResultsController extends BaseController
 {
-    public function index(int $eventId): JsonResponse
+    public function index(string $eventId): JsonResponse
     {
-        $event = Event::find($eventId);
+        $event = Event::find((int) $eventId);
         return response()->json($event->protocolLines);
     }
 }

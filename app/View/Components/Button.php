@@ -13,9 +13,9 @@ class Button extends Component
 
     public function __construct(
         string $text = '',
-        public readonly string $color = '',
-        public readonly string $icon = '',
-        public readonly string $url = '',
+        public string $color = '',
+        public string $icon = '',
+        public string $url = '',
     ) {
         $this->text = __($text);
     }

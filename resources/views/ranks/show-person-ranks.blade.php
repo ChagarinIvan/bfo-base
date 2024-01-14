@@ -1,5 +1,6 @@
 @php
     use App\Http\Controllers\Event\ShowEventAction;
+    use App\Http\Controllers\Rank\ActivatePersonRankAction;
     use App\Models\Person;
     use App\Models\Rank;
     use Illuminate\Support\Collection;
@@ -53,11 +54,14 @@
                 <th data-sortable="true">{{ __('app.rank.completed_date') }}</th>
                 <th data-sortable="true">{{ __('app.rank.finished_date') }}</th>
                 <th data-sortable="true">{{ __('app.event.title') }}</th>
+                @auth
+                    <th></th>
+                @endauth
             </tr>
             </thead>
             <tbody>
             @foreach ($ranks as $rank)
-                <tr>
+                <tr @if($rank->active) class="table-info" @else class="table-secondary" @endif>
                     <td>{{ $rank->rank }}</td>
                     <td>{{ $rank->event ? $rank->event->date->format('Y-m-d') : $rank->start_date->format('Y-m-d') }}</td>
                     <td>{{ $rank->finish_date->format('Y-m-d') }}</td>
@@ -67,6 +71,17 @@
                             >{{ $rank->event->competition->name }} ({{ $rank->event->name }})</a>
                         @endif
                     </td>
+                    @auth
+                        <td>
+                            @if(!$rank->active)
+                                <x-button text="app.rank.submit"
+                                          color="success"
+                                          icon="radioactive"
+                                          url="{{ action(ActivatePersonRankAction::class, [$person, $rank]) }}"
+                                />
+                            @endif
+                        </td>
+                    @endauth
                 </tr>
             @endforeach
             </tbody>

@@ -79,12 +79,15 @@ final readonly class RanksRepository
     {
         $rankQuery = Rank::where('person_id', '=', $personId)
             ->orderBy('finish_date', 'desc')
-            ->limit(1);
+            ->where('active', true)
+            ->limit(1)
+        ;
 
         if ($date !== null) {
             $rankQuery->where('finish_date', '>=', $date);
             $rankQuery->where('start_date', '<=', $date);
         }
+
         return $rankQuery->get()->first();
     }
 

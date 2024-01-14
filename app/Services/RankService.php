@@ -29,6 +29,7 @@ class RankService
         Rank::SM_RANK => 8,
         Rank::WSM_RANK => 9,
     ];
+
     public function __construct(
         private readonly RanksRepository $ranksRepository,
         private readonly ProtocolLineService $protocolLineService,
@@ -44,7 +45,22 @@ class RankService
         $filter = new RanksFilter();
         $filter->personId = $personId;
         $filter->isOrderDescByFinishDate = true;
+
         return $this->ranksRepository->getRanksList($filter);
+    }
+
+    public function activateRank(Rank $rank, Carbon $startDate): void
+    {
+        $protocolLineId = $this->protocolLineService->getProtocolLineIdForRank($rank);
+        $protocolLine = $this->protocolLineService->getProtocolLineWithEvent($protocolLineId);
+        if (!$protocolLine) {
+            return;
+        }
+
+        $protocolLine->activate_rank = $startDate;
+        $protocolLine->save();
+
+        $this->reFillRanksForPerson($rank->person_id);
     }
 
     public function reFillRanksForPerson(int $personId): void
@@ -83,7 +99,7 @@ class RankService
         $ranks = RanksCollection::empty();
 
         foreach ($personsIds as $personId) {
-            $actualRank = $this->getActualRank($personId, $nowDate);
+            $actualRank = $this->getActiveRank($personId, $nowDate);
             if ($actualRank && $actualRank->rank === $rank) {
                 $ranks->put($personId, $actualRank);
             }
@@ -92,9 +108,10 @@ class RankService
         return $ranks;
     }
 
-    public function getActualRank(int $personId, Carbon $date = null): ?Rank
+    public function getActiveRank(int $personId, Carbon $date = null): ?Rank
     {
         $rank = $this->ranksRepository->getDateRank($personId, $date);
+
         if ($rank === null) {
             $rank = $this->ranksRepository->getDateRank($personId);
         }
@@ -114,7 +131,7 @@ class RankService
     {
         $actualRanks = new Collection();
         foreach ($personIds as $personId) {
-            $rank = $this->getActualRank($personId);
+            $rank = $this->getActiveRank($personId);
             if ($rank) {
                 $actualRanks->put($personId, $rank);
             }
@@ -139,7 +156,7 @@ class RankService
         }
 
         $event = $protocolLine->event;
-        $actualRank = $this->getActualRank($protocolLine->person_id, $protocolLine->event->date);
+        $actualRank = $this->getActiveRank($protocolLine->person_id, $protocolLine->event->date);
 
         if ($actualRank) {
             if ($actualRank->rank === $protocolLine->complete_rank) {
@@ -158,12 +175,16 @@ class RankService
                 $finishDate = $event->date->clone()->addDays(-1);
 
                 $ranks->each(function (Rank $rank) use ($finishDate): void {
+                    if (!$rank->active) {
+                        return;
+                    }
+
                     $rank->finish_date = $finishDate;
                     $this->ranksRepository->storeRank($rank);
                 });
 
-                //Надо взять все разряды которые после этой даты
-                //Отсортировать их по дате евента и заново пересохранить
+                // Надо взять все разряды которые после этой даты
+                // Отсортировать их по дате евента и заново пересохранить
                 $ranksFilter = new RanksFilter();
                 $ranksFilter->personId = $actualRank->person_id;
                 $ranksFilter->startDateMore = $event->date;
@@ -181,9 +202,9 @@ class RankService
                 $this->ranksRepository->storeRank($newRank);
 
                 $protocolLines = $protocolLines->sortBy('distance.event.date');
-                foreach ($protocolLines as $protocolLine) {
-                    /** @var ProtocolLine $protocolLine */
-                    $this->fillRank($protocolLine);
+                foreach ($protocolLines as $line) {
+                    /** @var ProtocolLine $line */
+                    $this->fillRank($line);
                 }
             }
         } else {
@@ -235,6 +256,9 @@ class RankService
         return $rank;
     }
 
+    /**
+     * подходит ли этот юношеский разряд под возраст, или это вообще не юношеский разряд
+     */
     private function checkMaxJuniorAge(int $personId, string $rank): bool
     {
         if (!in_array($rank, Rank::JUNIOR_RANKS, true)) {
@@ -253,8 +277,9 @@ class RankService
         $lastRank->person_id = $protocolLine->person_id;
         $lastRank->event_id = $protocolLine->event->id;
         $lastRank->rank = $protocolLine->complete_rank;
-        $lastRank->start_date = $protocolLine->event->date;
-        $lastRank->finish_date = $protocolLine->event->date->clone()->addYears(2);
+        $lastRank->start_date = $protocolLine->activate_rank ?: $protocolLine->event->date;
+        $lastRank->finish_date = $lastRank->start_date->clone()->addYears(2);
+        $lastRank->active = (bool) $protocolLine->activate_rank;
 
         return $lastRank;
     }
@@ -277,6 +302,7 @@ class RankService
                     ->slice(0, 3)
                     ->values()
                 ;
+
                 $rank = $this->createNewRank($results->get(2));
                 $rank->rank = Rank::JUNIOR_THIRD_RANK;
                 $rank->save();

@@ -10,9 +10,9 @@ use Illuminate\Http\RedirectResponse;
 
 class ShowCompetitionsListAction extends AbstractCompetitionAction
 {
-    public function __invoke(int $yearInput): View|RedirectResponse
+    public function __invoke(string $yearInput): View|RedirectResponse
     {
-        $year = Year::from($yearInput);
+        $year = Year::from((int) $yearInput);
         return $this->view('competitions.index', [
             'competitions' => $this->competitionService->getYearCompetitions($year),
             'selectedYear' => $year,

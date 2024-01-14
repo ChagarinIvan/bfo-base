@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 
 class UpdatePersonAction extends AbstractPersonAction
 {
-    public function __invoke(int $personId, Request $request): View|RedirectResponse
+    public function __invoke(string $personId, Request $request): View|RedirectResponse
     {
         $formParams = $request->validate([
             'lastname' => 'required',
@@ -19,7 +19,7 @@ class UpdatePersonAction extends AbstractPersonAction
             'club_id' => 'required|int',
         ]);
 
-        $person = $this->personsService->updatePerson($personId, $formParams);
+        $person = $this->personsService->updatePerson((int) $personId, $formParams);
 
         return $this->redirector->action(ShowPersonAction::class, [$person->id]);
     }

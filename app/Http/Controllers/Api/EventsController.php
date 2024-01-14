@@ -11,7 +11,7 @@ use Illuminate\Routing\Controller as BaseController;
 
 class EventsController extends BaseController
 {
-    public function index(int $competitionId): JsonResponse
+    public function index(string $competitionId): JsonResponse
     {
         /** @var Collection $events */
         $events = Event::whereCompetitionId($competitionId)->get();

@@ -65,7 +65,7 @@
                         <td>
                             <x-edit-button
                                     url="{{ action(ShowEditFlagFormAction::class, [$flag]) }}"/>
-                            <x-delete-button modal-id="deleteModal{{ $flag->id }}"/>
+                            <x-modal-button modal-id="deleteModal{{ $flag->id }}"/>
                         </td>
                     @endauth
                 </tr>

@@ -15,7 +15,7 @@ use Illuminate\Support\Collection;
 
 class UnitEventsAction extends AbstractEventAction
 {
-    public function __invoke(int $competitionId, Request $request, DistanceService $distanceService): RedirectResponse
+    public function __invoke(string $competitionId, Request $request, DistanceService $distanceService): RedirectResponse
     {
         $formParams = $request->validate([
             'events' => 'required|array',
@@ -31,7 +31,7 @@ class UnitEventsAction extends AbstractEventAction
         $newEvent->name = $name;
         $newEvent->description = "Аб'яднанне этапаў: {$name}";
         $newEvent->date = $firstEvent->date;
-        $newEvent->competition_id = $competitionId;
+        $newEvent->competition_id = (int) $competitionId;
         $newEvent->save();
 
         $newProtocolLines = new Collection();

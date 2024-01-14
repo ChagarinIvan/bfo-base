@@ -9,9 +9,9 @@ use Illuminate\Http\RedirectResponse;
 
 class DeletePromptAction extends AbstractPersonPromptAction
 {
-    public function __invoke(int $personId, int $promptId): RedirectResponse
+    public function __invoke(string $personId, string $promptId): RedirectResponse
     {
-        $this->promptService->deletePersonPrompt($promptId);
+        $this->promptService->deletePersonPrompt((int) $promptId);
 
         return $this->redirector->action(ShowPersonPromptsListAction::class, [$personId]);
     }

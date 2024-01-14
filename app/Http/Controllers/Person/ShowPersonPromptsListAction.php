@@ -8,9 +8,9 @@ use Illuminate\Contracts\View\View;
 
 class ShowPersonPromptsListAction extends AbstractPersonAction
 {
-    public function __invoke(int $personId): View
+    public function __invoke(string $personId): View
     {
-        $person = $this->personsService->getPerson($personId);
+        $person = $this->personsService->getPerson((int) $personId);
 
         return $this->view('persons.prompts', [
             'person' => $person,

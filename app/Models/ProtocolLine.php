@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Services\PersonsIdentService;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Query\Expression;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
 /**
@@ -29,6 +29,7 @@ use Illuminate\Support\Collection;
  * @property null|int $person_id
  * @property string $prepared_line
  * @property bool $vk
+ * @property null|Carbon $activate_rank
  *
  * @property-read Event $event
  * @property-read Distance $distance
@@ -52,13 +53,14 @@ use Illuminate\Support\Collection;
  * @method Builder|ProtocolLine addSelect(string $column)
  * @method static Builder|ProtocolLine join(string $table, string $tableId, string $operator, string $joinId)
  * @method static ProtocolLine[] all()
+ * @method static ProtocolLine[]|iterable cursor()
  */
 class ProtocolLine extends Model
 {
     public $timestamps = false;
     protected $table = 'protocol_lines';
 
-    protected $dates = ['time'];
+    protected $dates = ['time', 'activate_rank'];
 
     protected $fillable = [
         'serial_number',
@@ -76,6 +78,7 @@ class ProtocolLine extends Model
         'distance_id',
         'prepared_line',
         'person_id',
+        'activate_rank',
     ];
 
     public function distance(): BelongsTo

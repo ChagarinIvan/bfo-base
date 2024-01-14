@@ -12,9 +12,9 @@ use Illuminate\Support\Collection;
 
 class ShowPersonAction extends AbstractPersonAction
 {
-    public function __invoke(int $personId): View|RedirectResponse
+    public function __invoke(string $personId): View|RedirectResponse
     {
-        $person = $this->personsService->getPerson($personId);
+        $person = $this->personsService->getPerson((int) $personId);
         $payments = $person->payments->sortByDesc(static fn (PersonPayment $payment) => $payment->date);
         $groupedProtocolLines = $person->protocolLines->groupBy(static fn (ProtocolLine $line) => $line->distance->event->date->format('Y'));
         $groupedProtocolLines->transform(static function (Collection $protocolLines) {
@@ -25,7 +25,7 @@ class ShowPersonAction extends AbstractPersonAction
         return $this->view('persons.show', [
             'person' => $person,
             'groupedProtocolLines' => $groupedProtocolLines,
-            'rank' => $this->rankService->getActualRank($person->id),
+            'rank' => $this->rankService->getActiveRank($person->id),
             'personPayment' => $payments->first(),
         ]);
     }

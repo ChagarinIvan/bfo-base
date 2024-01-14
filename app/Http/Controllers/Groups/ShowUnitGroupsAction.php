@@ -10,17 +10,17 @@ use RuntimeException;
 
 class ShowUnitGroupsAction extends AbstractGroupAction
 {
-    public function __invoke(int $groupId): View|RedirectResponse
+    public function __invoke(string $groupId): View|RedirectResponse
     {
         try {
-            $group = $this->groupsService->getGroup($groupId);
+            $group = $this->groupsService->getGroup((int) $groupId);
         } catch (RuntimeException) {
             return $this->redirectTo404Error();
         }
 
         return $this->view('groups.unit', [
             'unitedGroup' => $group,
-            'groups' => $this->groupsService->getAllGroupsWithout([$groupId]),
+            'groups' => $this->groupsService->getAllGroupsWithout([(int) $groupId]),
         ]);
     }
 }

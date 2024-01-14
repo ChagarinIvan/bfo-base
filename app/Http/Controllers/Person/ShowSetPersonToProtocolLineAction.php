@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 
 class ShowSetPersonToProtocolLineAction extends AbstractPersonAction
 {
-    public function __invoke(int $protocolLineId, Request $request): View|RedirectResponse
+    public function __invoke(string $protocolLineId, Request $request): View|RedirectResponse
     {
         /** @var ProtocolLine $protocolLine */
         $protocolLine = ProtocolLine::find($protocolLineId);

@@ -11,7 +11,7 @@ use Illuminate\Support\Str;
 
 class StoreEventAction extends AbstractEventAction
 {
-    public function __invoke(int $competitionId, Request $request): RedirectResponse
+    public function __invoke(string $competitionId, Request $request): RedirectResponse
     {
         $formParams = $request->validate([
             'name' => 'required',
@@ -38,7 +38,7 @@ class StoreEventAction extends AbstractEventAction
             $protocol = $protocol->getContent();
         }
 
-        $event->competition_id = $competitionId;
+        $event->competition_id = (int) $competitionId;
         $year = $event->date->format('Y');
 
         $protocolPath = "{$year}/{$event->date->format('Y-m-d')}_" . Str::snake($event->name) . '.html';

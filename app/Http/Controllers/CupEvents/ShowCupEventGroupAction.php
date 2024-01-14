@@ -14,15 +14,15 @@ use RuntimeException;
 class ShowCupEventGroupAction extends AbstractCupAction
 {
     public function __invoke(
-        int $cupId,
-        int $cupEventId,
+        string $cupId,
+        string $cupEventId,
         string $cupGroupId,
         DistanceService $distanceService
     ): View|RedirectResponse {
         try {
             $group = CupGroupFactory::fromId($cupGroupId);
-            $cup = $this->cupsService->getCup($cupId);
-            $cupEvent = $this->cupEventsService->getCupEvent($cupEventId);
+            $cup = $this->cupsService->getCup((int) $cupId);
+            $cupEvent = $this->cupEventsService->getCupEvent((int) $cupEventId);
         } catch (RuntimeException) {
             return $this->redirectTo404Error();
         }

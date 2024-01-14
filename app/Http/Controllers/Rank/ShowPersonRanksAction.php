@@ -21,7 +21,7 @@ class ShowPersonRanksAction extends AbstractRankAction
 
         return $this->view('ranks.show-person-ranks', [
             'ranks' => $ranks,
-            'actualRank' => $this->rankService->getActualRank($person->id),
+            'actualRank' => $this->rankService->getActiveRank($person->id),
             'person' => $person,
             'protocolLinesIds' => $protocolLinesIds,
         ]);
