@@ -19,7 +19,6 @@
         <th>№</th>
         <th>{{ __('app.common.fio') }}</th>
         <th>{{ __('app.common.birthday_year') }}</th>
-        <th>{{ __('app.club.name') }}</th>
         @foreach($cupEvents as $cupEvent)
             <th>{{ $cupEvent->event->date->format('m-d') }}</th>
         @endforeach
