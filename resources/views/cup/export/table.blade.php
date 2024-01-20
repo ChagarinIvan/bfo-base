@@ -18,7 +18,7 @@ $place = 1;
 <thead>
 <tr>
 <th>№</th>
-<th>ФІ</th>
+<th>{{ __('app.common.fio') }}</th>
 <th>ГР</th>
 @foreach($cupEvents as $cupEvent)
 <th>{{ $cupEvent->event->date->format('d.m') }}</th>
