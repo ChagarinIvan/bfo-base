@@ -18,13 +18,16 @@ class ShowCupTableExportAction extends AbstractCupAction
         $cupGroup = Group\CupGroupFactory::fromId($cupGroupId);
         $cupPoints = $this->cupEventsService->calculateCup($cup, $cupEvents, $cupGroup);
 
-        $view =  $this->view('cup.export.table', [
+        $view = $this->view('cup.export.table', [
             'cup' => $cup,
             'cupEvents' => $cupEvents,
             'cupPoints' => $cupPoints,
             'persons' => Person::whereIn('id', array_keys($cupPoints))->get()->keyBy('id'),
         ]);
 
-        return response()->file($view->render());
+        $filename = tempnam(__DIR__, 'temp');
+        file_put_contents($filename, $view->render());
+
+        return response()->file($filename);
     }
 }
