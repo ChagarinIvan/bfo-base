@@ -32,7 +32,7 @@
             <x-button text="app.cup.table.export"
                       color="info"
                       icon="download"
-                      url="{{ action(ShowCupTableExportAction::class, [$cup, $activeGroup]) }}"
+                      url="{{ action(ShowCupTableExportAction::class, [$cup, $activeGroup->id()]) }}"
             />
             @endauth
         </div>
