@@ -30,6 +30,9 @@ class ShowCupTableExportAction extends AbstractCupAction
         $tempFilePath = tempnam(sys_get_temp_dir(), 'tempfile');
         File::put($tempFilePath, $view->render());
 
-        return response()->download($tempFilePath)->deleteFileAfterSend();
+        return response()
+            ->download(file: $tempFilePath, name: "{$cup->name}_{$cupGroup->name()}.html")
+            ->deleteFileAfterSend()
+        ;
     }
 }
