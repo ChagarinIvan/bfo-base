@@ -7,6 +7,8 @@ namespace App\Http\Controllers\Cups;
 use App\Models\Cup;
 use App\Models\Group;
 use App\Models\Person;
+use Illuminate\Support\Facades\File;
+use SplFileInfo;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use function array_keys;
 
@@ -25,9 +27,9 @@ class ShowCupTableExportAction extends AbstractCupAction
             'persons' => Person::whereIn('id', array_keys($cupPoints))->get()->keyBy('id'),
         ]);
 
-        $filename = tmpfile();
-        fwrite($filename, $view->render());
+        $tempFilePath = tempnam(sys_get_temp_dir(), 'tempfile');
+        File::put($tempFilePath, $view->render());
 
-        return response()->download($filename);
+        return response()->download($tempFilePath)->deleteFileAfterSend();
     }
 }
