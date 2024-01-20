@@ -14,13 +14,14 @@
 @endphp
 
 <table>
+    <colgroup><col span="{{ 6 + $cupEvents->count() }}"></colgroup>
     <thead>
     <tr>
         <th>№</th>
-        <th>{{ __('app.common.fio') }}</th>
-        <th>{{ __('app.common.birthday_year') }}</th>
+        <th>ФІ</th>
+        <th>ГР</th>
         @foreach($cupEvents as $cupEvent)
-            <th>{{ $cupEvent->event->date->format('m-d') }}</th>
+            <th>{{ $cupEvent->event->date->format('d.m') }}</th>
         @endforeach
         <th>{{ __('app.common.points') }}</th>
         <th>{{ __('app.common.average') }}</th>
