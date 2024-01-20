@@ -25,9 +25,9 @@ class ShowCupTableExportAction extends AbstractCupAction
             'persons' => Person::whereIn('id', array_keys($cupPoints))->get()->keyBy('id'),
         ]);
 
-        $filename = tempnam(__DIR__, 'temp');
-        file_put_contents($filename, $view->render());
+        $filename = tmpfile();
+        fwrite($filename, $view->render());
 
-        return response()->file($filename);
+        return response()->download($filename);
     }
 }
