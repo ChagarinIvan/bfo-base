@@ -1,5 +1,6 @@
 @php
     use App\Http\Controllers\CupEvents\ShowCupEventGroupAction;
+    use App\Http\Controllers\Cups\ShowCupTableExportAction;
     use App\Http\Controllers\Event\ShowEventAction;
     use App\Http\Controllers\Person\ShowPersonAction;
     use App\Models\Cup;
@@ -27,6 +28,13 @@
     <div class="row mb-3">
         <div class="col-12">
             <x-back-button/>
+            @auth
+            <x-button text="app.cup.table.export"
+                      color="info"
+                      icon="download"
+                      url="{{ action(ShowCupTableExportAction::class, [$cup, $activeGroup]) }}"
+            />
+            @endauth
         </div>
     </div>
     <div class="row">
