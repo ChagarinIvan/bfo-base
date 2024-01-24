@@ -166,6 +166,7 @@ class WebRoutesServiceProvider extends ServiceProvider
 
                     //old auth
                     $this->middleware(['auth'])->group(function (): void {
+                        $this->route->get('{cup}/{group}/table-export', Cups\ShowCupTableExportAction::class);
                         $this->route->get('{year}/create', Cups\ShowCreateCupFormAction::class);
                         $this->route->post('store', Cups\StoreCupAction::class);
                         $this->route->get('{cup}/edit', Cups\ShowEditCupFormAction::class);
