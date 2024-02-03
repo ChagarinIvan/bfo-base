@@ -3,6 +3,7 @@
     use App\Http\Controllers\CupEvents\ShowCreateCupEventFormAction;
     use App\Http\Controllers\CupEvents\ShowCupEventGroupAction;
     use App\Http\Controllers\CupEvents\ShowEditCupEventFormAction;
+    use App\Http\Controllers\Cups\ExportCupTableAction;
     use App\Http\Controllers\Cups\ClearCacheAction;
     use App\Http\Controllers\Cups\ShowCupTableAction;
     use App\Http\Controllers\Cups\ShowEditCupFormAction;
@@ -35,6 +36,11 @@
                           color="warning"
                           icon="bi-arrow-clockwise"
                           url="{{ action(ClearCacheAction::class, [$cup]) }}"
+                />
+                <x-button text="app.cup.table.export"
+                          color="info"
+                          icon="download"
+                          url="{{ action(ExportCupTableAction::class, [$cup]) }}"
                 />
                 <x-modal-button modal-id="deleteModalCup{{ $cup->id }}"/>
             @endauth

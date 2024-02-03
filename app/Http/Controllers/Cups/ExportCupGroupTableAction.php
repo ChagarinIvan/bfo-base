@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Cups;
 
 use App\Models\Cup;
+use App\Models\CupEventPoint;
 use App\Models\Group;
 use App\Models\Person;
 use Illuminate\Support\Facades\File;
-use SplFileInfo;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use function array_keys;
 
-class ShowCupTableExportAction extends AbstractCupAction
+class ExportCupGroupTableAction extends AbstractCupAction
 {
     public function __invoke(Cup $cup, string $cupGroupId): BinaryFileResponse
     {
@@ -20,6 +20,8 @@ class ShowCupTableExportAction extends AbstractCupAction
         $cupGroup = Group\CupGroupFactory::fromId($cupGroupId);
         $cupPoints = $this->cupEventsService->calculateCup($cup, $cupEvents, $cupGroup);
 
+        // толькі тыя у каго бал большы за 0
+        $cupPoints = array_filter($cupPoints, fn (CupEventPoint $p) => $p->points > 0);
         $view = $this->view('cup.export.table', [
             'cup' => $cup,
             'cupEvents' => $cupEvents,

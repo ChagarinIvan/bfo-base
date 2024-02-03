@@ -19,7 +19,7 @@ $place = 1;
 <tr>
 <th>№</th>
 <th>{{ __('app.common.fio') }}</th>
-<th>ГР</th>
+<th>ГН</th>
 @foreach($cupEvents as $cupEvent)
 <th>{{ $cupEvent->event->date->format('d.m') }}</th>
 @endforeach
@@ -82,3 +82,5 @@ $count = $cupEventPoint->points === 0 ? $count : $count + 1;
 @endforeach
 </tbody>
 </table>
+<br/>
+<br/>

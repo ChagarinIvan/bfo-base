@@ -1,6 +1,6 @@
 @php
     use App\Http\Controllers\CupEvents\ShowCupEventGroupAction;
-    use App\Http\Controllers\Cups\ShowCupTableExportAction;
+    use App\Http\Controllers\Cups\ExportCupGroupTableAction;
     use App\Http\Controllers\Event\ShowEventAction;
     use App\Http\Controllers\Person\ShowPersonAction;
     use App\Models\Cup;
@@ -29,11 +29,11 @@
         <div class="col-12">
             <x-back-button/>
             @auth
-            <x-button text="app.cup.table.export"
-                      color="info"
-                      icon="download"
-                      url="{{ action(ShowCupTableExportAction::class, [$cup, $activeGroup->id()]) }}"
-            />
+                <x-button text="app.cup.table.export"
+                          color="info"
+                          icon="download"
+                          url="{{ action(ExportCupGroupTableAction::class, [$cup, $activeGroup->id()]) }}"
+                />
             @endauth
         </div>
     </div>
@@ -106,7 +106,9 @@
                                 </b>
                             </td>
                             <td>{{ $person->birthday?->year }}</td>
-                            <td><x-club-link :club="$person->club"></x-club-link></td>
+                            <td>
+                                <x-club-link :club="$person->club"></x-club-link>
+                            </td>
                             @foreach($cupEvents as $cupEvent)
                                 @php
                                     $find = false;
