@@ -98,7 +98,7 @@ class ProtocolLine extends Model
 
     public function fillProtocolLine(int $distanceId): void
     {
-        $this->prepared_line = PersonsIdentService::makeIdentLine($this->lastname, $this->firstname, $this->year);
+        $this->prepared_line = PersonsIdentService::makeIdentLine($this->lastname, $this->firstname, $this->year ? (int)$this->year : null);
 
         //чистим разряды
         $this->rank = Rank::getRank($this->rank) ?? '';
