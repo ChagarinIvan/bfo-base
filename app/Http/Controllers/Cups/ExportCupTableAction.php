@@ -21,6 +21,7 @@ class ExportCupTableAction extends AbstractCupAction
             $cupEvents = $this->cupEventsService->getCupEvents($cup)->sortBy('event.date');
             $cupPoints = $this->cupEventsService->calculateCup($cup, $cupEvents, $group);
 
+            $content .= "<b>{$group->name()}</b><br/><br/>";
             $content .= $this
                 ->view('cup.export.table', [
                     'cup' => $cup,
@@ -30,6 +31,7 @@ class ExportCupTableAction extends AbstractCupAction
                 ])
                 ->render()
             ;
+            $content .= "<br/><br/>";
 
         }
         $tempFilePath = tempnam(sys_get_temp_dir(), 'tempfile');

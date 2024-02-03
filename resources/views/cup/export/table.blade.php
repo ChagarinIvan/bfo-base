@@ -82,5 +82,3 @@ $count = $cupEventPoint->points === 0 ? $count : $count + 1;
 @endforeach
 </tbody>
 </table>
-<br/>
-<br/>
