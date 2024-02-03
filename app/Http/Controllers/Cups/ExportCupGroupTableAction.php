@@ -21,7 +21,11 @@ class ExportCupGroupTableAction extends AbstractCupAction
         $cupPoints = $this->cupEventsService->calculateCup($cup, $cupEvents, $cupGroup);
 
         // толькі тыя у каго бал большы за 0
-        $cupPoints = array_filter($cupPoints, fn (CupEventPoint $p) => $p->points > 0);
+        $cupPoints = array_filter(
+            $cupPoints,
+            static fn (array $points) => count(array_filter($points, static fn (CupEventPoint $p) => $p->points > 0)) > 0,
+        );
+
         $view = $this->view('cup.export.table', [
             'cup' => $cup,
             'cupEvents' => $cupEvents,

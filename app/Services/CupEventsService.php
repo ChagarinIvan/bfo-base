@@ -41,7 +41,7 @@ final readonly class CupEventsService
         $cupEvent->save();
     }
 
-    /** @return CupEventPoint[] */
+    /** @return array<string, CupEventPoint[]> */
     public function calculateCup(Cup $cup, Collection $cupEvents, CupGroup $group): array
     {
         return $this->cache->tags(['cups', $cup->id])->remember(
