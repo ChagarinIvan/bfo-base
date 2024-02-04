@@ -29,14 +29,8 @@ class ElkPathXlsxParser extends AbstractParser
 {
     public function parse(string $file, bool $needConvert = true): Collection
     {
-        $fileName = tempnam(sys_get_temp_dir(), 'TMP_');
-        file_put_contents($fileName, $file);
-        $xlsx = new Xlsx();
-        $spreadsheet = $xlsx->load($fileName);
-        $sheet = $spreadsheet->getActiveSheet();
-
         $linesList = new Collection();
-        $lines = $sheet->toArray();
+        $lines = $this->getContent($file);
         $linesCount = count($lines);
         $groupHeader = $lines[0];
 
@@ -69,7 +63,17 @@ class ElkPathXlsxParser extends AbstractParser
 
     public function check(string $file, string $extension): bool
     {
-        return str_contains($extension, 'openxmlformats');
+        return str_contains($extension, 'openxmlformats') && str_contains('startDate', $this->getContent($file)[0][0]);
+    }
+
+    private function getContent(string $file): array
+    {
+        $fileName = tempnam(sys_get_temp_dir(), 'TMP_');
+        file_put_contents($fileName, $file);
+        $xlsx = new Xlsx();
+        $spreadsheet = $xlsx->load($fileName);
+
+        return $spreadsheet->getActiveSheet()->toArray();
     }
 
     private function getColumn(string $field): string

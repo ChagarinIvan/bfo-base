@@ -30,11 +30,11 @@ class ParserService
             $extension
         );
 
-        dump($parser);
-        dump($needConvert);
-        dump($extension);
+//        dump($parser);
+//        dump($needConvert);
+//        dump($extension);
         $res = $parser->parse($protocol, $needConvert);
-        dd($res);
+//        dd($res);
         return $res;
     }
 
