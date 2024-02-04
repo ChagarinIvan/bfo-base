@@ -136,7 +136,7 @@ class ElkPathXlsxParser extends AbstractParser
             case 'club':
                 return $columnData;
             case 'group':
-                return str_replace(['Жанчыны', 'Мужчыны'], ['Ж', 'М'], $columnData);
+                return str_replace(['Жанчыны', 'Mужчыны', 'Дзяўчыны', 'Хлопцы'], ['Ж', 'М', 'Ж', 'М'], $columnData);
         }
         return null;
     }
