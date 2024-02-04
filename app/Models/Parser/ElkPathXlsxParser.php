@@ -49,6 +49,11 @@ class ElkPathXlsxParser extends AbstractParser
                     } elseif ($columnName === 'place' && $columnData === 'п/к') {
                         $protocolLine[$columnName] = null;
                         $protocolLine['vk'] = true;
+                        $protocolLine['serial_number'] = -1;
+                    } elseif ($columnName === 'place') {
+                        $value = $this->getValue($columnName, $columnData);
+                        $protocolLine[$columnName] = $value;
+                        $protocolLine['serial_number'] = $value;
                     } else {
                         $protocolLine[$columnName] = $this->getValue($columnName, $columnData);
                     }
