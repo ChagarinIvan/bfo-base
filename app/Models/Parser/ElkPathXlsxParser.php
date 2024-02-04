@@ -134,8 +134,9 @@ class ElkPathXlsxParser extends AbstractParser
             case 'lastname':
                 return mb_convert_case($columnData, MB_CASE_TITLE);
             case 'club':
-            case 'group':
                 return $columnData;
+            case 'group':
+                return str_replace(['Жанчыны', 'Мужчыны'], ['Ж', 'М'], $columnData);
         }
         return null;
     }
