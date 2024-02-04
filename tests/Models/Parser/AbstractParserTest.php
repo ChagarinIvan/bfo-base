@@ -17,17 +17,8 @@ abstract class AbstractParserTest extends TestCase
     abstract public static function dataProvider(): array;
     abstract protected function getParser(): string;
 
-    /**
-     * @dataProvider dataProvider
-     *
-     * @test
-     */
-    public function parse(string $filePath, int $linesCount, array $expectedResults, bool $needConvert = false, string $extension = 'html'): void
+    protected function getAllGroups(): array
     {
-        $storageManager = new FilesystemManager($this->app);
-        $protocolContent = $storageManager->disk('tests')->get($filePath);
-
-        $parserClass = $this->getParser();
         $group1 = new Group();
         $group1->name = 'М12';
         $group2 = new Group();
@@ -44,8 +35,23 @@ abstract class AbstractParserTest extends TestCase
         $group7->name = 'М18';
         $group8 = new Group();
         $group8->name = 'Ж18';
-        $groups = [$group1, $group2, $group3, $group4, $group5, $group6, $group7, $group8];
-        $parser = ParserFactory::createProtocolParser($protocolContent, Collection::make($groups)->pluck('name'), $extension);
+
+        return [$group1, $group2, $group3, $group4, $group5, $group6, $group7, $group8];
+    }
+
+    /**
+     * @dataProvider dataProvider
+     *
+     * @test
+     */
+    public function parse(string $filePath, int $linesCount, array $expectedResults, bool $needConvert = false, string $extension = 'html'): void
+    {
+        $storageManager = new FilesystemManager($this->app);
+        $protocolContent = $storageManager->disk('tests')->get($filePath);
+
+        $parserClass = $this->getParser();
+
+        $parser = ParserFactory::createProtocolParser($protocolContent, Collection::make($this->getAllGroups())->pluck('name'), $extension);
         self::assertInstanceOf($parserClass, $parser);
 
         $lines = $parser->parse($protocolContent, $needConvert);

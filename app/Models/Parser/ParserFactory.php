@@ -14,6 +14,7 @@ class ParserFactory
         CsvListParser::class,
     ];
     private const PROTOCOL_PARSERS = [
+        ElkPathXlsxParser::class,
         XlsParser::class,
         XlsxParser::class,
         SFRParser::class,
