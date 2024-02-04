@@ -15,7 +15,7 @@ final readonly class OrientByPersonDto
         public ?string $club, //клуб                       "КСО «Березино»"
         public ?string $rank, //разряд                     "I"
         public bool $paid,  //оплачен ли взнос             "true"
-        public string $paymentDate,  //когда оплачен взнос "31.12.2023"
+        public ?string $paymentDate,  //когда оплачен взнос "31.12.2023"
     ) {
     }
 
@@ -45,8 +45,8 @@ final readonly class OrientByPersonDto
         return null;
     }
 
-    public function paymentDate(): Carbon
+    public function paymentDate(): ?Carbon
     {
-        return Carbon::createFromFormat('d.m.Y', $this->paymentDate);
+        return $this->paymentDate ? Carbon::createFromFormat('d.m.Y', $this->paymentDate) : null;
     }
 }

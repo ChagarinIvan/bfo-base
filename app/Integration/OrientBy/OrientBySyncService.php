@@ -86,7 +86,7 @@ class OrientBySyncService
 //                    $person->birthday = $date;
                 }
 
-                if ($personDto->paid) {
+                if ($personDto->paid && $personDto->paymentDate()) {
                     $this->logger->info(
                         "update payment: ",
                         ['person_id' => $personId]
@@ -119,7 +119,7 @@ class OrientBySyncService
                     $this->setRank($person->id, $personDto->rank);
                 }
 
-                if ($personDto->paid) {
+                if ($personDto->paid && $personDto->paymentDate()) {
                     $this->paymentService->addPayment($person->id, $personDto->paymentDate(), Year::actualYear()->value);
                 }
             }
