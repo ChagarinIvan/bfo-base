@@ -7,6 +7,7 @@ namespace App\Integration\OrientBy;
 use App\Models\Person;
 use App\Models\PersonPayment;
 use App\Models\Rank;
+use App\Models\Year;
 use App\Services\ClubsService;
 use App\Services\PaymentService;
 use App\Services\PersonsIdentService;
@@ -40,7 +41,7 @@ class OrientBySyncService
         $this->logger->info('Start synchronisation.');
         $persons = $this->apiClient->getPersons();
         $this->logger->info(sprintf("Need process %d persons.", count($persons)));
-        $paymentDate = Carbon::createFromFormat('Y-m-d', '2023-01-10');
+//        $paymentDate = Carbon::createFromFormat('Y-m-d', '2023-01-10');
 
         $personsPrompts = [];
         foreach ($persons as $personDto) {
@@ -71,7 +72,8 @@ class OrientBySyncService
                         "update firstname: {$logPerson->firstname} => {$firstname}",
                         ['person_id' => $personId]
                     );
-                    $person->firstname = $firstname;
+                    continue;
+//                    $person->firstname = $firstname;
                 }
 
                 $date = $personDto->getYear();
@@ -80,7 +82,8 @@ class OrientBySyncService
                         "update birthday: " . ($logPerson->birthday ? $logPerson->birthday->format('Y') : '') . " => {$date->format('Y')}",
                         ['person_id' => $personId]
                     );
-                    $person->birthday = $date;
+                    continue;
+//                    $person->birthday = $date;
                 }
 
                 if ($personDto->paid) {
@@ -88,7 +91,7 @@ class OrientBySyncService
                         "update payment: ",
                         ['person_id' => $personId]
                     );
-                    $this->paymentService->addPayment($person->id, $paymentDate);
+                    $this->paymentService->addPayment($person->id, $personDto->paymentDate(), Year::actualYear()->value);
                 }
 
                 if ($this->setClub($person, $personDto)) {
@@ -100,6 +103,10 @@ class OrientBySyncService
 
                 $this->personsService->storePerson($person);
             } else {
+                $this->logger->info(
+                    "new person: {$personDto->getFirstName()} {$personDto->getLastName()}",
+                );
+
                 $person = new Person();
                 $person->from_base = true;
                 $person->lastname = $personDto->getLastName();
@@ -113,7 +120,7 @@ class OrientBySyncService
                 }
 
                 if ($personDto->paid) {
-                    $this->paymentService->addPayment($person->id, $paymentDate);
+                    $this->paymentService->addPayment($person->id, $personDto->paymentDate(), Year::actualYear()->value);
                 }
             }
         }

@@ -25,11 +25,12 @@ class OrientByApiClient
     private function extractPersonDto(array $data): OrientByPersonDto
     {
         return new OrientByPersonDto(
-            $data['name'],
-            isset($data['yob']) ? (int)$data['yob'] : null,
-            $data['club'] ?? null,
-            $data['rank'] ?? null,
-            (bool)$data['paid'],
+            name: $data['name'],
+            yob: isset($data['yob']) ? (int)$data['yob'] : null,
+            club: $data['club'] ?? null,
+            rank: $data['rank'] ?? null,
+            paid: (bool)$data['paid'],
+            paymentDate: $data['bfopaydate'] ?? null,
         );
     }
 }
