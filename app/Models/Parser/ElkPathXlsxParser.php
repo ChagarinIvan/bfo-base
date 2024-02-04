@@ -33,6 +33,7 @@ class ElkPathXlsxParser extends AbstractParser
         $lines = $this->getContent($file);
         $linesCount = count($lines);
         $groupHeader = $lines[0];
+        $activeDistance = ['length' => 0];
 
         for ($i = 1; $i < $linesCount; $i++) {
             $protocolLine = [];
@@ -45,7 +46,12 @@ class ElkPathXlsxParser extends AbstractParser
 
                     $columnData = $lines[$i][$headerIndex] ?? '';
                     if ($columnName === 'distance') {
-                        $protocolLine[$columnName] = ['length' => $this->getValue($columnName, $columnData)];
+                        if ($protocolLine['place'] !== 0) {
+                            $protocolLine[$columnName] = ['length' => $this->getValue($columnName, $columnData)];
+                            $activeDistance = $protocolLine[$columnName];
+                        } else {
+                            $protocolLine[$columnName] = $activeDistance;
+                        }
                     } elseif ($columnName === 'place' && $columnData === 'п/к') {
                         $protocolLine[$columnName] = null;
                         $protocolLine['vk'] = true;
