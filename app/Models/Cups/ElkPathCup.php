@@ -6,11 +6,25 @@ namespace App\Models\Cups;
 
 use App\Models\CupEvent;
 use App\Models\Group\CupGroup;
+use App\Models\Group\GroupAge;
 use App\Models\Group\GroupMale;
 use Illuminate\Support\Collection;
 
 class ElkPathCup extends EliteCupType
 {
+    protected const GROUPS_MAP = [
+        'M_0_Elite–M' => ['Elite–Mужчыны', 'EliteTrail-М'],
+        'W_0_Elite–W' => ['Elite–Жанчыны', 'EliteTrail-Ж'],
+        'M_0_Short–M' => ['ShortTrail-М,15-34', 'Short–Mужчыны'],
+        'W_0_Short–W' => ['ShortTrail-Ж,15-34', 'Short–Жанчыны'],
+        'M_35_Short–M-35' => ['ShortTrail-М,35+'],
+        'W_35_Short–W-35' => ['ShortTrail-Ж,35+'],
+        'M_0_Kids–M' => ['Kids–Хлопцы', 'KidsTrail-М'],
+        'W_0_Kids–W' => ['Kids–Дзяўчыны', 'KidsTrail-Ж'],
+        'M_0_Youth–M' => ['Youth–Хлопцы', 'YouthTrail-М'],
+        'W_0_Youth–W' => ['Youth–Дзяўчыны', 'YouthTrail-Ж'],
+    ];
+
     protected static function withPayments(): bool
     {
         return false;
@@ -25,18 +39,23 @@ class ElkPathCup extends EliteCupType
         return 'app.cup.type.elk_path';
     }
 
+    /**
+     * @return Collection&CupGroup[]
+     */
     public function getGroups(): Collection
     {
         $groups = Collection::make();
 
-        $groups->push(new CupGroup(GroupMale::Man, name: 'Elite–Mужчыны'));
-        $groups->push(new CupGroup(GroupMale::Woman, name: 'Elite–Жанчыны'));
-        $groups->push(new CupGroup(GroupMale::Man, name: 'Short–Mужчыны'));
-        $groups->push(new CupGroup(GroupMale::Woman, name: 'Short–Жанчыны'));
-        $groups->push(new CupGroup(GroupMale::Man, name: 'Kids–Хлопцы'));
-        $groups->push(new CupGroup(GroupMale::Woman, name: 'Kids–Дзяўчыны'));
-        $groups->push(new CupGroup(GroupMale::Man, name: 'Youth–Хлопцы'));
-        $groups->push(new CupGroup(GroupMale::Woman, name: 'Youth–Дзяўчыны'));
+        $groups->push(new CupGroup(GroupMale::Man, name: 'Elite–M'));
+        $groups->push(new CupGroup(GroupMale::Woman, name: 'Elite–W'));
+        $groups->push(new CupGroup(GroupMale::Man, name: 'Short–M'));
+        $groups->push(new CupGroup(GroupMale::Woman, name: 'Short–W'));
+        $groups->push(new CupGroup(GroupMale::Man, age: GroupAge::a35, name: 'Short–M-35'));
+        $groups->push(new CupGroup(GroupMale::Man, age: GroupAge::a35, name: 'Short–W-35'));
+        $groups->push(new CupGroup(GroupMale::Man, name: 'Kids–W'));
+        $groups->push(new CupGroup(GroupMale::Woman, name: 'Kids–M'));
+        $groups->push(new CupGroup(GroupMale::Man, name: 'Youth–M'));
+        $groups->push(new CupGroup(GroupMale::Woman, name: 'Youth–W'));
 
         return $groups;
     }
@@ -55,10 +74,9 @@ class ElkPathCup extends EliteCupType
 
     protected function getGroupsMap(CupGroup $group): array
     {
-        $map = [];
         foreach ($this->getGroups() as $cupGroup) {
             if ($cupGroup->equal($group)) {
-                return [$cupGroup->name()];
+                return self::GROUPS_MAP[$cupGroup->id()];
             }
         }
 
