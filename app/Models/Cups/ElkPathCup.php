@@ -17,7 +17,7 @@ class ElkPathCup extends EliteCupType
         'W_0_Elite–W' => ['Elite–Жанчыны', 'EliteTrail-Ж'],
         'M_0_Short–M' => ['ShortTrail-М,15-34', 'Short–Mужчыны'],
         'W_0_Short–W' => ['ShortTrail-Ж,15-34', 'Short–Жанчыны'],
-        'M_35_Short–M-35' => ['ShortTrail-М,35+'],
+        'M_35_Short–W-35' => ['ShortTrail-М,35+'],
         'W_35_Short–W-35' => ['ShortTrail-Ж,35+'],
         'M_0_Kids–M' => ['Kids–Хлопцы', 'KidsTrail-М'],
         'W_0_Kids–W' => ['Kids–Дзяўчыны', 'KidsTrail-Ж'],
@@ -51,7 +51,7 @@ class ElkPathCup extends EliteCupType
         $groups->push(new CupGroup(GroupMale::Man, name: 'Short–M'));
         $groups->push(new CupGroup(GroupMale::Woman, name: 'Short–W'));
         $groups->push(new CupGroup(GroupMale::Man, age: GroupAge::a35, name: 'Short–M-35'));
-        $groups->push(new CupGroup(GroupMale::Man, age: GroupAge::a35, name: 'Short–W-35'));
+        $groups->push(new CupGroup(GroupMale::Woman, age: GroupAge::a35, name: 'Short–W-35'));
         $groups->push(new CupGroup(GroupMale::Man, name: 'Kids–W'));
         $groups->push(new CupGroup(GroupMale::Woman, name: 'Kids–M'));
         $groups->push(new CupGroup(GroupMale::Man, name: 'Youth–M'));
