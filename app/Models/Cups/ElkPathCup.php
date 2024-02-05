@@ -52,8 +52,8 @@ class ElkPathCup extends EliteCupType
         $groups->push(new CupGroup(GroupMale::Woman, name: 'Short–W'));
         $groups->push(new CupGroup(GroupMale::Man, age: GroupAge::a35, name: 'Short–M-35'));
         $groups->push(new CupGroup(GroupMale::Woman, age: GroupAge::a35, name: 'Short–W-35'));
-        $groups->push(new CupGroup(GroupMale::Man, name: 'Kids–W'));
-        $groups->push(new CupGroup(GroupMale::Woman, name: 'Kids–M'));
+        $groups->push(new CupGroup(GroupMale::Man, name: 'Kids–M'));
+        $groups->push(new CupGroup(GroupMale::Woman, name: 'Kids–W'));
         $groups->push(new CupGroup(GroupMale::Man, name: 'Youth–M'));
         $groups->push(new CupGroup(GroupMale::Woman, name: 'Youth–W'));
 
