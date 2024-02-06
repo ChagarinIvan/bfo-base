@@ -10,7 +10,7 @@ use function preg_split;
 final readonly class OrientByPersonDto
 {
     public function __construct(
-        private string $name, //Фамилия Имя                "Ванькевич Дмитрий"
+        public string $name, //Фамилия Имя                "Ванькевич Дмитрий"
         public ?int $yob,    //год рождения                "1973
         public ?string $club, //клуб                       "КСО «Березино»"
         public ?string $rank, //разряд                     "I"

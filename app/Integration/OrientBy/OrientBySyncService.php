@@ -50,6 +50,8 @@ class OrientBySyncService
 
         $indicatedPersons = $this->identService->identLines(array_keys($personsPrompts));
         foreach ($personsPrompts as $personsPrompt => $personDto) {
+            $this->logger->info("Process $personDto->name");
+
             if (isset($indicatedPersons[$personsPrompt])) {
                 $personId = (int)$indicatedPersons[$personsPrompt];
                 $person = $this->personsService->getPerson($personId);
