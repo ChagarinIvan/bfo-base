@@ -12,8 +12,8 @@ use Illuminate\Support\Collection;
 
 class BikeCupType extends EliteCupType
 {
-    public const ELITE_MEN_GROUPS = ['М21_МТВО', 'М21 МТВО', 'М21Е', 'М21E', 'МЕ', 'Мужчины группа Е', 'М21', 'M21E', 'МE', 'М21 Фин Е', 'M21',];
-    public const ELITE_WOMEN_GROUPS = ['Ж21_МТВО', 'Ж21 МТВО', 'Ж21', 'Ж21Е', 'W21', 'ЖЕ', 'ЖE', 'Ж21E', 'W21E', 'Ж21 Фин Е', 'Женщины группа Е',];
+    public const ELITE_MEN_GROUPS = ['Мужчины', 'М21_МТВО', 'М21 МТВО', 'М21Е', 'М21E', 'МЕ', 'Мужчины группа Е', 'М21', 'M21E', 'МE', 'М21 Фин Е', 'M21',];
+    public const ELITE_WOMEN_GROUPS = ['Женщины', 'Ж21_МТВО', 'Ж21 МТВО', 'Ж21', 'Ж21Е', 'W21', 'ЖЕ', 'ЖE', 'Ж21E', 'W21E', 'Ж21 Фин Е', 'Женщины группа Е',];
 
     public function getId(): string
     {

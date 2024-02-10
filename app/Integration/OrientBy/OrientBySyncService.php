@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Integration\OrientBy;
 
 use App\Models\Person;
-use App\Models\PersonPayment;
 use App\Models\Rank;
 use App\Models\Year;
 use App\Services\ClubsService;
