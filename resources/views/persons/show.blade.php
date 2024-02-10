@@ -29,11 +29,13 @@
             <div class="col-12">
                 <h4>{{ $rank->rank }} {{ __('app.common.do') }} {{ $rank->finish_date->format('Y-m-d') }}</h4>
             </div>
-            @if ($personPayment)
-                <div class="col-12">
-                    <h4>{{ __('app.common.last_payment') }}: {{ $personPayment->date->format('Y-m-d') }}</h4>
-                </div>
-            @endif
+        </div>
+    @endif
+    @if ($personPayment)
+        <div class="row mb-3">
+            <div class="col-12">
+                <h4>{{ __('app.common.last_payment') }}: {{ $personPayment->date->format('Y-m-d') }}</h4>
+            </div>
         </div>
     @endif
     <div class="row mb-3">

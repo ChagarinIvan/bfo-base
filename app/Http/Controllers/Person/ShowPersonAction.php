@@ -16,7 +16,6 @@ class ShowPersonAction extends AbstractPersonAction
     {
         $person = $this->personsService->getPerson((int) $personId);
         $payments = $person->payments->sortByDesc(static fn (PersonPayment $payment) => $payment->date);
-        dump($payments);
         $groupedProtocolLines = $person->protocolLines->groupBy(static fn (ProtocolLine $line) => $line->distance->event->date->format('Y'));
         $groupedProtocolLines->transform(static function (Collection $protocolLines) {
             return $protocolLines->sortByDesc(static fn (ProtocolLine $line) => $line->distance->event->date);
