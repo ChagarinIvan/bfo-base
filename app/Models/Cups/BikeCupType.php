@@ -40,20 +40,7 @@ class BikeCupType extends EliteCupType
 
     protected function getAllGroupsMap(CupGroup $group): array
     {
-        $map = [
-            (new CupGroup(GroupMale::Man))->id() => array_merge(
-                self::ELITE_MEN_GROUPS,
-                JuniorCupType::MEN_MAIN_GROUPS_NAMES,
-                ['M18', 'М18']
-            ),
-            (new CupGroup(GroupMale::Woman))->id() => array_merge(
-                self::ELITE_WOMEN_GROUPS,
-                JuniorCupType::WOMEN_MAIN_GROUPS_NAMES,
-                ['Ж18', 'W18']
-            )
-        ];
-
-        return $map[$group->id()] ?? [];
+        return $this->getGroupsMap($group);
     }
 
     protected function getGroupsMap(CupGroup $group): array
