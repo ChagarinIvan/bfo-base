@@ -33,6 +33,7 @@ class BikeCupType extends EliteCupType
     public function calculateEvent(CupEvent $cupEvent, CupGroup $mainGroup): Collection
     {
         $cupEventProtocolLines = $this->getGroupProtocolLines($cupEvent, $mainGroup);
+        dump($cupEventProtocolLines);
         $results = $this->calculateLines($cupEvent, $cupEventProtocolLines);
 
         return $results->sortByDesc(static fn (CupEventPoint $cupEventResult) => $cupEventResult->points);
