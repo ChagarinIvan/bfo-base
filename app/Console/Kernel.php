@@ -12,6 +12,7 @@ use App\Console\Commands\SimpleIndentCommand;
 use App\Console\Commands\StartBigIdentCommand;
 use App\Console\Commands\SyncPersonCommand;
 use App\Console\Commands\SyncPersonsCommand;
+use App\Console\Commands\SyncStoredPersonsCommand;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use function sleep;
@@ -28,6 +29,7 @@ class Kernel extends ConsoleKernel
         RankValidationCommand::class,
         SyncPersonsCommand::class,
         SyncPersonCommand::class,
+        SyncStoredPersonsCommand::class,
         RecalculatingRanks::class,
         FixRankCommand::class,
     ];
