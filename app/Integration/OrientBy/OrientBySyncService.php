@@ -24,7 +24,6 @@ class OrientBySyncService
     private LoggerInterface $logger;
 
     public function __construct(
-        private readonly OrientByApiClient $apiClient,
         private readonly PersonsIdentService $identService,
         private readonly PersonsService $personsService,
         private readonly RankService $rankService,
@@ -35,10 +34,9 @@ class OrientBySyncService
         $this->logger = $loggerManager->channel('sync');
     }
 
-    public function synchronize(): void
+    public function synchronize(array $persons): void
     {
         $this->logger->info('Start synchronisation.');
-        $persons = $this->apiClient->getPersons();
         $this->logger->info(sprintf("Need process %d persons.", count($persons)));
 //        $paymentDate = Carbon::createFromFormat('Y-m-d', '2023-01-10');
 
