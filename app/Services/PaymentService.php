@@ -15,7 +15,7 @@ class PaymentService
         if ($payment === null) {
             $payment = new PersonPayment();
             $payment->person_id = $personId;
-            $payment->year = $date->year;
+            $payment->year = $year;
             $payment->date = $date;
             $payment->save();
         }
