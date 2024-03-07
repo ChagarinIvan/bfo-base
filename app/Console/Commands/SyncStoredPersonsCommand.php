@@ -31,7 +31,7 @@ class SyncStoredPersonsCommand extends Command
         $this->logger->info('Start.');
 
         try {
-            for ($i = 0; $i < 4409; $i++) {
+            for ($i = 0; $i < 6000; $i++) {
                 $path = '/sync/' . $i;
                 $person = $this->storage->get($path);
                 if (!$person) {
