@@ -24,7 +24,7 @@ class SyncStoredPersonsCommand extends Command
     {
         $this->info('Start.');
 
-        for ($i = 2; $i < 4395; $i++) {
+        for ($i = 0; $i < 4409; $i++) {
             $person = $this->storage->get('/sync/' . $i);
             $person = unserialize($person);
             $this->service->synchronize([$person]);
