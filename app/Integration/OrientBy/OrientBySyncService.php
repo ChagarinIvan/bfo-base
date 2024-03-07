@@ -34,6 +34,9 @@ class OrientBySyncService
         $this->logger = $loggerManager->channel('sync');
     }
 
+    /**
+     * @param OrientByPersonDto[] $persons
+     */
     public function synchronize(array $persons): void
     {
         $this->logger->info('Start synchronisation.');
