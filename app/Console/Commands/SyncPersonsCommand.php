@@ -31,6 +31,9 @@ class SyncPersonsCommand extends Command
 
         $persons = $apiClient->getPersons();
         foreach ($persons as $index => $person) {
+            if (!str_contains($person->name, 'Ермолаев')) {
+                continue;
+            }
             $this->storage->put('/sync/' . $index, serialize($person));
         }
     }
