@@ -16,9 +16,9 @@ class PaymentService
             $payment = new PersonPayment();
             $payment->person_id = $personId;
             $payment->year = $year;
-            $payment->date = $date;
-            $payment->save();
         }
+        $payment->date = $date;
+        $payment->save();
 
         return $payment;
     }
