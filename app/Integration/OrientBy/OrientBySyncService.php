@@ -74,7 +74,7 @@ class OrientBySyncService
                         "update firstname: {$logPerson->firstname} => {$firstname}",
                         ['person_id' => $personId]
                     );
-                    continue;
+//                    continue;
 //                    $person->firstname = $firstname;
                 }
 
