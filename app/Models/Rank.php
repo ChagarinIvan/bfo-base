@@ -117,7 +117,7 @@ class Rank extends Model
     protected $casts = [
         'start_date' => 'datetime:Y-m-d',
         'finish_date' => 'datetime:Y-m-d',
-        'active_date' => 'datetime:Y-m-d',
+        'activated_date' => 'datetime:Y-m-d',
     ];
 
     private static array $preparedRanks = [];
