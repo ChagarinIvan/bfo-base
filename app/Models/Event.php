@@ -21,8 +21,8 @@ use Illuminate\Support\Collection;
  * @property Carbon $date
  * @property int $competition_id
  * @property string $file
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon $created_at
+ * @property \Illuminate\Support\Carbon $updated_at
  *
  * @property-read Competition|null $competition
  * @property-read Collection|ProtocolLine[] $protocolLines
@@ -46,7 +46,9 @@ class Event extends Model
         'name', 'description', 'date'
     ];
 
-    protected $dates = ['date'];
+    protected $casts = [
+        'date' => 'datetime:Y-m-d',
+    ];
 
     public function competition(): HasOne
     {

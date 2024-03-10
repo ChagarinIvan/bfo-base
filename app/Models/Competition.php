@@ -31,7 +31,10 @@ class Competition extends Model
 
     protected $table = 'competitions';
 
-    protected $dates = ['from', 'to'];
+    protected $casts = [
+        'from' => 'datetime:Y-m-d',
+        'to' => 'datetime:Y-m-d',
+    ];
 
     public function events(): HasMany
     {

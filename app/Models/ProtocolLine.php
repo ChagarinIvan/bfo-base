@@ -64,7 +64,10 @@ class ProtocolLine extends Model
     public $timestamps = false;
     protected $table = 'protocol_lines';
 
-    protected $dates = ['time', 'activate_rank'];
+    protected $casts = [
+        'time' => 'datetime',
+        'activate_rank' => 'datetime:Y-m-d',
+    ];
 
     protected $fillable = [
         'serial_number',

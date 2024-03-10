@@ -113,7 +113,10 @@ class Rank extends Model
 
     public $timestamps = false;
     protected $table = 'ranks';
-    protected $dates = ['start_date', 'finish_date'];
+    protected $casts = [
+        'start_date' => 'datetime:Y-m-d',
+        'finish_date' => 'datetime:Y-m-d',
+    ];
 
     private static array $preparedRanks = [];
 

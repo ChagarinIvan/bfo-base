@@ -29,7 +29,9 @@ class PersonPayment extends Model
     public $timestamps = false;
 
     protected $table = 'persons_payments';
-    protected $dates = ['date'];
+    protected $casts = [
+        'date' => 'datetime:Y-m-d',
+    ];
 
     public function person(): HasOne
     {
