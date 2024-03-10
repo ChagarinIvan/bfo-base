@@ -32,7 +32,7 @@ jobs:
       run: |
         php -r "file_exists('.env') || copy('.env.example', '.env');"
         echo "DB_HOST=127.0.0.1" >> .env
-        echo "DB_PORT=3306" >> .env
+        echo "DB_PORT=${{ job.services.mysql.ports['3306'] }}" >> .env
         echo "DB_DATABASE=laravel_test" >> .env
         echo "DB_USERNAME=test" >> .env
         echo "DB_PASSWORD=secret" >> .env
