@@ -6,7 +6,7 @@ namespace Tests\Models\Parser;
 
 use App\Models\Parser\OBelarusNetRelayWithHeadersParser;
 
-class OBelarusNetRelayWithHeadersParserTest extends AbstractParserTest
+final class OBelarusNetRelayWithHeadersParserTest extends AbstractParser
 {
     public static function dataProvider(): array
     {

@@ -6,7 +6,7 @@ namespace Tests\Models\Parser;
 
 use App\Models\Parser\OBelarusSpanParser;
 
-class OBelarusSpanParserTest extends AbstractParserTest
+final class OBelarusSpanParserTest extends AbstractParser
 {
     public static function dataProvider(): array
     {

@@ -6,7 +6,7 @@ namespace Tests\Models\Parser;
 
 use App\Models\Parser\WinOrientHtmlParser;
 
-class WinOrientParserTest extends AbstractParserTest
+final class WinOrientParserTest extends AbstractParser
 {
     public static function dataProvider(): array
     {

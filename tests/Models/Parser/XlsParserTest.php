@@ -6,7 +6,7 @@ namespace Tests\Models\Parser;
 
 use App\Models\Parser\XlsParser;
 
-class XlsParserTest extends AbstractParserTest
+final class XlsParserTest extends AbstractParser
 {
     public static function dataProvider(): array
     {

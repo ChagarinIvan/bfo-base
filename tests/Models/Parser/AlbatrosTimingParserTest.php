@@ -6,7 +6,7 @@ namespace Tests\Models\Parser;
 
 use App\Models\Parser\AlbatrosTimingParser;
 
-class AlbatrosTimingParserTest extends AbstractParserTest
+final class AlbatrosTimingParserTest extends AbstractParser
 {
     public static function dataProvider(): array
     {

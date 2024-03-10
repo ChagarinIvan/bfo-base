@@ -6,7 +6,7 @@ namespace Tests\Models\Parser;
 
 use App\Models\Parser\OParser;
 
-class OParserTest extends AbstractParserTest
+final class OParserTest extends AbstractParser
 {
     public static function dataProvider(): array
     {

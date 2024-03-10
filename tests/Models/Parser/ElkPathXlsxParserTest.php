@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace Tests\Models\Parser;
 
 use App\Models\Parser\ElkPathXlsxParser;
-use Tests\Models\Parser\AbstractParserTest;
 
-class ElkPathXlsxParserTest extends AbstractParserTest
+final class ElkPathXlsxParserTest extends AbstractParser
 {
     public static function dataProvider(): array
     {

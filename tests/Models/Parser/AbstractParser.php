@@ -12,15 +12,13 @@ use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Support\Collection;
 use Tests\TestCase;
 
-abstract class AbstractParserTest extends TestCase
+abstract class AbstractParser extends TestCase
 {
     abstract public static function dataProvider(): array;
     abstract protected function getParser(): string;
 
     /**
      * @dataProvider dataProvider
-     *
-     * @test
      */
     public function parse(string $filePath, int $linesCount, array $expectedResults, bool $needConvert = false, string $extension = 'html'): void
     {

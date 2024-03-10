@@ -6,7 +6,7 @@ namespace Tests\Models\Parser;
 
 use App\Models\Parser\SFRParser;
 
-class SfrParserTest extends AbstractParserTest
+final class SfrParserTest extends AbstractParser
 {
     public static function dataProvider(): array
     {

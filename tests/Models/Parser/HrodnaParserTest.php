@@ -6,7 +6,7 @@ namespace Tests\Models\Parser;
 
 use App\Models\Parser\HrodnoParser;
 
-class HrodnaParserTest extends AbstractParserTest
+final class HrodnaParserTest extends AbstractParser
 {
     public static function dataProvider(): array
     {

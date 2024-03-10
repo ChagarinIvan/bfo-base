@@ -6,7 +6,7 @@ namespace Tests\Models\Parser;
 
 use App\Models\Parser\SimplyParser;
 
-class SimplyParserTest extends AbstractParserTest
+final class SimplyParserTest extends AbstractParser
 {
     public static function dataProvider(): array
     {

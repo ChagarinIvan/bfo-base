@@ -6,7 +6,7 @@ namespace Tests\Models\Parser;
 
 use App\Models\Parser\AlbatrosRelayParser;
 
-class AlbatrosRelayParserTest extends AbstractParserTest
+final class AlbatrosRelayParserTest extends AbstractParser
 {
     public static function dataProvider(): array
     {

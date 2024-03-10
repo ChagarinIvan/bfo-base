@@ -6,7 +6,7 @@ namespace Tests\Models\Parser;
 
 use App\Models\Parser\HandicapAlbatrosTimingParser;
 
-class HandicapTimingParserTest extends AbstractParserTest
+final class HandicapTimingParserTest extends AbstractParser
 {
     public static function dataProvider(): array
     {
