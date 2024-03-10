@@ -46,14 +46,6 @@ jobs:
       run: |
         mysql --version
         mysql --host 127.0.0.1 --port ${{ job.services.mysql.ports['3306'] }} -utest -psecret --ssl-mode=DISABLED -e "SHOW DATABASES"
-    - name: Wait for MySQL to become ready
-      run: |
-        for i in {1..30}; do
-          nc -z 127.0.0.1 3306 && echo Success && exit 0
-          echo -n .
-          sleep 1
-        done
-        echo Failed waiting for MySQL && exit 1
     - name: Migrate Database
       run: php artisan migrate --force
     - name: Execute tests (Unit and Feature tests) via PHPUnit
