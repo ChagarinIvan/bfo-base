@@ -75,7 +75,7 @@ class ElkPathXlsxParser extends AbstractParser
 
     public function check(string $file, string $extension): bool
     {
-        return str_contains($extension, 'openxmlformats') && str_contains('startDate', $this->getContent($file)[0][0] ?? '');
+        return str_contains($extension, 'openxmlformats') && str_contains('startDate', $this->getContent($file)[0][0] ?? 'not');
     }
 
     private function getContent(string $file): array
