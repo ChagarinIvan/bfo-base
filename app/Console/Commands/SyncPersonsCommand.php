@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Console\Commands;
 
 use App\Integration\OrientBy\OrientByApiClient;
-use App\Integration\OrientBy\OrientBySyncService;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Filesystem\Filesystem;
+use function serialize;
 
 /**
  * Будем синхронизировать членов бфо с главным сайтом федерации.
@@ -31,9 +31,6 @@ class SyncPersonsCommand extends Command
 
         $persons = $apiClient->getPersons();
         foreach ($persons as $index => $person) {
-            if (!str_contains($person->name, 'Ермолаев')) {
-                continue;
-            }
             $this->storage->put('/sync/' . $index, serialize($person));
         }
     }

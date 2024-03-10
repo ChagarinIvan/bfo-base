@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Carbon\Carbon;
+use Illuminate\Contracts\Database\Query\Expression;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Collection;
 
 /**
@@ -32,10 +33,12 @@ use Illuminate\Support\Collection;
  * @method static Person|Builder with(mixed $ids)
  * @method static Person|Builder withCount(string $ids)
  * @method static Person|Builder whereIn(string $column, array|Collection $value)
+ * @method static Person|Builder whereNotIn(string $column, Expression $value)
  * @method Person|Builder where(string $column, string $operator, string $value)
  * @method Person|Builder orWhere(string|Expression $column, string $operator, string $value)
  * @method Person|Builder orWhereHas(string $column, callable $callable)
  * @method static Collection get()
+ * @method void delete()
  * @method static Person|Builder whereClubId(int $clubId)
  * @method static Person|Builder whereFirstname(string $firstname)
  * @method static Person|Builder whereLastname(string $lastname)
@@ -46,6 +49,8 @@ use Illuminate\Support\Collection;
  */
 class Person extends Model
 {
+    use HasFactory;
+
     public $timestamps = false;
     protected $table = 'person';
     protected $dates = ['birthday'];

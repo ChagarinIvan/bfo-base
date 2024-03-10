@@ -10,7 +10,6 @@ use App\Console\Commands\RankValidationCommand;
 use App\Console\Commands\RecalculatingRanks;
 use App\Console\Commands\SimpleIndentCommand;
 use App\Console\Commands\StartBigIdentCommand;
-use App\Console\Commands\SyncPersonCommand;
 use App\Console\Commands\SyncPersonsCommand;
 use App\Console\Commands\SyncStoredPersonsCommand;
 use Illuminate\Console\Scheduling\Schedule;
@@ -28,7 +27,6 @@ class Kernel extends ConsoleKernel
         StartBigIdentCommand::class,
         RankValidationCommand::class,
         SyncPersonsCommand::class,
-        SyncPersonCommand::class,
         SyncStoredPersonsCommand::class,
         RecalculatingRanks::class,
         FixRankCommand::class,

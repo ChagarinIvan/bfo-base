@@ -5,23 +5,11 @@ declare(strict_types=1);
 namespace Tests\Services;
 
 use App\Services\ProtocolLineIdentService;
-use Tests\TestCase;
+use PHPUnit\Framework\TestCase;
 
 class ProtocolLineIdentServiceTest extends TestCase
 {
-    /**
-     * @param string $name
-     * @param string $expectedName
-     * @dataProvider prepareLineDataProvider
-     *
-     * @test
-     */
-    public function prepare_line(string $name, string $expectedName): void
-    {
-        $this->assertEquals($expectedName, ProtocolLineIdentService::prepareLine($name));
-    }
-
-    public function prepareLineDataProvider(): array
+    public static function prepareLineDataProvider(): array
     {
         return [
             ['алена', 'алена'],
@@ -29,5 +17,17 @@ class ProtocolLineIdentServiceTest extends TestCase
             ['лена', 'елена'],
             ['алёна', 'алена'],
         ];
+    }
+    /**
+     * @param string $name
+     * @param string $expectedName
+     *
+     * @dataProvider prepareLineDataProvider
+     *
+     * @test
+     */
+    public function prepare_line(string $name, string $expectedName): void
+    {
+        $this->assertEquals($expectedName, ProtocolLineIdentService::prepareLine($name));
     }
 }

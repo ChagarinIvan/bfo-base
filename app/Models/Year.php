@@ -17,6 +17,12 @@ enum Year: int
     {
         return self::from($date->year);
     }
+
+    public function previous(): Year
+    {
+        return self::from($this->value - 1);
+    }
+
     case y2025 = 2025;
     case y2024 = 2024;
     case y2023 = 2023;

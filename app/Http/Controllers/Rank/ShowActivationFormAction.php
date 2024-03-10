@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Rank;
 use App\Models\Person;
 use App\Models\Rank;
 use Illuminate\Contracts\View\View;
+use function compact;
 
 class ShowActivationFormAction extends AbstractRankAction
 {

@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace App\Models\Cups;
 
+use App\Domain\ProtocolLine\Criteria\CupEventDistancesProtocolLinesCriteria;
+use App\Models\Cup;
 use App\Models\CupEvent;
 use App\Models\CupEventPoint;
 use App\Models\Distance;
 use App\Models\Group\CupGroup;
 use App\Models\Group\CupGroupFactory;
 use App\Models\Group\GroupMale;
+use App\Models\Year;
 use Illuminate\Support\Collection;
 use function array_merge;
 use function in_array;
@@ -18,11 +21,6 @@ class EliteCupType extends AbstractCupType
 {
     public const ELITE_MEN_GROUPS = ['М21Е', 'М21E', 'МЕ', 'Мужчины группа Е', 'М21', 'M21E', 'МE', 'М21 Фин Е', 'M21', 'МE(35)'];
     public const ELITE_WOMEN_GROUPS = ['Ж21', 'Ж21Е', 'W21', 'ЖЕ', 'ЖE', 'Ж21E', 'W21E', 'Ж21 Фин Е', 'Женщины группа Е', 'ЖE(35)'];
-
-    protected static function withPayments(): bool
-    {
-        return true;
-    }
 
     public function getId(): string
     {
@@ -44,9 +42,14 @@ class EliteCupType extends AbstractCupType
         ;
     }
 
-    public function getGroups(): Collection
+    public function getGroups(): Collection|array
     {
         return CupGroupFactory::getAgeTypeGroups();
+    }
+
+    protected function paymentYear(Cup $cup): Year
+    {
+        return Year::from($cup->year);
     }
 
     protected function getGroupProtocolLines(CupEvent $cupEvent, CupGroup $group): Collection
@@ -57,13 +60,16 @@ class EliteCupType extends AbstractCupType
         if ($mainDistance === null) {
             return new Collection();
         }
+
         $equalDistances = $this->distanceService->getEqualDistances($mainDistance);
         $distances = $equalDistances
             ->add($mainDistance)
             ->filter(fn (Distance $distance) => in_array($distance->group->name, $this->getAllGroupsMap($group), true))
         ;
 
-        return $this->protocolLinesRepository->getCupEventDistancesProtocolLines($distances, $cupEvent, static::withPayments());
+        return $this->protocolLinesRepository->byCriteria(
+            CupEventDistancesProtocolLinesCriteria::create($distances, $cupEvent, $this->paymentYear($cupEvent->cup))
+        );
     }
 
     protected function getGroupsMap(CupGroup $group): array
