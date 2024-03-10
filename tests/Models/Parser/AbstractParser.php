@@ -20,7 +20,7 @@ abstract class AbstractParser extends TestCase
     /**
      * @dataProvider dataProvider
      */
-    public function parse(string $filePath, int $linesCount, array $expectedResults, bool $needConvert = false, string $extension = 'html'): void
+    public function testParse(string $filePath, int $linesCount, array $expectedResults, bool $needConvert = false, string $extension = 'html'): void
     {
         $storageManager = new FilesystemManager($this->app);
         $protocolContent = $storageManager->disk('tests')->get($filePath);
