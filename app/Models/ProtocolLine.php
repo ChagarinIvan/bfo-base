@@ -65,7 +65,7 @@ class ProtocolLine extends Model
     protected $table = 'protocol_lines';
 
     protected $casts = [
-        'time' => 'time',
+        'time' => 'datetime',
         'activate_rank' => 'datetime:Y-m-d',
     ];
 
