@@ -31,13 +31,13 @@ final readonly class RanksRepository
     public function getRanksList(RanksFilter $filter): Collection
     {
         /** @var Rank|Builder $ranks */
-        $ranks = Rank::selectRaw(new Expression('ranks.*'))
+        $ranks = Rank::selectRaw('ranks.*')
             ->leftJoin('events', 'events.id', '=', 'ranks.event_id');
 
         if ($filter->isOrderDescByFinishDate) {
-            $ranks->orderByRaw(new Expression('ranks.finish_date DESC, events.date DESC'));
+            $ranks->orderByRaw('ranks.finish_date DESC, events.date DESC');
         } elseif ($filter->isOrderByFinish) {
-            $ranks->orderByRaw(new Expression('ranks.finish_date'));
+            $ranks->orderByRaw('ranks.finish_date');
         }
 
         if ($filter->personId !== null) {
