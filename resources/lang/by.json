@@ -18,6 +18,7 @@
     "app.distance.points" : "КП",
     "app.ranks" : "Разрады",
     "app.rank.recompleted_date" : "Дата паследняга падтвярджэння",
+    "app.rank.activated_date" : "Дата актывацыі",
     "app.rank.completed_date" : "Дата выканання",
     "app.rank.finished_date" : "Дата заканчэння",
     "app.rank.check" : "Праверка разрадаў",

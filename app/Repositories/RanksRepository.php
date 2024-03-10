@@ -112,6 +112,7 @@ final readonly class RanksRepository
     {
         return Person::selectRaw(new Expression('person.id'))
             ->join('ranks', 'ranks.person_id', '=', 'person.id', 'left outer')
-            ->get();
+            ->get()
+        ;
     }
 }

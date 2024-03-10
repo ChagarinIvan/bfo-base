@@ -25,7 +25,8 @@ use function str_replace;
  * @property string $rank
  * @property Carbon $start_date
  * @property Carbon $finish_date
- * @property bool $active
+ * @property Carbon|null $activated_date
+ * @property Carbon $active
  *
  * @property-read Event|null $event
  * @property-read Person $person
@@ -116,6 +117,7 @@ class Rank extends Model
     protected $casts = [
         'start_date' => 'datetime:Y-m-d',
         'finish_date' => 'datetime:Y-m-d',
+        'active_date' => 'datetime:Y-m-d',
     ];
 
     private static array $preparedRanks = [];

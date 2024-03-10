@@ -85,6 +85,7 @@
     "app.protocol-hint" : "Если не добавлять файл, то обнаўления участников не будет",
     "app.ranks" : "Разряды",
     "app.rank.recompleted_date" : "Дата последнего подтверждения",
+    "app.rank.activated_date" : "Дата актывацыі",
     "app.rank.completed_date" : "Дата выполнения",
     "app.rank.finished_date" : "Дата окончания",
     "app.rank.check" : "Проверка разрядов",

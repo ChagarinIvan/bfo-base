@@ -154,7 +154,8 @@ class OrientBySyncService
             $rank->rank = Rank::getRank($rankData);
             $rank->start_date = Carbon::now();
             $rank->finish_date = $rank->start_date->clone()->addYears(2);
-            $rank->active = true;
+            $rank->activated_date = $rank->start_date;
+
             $this->rankService->storeRank($rank);
         }
     }

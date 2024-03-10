@@ -53,6 +53,7 @@ class RankService
     {
         $protocolLineId = $this->protocolLineService->getProtocolLineIdForRank($rank);
         $protocolLine = $this->protocolLineService->getProtocolLineWithEvent($protocolLineId);
+
         if (!$protocolLine) {
             return;
         }
@@ -175,7 +176,7 @@ class RankService
                 $finishDate = $event->date->clone()->addDays(-1);
 
                 $ranks->each(function (Rank $rank) use ($finishDate): void {
-                    if (!$rank->active) {
+                    if (!$rank->activated_date) {
                         return;
                     }
 
@@ -279,7 +280,7 @@ class RankService
         $lastRank->rank = $protocolLine->complete_rank;
         $lastRank->start_date = $protocolLine->activate_rank ?: $protocolLine->event->date;
         $lastRank->finish_date = $lastRank->start_date->clone()->addYears(2);
-        $lastRank->active = (bool) $protocolLine->activate_rank;
+        $lastRank->activated_date = $protocolLine->activate_rank;
 
         return $lastRank;
     }

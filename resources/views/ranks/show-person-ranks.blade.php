@@ -52,6 +52,8 @@
             <tr>
                 <th>{{ __('app.common.rank') }}</th>
                 <th data-sortable="true">{{ __('app.rank.completed_date') }}</th>
+                <th data-sortable="true">{{ __('app.rank.activated_date') }}</th>
+                <th data-sortable="true">{{ __('app.rank.recompleted_date') }}</th>
                 <th data-sortable="true">{{ __('app.rank.finished_date') }}</th>
                 <th data-sortable="true">{{ __('app.event.title') }}</th>
                 @auth
@@ -61,9 +63,15 @@
             </thead>
             <tbody>
             @foreach ($ranks as $rank)
-                <tr @if($rank->active) class="table-info" @else class="table-secondary" @endif>
+                <tr @if($rank->activated_date) class="table-info" @else class="table-secondary" @endif>
                     <td>{{ $rank->rank }}</td>
                     <td>{{ $rank->event ? $rank->event->date->format('Y-m-d') : $rank->start_date->format('Y-m-d') }}</td>
+                    <td>{{ $rank->activated_date->format('Y-m-d') }}</td>
+                    <td>
+                        @if ($rank->event_id !== null)
+                            {{ $rank->event->date->format('Y-m-d') }}
+                        @endif
+                    </td>
                     <td>{{ $rank->finish_date->format('Y-m-d') }}</td>
                     <td>
                         @if ($rank->event_id !== null)
@@ -73,7 +81,7 @@
                     </td>
                     @auth
                         <td>
-                            @if(!$rank->active)
+                            @if(!$rank->activated_date)
                                 <x-button text="app.rank.submit"
                                           color="success"
                                           icon="radioactive"
