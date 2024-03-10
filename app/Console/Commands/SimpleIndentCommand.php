@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use App\Models\Person;
 use App\Models\ProtocolLine;
 use App\Services\ProtocolLineIdentService;
 use Illuminate\Console\Command;
+use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Facades\DB;
 use function time;
 
@@ -27,10 +29,11 @@ class SimpleIndentCommand extends Command
         $notIndentCount = $identService->simpleIdent($protocolLines)->count();
         $this->info('Affected rows count is ' . ($protocolLines->count() - $notIndentCount));
         $time = time() - $startTime;
-        $this->info("Time for query: {$time}");
+        $this->info("Time for query: $time");
+
         //Почистим людей у которых 0 протокольных линий
-        $expression = DB::raw('DELETE FROM person WHERE id NOT IN (SELECT ANY_VALUE(person_id) FROM protocol_lines WHERE person_id IS NOT NULL GROUP BY person_id);');
-        DB::delete($expression->getValue());
+        $expression = DB::raw('SELECT ANY_VALUE(person_id) FROM protocol_lines WHERE person_id IS NOT NULL GROUP BY person_id;');
+        Person::whereNotIn('id', $expression)->delete();
         $this->info("Finish");
     }
 }

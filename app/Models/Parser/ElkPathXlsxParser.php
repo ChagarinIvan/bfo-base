@@ -19,6 +19,7 @@ use function mb_convert_case;
 use function mb_strtolower;
 use function preg_match;
 use function str_contains;
+use function str_replace;
 use function strtolower;
 use function sys_get_temp_dir;
 use function tempnam;
@@ -74,7 +75,7 @@ class ElkPathXlsxParser extends AbstractParser
 
     public function check(string $file, string $extension): bool
     {
-        return str_contains($extension, 'openxmlformats') && str_contains('startDate', $this->getContent($file)[0][0]);
+        return str_contains($extension, 'openxmlformats') && str_contains('startDate', $this->getContent($file)[0][0] ?? '');
     }
 
     private function getContent(string $file): array

@@ -7,21 +7,9 @@ namespace Tests\Models;
 use App\Models\Rank;
 use PHPUnit\Framework\TestCase;
 
-class RankTest extends TestCase
+final class RankTest extends TestCase
 {
-    /**
-     * @param bool $expectedValidationResult
-     * @param string $rank
-     * @dataProvider ranksProvider
-     *
-     * @test
-     */
-    public function validate_rank(bool $expectedValidationResult, string $rank): void
-    {
-        $this->assertEquals($expectedValidationResult, Rank::validateRank($rank));
-    }
-
-    public function ranksProvider(): array
+    public static function ranksProvider(): array
     {
         return [
             0 => [true, 'КМС'],
@@ -42,5 +30,17 @@ class RankTest extends TestCase
             15 => [true, '1'],
             16 => [true, '1ю'],
         ];
+    }
+    /**
+     * @param bool $expectedValidationResult
+     * @param string $rank
+     *
+     * @dataProvider ranksProvider
+     *
+     * @test
+     */
+    public function validate_rank(bool $expectedValidationResult, string $rank): void
+    {
+        $this->assertEquals($expectedValidationResult, Rank::validateRank($rank));
     }
 }

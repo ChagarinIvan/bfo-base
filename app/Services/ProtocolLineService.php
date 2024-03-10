@@ -12,7 +12,6 @@ use App\Models\Rank;
 use App\Models\Year;
 use App\Repositories\GroupsRepository;
 use App\Repositories\ProtocolLinesRepository;
-use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use RuntimeException;
 use function str_replace;
@@ -73,12 +72,12 @@ final readonly class ProtocolLineService
 
     public function getProtocolLineWithEvent(int $id): ?ProtocolLine
     {
-        return $this->protocolLinesRepository->getProtocolLine($id, ['distance.event']);
+        return $this->protocolLinesRepository->byId($id, ['distance.event']);
     }
 
     public function getProtocolLine(int $id): ProtocolLine
     {
-        $protocolLine = $this->protocolLinesRepository->getProtocolLine($id);
+        $protocolLine = $this->protocolLinesRepository->byId($id);
         if ($protocolLine) {
             return $protocolLine;
         }

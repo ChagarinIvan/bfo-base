@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\Cups;
 
+use App\Domain\ProtocolLine\Criteria\CupEventDistancesProtocolLinesCriteria;
 use App\Models\CupEvent;
 use App\Models\Group\CupGroup;
 use App\Models\Group\GroupAge;
@@ -25,10 +26,6 @@ class ElkPathCup extends EliteCupType
         'W_0_Youth–W' => ['Youth–Дзяўчыны', 'YouthTrail-Ж'],
     ];
 
-    protected static function withPayments(): bool
-    {
-        return false;
-    }
     public function getId(): string
     {
         return CupType::ELK_PATH;
@@ -39,10 +36,7 @@ class ElkPathCup extends EliteCupType
         return 'app.cup.type.elk_path';
     }
 
-    /**
-     * @return Collection&CupGroup[]
-     */
-    public function getGroups(): Collection
+    public function getGroups(): Collection|array
     {
         $groups = Collection::make();
 
@@ -69,7 +63,9 @@ class ElkPathCup extends EliteCupType
             return new Collection();
         }
 
-        return $this->protocolLinesRepository->getCupEventDistancesProtocolLines(collect([$mainDistance]), $cupEvent, static::withPayments());
+        return $this->protocolLinesRepository->byCriteria(
+            CupEventDistancesProtocolLinesCriteria::create(collect([$mainDistance]), $cupEvent)
+        );
     }
 
     protected function getGroupsMap(CupGroup $group): array

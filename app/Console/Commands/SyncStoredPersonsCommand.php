@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
-use App\Integration\OrientBy\OrientByApiClient;
 use App\Integration\OrientBy\OrientByPersonDto;
 use App\Integration\OrientBy\OrientBySyncService;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Log\LogManager;
 use Psr\Log\LoggerInterface;
+use Throwable;
+use function unserialize;
 
 class SyncStoredPersonsCommand extends Command
 {
@@ -20,7 +21,7 @@ class SyncStoredPersonsCommand extends Command
     public function __construct(
         private readonly OrientBySyncService $service,
         private readonly Filesystem $storage,
-        private readonly LogManager $loggerManager,
+        LogManager $loggerManager,
     ) {
         parent::__construct();
         $this->logger = $loggerManager->channel('sync');
@@ -45,7 +46,7 @@ class SyncStoredPersonsCommand extends Command
                 $this->logger->info('Delete ' . $path);
                 $this->storage->delete($path);
             }
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->logger->error($e->getMessage());
         }
 

@@ -2,18 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Models\Parser;
+namespace Tests\Models\Parser;
 
 use App\Models\Parser\ElkPathXlsxParser;
 use Tests\Models\Parser\AbstractParserTest;
 
 class ElkPathXlsxParserTest extends AbstractParserTest
 {
-    protected function getAllGroups(): array
-    {
-        return [];
-    }
-
     public static function dataProvider(): array
     {
         return [
@@ -51,6 +46,10 @@ class ElkPathXlsxParserTest extends AbstractParserTest
                 'openxmlformats'
             ],
         ];
+    }
+    protected function getAllGroups(): array
+    {
+        return [];
     }
     protected function getParser(): string
     {
