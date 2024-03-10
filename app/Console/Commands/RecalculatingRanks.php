@@ -35,6 +35,7 @@ final class RecalculatingRanks extends Command
             $this->logger->info("Process $index.");
             $service->fillRank($protocolLine);
         }
+
         $this->logger->info('Finish.');
     }
 }
