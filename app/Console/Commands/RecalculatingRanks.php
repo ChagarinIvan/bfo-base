@@ -31,7 +31,7 @@ final class RecalculatingRanks extends Command
         $this->logger->info('Start.');
 
         Rank::truncate();
-        foreach (ProtocolLine::all() as $index => $protocolLine) {
+        foreach (ProtocolLine::cursor() as $index => $protocolLine) {
             $this->logger->info("Process $index.");
             $service->fillRank($protocolLine);
         }
