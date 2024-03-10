@@ -41,7 +41,7 @@ jobs:
       run: chmod -R 777 storage bootstrap/cache
     - name: Wait for MySQL to become ready
       run: |
-        for i in {1..10}; do
+        for i in {1..30}; do
           nc -z 127.0.0.1 3306 && echo Success && exit 0
           echo -n .
           sleep 1
