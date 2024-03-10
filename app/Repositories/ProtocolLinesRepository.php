@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repositories;
 
+use App\Domain\Shared\Criteria;
 use App\Models\CupEvent;
 use App\Models\Distance;
 use App\Models\ProtocolLine;
@@ -13,15 +14,16 @@ use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Collection;
 use function count;
 
-class ProtocolLinesRepository
+final readonly class ProtocolLinesRepository
 {
-    public function __construct(private readonly ConnectionInterface $db)
+    public function __construct(private ConnectionInterface $db)
     {
     }
 
-    public function getProtocolLine(int $id, array $with = []): ?ProtocolLine
+    public function byId(int $id, array $with = []): ?ProtocolLine
     {
         $protocolLineQuery = ProtocolLine::where('id', $id);
+
         if (count($with) > 0) {
             $protocolLineQuery->with($with);
         }
@@ -39,28 +41,19 @@ class ProtocolLinesRepository
         ;
     }
 
-    /**
-     * Идёт проверка на оплату взноса в федерацию
-     *
-     * @param Collection|Distance[] $distances
-     * @param CupEvent $cupEvent
-     * @return Collection
-     */
-    public function getCupEventDistancesProtocolLines(Collection|array $distances, CupEvent $cupEvent, bool $withPayments): Collection
+    public function byCriteria(Criteria $criteria): Collection
     {
-        $query = ProtocolLine::selectRaw(new Expression('`protocol_lines`.*, `persons_payments`.`date`'))
+        $query = ProtocolLine::selectRaw('protocol_lines.*, persons_payments.date')
             ->join('person', 'person.id', '=', 'protocol_lines.person_id')
             ->leftJoin('persons_payments', 'person.id', '=', 'persons_payments.person_id')
             ->where('protocol_lines.vk', false)
-            ->whereIn('distance_id', $distances->pluck('id')->unique())
+            ->whereIn('distance_id', $criteria->param('distances'))
         ;
 
-        if ($withPayments) {
-            $expression = new Expression("`persons_payments`.`date` <= '{$cupEvent->event->date}'");
+        if ($criteria->hasParam('paymentYear')) {
             $query
-                ->where('persons_payments.year', '=', $cupEvent->cup->year)
-                ->where('persons_payments.date', '<=', $cupEvent->event->date)
-                ->havingRaw($expression->getValue())
+                ->where('persons_payments.year', '>=', $criteria->param('paymentYear'))
+                ->where('persons_payments.date', '<=', $criteria->param('eventDate'))
             ;
         }
 
@@ -94,7 +87,7 @@ class ProtocolLinesRepository
                 ->addSelect('persons_payments.date')
                 ->join('persons_payments', 'person.id', '=', 'persons_payments.person_id')
                 ->where('persons_payments.year', '=', $cupEvent->cup->year)
-                ->havingRaw(new Expression("`persons_payments`.`date` <= '{$cupEvent->event->date}'"))
+                ->havingRaw('persons_payments.date <= ?', [$cupEvent->event->date])
             ;
         }
 
@@ -114,8 +107,9 @@ class ProtocolLinesRepository
             ->where('persons_payments.year', $cupEvent->cup->year)
             ->where('distances.event_id', $cupEvent->event_id)
             ->where('distances.group_id', $groupId)
-            ->havingRaw(new Expression("persons_payments.date <= '{$cupEvent->event->date}'"))
-            ->get();
+            ->havingRaw('persons_payments.date <= ?', [$cupEvent->event->date])
+            ->get()
+        ;
     }
 
     public function getCupEventDistanceProtocolLines(int $distanceId): Collection
@@ -133,7 +127,8 @@ class ProtocolLinesRepository
             ->whereNull('pls.person_id')
             ->whereNotNull('plj.person_id')
             ->whereIn('pls.id', $linesIds)
-            ->update(['pls.person_id' => new Expression('plj.person_id')]);
+            ->update(['pls.person_id' => new Expression('plj.person_id')])
+        ;
     }
 
     public function identByEqualPersonPrompt(Collection $linesIds): void
@@ -142,7 +137,8 @@ class ProtocolLinesRepository
             ->join('persons_prompt AS pp', 'pl.prepared_line', '=', 'pp.prompt')
             ->whereNull('pl.person_id')
             ->whereIn('pl.id', $linesIds)
-            ->update(['pl.person_id' => new Expression('pp.person_id')]);
+            ->update(['pl.person_id' => new Expression('pp.person_id')])
+        ;
     }
 
     public function getProtocolLines(int $personId, ?Year $year): Collection

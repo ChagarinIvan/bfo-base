@@ -17,28 +17,6 @@ abstract class AbstractParserTest extends TestCase
     abstract public static function dataProvider(): array;
     abstract protected function getParser(): string;
 
-    protected function getAllGroups(): array
-    {
-        $group1 = new Group();
-        $group1->name = 'М12';
-        $group2 = new Group();
-        $group2->name = 'Ж12';
-        $group3 = new Group();
-        $group3->name = 'М14';
-        $group4 = new Group();
-        $group4->name = 'Ж14';
-        $group5 = new Group();
-        $group5->name = 'М16';
-        $group6 = new Group();
-        $group6->name = 'Ж16';
-        $group7 = new Group();
-        $group7->name = 'М18';
-        $group8 = new Group();
-        $group8->name = 'Ж18';
-
-        return [$group1, $group2, $group3, $group4, $group5, $group6, $group7, $group8];
-    }
-
     /**
      * @dataProvider dataProvider
      *
@@ -77,5 +55,27 @@ abstract class AbstractParserTest extends TestCase
                 self::assertEquals($expectedResult[11], $line['group'], 'group');
             }
         }
+    }
+
+    protected function getAllGroups(): array
+    {
+        $group1 = new Group();
+        $group1->name = 'М12';
+        $group2 = new Group();
+        $group2->name = 'Ж12';
+        $group3 = new Group();
+        $group3->name = 'М14';
+        $group4 = new Group();
+        $group4->name = 'Ж14';
+        $group5 = new Group();
+        $group5->name = 'М16';
+        $group6 = new Group();
+        $group6->name = 'Ж16';
+        $group7 = new Group();
+        $group7->name = 'М18';
+        $group8 = new Group();
+        $group8->name = 'Ж18';
+
+        return [$group1, $group2, $group3, $group4, $group5, $group6, $group7, $group8];
     }
 }

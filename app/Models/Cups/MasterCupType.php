@@ -110,10 +110,7 @@ class MasterCupType extends AbstractCupType
         return $results->sortByDesc(static fn (CupEventPoint $cupEventResult) => $cupEventResult->points);
     }
 
-    /**
-     * @return Collection|CupGroup[]
-     */
-    public function getGroups(): Collection
+    public function getGroups(): Collection|array
     {
         return CupGroupFactory::getAgeTypeGroups([
             GroupAge::a35,

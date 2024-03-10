@@ -11,6 +11,8 @@ use App\Models\Person;
 use Illuminate\Support\Facades\File;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use function array_keys;
+use function sys_get_temp_dir;
+use function tempnam;
 
 class ExportCupTableAction extends AbstractCupAction
 {
@@ -32,7 +34,6 @@ class ExportCupTableAction extends AbstractCupAction
                 ->render()
             ;
             $content .= "<br/><br/>";
-
         }
         $tempFilePath = tempnam(sys_get_temp_dir(), 'tempfile');
         File::put($tempFilePath, $content);

@@ -4,26 +4,19 @@ declare(strict_types=1);
 
 namespace App\Models\Parser;
 
-use App\Models\Group;
-use App\Models\Rank;
 use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
-use function array_filter;
 use function count;
-use function explode;
 use function file_put_contents;
-use function is_numeric;
 use function mb_convert_case;
 use function mb_strtolower;
-use function preg_match;
 use function str_contains;
-use function strtolower;
+use function str_replace;
 use function sys_get_temp_dir;
 use function tempnam;
 use function trim;
-use function ucwords;
 
 class ElkPathXlsxParser extends AbstractParser
 {
@@ -74,7 +67,7 @@ class ElkPathXlsxParser extends AbstractParser
 
     public function check(string $file, string $extension): bool
     {
-        return str_contains($extension, 'openxmlformats') && str_contains('startDate', $this->getContent($file)[0][0]);
+        return str_contains($extension, 'openxmlformats') && str_contains('startDate', $this->getContent($file)[0][0] ?? 'not');
     }
 
     private function getContent(string $file): array

@@ -10,7 +10,11 @@ use App\Models\Group;
 use App\Models\Person;
 use Illuminate\Support\Facades\File;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use function array_filter;
 use function array_keys;
+use function count;
+use function sys_get_temp_dir;
+use function tempnam;
 
 class ExportCupGroupTableAction extends AbstractCupAction
 {

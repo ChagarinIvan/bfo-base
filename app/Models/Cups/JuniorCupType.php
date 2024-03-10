@@ -132,7 +132,7 @@ class JuniorCupType extends MasterCupType
         return 'app.cup.type.junior';
     }
 
-    public function getGroups(): Collection
+    public function getGroups(): Collection|array
     {
         return CupGroupFactory::getAgeTypeGroups([GroupAge::a20]);
     }

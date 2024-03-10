@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Models\Cups;
 
+use App\Models\Cup;
 use App\Models\CupEvent;
 use App\Models\CupEventPoint;
 use App\Models\Group\CupGroup;
 use App\Models\Group\GroupMale;
+use App\Models\Year;
 use Illuminate\Support\Collection;
 
 class SkiCupType extends EliteCupType
@@ -33,9 +35,16 @@ class SkiCupType extends EliteCupType
     public function calculateEvent(CupEvent $cupEvent, CupGroup $mainGroup): Collection
     {
         $cupEventProtocolLines = $this->getGroupProtocolLines($cupEvent, $mainGroup);
-        $results = $this->calculateLines($cupEvent, $cupEventProtocolLines);
 
-        return $results->sortByDesc(static fn (CupEventPoint $cupEventResult) => $cupEventResult->points);
+        return $this
+            ->calculateLines($cupEvent, $cupEventProtocolLines)
+            ->sortByDesc(static fn (CupEventPoint $cupEventResult) => $cupEventResult->points)
+        ;
+    }
+
+    protected function paymentYear(Cup $cup): Year
+    {
+        return Year::from($cup->year)->previous();
     }
 
     protected function getGroupsMap(CupGroup $group): array
