@@ -45,7 +45,7 @@ jobs:
     - name: Verify MySQL connection
       run: |
         mysql --version
-        mysql --host 127.0.0.1 --port ${{ job.services.mysql.ports['3306'] }} -utest -psecret -e "SHOW DATABASES"
+        mysql --host 127.0.0.1 --port ${{ job.services.mysql.ports['3306'] }} -utest -psecret --ssl-mode=DISABLED -e "SHOW DATABASES"
     - name: Wait for MySQL to become ready
       run: |
         for i in {1..30}; do
