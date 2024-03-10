@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 
 define('LARAVEL_START', microtime(true));
 
+echo 'Temporary unavailable. Service work';
+die();
+
 /*
 |--------------------------------------------------------------------------
 | Check If Application Is Under Maintenance
