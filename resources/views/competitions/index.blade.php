@@ -77,7 +77,7 @@
                                 <a href="{{ action(ShowCompetitionAction::class, [$competition->id]) }}"
                                 >{{ Str::limit($competition->name, 50) }}</a>
                             </td>
-                            <td>{{ $competition->from->format('Y-m-d') }} / {{ $competition->to->format('Y-m-d') }}</td>
+                            <td>{{ $competition->from }} / {{ $competition->to }}</td>
                             <td><small>{{ Str::limit($competition->description) }}</small></td>
                             @auth
                                 <td>
