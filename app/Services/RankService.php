@@ -242,6 +242,7 @@ class RankService
             $rank = $rank->replicate();
             $rank->start_date = $rank->finish_date->addDay();
             $rank->finish_date = $rank->start_date->addYears(2);
+            $rank->activated_date = $rank->start_date;
             $rank->event_id = null;
             $rank->rank = Rank::PREVIOUS_RANKS[$rank->rank];
 
