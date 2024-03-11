@@ -6,7 +6,6 @@ namespace App\Repositories;
 
 use App\Domain\Shared\Criteria;
 use App\Models\CupEvent;
-use App\Models\Distance;
 use App\Models\ProtocolLine;
 use App\Models\Year;
 use Illuminate\Database\ConnectionInterface;
@@ -43,11 +42,12 @@ final readonly class ProtocolLinesRepository
 
     public function byCriteria(Criteria $criteria): Collection
     {
-        $query = ProtocolLine::selectRaw('protocol_lines.*, persons_payments.date')
+        $query = ProtocolLine::selectRaw('protocol_lines.*, max(persons_payments.date)')
             ->join('person', 'person.id', '=', 'protocol_lines.person_id')
             ->leftJoin('persons_payments', 'person.id', '=', 'persons_payments.person_id')
             ->where('protocol_lines.vk', false)
             ->whereIn('distance_id', $criteria->param('distances'))
+            ->groupBy('protocol_lines.id')
         ;
 
         if ($criteria->hasParam('paymentYear')) {

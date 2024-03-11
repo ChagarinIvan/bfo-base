@@ -53,6 +53,11 @@
                           url="{{ action(ShowPersonPromptsListAction::class, [$person->id]) }}"
                 />
             @endauth
+            <x-button text="app.common.payments"
+                      color="warning"
+                      icon="bi-currency-dollar"
+                      url="{{ action(ShowPersonPromptsListAction::class, [$person->id]) }}"
+            />
             <x-button text="app.ranks"
                       color="info"
                       icon="bi-smartwatch"

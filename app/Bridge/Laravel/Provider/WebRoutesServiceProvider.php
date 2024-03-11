@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Providers;
+namespace App\Bridge\Laravel\Provider;
 
 use App\Http\Controllers\BackAction;
 use App\Http\Controllers\Club;
@@ -87,6 +87,7 @@ class WebRoutesServiceProvider extends ServiceProvider
                         $this->route->get('/{person}/delete', Person\DeletePersonAction::class);
 
                         $this->route->get('{person}/prompts', Person\ShowPersonPromptsListAction::class);
+                        $this->route->get('{person}/payments', Person\ShowPersonPaymentsListAction::class);
                         $this->route->get('person/{protocol}/show', Person\ShowSetPersonToProtocolLineAction::class);
                         $this->route->get('{person}/{protocol}/set', Person\SetProtocolLinePersonAction::class);
                         $this->route->get('extract/{protocol}/', Person\ExtractPersonAction::class);

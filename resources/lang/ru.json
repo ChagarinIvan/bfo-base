@@ -68,6 +68,7 @@
     "app.common.last_payment" : "Последняя оплата",
     "app.common.cache_clear" : "Обновить кеш",
     "app.common.prompts" : "Поисковые строки",
+    "app.common.payments" : "Аплаты",
     "app.common.prompt" : "Поисковая строка",
     "app.common.metaphone" : "Звучание",
     "app.common.disqual" : "Результаты группы аннулированы",

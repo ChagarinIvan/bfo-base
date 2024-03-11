@@ -15,5 +15,5 @@
        data-bs-placement="top"
        title="{{ $text }}"
     ></i>
-    <span class="d-none d-xl-inline">{{ $text }}</span>
+    <span class="d-none d-xl-inline" style="margin-left: 5px;">{{ $text }}</span>
 </a>

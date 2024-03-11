@@ -11,7 +11,7 @@ class PaymentService
 {
     public function addPayment(int $personId, Carbon $date, int $year = null): PersonPayment
     {
-        $payment = PersonPayment::where('year', $year ?: $date->year)->wherePersonId($personId)->first();
+        $payment = PersonPayment::where('year', $year ?: $date->year)->where('person_id', $personId)->first();
         if ($payment === null) {
             $payment = new PersonPayment();
             $payment->person_id = $personId;

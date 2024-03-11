@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Query\Builder;
 
 /**
  * @property int $id
@@ -19,8 +19,6 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property-read Person $person
  *
  * @method static PersonPayment|Builder where(string $column, int $year)
- * @method static PersonPayment|Builder wherePersonId(int $personId)
- * @method static PersonPayment|null first()
  */
 class PersonPayment extends Model
 {

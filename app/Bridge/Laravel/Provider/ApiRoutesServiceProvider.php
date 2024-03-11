@@ -2,13 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Providers;
+namespace App\Bridge\Laravel\Provider;
 
 use App\Http\Controllers\Api;
-use Illuminate\Cache\RateLimiter;
-use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
-use Illuminate\Http\Request;
 use Illuminate\Routing\RouteRegistrar;
 
 class ApiRoutesServiceProvider extends ServiceProvider
