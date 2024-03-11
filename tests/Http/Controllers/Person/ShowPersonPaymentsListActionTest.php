@@ -7,6 +7,7 @@ namespace Tests\Http\Controllers\Person;
 use App\Http\Controllers\Person\ShowPersonPaymentsListAction;
 use App\Models\User;
 use Database\Seeders\ProtocolLinesSeeder;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\CreatesApplication;
@@ -25,8 +26,10 @@ final class ShowPersonPaymentsListActionTest extends TestCase
     {
         $this->seed(ProtocolLinesSeeder::class);
 
+        /** @var Authenticatable $user */
         $user = User::factory()->createOne();
         $this->actingAs($user);
+
         $this->get('/persons/1/payments')
             ->assertStatus(Response::HTTP_OK)
             ->assertSeeTextInOrder([
