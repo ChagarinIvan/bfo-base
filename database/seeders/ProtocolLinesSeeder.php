@@ -30,8 +30,8 @@ class ProtocolLinesSeeder extends Seeder
         Person::factory(state: ['id' => 3])->createOne();
         Person::factory(state: ['id' => 4])->createOne();
 
-        PersonPayment::factory(state: ['id' => 1, 'person_id' => 1, 'date' => '2021-01-11', 'year' => 2021])->createOne();
-        PersonPayment::factory(state: ['id' => 2, 'person_id' => 1, 'date' => '2022-01-11', 'year' => 2022])->createOne();
+        PersonPayment::factory(state: ['id' => 1, 'person_id' => 1, 'date' => '2021-02-12', 'year' => 2021])->createOne();
+        PersonPayment::factory(state: ['id' => 2, 'person_id' => 1, 'date' => '2022-03-13', 'year' => 2022])->createOne();
         PersonPayment::factory(state: ['id' => 3, 'person_id' => 1, 'date' => '2023-01-11', 'year' => 2023])->createOne();
         PersonPayment::factory(state: ['id' => 4, 'person_id' => 2, 'date' => '2024-01-11', 'year' => 2024])->createOne();
         PersonPayment::factory(state: ['id' => 5, 'person_id' => 3, 'date' => '2024-01-12', 'year' => 2024])->createOne();

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Http\Controllers\Person;
 
 use App\Http\Controllers\Person\ShowPersonPaymentsListAction;
+use App\Models\User;
 use Database\Seeders\ProtocolLinesSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
@@ -24,16 +25,17 @@ final class ShowPersonPaymentsListActionTest extends TestCase
     {
         $this->seed(ProtocolLinesSeeder::class);
 
-        $this
-            ->get('persons/1/payments')
+        $user = User::factory()->createOne();
+        $this->actingAs($user);
+        $this->get('/persons/1/payments')
             ->assertStatus(Response::HTTP_OK)
             ->assertSeeTextInOrder([
-                '<td>2021</td>',
-                '<td>2021-01-11</td>',
-                '<td>2022</td>',
-                '<td>2022-01-11</td>',
-                '<td>2023</td>',
-                '<td>2023-01-11</td>',
+                '2021',
+                '2021-02-12',
+                '2022',
+                '2022-03-13',
+                '2023',
+                '2023-01-11',
             ])
         ;
     }
