@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Integration\OrientBy;
 
+use App\Application\Dto\PersonPayment\PersonPaymentDto;
+use App\Application\Service\PersonPayment\CreateOrUpdatePersonPayments;
+use App\Application\Service\PersonPayment\CreateOrUpdatePersonPaymentsService;
 use App\Models\Person;
 use App\Models\Rank;
 use App\Models\Year;
 use App\Services\ClubsService;
-use App\Services\PaymentService;
 use App\Services\PersonsIdentService;
 use App\Services\PersonsService;
 use App\Services\RankService;
@@ -24,12 +26,12 @@ class OrientBySyncService
     private LoggerInterface $logger;
 
     public function __construct(
-        private readonly PersonsIdentService $identService,
-        private readonly PersonsService $personsService,
-        private readonly RankService $rankService,
-        private readonly ClubsService $clubsService,
-        private readonly PaymentService $paymentService,
-        LogManager $loggerManager,
+        private readonly PersonsIdentService                 $identService,
+        private readonly PersonsService                      $personsService,
+        private readonly RankService                         $rankService,
+        private readonly ClubsService                        $clubsService,
+        private readonly CreateOrUpdatePersonPaymentsService $addPersonPaymentsService,
+        LogManager                                           $loggerManager,
     ) {
         $this->logger = $loggerManager->channel('sync');
     }
@@ -41,7 +43,7 @@ class OrientBySyncService
     {
         $this->logger->info('Start synchronisation.');
         $this->logger->info(sprintf("Need process %d persons.", count($persons)));
-//        $paymentDate = Carbon::createFromFormat('Y-m-d', '2023-01-10');
+        $year = Year::actualYear();
 
         $personsPrompts = [];
         foreach ($persons as $personDto) {
@@ -89,11 +91,13 @@ class OrientBySyncService
                 }
 
                 if ($personDto->paid && $personDto->paymentDate()) {
-                    $this->logger->info(
-                        "update payment: ",
-                        ['person_id' => $personId]
-                    );
-                    $this->paymentService->addPayment($person->id, $personDto->paymentDate(), Year::actualYear()->value);
+                    $this->logger->info('update payment: ', ['person_id' => $personId]);
+
+                    $this->addPersonPaymentsService->execute(new CreateOrUpdatePersonPayments(new PersonPaymentDto(
+                        personId: (string) $personId,
+                        year: (string) $year->value,
+                        date: $personDto->paymentDate()->format('Y-m-d'),
+                    )));
                 }
 
                 if ($this->setClub($person, $personDto)) {
@@ -122,7 +126,11 @@ class OrientBySyncService
                 }
 
                 if ($personDto->paid && $personDto->paymentDate()) {
-                    $this->paymentService->addPayment($person->id, $personDto->paymentDate(), Year::actualYear()->value);
+                    $this->addPersonPaymentsService->execute(new CreateOrUpdatePersonPayments(new PersonPaymentDto(
+                        personId: (string) $person->id,
+                        year: (string) $year->value,
+                        date: $personDto->paymentDate()->format('Y-m-d'),
+                    )));
                 }
             }
         }

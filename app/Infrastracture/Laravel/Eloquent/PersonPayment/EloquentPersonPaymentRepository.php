@@ -11,8 +11,21 @@ use Illuminate\Support\Collection;
 
 final class EloquentPersonPaymentRepository implements PersonPaymentRepository
 {
+    public function add(PersonPayment $personPayment): PersonPayment
+    {
+        $personPayment->save();
+
+        return $personPayment;
+    }
+
     public function byCriteria(Criteria $criteria): Collection
     {
-        return PersonPayment::where('person_id', $criteria->param('personId'))->get();
+        $query = PersonPayment::where('person_id', $criteria->param('personId'));
+
+        if ($criteria->hasParam('year')) {
+            $query->where('year', $criteria->param('year'));
+        }
+
+        return $query->get();
     }
 }

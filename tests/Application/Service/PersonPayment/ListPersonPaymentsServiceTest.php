@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Application\Service\Payment;
+namespace Application\Service\PersonPayment;
 
 use App\Application\Dto\PersonPayment\PersonPaymentAssembler;
 use App\Application\Dto\PersonPayment\SearchPersonPaymentsDto;
