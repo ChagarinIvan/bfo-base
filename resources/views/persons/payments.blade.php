@@ -42,15 +42,8 @@
                 <tr>
                     <td>{{ $payment->year }}</td>
                     <td>{{ $payment->date }}</td>
-                    <td data-toggle="tooltip" title="lkjlkjlk asdasd">
-                        <span style="margin-right: 5px;">2021-10-22</span>
-                        <i class="bi bi-info-circle-fill text-info"
-                           data-bs-toggle="tooltip"
-                           data-bs-placement="top"
-                           title="adasdasd"
-                        ></i>
-                    </td>
-                    <td></td>
+                    <x-impression :impression="$payment->created" />
+                    <x-impression :impression="$payment->updated" />
                 </tr>
             @endforeach
             </tbody>
