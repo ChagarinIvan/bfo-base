@@ -5,8 +5,8 @@
      */
 @endphp
 <span style="margin-right: 5px;">{{ $date }}</span>
-<i class="impression bi bi-info-circle text-info"
+<i class="impression bi bi-info-circle-fill text-info"
    data-bs-toggle="tooltip"
    data-bs-placement="top"
-   title="{{ $email }}"
+   title="adasdasd"
 ></i>
