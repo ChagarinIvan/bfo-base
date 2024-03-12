@@ -8,13 +8,15 @@ use App\Application\Dto\PersonPayment\PersonPaymentDto;
 use App\Application\Service\PersonPayment\CreateOrUpdatePersonPayments;
 use App\Application\Service\PersonPayment\CreateOrUpdatePersonPaymentsService;
 use App\Domain\PersonPayment\PersonPaymentFactory;
+use App\Domain\PersonPayment\PersonPaymentInput;
 use App\Domain\PersonPayment\PersonPaymentRepository;
 use App\Domain\Shared\Criteria;
+use App\Domain\Shared\DummyTransactional;
+use App\Domain\Shared\FrozenClock;
 use App\Models\PersonPayment;
 use Carbon\Carbon;
-use Illuminate\Support\Collection;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 
 final class CreateOrUpdatePersonPaymentsServiceTest extends TestCase
 {
@@ -22,10 +24,21 @@ final class CreateOrUpdatePersonPaymentsServiceTest extends TestCase
 
     private CreateOrUpdatePersonPaymentsService $service;
 
+    private PersonPaymentFactory&MockObject $factory;
+
     protected function setUp(): void
     {
+        parent::setUp();
+
         $this->payments = $this->createMock(PersonPaymentRepository::class);
-        $this->service = new CreateOrUpdatePersonPaymentsService($this->payments, new PersonPaymentFactory());
+        $this->factory = $this->createMock(PersonPaymentFactory::class);
+
+        $this->service = new CreateOrUpdatePersonPaymentsService(
+            $this->payments,
+            $this->factory,
+            new DummyTransactional(),
+            new FrozenClock(),
+        );
     }
 
     /** @test */
@@ -33,87 +46,89 @@ final class CreateOrUpdatePersonPaymentsServiceTest extends TestCase
     {
         $this->payments
             ->expects($this->once())
-            ->method('byCriteria')
+            ->method('lockOneByCriteria')
             ->with($this->equalTo(new Criteria(['personId' => 1, 'year' => 2021])))
-            ->willReturn(Collection::make())
         ;
 
-        $personPayment = new PersonPayment();
-        $personPayment->person_id = 1;
-        $personPayment->year = 2021;
-        $personPayment->date = Carbon::createFromFormat('Y-m-d', '2021-01-01');
+        $date = Carbon::createFromFormat('Y-m-d', '2021-01-01');
+        $personPayment = PersonPayment::factory(state: ['year' => 2021,'date' => $date])->makeOne();
+
+        $this->factory
+            ->expects($this->once())
+            ->method('create')
+            ->with(new PersonPaymentInput(1, 2021, $date, 1))
+            ->willReturn($personPayment)
+        ;
 
         $this->payments->expects($this->never())->method('update');
         $this->payments
             ->expects($this->once())
             ->method('add')
-            ->with($this->equalTo($personPayment))
+            ->with($this->identicalTo($personPayment))
         ;
 
-        $this->service->execute(new CreateOrUpdatePersonPayments(new PersonPaymentDto(
-            personId: '1',
-            year: '2021',
-            date: '2021-01-01',
-        )));
+        $this->service->execute(new CreateOrUpdatePersonPayments(
+            new PersonPaymentDto('1', '2021', '2021-01-01'),
+            1,
+        ));
     }
 
     /** @test */
     public function it_doesnt_update_if_no_changes(): void
     {
-        $personPayment = new PersonPayment();
-        $personPayment->person_id = 1;
-        $personPayment->year = 2021;
-        $personPayment->date = Carbon::createFromFormat('Y-m-d', '2021-01-01');
+        $date = Carbon::createFromFormat('Y-m-d', '2021-01-01');
+        $personPayment = PersonPayment::factory(state: ['year' => 2021, 'date' => $date])->makeOne();
 
         $this->payments
             ->expects($this->once())
-            ->method('byCriteria')
+            ->method('lockOneByCriteria')
             ->with($this->equalTo(new Criteria(['personId' => 1, 'year' => 2021])))
-            ->willReturn(Collection::make([$personPayment]))
+            ->willReturn($personPayment)
         ;
 
+        $this->factory->expects($this->never())->method('create');
         $this->payments->expects($this->never())->method('update');
         $this->payments->expects($this->never())->method('add');
 
-        $this->service->execute(new CreateOrUpdatePersonPayments(new PersonPaymentDto(
-            personId: '1',
-            year: '2021',
-            date: '2021-01-01',
-        )));
+        $this->service->execute(new CreateOrUpdatePersonPayments(
+            new PersonPaymentDto('1', '2021', '2021-01-01'),
+            1,
+        ));
     }
 
     /** @test */
     public function it_updates_existed_payment(): void
     {
-        $existPersonPayment = new PersonPayment();
-        $existPersonPayment->person_id = 1;
-        $existPersonPayment->year = 2021;
-        $existPersonPayment->date = Carbon::createFromFormat('Y-m-d', '2021-02-01');
+        /** @var PersonPayment $existPersonPayment */
+        $existPersonPayment = PersonPayment::factory(state: [
+            'id' => 1,
+            'year' => 2021,
+            'date' => Carbon::createFromFormat('Y-m-d', '2021-02-01'),
+        ])->makeOne();
 
         $this->payments
             ->expects($this->once())
-            ->method('byCriteria')
+            ->method('lockOneByCriteria')
             ->with($this->equalTo(new Criteria(['personId' => 1, 'year' => 2021])))
-            ->willReturn(Collection::make([$existPersonPayment]))
+            ->willReturn($existPersonPayment)
         ;
 
         $this->payments->expects($this->never())->method('add');
-
-        $personPayment = new PersonPayment();
-        $personPayment->person_id = 1;
-        $personPayment->year = 2021;
-        $personPayment->date = Carbon::createFromFormat('Y-m-d', '2021-01-01');
+        $personPayment = PersonPayment::factory(state: [
+            'id' => 1,
+            'person_id' => $existPersonPayment->person_id,
+            'year' => 2021,
+            'date' => Carbon::createFromFormat('Y-m-d', '2021-01-01'),
+        ])->makeOne();
 
         $this->payments
             ->expects($this->once())
             ->method('update')
-            ->with($this->equalTo($personPayment))
         ;
 
-        $this->service->execute(new CreateOrUpdatePersonPayments(new PersonPaymentDto(
-            personId: '1',
-            year: '2021',
-            date: '2021-01-01',
-        )));
+        $this->service->execute(new CreateOrUpdatePersonPayments(
+            new PersonPaymentDto('1', '2021', '2021-01-01'),
+            1,
+        ));
     }
 }

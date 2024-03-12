@@ -11,7 +11,7 @@ final readonly class Impression
 {
     public function __construct(
         public Carbon $at,
-        public Footprint $by,
+        public int $by,
     ) {
     }
 }

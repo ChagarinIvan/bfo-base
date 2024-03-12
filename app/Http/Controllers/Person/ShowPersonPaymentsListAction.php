@@ -28,6 +28,7 @@ final class ShowPersonPaymentsListAction extends BaseController
         $person = $personService->execute(new ViewPerson($personId));
         $payments = $personPaymentsService->execute(new ListPersonPayments(new SearchPersonPaymentsDto($personId)));
 
+        /** @see /resources/views/persons/payments.blade.php */
         return $this->view('persons.payments', compact('person', 'payments'));
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Bridge\Laravel\Provider\ApiRoutesServiceProvider;
 use App\Bridge\Laravel\Provider\Person\PersonProvider;
 use App\Bridge\Laravel\Provider\PersonPayment\PersonPaymentProvider;
+use App\Bridge\Laravel\Provider\Shared\SharedProvider;
 use App\Bridge\Laravel\Provider\WebRoutesServiceProvider;
 
 return [
@@ -168,6 +169,7 @@ return [
         Illuminate\View\ViewServiceProvider::class,
 
         // Domain
+        SharedProvider::class,
         PersonProvider::class,
         PersonPaymentProvider::class,
 

@@ -18,8 +18,6 @@ use Tests\TestCase;
 
 final class ViewPersonServiceTest extends TestCase
 {
-    use RefreshDatabase;
-
     private PersonRepository&MockObject $persons;
 
     private ViewPersonService $service;
@@ -27,8 +25,7 @@ final class ViewPersonServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->createApplication();
-        RefreshDatabaseState::$migrated = false;
+
         $this->persons = $this->createMock(PersonRepository::class);
         $this->service = new ViewPersonService($this->persons, new PersonAssembler);
     }
@@ -52,7 +49,8 @@ final class ViewPersonServiceTest extends TestCase
     public function it_views_person(): void
     {
         /** @var Person $person */
-        $person = Person::factory()->createOne();
+        $person = Person::factory()->makeOne();
+        $person->id = 1;
 
         $this->persons
             ->expects($this->once())

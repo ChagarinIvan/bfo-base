@@ -6,15 +6,7 @@ namespace App\Domain\PersonPayment;
 
 use App\Models\PersonPayment;
 
-final class PersonPaymentFactory
+interface PersonPaymentFactory
 {
-    public function create(PersonPaymentInput $input): PersonPayment
-    {
-        $personPayment = new PersonPayment();
-        $personPayment->person_id = $input->personId;
-        $personPayment->year = $input->year;
-        $personPayment->date = $input->date;
-
-        return $personPayment;
-    }
+    public function create(PersonPaymentInput $input): PersonPayment;
 }

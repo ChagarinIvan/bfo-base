@@ -10,6 +10,7 @@ use Illuminate\Console\Command;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Log\LogManager;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Console\Input\InputArgument;
 use Throwable;
 use function unserialize;
 
@@ -30,6 +31,7 @@ class SyncStoredPersonsCommand extends Command
     public function handle(): void
     {
         $this->logger->info('Start.');
+        $userId = (int) $this->argument('user_id');
 
         try {
             for ($i = 0; $i < 6000; $i++) {
@@ -42,7 +44,7 @@ class SyncStoredPersonsCommand extends Command
                 /** @var OrientByPersonDto $person */
                 $person = unserialize($person);
                 $this->logger->info('Process ' . $person->name);
-                $this->service->synchronize([$person]);
+                $this->service->synchronize([$person], $userId);
                 $this->logger->info('Delete ' . $path);
                 $this->storage->delete($path);
             }
@@ -51,5 +53,17 @@ class SyncStoredPersonsCommand extends Command
         }
 
         $this->logger->info('Success.');
+    }
+
+    protected function configure(): void
+    {
+        $this
+            ->setName('persons:sync:stored')
+            ->setDescription('Sync already stored orient by persons,')
+            ->addArgument(
+                'user_id',
+                InputArgument::REQUIRED,
+                'User Id for impression,'
+            );
     }
 }

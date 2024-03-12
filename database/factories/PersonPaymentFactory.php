@@ -18,6 +18,8 @@ class PersonPaymentFactory extends Factory
             'person_id' => $this->faker->numberBetween(1, 100),
             'year' => $this->faker->year,
             'date' => $this->faker->date,
+            'created' => AuthFactory::random(),
+            'updated' =>  AuthFactory::random(),
         ];
     }
 }

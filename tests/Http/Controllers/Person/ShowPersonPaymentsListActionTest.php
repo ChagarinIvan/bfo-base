@@ -41,12 +41,12 @@ final class ShowPersonPaymentsListActionTest extends TestCase
         $this->get('/persons/1/payments')
             ->assertStatus(Response::HTTP_OK)
             ->assertSeeTextInOrder([
-                '2021',
-                '2021-02-12',
-                '2022',
-                '2022-03-13',
                 '2023',
                 '2023-01-11',
+                '2022',
+                '2022-03-13',
+                '2021',
+                '2021-02-12',
             ])
         ;
     }

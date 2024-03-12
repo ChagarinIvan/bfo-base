@@ -14,5 +14,7 @@ interface PersonPaymentRepository
 
     public function byCriteria(Criteria $criteria): Collection;
 
+    public function lockOneByCriteria(Criteria $criteria): ?PersonPayment;
+
     public function update(PersonPayment $personPayment): void;
 }

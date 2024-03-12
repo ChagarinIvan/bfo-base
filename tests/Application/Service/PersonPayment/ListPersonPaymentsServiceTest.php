@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Application\Service\PersonPayment;
 
+use App\Application\Dto\Auth\AuthAssembler;
 use App\Application\Dto\PersonPayment\PersonPaymentAssembler;
 use App\Application\Dto\PersonPayment\SearchPersonPaymentsDto;
 use App\Application\Dto\PersonPayment\ViewPersonPaymentDto;
@@ -26,7 +27,7 @@ final class ListPersonPaymentsServiceTest extends TestCase
     protected function setUp(): void
     {
         $this->payments = $this->createMock(PersonPaymentRepository::class);
-        $this->service = new ListPersonPaymentsService($this->payments, new PersonPaymentAssembler);
+        $this->service = new ListPersonPaymentsService($this->payments, new PersonPaymentAssembler(new AuthAssembler));
     }
 
     /** @test */

@@ -30,7 +30,7 @@ class OrientBySyncService
         private readonly PersonsService                      $personsService,
         private readonly RankService                         $rankService,
         private readonly ClubsService                        $clubsService,
-        private readonly CreateOrUpdatePersonPaymentsService $addPersonPaymentsService,
+        private readonly CreateOrUpdatePersonPaymentsService $createOrUpdatePersonPaymentsService,
         LogManager                                           $loggerManager,
     ) {
         $this->logger = $loggerManager->channel('sync');
@@ -39,7 +39,7 @@ class OrientBySyncService
     /**
      * @param OrientByPersonDto[] $persons
      */
-    public function synchronize(array $persons): void
+    public function synchronize(array $persons, int $userId): void
     {
         $this->logger->info('Start synchronisation.');
         $this->logger->info(sprintf("Need process %d persons.", count($persons)));
@@ -93,11 +93,10 @@ class OrientBySyncService
                 if ($personDto->paid && $personDto->paymentDate()) {
                     $this->logger->info('update payment: ', ['person_id' => $personId]);
 
-                    $this->addPersonPaymentsService->execute(new CreateOrUpdatePersonPayments(new PersonPaymentDto(
-                        personId: (string) $personId,
-                        year: (string) $year->value,
-                        date: $personDto->paymentDate()->format('Y-m-d'),
-                    )));
+                    $this->createOrUpdatePersonPaymentsService->execute(new CreateOrUpdatePersonPayments(
+                        new PersonPaymentDto((string) $personId, (string) $year->value, $personDto->paymentDate()->format('Y-m-d')),
+                        $userId,
+                    ));
                 }
 
                 if ($this->setClub($person, $personDto)) {
@@ -126,11 +125,10 @@ class OrientBySyncService
                 }
 
                 if ($personDto->paid && $personDto->paymentDate()) {
-                    $this->addPersonPaymentsService->execute(new CreateOrUpdatePersonPayments(new PersonPaymentDto(
-                        personId: (string) $person->id,
-                        year: (string) $year->value,
-                        date: $personDto->paymentDate()->format('Y-m-d'),
-                    )));
+                    $this->createOrUpdatePersonPaymentsService->execute(new CreateOrUpdatePersonPayments(
+                        new PersonPaymentDto((string) $person->id, (string) $year->value, $personDto->paymentDate()->format('Y-m-d')),
+                        $userId,
+                    ));
                 }
             }
         }
