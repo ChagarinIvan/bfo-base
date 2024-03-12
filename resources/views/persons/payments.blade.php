@@ -42,8 +42,12 @@
                 <tr>
                     <td>{{ $payment->year }}</td>
                     <td>{{ $payment->date }}</td>
-                    <td><x-impression :impression="$payment->created" /></td>
-                    <td><x-impression :impression="$payment->updated" /></td>
+                    <td><i class="bi bi-info-circle-fill text-info"
+                           data-bs-toggle="tooltip"
+                           data-bs-placement="top"
+                           title="фывфыв"
+                        ></i></td>
+                    <td>-</td>
                 </tr>
             @endforeach
             </tbody>
