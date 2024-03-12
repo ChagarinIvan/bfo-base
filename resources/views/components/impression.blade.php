@@ -11,9 +11,3 @@
    id="impression"
    title="{{ $email }}"
 ></i>
-
-<script>
-    $(function () {
-      document.querySelectorAll('.impression[data-bs-toggle="tooltip"]').tooltip()
-    })
-</script>
