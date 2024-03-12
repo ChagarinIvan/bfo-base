@@ -14,6 +14,6 @@
 
 <script>
     $(function () {
-        $('.impression[data-bs-toggle="tooltip"]').tooltip()
+      document.querySelectorAll('.impression[data-bs-toggle="tooltip"]').tooltip()
     })
 </script>
