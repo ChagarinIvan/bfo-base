@@ -9,11 +9,10 @@ use App\Http\Controllers\Error\ShowUnexpectedErrorAction;
 use App\Services\ViewActionsService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Routing\Controller;
 use Illuminate\Routing\Redirector;
 use function array_values;
 
-abstract class AbstractAction extends Controller
+trait Action
 {
     public function __construct(
         protected ViewActionsService $viewService,
@@ -23,16 +22,7 @@ abstract class AbstractAction extends Controller
 
     public function callAction($method, $parameters)
     {
-        //        try {
         return $this->{$method}(...array_values($parameters));
-        //        } catch (\Throwable $exception) {
-        //            if ($exception instanceof ValidationException || env('APP_ENV', 'dev') === 'dev') {
-        //                throw $exception;
-        //            } else {
-        //                $this->viewService->sendErrorMail($exception, request()->url(),  url()->previous()) ;
-        //                return $this->redirectToError();
-        //            }
-        //        }
     }
 
     protected function view(string $template, array $data = [], bool $isMainTab = true): View

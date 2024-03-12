@@ -54,12 +54,12 @@
                           icon="bi-terminal"
                           url="{{ action(ShowPersonPromptsListAction::class, [$person->id]) }}"
                 />
+                <x-button text="app.common.payments"
+                          color="warning"
+                          icon="bi-currency-dollar"
+                          url="{{ action(ShowPersonPaymentsListAction::class, [$person->id]) }}"
+                />
             @endauth
-            <x-button text="app.common.payments"
-                      color="warning"
-                      icon="bi-currency-dollar"
-                      url="{{ action(ShowPersonPaymentsListAction::class, [$person->id]) }}"
-            />
             <x-button text="app.ranks"
                       color="info"
                       icon="bi-smartwatch"

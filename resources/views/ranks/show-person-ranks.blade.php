@@ -66,7 +66,7 @@
                 <tr @if($rank->activated_date) class="table-info" @else class="table-secondary" @endif>
                     <td>{{ $rank->rank }}</td>
                     <td>{{ $rank->event ? $rank->event->date->format('Y-m-d') : $rank->start_date->format('Y-m-d') }}</td>
-                    <td>{{ $rank->activated_date->format('Y-m-d') }}</td>
+                    <td>{{ $rank->activated_date ? $rank->activated_date->format('Y-m-d') : '-' }}</td>
                     <td>
                         @if ($rank->event_id !== null)
                             {{ $rank->event->date->format('Y-m-d') }}

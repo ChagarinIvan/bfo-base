@@ -9,6 +9,7 @@ use App\Models\User;
 use Database\Seeders\ProtocolLinesSeeder;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use Illuminate\Http\Response;
 use Tests\CreatesApplication;
 use Tests\TestCase;
@@ -17,6 +18,13 @@ final class ShowPersonPaymentsListActionTest extends TestCase
 {
     use CreatesApplication;
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->createApplication();
+        RefreshDatabaseState::$migrated = false;
+    }
 
     /**
      * @test

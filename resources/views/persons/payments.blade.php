@@ -1,14 +1,16 @@
 @php
     use App\Application\Dto\PersonPayment\ViewPersonPaymentDto;
+    use App\Application\Dto\Person\ViewPersonDto;
 
     /**
+     * @var ViewPersonDto $person
      * @var ViewPersonPaymentDto[] $payments
      */
 @endphp
 
 @extends('layouts.app')
 
-@section('title', __('app.common.payments'))
+@section('title', sprintf('%s %s %s', __('app.common.payments'), $person->lastname, $person->firstname))
 
 @section('content')
     <div class="row mb-3">

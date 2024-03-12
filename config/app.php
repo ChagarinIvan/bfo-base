@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Bridge\Laravel\Provider\ApiRoutesServiceProvider;
+use App\Bridge\Laravel\Provider\Person\PersonProvider;
 use App\Bridge\Laravel\Provider\PersonPayment\PersonPaymentProvider;
 use App\Bridge\Laravel\Provider\WebRoutesServiceProvider;
 
@@ -167,6 +168,7 @@ return [
         Illuminate\View\ViewServiceProvider::class,
 
         // Domain
+        PersonProvider::class,
         PersonPaymentProvider::class,
 
         // routes

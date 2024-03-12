@@ -11,11 +11,14 @@ use Illuminate\Support\Collection;
 
 final class EloquentPersonPaymentRepository implements PersonPaymentRepository
 {
-    public function add(PersonPayment $personPayment): PersonPayment
+    public function add(PersonPayment $personPayment): void
     {
         $personPayment->save();
+    }
 
-        return $personPayment;
+    public function update(PersonPayment $personPayment): void
+    {
+        $personPayment->save();
     }
 
     public function byCriteria(Criteria $criteria): Collection
