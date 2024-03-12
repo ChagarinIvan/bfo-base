@@ -8,6 +8,5 @@
 <i class="impression bi bi-info-circle text-info"
    data-bs-toggle="tooltip"
    data-bs-placement="top"
-   id="impression"
    title="{{ $email }}"
 ></i>
