@@ -5,9 +5,15 @@
      */
 @endphp
 <span style="margin-right: 5px;">{{ $date }}</span>
-<i class="bi bi-info-circle-fill text-info"
+<i class="impression bi bi-info-circle text-info"
    data-bs-toggle="tooltip"
    data-bs-placement="top"
+   id="impression"
    title="{{ $email }}"
 ></i>
 
+<script>
+    $(function () {
+        $('.impression[data-bs-toggle="tooltip"]').tooltip()
+    })
+</script>
