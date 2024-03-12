@@ -13,11 +13,6 @@
 @section('title', sprintf('%s %s %s', __('app.common.payments'), $person->lastname, $person->firstname))
 
 @section('content')
-    <i class="bi bi-info-circle-fill text-info"
-       data-bs-toggle="tooltip"
-       data-bs-placement="top"
-       title="фывфыв"
-    ></i>
     <div class="row mb-3">
         <div class="col-12">
             <x-back-button/>
@@ -33,6 +28,7 @@
                data-toggle="table"
                data-sort-class="table-active"
                data-resizable="true"
+               data-show-tooltip="false"
         >
             <thead class="table-dark">
             <tr>
@@ -47,8 +43,8 @@
                 <tr>
                     <td>{{ $payment->year }}</td>
                     <td>{{ $payment->date }}</td>
-                    <td>-</td>
-                    <td>-</td>
+                    <td><x-impression :impression="$payment->created" /></td>
+                    <td><x-impression :impression="$payment->updated" /></td>
                 </tr>
             @endforeach
             </tbody>
