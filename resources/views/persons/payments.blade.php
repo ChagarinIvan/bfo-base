@@ -42,8 +42,8 @@
                 <tr>
                     <td>{{ $payment->year }}</td>
                     <td>{{ $payment->date }}</td>
-                    <x-impression :impression="$payment->created" />
-                    <x-impression :impression="$payment->updated" />
+                    <td><x-impression :impression="$payment->created" /></td>
+                    <td><x-impression :impression="$payment->updated" /></td>
                 </tr>
             @endforeach
             </tbody>
