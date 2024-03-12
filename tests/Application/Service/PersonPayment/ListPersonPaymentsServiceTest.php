@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Application\Service\PersonPayment;
+namespace Tests\Application\Service\PersonPayment;
 
 use App\Application\Dto\Auth\AuthAssembler;
 use App\Application\Dto\PersonPayment\PersonPaymentAssembler;
@@ -13,10 +13,9 @@ use App\Application\Service\PersonPayment\ListPersonPaymentsService;
 use App\Domain\PersonPayment\PersonPaymentRepository;
 use App\Domain\Shared\Criteria;
 use App\Models\PersonPayment;
-use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 
 final class ListPersonPaymentsServiceTest extends TestCase
 {
@@ -26,6 +25,8 @@ final class ListPersonPaymentsServiceTest extends TestCase
 
     protected function setUp(): void
     {
+        parent::setUp();
+
         $this->payments = $this->createMock(PersonPaymentRepository::class);
         $this->service = new ListPersonPaymentsService($this->payments, new PersonPaymentAssembler(new AuthAssembler));
     }
@@ -37,26 +38,12 @@ final class ListPersonPaymentsServiceTest extends TestCase
             ->expects($this->once())
             ->method('byCriteria')
             ->with($this->equalTo(new Criteria(['personId' => 1])))
-            ->willReturn(Collection::make([
-                $this->createPersonPayment(1, 1, 2021, '2021-01-01'),
-                $this->createPersonPayment(2, 1, 2022, '2022-01-01'),
-            ]))
+            ->willReturn(PersonPayment::factory(2)->make())
         ;
 
         $list = $this->service->execute(new ListPersonPayments(new SearchPersonPaymentsDto(personId: '1')));
 
         $this->assertCount(2, $list);
         $this->assertContainsOnlyInstancesOf(ViewPersonPaymentDto::class, $list);
-    }
-
-    private function createPersonPayment(int $id, int $personId, int $year, string $date): PersonPayment
-    {
-        $payment = new PersonPayment;
-        $payment->id = $id;
-        $payment->person_id = $personId;
-        $payment->year = $year;
-        $payment->date = new Carbon($date);
-
-        return $payment;
     }
 }

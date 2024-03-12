@@ -13,15 +13,15 @@ final readonly class PersonPaymentAssembler
     {
     }
 
-    public function toViewPersonPaymentDto(PersonPayment $payment): ViewPersonPaymentDto
+    public function toViewPersonPaymentDto(PersonPayment $personPayment): ViewPersonPaymentDto
     {
         return new ViewPersonPaymentDto(
-            id: $payment->id,
-            personId: $payment->person_id,
-            year: $payment->year,
-            date: $payment->date->format('Y-m-d'),
-            created: $this->authAssembler->toImpressionDto($payment->created),
-            updated: $this->authAssembler->toImpressionDto($payment->updated),
+            id: $personPayment->id,
+            personId: $personPayment->person_id,
+            year: $personPayment->year,
+            date: $personPayment->date->format('Y-m-d'),
+            created: $this->authAssembler->toImpressionDto($personPayment->created),
+            updated: $this->authAssembler->toImpressionDto($personPayment->updated),
         );
     }
 }
