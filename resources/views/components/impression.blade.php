@@ -4,8 +4,8 @@
      * @var string $email
      */
 @endphp
-<span style="margin-left: 5px;">{{ $date }}</span>
-<i class="bi bi-info-circle-fill"
+<span style="margin-right: 5px;">{{ $date }}</span>
+<i class="bi bi-info-circle-fill text-info"
    data-bs-toggle="tooltip"
    data-bs-placement="top"
    title="{{ $email }}"
