@@ -22,20 +22,15 @@
         <table id="table"
                data-cookie="true"
                data-cookie-id-table="person-payments-show"
-               data-mobile-responsive="true"
-               data-check-on-init="true"
                data-min-width="800"
-               data-toggle="table"
-               data-sort-class="table-active"
-               data-resizable="true"
                data-show-tooltip="false"
         >
             <thead class="table-dark">
             <tr>
-                <th data-sortable="true">{{ __('app.common.year') }}</th>
-                <th data-sortable="true">{{ __('app.common.date') }}</th>
-                <th data-sortable="true">{{ __('app.common.created') }}</th>
-                <th data-sortable="true">{{ __('app.common.updated') }}</th>
+                <th>{{ __('app.common.year') }}</th>
+                <th>{{ __('app.common.date') }}</th>
+                <th>{{ __('app.common.created') }}</th>
+                <th>{{ __('app.common.updated') }}</th>
             </tr>
             </thead>
             <tbody>
