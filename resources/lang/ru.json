@@ -20,6 +20,8 @@
     "app.common.visible" : "Видимый",
     "app.common.birthday_year" : "Год рождения",
     "app.common.name" : "Имя",
+    "app.common.created" : "Створаны",
+    "app.common.updated" : "Абноўлены",
     "app.common.fio" : "Фамилия, Имя",
     "app.common.events_count" : "Количество стартов",
     "app.common.lastname" : "Фамилия",

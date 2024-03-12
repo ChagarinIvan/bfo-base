@@ -33,6 +33,8 @@
             <tr>
                 <th data-sortable="true">{{ __('app.common.year') }}</th>
                 <th data-sortable="true">{{ __('app.common.date') }}</th>
+                <th data-sortable="true">{{ __('app.common.created') }}</th>
+                <th data-sortable="true">{{ __('app.common.updated') }}</th>
             </tr>
             </thead>
             <tbody>
@@ -40,6 +42,8 @@
                 <tr>
                     <td>{{ $payment->year }}</td>
                     <td>{{ $payment->date }}</td>
+                    <td><x-impression :impression="$payment->created" /></td>
+                    <td><x-impression :impression="$payment->updated" /></td>
                 </tr>
             @endforeach
             </tbody>

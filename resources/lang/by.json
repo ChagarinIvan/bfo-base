@@ -53,6 +53,8 @@
     "app.common.description" : "Апісанне",
     "app.common.back" : "Назад",
     "app.common.date" : "Дата",
+    "app.common.created" : "Створан",
+    "app.common.updated" : "Абноўлен",
     "app.common.dates" : "Даты",
     "app.common.competitors" : "Колькасць удзельнікаў",
     "app.common.edit" : "Рэдагаваць",
