@@ -10,7 +10,6 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Query\Builder;
 
 /**
  * @property int $id
@@ -19,8 +18,6 @@ use Illuminate\Database\Query\Builder;
  * @property Carbon $date
  * @property Impression $created
  * @property Impression $updated
- *
- * @method static PersonPayment|Builder where(string $column, int $value)
  */
 class PersonPayment extends Model
 {

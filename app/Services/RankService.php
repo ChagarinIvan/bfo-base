@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Collections\RanksCollection;
 use App\Filters\RanksFilter;
 use App\Models\Event;
 use App\Models\ProtocolLine;
@@ -37,9 +36,6 @@ class RankService
     ) {
     }
 
-    /**
-     * @return RanksCollection
-     */
     public function getPersonRanks(int $personId): Collection
     {
         $filter = new RanksFilter();
@@ -74,7 +70,7 @@ class RankService
         }
     }
 
-    public function getFinishedRanks(string $rank): RanksCollection
+    public function getFinishedRanks(string $rank): Collection
     {
         $filter = new RanksFilter();
         $filter->rank = $rank;
@@ -97,7 +93,7 @@ class RankService
         if ($rank === Rank::JUNIOR_THIRD_RANK) {
             $personsIds = $personsIds->merge($this->ranksRepository->getPersonsIdsWithoutRanks()->pluck('id'));
         }
-        $ranks = RanksCollection::empty();
+        $ranks = Collection::empty();
 
         foreach ($personsIds as $personId) {
             $actualRank = $this->getActiveRank($personId, $nowDate);
@@ -233,26 +229,27 @@ class RankService
     private function createPreviousRank(Rank $rank, Carbon $date = null): ?Rank
     {
         if ($date === null) {
-            $date = Carbon::now();
+            $date = new Carbon('now');
         }
         if ($rank->finish_date < $date) {
             if (!isset(Rank::PREVIOUS_RANKS[$rank->rank])) {
                 return null;
             }
-            $rank = $rank->replicate();
-            $rank->start_date = $rank->finish_date->addDay();
-            $rank->finish_date = $rank->start_date->addYears(2);
-            $rank->activated_date = $rank->start_date;
-            $rank->event_id = null;
-            $rank->rank = Rank::PREVIOUS_RANKS[$rank->rank];
 
-            if (!$this->checkMaxJuniorAge($rank->person_id, $rank->rank)) {
+            $newRank = $rank->replicate();
+            $newRank->start_date = $newRank->finish_date->addDay();
+            $newRank->finish_date = $newRank->start_date->addYears(2);
+            $newRank->activated_date = $newRank->start_date;
+            $newRank->event_id = null;
+            $newRank->rank = Rank::PREVIOUS_RANKS[$rank->rank];
+
+            if (!$this->checkMaxJuniorAge($newRank->person_id, $newRank->rank)) {
                 return null;
             }
 
-            $rank = $this->ranksRepository->storeRank($rank);
+            $newRank = $this->ranksRepository->storeRank($newRank);
 
-            return $this->createPreviousRank($rank, $date);
+            return $this->createPreviousRank($newRank, $date);
         }
 
         return $rank;
