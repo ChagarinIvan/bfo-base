@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property int $person_id
  * @property int $year
  * @property Carbon $date
+ *
  * @property Impression $created
  * @property Impression $updated
  */

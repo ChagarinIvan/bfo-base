@@ -10,6 +10,7 @@ use App\Services\ViewActionsService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Redirector;
+use Symfony\Component\HttpFoundation\Response;
 use function array_values;
 
 trait Action
@@ -20,7 +21,7 @@ trait Action
     ) {
     }
 
-    public function callAction($method, $parameters)
+    public function callAction($method, $parameters): Response
     {
         return $this->{$method}(...array_values($parameters));
     }

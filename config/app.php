@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Bridge\Laravel\Provider\ApiRoutesServiceProvider;
+use App\Bridge\Laravel\Provider\Competition\CompetitionProvider;
 use App\Bridge\Laravel\Provider\Person\PersonProvider;
 use App\Bridge\Laravel\Provider\PersonPayment\PersonPaymentProvider;
 use App\Bridge\Laravel\Provider\Shared\SharedProvider;
@@ -170,6 +171,7 @@ return [
         Illuminate\View\ViewServiceProvider::class,
 
         // Domain
+        CompetitionProvider::class,
         PersonProvider::class,
         PersonPaymentProvider::class,
         SharedProvider::class,

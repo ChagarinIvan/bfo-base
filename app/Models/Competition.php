@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Domain\Auth\Impression;
+use App\Infrastracture\Laravel\Eloquent\Auth\ImpressionCast;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 
 /**
@@ -17,13 +18,11 @@ use Illuminate\Support\Collection;
  * @property string $description
  * @property Carbon $from
  * @property Carbon $to
- * @property Carbon $created_at
- * @property Carbon $updated_at
+ *
+ * @property Impression $created
+ * @property Impression $updated
  *
  * @property-read Collection|Event[] $events
- *
- * @method static Competition|null find(mixed $ids)
- * @method static Competition|Builder where(string $column, string $operator, string $value)
  */
 class Competition extends Model
 {
@@ -34,6 +33,8 @@ class Competition extends Model
     protected $casts = [
         'from' => 'datetime:Y-m-d',
         'to' => 'datetime:Y-m-d',
+        'created' => ImpressionCast::class,
+        'updated' => ImpressionCast::class,
     ];
 
     public function events(): HasMany

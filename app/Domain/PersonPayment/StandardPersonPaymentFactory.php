@@ -20,8 +20,7 @@ final readonly class StandardPersonPaymentFactory implements PersonPaymentFactor
         $personPayment->person_id = $input->personId;
         $personPayment->year = $input->year;
         $personPayment->date = $input->date;
-        $personPayment->created = new Impression($this->clock->now(), $input->userId);
-        $personPayment->updated = $personPayment->created;
+        $personPayment->created = $personPayment->updated = new Impression($this->clock->now(), $input->userId);
 
         return $personPayment;
     }

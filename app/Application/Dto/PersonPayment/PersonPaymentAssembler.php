@@ -16,9 +16,9 @@ final readonly class PersonPaymentAssembler
     public function toViewPersonPaymentDto(PersonPayment $personPayment): ViewPersonPaymentDto
     {
         return new ViewPersonPaymentDto(
-            id: $personPayment->id,
-            personId: $personPayment->person_id,
-            year: $personPayment->year,
+            id: (string) $personPayment->id,
+            personId: (string) $personPayment->person_id,
+            year: (string)$personPayment->year,
             date: $personPayment->date->format('Y-m-d'),
             created: $this->authAssembler->toImpressionDto($personPayment->created),
             updated: $this->authAssembler->toImpressionDto($personPayment->updated),

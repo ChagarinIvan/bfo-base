@@ -4,23 +4,20 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Competition;
 
-use App\Models\Competition;
+use App\Application\Dto\Competition\CompetitionDto;
+use App\Application\Service\Competition\AddCompetition;
+use App\Application\Service\Competition\AddCompetitionService;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 
-class StoreCompetitionAction extends AbstractCompetitionAction
+class StoreCompetitionAction extends Controller
 {
-    public function __invoke(Request $request): RedirectResponse
-    {
-        $formParams = $request->validate([
-            'name' => 'required|max:255',
-            'description' => 'nullable',
-            'from' => 'required|date',
-            'to' => 'required|date',
-        ]);
-
-        $competition = new Competition();
-        $competition = $this->competitionService->fillAndStore($competition, $formParams);
+    public function __invoke(
+        CompetitionDto $info,
+        AddCompetitionService $service,
+        int $userId,
+    ): RedirectResponse {
+        $competition = $service->execute(new AddCompetition($info, $userId));
 
         return $this->redirector->action(ShowCompetitionAction::class, [$competition->id]);
     }

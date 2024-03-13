@@ -66,6 +66,8 @@
                         <th data-sortable="true">{{ __('app.common.dates') }}</th>
                         <th data-sortable="true">{{ __('app.common.description') }}</th>
                         @auth
+                            <th data-sortable="true">{{ __('app.common.created') }}</th>
+                            <th data-sortable="true">{{ __('app.common.updated') }}</th>
                             <th></th>
                         @endauth
                     </tr>
@@ -80,6 +82,8 @@
                             <td>{{ $competition->from->format('Y-m-d') }} / {{ $competition->to->format('Y-m-d') }}</td>
                             <td><small>{{ Str::limit($competition->description) }}</small></td>
                             @auth
+                                <td><x-impression :impression="$competition->created" /></td>
+                                <td><x-impression :impression="$competition->updated" /></td>
                                 <td>
                                     <x-edit-button url="{{ action(ShowEditCompetitionFormAction::class, [$year->value, $competition->id]) }}"/>
                                     <x-modal-button modal-id="deleteModal{{ $competition->id }}"/>
