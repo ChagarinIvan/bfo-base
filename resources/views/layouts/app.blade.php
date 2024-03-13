@@ -10,8 +10,8 @@
     <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <title>{{ Str::limit($__env->yieldContent('title'), 20) }}</title>
-    <style>
-        .tooltip {
+    <style type="text/css">
+        .tooltip-wrapper {
             position: relative;
             display: inline-block;
         }
@@ -34,7 +34,7 @@
             visibility: hidden;
         }
 
-        .tooltip:hover .tooltip-text {
+        .tooltip-wrapper:hover .tooltip-text {
             visibility: visible;
             opacity: 1;
         }
