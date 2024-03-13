@@ -15,7 +15,7 @@ class SystemUserSeeder extends Seeder
         $user = new User();
         $user->id = 10;
         $user->email = 'bfo.base@orient.by';
-        $user->password = random_bytes(10);
+        $user->password = bin2hex(random_bytes(5));
         $user->save();
     }
 }
