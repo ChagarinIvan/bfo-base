@@ -16,15 +16,13 @@
             display: inline-block;
         }
 
-        .tooltip .tooltip-text {
-            visibility: hidden;
-            width: 120px;
+        .tooltip-text {
+            width: 200px;
             background-color: #555;
             color: #fff;
             text-align: center;
             padding: 5px 0;
             border-radius: 6px;
-
             position: absolute;
             z-index: 1;
             bottom: 100%;
@@ -33,19 +31,12 @@
 
             opacity: 0;
             transition: opacity 0.3s;
+            visibility: hidden;
         }
 
         .tooltip:hover .tooltip-text {
             visibility: visible;
             opacity: 1;
-        }
-
-        .impression-icon {
-            background-color: #ccc;
-            border-radius: 50%;
-            padding: 5px;
-            display: inline-block;
-            text-align: center;
         }
     </style>
 </head>
