@@ -15,16 +15,6 @@ use Illuminate\Support\Collection;
  * @property string $name
  *
  * @property-read Distance[]|Collection $distances
- *
- * @method static Group|null find(int $id)
- * @method static Builder|Group whereName(string $value)
- * @method static Builder|Group where(string $column, string $operator, string|int $value)
- * @method static Collection get()
- * @method static Collection all()
- * @method static Group|null first()
- * @method static Builder|Group with(mixed $params)
- * @method static Builder|Group selectRaw(Expression $raw)
- * @method static Builder|Group join(string $table, string $tableId, string $operator, string $joinId)
  */
 class Group extends Model
 {

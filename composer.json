@@ -69,6 +69,7 @@
     "require-dev": {
         "fakerphp/faker": "^1.23",
         "friendsofphp/php-cs-fixer": "^3.42",
+        "larastan/larastan": "^2.9",
         "mockery/mockery": "^1.6",
         "phpstan/phpstan": "^1.10"
     }

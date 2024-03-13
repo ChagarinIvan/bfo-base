@@ -10,11 +10,11 @@ use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
-class ActivatePersonRankAction extends AbstractRankAction
+final class ActivatePersonRankAction extends AbstractRankAction
 {
     public function __invoke(Person $person, Rank $rank, Request $request): RedirectResponse
     {
-        if ($rank->active) {
+        if ($rank->activated_date) {
             return $this->redirector->action(ShowPersonRanksAction::class, [$person]);
         }
 

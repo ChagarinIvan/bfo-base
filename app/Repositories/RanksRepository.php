@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace App\Repositories;
 
-use App\Collections\RanksCollection;
 use App\Filters\RanksFilter;
 use App\Models\Person;
-use App\Models\ProtocolLine;
 use App\Models\Rank;
 use Carbon\Carbon;
 use Illuminate\Database\ConnectionInterface;
@@ -25,8 +23,6 @@ final readonly class RanksRepository
 
     /**
      * Выборка действующих актуальных разрядов с фильтром по типу разряда
-     *
-     * @return RanksCollection
      */
     public function getRanksList(RanksFilter $filter): Collection
     {
@@ -79,7 +75,7 @@ final readonly class RanksRepository
     {
         $rankQuery = Rank::where('person_id', '=', $personId)
             ->orderBy('finish_date', 'desc')
-            ->where('active', true)
+            ->whereNotNull('activated_date')
             ->limit(1)
         ;
 
@@ -88,7 +84,7 @@ final readonly class RanksRepository
             $rankQuery->where('start_date', '<=', $date);
         }
 
-        return $rankQuery->get()->first();
+        return $rankQuery->first();
     }
 
     public function storeRank(Rank $rank): Rank
@@ -110,8 +106,9 @@ final readonly class RanksRepository
 
     public function getPersonsIdsWithoutRanks(): Collection
     {
-        return Person::selectRaw(new Expression('person.id'))
+        return Person::selectRaw('person.id')
             ->join('ranks', 'ranks.person_id', '=', 'person.id', 'left outer')
-            ->get();
+            ->get()
+        ;
     }
 }

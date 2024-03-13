@@ -18,6 +18,10 @@ class CompetitionFactory extends Factory
             'description' => $this->faker->name,
             'from' => $this->faker->date,
             'to' => $this->faker->date,
+            'created_at' => $this->faker->date,
+            'created_by' => $this->faker->numberBetween(1, 100),
+            'updated_at' => $this->faker->date,
+            'updated_by' => $this->faker->numberBetween(1, 100),
         ];
     }
 }

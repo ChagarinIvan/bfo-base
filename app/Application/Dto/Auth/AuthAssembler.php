@@ -12,8 +12,8 @@ final class AuthAssembler
     public function toImpressionDto(Impression $impression): ImpressionDto
     {
         return new ImpressionDto(
-            $impression->by->toString(),
             $impression->at->format(DateTimeImmutable::ATOM),
+            (string) $impression->by,
         );
     }
 }

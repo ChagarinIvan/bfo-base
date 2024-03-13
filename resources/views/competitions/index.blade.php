@@ -1,14 +1,14 @@
 @php
+    use App\Application\Dto\Competition\ViewCompetitionDto;
     use App\Http\Controllers\Competition\DeleteCompetitionAction;
     use App\Http\Controllers\Competition\ShowCompetitionAction;
     use App\Http\Controllers\Competition\ShowCompetitionsListAction;
     use App\Http\Controllers\Competition\ShowCreateCompetitionFormAction;
     use App\Http\Controllers\Competition\ShowEditCompetitionFormAction;
     use App\Models\Year;
-    use Illuminate\Support\Collection;
     use Illuminate\Support\Str;
     /**
-     * @var Collection $competitions;
+     * @var ViewCompetitionDto[] $competitions;
      * @var Year $selectedYear;
      */
 @endphp
@@ -31,7 +31,7 @@
     @endauth
     <div class="row">
         <ul class="nav nav-tabs">
-            @foreach(\App\Models\Year::cases() as $year)
+            @foreach(Year::cases() as $year)
                 <li class="nav-item">
                     <a href="{{ action(ShowCompetitionsListAction::class, [$year->value]) }}"
                        class="text-decoration-none nav-link {{ $year === $selectedYear ? 'active' : '' }}"
@@ -66,6 +66,8 @@
                         <th data-sortable="true">{{ __('app.common.dates') }}</th>
                         <th data-sortable="true">{{ __('app.common.description') }}</th>
                         @auth
+                            <th data-sortable="true">{{ __('app.common.created') }}</th>
+                            <th data-sortable="true">{{ __('app.common.updated') }}</th>
                             <th></th>
                         @endauth
                     </tr>
@@ -77,9 +79,11 @@
                                 <a href="{{ action(ShowCompetitionAction::class, [$competition->id]) }}"
                                 >{{ Str::limit($competition->name, 50) }}</a>
                             </td>
-                            <td>{{ $competition->from->format('Y-m-d') }} / {{ $competition->to->format('Y-m-d') }}</td>
+                            <td>{{ $competition->from }} / {{ $competition->to }}</td>
                             <td><small>{{ Str::limit($competition->description) }}</small></td>
                             @auth
+                                <td><x-impression :impression="$competition->created" /></td>
+                                <td><x-impression :impression="$competition->updated" /></td>
                                 <td>
                                     <x-edit-button url="{{ action(ShowEditCompetitionFormAction::class, [$year->value, $competition->id]) }}"/>
                                     <x-modal-button modal-id="deleteModal{{ $competition->id }}"/>
@@ -94,7 +98,7 @@
     </div>
     @foreach ($competitions as $competition)
         <x-modal modal-id="deleteModal{{ $competition->id }}"
-                 url="{{ action(DeleteCompetitionAction::class, [$selectedYear->value    , $competition->id]) }}"
+                 url="{{ action(DeleteCompetitionAction::class, [$selectedYear->value, $competition->id]) }}"
         />
     @endforeach
 @endsection

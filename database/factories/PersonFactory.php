@@ -7,7 +7,7 @@ namespace Database\Factories;
 use App\Models\Person;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class PersonFactory extends Factory
+final class PersonFactory extends Factory
 {
     protected $model = Person::class;
 
@@ -18,7 +18,7 @@ class PersonFactory extends Factory
             'firstname' => $this->faker->firstName,
             'birthday' => $this->faker->date,
             'club_id' => null,
-            'from_base' =>  false,
+            'from_base' => false,
         ];
     }
 }

@@ -6,7 +6,6 @@ namespace App\Repositories;
 
 use App\Domain\Shared\Criteria;
 use App\Models\CupEvent;
-use App\Models\Distance;
 use App\Models\ProtocolLine;
 use App\Models\Year;
 use Illuminate\Database\ConnectionInterface;
@@ -43,11 +42,12 @@ final readonly class ProtocolLinesRepository
 
     public function byCriteria(Criteria $criteria): Collection
     {
-        $query = ProtocolLine::selectRaw('protocol_lines.*, persons_payments.date')
+        $query = ProtocolLine::selectRaw('protocol_lines.*, max(persons_payments.date)')
             ->join('person', 'person.id', '=', 'protocol_lines.person_id')
             ->leftJoin('persons_payments', 'person.id', '=', 'persons_payments.person_id')
             ->where('protocol_lines.vk', false)
             ->whereIn('distance_id', $criteria->param('distances'))
+            ->groupBy('protocol_lines.id')
         ;
 
         if ($criteria->hasParam('paymentYear')) {
@@ -67,7 +67,7 @@ final readonly class ProtocolLinesRepository
         bool $withPayments = false,
         ?Collection $groups = null,
     ): Collection {
-        $protocolLinesQuery = ProtocolLine::selectRaw(new Expression('protocol_lines.*'))
+        $protocolLinesQuery = ProtocolLine::selectRaw('protocol_lines.*')
             ->join('person', 'person.id', '=', 'protocol_lines.person_id')
             ->join('distances', 'distances.id', '=', 'protocol_lines.distance_id')
             ->where('protocol_lines.vk', false)
@@ -100,7 +100,7 @@ final readonly class ProtocolLinesRepository
 
     public function getCupEventGroupProtocolLinesForPersonsWithPayment(CupEvent $cupEvent, int $groupId): Collection
     {
-        return ProtocolLine::selectRaw(new Expression('protocol_lines.*, persons_payments.date'))
+        return ProtocolLine::selectRaw('protocol_lines.*, persons_payments.date')
             ->join('person', 'person.id', '=', 'protocol_lines.person_id')
             ->join('persons_payments', 'person.id', '=', 'persons_payments.person_id')
             ->join('distances', 'distances.id', '=', 'protocol_lines.distance_id')
@@ -143,7 +143,7 @@ final readonly class ProtocolLinesRepository
 
     public function getProtocolLines(int $personId, ?Year $year): Collection
     {
-        $query = ProtocolLine::selectRaw(new Expression('protocol_lines.*'))
+        $query = ProtocolLine::selectRaw('protocol_lines.*')
             ->join('distances', 'distances.id', '=', 'protocol_lines.distance_id')
             ->join('events', 'events.id', '=', 'distances.event_id')
             ->where('protocol_lines.person_id', $personId)

@@ -18,7 +18,7 @@ class GroupsRepository
 
     public function getEventGroups(int $eventId): Collection
     {
-        return Group::selectRaw(new Expression('`groups`.*'))
+        return Group::selectRaw('`groups`.*')
             ->join('distances', 'distances.group_id', '=', 'groups.id')
             ->where('distances.event_id', '=', $eventId)
             ->get();

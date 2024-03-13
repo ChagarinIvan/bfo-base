@@ -29,12 +29,6 @@ use Illuminate\Support\Collection;
  * @property-read Collection|Distance[] $distances
  * @property-read Collection|CupEvent[] $cups
  * @property-read Collection|Flag[] $flags
- *
- * @method static Builder|Event find(Collection|int $ids)
- * @method static Builder|Event with(mixed $params)
- * @method static Builder|Event where(mixed ... $args)
- * @method static Builder|Event whereCompetitionId($value)
- * @method Builder|Event orderByDesc(string $column)
  */
 class Event extends Model
 {
@@ -55,7 +49,7 @@ class Event extends Model
         return $this->hasOne(Competition::class, 'id', 'competition_id');
     }
 
-    public function protocolLines(): HasManyThrough|Builder
+    public function protocolLines(): HasManyThrough
     {
         return $this->hasManyThrough(ProtocolLine::class, Distance::class, 'event_id', 'distance_id', 'id', 'id');
     }

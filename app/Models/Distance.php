@@ -23,17 +23,6 @@ use Illuminate\Support\Collection;
  * @property-read Group $group
  * @property-read Event $event
  * @property-read ProtocolLine[]|Collection $protocolLines
- *
- * @method static Builder|Distance where(string $column, string $equal, string|int $value)
- * @method static Builder|Distance whereGroupId(int $groupId)
- * @method static Builder|Distance whereEventId(int $eventId)
- * @method static Builder|Distance whereLength(int $length)
- * @method static Builder|Distance wherePoints(int $points)
- * @method static Builder|Distance whereIn(string $column, array|Collection $eventGroups)
- * @method static Builder|Distance selectRaw(Expression $raw)
- * @method static Builder|Distance join(string $table, string $tableId, string $operator, string $joinId)
- * @method static Distance|null first()
- * @method static Collection get()
  */
 class Distance extends Model
 {

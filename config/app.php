@@ -2,6 +2,14 @@
 
 declare(strict_types=1);
 
+use App\Bridge\Laravel\Provider\ApiRoutesServiceProvider;
+use App\Bridge\Laravel\Provider\Competition\CompetitionProvider;
+use App\Bridge\Laravel\Provider\Person\PersonProvider;
+use App\Bridge\Laravel\Provider\PersonPayment\PersonPaymentProvider;
+use App\Bridge\Laravel\Provider\Shared\SharedProvider;
+use App\Bridge\Laravel\Provider\User\UserProvider;
+use App\Bridge\Laravel\Provider\WebRoutesServiceProvider;
+
 return [
     /*
     |--------------------------------------------------------------------------
@@ -162,18 +170,16 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
 
-        /*
-         * Package Service Providers...
-         */
+        // Domain
+        CompetitionProvider::class,
+        PersonProvider::class,
+        PersonPaymentProvider::class,
+        SharedProvider::class,
+        UserProvider::class,
 
-        /*
-         * Application Service Providers...
-         */
-        App\Providers\AppServiceProvider::class,
-
-        //routes
-        App\Providers\WebRoutesServiceProvider::class,
-        App\Providers\ApiRoutesServiceProvider::class,
+        // routes
+        WebRoutesServiceProvider::class,
+        ApiRoutesServiceProvider::class,
     ],
 
     /*

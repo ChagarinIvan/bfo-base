@@ -11,14 +11,13 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller;
 use Illuminate\Routing\Redirector;
-use Illuminate\Validation\ValidationException;
 use function array_values;
 
 abstract class AbstractAction extends Controller
 {
     public function __construct(
         protected ViewActionsService $viewService,
-        protected Redirector $redirector
+        protected Redirector $redirector,
     ) {
     }
 

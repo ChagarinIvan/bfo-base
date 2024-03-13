@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Domain\Auth\Impression;
+use App\Infrastracture\Laravel\Eloquent\Auth\ImpressionCast;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -16,11 +17,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property int $year
  * @property Carbon $date
  *
- * @property-read Person $person
- *
- * @method static PersonPayment|Builder where(string $column, int $year)
- * @method static PersonPayment|Builder wherePersonId(int $personId)
- * @method static PersonPayment|null first()
+ * @property Impression $created
+ * @property Impression $updated
  */
 class PersonPayment extends Model
 {
@@ -29,12 +27,21 @@ class PersonPayment extends Model
     public $timestamps = false;
 
     protected $table = 'persons_payments';
+
     protected $casts = [
         'date' => 'datetime:Y-m-d',
+        'created' => ImpressionCast::class,
+        'updated' => ImpressionCast::class,
     ];
 
     public function person(): HasOne
     {
         return $this->hasOne(Person::class, 'id', 'person_id');
+    }
+
+    public function updateDate(Carbon $date, Impression $impression): void
+    {
+        $this->date = $date;
+        $this->updated = $impression;
     }
 }

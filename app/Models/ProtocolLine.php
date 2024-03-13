@@ -9,9 +9,6 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Query\Builder;
-use Illuminate\Database\Query\Expression;
-use Illuminate\Support\Collection;
 
 /**
  * @property int $id
@@ -35,27 +32,6 @@ use Illuminate\Support\Collection;
  * @property-read Event $event
  * @property-read Distance $distance
  * @property-read Person|null $person
- *
- * @method static Collection find(mixed $ids)
- * @method ProtocolLine[]|Collection get(array $columns = ['*'])
- * @method static Builder|ProtocolLine whereDistanceId(int $distanceId)
- * @method static Builder|ProtocolLine wherePreparedLine(string $value)
- * @method static Builder|ProtocolLine wherePersonId(int $personId)
- * @method static Builder|ProtocolLine whereNotNull(string $column)
- * @method static Builder|ProtocolLine havingRaw(string $expression, array $arguments)
- * @method static Builder|ProtocolLine whereNull(string $column)
- * @method static Builder|ProtocolLine whereIn(string|Expression $column, array|Collection $list)
- * @method static Builder|ProtocolLine where(string|Expression $column, string|int|bool $operator, mixed $value = '')
- * @method static Builder|ProtocolLine orderBy(string $column)
- * @method Builder|ProtocolLine with(mixed $ids)
- * @method static Builder|ProtocolLine distinct()
- * @method static Builder|ProtocolLine orderByDesc(string $column)
- * @method static Builder|ProtocolLine selectRaw(Expression|string $raw)
- * @method Builder|ProtocolLine addSelect(string $column)
- * @method static Builder|ProtocolLine join(string $table, string $tableId, string $operator, string $joinId)
- * @method Builder|ProtocolLine leftJoin(string $table, string $tableId, string $operator, string $joinId)
- * @method static ProtocolLine[] all()
- * @method static ProtocolLine[]|iterable cursor()
  */
 class ProtocolLine extends Model
 {

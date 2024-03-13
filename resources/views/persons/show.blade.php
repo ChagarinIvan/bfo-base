@@ -4,11 +4,13 @@
     use App\Http\Controllers\Person\ExtractPersonAction;
     use App\Http\Controllers\Person\ShowEditPersonAction;
     use App\Http\Controllers\Person\ShowPersonPromptsListAction;
+    use App\Http\Controllers\Person\ShowPersonPaymentsListAction;
     use App\Http\Controllers\Rank\ShowPersonRanksAction;
     use App\Models\Person;
     use App\Models\PersonPayment;
     use App\Models\Rank;
     use Illuminate\Support\Collection;use Illuminate\Support\Str;
+
     /**
      * @var Person $person
      * @var Collection $groupedProtocolLines
@@ -51,6 +53,11 @@
                           color="success"
                           icon="bi-terminal"
                           url="{{ action(ShowPersonPromptsListAction::class, [$person->id]) }}"
+                />
+                <x-button text="app.common.payments"
+                          color="warning"
+                          icon="bi-currency-dollar"
+                          url="{{ action(ShowPersonPaymentsListAction::class, [$person->id]) }}"
                 />
             @endauth
             <x-button text="app.ranks"

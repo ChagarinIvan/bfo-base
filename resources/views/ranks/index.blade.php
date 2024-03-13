@@ -62,6 +62,7 @@
                     <tr>
                         <th data-sortable="true">{{ __('app.common.fio') }}</th>
                         <th data-sortable="true">{{ __('app.rank.completed_date') }}</th>
+                        <th data-sortable="true">{{ __('app.rank.activated_date') }}</th>
                         <th data-sortable="true">{{ __('app.rank.recompleted_date') }}</th>
                         <th data-sortable="true">{{ __('app.rank.finished_date') }}</th>
                     </tr>
@@ -74,6 +75,7 @@
                                 >{{ $rank->person->lastname }} {{ $rank->person->firstname }}</a>
                             </td>
                             <td>{{ $rank->start_date->format('Y-m-d') }}</td>
+                            <td>{{ $rank->activated_date->format('Y-m-d') }}</td>
                             <td>
                                 @if ($rank->event_id !== null)
                                     <a href="{{ action(ShowEventAction::class, [$rank->event, $rank->event->distances->first()]) }}"
