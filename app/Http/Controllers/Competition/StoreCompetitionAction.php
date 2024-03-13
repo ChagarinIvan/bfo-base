@@ -11,7 +11,7 @@ use App\Application\Service\Competition\AddCompetitionService;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 
-class StoreCompetitionAction extends Controller
+final class StoreCompetitionAction extends Controller
 {
     public function __invoke(
         CompetitionDto $info,

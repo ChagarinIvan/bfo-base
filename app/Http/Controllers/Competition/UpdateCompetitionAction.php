@@ -4,22 +4,22 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Competition;
 
+use App\Application\Dto\Auth\UserId;
+use App\Application\Dto\Competition\CompetitionDto;
+use App\Application\Service\Competition\UpdateCompetitionInfo;
+use App\Application\Service\Competition\UpdateCompetitionInfoService;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 
-class UpdateCompetitionAction extends AbstractCompetitionAction
+final class UpdateCompetitionAction extends Controller
 {
-    public function __invoke(string $year, string $competitionId, Request $request): RedirectResponse
-    {
-        $formParams = $request->validate([
-            'name' => 'required|max:255',
-            'description' => 'nullable',
-            'from' => 'required|date',
-            'to' => 'required|date',
-        ]);
-
-        $competition = $this->competitionService->getCompetition((int) $competitionId);
-        $competition = $this->competitionService->fillAndStore($competition, $formParams);
+    public function __invoke(
+        string $id,
+        CompetitionDto $info,
+        UpdateCompetitionInfoService $service,
+        UserId $userId,
+    ): RedirectResponse {
+        $competition = $service->execute(new UpdateCompetitionInfo($id, $info, $userId));
 
         return $this->redirector->action(ShowCompetitionAction::class, [$competition->id]);
     }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Domain\Auth\Impression;
+use App\Domain\Competition\CompetitionInfo;
 use App\Infrastracture\Laravel\Eloquent\Auth\ImpressionCast;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -40,5 +41,15 @@ class Competition extends Model
     public function events(): HasMany
     {
         return $this->hasMany(Event::class);
+    }
+
+    public function updateInfo(CompetitionInfo $info, Impression $impression): void
+    {
+        $this->name = $info->name;
+        $this->description = $info->description;
+        $this->from = $info->from;
+        $this->to = $info->to;
+
+        $this->updated = $impression;
     }
 }

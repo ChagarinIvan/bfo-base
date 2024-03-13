@@ -11,6 +11,7 @@ use App\Application\Dto\Competition\CompetitionDto;
 use App\Application\Service\Competition\AddCompetition;
 use App\Application\Service\Competition\AddCompetitionService;
 use App\Domain\Competition\CompetitionFactory;
+use App\Domain\Competition\CompetitionInfo;
 use App\Domain\Competition\CompetitionInput;
 use App\Domain\Competition\CompetitionRepository;
 use App\Models\Competition;
@@ -40,10 +41,12 @@ final class AddCompetitionServiceTest extends TestCase
     public function it_creates_competition(): void
     {
         $input = new CompetitionInput(
-            name: 'test competition',
-            description: 'test competition description',
-            from: Carbon::parse('2023-01-01'),
-            to: Carbon::parse('2023-01-02'),
+            new CompetitionInfo(
+                name: 'test competition',
+                description: 'test competition description',
+                from: Carbon::parse('2023-01-01'),
+                to: Carbon::parse('2023-01-02'),
+            ),
             userId: 1,
         );
 

@@ -39,15 +39,4 @@ class CompetitionService
             ->orderByDesc('from')
             ->get();
     }
-
-    public function fillAndStore(Competition $competition, array $formParams): Competition
-    {
-        $competition->name = $formParams['name'];
-        $competition->description = $formParams['description'];
-        $competition->from = $formParams['from'];
-        $competition->to = $formParams['to'];
-        $competition->save();
-
-        return $competition;
-    }
 }

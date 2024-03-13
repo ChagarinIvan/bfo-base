@@ -13,4 +13,14 @@ final class EloquentCompetitionRepository implements CompetitionRepository
     {
         $competition->save();
     }
+
+    public function update(Competition $competition): void
+    {
+        $competition->save();
+    }
+
+    public function lockById(int $id): ?Competition
+    {
+        return Competition::lockForUpdate()->find($id);
+    }
 }

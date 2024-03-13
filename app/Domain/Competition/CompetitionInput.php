@@ -9,10 +9,7 @@ use Carbon\Carbon;
 final readonly class CompetitionInput
 {
     public function __construct(
-        public string $name,
-        public string $description,
-        public Carbon $from,
-        public Carbon $to,
+        public CompetitionInfo $info,
         public int $userId,
     ) {
     }

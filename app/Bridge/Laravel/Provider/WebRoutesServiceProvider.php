@@ -52,7 +52,7 @@ class WebRoutesServiceProvider extends ServiceProvider
                         $this->route->get('{year}/{competition}/edit', Competition\ShowEditCompetitionFormAction::class);
                         $this->route->get('{year}/{competition}/delete', Competition\DeleteCompetitionAction::class);
                         $this->route->post('store', Competition\StoreCompetitionAction::class);
-                        $this->route->post('{year}/{competition}/update', Competition\UpdateCompetitionAction::class);
+                        $this->route->post('{competition}/update', Competition\UpdateCompetitionAction::class);
                     });
                 });
 
