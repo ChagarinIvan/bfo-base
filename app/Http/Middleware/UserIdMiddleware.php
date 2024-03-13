@@ -18,6 +18,7 @@ final readonly class UserIdMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         $userId = $this->auth->guard()->id();
+        dd($userId);
         $request->merge(['userId' => $userId]);
 
         return $next($request);
