@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Application\Service\PersonPayment;
 
+use App\Application\Dto\Auth\UserId;
 use App\Application\Dto\PersonPayment\PersonPaymentDto;
 use App\Application\Service\PersonPayment\CreateOrUpdatePersonPayments;
 use App\Application\Service\PersonPayment\CreateOrUpdatePersonPaymentsService;
@@ -69,7 +70,7 @@ final class CreateOrUpdatePersonPaymentsServiceTest extends TestCase
 
         $this->service->execute(new CreateOrUpdatePersonPayments(
             new PersonPaymentDto('1', '2021', '2021-01-01'),
-            1,
+            new UserId(1),
         ));
     }
 
@@ -92,7 +93,7 @@ final class CreateOrUpdatePersonPaymentsServiceTest extends TestCase
 
         $this->service->execute(new CreateOrUpdatePersonPayments(
             new PersonPaymentDto('1', '2021', '2021-01-01'),
-            1,
+            new UserId(1),
         ));
     }
 
@@ -128,7 +129,7 @@ final class CreateOrUpdatePersonPaymentsServiceTest extends TestCase
 
         $this->service->execute(new CreateOrUpdatePersonPayments(
             new PersonPaymentDto('1', '2021', '2021-01-01'),
-            1,
+            new UserId(1),
         ));
     }
 }

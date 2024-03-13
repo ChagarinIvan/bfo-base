@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Application\Service\Competition;
 
 use App\Application\Dto\Auth\AuthAssembler;
+use App\Application\Dto\Auth\UserId;
 use App\Application\Dto\Competition\CompetitionAssembler;
 use App\Application\Dto\Competition\CompetitionDto;
 use App\Application\Service\Competition\AddCompetition;
@@ -68,7 +69,7 @@ final class AddCompetitionServiceTest extends TestCase
         $dto->from = '2023-01-01';
         $dto->to = '2023-01-02';
 
-        $command = new AddCompetition($dto, 1);
+        $command = new AddCompetition($dto, new UserId(1));
         $competitionDto = $this->service->execute($command);
 
         $this->assertEquals($competition->id, $competitionDto->id);

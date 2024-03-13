@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Integration\OrientBy;
 
+use App\Application\Dto\Auth\UserId;
 use App\Application\Dto\PersonPayment\PersonPaymentDto;
 use App\Application\Service\PersonPayment\CreateOrUpdatePersonPayments;
 use App\Application\Service\PersonPayment\CreateOrUpdatePersonPaymentsService;
@@ -26,12 +27,12 @@ class OrientBySyncService
     private LoggerInterface $logger;
 
     public function __construct(
-        private readonly PersonsIdentService                 $identService,
-        private readonly PersonsService                      $personsService,
-        private readonly RankService                         $rankService,
-        private readonly ClubsService                        $clubsService,
+        private readonly PersonsIdentService $identService,
+        private readonly PersonsService $personsService,
+        private readonly RankService $rankService,
+        private readonly ClubsService $clubsService,
         private readonly CreateOrUpdatePersonPaymentsService $createOrUpdatePersonPaymentsService,
-        LogManager                                           $loggerManager,
+        LogManager $loggerManager,
     ) {
         $this->logger = $loggerManager->channel('sync');
     }
@@ -39,7 +40,7 @@ class OrientBySyncService
     /**
      * @param OrientByPersonDto[] $persons
      */
-    public function synchronize(array $persons, int $userId): void
+    public function synchronize(array $persons, UserId $userId): void
     {
         $this->logger->info('Start synchronisation.');
         $this->logger->info(sprintf("Need process %d persons.", count($persons)));

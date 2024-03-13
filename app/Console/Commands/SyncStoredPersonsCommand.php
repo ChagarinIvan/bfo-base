@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use App\Application\Dto\Auth\UserId;
 use App\Integration\OrientBy\OrientByPersonDto;
 use App\Integration\OrientBy\OrientBySyncService;
 use Illuminate\Console\Command;
@@ -44,7 +45,7 @@ class SyncStoredPersonsCommand extends Command
                 /** @var OrientByPersonDto $person */
                 $person = unserialize($person);
                 $this->logger->info('Process ' . $person->name);
-                $this->service->synchronize([$person], $userId);
+                $this->service->synchronize([$person], new UserId($userId));
                 $this->logger->info('Delete ' . $path);
                 $this->storage->delete($path);
             }

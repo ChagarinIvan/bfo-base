@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Competition;
 
+use App\Application\Dto\Auth\UserId;
 use App\Application\Dto\Competition\CompetitionDto;
 use App\Application\Service\Competition\AddCompetition;
 use App\Application\Service\Competition\AddCompetitionService;
@@ -15,7 +16,7 @@ class StoreCompetitionAction extends Controller
     public function __invoke(
         CompetitionDto $info,
         AddCompetitionService $service,
-        int $userId,
+        UserId $userId,
     ): RedirectResponse {
         $competition = $service->execute(new AddCompetition($info, $userId));
 

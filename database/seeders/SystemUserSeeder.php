@@ -6,6 +6,7 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use function bin2hex;
 use function random_bytes;
 
 class SystemUserSeeder extends Seeder

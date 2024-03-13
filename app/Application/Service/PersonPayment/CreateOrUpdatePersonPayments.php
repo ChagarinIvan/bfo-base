@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Service\PersonPayment;
 
+use App\Application\Dto\Auth\UserId;
 use App\Application\Dto\PersonPayment\PersonPaymentDto;
 use App\Domain\Auth\Impression;
 use App\Domain\PersonPayment\PersonPaymentInput;
@@ -15,7 +16,7 @@ final readonly class CreateOrUpdatePersonPayments
 {
     public function __construct(
         private PersonPaymentDto $dto,
-        private int $userId,
+        private UserId $userId,
     ) {
     }
 
@@ -33,7 +34,7 @@ final readonly class CreateOrUpdatePersonPayments
             personId: (int) $this->dto->personId,
             year: (int) $this->dto->year,
             date: $this->date(),
-            userId: $this->userId,
+            userId: $this->userId->id,
         );
     }
 
@@ -44,6 +45,6 @@ final readonly class CreateOrUpdatePersonPayments
 
     public function impression(Clock $clock): Impression
     {
-        return new Impression($clock->now(), $this->userId);
+        return new Impression($clock->now(), $this->userId->id);
     }
 }

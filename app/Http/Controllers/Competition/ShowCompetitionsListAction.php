@@ -8,6 +8,7 @@ use App\Application\Dto\Competition\CompetitionAssembler;
 use App\Models\Year;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use function array_map;
 
 class ShowCompetitionsListAction extends AbstractCompetitionAction
 {
