@@ -23,4 +23,9 @@ abstract class AbstractDto
             $this->$name = $data[$name];
         }
     }
+
+    public function fromRequest(): bool
+    {
+        return true;
+    }
 }

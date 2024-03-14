@@ -12,6 +12,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
+use Illuminate\Validation\Factory as Validator;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -22,6 +23,7 @@ trait Action
         private readonly ViewActionsService $viewService,
         protected readonly Redirector $redirector,
         private readonly Request $request,
+        private readonly Validator $validator,
     ) {
     }
 
@@ -31,7 +33,11 @@ trait Action
         foreach ($parameters as $parameter) {
             if ($parameter instanceof AbstractDto) {
                 try {
-                    $validated = $this->request->validate($parameter::validationRules());
+                    if ($parameter->fromRequest()) {
+                        $validated = $this->request->validate($parameter::validationRules());
+                    } else {
+                        $validated = $this->validator->validate($parameters, $parameter::validationRules());
+                    }
                 } catch (ValidationException $e) {
                     throw new BadRequestHttpException($e->getMessage(), previous: $e);
                 }

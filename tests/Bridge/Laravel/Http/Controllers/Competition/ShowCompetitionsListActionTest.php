@@ -35,6 +35,9 @@ final class ShowCompetitionsListActionTest extends TestCase
             ->assertSeeTextInOrder([
                 'test',
                 '2021-01-01',
-            ]);
+            ])
+            ->assertDontSee('test2');
+        ;
+
     }
 }

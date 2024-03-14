@@ -23,4 +23,9 @@ final class CompetitionSearchDto extends AbstractDto
 
         return $this;
     }
+
+    public function fromRequest(): bool
+    {
+        return false;
+    }
 }
