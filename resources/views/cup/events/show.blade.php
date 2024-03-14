@@ -1,10 +1,9 @@
 @php
-    use App\Http\Controllers\Competition\ShowCompetitionAction;
-    use App\Http\Controllers\CupEvents\ShowCupEventGroupAction;
-    use App\Http\Controllers\Event\ShowEventAction;
-    use App\Http\Controllers\Person\ShowPersonAction;
-    use App\Models\Cup;
-    use App\Models\CupEvent;
+    use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionAction;
+    use App\Bridge\Laravel\Http\Controllers\CupEvents\ShowCupEventGroupAction;
+    use App\Bridge\Laravel\Http\Controllers\Event\ShowEventAction;
+    use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonAction;
+    use App\Models\Cup;use App\Models\CupEvent;
     use App\Models\CupEventPoint;
     use App\Models\Group\CupGroup;
     /**
@@ -88,7 +87,9 @@
                                 </a>
                             </td>
                             <td>{{ $cupEventPoint->protocolLine->year }}</td>
-                            <td><x-club-link :club="$cupEventPoint->protocolLine->person->club"></x-club-link></td>
+                            <td>
+                                <x-club-link :club="$cupEventPoint->protocolLine->person->club"></x-club-link>
+                            </td>
                             <td>{{ $cupEventPoint->protocolLine->time ? $cupEventPoint->protocolLine->time->format('H:i:s') : '-' }}</td>
                             @if($cupEventPoint->points === $cupEvent->points)
                                 <td><b class="text-info">{{ $cupEventPoint->points }}</b></td>

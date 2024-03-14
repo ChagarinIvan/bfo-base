@@ -1,8 +1,8 @@
 @php
-    use App\Http\Controllers\Flags\DeleteFlagAction;
-    use App\Http\Controllers\Flags\ShowCreateFlagFormAction;
-    use App\Http\Controllers\Flags\ShowEditFlagFormAction;
-    use App\Http\Controllers\Flags\ShowFlagEventsAction;
+    use App\Bridge\Laravel\Http\Controllers\Flags\DeleteFlagAction;
+    use App\Bridge\Laravel\Http\Controllers\Flags\ShowCreateFlagFormAction;
+    use App\Bridge\Laravel\Http\Controllers\Flags\ShowEditFlagFormAction;
+    use App\Bridge\Laravel\Http\Controllers\Flags\ShowFlagEventsAction;
     use App\Models\Flag;
     /**
      * @var Flag[] $flags;

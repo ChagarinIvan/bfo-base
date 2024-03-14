@@ -1,5 +1,5 @@
 @php
-    use App\Http\Controllers\Person\StorePersonAction;
+    use App\Bridge\Laravel\Http\Controllers\Person\StorePersonAction;
     use App\Models\Club;
     use Illuminate\Support\Collection;
     /**

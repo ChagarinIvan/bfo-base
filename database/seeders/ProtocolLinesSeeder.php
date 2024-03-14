@@ -19,11 +19,16 @@ class ProtocolLinesSeeder extends Seeder
 
     public function run(): void
     {
-        $competition = Competition::factory()->createOne();
-        $event = Event::factory(state: ['competition_id' => $competition->id])->createOne();
-        Distance::factory(state: ['id' => 1, 'event_id' => $event->id])->createOne();
-        Distance::factory(state: ['id' => 2, 'event_id' => $event->id])->createOne();
-        Distance::factory(state: ['id' => 3, 'event_id' => $event->id])->createOne();
+        Competition::factory(state: ['id' => 1])->createOne();
+        Competition::factory(state: ['id' => 2])->createOne();
+
+        Event::factory(state: ['id' => 1, 'competition_id' => 1, 'name' => 'name1'])->createOne();
+        Event::factory(state: ['id' => 2, 'competition_id' => 1, 'name' => 'name2'])->createOne();
+        Event::factory(state: ['id' => 3, 'competition_id' => 2, 'name' => 'name3'])->createOne();
+
+        Distance::factory(state: ['id' => 1, 'event_id' => 1])->createOne();
+        Distance::factory(state: ['id' => 2, 'event_id' => 1])->createOne();
+        Distance::factory(state: ['id' => 3, 'event_id' => 1])->createOne();
 
         Person::factory(state: ['id' => 1])->createOne();
         Person::factory(state: ['id' => 2])->createOne();

@@ -1,7 +1,7 @@
 @php
-    use App\Http\Controllers\Person\UpdatePersonAction;
-    use App\Models\Person;
+    use App\Bridge\Laravel\Http\Controllers\Person\UpdatePersonAction;
     use App\Models\Club;
+    use App\Models\Person;
     use Illuminate\Support\Collection;
     /**
      * @var Person $person

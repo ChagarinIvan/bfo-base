@@ -1,6 +1,6 @@
 @php
+    use App\Bridge\Laravel\Http\Controllers\Groups\UnitGroupsAction;
     use App\Facades\Color;
-    use App\Http\Controllers\Groups\UnitGroupsAction;
     use App\Models\Group;
     use Illuminate\Support\Collection;
     /**

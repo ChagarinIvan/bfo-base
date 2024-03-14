@@ -1,5 +1,5 @@
 @php
-    use App\Http\Controllers\Cups\UpdateCupAction;
+    use App\Bridge\Laravel\Http\Controllers\Cups\UpdateCupAction;
     use App\Models\Cup;
     use App\Models\Cups\CupType;
     use Carbon\Carbon;

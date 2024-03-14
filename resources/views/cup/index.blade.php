@@ -1,12 +1,11 @@
 @php
-    use App\Http\Controllers\Cups\DeleteCupAction;
-    use App\Http\Controllers\Cups\ShowCreateCupFormAction;
-    use App\Http\Controllers\Cups\ShowCupAction;
-    use App\Http\Controllers\Cups\ShowCupsListAction;
-    use App\Http\Controllers\Cups\ShowCupTableAction;
-    use App\Http\Controllers\Cups\ShowEditCupFormAction;
-    use App\Models\Cup;
-    use App\Models\Year;
+    use App\Bridge\Laravel\Http\Controllers\Cups\DeleteCupAction;
+    use App\Bridge\Laravel\Http\Controllers\Cups\ShowCreateCupFormAction;
+    use App\Bridge\Laravel\Http\Controllers\Cups\ShowCupAction;
+    use App\Bridge\Laravel\Http\Controllers\Cups\ShowCupsListAction;
+    use App\Bridge\Laravel\Http\Controllers\Cups\ShowCupTableAction;
+    use App\Bridge\Laravel\Http\Controllers\Cups\ShowEditCupFormAction;
+    use App\Models\Cup;use App\Models\Year;
     use Illuminate\Support\Collection;
     /**
      * @var Collection|Cup[] $cups;

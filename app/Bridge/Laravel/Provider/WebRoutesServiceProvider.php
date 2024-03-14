@@ -4,21 +4,21 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Provider;
 
-use App\Http\Controllers\BackAction;
-use App\Http\Controllers\Club;
-use App\Http\Controllers\Competition;
-use App\Http\Controllers\CupEvents;
-use App\Http\Controllers\Cups;
-use App\Http\Controllers\Error;
-use App\Http\Controllers\Event;
-use App\Http\Controllers\Faq;
-use App\Http\Controllers\Flags;
-use App\Http\Controllers\Groups;
-use App\Http\Controllers\Login;
-use App\Http\Controllers\Person;
-use App\Http\Controllers\PersonPrompt;
-use App\Http\Controllers\Rank;
-use App\Http\Controllers\Registration;
+use App\Bridge\Laravel\Http\Controllers\BackAction;
+use App\Bridge\Laravel\Http\Controllers\Club;
+use App\Bridge\Laravel\Http\Controllers\Competition;
+use App\Bridge\Laravel\Http\Controllers\CupEvents;
+use App\Bridge\Laravel\Http\Controllers\Cups;
+use App\Bridge\Laravel\Http\Controllers\Error;
+use App\Bridge\Laravel\Http\Controllers\Event;
+use App\Bridge\Laravel\Http\Controllers\Faq;
+use App\Bridge\Laravel\Http\Controllers\Flags;
+use App\Bridge\Laravel\Http\Controllers\Groups;
+use App\Bridge\Laravel\Http\Controllers\Login;
+use App\Bridge\Laravel\Http\Controllers\Person;
+use App\Bridge\Laravel\Http\Controllers\PersonPrompt;
+use App\Bridge\Laravel\Http\Controllers\Rank;
+use App\Bridge\Laravel\Http\Controllers\Registration;
 use App\Models\Year;
 use Illuminate\Contracts\Routing\Registrar;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
@@ -45,14 +45,14 @@ class WebRoutesServiceProvider extends ServiceProvider
                 //competitions
                 $this->routeRegistrar->prefix('competitions')->group(function (): void {
                     $this->route->get('{year}', Competition\ShowCompetitionsListAction::class);
-                    $this->route->get('{competition}/show', Competition\ShowCompetitionAction::class);
+                    $this->route->get('{competitionId}/show', Competition\ShowCompetitionAction::class);
 
                     $this->middleware(['auth'])->group(function (): void {
-                        $this->route->get('{year}/create', Competition\ShowCreateCompetitionFormAction::class);
-                        $this->route->get('{year}/{competition}/edit', Competition\ShowEditCompetitionFormAction::class);
+                        $this->route->get('create', Competition\ShowCreateCompetitionFormAction::class);
+                        $this->route->get('{competitionId}/edit', Competition\ShowEditCompetitionFormAction::class);
                         $this->route->get('{year}/{competition}/delete', Competition\DeleteCompetitionAction::class);
                         $this->route->post('store', Competition\StoreCompetitionAction::class);
-                        $this->route->post('{competition}/update', Competition\UpdateCompetitionAction::class);
+                        $this->route->post('{competitionId}/update', Competition\UpdateCompetitionAction::class);
                     });
                 });
 

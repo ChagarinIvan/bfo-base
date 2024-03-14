@@ -1,15 +1,12 @@
 @php
-    use App\Http\Controllers\CupEvents\ShowCupEventGroupAction;
-    use App\Http\Controllers\Cups\ExportCupGroupTableAction;
-    use App\Http\Controllers\Event\ShowEventAction;
-    use App\Http\Controllers\Person\ShowPersonAction;
-    use App\Models\Cup;
-    use App\Models\CupEvent;
-    use App\Models\CupEventPoint;
-    use App\Models\Group\CupGroup;
-    use App\Models\Person;
+    use App\Bridge\Laravel\Http\Controllers\CupEvents\ShowCupEventGroupAction;
+    use App\Bridge\Laravel\Http\Controllers\Cups\ExportCupGroupTableAction;
+    use App\Bridge\Laravel\Http\Controllers\Cups\ShowCupTableAction;
+    use App\Bridge\Laravel\Http\Controllers\Event\ShowEventAction;
+    use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonAction;
+    use App\Models\Cup;use App\Models\CupEvent;use App\Models\CupEventPoint;
+    use App\Models\Group\CupGroup;use App\Models\Person;
     use Illuminate\Support\Collection;
-    use App\Http\Controllers\Cups\ShowCupTableAction;
     /**
      * @var Cup $cup;
      * @var CupEvent[] $cupEvents;

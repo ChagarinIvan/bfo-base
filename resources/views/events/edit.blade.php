@@ -1,5 +1,5 @@
 @php
-    use App\Http\Controllers\Event\UpdateEventAction;
+    use App\Bridge\Laravel\Http\Controllers\Event\UpdateEventAction;
     use App\Models\Event;
     use App\Models\Flag;
     use Illuminate\Support\Collection;

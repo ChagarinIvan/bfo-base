@@ -1,5 +1,5 @@
 @php
-    use App\Http\Controllers\Club\StoreClubsAction;
+    use App\Bridge\Laravel\Http\Controllers\Club\StoreClubsAction;
 @endphp
 
 @extends('layouts.app')

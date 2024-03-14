@@ -1,5 +1,5 @@
 @php
-    use App\Http\Controllers\Cups\StoreCupAction;
+    use App\Bridge\Laravel\Http\Controllers\Cups\StoreCupAction;
     use App\Models\Cups\CupType;
     /**
      * @var int $selectedYear;

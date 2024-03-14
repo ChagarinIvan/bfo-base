@@ -1,5 +1,5 @@
 @php
-    use App\Http\Controllers\Competition\ShowCompetitionsListAction;
+    use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionsListAction;
 @endphp
 
 @extends('layouts.app')

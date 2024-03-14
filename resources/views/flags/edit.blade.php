@@ -1,5 +1,5 @@
 @php
-    use App\Http\Controllers\Flags\UpdateFlagAction;
+    use App\Bridge\Laravel\Http\Controllers\Flags\UpdateFlagAction;
     use App\Models\Flag;
     /**
      * @var Flag $flag;

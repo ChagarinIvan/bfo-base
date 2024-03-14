@@ -1,7 +1,7 @@
 @php
-    use App\Http\Controllers\Person\SetProtocolLinePersonAction;
-    use App\Models\ProtocolLine;
+    use App\Bridge\Laravel\Http\Controllers\Person\SetProtocolLinePersonAction;
     use App\Models\Person;
+    use App\Models\ProtocolLine;
     /**
      * @var ProtocolLine $protocolLine
      * @var Person[] $persons

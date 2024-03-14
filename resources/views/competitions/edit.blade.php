@@ -1,9 +1,8 @@
 @php
-    use App\Http\Controllers\Competition\UpdateCompetitionAction;
-    use App\Models\Competition;
+    use App\Application\Dto\Competition\ViewCompetitionDto;
+    use App\Bridge\Laravel\Http\Controllers\Competition\UpdateCompetitionAction;
     /**
-     * @var int $year;
-     * @var Competition $competition;
+     * @var ViewCompetitionDto $competition;
      */
 @endphp
 
@@ -18,7 +17,7 @@
         >
             @csrf
             <div class="form-floating mb-3">
-                <input name="name" class="form-control" id="name" value="{{ $competition->name }}">
+                <input class="form-control" id="name" name="name" value="{{ $competition->name }}">
                 <label for="name">{{ __('app.competition.name') }}</label>
             </div>
             <div class="form-floating mb-3">
@@ -27,12 +26,12 @@
             </div>
             <div class="form-floating mb-3">
                 <input class="form-control" type="date" id="from" name="from"
-                       value="{{ $competition->from->format('Y-m-d') }}">
+                       value="{{ $competition->from }}">
                 <label for="from">{{ __('app.competition.from_date') }}</label>
             </div>
             <div class="form-floating mb-3">
                 <input class="form-control" type="date" id="to" name="to"
-                       value="{{ $competition->to->format('Y-m-d') }}">
+                       value="{{ $competition->to }}">
                 <label for="to">{{ __('app.competition.to_date') }}</label>
             </div>
             <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3 col-xxl-2">

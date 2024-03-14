@@ -19,6 +19,10 @@ class EventFactory extends Factory
             'date' => $this->faker->date,
             'competition_id' =>  $this->faker->numberBetween(1, 100),
             'file' => '',
+            'created_at' => $this->faker->date,
+            'created_by' => $this->faker->numberBetween(1, 100),
+            'updated_at' => $this->faker->date,
+            'updated_by' => $this->faker->numberBetween(1, 100),
         ];
     }
 }

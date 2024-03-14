@@ -1,5 +1,5 @@
 @php
-    use App\Http\Controllers\Login\ShowLoginFormAction;
+    use App\Bridge\Laravel\Http\Controllers\Login\ShowLoginFormAction;
     /**
      * @var string $email;
      */

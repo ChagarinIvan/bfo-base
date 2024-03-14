@@ -1,20 +1,17 @@
 @php
-    use App\Http\Controllers\Club\ShowClubsListAction;
-    use App\Http\Controllers\Competition\ShowCompetitionsListAction;
-    use App\Http\Controllers\Cups\ShowCupsListAction;
-    use App\Http\Controllers\Faq\ShowApiFaqAction;
-    use App\Http\Controllers\Faq\ShowFaqAction;
-    use App\Http\Controllers\Flags\ShowFlagsListAction;
-    use App\Http\Controllers\Groups\ShowGroupsListAction;
-    use App\Http\Controllers\Localization\ChangeLanguageAction;
-    use App\Http\Controllers\Login\ShowLoginFormAction;
-    use App\Http\Controllers\Login\SignOutAction;
-    use App\Http\Controllers\Person\ShowPersonsListAction;
-    use App\Http\Controllers\Rank\ShowRanksListAction;
-    use App\Http\Controllers\Registration\ShowRegistrationFormAction;
-    use App\Models\Rank;
-    use App\Models\Year;
-    use App\Services\UserService;
+    use App\Bridge\Laravel\Http\Controllers\Club\ShowClubsListAction;
+    use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionsListAction;
+    use App\Bridge\Laravel\Http\Controllers\Cups\ShowCupsListAction;
+    use App\Bridge\Laravel\Http\Controllers\Faq\ShowApiFaqAction;
+    use App\Bridge\Laravel\Http\Controllers\Faq\ShowFaqAction;
+    use App\Bridge\Laravel\Http\Controllers\Flags\ShowFlagsListAction;
+    use App\Bridge\Laravel\Http\Controllers\Groups\ShowGroupsListAction;
+    use App\Bridge\Laravel\Http\Controllers\Login\ShowLoginFormAction;
+    use App\Bridge\Laravel\Http\Controllers\Login\SignOutAction;
+    use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonsListAction;
+    use App\Bridge\Laravel\Http\Controllers\Rank\ShowRanksListAction;
+    use App\Bridge\Laravel\Http\Controllers\Registration\ShowRegistrationFormAction;
+    use App\Models\Rank;use App\Models\Year;
     /**
      * @var bool $isAuth;
      * @var bool $isByLocale;
@@ -123,18 +120,18 @@
                     </li>
                 @endauth
             </ul>
-{{--            <div class="d-flex mx-auto my-1">--}}
-{{--                <div class="btn-group btn-group-sm" role="group" aria-label="Select locale">--}}
-{{--                    <a type="button"--}}
-{{--                       class="btn {{ $isByLocale ? 'btn-outline-danger' : 'btn-outline-secondary' }}"--}}
-{{--                       href="{{ action(ChangeLanguageAction::class, [UserService::BY_LOCALE]) }}"--}}
-{{--                    >{{ __('app.lang.by') }}</a>--}}
-{{--                    <a type="button"--}}
-{{--                       class="btn btn-sm {{ $isRuLocale ? 'btn-outline-danger' : 'btn-outline-secondary' }}"--}}
-{{--                       href="{{ action(ChangeLanguageAction::class, [UserService::RU_LOCALE]) }}"--}}
-{{--                    >{{ __('app.lang.ru') }}</a>--}}
-{{--                </div>--}}
-{{--            </div>--}}
+            {{--            <div class="d-flex mx-auto my-1">--}}
+            {{--                <div class="btn-group btn-group-sm" role="group" aria-label="Select locale">--}}
+            {{--                    <a type="button"--}}
+            {{--                       class="btn {{ $isByLocale ? 'btn-outline-danger' : 'btn-outline-secondary' }}"--}}
+            {{--                       href="{{ action(ChangeLanguageAction::class, [UserService::BY_LOCALE]) }}"--}}
+            {{--                    >{{ __('app.lang.by') }}</a>--}}
+            {{--                    <a type="button"--}}
+            {{--                       class="btn btn-sm {{ $isRuLocale ? 'btn-outline-danger' : 'btn-outline-secondary' }}"--}}
+            {{--                       href="{{ action(ChangeLanguageAction::class, [UserService::RU_LOCALE]) }}"--}}
+            {{--                    >{{ __('app.lang.ru') }}</a>--}}
+            {{--                </div>--}}
+            {{--            </div>--}}
 
             <div class="d-flex ms-auto my-1">
                 @if($isAuth)

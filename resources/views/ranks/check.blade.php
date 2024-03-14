@@ -1,5 +1,5 @@
 @php
-    use App\Http\Controllers\Rank\CheckPersonsRanksAction;
+    use App\Bridge\Laravel\Http\Controllers\Rank\CheckPersonsRanksAction;
 @endphp
 @extends('layouts.app')
 

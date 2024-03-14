@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Provider;
 
-use App\Http\Controllers\Api;
+use App\Bridge\Laravel\Http\Controllers\Api;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Routing\RouteRegistrar;
 

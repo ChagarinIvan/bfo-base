@@ -1,5 +1,5 @@
 @php
-    use App\Http\Controllers\PersonPrompt\StorePromptAction;
+    use App\Bridge\Laravel\Http\Controllers\PersonPrompt\StorePromptAction;
     /**
      * @var int $personId
      */

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\View\Components;
 
-use App\Http\Controllers\BackAction;
+use App\Bridge\Laravel\Http\Controllers\BackAction;
 
 final class BackButton extends Button
 {

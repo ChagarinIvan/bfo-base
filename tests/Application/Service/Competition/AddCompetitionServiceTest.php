@@ -30,6 +30,7 @@ final class AddCompetitionServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
         $this->service = new AddCompetitionService(
             $this->factory = $this->createMock(CompetitionFactory::class),
             $this->competitions = $this->createMock(CompetitionRepository::class),

@@ -1,15 +1,16 @@
 @php
-    use App\Http\Controllers\Competition\ShowCompetitionAction;
-    use App\Http\Controllers\Event\ShowEventAction;
-    use App\Http\Controllers\Person\ExtractPersonAction;
-    use App\Http\Controllers\Person\ShowEditPersonAction;
-    use App\Http\Controllers\Person\ShowPersonPromptsListAction;
-    use App\Http\Controllers\Person\ShowPersonPaymentsListAction;
-    use App\Http\Controllers\Rank\ShowPersonRanksAction;
+    use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionAction;
+    use App\Bridge\Laravel\Http\Controllers\Event\ShowEventAction;
+    use App\Bridge\Laravel\Http\Controllers\Person\ExtractPersonAction;
+    use App\Bridge\Laravel\Http\Controllers\Person\ShowEditPersonAction;
+    use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonPaymentsListAction;
+    use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonPromptsListAction;
+    use App\Bridge\Laravel\Http\Controllers\Rank\ShowPersonRanksAction;
     use App\Models\Person;
     use App\Models\PersonPayment;
     use App\Models\Rank;
-    use Illuminate\Support\Collection;use Illuminate\Support\Str;
+    use Illuminate\Support\Collection;
+    use Illuminate\Support\Str;
 
     /**
      * @var Person $person

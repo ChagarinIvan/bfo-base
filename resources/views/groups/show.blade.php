@@ -1,7 +1,7 @@
 @php
-    use App\Http\Controllers\Competition\ShowCompetitionAction;
-    use App\Http\Controllers\Event\ShowEventAction;
-    use App\Http\Controllers\Groups\ShowUnitGroupsAction;
+    use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionAction;
+    use App\Bridge\Laravel\Http\Controllers\Event\ShowEventAction;
+    use App\Bridge\Laravel\Http\Controllers\Groups\ShowUnitGroupsAction;
     use App\Models\Group;
     /**
      * @var Group $group

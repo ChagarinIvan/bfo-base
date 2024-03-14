@@ -1,17 +1,14 @@
 @php
-    use App\Http\Controllers\Club\ShowClubAction;
-    use App\Http\Controllers\Competition\ShowCompetitionAction;
-    use App\Http\Controllers\Cups\ShowCupAction;
-    use App\Http\Controllers\Event\ShowEditEventFormAction;
-    use App\Http\Controllers\Event\ShowEventAction;
-    use App\Http\Controllers\Flags\ShowFlagEventsAction;
-    use App\Http\Controllers\Person\ShowPersonAction;
-    use App\Http\Controllers\Person\ShowSetPersonToProtocolLineAction;
-    use App\Models\Distance;
-    use App\Models\Event;
-    use App\Models\Group;
-    use App\Models\Club;
-    use App\Models\ProtocolLine;
+    use App\Bridge\Laravel\Http\Controllers\Club\ShowClubAction;
+    use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionAction;
+    use App\Bridge\Laravel\Http\Controllers\Cups\ShowCupAction;
+    use App\Bridge\Laravel\Http\Controllers\Event\ShowEditEventFormAction;
+    use App\Bridge\Laravel\Http\Controllers\Event\ShowEventAction;
+    use App\Bridge\Laravel\Http\Controllers\Flags\ShowFlagEventsAction;
+    use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonAction;
+    use App\Bridge\Laravel\Http\Controllers\Person\ShowSetPersonToProtocolLineAction;
+    use App\Models\Club;use App\Models\Distance;use App\Models\Event;
+    use App\Models\Group;use App\Models\ProtocolLine;
     use App\Services\ClubsService;
     use Illuminate\Support\Collection;
     /**

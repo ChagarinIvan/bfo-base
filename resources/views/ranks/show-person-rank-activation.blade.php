@@ -1,5 +1,5 @@
 @php
-    use App\Http\Controllers\Rank\ActivatePersonRankAction;
+    use App\Bridge\Laravel\Http\Controllers\Rank\ActivatePersonRankAction;
     use App\Models\Person;
     use App\Models\Rank;
     /**

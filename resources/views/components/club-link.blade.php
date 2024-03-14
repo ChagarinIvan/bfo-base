@@ -1,6 +1,6 @@
 @php
+    use App\Bridge\Laravel\Http\Controllers\Club\ShowClubAction;
     use App\Models\Club;
-    use App\Http\Controllers\Club\ShowClubAction;
     /**
      * @var Club|null $club
      */

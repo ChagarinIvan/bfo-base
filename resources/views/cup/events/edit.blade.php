@@ -1,8 +1,7 @@
 @php
-    use App\Http\Controllers\CupEvents\UpdateCupEventAction;
-    use App\Http\Controllers\Cups\ShowCupTableAction;
-    use App\Models\Cup;
-    use App\Models\CupEvent;
+    use App\Bridge\Laravel\Http\Controllers\CupEvents\UpdateCupEventAction;
+    use App\Bridge\Laravel\Http\Controllers\Cups\ShowCupTableAction;
+    use App\Models\Cup;use App\Models\CupEvent;
     use App\Models\Event;
     use Illuminate\Support\Collection;
     /**

@@ -1,18 +1,18 @@
 @php
-    use App\Http\Controllers\Cups\ShowCupAction;
-    use App\Http\Controllers\Event\DeleteEventAction;
-    use App\Http\Controllers\Event\ShowAddFlagToEventFormAction;
-    use App\Http\Controllers\Event\ShowCreateEventFormAction;
-    use App\Http\Controllers\Event\ShowEditEventFormAction;
-    use App\Http\Controllers\Event\ShowEventAction;
-    use App\Http\Controllers\Event\ShowUnitEventsFormAction;
-    use App\Http\Controllers\Flags\ShowFlagEventsAction;
-    use App\Models\Competition;
-    use App\Models\Event;
-    use Illuminate\Support\Collection;use Illuminate\Support\Str;
+    use App\Application\Dto\Competition\ViewCompetitionDto;
+    use App\Application\Dto\Event\ViewEventDto;
+    use App\Bridge\Laravel\Http\Controllers\Cups\ShowCupAction;
+    use App\Bridge\Laravel\Http\Controllers\Event\DeleteEventAction;
+    use App\Bridge\Laravel\Http\Controllers\Event\ShowAddFlagToEventFormAction;
+    use App\Bridge\Laravel\Http\Controllers\Event\ShowCreateEventFormAction;
+    use App\Bridge\Laravel\Http\Controllers\Event\ShowEditEventFormAction;
+    use App\Bridge\Laravel\Http\Controllers\Event\ShowEventAction;
+    use App\Bridge\Laravel\Http\Controllers\Event\ShowUnitEventsFormAction;
+    use App\Bridge\Laravel\Http\Controllers\Flags\ShowFlagEventsAction;
+    use Illuminate\Support\Str;
     /**
-     * @var Competition $competition;
-     * @var Event[]|Collection $events;
+     * @var ViewCompetitionDto $competition
+     * @var ViewEventDto[] $events;
      */
 @endphp
 
@@ -22,6 +22,12 @@
 
 @section('content')
     <div class="row">
+        <div class="col-12">
+            {{ __('app.common.created') }}:
+            <x-impression :impression="$competition->created"/>
+            {{ __('app.common.updated') }}:
+            <x-impression :impression="$competition->updated"/>
+        </div>
         <div class="col-12">
             @auth
                 <x-button text="app.competition.add_event"
@@ -38,7 +44,7 @@
             <x-back-button/>
         </div>
     </div>
-    @if ($events->count() > 0)
+    @if (count($events) > 0)
         <div class="row pt-3">
             <table id="table"
                    data-cookie="true"
@@ -61,6 +67,8 @@
                     <th data-sortable="true">{{ __('app.common.date') }}</th>
                     <th data-sortable="true">{{ __('app.common.competitors') }}</th>
                     @auth
+                        <th data-sortable="true">{{ __('app.common.created') }}</th>
+                        <th data-sortable="true">{{ __('app.common.updated') }}</th>
                         <th></th>
                     @endauth
                 </tr>
@@ -69,7 +77,7 @@
                 @foreach ($events as $event)
                     <tr>
                         <td>
-                            <a href="{{ action(ShowEventAction::class, [$event->id, $event->distances->first() ?? 0]) }}">{{ $event->name }}</a>
+                            <a href="{{ action(ShowEventAction::class, [$event->id, $event->firstDistance ?? 0]) }}">{{ $event->name }}</a>
                         </td>
                         <td>
                             @foreach($event->cups as $cupEvent)
@@ -85,16 +93,18 @@
                             @endforeach
                         </td>
                         <td><small>{{ Str::limit($event->description) }}</small></td>
-                        <td>{{ $event->date->format('Y-m-d') }}</td>
-                        <td>{{ count($event->protocolLines) }}</td>
+                        <td>{{ $event->date }}</td>
+                        <td>{{ $event->protocolLinesCount }}</td>
                         @auth
+                            <td><x-impression :impression="{!! $event->created !!}"/></td>
+                            <td><x-impression :impression="$event->updated"/></td>
                             <td>
                                 <x-button text="app.common.add_flags"
                                           color="info"
                                           icon="bi-flag-fill"
-                                          url="{{ action(ShowAddFlagToEventFormAction::class, [$event]) }}"
+                                          url="{{ action(ShowAddFlagToEventFormAction::class, [$event->id]) }}"
                                 />
-                                <x-edit-button url="{{ action(ShowEditEventFormAction::class, [$event]) }}"/>
+                                <x-edit-button url="{{ action(ShowEditEventFormAction::class, [$event->id]) }}"/>
                                 <x-modal-button modal-id="deleteModal{{ $event->id }}"/>
                             </td>
                         @endauth

@@ -1,7 +1,6 @@
 @php
-    use App\Http\Controllers\Person\ShowPersonAction;
-    use App\Models\Person;
-    use App\Models\Club;
+    use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonAction;
+    use App\Models\Club;use App\Models\Person;
     /**
      * @var Club $club;
      * @var Person[] $persons;

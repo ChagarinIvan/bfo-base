@@ -1,10 +1,10 @@
 @php
-    use App\Http\Controllers\Competition\ShowCompetitionAction;
-    use App\Http\Controllers\Event\ShowAddFlagToEventFormAction;
-    use App\Http\Controllers\Event\ShowEventAction;
-    use App\Models\Event;
-    use App\Models\Flag;
-    use Illuminate\Support\Collection;use Illuminate\Support\Str;
+    use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionAction;
+    use App\Bridge\Laravel\Http\Controllers\Event\ShowAddFlagToEventFormAction;
+    use App\Bridge\Laravel\Http\Controllers\Event\ShowEventAction;
+    use App\Models\Event;use App\Models\Flag;
+    use Illuminate\Support\Collection;
+    use Illuminate\Support\Str;
     /**
      * @var Flag $flag;
      * @var Collection|Event[] $events;

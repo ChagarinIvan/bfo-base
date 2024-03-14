@@ -1,6 +1,6 @@
 @php
-    use App\Http\Controllers\Person\ShowPersonAction;
-    use App\Http\Controllers\Rank\ShowPersonRanksAction;
+    use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonAction;
+    use App\Bridge\Laravel\Http\Controllers\Rank\ShowPersonRanksAction;
     use App\Models\Person;
     use App\Models\Rank;
     use Illuminate\Support\Collection;

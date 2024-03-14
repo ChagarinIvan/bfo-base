@@ -1,5 +1,5 @@
 @php
-    use App\Http\Controllers\Flags\StoreFlagAction;
+    use App\Bridge\Laravel\Http\Controllers\Flags\StoreFlagAction;
 @endphp
 
 @extends('layouts.app')

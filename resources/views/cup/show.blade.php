@@ -1,16 +1,15 @@
 @php
-    use App\Http\Controllers\CupEvents\DeleteCupEventAction;
-    use App\Http\Controllers\CupEvents\ShowCreateCupEventFormAction;
-    use App\Http\Controllers\CupEvents\ShowCupEventGroupAction;
-    use App\Http\Controllers\CupEvents\ShowEditCupEventFormAction;
-    use App\Http\Controllers\Cups\ExportCupTableAction;
-    use App\Http\Controllers\Cups\ClearCacheAction;
-    use App\Http\Controllers\Cups\ShowCupTableAction;
-    use App\Http\Controllers\Cups\ShowEditCupFormAction;
-    use App\Http\Controllers\Cups\DeleteCupAction;
-    use App\Models\Cup;
-    use App\Models\CupEvent;
-    use Illuminate\Support\Collection;use Illuminate\Support\Str;
+    use App\Bridge\Laravel\Http\Controllers\CupEvents\DeleteCupEventAction;
+    use App\Bridge\Laravel\Http\Controllers\CupEvents\ShowCreateCupEventFormAction;
+    use App\Bridge\Laravel\Http\Controllers\CupEvents\ShowCupEventGroupAction;
+    use App\Bridge\Laravel\Http\Controllers\CupEvents\ShowEditCupEventFormAction;
+    use App\Bridge\Laravel\Http\Controllers\Cups\ClearCacheAction;
+    use App\Bridge\Laravel\Http\Controllers\Cups\DeleteCupAction;
+    use App\Bridge\Laravel\Http\Controllers\Cups\ExportCupTableAction;
+    use App\Bridge\Laravel\Http\Controllers\Cups\ShowCupTableAction;
+    use App\Bridge\Laravel\Http\Controllers\Cups\ShowEditCupFormAction;
+    use App\Models\Cup;use App\Models\CupEvent;use Illuminate\Support\Collection;
+    use Illuminate\Support\Str;
     /**
      * @var Cup $cup;
      * @var CupEvent[] $cupEvents;

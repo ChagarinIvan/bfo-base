@@ -1,5 +1,5 @@
 @php
-    use App\Http\Controllers\Faq\ShowApiFaqAction;
+    use App\Bridge\Laravel\Http\Controllers\Faq\ShowApiFaqAction;
 @endphp
 
 @extends('layouts.app')

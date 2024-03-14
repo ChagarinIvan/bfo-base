@@ -1,6 +1,6 @@
 @php
+    use App\Bridge\Laravel\Http\Controllers\Event\UnitEventsAction;
     use App\Facades\Color;
-    use App\Http\Controllers\Event\UnitEventsAction;
     use App\Models\Competition;
     /**
      * @var Competition $competition;

@@ -1,8 +1,5 @@
 @php
-    use App\Http\Controllers\Competition\StoreCompetitionAction;
-    /**
-     * @var int $year;
-     */
+    use App\Bridge\Laravel\Http\Controllers\Competition\StoreCompetitionAction;
 @endphp
 
 @extends('layouts.app')

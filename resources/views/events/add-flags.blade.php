@@ -1,9 +1,8 @@
 @php
-    use App\Http\Controllers\Event\AddFlagToEventAction;
-    use App\Http\Controllers\Event\DeleteEventFlagAction;
-    use App\Http\Controllers\Flags\ShowFlagEventsAction;
-    use App\Models\Flag;
-    use App\Models\Event;
+    use App\Bridge\Laravel\Http\Controllers\Event\AddFlagToEventAction;
+    use App\Bridge\Laravel\Http\Controllers\Event\DeleteEventFlagAction;
+    use App\Bridge\Laravel\Http\Controllers\Flags\ShowFlagEventsAction;
+    use App\Models\Event;use App\Models\Flag;
     use Illuminate\Support\Collection;
     /**
      * @var Flag[]|Collection $flags;

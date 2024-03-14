@@ -1,5 +1,5 @@
 @php
-    use App\Http\Controllers\CupEvents\StoreCupEventAction;
+    use App\Bridge\Laravel\Http\Controllers\CupEvents\StoreCupEventAction;
     use App\Models\Cup;
     use App\Models\Event;
     use Illuminate\Support\Collection;

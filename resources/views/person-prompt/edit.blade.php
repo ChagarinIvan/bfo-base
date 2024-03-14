@@ -1,6 +1,6 @@
 @php
-    use App\Http\Controllers\PersonPrompt\UpdatePromptAction;
-    use \App\Models\PersonPrompt;
+    use App\Bridge\Laravel\Http\Controllers\PersonPrompt\UpdatePromptAction;
+    use App\Models\PersonPrompt;
     /**
      * @var int $personId
      * @var PersonPrompt $prompt

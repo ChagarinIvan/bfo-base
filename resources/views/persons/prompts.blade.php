@@ -1,7 +1,7 @@
 @php
-    use App\Http\Controllers\PersonPrompt\DeletePromptAction;
-    use App\Http\Controllers\PersonPrompt\ShowCreatePromptAction;
-    use App\Http\Controllers\PersonPrompt\ShowEditPromptAction;
+    use App\Bridge\Laravel\Http\Controllers\PersonPrompt\DeletePromptAction;
+    use App\Bridge\Laravel\Http\Controllers\PersonPrompt\ShowCreatePromptAction;
+    use App\Bridge\Laravel\Http\Controllers\PersonPrompt\ShowEditPromptAction;
     use App\Models\Person;
     /**
      * @var Person $person

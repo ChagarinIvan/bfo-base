@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Http\Controllers\BackAction;
+use App\Bridge\Laravel\Http\Controllers\BackAction;
 use App\Mail\ErrorMail;
 use Illuminate\Contracts\Mail\Mailer;
 use Illuminate\Contracts\Routing\UrlGenerator;

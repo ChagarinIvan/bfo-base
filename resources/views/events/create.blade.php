@@ -1,5 +1,5 @@
 @php
-    use App\Http\Controllers\Event\StoreEventAction;
+    use App\Bridge\Laravel\Http\Controllers\Event\StoreEventAction;
     use App\Models\Flag;
     use Illuminate\Support\Collection;
     /**

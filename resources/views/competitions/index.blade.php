@@ -1,12 +1,11 @@
 @php
     use App\Application\Dto\Competition\ViewCompetitionDto;
-    use App\Http\Controllers\Competition\DeleteCompetitionAction;
-    use App\Http\Controllers\Competition\ShowCompetitionAction;
-    use App\Http\Controllers\Competition\ShowCompetitionsListAction;
-    use App\Http\Controllers\Competition\ShowCreateCompetitionFormAction;
-    use App\Http\Controllers\Competition\ShowEditCompetitionFormAction;
-    use App\Models\Year;
-    use Illuminate\Support\Str;
+    use App\Bridge\Laravel\Http\Controllers\Competition\DeleteCompetitionAction;
+    use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionAction;
+    use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionsListAction;
+    use App\Bridge\Laravel\Http\Controllers\Competition\ShowCreateCompetitionFormAction;
+    use App\Bridge\Laravel\Http\Controllers\Competition\ShowEditCompetitionFormAction;
+    use App\Models\Year;use Illuminate\Support\Str;
     /**
      * @var ViewCompetitionDto[] $competitions;
      * @var Year $selectedYear;
@@ -82,10 +81,11 @@
                             <td>{{ $competition->from }} / {{ $competition->to }}</td>
                             <td><small>{{ Str::limit($competition->description) }}</small></td>
                             @auth
-                                <td><x-impression :impression="$competition->created" /></td>
-                                <td><x-impression :impression="$competition->updated" /></td>
+                                <td><x-impression :impression="$competition->created"/></td>
+                                <td><x-impression :impression="$competition->updated"/></td>
                                 <td>
-                                    <x-edit-button url="{{ action(ShowEditCompetitionFormAction::class, [$year->value, $competition->id]) }}"/>
+                                    <x-edit-button
+                                            url="{{ action(ShowEditCompetitionFormAction::class, [$year->value, $competition->id]) }}"/>
                                     <x-modal-button modal-id="deleteModal{{ $competition->id }}"/>
                                 </td>
                             @endauth

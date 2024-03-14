@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Domain\Auth\Impression;
+use App\Infrastracture\Laravel\Eloquent\Auth\ImpressionCast;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -21,8 +23,8 @@ use Illuminate\Support\Collection;
  * @property Carbon $date
  * @property int $competition_id
  * @property string $file
- * @property \Illuminate\Support\Carbon $created_at
- * @property \Illuminate\Support\Carbon $updated_at
+ * @property Impression $created
+ * @property Impression $updated
  *
  * @property-read Competition|null $competition
  * @property-read Collection|ProtocolLine[] $protocolLines
@@ -42,6 +44,8 @@ class Event extends Model
 
     protected $casts = [
         'date' => 'datetime:Y-m-d',
+        'created' => ImpressionCast::class,
+        'updated' => ImpressionCast::class,
     ];
 
     public function competition(): HasOne
