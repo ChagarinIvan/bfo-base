@@ -31,12 +31,4 @@ class CompetitionService
         }
         throw new RuntimeException('Wrong competition id.');
     }
-
-    public function getYearCompetitions(Year $year): Collection
-    {
-        return Competition::where('from', '>=', "{$year->value}-01-01")
-            ->where('to', '<=', "{$year->value}-12-31")
-            ->orderByDesc('from')
-            ->get();
-    }
 }

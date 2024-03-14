@@ -4,23 +4,28 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Http\Controllers\Competition;
 
-use App\Application\Dto\Competition\CompetitionAssembler;
-use App\Models\Year;
+use App\Application\Dto\Competition\CompetitionSearchDto;
+use App\Application\Service\Competition\ListCompetitions;
+use App\Application\Service\Competition\ListCompetitionsService;
 use Illuminate\Contracts\View\View;
-use function array_map;
+use Illuminate\Routing\Controller as BaseController;
 
-final class ShowCompetitionsListAction extends AbstractCompetitionAction
+final class ShowCompetitionsListAction extends BaseController
 {
-    public function __invoke(string $yearInput, CompetitionAssembler $assembler): View
-    {
-        $year = Year::from((int) $yearInput);
-        $competitions = $this->competitionService->getYearCompetitions($year)->all();
+    use CompetitionAction;
+
+    public function __invoke(
+        string $year,
+        CompetitionSearchDto $search,
+        ListCompetitionsService $service,
+    ): View {
+        $competitions = $service->execute(new ListCompetitions($search));
 
         /** @see /resources/views/competitions/index.blade.php */
         return $this->view('competitions.index', [
-            'competitions' => array_map($assembler->toViewCompetitionDto(...), $competitions),
+            'competitions' => $competitions,
             'selectedYear' => $year,
-        ], Year::actualYear() === $year);
+        ]);
     }
 
     protected function isNavbarRoute(): bool

@@ -5,10 +5,11 @@
     use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionsListAction;
     use App\Bridge\Laravel\Http\Controllers\Competition\ShowCreateCompetitionFormAction;
     use App\Bridge\Laravel\Http\Controllers\Competition\ShowEditCompetitionFormAction;
-    use App\Models\Year;use Illuminate\Support\Str;
+    use App\Models\Year;
+    use Illuminate\Support\Str;
     /**
      * @var ViewCompetitionDto[] $competitions;
-     * @var Year $selectedYear;
+     * @var string $selectedYear;
      */
 @endphp
 
@@ -23,7 +24,7 @@
                 <x-button text="app.competition.add_competition"
                           color="success"
                           icon="bi-file-earmark-plus-fill"
-                          url="{{ action(ShowCreateCompetitionFormAction::class, [$selectedYear->value]) }}"
+                          url="{{ action(ShowCreateCompetitionFormAction::class) }}"
                 />
             </div>
         </div>
@@ -33,7 +34,7 @@
             @foreach(Year::cases() as $year)
                 <li class="nav-item">
                     <a href="{{ action(ShowCompetitionsListAction::class, [$year->value]) }}"
-                       class="text-decoration-none nav-link {{ $year === $selectedYear ? 'active' : '' }}"
+                       class="text-decoration-none nav-link {{ $year->value === $selectedYear ? 'active' : '' }}"
                     >
                         <b>{{ $year->value }}</b>
                     </a>
@@ -44,7 +45,7 @@
             <div class="tab-pane fade show active">
                 <table id="table"
                        data-cookie="true"
-                       data-cookie-id-table="competition-list-{{ $selectedYear->value }}"
+                       data-cookie-id-table="competition-list-{{ $selectedYear }}"
                        data-mobile-responsive="true"
                        data-check-on-init="true"
                        data-min-width="800"
@@ -98,7 +99,7 @@
     </div>
     @foreach ($competitions as $competition)
         <x-modal modal-id="deleteModal{{ $competition->id }}"
-                 url="{{ action(DeleteCompetitionAction::class, [$selectedYear->value, $competition->id]) }}"
+                 url="{{ action(DeleteCompetitionAction::class, [$selectedYear, $competition->id]) }}"
         />
     @endforeach
 @endsection

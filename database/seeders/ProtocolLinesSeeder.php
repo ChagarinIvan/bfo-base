@@ -19,7 +19,7 @@ class ProtocolLinesSeeder extends Seeder
 
     public function run(): void
     {
-        Competition::factory(state: ['id' => 1])->createOne();
+        Competition::factory(state: ['id' => 1, 'name' => 'test', 'from' => '2021-01-01'])->createOne();
         Competition::factory(state: ['id' => 2])->createOne();
 
         Event::factory(state: ['id' => 1, 'competition_id' => 1, 'name' => 'name1'])->createOne();

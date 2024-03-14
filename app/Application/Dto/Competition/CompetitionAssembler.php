@@ -18,7 +18,7 @@ final readonly class CompetitionAssembler
         return new ViewCompetitionDto(
             id: (string) $competition->id,
             name: $competition->name,
-            description: $competition->description,
+            description: $competition->description ?? '',
             from: $competition->from->format('Y-m-d'),
             to: $competition->to->format('Y-m-d'),
             created: $this->authAssembler->toImpressionDto($competition->created),

@@ -43,9 +43,9 @@ trait Action
         return parent::callAction($method, $injectParams);
     }
 
-    protected function view(string $template, array $data = [], bool $isMainTab = true): View
+    protected function view(string $template, array $data = []): View
     {
-        if ($this->isNavbarRoute() && $isMainTab) {
+        if ($this->isNavbarRoute()) {
             $this->viewService->cleanBackUrls();
         } else {
             if ($this::class !== $this->viewService->getActualAction()) {
