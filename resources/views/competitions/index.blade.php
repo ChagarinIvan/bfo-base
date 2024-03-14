@@ -34,7 +34,7 @@
             @foreach(Year::cases() as $year)
                 <li class="nav-item">
                     <a href="{{ action(ShowCompetitionsListAction::class, [$year->value]) }}"
-                       class="text-decoration-none nav-link {{ $year->value === $selectedYear ? 'active' : '' }}"
+                       class="text-decoration-none nav-link {{ $year->value == $selectedYear ? 'active' : '' }}"
                     >
                         <b>{{ $year->value }}</b>
                     </a>
