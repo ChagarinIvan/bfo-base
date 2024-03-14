@@ -96,7 +96,7 @@
                         <td>{{ $event->date }}</td>
                         <td>{{ $event->protocolLinesCount }}</td>
                         @auth
-                            <td><x-impression :impression="{!! $event->created !!}"/></td>
+                            <td><x-impression :impression="$event->created"/></td>
                             <td><x-impression :impression="$event->updated"/></td>
                             <td>
                                 <x-button text="app.common.add_flags"
