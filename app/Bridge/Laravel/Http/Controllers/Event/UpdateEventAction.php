@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Http\Controllers\Event;
 
+use App\Application\Dto\Auth\UserId;
+use App\Domain\Auth\Impression;
+use App\Domain\Shared\Clock;
 use App\Models\Event;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -11,8 +14,12 @@ use Illuminate\Support\Str;
 
 class UpdateEventAction extends AbstractEventAction
 {
-    public function __invoke(Event $event, Request $request): RedirectResponse
-    {
+    public function __invoke(
+        Event $event,
+        Request $request,
+        UserId $userId,
+        Clock $clock,
+    ): RedirectResponse {
         $formParams = $request->validate([
             'name' => 'required',
             'description' => 'nullable',
@@ -22,9 +29,11 @@ class UpdateEventAction extends AbstractEventAction
         $protocol = $request->file('protocol');
         $url = $request->get('obelarus_net');
         $event->fill($formParams);
+        $event->updated = new Impression($clock->now(), $userId->id);
 
         if ($protocol === null && $url === null) {
             $event->save();
+
             return $this->redirector->action(ShowEventAction::class, [$event, $event->distances->first()]);
         }
 

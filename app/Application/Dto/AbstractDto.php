@@ -14,6 +14,11 @@ abstract class AbstractDto
     /** @param array<string, mixed> $data */
     abstract public function fromArray(array $data): self;
 
+    public function fromRequest(): bool
+    {
+        return true;
+    }
+
     /**
      * @param array<string, mixed> $data
      */
@@ -22,10 +27,5 @@ abstract class AbstractDto
         if (array_key_exists($name, $data)) {
             $this->$name = $data[$name];
         }
-    }
-
-    public function fromRequest(): bool
-    {
-        return true;
     }
 }

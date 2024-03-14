@@ -7,6 +7,7 @@ namespace App\Application\Service\Competition;
 use App\Application\Dto\Competition\CompetitionAssembler;
 use App\Application\Dto\Competition\ViewCompetitionDto;
 use App\Domain\Competition\CompetitionRepository;
+use function array_map;
 
 final readonly class ListCompetitionsService
 {

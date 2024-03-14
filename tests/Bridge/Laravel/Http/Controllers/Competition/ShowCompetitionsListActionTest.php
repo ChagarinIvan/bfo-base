@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Bridge\Laravel\Http\Controllers\Competition;
 
 use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionsListAction;
@@ -38,6 +40,5 @@ final class ShowCompetitionsListActionTest extends TestCase
             ])
             ->assertDontSee('test2');
         ;
-
     }
 }

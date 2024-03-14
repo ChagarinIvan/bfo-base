@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Http\Controllers\Event;
 
+use App\Application\Dto\Auth\UserId;
+use App\Domain\Auth\Impression;
+use App\Domain\Shared\Clock;
 use App\Models\Event;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -11,8 +14,12 @@ use Illuminate\Support\Str;
 
 class StoreEventAction extends AbstractEventAction
 {
-    public function __invoke(string $competitionId, Request $request): RedirectResponse
-    {
+    public function __invoke(
+        string $competitionId,
+        Request $request,
+        UserId $userId,
+        Clock $clock,
+    ): RedirectResponse {
         $formParams = $request->validate([
             'name' => 'required',
             'flags' => 'array',
@@ -43,6 +50,7 @@ class StoreEventAction extends AbstractEventAction
 
         $protocolPath = "{$year}/{$event->date->format('Y-m-d')}_" . Str::snake($event->name) . '.html';
         $event->file = $protocolPath;
+        $event->created = $event->updated = new Impression($clock->now(), $userId->id);
 
         $lineList = $this->parserService->parseProtocol($protocol, $needConvert, $extension);
         $event->save();
