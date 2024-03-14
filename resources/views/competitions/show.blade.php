@@ -23,10 +23,12 @@
 @section('content')
     <div class="row">
         <div class="col-12">
-            {{ __('app.common.created') }}:
-            <x-impression :impression="$competition->created"/>
-            {{ __('app.common.updated') }}:
-            <x-impression :impression="$competition->updated"/>
+            <h4>
+                {{ __('app.common.created') }}:
+                <x-impression :impression="$competition->created"/>
+                {{ __('app.common.updated') }}:
+                <x-impression :impression="$competition->updated"/>
+            </h4>
         </div>
         <div class="col-12">
             @auth
