@@ -22,7 +22,7 @@
         <table id="table"
                data-cookie="true"
                data-url="/api/competitions-json"
-               data-cookie-id-table="competition-list-{{ $selectedYear }}"
+               data-cookie-id-table="competition-list"
                data-mobile-responsive="true"
                data-check-on-init="true"
                data-min-width="800"
