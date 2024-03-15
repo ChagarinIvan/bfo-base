@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Bridge\Laravel\View\Components;
+namespace App\View\Components;
 
 use App\Application\Dto\Auth\ImpressionDto;
 use App\Domain\User\UserRepository;

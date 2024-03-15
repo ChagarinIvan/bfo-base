@@ -1,5 +1,5 @@
 @php
-    use App\Bridge\Laravel\View\Components\EditButton;
+    use App\View\Components\EditButton;
     /**
      * @var string $header
      * @var string $content

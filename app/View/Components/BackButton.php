@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Bridge\Laravel\View\Components;
+namespace App\View\Components;
 
 use App\Bridge\Laravel\Http\Controllers\BackAction;
 
