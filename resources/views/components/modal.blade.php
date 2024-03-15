@@ -1,5 +1,5 @@
 @php
-    use App\View\Components\EditButton;
+    use App\Bridge\Laravel\View\Components\EditButton;
     /**
      * @var string $header
      * @var string $content
@@ -17,10 +17,10 @@
             <div class="modal-body">{{ $content }}</div>
             <div class="modal-footer">
                 <x-button
-                    text="{{ $button->text }}"
-                    color="{{ $button->color }}"
-                    icon="{{ $button->icon }}"
-                    url="{{ $button->url }}"
+                        text="{{ $button->text }}"
+                        color="{{ $button->color }}"
+                        icon="{{ $button->icon }}"
+                        url="{{ $button->url }}"
                 />
             </div>
         </div>

@@ -7,9 +7,8 @@ namespace App\Application\Service\Event;
 use App\Application\Dto\Auth\UserId;
 use App\Application\Dto\Event\EventDto;
 use App\Domain\Event\EventInfo;
-use App\Domain\Event\EventInput;
+use App\Domain\Event\Factory\EventInput;
 use Carbon\Carbon;
-use DateTimeImmutable;
 
 final readonly class AddEvent
 {

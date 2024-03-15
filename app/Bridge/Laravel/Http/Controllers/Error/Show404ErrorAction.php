@@ -10,7 +10,7 @@ use Illuminate\Http\RedirectResponse;
 
 class Show404ErrorAction extends AbstractAction
 {
-    public function __invoke(): View|RedirectResponse
+    public function __invoke(): View
     {
         return $this->view('errors.404error');
     }

@@ -23,12 +23,12 @@ final class EloquentCompetitionRepository implements CompetitionRepository
 
     public function byId(int $id): ?Competition
     {
-        return Competition::find($id);
+        return Competition::where('active', true)->find($id);
     }
 
     public function byCriteria(Criteria $criteria): Collection
     {
-        $query = Competition::orderByDesc('from');
+        $query = Competition::where('active', true)->orderByDesc('from');
 
         if ($criteria->hasParam('year')) {
             $query
@@ -42,6 +42,6 @@ final class EloquentCompetitionRepository implements CompetitionRepository
 
     public function lockById(int $id): ?Competition
     {
-        return Competition::lockForUpdate()->find($id);
+        return Competition::where('active', true)->lockForUpdate()->find($id);
     }
 }

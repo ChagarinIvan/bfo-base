@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Http\Controllers\Event;
 
+use App\Application\Dto\Auth\UserId;
+use App\Domain\Auth\Impression;
+use App\Domain\Shared\Clock;
 use App\Models\Distance;
 use App\Models\Event;
 use App\Models\ProtocolLine;
@@ -15,8 +18,13 @@ use Illuminate\Support\Collection;
 
 class UnitEventsAction extends AbstractEventAction
 {
-    public function __invoke(string $competitionId, Request $request, DistanceService $distanceService): RedirectResponse
-    {
+    public function __invoke(
+        string $competitionId,
+        Request $request,
+        DistanceService $distanceService,
+        UserId $userId,
+        Clock $clock,
+    ): RedirectResponse {
         $formParams = $request->validate([
             'events' => 'required|array',
         ]);
@@ -32,6 +40,7 @@ class UnitEventsAction extends AbstractEventAction
         $newEvent->description = "Аб'яднанне этапаў: {$name}";
         $newEvent->date = $firstEvent->date;
         $newEvent->competition_id = (int) $competitionId;
+        $newEvent->created = $newEvent->updated = new Impression($clock->now(), $userId->id);
         $newEvent->save();
 
         $newProtocolLines = new Collection();

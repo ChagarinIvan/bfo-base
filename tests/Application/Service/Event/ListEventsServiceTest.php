@@ -45,9 +45,7 @@ class ListEventsServiceTest extends TestCase
             ->willReturn($events)
         ;
 
-        $dto = new EventSearchDto();
-
-        $dto->competitionId = '1';
+        $dto = new EventSearchDto('1');
 
         $command = new ListEvents($dto);
         $result = $this->service->execute($command);

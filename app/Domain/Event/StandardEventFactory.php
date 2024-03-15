@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Domain\Event;
 
 use App\Domain\Auth\Impression;
+use App\Domain\Event\Factory\EventFactory;
+use App\Domain\Event\Factory\EventInput;
 use App\Domain\Shared\Clock;
 use App\Models\Event;
 

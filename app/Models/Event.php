@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Domain\Auth\Impression;
+use App\Domain\Event\Event\EventDisabled;
 use App\Infrastracture\Laravel\Eloquent\Auth\ImpressionCast;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -23,6 +24,8 @@ use Illuminate\Support\Collection;
  * @property Carbon $date
  * @property int $competition_id
  * @property string $file
+ * @property bool $active
+ *
  * @property Impression $created
  * @property Impression $updated
  *
@@ -76,5 +79,13 @@ class Event extends Model
     public function ranks(): HasMany|Builder
     {
         return $this->hasMany(Rank::class);
+    }
+
+    public function disable(Impression $impression): void
+    {
+        $this->updated = $impression;
+        $this->active = false;
+
+        event(new EventDisabled($this));
     }
 }

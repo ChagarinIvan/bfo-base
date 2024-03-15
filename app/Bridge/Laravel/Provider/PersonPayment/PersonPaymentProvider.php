@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Provider\PersonPayment;
 
-use App\Domain\PersonPayment\PersonPaymentFactory;
+use App\Domain\PersonPayment\Factory\PersonPaymentFactory;
 use App\Domain\PersonPayment\PersonPaymentRepository;
 use App\Domain\PersonPayment\StandardPersonPaymentFactory;
 use App\Infrastracture\Laravel\Eloquent\PersonPayment\EloquentPersonPaymentRepository;

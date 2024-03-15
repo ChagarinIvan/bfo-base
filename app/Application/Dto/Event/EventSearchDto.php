@@ -8,14 +8,14 @@ use App\Application\Dto\AbstractDto;
 
 final class EventSearchDto extends AbstractDto
 {
-    // exact match
-    public ?string $competitionId;
-
     public static function validationRules(): array
     {
         return [
             'competitionId' => 'numeric',
         ];
+    }
+    public function __construct(public ?string $competitionId = null)
+    {
     }
 
     public function fromArray(array $data): AbstractDto

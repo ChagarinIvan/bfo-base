@@ -38,7 +38,7 @@ final class ShowCompetitionsListActionTest extends TestCase
                 'test',
                 '2021-01-01',
             ])
-            ->assertDontSee('test2');
+            ->assertDontSee(['test2', 'test3'])
         ;
     }
 }

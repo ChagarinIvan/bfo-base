@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Domain\Auth\Impression;
 use App\Domain\Competition\CompetitionInfo;
+use App\Domain\Competition\Event\CompetitionDisabled;
 use App\Infrastracture\Laravel\Eloquent\Auth\ImpressionCast;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -19,6 +20,7 @@ use Illuminate\Support\Collection;
  * @property string|null $description
  * @property Carbon $from
  * @property Carbon $to
+ * @property bool $active
  *
  * @property Impression $created
  * @property Impression $updated
@@ -51,5 +53,13 @@ class Competition extends Model
         $this->to = $info->to;
 
         $this->updated = $impression;
+    }
+
+    public function disable(Impression $impression): void
+    {
+        $this->updated = $impression;
+        $this->active = false;
+
+        event(new CompetitionDisabled($this));
     }
 }

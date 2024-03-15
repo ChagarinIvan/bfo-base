@@ -16,9 +16,24 @@ final class EloquentEventRepository implements EventRepository
         $event->save();
     }
 
+    public function byId(int $id): ?Event
+    {
+        return Event::where('active', true)->find($id);
+    }
+
+    public function lockById(int $id): ?Event
+    {
+        return Event::where('active', true)->lockForUpdate()->find($id);
+    }
+
+    public function update(Event $event): void
+    {
+        $event->save();
+    }
+
     public function byCriteria(Criteria $criteria): Collection
     {
-        $query = Event::orderBy('date', 'asc');
+        $query = Event::where('active', true)->orderBy('date', 'asc');
 
         if ($criteria->hasParam('competitionId')) {
             $query->where('competition_id', $criteria->param('competitionId'));

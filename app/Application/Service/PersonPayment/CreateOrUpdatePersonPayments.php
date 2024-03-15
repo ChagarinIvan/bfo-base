@@ -7,7 +7,7 @@ namespace App\Application\Service\PersonPayment;
 use App\Application\Dto\Auth\UserId;
 use App\Application\Dto\PersonPayment\PersonPaymentDto;
 use App\Domain\Auth\Impression;
-use App\Domain\PersonPayment\PersonPaymentInput;
+use App\Domain\PersonPayment\Factory\PersonPaymentInput;
 use App\Domain\Shared\Clock;
 use App\Domain\Shared\Criteria;
 use Carbon\Carbon;

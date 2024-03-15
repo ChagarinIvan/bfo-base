@@ -6,8 +6,8 @@ namespace App\Application\Service\Event;
 
 use App\Application\Dto\Event\EventAssembler;
 use App\Application\Dto\Event\ViewEventDto;
-use App\Domain\Event\EventFactory;
 use App\Domain\Event\EventRepository;
+use App\Domain\Event\Factory\EventFactory;
 
 final readonly class AddEventService
 {

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Service\PersonPayment;
 
-use App\Domain\PersonPayment\PersonPaymentFactory;
+use App\Domain\PersonPayment\Factory\PersonPaymentFactory;
 use App\Domain\PersonPayment\PersonPaymentRepository;
 use App\Domain\Shared\Clock;
 use App\Domain\Shared\TransactionManager;

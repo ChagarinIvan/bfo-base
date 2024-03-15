@@ -7,7 +7,7 @@ namespace App\Application\Service\Competition;
 use App\Application\Dto\Auth\UserId;
 use App\Application\Dto\Competition\CompetitionDto;
 use App\Domain\Competition\CompetitionInfo;
-use App\Domain\Competition\CompetitionInput;
+use App\Domain\Competition\Factory\CompetitionInput;
 use Carbon\Carbon;
 
 final readonly class AddCompetition

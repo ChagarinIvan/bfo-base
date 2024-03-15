@@ -50,7 +50,7 @@ class WebRoutesServiceProvider extends ServiceProvider
                     $this->middleware(['auth'])->group(function (): void {
                         $this->route->get('create', Competition\ShowCreateCompetitionFormAction::class);
                         $this->route->get('{competitionId}/edit', Competition\ShowEditCompetitionFormAction::class);
-                        $this->route->get('{year}/{competition}/delete', Competition\DeleteCompetitionAction::class);
+                        $this->route->get('{year}/{competitionId}/delete', Competition\DeleteCompetitionAction::class);
                         $this->route->post('store', Competition\StoreCompetitionAction::class);
                         $this->route->post('{competitionId}/update', Competition\UpdateCompetitionAction::class);
                     });
