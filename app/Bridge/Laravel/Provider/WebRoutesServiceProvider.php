@@ -44,6 +44,7 @@ class WebRoutesServiceProvider extends ServiceProvider
 
                 //competitions
                 $this->routeRegistrar->prefix('competitions')->group(function (): void {
+                    $this->route->get('', Competition\ShowCompetitionsListApiAction::class);
                     $this->route->get('{year}', Competition\ShowCompetitionsListAction::class);
                     $this->route->get('{competitionId}/show', Competition\ShowCompetitionAction::class);
 
