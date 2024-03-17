@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
-use App\Models\ProtocolLine;
+use App\Domain\ProtocolLine\ProtocolLine;
 use App\Services\RankService;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Collection;

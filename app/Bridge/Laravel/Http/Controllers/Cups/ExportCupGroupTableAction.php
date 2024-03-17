@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Http\Controllers\Cups;
 
+use App\Domain\Person\Person;
 use App\Models\Cup;
 use App\Models\CupEventPoint;
 use App\Models\Group;
-use App\Models\Person;
 use Illuminate\Support\Facades\File;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use function array_filter;

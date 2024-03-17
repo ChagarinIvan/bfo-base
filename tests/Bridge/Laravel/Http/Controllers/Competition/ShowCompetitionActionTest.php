@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Bridge\Laravel\Http\Controllers\Competition;
 
 use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionAction;
-use App\Models\Competition;
 use Database\Seeders\ProtocolLinesSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;

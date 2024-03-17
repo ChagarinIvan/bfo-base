@@ -4,24 +4,29 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Http\Controllers\Person;
 
-use App\Models\Person;
-use Illuminate\Contracts\View\View;
+use App\Application\Dto\Auth\UserId;
+use App\Application\Dto\Person\PersonDto;
+use App\Application\Service\Person\AddPerson;
+use App\Application\Service\Person\AddPersonService;
+use App\Application\Service\Person\Exception\FailedToAddPerson;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
+use Illuminate\Routing\Controller as BaseController;
+use Illuminate\View\View;
 
-class StorePersonAction extends AbstractPersonAction
+class StorePersonAction extends BaseController
 {
-    public function __invoke(Request $request): View|RedirectResponse
-    {
-        $formParams = $request->validate([
-            'lastname' => 'required',
-            'firstname' => 'required',
-            'birthday' => 'required|date',
-            'club_id' => 'required|int',
-        ]);
+    use PersonAction;
 
-        $person = $this->personsService->fillPerson(new Person(), $formParams);
-        $person = $this->personsService->storePerson($person);
+    public function __invoke(
+        PersonDto $dto,
+        AddPersonService $service,
+        UserId $userId,
+    ): View|RedirectResponse {
+        try {
+            $person = $service->execute(new AddPerson($dto, $userId));
+        } catch (FailedToAddPerson) {
+            return $this->redirectToError();
+        }
 
         return $this->redirector->action(ShowPersonAction::class, [$person->id]);
     }

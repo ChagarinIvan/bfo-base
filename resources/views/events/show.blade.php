@@ -7,8 +7,11 @@
     use App\Bridge\Laravel\Http\Controllers\Flags\ShowFlagEventsAction;
     use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonAction;
     use App\Bridge\Laravel\Http\Controllers\Person\ShowSetPersonToProtocolLineAction;
-    use App\Models\Club;use App\Models\Distance;use App\Models\Event;
-    use App\Models\Group;use App\Models\ProtocolLine;
+    use App\Domain\Event\Event;
+    use App\Domain\Club\Club;
+    use App\Domain\ProtocolLine\ProtocolLine;
+    use App\Models\Distance;
+    use App\Models\Group;
     use App\Services\ClubsService;
     use Illuminate\Support\Collection;
     /**

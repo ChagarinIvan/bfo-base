@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Domain\Competition;
 
 use App\Domain\Shared\Criteria;
-use App\Models\Competition;
 use Illuminate\Support\Collection;
 
 interface CompetitionRepository

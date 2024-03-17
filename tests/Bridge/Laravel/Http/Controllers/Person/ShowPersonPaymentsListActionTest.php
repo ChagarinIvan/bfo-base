@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Bridge\Laravel\Http\Controllers\Person;
 
 use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonPaymentsListAction;
-use App\Models\User;
+use App\Domain\User\User;
 use Database\Seeders\ProtocolLinesSeeder;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;

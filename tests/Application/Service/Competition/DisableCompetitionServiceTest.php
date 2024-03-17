@@ -8,11 +8,10 @@ use App\Application\Dto\Auth\UserId;
 use App\Application\Service\Competition\DisableCompetition;
 use App\Application\Service\Competition\DisableCompetitionService;
 use App\Application\Service\Competition\Exception\CompetitionNotFound;
+use App\Domain\Competition\Competition;
 use App\Domain\Competition\CompetitionRepository;
 use App\Domain\Shared\DummyTransactional;
 use App\Domain\Shared\FrozenClock;
-use App\Models\Competition;
-use Mockery;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 

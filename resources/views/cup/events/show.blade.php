@@ -3,7 +3,8 @@
     use App\Bridge\Laravel\Http\Controllers\CupEvents\ShowCupEventGroupAction;
     use App\Bridge\Laravel\Http\Controllers\Event\ShowEventAction;
     use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonAction;
-    use App\Models\Cup;use App\Models\CupEvent;
+    use App\Models\Cup;
+    use App\Models\CupEvent;
     use App\Models\CupEventPoint;
     use App\Models\Group\CupGroup;
     /**
@@ -88,7 +89,7 @@
                             </td>
                             <td>{{ $cupEventPoint->protocolLine->year }}</td>
                             <td>
-                                <x-club-link :club="$cupEventPoint->protocolLine->person->club"></x-club-link>
+                                <x-club-link :clubId="$cupEventPoint->protocolLine->person->club_id"></x-club-link>
                             </td>
                             <td>{{ $cupEventPoint->protocolLine->time ? $cupEventPoint->protocolLine->time->format('H:i:s') : '-' }}</td>
                             @if($cupEventPoint->points === $cupEvent->points)

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Dto\Event;
 
 use App\Application\Dto\Auth\AuthAssembler;
-use App\Models\Event;
+use App\Domain\Event\Event;
 
 final readonly class EventAssembler
 {
@@ -21,6 +21,7 @@ final readonly class EventAssembler
             name: $event->name,
             description: $event->description,
             date: $event->date->format('Y-m-d'),
+            competitionName: $event->competition?->name ?: '',
             protocolLinesCount: $event->protocolLines->count(),
             firstDistance: $event->distances->first(),
             cups: $event->cups->all(),

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Models\Event;
+use App\Domain\Event\Event;
 use Illuminate\Cache\Repository as CacheManager;
 
 class EventService

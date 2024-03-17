@@ -2,9 +2,10 @@
     use App\Bridge\Laravel\Http\Controllers\PersonPrompt\DeletePromptAction;
     use App\Bridge\Laravel\Http\Controllers\PersonPrompt\ShowCreatePromptAction;
     use App\Bridge\Laravel\Http\Controllers\PersonPrompt\ShowEditPromptAction;
-    use App\Models\Person;
+    use App\Application\Dto\PersonPrompt\ViewPersonPromptDto;
     /**
-     * @var Person $person
+     * @var string $personId
+     * @var ViewPersonPromptDto[] $prompts
      */
 @endphp
 
@@ -19,13 +20,13 @@
                 <x-button text="app.common.new"
                           color="success"
                           icon="bi-file-earmark-plus-fill"
-                          url="{{ action(ShowCreatePromptAction::class, [$person->id]) }}"
+                          url="{{ action(ShowCreatePromptAction::class, [$personId]) }}"
                 />
             @endauth
             <x-back-button/>
         </div>
     </div>
-    @if($person->prompts->count() > 0)
+    @if(count($prompts) > 0)
         <table id="table"
                data-cookie="true"
                data-cookie-id-table="person-prompts-show"
@@ -48,13 +49,13 @@
             </tr>
             </thead>
             <tbody>
-            @foreach ($person->prompts as $prompt)
+            @foreach ($prompts as $prompt)
                 <tr>
                     <td>{{ $prompt->prompt }}</td>
                     <td>{{ $prompt->metaphone }}</td>
                     @auth
                         <td>
-                            <x-edit-button url="{{ action(ShowEditPromptAction::class, [$prompt->person_id, $prompt->id]) }}"/>
+                            <x-edit-button url="{{ action(ShowEditPromptAction::class, [$prompt->id]) }}"/>
                             <x-modal-button modal-id="deleteModal{{ $prompt->id }}"/>
                         </td>
                     @endauth
@@ -62,9 +63,9 @@
             @endforeach
             </tbody>
         </table>
-        @foreach ($person->prompts as $prompt)
+        @foreach ($prompts as $prompt)
             <x-modal modal-id="deleteModal{{ $prompt->id }}"
-                     url="{{ action(DeletePromptAction::class, [$prompt->person_id, $prompt->id]) }}"
+                     url="{{ action(DeletePromptAction::class, [$prompt->id]) }}"
             />
         @endforeach
     @endif

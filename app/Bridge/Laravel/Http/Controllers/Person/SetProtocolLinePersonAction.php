@@ -4,21 +4,24 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Http\Controllers\Person;
 
-use App\Models\Person;
-use App\Models\ProtocolLine;
+use App\Domain\Person\Person;
+use App\Domain\ProtocolLine\ProtocolLine;
 use App\Services\PersonPromptService;
 use App\Services\ProtocolLineService;
 use App\Services\RankService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Routing\Controller as BaseController;
 
-class SetProtocolLinePersonAction extends AbstractPersonAction
+class SetProtocolLinePersonAction extends BaseController
 {
+    use PersonAction;
+
     public function __invoke(
         Person $person,
         string $protocolLineId,
         ProtocolLineService $protocolLineService,
         PersonPromptService $personPromptService,
-        RankService $rankService
+        RankService $rankService,
     ): RedirectResponse {
         /** @var ProtocolLine $protocolLine */
         $protocolLine = ProtocolLine::find($protocolLineId);

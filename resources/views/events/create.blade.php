@@ -1,9 +1,7 @@
 @php
     use App\Bridge\Laravel\Http\Controllers\Event\StoreEventAction;
-    use App\Models\Flag;
-    use Illuminate\Support\Collection;
     /**
-     * @var Flag[]|Collection $flags;
+     * @var string $competitionId;
      */
 @endphp
 

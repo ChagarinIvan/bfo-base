@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\PersonPayment\Factory;
 
-use App\Models\PersonPayment;
+use App\Domain\PersonPayment\PersonPayment;
 
 interface PersonPaymentFactory
 {

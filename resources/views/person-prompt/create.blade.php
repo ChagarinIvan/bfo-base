@@ -1,7 +1,7 @@
 @php
     use App\Bridge\Laravel\Http\Controllers\PersonPrompt\StorePromptAction;
     /**
-     * @var int $personId
+     * @var string $personId
      */
 @endphp
 

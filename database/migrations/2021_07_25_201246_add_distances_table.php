@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Domain\ProtocolLine\ProtocolLine;
 use App\Models\Distance;
-use App\Models\ProtocolLine;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;

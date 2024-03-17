@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Bridge\Laravel\Http\Controllers\Login;
 
 use App\Bridge\Laravel\Http\Controllers\AbstractAction;
+use App\Domain\User\User;
 use App\Mail\PasswordMail;
-use App\Models\User;
 use App\Services\ViewActionsService;
 use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Contracts\Mail\Mailer;

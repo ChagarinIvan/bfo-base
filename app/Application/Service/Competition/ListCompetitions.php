@@ -6,6 +6,7 @@ namespace App\Application\Service\Competition;
 
 use App\Application\Dto\Competition\CompetitionSearchDto;
 use App\Domain\Shared\Criteria;
+use function array_filter;
 use function get_object_vars;
 
 final readonly class ListCompetitions
@@ -16,6 +17,6 @@ final readonly class ListCompetitions
 
     public function criteria(): Criteria
     {
-        return new Criteria(get_object_vars($this->search));
+        return new Criteria(array_filter(get_object_vars($this->search)));
     }
 }

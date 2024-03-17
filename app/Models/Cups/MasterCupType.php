@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Models\Cups;
 
+use App\Domain\ProtocolLine\ProtocolLine;
 use App\Models\CupEvent;
 use App\Models\CupEventPoint;
 use App\Models\Group\CupGroup;
 use App\Models\Group\CupGroupFactory;
 use App\Models\Group\GroupAge;
 use App\Models\Group\GroupMale;
-use App\Models\ProtocolLine;
 use Illuminate\Support\Collection;
 use function in_array;
 

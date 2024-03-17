@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace App\Bridge\Laravel\Http\Controllers\Person;
 
 use Illuminate\Contracts\View\View;
-use Illuminate\Http\RedirectResponse;
+use Illuminate\Routing\Controller as BaseController;
 
-class ShowPersonsListAction extends AbstractPersonAction
+class ShowPersonsListAction extends BaseController
 {
-    public function __invoke(): View|RedirectResponse
+    use PersonAction;
+
+    public function __invoke(): View
     {
+        /** @see /resources/views/persons/index.blade.php */
         return $this->view('persons.index');
     }
 

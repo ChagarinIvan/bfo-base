@@ -1,9 +1,5 @@
 @php
-    use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonAction;
-    use App\Bridge\Laravel\Http\Controllers\Rank\ShowPersonRanksAction;
-    use App\Models\Person;
-    use App\Models\Rank;
-    use Illuminate\Support\Collection;
+    use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonAction;use App\Bridge\Laravel\Http\Controllers\Rank\ShowPersonRanksAction;use App\Domain\Person\Person;use App\Models\Rank;use Illuminate\Support\Collection;
     /**
      * @var Collection $list;
      * @var Collection|Rank[] $ranks;
@@ -61,7 +57,7 @@
                     $hasPerson = false;
 
                     if ($personsList->has($preparedLine)) {
-                        /** @var App\Models\Person $person */
+                        /** @var \App\Domain\Person\Person $person */
                         $personId = $personsList->get($preparedLine);
                         if ($persons->has($personId)) {
                             $hasPerson = true;

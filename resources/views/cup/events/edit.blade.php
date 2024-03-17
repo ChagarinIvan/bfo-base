@@ -1,13 +1,13 @@
 @php
     use App\Bridge\Laravel\Http\Controllers\CupEvents\UpdateCupEventAction;
     use App\Bridge\Laravel\Http\Controllers\Cups\ShowCupTableAction;
-    use App\Models\Cup;use App\Models\CupEvent;
-    use App\Models\Event;
-    use Illuminate\Support\Collection;
+    use App\Models\Cup;
+    use App\Models\CupEvent;
+    use App\Application\Dto\Event\ViewEventDto;
     /**
      * @var Cup $cup;
      * @var CupEvent $cupEvent;
-     * @var Collection|Event[] $events;
+     * @var ViewEventDto[] $events;
      */
 @endphp
 
@@ -38,7 +38,7 @@
                     @foreach($events as $event)
                         <option value="{{ $event->id }}"
                                 {{ $event->id === $cupEvent->event_id ? 'selected' : ''}}
-                        >{{ $event->date->format('d.m')." - ".$event->competition->name.' - '.$event->name }}</option>
+                        >{{ $event->date." - ".$event->competitionName.' - '.$event->name }}</option>
                     @endforeach
                 </select>
                 <label for="event">{{ __('app.event.title') }}</label>

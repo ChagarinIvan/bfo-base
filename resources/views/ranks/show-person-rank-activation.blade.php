@@ -1,7 +1,5 @@
 @php
-    use App\Bridge\Laravel\Http\Controllers\Rank\ActivatePersonRankAction;
-    use App\Models\Person;
-    use App\Models\Rank;
+    use App\Bridge\Laravel\Http\Controllers\Rank\ActivatePersonRankAction;use App\Domain\Person\Person;use App\Models\Rank;
     /**
      * @var Person $year;
      * @var Rank $rank;

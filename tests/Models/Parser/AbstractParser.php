@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Models\Parser;
 
+use App\Domain\ProtocolLine\ProtocolLine;
 use App\Models\Group;
 use App\Models\Parser\ParserFactory;
-use App\Models\ProtocolLine;
 use Carbon\Carbon;
 use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Support\Collection;

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Domain\PersonPrompt\PersonPrompt;
+use App\Domain\ProtocolLine\ProtocolLine;
 use App\Models\IdentLine;
-use App\Models\PersonPrompt;
-use App\Models\ProtocolLine;
 use Illuminate\Support\Collection;
 use Mav\Slovo\Phonetics;
 use function in_array;

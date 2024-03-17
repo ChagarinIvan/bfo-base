@@ -10,8 +10,8 @@ use App\Application\Dto\Competition\ViewCompetitionDto;
 use App\Application\Service\Competition\Exception\CompetitionNotFound;
 use App\Application\Service\Competition\ViewCompetition;
 use App\Application\Service\Competition\ViewCompetitionService;
+use App\Domain\Competition\Competition;
 use App\Domain\Competition\CompetitionRepository;
-use App\Models\Competition;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 

@@ -1,11 +1,10 @@
 @php
     use App\Bridge\Laravel\Http\Controllers\Person\UpdatePersonAction;
-    use App\Models\Club;
-    use App\Models\Person;
-    use Illuminate\Support\Collection;
+    use App\Application\Dto\Person\ViewPersonDto;
+    use App\Application\Dto\Club\ViewClubDto;
     /**
-     * @var Person $person
-     * @var Collection|Club[] $clubs
+     * @var ViewPersonDto $person
+     * @var ViewClubDto[] $clubs
      */
 @endphp
 
@@ -40,7 +39,7 @@
                        type="date"
                        id="birthday"
                        name="birthday"
-                       value="{{ $person->birthday ? $person->birthday->format('Y-m-d') : '' }}"
+                       value="{{ $person->birthday ?: '' }}"
                 />
                 <label for="birthday">{{ __('app.common.birthday') }}</label>
             </div>
@@ -50,13 +49,13 @@
                         name="club_id"
                 >
                     <option value="0"
-                            @if($person->club_id === 0)
+                            @if(empty($person->clubId))
                                 selected
                             @endif
                     ></option>
                     @foreach($clubs as $club)
                         <option value="{{ $club->id }}"
-                                @if($club->id === $person->club_id)
+                                @if($club->id === $person->clubId)
                                     selected
                                 @endif
                         >{{ $club->name }}</option>

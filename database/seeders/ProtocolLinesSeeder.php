@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
-use App\Models\Competition;
+use App\Domain\Competition\Competition;
+use App\Domain\Event\Event;
+use App\Domain\Person\Person;
+use App\Domain\PersonPayment\PersonPayment;
+use App\Domain\ProtocolLine\ProtocolLine;
 use App\Models\Distance;
-use App\Models\Event;
-use App\Models\Person;
-use App\Models\PersonPayment;
-use App\Models\ProtocolLine;
 use Illuminate\Database\Seeder;
 use Illuminate\Foundation\Testing\WithFaker;
 
@@ -25,7 +25,7 @@ class ProtocolLinesSeeder extends Seeder
 
         Event::factory(state: ['id' => 1, 'competition_id' => 1, 'name' => 'name1'])->createOne();
         Event::factory(state: ['id' => 2, 'competition_id' => 1, 'name' => 'name2'])->createOne();
-        Event::factory(state: ['id' => 3, 'competition_id' => 2, 'name' => 'name3'])->createOne();
+        Event::factory(state: ['id' => 3, 'competition_id' => 2, 'name' => 'name3', 'description' => 'test3'])->createOne();
 
         Distance::factory(state: ['id' => 1, 'event_id' => 1])->createOne();
         Distance::factory(state: ['id' => 2, 'event_id' => 1])->createOne();

@@ -7,6 +7,7 @@ namespace App\Bridge\Laravel\Http\Controllers\Competition;
 use App\Application\Dto\Competition\CompetitionSearchDto;
 use App\Application\Service\Competition\ListCompetitions;
 use App\Application\Service\Competition\ListCompetitionsService;
+use App\Application\Service\Person\ListPersons;
 use Illuminate\Contracts\View\View;
 use Illuminate\Routing\Controller as BaseController;
 

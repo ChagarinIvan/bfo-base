@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Bridge\Laravel\Http\Controllers\Event;
 
 use App\Bridge\Laravel\Http\Controllers\AbstractAction;
-use App\Models\Event;
+use App\Domain\Event\Event;
 use Illuminate\Http\RedirectResponse;
 
 class DeleteEventFlagAction extends AbstractAction

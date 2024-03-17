@@ -1,6 +1,5 @@
 @php
-    use App\Bridge\Laravel\Http\Controllers\Registration\SendRegistrationDataAction;
-    use App\Models\Club;
+    use App\Bridge\Laravel\Http\Controllers\Registration\SendRegistrationDataAction;use App\Domain\Club\Club;
     /**
      * @var string $search
      * @var Club[] $clubs;

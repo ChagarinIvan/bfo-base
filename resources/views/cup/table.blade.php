@@ -1,12 +1,5 @@
 @php
-    use App\Bridge\Laravel\Http\Controllers\CupEvents\ShowCupEventGroupAction;
-    use App\Bridge\Laravel\Http\Controllers\Cups\ExportCupGroupTableAction;
-    use App\Bridge\Laravel\Http\Controllers\Cups\ShowCupTableAction;
-    use App\Bridge\Laravel\Http\Controllers\Event\ShowEventAction;
-    use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonAction;
-    use App\Models\Cup;use App\Models\CupEvent;use App\Models\CupEventPoint;
-    use App\Models\Group\CupGroup;use App\Models\Person;
-    use Illuminate\Support\Collection;
+    use App\Bridge\Laravel\Http\Controllers\CupEvents\ShowCupEventGroupAction;use App\Bridge\Laravel\Http\Controllers\Cups\ExportCupGroupTableAction;use App\Bridge\Laravel\Http\Controllers\Cups\ShowCupTableAction;use App\Bridge\Laravel\Http\Controllers\Event\ShowEventAction;use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonAction;use App\Domain\Person\Person;use App\Models\Cup;use App\Models\CupEvent;use App\Models\CupEventPoint;use App\Models\Group\CupGroup;use Illuminate\Support\Collection;
     /**
      * @var Cup $cup;
      * @var CupEvent[] $cupEvents;
@@ -104,7 +97,7 @@
                             </td>
                             <td>{{ $person->birthday?->year }}</td>
                             <td>
-                                <x-club-link :club="$person->club"></x-club-link>
+                                <x-club-link :clubId="$person->club_id"></x-club-link>
                             </td>
                             @foreach($cupEvents as $cupEvent)
                                 @php

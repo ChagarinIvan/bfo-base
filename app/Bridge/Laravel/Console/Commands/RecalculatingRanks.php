@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Console\Commands;
 
-use App\Models\ProtocolLine;
+use App\Domain\ProtocolLine\ProtocolLine;
 use App\Models\Rank;
 use App\Services\RankService;
 use Illuminate\Console\Command;

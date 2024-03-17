@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Models\Cups;
 
+use App\Domain\ProtocolLine\ProtocolLine;
 use App\Models\Cup;
 use App\Models\CupEvent;
 use App\Models\CupEventPoint;
 use App\Models\Group\CupGroup;
-use App\Models\ProtocolLine;
 use App\Repositories\ProtocolLinesRepository;
 use App\Services\DistanceService;
 use App\Services\GroupsService;

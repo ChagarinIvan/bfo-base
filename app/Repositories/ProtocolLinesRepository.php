@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Repositories;
 
+use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\Shared\Criteria;
 use App\Models\CupEvent;
-use App\Models\ProtocolLine;
 use App\Models\Year;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Query\Expression;

@@ -4,14 +4,16 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Http\Controllers\Club;
 
-use App\Bridge\Laravel\Http\Controllers\Flags\AbstractFlagsAction;
 use Illuminate\Contracts\View\View;
-use Illuminate\Http\RedirectResponse;
+use Illuminate\Routing\Controller as BaseController;
 
-class ShowCreateClubFormAction extends AbstractFlagsAction
+class ShowCreateClubFormAction extends BaseController
 {
-    public function __invoke(): View|RedirectResponse
+    use ClubAction;
+
+    public function __invoke(): View
     {
+        /** @see /resources/views/clubs/create.blade.php */
         return $this->view('clubs.create');
     }
 }

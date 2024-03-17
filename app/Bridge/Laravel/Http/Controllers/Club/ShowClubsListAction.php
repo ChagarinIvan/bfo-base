@@ -4,14 +4,21 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Http\Controllers\Club;
 
+use App\Application\Service\Club\ListClubsService;
 use Illuminate\Contracts\View\View;
-use Illuminate\Http\RedirectResponse;
+use Illuminate\Routing\Controller as BaseController;
+use function compact;
 
-class ShowClubsListAction extends AbstractClubAction
+class ShowClubsListAction extends BaseController
 {
-    public function __invoke(): View|RedirectResponse
+    use ClubAction;
+
+    public function __invoke(ListClubsService $service): View
     {
-        return $this->view('clubs.index', ['clubs' => $this->clubsService->getAllClubs()]);
+        $clubs = $service->execute();
+
+        /** @see /resources/views/clubs/index.blade.php */
+        return $this->view('clubs.index', compact('clubs'));
     }
 
     protected function isNavbarRoute(): bool

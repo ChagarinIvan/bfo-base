@@ -19,7 +19,7 @@ final class DeleteCompetitionAction extends BaseController
         string $year,
         string $id,
         DisableCompetitionService $service,
-        UserId $userId
+        UserId $userId,
     ): RedirectResponse {
         try {
             $service->execute(new DisableCompetition($id, $userId));

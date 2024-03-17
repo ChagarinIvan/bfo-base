@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Models\PersonPrompt;
-use App\Repositories\PersonPromptRepository;
+use App\Domain\PersonPrompt\PersonPrompt;
 use Illuminate\Support\Collection;
 use Mav\Slovo\Phonetics;
 use RuntimeException;
@@ -13,7 +12,6 @@ use RuntimeException;
 class PersonPromptService
 {
     public function __construct(
-        private readonly PersonPromptRepository $repository,
         private readonly Phonetics $phonetics
     ) {
     }
@@ -62,7 +60,7 @@ class PersonPromptService
      */
     public function identPersonsByPrompts(array $preparedLines): array
     {
-        $prompts = $this->repository->findPersonsPrompts($preparedLines);
+        $prompts = PersonPrompt::whereIn('prompt', $preparedLines)->get();
 
         return $prompts->pluck('person_id', 'prompt')->toArray();
     }

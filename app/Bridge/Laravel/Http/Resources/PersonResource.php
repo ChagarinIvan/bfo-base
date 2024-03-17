@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Http\Resources;
 
-use App\Models\Person;
+use App\Domain\Person\Person;
 use App\Services\RankService;
 use Illuminate\Http\Resources\Json\JsonResource;
 

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Infrastracture\Laravel\Eloquent\Competition;
 
+use App\Domain\Competition\Competition;
 use App\Domain\Competition\CompetitionRepository;
 use App\Domain\Shared\Criteria;
-use App\Models\Competition;
 use Illuminate\Support\Collection;
 
 final class EloquentCompetitionRepository implements CompetitionRepository

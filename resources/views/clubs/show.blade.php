@@ -1,9 +1,10 @@
 @php
     use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonAction;
-    use App\Models\Club;use App\Models\Person;
+    use App\Application\Dto\Club\ViewClubDto;
+    use App\Application\Dto\Person\ViewPersonDto;
     /**
-     * @var Club $club;
-     * @var Person[] $persons;
+     * @var ViewClubDto $club;
+     * @var ViewPersonDto[] $persons;
      */
 @endphp
 
@@ -45,12 +46,12 @@
             <tbody>
             @foreach ($persons as $person)
                 @php
-                    $link = action(ShowPersonAction::class, [$person]);
+                    $link = action(ShowPersonAction::class, [$person->id]);
                 @endphp
                 <tr>
                     <td><a href="{{ $link }}">{{ $person->lastname }}</a></td>
                     <td><a href="{{ $link }}">{{ $person->firstname }}</a></td>
-                    <td>{{ $person->birthday ? $person->birthday->format('Y') : '' }}</td>
+                    <td>{{ $person->birthday ?: '' }}</td>
                 </tr>
             @endforeach
             </tbody>

@@ -8,7 +8,9 @@ use App\Application\Dto\Auth\UserId;
 use App\Application\Dto\PersonPayment\PersonPaymentDto;
 use App\Application\Service\PersonPayment\CreateOrUpdatePersonPayments;
 use App\Application\Service\PersonPayment\CreateOrUpdatePersonPaymentsService;
-use App\Models\Person;
+use App\Domain\Auth\Impression;
+use App\Domain\Person\Person;
+use App\Domain\Shared\Clock;
 use App\Models\Rank;
 use App\Models\Year;
 use App\Services\ClubsService;
@@ -32,6 +34,7 @@ class OrientBySyncService
         private readonly RankService $rankService,
         private readonly ClubsService $clubsService,
         private readonly CreateOrUpdatePersonPaymentsService $createOrUpdatePersonPaymentsService,
+        private readonly Clock $clock,
         LogManager $loggerManager,
     ) {
         $this->logger = $loggerManager->channel('sync');
@@ -107,7 +110,8 @@ class OrientBySyncService
                     );
                 }
 
-                $this->personsService->storePerson($person);
+                $person->updated = new Impression($this->clock->now(), $userId->id);
+                $person->save();
             } else {
                 $this->logger->info(
                     "new person: {$personDto->getFirstName()} {$personDto->getLastName()}",
@@ -119,7 +123,9 @@ class OrientBySyncService
                 $person->firstname = $personDto->getFirstName();
                 $person->birthday = $personDto->getYear();
                 $this->setClub($person, $personDto);
-                $person = $this->personsService->storePerson($person);
+                $person->created = $person->updated = new Impression($this->clock->now(), $userId->id);
+
+                $person->create();
 
                 if ($personDto->rank) {
                     $this->setRank($person->id, $personDto->rank);

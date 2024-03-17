@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Bridge\Laravel\Http\Controllers\Cups;
 
 use App\Bridge\Laravel\Http\Controllers\AbstractAction;
-use App\Repositories\EventsRepository;
 use App\Services\CupEventsService;
 use App\Services\CupsService;
 use App\Services\ViewActionsService;
@@ -17,7 +16,6 @@ abstract class AbstractCupAction extends AbstractAction
         protected ViewActionsService $viewService,
         protected CupEventsService $cupEventsService,
         protected CupsService $cupsService,
-        protected EventsRepository $eventsRepository,
         protected Redirector $redirector,
     ) {
         parent::__construct($viewService, $redirector);

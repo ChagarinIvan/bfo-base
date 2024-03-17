@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Dto\Competition;
 
 use App\Application\Dto\Auth\AuthAssembler;
-use App\Models\Competition;
+use App\Domain\Competition\Competition;
 
 final readonly class CompetitionAssembler
 {

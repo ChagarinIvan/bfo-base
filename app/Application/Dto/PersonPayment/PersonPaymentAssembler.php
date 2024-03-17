@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Dto\PersonPayment;
 
 use App\Application\Dto\Auth\AuthAssembler;
-use App\Models\PersonPayment;
+use App\Domain\PersonPayment\PersonPayment;
 
 final readonly class PersonPaymentAssembler
 {

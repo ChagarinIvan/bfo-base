@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Repositories;
 
+use App\Domain\Person\Person;
 use App\Filters\RanksFilter;
-use App\Models\Person;
 use App\Models\Rank;
 use Carbon\Carbon;
 use Illuminate\Database\ConnectionInterface;

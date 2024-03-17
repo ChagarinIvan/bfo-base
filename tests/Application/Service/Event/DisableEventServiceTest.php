@@ -8,10 +8,10 @@ use App\Application\Dto\Auth\UserId;
 use App\Application\Service\Event\DisableEvent;
 use App\Application\Service\Event\DisableEventService;
 use App\Application\Service\Event\Exception\EventNotFound;
+use App\Domain\Event\Event;
 use App\Domain\Event\EventRepository;
 use App\Domain\Shared\DummyTransactional;
 use App\Domain\Shared\FrozenClock;
-use App\Models\Event;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 

@@ -6,8 +6,8 @@ namespace App\Bridge\Laravel\Http\Controllers\Event;
 
 use App\Application\Dto\Auth\UserId;
 use App\Domain\Auth\Impression;
+use App\Domain\Event\Event;
 use App\Domain\Shared\Clock;
-use App\Models\Event;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Http\Controllers\Event;
 
-use App\Models\Event;
+use App\Domain\Event\Event;
 use App\Models\Flag;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;

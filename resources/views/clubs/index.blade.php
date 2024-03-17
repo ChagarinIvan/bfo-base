@@ -1,8 +1,8 @@
 @php
     use App\Bridge\Laravel\Http\Controllers\Club\ShowCreateClubFormAction;
-    use App\Models\Club;
+    use App\Application\Dto\Club\ViewClubDto;
     /**
-     * @var Club[] $clubs;
+     * @var ViewClubDto[] $clubs;
      */
 @endphp
 
@@ -44,15 +44,23 @@
             <tr>
                 <th data-sortable="true">{{ __('app.common.title') }}</th>
                 <th data-sortable="true">{{ __('app.club.persons_count') }}</th>
+                @auth
+                    <th data-sortable="true">{{ __('app.common.created') }}</th>
+                    <th data-sortable="true">{{ __('app.common.updated') }}</th>
+                @endauth
             </tr>
             </thead>
             <tbody>
             @foreach ($clubs as $club)
                 <tr>
                     <td>
-                        <x-club-link :club="$club"></x-club-link>
+                        <x-club-link :clubId="$club->id"></x-club-link>
                     </td>
-                    <td>{{ $club->persons->count() }}</td>
+                    <td>{{ $club->personsCount }}</td>
+                    @auth
+                        <td><x-impression :impression="$club->created"/></td>
+                        <td><x-impression :impression="$club->updated"/></td>
+                    @endauth
                 </tr>
             @endforeach
             </tbody>

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Bridge\Laravel\Http\Controllers\Competition;
 
 use App\Bridge\Laravel\Http\Controllers\Competition\UpdateCompetitionAction;
-use App\Models\Competition;
-use App\Models\User;
+use App\Domain\Competition\Competition;
+use App\Domain\User\User;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
@@ -35,6 +35,7 @@ final class UpdateCompetitionActionTest extends TestCase
         /** @var Authenticatable&User $user */
         $user = User::factory()->createOne();
         $this->actingAs($user);
+
         /** @var Competition $competition */
         $competition = Competition::factory()->createOne();
 

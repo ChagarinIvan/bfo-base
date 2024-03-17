@@ -10,9 +10,9 @@ use App\Application\Dto\Event\EventSearchDto;
 use App\Application\Dto\Event\ViewEventDto;
 use App\Application\Service\Event\ListEvents;
 use App\Application\Service\Event\ListEventsService;
+use App\Domain\Event\Event;
 use App\Domain\Event\EventRepository;
 use App\Domain\Shared\Criteria;
-use App\Models\Event;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
@@ -52,6 +52,6 @@ class ListEventsServiceTest extends TestCase
 
         $this->assertIsList($result);
         $this->assertContainsOnlyInstancesOf(ViewEventDto::class, $result);
-        $this->assertEquals($events[0]->id, $result[1]->id);
+        $this->assertEquals($events[1]->id, $result[1]->id);
     }
 }

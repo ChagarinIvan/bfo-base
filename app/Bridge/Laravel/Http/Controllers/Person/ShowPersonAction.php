@@ -4,17 +4,24 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Http\Controllers\Person;
 
-use App\Models\PersonPayment;
-use App\Models\ProtocolLine;
+use App\Domain\PersonPayment\PersonPayment;
+use App\Domain\ProtocolLine\ProtocolLine;
+use App\Services\PersonsService;
+use App\Services\RankService;
 use Illuminate\Contracts\View\View;
-use Illuminate\Http\RedirectResponse;
+use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Collection;
 
-class ShowPersonAction extends AbstractPersonAction
+class ShowPersonAction extends BaseController
 {
-    public function __invoke(string $personId): View|RedirectResponse
-    {
-        $person = $this->personsService->getPerson((int) $personId);
+    use PersonAction;
+
+    public function __invoke(
+        string $personId,
+        PersonsService $personsService,
+        RankService $rankService,
+    ): View {
+        $person = $personsService->getPerson((int) $personId);
         $payments = $person->payments->sortByDesc(static fn (PersonPayment $payment) => $payment->date);
         $groupedProtocolLines = $person->protocolLines->groupBy(static fn (ProtocolLine $line) => $line->distance->event->date->format('Y'));
         $groupedProtocolLines->transform(static function (Collection $protocolLines) {
@@ -22,10 +29,11 @@ class ShowPersonAction extends AbstractPersonAction
         });
         $groupedProtocolLines = $groupedProtocolLines->sortKeysDesc();
 
+        /** @see /resources/views/persons/show.blade.php */
         return $this->view('persons.show', [
             'person' => $person,
             'groupedProtocolLines' => $groupedProtocolLines,
-            'rank' => $this->rankService->getActiveRank($person->id),
+            'rank' => $rankService->getActiveRank($person->id),
             'personPayment' => $payments->first(),
         ]);
     }

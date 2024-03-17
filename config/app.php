@@ -3,11 +3,13 @@
 declare(strict_types=1);
 
 use App\Bridge\Laravel\Provider\ApiRoutesServiceProvider;
+use App\Bridge\Laravel\Provider\Club\ClubProvider;
 use App\Bridge\Laravel\Provider\Competition\CompetitionProvider;
 use App\Bridge\Laravel\Provider\Event\EventProvider;
 use App\Bridge\Laravel\Provider\EventHandlerServiceProvider;
 use App\Bridge\Laravel\Provider\Person\PersonProvider;
 use App\Bridge\Laravel\Provider\PersonPayment\PersonPaymentProvider;
+use App\Bridge\Laravel\Provider\PersonPrompt\PersonPromptProvider;
 use App\Bridge\Laravel\Provider\Shared\SharedProvider;
 use App\Bridge\Laravel\Provider\User\UserProvider;
 use App\Bridge\Laravel\Provider\WebRoutesServiceProvider;
@@ -173,10 +175,12 @@ return [
         Illuminate\View\ViewServiceProvider::class,
 
         // Domain
+        ClubProvider::class,
         CompetitionProvider::class,
         EventProvider::class,
         PersonProvider::class,
         PersonPaymentProvider::class,
+        PersonPromptProvider::class,
         SharedProvider::class,
         UserProvider::class,
 

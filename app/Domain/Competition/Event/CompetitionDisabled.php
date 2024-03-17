@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Competition\Event;
 
-use App\Models\Competition;
+use App\Domain\Competition\Competition;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 

@@ -4,17 +4,15 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Models\Person;
-use App\Models\ProtocolLine;
+use App\Domain\Auth\Impression;
+use App\Domain\Person\Person;
+use App\Domain\ProtocolLine\ProtocolLine;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
-use function array_diff;
-use function implode;
 use function in_array;
-use function mb_strtolower;
 
 class PersonsService
 {
@@ -26,7 +24,6 @@ class PersonsService
     ];
 
     public function __construct(
-        private readonly PersonPromptService $promptService,
         private readonly ClubsService $clubService
     ) {
     }
@@ -71,79 +68,6 @@ class PersonsService
         return $persons;
     }
 
-    public function storePerson(Person $person): Person
-    {
-        $person->save();
-        $this->makePrompts($person);
-
-        return $person;
-    }
-
-    public function makePrompts(Person $person): void
-    {
-        $existPrompts = $person->prompts->pluck('prompt')->toArray();
-        $prompts = [];
-
-        $hasNameSake = Person::whereFirstname($person->firstname)->whereLastname($person->lastname)->count() > 1;
-
-        $personData = [
-            ProtocolLineIdentService::prepareLine(mb_strtolower($person->lastname)),
-            ProtocolLineIdentService::prepareLine(mb_strtolower($person->firstname)),
-        ];
-
-        $reversPersonData = [
-            ProtocolLineIdentService::prepareLine(mb_strtolower($person->firstname)),
-            ProtocolLineIdentService::prepareLine(mb_strtolower($person->lastname)),
-        ];
-
-        if ($hasNameSake) {
-            $this->promptService->deletePrompt(implode('_', $personData));
-            $this->promptService->deletePrompt(implode('_', $reversPersonData));
-        } else {
-            $prompts[] = implode('_', $personData);
-            $prompts[] = implode('_', $reversPersonData);
-        }
-
-        if ($person->birthday !== null) {
-            $personData[] = $person->birthday->format('Y');
-            $reversPersonData[] = $person->birthday->format('Y');
-            $prompts[] = implode('_', $personData);
-            $prompts[] = implode('_', $reversPersonData);
-        }
-
-        $prompts = array_diff($prompts, $existPrompts);
-        foreach ($prompts as $prompt) {
-            $this->promptService->storePrompt($prompt, $person->id);
-        }
-    }
-
-    public function updatePerson(int $personId, array $personData): Person
-    {
-        $person = $this->getPerson($personId);
-        //        $this->promptService->deletePrompts($person);
-        $person = $this->fillPerson($person, $personData);
-
-        return $this->storePerson($person);
-    }
-
-    public function fillPerson(Person $person, array $personData): Person
-    {
-        $person->fill($personData);
-        if ($person->club_id === 0) {
-            $person->club_id = null;
-        }
-        return $person;
-    }
-
-    /**
-     * @param int $clubId
-     * @return Collection|Person[]
-     */
-    public function getClubPersons(int $clubId): Collection
-    {
-        return Person::whereClubId($clubId)->get();
-    }
-
     public function deletePerson(int $personId): void
     {
         $person = $this->getPerson($personId);
@@ -155,7 +79,7 @@ class PersonsService
         $person->delete();
     }
 
-    public function extractPersonFromLine(ProtocolLine $protocolLine): Person
+    public function extractPersonFromLine(ProtocolLine $protocolLine, Impression $impression): Person
     {
         $person = new Person();
         $person->lastname = $protocolLine->lastname;
@@ -164,6 +88,7 @@ class PersonsService
         $club = $this->clubService->findClub($protocolLine->club);
         $person->club_id = $club?->id;
         $person->from_base = false;
+        $person->created = $person->updated = $impression;
 
         return $person;
     }

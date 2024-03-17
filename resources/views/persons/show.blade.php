@@ -1,16 +1,5 @@
 @php
-    use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionAction;
-    use App\Bridge\Laravel\Http\Controllers\Event\ShowEventAction;
-    use App\Bridge\Laravel\Http\Controllers\Person\ExtractPersonAction;
-    use App\Bridge\Laravel\Http\Controllers\Person\ShowEditPersonAction;
-    use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonPaymentsListAction;
-    use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonPromptsListAction;
-    use App\Bridge\Laravel\Http\Controllers\Rank\ShowPersonRanksAction;
-    use App\Models\Person;
-    use App\Models\PersonPayment;
-    use App\Models\Rank;
-    use Illuminate\Support\Collection;
-    use Illuminate\Support\Str;
+    use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionAction;use App\Bridge\Laravel\Http\Controllers\Event\ShowEventAction;use App\Bridge\Laravel\Http\Controllers\Person\ExtractPersonAction;use App\Bridge\Laravel\Http\Controllers\Person\ShowEditPersonAction;use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonPaymentsListAction;use App\Bridge\Laravel\Http\Controllers\PersonPrompt\ShowPersonPromptsListAction;use App\Bridge\Laravel\Http\Controllers\Rank\ShowPersonRanksAction;use App\Domain\Person\Person;use App\Domain\PersonPayment\PersonPayment;use App\Models\Rank;use Illuminate\Support\Collection;use Illuminate\Support\Str;
 
     /**
      * @var Person $person
@@ -107,7 +96,7 @@
                 </tr>
                 @foreach($lines as $line)
                     @php
-                        /** @var App\Models\ProtocolLine $line */
+                        /** @var \App\Domain\ProtocolLine\ProtocolLine $line */
                         $lineName = "{$line->lastname}_$line->firstname";
                     @endphp
                     <tr>

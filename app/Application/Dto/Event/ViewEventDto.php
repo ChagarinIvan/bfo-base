@@ -19,6 +19,7 @@ final readonly class ViewEventDto
         public string $date,
 
         // TODO remove laravel trush
+        public string $competitionName,
         public int $protocolLinesCount,
         public ?Distance $firstDistance,
         /** @var CupEvent[] $cups */

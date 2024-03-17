@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Infrastracture\Laravel\Eloquent\PersonPayment;
 
+use App\Domain\PersonPayment\PersonPayment;
 use App\Domain\PersonPayment\PersonPaymentRepository;
 use App\Domain\Shared\Criteria;
-use App\Models\PersonPayment;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 

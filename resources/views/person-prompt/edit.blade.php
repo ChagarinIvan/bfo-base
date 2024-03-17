@@ -1,9 +1,8 @@
 @php
     use App\Bridge\Laravel\Http\Controllers\PersonPrompt\UpdatePromptAction;
-    use App\Models\PersonPrompt;
+    use App\Application\Dto\PersonPrompt\ViewPersonPromptDto;
     /**
-     * @var int $personId
-     * @var PersonPrompt $prompt
+     * @var ViewPersonPromptDto $prompt
      */
 @endphp
 
@@ -14,15 +13,11 @@
 @section('content')
     <div class="row">
         <form method="POST"
-              action="{{ action(UpdatePromptAction::class, [$personId, $prompt->id]) }}"
+              action="{{ action(UpdatePromptAction::class, [$prompt->id]) }}"
         >
             @csrf
             <div class="form-floating mb-3">
-                <input class="form-control @error('prompt') is-invalid @enderror"
-                       id="prompt"
-                       name="prompt"
-                       value="{{ $prompt->prompt }}"
-                />
+                <input class="form-control @error('prompt') is-invalid @enderror" id="prompt" name="prompt" value="{{ $prompt->prompt }}" />
                 <label for="prompt">{{ __('app.common.prompt') }}</label>
             </div>
 

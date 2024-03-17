@@ -11,7 +11,6 @@ use App\Application\Service\Event\DisableEventService;
 use App\Application\Service\Event\ListEvents;
 use App\Application\Service\Event\ListEventsService;
 use App\Domain\Competition\Event\CompetitionDisabled;
-use App\Services\EventService;
 
 final readonly class DisableCompetitionHandler
 {
@@ -23,8 +22,14 @@ final readonly class DisableCompetitionHandler
 
     public function handle(CompetitionDisabled $event): void
     {
-        foreach ($this->service->execute(new ListEvents(new EventSearchDto((string) $event->competition->id))) as $eventDto) {
-            $this->eventService->execute(new DisableEvent($eventDto->id, new UserId($event->competition->updated->by)));
+        $events = $this->service->execute(
+            new ListEvents(new EventSearchDto(competitionId: (string) $event->competition->id))
+        );
+
+        foreach ($events as $eventDto) {
+            $this->eventService->execute(
+                new DisableEvent($eventDto->id, new UserId((int) $event->competition->updated->by))
+            );
         }
     }
 }

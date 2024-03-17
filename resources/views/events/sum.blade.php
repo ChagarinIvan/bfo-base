@@ -1,9 +1,10 @@
 @php
     use App\Bridge\Laravel\Facades\Color;
     use App\Bridge\Laravel\Http\Controllers\Event\UnitEventsAction;
-    use App\Models\Competition;
+    use \App\Application\Dto\Event\ViewEventDto;
     /**
-     * @var Competition $competition;
+     * @var string $competitionId;
+     * @var ViewEventDto[] $events;
      */
 @endphp
 
@@ -14,16 +15,16 @@
 @section('content')
     <div class="row">
         <form method="POST"
-              action="{{ action(UnitEventsAction::class, [$competition->id]) }}"
+              action="{{ action(UnitEventsAction::class, [$competitionId]) }}"
               enctype="multipart/form-data"
         >
             @csrf
             <div class="form-group mb-3">
                 <select class="selectpicker form-control" multiple id="events" name="events[]'"
                         title="{{ __('app.cup.events') }}">
-                    @foreach($competition->events as $event)
+                    @foreach($events as $event)
                         @php
-                            $eventName = $event->date->format('d.m').' - '.$event->name;
+                            $eventName = $event->date.' - '.$event->name;
                         @endphp
                         <option value="{{ $event->id }}"
                                 data-content="<span class='badge' style='background: {{ Color::getColor($eventName) }}'>{{ $eventName }}</span>"

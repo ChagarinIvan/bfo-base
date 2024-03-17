@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Models\Club;
+use App\Domain\Club\Club;
 use App\Repositories\ClubsRepository;
 use Illuminate\Support\Collection;
 use function mb_strtolower;

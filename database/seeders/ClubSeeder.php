@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
-use App\Models\Club;
-use App\Models\Person;
+use App\Domain\Club\Club;
+use App\Domain\Person\Person;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Database\Seeder;
 use function explode;

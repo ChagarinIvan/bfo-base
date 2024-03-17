@@ -1,11 +1,8 @@
 @php
     use App\Bridge\Laravel\Http\Controllers\Event\UpdateEventAction;
-    use App\Models\Event;
-    use App\Models\Flag;
-    use Illuminate\Support\Collection;
+    use \App\Application\Dto\Event\ViewEventDto;
     /**
-     * @var Event $event;
-     * @var Flag[]|Collection $flags;
+     * @var ViewEventDto  $event;
      */
 @endphp
 
@@ -16,21 +13,21 @@
 @section('content')
     <div class="row">
         <form method="POST"
-              action="{{ action(UpdateEventAction::class, [$event]) }}"
+              action="{{ action(UpdateEventAction::class, [$event->id]) }}"
               enctype="multipart/form-data"
         >
             @csrf
             <div class="form-floating mb-3">
-                <input class="form-control" id="name" name="name" value="{{ $event->name }}"/>
+                <input class="form-control" id="name" name="name" value="{{ $event->name }}" />
                 <label for="name">{{ __('app.common.title') }}</label>
             </div>
             <div class="form-floating mb-3">
-                <input class="form-control" id="description" name="description" value="{{ $event->description }}">
+                <input class="form-control" id="description" name="description" value="{{ $event->description }}" />
                 <label for="description">{{ __('app.competition.description') }}</label>
             </div>
             <div class="form-floating mb-3">
                 <input class="form-control" type="date" id="date" name="date"
-                       value="{{ $event->date->format('Y-m-d') }}">
+                       value="{{ $event->date }}">
                 <label for="date">{{ __('app.common.date') }}</label>
             </div>
 

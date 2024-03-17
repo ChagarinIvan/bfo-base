@@ -44,7 +44,6 @@ class WebRoutesServiceProvider extends ServiceProvider
 
                 //competitions
                 $this->routeRegistrar->prefix('competitions')->group(function (): void {
-                    $this->route->get('', Competition\ShowCompetitionsListApiAction::class);
                     $this->route->get('{year}', Competition\ShowCompetitionsListAction::class);
                     $this->route->get('{competitionId}/show', Competition\ShowCompetitionAction::class);
 
@@ -87,7 +86,7 @@ class WebRoutesServiceProvider extends ServiceProvider
                         $this->route->post('/{person}/update', Person\UpdatePersonAction::class);
                         $this->route->get('/{person}/delete', Person\DeletePersonAction::class);
 
-                        $this->route->get('{person}/prompts', Person\ShowPersonPromptsListAction::class);
+                        $this->route->get('{personId}/prompts', PersonPrompt\ShowPersonPromptsListAction::class);
                         $this->route->get('{person}/payments', Person\ShowPersonPaymentsListAction::class);
                         $this->route->get('person/{protocol}/show', Person\ShowSetPersonToProtocolLineAction::class);
                         $this->route->get('{person}/{protocol}/set', Person\SetProtocolLinePersonAction::class);
@@ -99,9 +98,9 @@ class WebRoutesServiceProvider extends ServiceProvider
                             ->group(function (): void {
                                 $this->route->get('{person}/create', PersonPrompt\ShowCreatePromptAction::class);
                                 $this->route->post('{person}/store', PersonPrompt\StorePromptAction::class);
-                                $this->route->get('{person}/{prompt}/edit', PersonPrompt\ShowEditPromptAction::class);
-                                $this->route->post('{person}/{prompt}/update', PersonPrompt\UpdatePromptAction::class);
-                                $this->route->get('{person}/{prompt}/delete', PersonPrompt\DeletePromptAction::class);
+                                $this->route->get('{prompt}/edit', PersonPrompt\ShowEditPromptAction::class);
+                                $this->route->post('{prompt}/update', PersonPrompt\UpdatePromptAction::class);
+                                $this->route->get('{prompt}/delete', PersonPrompt\DeletePromptAction::class);
                             });
                     });
                 });

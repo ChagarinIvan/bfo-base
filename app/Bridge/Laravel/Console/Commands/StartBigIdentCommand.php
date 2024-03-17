@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Console\Commands;
 
-use App\Models\ProtocolLine;
+use App\Domain\ProtocolLine\ProtocolLine;
 use App\Services\ProtocolLineIdentService;
 use Illuminate\Console\Command;
 use function time;

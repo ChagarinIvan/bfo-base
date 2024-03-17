@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Domain\Event\Event;
 use App\Models\CupEvent;
 use App\Models\Distance;
-use App\Models\Event;
 use App\Repositories\DistanceRepository;
 use Illuminate\Support\Collection;
 

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Infrastracture\Laravel\Eloquent\Event;
 
+use App\Domain\Event\Event;
 use App\Domain\Event\EventRepository;
 use App\Domain\Shared\Criteria;
-use App\Models\Event;
 use Illuminate\Support\Collection;
 
 final class EloquentEventRepository implements EventRepository
@@ -34,6 +34,10 @@ final class EloquentEventRepository implements EventRepository
     public function byCriteria(Criteria $criteria): Collection
     {
         $query = Event::where('active', true)->orderBy('date', 'asc');
+
+        if ($criteria->hasParam('year')) {
+            $query->where('date', 'LIKE', "%{$criteria->param('year')}%");
+        }
 
         if ($criteria->hasParam('competitionId')) {
             $query->where('competition_id', $criteria->param('competitionId'));

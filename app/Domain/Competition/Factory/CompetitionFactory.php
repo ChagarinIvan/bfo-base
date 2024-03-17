@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Competition\Factory;
 
-use App\Models\Competition;
+use App\Domain\Competition\Competition;
 
 interface CompetitionFactory
 {

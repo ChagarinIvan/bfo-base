@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Domain\Event\Event;
+use App\Domain\ProtocolLine\ProtocolLine;
 use App\Filters\RanksFilter;
-use App\Models\Event;
-use App\Models\ProtocolLine;
 use App\Models\Rank;
 use App\Models\Year;
 use App\Repositories\RanksRepository;

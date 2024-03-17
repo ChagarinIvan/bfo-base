@@ -1,11 +1,10 @@
 @php
     use App\Bridge\Laravel\Http\Controllers\CupEvents\StoreCupEventAction;
     use App\Models\Cup;
-    use App\Models\Event;
-    use Illuminate\Support\Collection;
+    use App\Application\Dto\Event\ViewEventDto;
     /**
      * @var Cup $cup;
-     * @var Collection|Event[] $events;
+     * @var ViewEventDto[] $events;
      */
 @endphp
 
@@ -32,7 +31,7 @@
             <div class="form-floating mb-3">
                 <select class="form-select" id="event" name="event">
                     @foreach($events as $event)
-                        <option value="{{ $event->id }}">{{ $event->date->format('d.m')." - ".$event->competition->name.' - '.$event->name }}</option>
+                        <option value="{{ $event->id }}">{{ $event->date." - ".$event->competitionName.' - '.$event->name }}</option>
                     @endforeach
                 </select>
                 <label for="event">{{ __('app.event.title') }}</label>

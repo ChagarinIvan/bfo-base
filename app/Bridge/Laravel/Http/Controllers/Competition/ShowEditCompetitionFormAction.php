@@ -23,6 +23,7 @@ final class ShowEditCompetitionFormAction extends BaseController
         } catch (CompetitionNotFound) {
             return $this->redirectTo404Error();
         }
+
         /** @see /resources/views/competitions/edit.blade.php */
         return $this->view('competitions.edit', compact('competition'));
     }

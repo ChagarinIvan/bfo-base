@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Http\Controllers\Event;
 
-use App\Models\Flag;
 use Illuminate\Contracts\View\View;
-use Illuminate\Http\RedirectResponse;
+use Illuminate\Routing\Controller as BaseController;
+use function compact;
 
-class ShowCreateEventFormAction extends AbstractEventAction
+class ShowCreateEventFormAction extends BaseController
 {
-    public function __invoke(string $competitionId): View|RedirectResponse
+    use EventAction;
+
+    public function __invoke(string $competitionId): View
     {
-        return $this->view('events.create', [
-            'competitionId' => $competitionId,
-            'flags' => Flag::all(),
-        ]);
+        /** @see /resources/views/events/create.blade.php */
+        return $this->view('events.create', compact('competitionId'));
     }
 }

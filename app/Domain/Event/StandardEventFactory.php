@@ -8,7 +8,6 @@ use App\Domain\Auth\Impression;
 use App\Domain\Event\Factory\EventFactory;
 use App\Domain\Event\Factory\EventInput;
 use App\Domain\Shared\Clock;
-use App\Models\Event;
 
 final readonly class StandardEventFactory implements EventFactory
 {

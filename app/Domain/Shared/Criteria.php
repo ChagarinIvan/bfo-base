@@ -8,6 +8,10 @@ use OutOfRangeException;
 
 readonly class Criteria
 {
+    public static function empty(): self
+    {
+        return new self([]);
+    }
     public function __construct(
         /** @var array<string, mixed> $params */
         private array $params,

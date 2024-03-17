@@ -4,22 +4,30 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Http\Controllers\Club;
 
-use App\Repositories\ClubsRepository;
-use App\Services\Club\ClubFactory;
+use App\Application\Dto\Auth\UserId;
+use App\Application\Dto\Club\ClubDto;
+use App\Application\Service\Club\AddClub;
+use App\Application\Service\Club\AddClubService;
+use App\Application\Service\Club\Exception\FailedToAddClub;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
+use Illuminate\Routing\Controller as BaseController;
+use Illuminate\View\View;
 
-class StoreClubsAction extends AbstractClubAction
+class StoreClubsAction extends BaseController
 {
-    public function __invoke(Request $request, ClubFactory $factory, ClubsRepository $clubs): RedirectResponse
-    {
-        $formParams = $request->validate([
-            'name' => 'required',
-        ]);
+    use ClubAction;
 
-        $club = $factory->create($formParams['name']);
-        $clubs->add($club);
+    public function __invoke(
+        ClubDto $clubDto,
+        AddClubService $service,
+        UserId $userId,
+    ): View|RedirectResponse {
+        try {
+            $club = $service->execute(new AddClub($clubDto, $userId));
+        } catch (FailedToAddClub) {
+            return $this->redirectToError();
+        }
 
-        return $this->redirector->action(ShowClubsListAction::class);
+        return $this->redirector->action(ShowClubAction::class, [$club->id]);
     }
 }

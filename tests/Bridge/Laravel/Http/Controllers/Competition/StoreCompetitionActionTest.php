@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Bridge\Laravel\Http\Controllers\Competition;
 
 use App\Bridge\Laravel\Http\Controllers\Competition\StoreCompetitionAction;
-use App\Models\User;
+use App\Domain\User\User;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
@@ -42,7 +42,7 @@ final class StoreCompetitionActionTest extends TestCase
             'to' => '2023-01-02',
         ])
             ->assertStatus(Response::HTTP_FOUND)
-            ->assertRedirect('/competitions/1/show');
+            ->assertRedirect('/competitions/1/show')
         ;
     }
 }
