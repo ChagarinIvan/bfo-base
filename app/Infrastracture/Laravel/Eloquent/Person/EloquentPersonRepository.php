@@ -38,7 +38,7 @@ final class EloquentPersonRepository implements PersonRepository
 
         if ($criteria->hasParam('clubId')) {
             $query
-                ->where('clubId', $criteria->param('clubId'))
+                ->where('club_id', $criteria->param('clubId'))
             ;
         }
 
