@@ -70,7 +70,7 @@ class PersonPromptService
      */
     public function all(): Collection
     {
-        return PersonPrompt::select('person_id', 'prompt', 'metaphone')->all();
+        return PersonPrompt::select('person_id', 'prompt', 'metaphone')->get();
     }
 
     public function fillPrompt(PersonPrompt $prompt, array $formParams, int $personId = null): PersonPrompt
