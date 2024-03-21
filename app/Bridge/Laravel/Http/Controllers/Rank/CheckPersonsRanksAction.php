@@ -24,7 +24,6 @@ class CheckPersonsRanksAction extends AbstractRankAction
         $list = $list->getContent();
         $list = $this->parserService->parserRankList($list);
         $list = $this->preparedLines($list);
-        $list = $list->slice(0, 20);
         $personsList = $this->identService->identLines($list->keys()->toArray());
         $personsList = Collection::make($personsList);
         $persons = $this->personsService->getPersons($personsList->values())->keyBy('id');
