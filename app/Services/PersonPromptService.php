@@ -61,7 +61,7 @@ class PersonPromptService
     public function identPersonsByPrompts(array $preparedLines): array
     {
         $prompts = PersonPrompt::whereIn('prompt', $preparedLines)->get();
-
+        dd($prompts);
         return $prompts->pluck('person_id', 'prompt')->toArray();
     }
 
