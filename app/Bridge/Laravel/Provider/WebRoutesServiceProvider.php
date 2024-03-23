@@ -39,12 +39,12 @@ class WebRoutesServiceProvider extends ServiceProvider
 
         $this->routes(function (): void {
             $this->routeRegistrar->middleware('web')->group(function (): void {
-                $this->route->get('', fn () => $this->redirector->action(Competition\ShowCompetitionsListAction::class, [(string) Year::actualYear()->value]));
+                $this->route->get('', fn () => $this->redirector->action(Competition\ShowCompetitionsListAction::class, ['year' => (string) Year::actualYear()->value]));
                 $this->route->get('back', BackAction::class);
 
                 //competitions
                 $this->routeRegistrar->prefix('competitions')->group(function (): void {
-                    $this->route->get('{year}', Competition\ShowCompetitionsListAction::class);
+                    $this->route->get('', Competition\ShowCompetitionsListAction::class);
                     $this->route->get('{competitionId}/show', Competition\ShowCompetitionAction::class);
 
                     $this->middleware(['auth'])->group(function (): void {

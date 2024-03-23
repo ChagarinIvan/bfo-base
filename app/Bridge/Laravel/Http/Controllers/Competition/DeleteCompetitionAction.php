@@ -27,6 +27,6 @@ final class DeleteCompetitionAction extends BaseController
             return $this->redirectTo404Error();
         }
 
-        return $this->redirector->action(ShowCompetitionsListAction::class, [$year]);
+        return $this->redirector->action(ShowCompetitionsListAction::class, ['year' => $year]);
     }
 }

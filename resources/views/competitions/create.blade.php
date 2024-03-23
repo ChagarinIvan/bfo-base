@@ -13,7 +13,7 @@
         >
             @csrf
             <div class="form-floating mb-3">
-                <input name="name" class="form-control" id="name">
+                <input class="form-control" id="name" name="name">
                 <label for="name">{{ __('app.competition.name') }}</label>
             </div>
             <div class="form-floating mb-3">

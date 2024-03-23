@@ -33,7 +33,7 @@
         <ul class="nav nav-tabs">
             @foreach(Year::cases() as $year)
                 <li class="nav-item">
-                    <a href="{{ action(ShowCompetitionsListAction::class, [$year->value]) }}"
+                    <a href="{{ action(ShowCompetitionsListAction::class, ['year' => $year->value]) }}"
                        class="text-decoration-none nav-link {{ $year->value == $selectedYear ? 'active' : '' }}"
                     >
                         <b>{{ $year->value }}</b>
@@ -86,7 +86,7 @@
                                 <td><x-impression :impression="$competition->updated"/></td>
                                 <td>
                                     <x-edit-button
-                                            url="{{ action(ShowEditCompetitionFormAction::class, [$year->value, $competition->id]) }}"/>
+                                            url="{{ action(ShowEditCompetitionFormAction::class, [$competition->id]) }}"/>
                                     <x-modal-button modal-id="deleteModal{{ $competition->id }}"/>
                                 </td>
                             @endauth

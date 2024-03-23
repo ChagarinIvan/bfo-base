@@ -150,6 +150,7 @@ class ProtocolLineIdentService
             ]);
         }
 
+        /** @var array<string, string|int> $minRank */
         $minRank = $ranks->sortBy('rank')->first();
         if ($minRank['rank'] <= 2) {
             $prompts = self::$prompts->where('metaphone', $minRank['metaphone']);

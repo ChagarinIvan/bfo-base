@@ -23,7 +23,7 @@ class SignInAction extends AbstractSignAction
         $guard = $this->sessionGuard->guard('web');
         if ($guard->attempt($authData, true)) {
             $request->session()->regenerate();
-            return $this->redirector->action(ShowCompetitionsListAction::class, [(string)Year::actualYear()->value]);
+            return $this->redirector->action(ShowCompetitionsListAction::class, ['year' => (string) Year::actualYear()->value]);
         }
 
         return $this->redirector->action(ShowLoginFormAction::class);

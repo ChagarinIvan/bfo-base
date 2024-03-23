@@ -32,7 +32,7 @@ final class ShowCompetitionsListActionTest extends TestCase
     {
         $this->seed(ProtocolLinesSeeder::class);
 
-        $this->get("/competitions/2021")
+        $this->get("/competitions?year=2021")
             ->assertStatus(Response::HTTP_OK)
             ->assertSeeTextInOrder([
                 'test',

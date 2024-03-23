@@ -11,7 +11,8 @@
     use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonsListAction;
     use App\Bridge\Laravel\Http\Controllers\Rank\ShowRanksListAction;
     use App\Bridge\Laravel\Http\Controllers\Registration\ShowRegistrationFormAction;
-    use App\Models\Rank;use App\Models\Year;
+    use App\Models\Rank;
+    use App\Models\Year;
     /**
      * @var bool $isAuth;
      * @var bool $isByLocale;
@@ -48,7 +49,7 @@
                     <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="competitionsDropdown">
                         <li>
                             <a class="dropdown-item {{ $isCompetitionsRoute ? 'active' : '' }}"
-                               href="{{ action(ShowCompetitionsListAction::class, [(string)Year::actualYear()->value]) }}"
+                               href="{{ action(ShowCompetitionsListAction::class, ['year' => (string) Year::actualYear()->value]) }}"
                             >{{ __('app.navbar.competitions') }}</a>
                         </li>
                         <li>

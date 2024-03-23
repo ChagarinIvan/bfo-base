@@ -40,7 +40,7 @@ final class DeleteCompetitionActionTest extends TestCase
 
         $this->get("/competitions/2021/1/delete")
             ->assertStatus(Response::HTTP_FOUND)
-            ->assertRedirect('/competitions/2021');
+            ->assertRedirect('/competitions?year=2021')
         ;
 
         $this->assertDatabaseHas('competitions', [
