@@ -124,8 +124,10 @@ class XlsxParser extends AbstractParser
             return 'firstname';
         } elseif (str_contains($field, 'амилия')) {
             return 'name_surname';
-        } elseif (str_contains($field, '.р.') || $field === 'гр') {
+        } elseif (str_contains($field, '.р.') || str_contains($field, 'рожд') || $field === 'гр') {
             return 'year';
+        } elseif (str_contains($field, 'ып.') || $field === 'вып') {
+            return 'complete_rank';
         } elseif (str_contains($field, 'азр') || str_contains($field, 'квал')) {
             return 'rank';
         } elseif (str_contains($field, 'оманда') || str_contains($field, 'ллектив')) {
@@ -136,9 +138,8 @@ class XlsxParser extends AbstractParser
             return 'place';
         } elseif (str_contains($field, 'чки')) {
             return 'points';
-        } elseif (str_contains($field, 'ып.') || $field === 'вып') {
-            return 'complete_rank';
         }
+
         return '';
     }
 
