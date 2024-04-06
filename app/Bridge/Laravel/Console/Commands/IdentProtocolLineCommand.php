@@ -10,7 +10,6 @@ use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\Shared\Clock;
 use App\Models\IdentLine;
 use App\Services\ClubsService;
-use App\Services\PersonsService;
 use App\Services\ProtocolLineIdentService;
 use App\Services\ProtocolLineService;
 use App\Services\RankService;
@@ -31,7 +30,6 @@ class IdentProtocolLineCommand extends Command
     //стартует каждую минуту
     public function handle(
         RankService $rankService,
-        PersonsService $personsService,
         ClubsService $clubsService,
         ProtocolLineService $protocolLineService,
         ProtocolLineIdentService $protocolLineIdentService,

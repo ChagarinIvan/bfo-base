@@ -110,6 +110,7 @@ class ProtocolLineIdentService
             $this->rankService->reFillRanksForPerson($line->person_id);
         }
 
+        // create ident line
         $this->pushIdentLines($notIdentedLines->pluck('prepared_line')->unique());
     }
 
