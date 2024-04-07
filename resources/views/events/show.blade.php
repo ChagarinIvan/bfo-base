@@ -65,7 +65,7 @@
         <ul class="nav nav-tabs">
             @foreach($event->distances as $distance)
                 <li class="nav-item">
-                    <a href="{{ action(ShowEventDistanceAction::class, [$event, $distance]) }}"
+                    <a href="{{ action(ShowEventDistanceAction::class, [$distance]) }}"
                        class="text-decoration-none nav-link {{ $distance->id === $selectedDistance->id ? 'active' : '' }}"
                     >
                         <b>{{ $distance->group->name }}</b>
