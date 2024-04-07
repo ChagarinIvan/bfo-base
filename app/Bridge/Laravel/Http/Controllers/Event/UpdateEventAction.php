@@ -37,7 +37,7 @@ class UpdateEventAction extends AbstractEventAction
         if ($file === null && $url === null) {
             $event->save();
 
-            return $this->redirector->action(ShowEventDistanceAction::class, [$event, $event->distances->first()]);
+            return $this->redirector->action(ShowEventDistanceAction::class, [$event->distances->first()]);
         }
 
         if ($url !== null) {
@@ -76,6 +76,6 @@ class UpdateEventAction extends AbstractEventAction
         $this->identService->identPersons($lineList);
 
         $this->removeLastBackUrl();
-        return $this->redirector->action(ShowEventDistanceAction::class, [$event, $event->distances->first()]);
+        return $this->redirector->action(ShowEventDistanceAction::class, [$event->distances->first()]);
     }
 }

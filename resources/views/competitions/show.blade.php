@@ -9,6 +9,7 @@
     use App\Bridge\Laravel\Http\Controllers\Event\ShowEventDistanceAction;
     use App\Bridge\Laravel\Http\Controllers\Event\ShowUnitEventsFormAction;
     use App\Bridge\Laravel\Http\Controllers\Flags\ShowFlagEventsAction;
+    use App\Bridge\Laravel\Http\Controllers\Event\ShowEventAction;
     use Illuminate\Support\Str;
     /**
      * @var ViewCompetitionDto $competition
@@ -79,7 +80,7 @@
                 @foreach ($events as $event)
                     <tr>
                         <td>
-                            <a href="{{ action(ShowEventDistanceAction::class, [$event->id, $event->firstDistance ?? 0]) }}">{{ $event->name }}</a>
+                            <a href="{{ $event->firstDistance ? action(ShowEventDistanceAction::class, [$event->firstDistance]) : action(ShowEventAction::class, [$event->id]) }}">{{ $event->name }}</a>
                         </td>
                         <td>
                             @foreach($event->cups as $cupEvent)

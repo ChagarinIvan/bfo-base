@@ -34,9 +34,9 @@ final class ShowCompetitionActionTest extends TestCase
 
         $this->get("/competitions/1/show")
             ->assertStatus(Response::HTTP_OK)
-            ->assertSee('<a href="http://localhost/events/101/d/101">name1</a>', false)
-            ->assertSee('<a href="http://localhost/events/102/d/0">name2</a>', false)
-            ->assertDontSee('<a href="http://localhost/events/103/d/0">name3</a>', false)
+            ->assertSee('<a href="http://localhost/events/d/101">name1</a>', false)
+            ->assertSee('<a href="http://localhost/events/102">name2</a>', false)
+            ->assertDontSee('<a href="http://localhost/events/103">name3</a>', false)
         ;
     }
 }

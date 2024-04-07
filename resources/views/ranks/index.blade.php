@@ -78,7 +78,7 @@
                             <td>{{ $rank->activated_date->format('Y-m-d') }}</td>
                             <td>
                                 @if ($rank->event_id !== null)
-                                    <a href="{{ action(ShowEventDistanceAction::class, [$rank->event, $rank->event->distances->first()]) }}"
+                                    <a href="{{ action(ShowEventDistanceAction::class, [$rank->event->distances->first()]) }}"
                                     >{{ $rank->event->date->format('Y-m-d') }}</a>
                                 @endif
                             </td>

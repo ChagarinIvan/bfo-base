@@ -29,7 +29,7 @@
     </div>
     <div class="row mb-3">
         <h5>
-            <a href="{{ action(ShowEventDistanceAction::class, [$cupEvent->event_id, $cupEvent->event->distances->first()]) }}"
+            <a href="{{ action(ShowEventDistanceAction::class, [$cupEvent->event->distances->first()]) }}"
             >{{ $cupEvent->event->name }} - {{ $cupEvent->event->date->format('Y-m-d') }}</a>
         </h5>
     </div>

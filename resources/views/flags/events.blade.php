@@ -1,5 +1,11 @@
 @php
-    use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionAction;use App\Bridge\Laravel\Http\Controllers\Event\ShowAddFlagToEventFormAction;use App\Bridge\Laravel\Http\Controllers\Event\ShowEventDistanceAction;use App\Domain\Event\Event;use App\Models\Flag;use Illuminate\Support\Collection;use Illuminate\Support\Str;
+    use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionAction;
+    use App\Bridge\Laravel\Http\Controllers\Event\ShowAddFlagToEventFormAction;
+    use App\Bridge\Laravel\Http\Controllers\Event\ShowEventDistanceAction;
+    use App\Domain\Event\Event;
+    use App\Models\Flag;
+    use Illuminate\Support\Collection;
+    use Illuminate\Support\Str;
     /**
      * @var Flag $flag;
      * @var Collection|Event[] $events;
@@ -54,7 +60,7 @@
                            href="{{ action(ShowCompetitionAction::class, [$event->competition]) }}">{{ Str::limit($event->competition->name, 30) }}</a>
                     </td>
                     <td>
-                        <a href="{{ action(ShowEventDistanceAction::class, [$event->id, $event->distances->first()]) }}">{{ Str::limit($event->name, 30) }}</a>
+                        <a href="{{ action(ShowEventDistanceAction::class, [$event->distances->first()]) }}">{{ Str::limit($event->name, 30) }}</a>
                     </td>
                     <td>
                         <small class="d-none d-xl-inline">{{ Str::limit($event->description, 80) }}</small>

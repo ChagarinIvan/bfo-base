@@ -59,7 +59,7 @@
                         </a>
                     </td>
                     <td>
-                        <a href="{{ action(ShowEventDistanceAction::class, [$distance->event_id, $distance]) }}#{{ $group->id }}">
+                        <a href="{{ action(ShowEventDistanceAction::class, [$distance]) }}#{{ $group->id }}">
                             {{ $distance->event->name }}
                         </a>
                     </td>
