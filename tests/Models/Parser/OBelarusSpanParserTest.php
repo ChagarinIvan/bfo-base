@@ -58,7 +58,6 @@ final class OBelarusSpanParserTest extends AbstractParser
                         null,                  // очки
                     ],
                 ],
-                true
             ],
         ];
     }

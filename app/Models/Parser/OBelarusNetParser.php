@@ -29,13 +29,10 @@ use function trim;
 
 class OBelarusNetParser extends AbstractParser
 {
-    public function parse(string $file, bool $needConvert = true): Collection
+    public function parse(string $file): Collection
     {
         $doc = new DOMDocument();
         $content = $file;
-        if ($needConvert) {
-            $content = mb_convert_encoding($content, 'utf-8', 'windows-1251');
-        }
         $content = str_replace(["&nbsp;", " "], ' ', $content);
         @$doc->loadHTML($content);
         $xpath = new DOMXpath($doc);

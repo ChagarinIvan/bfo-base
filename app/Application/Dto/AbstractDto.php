@@ -9,7 +9,16 @@ use function array_key_exists;
 abstract class AbstractDto
 {
     /** @return array<string, mixed> */
-    abstract public static function validationRules(): array;
+    public static function requestValidationRules(): array
+    {
+        return [];
+    }
+
+    /** @return array<string, mixed> */
+    public static function parametersValidationRules(): array
+    {
+        return [];
+    }
 
     /** @param array<string, mixed> $data */
     abstract public function fromArray(array $data): self;

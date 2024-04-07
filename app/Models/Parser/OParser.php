@@ -148,8 +148,8 @@ class OParser extends AbstractParser
 
     public function check(string $file, string $extension): bool
     {
-        if ($extension === 'html') {
-            return (bool)preg_match('#<h2>\w{3}</h2><pre>\w+|<br />#u', $file);
+        if (str_contains($extension, 'html')) {
+            return (bool)preg_match('#<h2>\w{3}</h2>Параметр#u', $file);
         }
 
         return false;

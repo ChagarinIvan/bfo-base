@@ -6,7 +6,7 @@
     use App\Bridge\Laravel\Http\Controllers\Event\ShowAddFlagToEventFormAction;
     use App\Bridge\Laravel\Http\Controllers\Event\ShowCreateEventFormAction;
     use App\Bridge\Laravel\Http\Controllers\Event\ShowEditEventFormAction;
-    use App\Bridge\Laravel\Http\Controllers\Event\ShowEventAction;
+    use App\Bridge\Laravel\Http\Controllers\Event\ShowEventDistanceAction;
     use App\Bridge\Laravel\Http\Controllers\Event\ShowUnitEventsFormAction;
     use App\Bridge\Laravel\Http\Controllers\Flags\ShowFlagEventsAction;
     use Illuminate\Support\Str;
@@ -79,7 +79,7 @@
                 @foreach ($events as $event)
                     <tr>
                         <td>
-                            <a href="{{ action(ShowEventAction::class, [$event->id, $event->firstDistance ?? 0]) }}">{{ $event->name }}</a>
+                            <a href="{{ action(ShowEventDistanceAction::class, [$event->id, $event->firstDistance ?? 0]) }}">{{ $event->name }}</a>
                         </td>
                         <td>
                             @foreach($event->cups as $cupEvent)
@@ -98,8 +98,12 @@
                         <td>{{ $event->date }}</td>
                         <td>{{ $event->protocolLinesCount }}</td>
                         @auth
-                            <td><x-impression :impression="$event->created"/></td>
-                            <td><x-impression :impression="$event->updated"/></td>
+                            <td>
+                                <x-impression :impression="$event->created"/>
+                            </td>
+                            <td>
+                                <x-impression :impression="$event->updated"/>
+                            </td>
                             <td>
                                 <x-button text="app.common.add_flags"
                                           color="info"

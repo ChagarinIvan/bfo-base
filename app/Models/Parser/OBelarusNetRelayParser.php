@@ -35,11 +35,8 @@ class OBelarusNetRelayParser extends AbstractParser
     private ?string $commandRank = null;
     private int $commandSerial = 0;
 
-    public function parse(string $file, bool $needConvert = true): Collection
+    public function parse(string $file): Collection
     {
-        if ($needConvert) {
-            $file = mb_convert_encoding($file, 'utf-8', 'windows-1251');
-        }
         $linesList = new Collection();
         $distancePoints = 0;
         $distanceLength = 0;

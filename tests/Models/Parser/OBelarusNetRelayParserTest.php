@@ -40,7 +40,6 @@ final class OBelarusNetRelayParserTest extends AbstractParser
                         null,
                     ],
                 ],
-                true
             ],
             [
                 '2021/210905_res.htm',
@@ -109,7 +108,6 @@ final class OBelarusNetRelayParserTest extends AbstractParser
                         null,
                     ],
                 ],
-                true
             ],
             [
                 '2021/20210717.html',
@@ -200,7 +198,6 @@ final class OBelarusNetRelayParserTest extends AbstractParser
                         null,               //очки
                     ],
                 ],
-                true
             ],
             [
                 '2023/230917.htm',
@@ -259,7 +256,6 @@ final class OBelarusNetRelayParserTest extends AbstractParser
                         true             //в\к
                     ],
                 ],
-                true,
                 'htm'
             ],
         ];

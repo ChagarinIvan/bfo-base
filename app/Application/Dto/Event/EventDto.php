@@ -12,11 +12,17 @@ final class EventDto extends AbstractDto
 
     public string $competitionId;
 
-    public static function validationRules(): array
+    public static function requestValidationRules(): array
     {
         return [
-            ...EventInfoDto::validationRules(),
-            'competitionId' => 'required|uuid',
+            ...EventInfoDto::requestValidationRules(),
+        ];
+    }
+
+    public static function parametersValidationRules(): array
+    {
+        return [
+            'competitionId' => 'required|numeric',
         ];
     }
 

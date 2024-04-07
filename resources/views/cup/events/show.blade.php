@@ -1,7 +1,7 @@
 @php
     use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionAction;
     use App\Bridge\Laravel\Http\Controllers\CupEvents\ShowCupEventGroupAction;
-    use App\Bridge\Laravel\Http\Controllers\Event\ShowEventAction;
+    use App\Bridge\Laravel\Http\Controllers\Event\ShowEventDistanceAction;
     use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonAction;
     use App\Models\Cup;
     use App\Models\CupEvent;
@@ -29,7 +29,7 @@
     </div>
     <div class="row mb-3">
         <h5>
-            <a href="{{ action(ShowEventAction::class, [$cupEvent->event_id, $cupEvent->event->distances->first()]) }}"
+            <a href="{{ action(ShowEventDistanceAction::class, [$cupEvent->event_id, $cupEvent->event->distances->first()]) }}"
             >{{ $cupEvent->event->name }} - {{ $cupEvent->event->date->format('Y-m-d') }}</a>
         </h5>
     </div>

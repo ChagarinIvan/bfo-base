@@ -1,5 +1,5 @@
 @php
-    use App\Bridge\Laravel\Http\Controllers\CupEvents\ShowCupEventGroupAction;use App\Bridge\Laravel\Http\Controllers\Cups\ExportCupGroupTableAction;use App\Bridge\Laravel\Http\Controllers\Cups\ShowCupTableAction;use App\Bridge\Laravel\Http\Controllers\Event\ShowEventAction;use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonAction;use App\Domain\Person\Person;use App\Models\Cup;use App\Models\CupEvent;use App\Models\CupEventPoint;use App\Models\Group\CupGroup;use Illuminate\Support\Collection;
+    use App\Bridge\Laravel\Http\Controllers\CupEvents\ShowCupEventGroupAction;use App\Bridge\Laravel\Http\Controllers\Cups\ExportCupGroupTableAction;use App\Bridge\Laravel\Http\Controllers\Cups\ShowCupTableAction;use App\Bridge\Laravel\Http\Controllers\Event\ShowEventDistanceAction;use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonAction;use App\Domain\Person\Person;use App\Models\Cup;use App\Models\CupEvent;use App\Models\CupEventPoint;use App\Models\Group\CupGroup;use Illuminate\Support\Collection;
     /**
      * @var Cup $cup;
      * @var CupEvent[] $cupEvents;
@@ -127,13 +127,13 @@
                                             $count = $cupEventPoint->points === 0 ? $count : $count + 1;
                                         @endphp
                                         <td>
-                                            <a href="{{ action(ShowEventAction::class, [$cupEvent->event_id, $cupEventPoint->protocolLine->distance_id]) }}#{{ $cupEventPoint->protocolLine->id }}">
+                                            <a href="{{ action(ShowEventDistanceAction::class, [$cupEvent->event_id, $cupEventPoint->protocolLine->distance_id]) }}#{{ $cupEventPoint->protocolLine->id }}">
                                                 <b class="text-info">{{ $cupEventPoint->points }}</b>
                                             </a>
                                         </td>
                                     @else
                                         <td>
-                                            <a href="{{ action(ShowEventAction::class, [$cupEvent->event_id, $cupEventPoint->protocolLine->distance_id]) }}#{{ $cupEventPoint->protocolLine->id }}">
+                                            <a href="{{ action(ShowEventDistanceAction::class, [$cupEvent->event_id, $cupEventPoint->protocolLine->distance_id]) }}#{{ $cupEventPoint->protocolLine->id }}">
                                                 <b class="text-dark">{{ $cupEventPoint->points }}</b>
                                             </a>
                                         </td>

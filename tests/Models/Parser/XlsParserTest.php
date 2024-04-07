@@ -39,7 +39,6 @@ final class XlsParserTest extends AbstractParser
                         null,        //выполненный разряд
                     ],
                 ],
-                false,
                 'excel'
             ],
             [
@@ -70,7 +69,6 @@ final class XlsParserTest extends AbstractParser
                         null,        //выполненный разряд
                     ],
                 ],
-                false,
                 'excel'
             ]
         ];

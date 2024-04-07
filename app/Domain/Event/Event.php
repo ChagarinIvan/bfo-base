@@ -6,6 +6,7 @@ namespace App\Domain\Event;
 
 use App\Domain\Auth\Impression;
 use App\Domain\Competition\Competition;
+use App\Domain\Event\Event\EventCreated;
 use App\Domain\Event\Event\EventDisabled;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Infrastracture\Laravel\Eloquent\Auth\ImpressionCast;
@@ -22,6 +23,7 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 /**
  * @property int $id
@@ -93,5 +95,34 @@ class Event extends Model
         $this->active = false;
 
         event(new EventDisabled($this));
+    }
+
+    public function storeProtocol(ProtocolStorage $storage, Protocol $protocol, Impression $impression): void
+    {
+        $path = $this->protocolPath($protocol);
+        $storage->put($path, $protocol->content);
+
+        $this->file = $path;
+        $this->updated = $impression;
+    }
+
+    private function protocolPath(Protocol $protocol): string
+    {
+        return "{$this->date->format('Y')}/{$this->date->format('Y-m-d')}_" . Str::snake($this->name) . ".$protocol->extension";
+    }
+
+    public function protocol(ProtocolStorage $storage): Protocol
+    {
+        $data = explode('.', $this->file);
+        $extension = array_pop($data);
+
+        return new Protocol($storage->get($this->file), $extension);
+    }
+
+    public function create(): void
+    {
+        $this->save();
+
+        event(new EventCreated($this));
     }
 }

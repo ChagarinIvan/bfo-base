@@ -13,7 +13,7 @@ final class EloquentEventRepository implements EventRepository
 {
     public function add(Event $event): void
     {
-        $event->save();
+        $event->create();
     }
 
     public function byId(int $id): ?Event

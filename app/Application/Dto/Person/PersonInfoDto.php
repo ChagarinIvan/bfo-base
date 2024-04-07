@@ -16,7 +16,7 @@ final class PersonInfoDto extends AbstractDto
 
     public ?string $clubId = null;
 
-    public static function validationRules(): array
+    public static function requestValidationRules(): array
     {
         return [
             'firstname' => 'required|max:255',

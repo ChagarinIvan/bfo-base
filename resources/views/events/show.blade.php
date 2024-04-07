@@ -3,7 +3,7 @@
     use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionAction;
     use App\Bridge\Laravel\Http\Controllers\Cups\ShowCupAction;
     use App\Bridge\Laravel\Http\Controllers\Event\ShowEditEventFormAction;
-    use App\Bridge\Laravel\Http\Controllers\Event\ShowEventAction;
+    use App\Bridge\Laravel\Http\Controllers\Event\ShowEventDistanceAction;
     use App\Bridge\Laravel\Http\Controllers\Flags\ShowFlagEventsAction;
     use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonAction;
     use App\Bridge\Laravel\Http\Controllers\Person\ShowSetPersonToProtocolLineAction;
@@ -65,7 +65,7 @@
         <ul class="nav nav-tabs">
             @foreach($event->distances as $distance)
                 <li class="nav-item">
-                    <a href="{{ action(ShowEventAction::class, [$event, $distance]) }}"
+                    <a href="{{ action(ShowEventDistanceAction::class, [$event, $distance]) }}"
                        class="text-decoration-none nav-link {{ $distance->id === $selectedDistance->id ? 'active' : '' }}"
                     >
                         <b>{{ $distance->group->name }}</b>

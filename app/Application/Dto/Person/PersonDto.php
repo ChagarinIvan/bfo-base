@@ -13,10 +13,10 @@ final class PersonDto extends AbstractDto
 
     public bool $fromBase = false;
 
-    public static function validationRules(): array
+    public static function requestValidationRules(): array
     {
         return [
-            ...PersonInfoDto::validationRules(),
+            ...PersonInfoDto::requestValidationRules(),
             'fromBase' => 'bool',
         ];
     }

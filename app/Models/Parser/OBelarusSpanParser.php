@@ -27,11 +27,8 @@ use function trim;
 
 class OBelarusSpanParser extends AbstractParser
 {
-    public function parse(string $file, bool $needConvert = true): Collection
+    public function parse(string $file): Collection
     {
-        if ($needConvert) {
-            $file = mb_convert_encoding($file, 'utf-8', 'windows-1251');
-        }
         $file = str_replace(["&nbsp;", " "], ' ', $file);
         $linesList = new Collection();
         $distancePoints = 0;
@@ -50,7 +47,7 @@ class OBelarusSpanParser extends AbstractParser
             $groupName = strip_tags($groupName);
             if (preg_match('#(\d+)\s+[^\d]+,\s+(\d+\.?\d*?)\s+[^\d]#s', $groupName, $match)) {
                 $distancePoints = (int) $match[1];
-                $distanceLength = ((int) $match[2]) * 1000;
+                $distanceLength = ((float) $match[2]) * 1000;
             }
 
             if (str_contains($groupName, ',')) {
@@ -131,7 +128,7 @@ class OBelarusSpanParser extends AbstractParser
 
     public function check(string $file, string $extension): bool
     {
-        if ($extension === 'html') {
+        if (str_contains($extension, 'html')) {
             //этот паттерн срабатывает на ОбеларусЭстафеты..поэтому он позже в проверказ парсеров
             return (bool)preg_match('#<span\sid="m\d\d?"></span>[^<]+,#', $file);
         }

@@ -77,7 +77,6 @@ final class OBelarusNetParserTest extends AbstractParser
                         null,
                     ],
                 ],
-                true
             ],
             [
                 '2020/20201202.html',

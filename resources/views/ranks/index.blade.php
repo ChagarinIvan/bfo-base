@@ -1,5 +1,5 @@
 @php
-    use App\Bridge\Laravel\Http\Controllers\Event\ShowEventAction;
+    use App\Bridge\Laravel\Http\Controllers\Event\ShowEventDistanceAction;
     use App\Bridge\Laravel\Http\Controllers\Rank\ShowCheckPersonsRanksFormAction;
     use App\Bridge\Laravel\Http\Controllers\Rank\ShowPersonRanksAction;
     use App\Bridge\Laravel\Http\Controllers\Rank\ShowRanksListAction;
@@ -78,7 +78,7 @@
                             <td>{{ $rank->activated_date->format('Y-m-d') }}</td>
                             <td>
                                 @if ($rank->event_id !== null)
-                                    <a href="{{ action(ShowEventAction::class, [$rank->event, $rank->event->distances->first()]) }}"
+                                    <a href="{{ action(ShowEventDistanceAction::class, [$rank->event, $rank->event->distances->first()]) }}"
                                     >{{ $rank->event->date->format('Y-m-d') }}</a>
                                 @endif
                             </td>

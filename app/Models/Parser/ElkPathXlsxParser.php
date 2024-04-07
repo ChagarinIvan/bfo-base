@@ -20,7 +20,7 @@ use function trim;
 
 class ElkPathXlsxParser extends AbstractParser
 {
-    public function parse(string $file, bool $needConvert = true): Collection
+    public function parse(string $file): Collection
     {
         $linesList = new Collection();
         $lines = $this->getContent($file);

@@ -15,7 +15,7 @@ use function preg_split;
 
 class CsvListParser implements ParserInterface
 {
-    public function parse(string $file, bool $needConvert = true): Collection
+    public function parse(string $file): Collection
     {
         $list = new Collection();
         $content = mb_convert_encoding($file, 'utf-8', 'windows-1251');
@@ -64,6 +64,6 @@ class CsvListParser implements ParserInterface
 
     public function check(string $file, string $extension): bool
     {
-        return $extension === 'csv';
+        return str_contains($extension, 'csv');
     }
 }

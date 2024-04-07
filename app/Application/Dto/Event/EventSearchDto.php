@@ -8,7 +8,7 @@ use App\Application\Dto\AbstractDto;
 
 final class EventSearchDto extends AbstractDto
 {
-    public static function validationRules(): array
+    public static function requestValidationRules(): array
     {
         return [
             'competitionId' => 'numeric',

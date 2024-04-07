@@ -22,7 +22,7 @@ abstract class AbstractParser extends TestCase
      *
      * @test
      */
-    public function parse(string $filePath, int $linesCount, array $expectedResults, bool $needConvert = false, string $extension = 'html'): void
+    public function parse(string $filePath, int $linesCount, array $expectedResults, string $extension = 'html'): void
     {
         $storageManager = new FilesystemManager($this->app);
         $protocolContent = $storageManager->disk('tests')->get($filePath);
@@ -32,7 +32,7 @@ abstract class AbstractParser extends TestCase
         $parser = ParserFactory::createProtocolParser($protocolContent, Collection::make($this->getAllGroups())->pluck('name'), $extension);
         self::assertInstanceOf($parserClass, $parser);
 
-        $lines = $parser->parse($protocolContent, $needConvert);
+        $lines = $parser->parse($protocolContent);
         self::assertCount($linesCount, $lines);
 
         foreach ($expectedResults as $index => $expectedResult) {

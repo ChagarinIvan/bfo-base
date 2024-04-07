@@ -8,7 +8,7 @@ use App\Application\Dto\AbstractDto;
 
 final class PersonSearchDto extends AbstractDto
 {
-    public static function validationRules(): array
+    public static function parametersValidationRules(): array
     {
         return [
             'clubId' => 'numeric',
@@ -24,10 +24,5 @@ final class PersonSearchDto extends AbstractDto
         $this->setStringParam('clubId', $data);
 
         return $this;
-    }
-
-    public function fromRequest(): bool
-    {
-        return false;
     }
 }

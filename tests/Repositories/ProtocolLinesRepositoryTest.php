@@ -22,13 +22,13 @@ final class ProtocolLinesRepositoryTest extends TestCase
     {
         return [
             'by distance' =>
-                [2, new Criteria(['distances' => collect([1])])],
+                [2, new Criteria(['distances' => collect([101])])],
             'by distances' =>
-                [4, new Criteria(['distances' => collect([1, 2, 3])])],
+                [4, new Criteria(['distances' => collect([101, 102, 103])])],
             'with payment year' =>
-                [2, new Criteria(['distances' => collect([1, 2, 3]), 'paymentYear' => 2024, 'eventDate' => '2024-01-12'])],
+                [2, new Criteria(['distances' => collect([101, 102, 103]), 'paymentYear' => 2024, 'eventDate' => '2024-01-12'])],
             'with previous payment year' =>
-                [3, new Criteria(['distances' => collect([1, 2, 3]), 'paymentYear' => 2023, 'eventDate' => '2024-01-12'])],
+                [3, new Criteria(['distances' => collect([101, 102, 103]), 'paymentYear' => 2023, 'eventDate' => '2024-01-12'])],
         ];
     }
 
@@ -44,7 +44,7 @@ final class ProtocolLinesRepositoryTest extends TestCase
     public function it_gets_line_by_id(): void
     {
         $this->seed(ProtocolLinesSeeder::class);
-        $protocolLine = $this->repository->byId(1);
+        $protocolLine = $this->repository->byId(101);
         $this->assertNotNull($protocolLine);
     }
 

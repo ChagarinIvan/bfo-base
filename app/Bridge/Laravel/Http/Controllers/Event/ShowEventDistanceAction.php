@@ -4,17 +4,16 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Http\Controllers\Event;
 
-use App\Domain\Event\Event;
+use App\Models\Distance;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 
-class ShowEventAction extends AbstractEventAction
+class ShowEventDistanceAction extends AbstractEventAction
 {
-    public function __invoke(Event $event): View|RedirectResponse
+    public function __invoke(Distance $distance): View|RedirectResponse
     {
         $withPoints = false;
         $withVk = false;
-        $distance = $event->distances->first();
         $protocolLines = $distance->protocolLines;
         $clubs = $this->clubsService->getAllClubs()->keyBy('normalize_name');
 

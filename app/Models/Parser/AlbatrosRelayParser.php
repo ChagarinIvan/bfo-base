@@ -27,7 +27,7 @@ use function trim;
 
 class AlbatrosRelayParser extends AbstractParser
 {
-    public function parse(string $file, bool $needConvert = true): Collection
+    public function parse(string $file): Collection
     {
         $doc = new DOMDocument();
         if (!str_starts_with($file, '<html lang="ru">')) {
@@ -156,7 +156,7 @@ class AlbatrosRelayParser extends AbstractParser
 
     public function check(string $file, string $extension): bool
     {
-        if ($extension === 'html') {
+        if (str_contains($extension, 'html')) {
             return (bool) preg_match(pattern: '#<b>\d+\s+(-|\d+|в/к)\s+(-|\S{1,3})<#', subject: $file);
         }
 

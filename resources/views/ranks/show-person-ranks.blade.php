@@ -1,5 +1,5 @@
 @php
-    use App\Bridge\Laravel\Http\Controllers\Event\ShowEventAction;use App\Bridge\Laravel\Http\Controllers\Rank\ActivatePersonRankAction;use App\Domain\Person\Person;use App\Models\Rank;use Illuminate\Support\Collection;
+    use App\Bridge\Laravel\Http\Controllers\Event\ShowEventDistanceAction;use App\Bridge\Laravel\Http\Controllers\Rank\ActivatePersonRankAction;use App\Domain\Person\Person;use App\Models\Rank;use Illuminate\Support\Collection;
     /**
      * @var Rank[]|Collection $ranks;
      * @var Person $person;
@@ -71,7 +71,7 @@
                     <td>{{ $rank->finish_date->format('Y-m-d') }}</td>
                     <td>
                         @if ($rank->event_id !== null)
-                            <a href="{{ action(ShowEventAction::class, [$rank->event->id, $rank->event->distances->first()]) }}#{{ $protocolLinesIds[$rank->id] }}"
+                            <a href="{{ action(ShowEventDistanceAction::class, [$rank->event->id, $rank->event->distances->first()]) }}#{{ $protocolLinesIds[$rank->id] }}"
                             >{{ $rank->event->competition->name }} ({{ $rank->event->name }})</a>
                         @endif
                     </td>

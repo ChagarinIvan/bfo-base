@@ -10,7 +10,7 @@ final class ClubDto extends AbstractDto
 {
     public string $name;
 
-    public static function validationRules(): array
+    public static function requestValidationRules(): array
     {
         return [
             'name' => 'required|max:255',

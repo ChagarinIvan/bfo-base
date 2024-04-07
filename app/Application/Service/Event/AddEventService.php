@@ -8,11 +8,13 @@ use App\Application\Dto\Event\EventAssembler;
 use App\Application\Dto\Event\ViewEventDto;
 use App\Domain\Event\EventRepository;
 use App\Domain\Event\Factory\EventFactory;
+use App\Domain\Event\ProtocolStorage;
 
 final readonly class AddEventService
 {
     public function __construct(
         private EventFactory $factory,
+        private ProtocolStorage $storage,
         private EventRepository $events,
         private EventAssembler $assembler,
     ) {
@@ -21,6 +23,7 @@ final readonly class AddEventService
     public function execute(AddEvent $command): ViewEventDto
     {
         $event = $this->factory->create($command->eventInput());
+        $event->storeProtocol($this->storage, $command->protocolInput(), $event->created);
         $this->events->add($event);
 
         return $this->assembler->toViewEventDto($event);

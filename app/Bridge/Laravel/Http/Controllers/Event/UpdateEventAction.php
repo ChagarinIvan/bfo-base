@@ -7,6 +7,7 @@ namespace App\Bridge\Laravel\Http\Controllers\Event;
 use App\Application\Dto\Auth\UserId;
 use App\Domain\Auth\Impression;
 use App\Domain\Event\Event;
+use App\Domain\Event\Protocol;
 use App\Domain\Shared\Clock;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -14,6 +15,8 @@ use Illuminate\Support\Str;
 
 class UpdateEventAction extends AbstractEventAction
 {
+    use UploadHelper;
+
     public function __invoke(
         Event $event,
         Request $request,
@@ -26,31 +29,33 @@ class UpdateEventAction extends AbstractEventAction
             'date' => 'required|date',
         ]);
 
-        $protocol = $request->file('protocol');
-        $url = $request->get('obelarus_net');
+        $file = $request->file('protocol');
+        $url = $request->get('url');
         $event->fill($formParams);
         $event->updated = new Impression($clock->now(), $userId->id);
 
-        if ($protocol === null && $url === null) {
+        if ($file === null && $url === null) {
             $event->save();
 
-            return $this->redirector->action(ShowEventAction::class, [$event, $event->distances->first()]);
+            return $this->redirector->action(ShowEventDistanceAction::class, [$event, $event->distances->first()]);
         }
 
         if ($url !== null) {
             $needConvert = false;
-            $extension = 'html';
-            $protocol = $this->parserService->uploadProtocol($url);
+            $protocol = $this->uploadProtocol($url);
         } else {
             $needConvert = true;
-            $extension = $protocol->getMimeType();
-            $protocol = $protocol->getContent();
+            $protocol = new Protocol(
+                $file->getContent(),
+                $file->getMimeType(),
+            );
+
         }
 
         $year = $event->date->format('Y');
         $protocolPath = "{$year}/{$event->date->format('Y-m-d')}_" . Str::snake($event->name) . '.html';
 
-        $lineList = $this->parserService->parseProtocol($protocol, $needConvert, $extension);
+        $lineList = $this->parserService->parse($protocol);
 
         $this->storage->delete($event->file);
         $event->file = $protocolPath;
@@ -67,10 +72,10 @@ class UpdateEventAction extends AbstractEventAction
         $lineList = $this->protocolLineService->fillProtocolLines($event->id, $lineList);
 
         // заполняем event_id и сохраняем
-        $this->storage->put($protocolPath, $protocol);
+        $this->storage->put($protocolPath, $protocol->content);
         $this->identService->identPersons($lineList);
 
         $this->removeLastBackUrl();
-        return $this->redirector->action(ShowEventAction::class, [$event, $event->distances->first()]);
+        return $this->redirector->action(ShowEventDistanceAction::class, [$event, $event->distances->first()]);
     }
 }

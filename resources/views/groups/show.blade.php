@@ -1,6 +1,6 @@
 @php
     use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionAction;
-    use App\Bridge\Laravel\Http\Controllers\Event\ShowEventAction;
+    use App\Bridge\Laravel\Http\Controllers\Event\ShowEventDistanceAction;
     use App\Bridge\Laravel\Http\Controllers\Groups\ShowUnitGroupsAction;
     use App\Models\Group;
     /**
@@ -59,7 +59,7 @@
                         </a>
                     </td>
                     <td>
-                        <a href="{{ action(ShowEventAction::class, [$distance->event_id, $distance]) }}#{{ $group->id }}">
+                        <a href="{{ action(ShowEventDistanceAction::class, [$distance->event_id, $distance]) }}#{{ $group->id }}">
                             {{ $distance->event->name }}
                         </a>
                     </td>

@@ -31,12 +31,14 @@ trait Action
     {
         $injectParams = [];
         foreach ($parameters as $parameter) {
+            $validated = [];
             if ($parameter instanceof AbstractDto) {
                 try {
-                    if ($parameter->fromRequest()) {
-                        $validated = $this->request->validate($parameter::validationRules());
-                    } else {
-                        $validated = $this->validator->validate($parameters, $parameter::validationRules());
+                    if (!empty($parameter->requestValidationRules())) {
+                        $validated = array_merge($this->request->validate($parameter::requestValidationRules()), $validated);
+                    }
+                    if (!empty($parameter->parametersValidationRules())) {
+                        $validated = array_merge($this->validator->validate($parameters, $parameter::parametersValidationRules()), $validated);
                     }
                 } catch (ValidationException $e) {
                     throw new BadRequestHttpException($e->getMessage(), previous: $e);

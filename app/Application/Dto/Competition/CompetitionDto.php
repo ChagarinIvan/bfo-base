@@ -13,7 +13,7 @@ final class CompetitionDto extends AbstractDto
     public string $from;
     public string $to;
 
-    public static function validationRules(): array
+    public static function requestValidationRules(): array
     {
         return [
             'name' => 'required|max:255',

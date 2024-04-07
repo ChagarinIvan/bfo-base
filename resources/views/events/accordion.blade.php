@@ -19,7 +19,7 @@
         </h5>
         <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordion">
             <div class="form-floating mb-3">
-                <input class="form-control" id="obelarus-url" name="obelarus_net">
+                <input class="form-control" id="url" name="url">
                 <label for="obelarus-url">{{ __('app.common.url') }}</label>
             </div>
         </div>

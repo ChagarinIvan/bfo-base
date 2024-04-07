@@ -28,7 +28,6 @@ final class SfrParserTest extends AbstractParser
                         null,
                     ],
                 ],
-                true
             ],
         ];
     }

@@ -38,7 +38,7 @@ final class ShowEditEventFormActionTest extends TestCase
         $user = User::factory()->createOne();
         $this->actingAs($user);
 
-        $this->get("/events/3/edit")
+        $this->get("/events/103/edit")
             ->assertStatus(Response::HTTP_OK)
             ->assertSee('<input class="form-control" id="name" name="name" value="name3" />', false)
             ->assertSee('<input class="form-control" id="description" name="description" value="test3" />', false)

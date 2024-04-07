@@ -25,12 +25,10 @@ use function trim;
 
 class SFRParser extends AbstractParser
 {
-    public function parse(string $file, bool $needConvert = true): Collection
+    public function parse(string $file): Collection
     {
         $content = $file;
-        if ($needConvert) {
-            $content = mb_convert_encoding($content, 'utf-8', 'windows-1251');
-        }
+        $content = mb_convert_encoding($content, 'utf-8', 'windows-1251');
 
         $linesList = new Collection();
         preg_match_all('#<h2>(.+?)</h2>.*?<table\s+class=.rezult.>(.+?)</table#msi', $content, $nodesMatch);

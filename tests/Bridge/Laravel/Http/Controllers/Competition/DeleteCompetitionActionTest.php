@@ -50,7 +50,13 @@ final class DeleteCompetitionActionTest extends TestCase
         ]);
 
         $this->assertDatabaseHas('events', [
-            'id' => 1,
+            'id' => 101,
+            'active' => false,
+            'updated_by' => $user->id,
+        ]);
+
+        $this->assertDatabaseHas('events', [
+            'id' => 102,
             'active' => false,
             'updated_by' => $user->id,
         ]);

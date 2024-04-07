@@ -25,7 +25,7 @@ use function trim;
 
 class AlbatrosRelayWithHeadersParser extends AbstractParser
 {
-    public function parse(string $file, bool $needConvert = true): Collection
+    public function parse(string $file): Collection
     {
         $doc = new DOMDocument();
         @$doc->loadHTML($file);

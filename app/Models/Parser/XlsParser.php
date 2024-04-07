@@ -23,7 +23,7 @@ use function trim;
 
 class XlsParser extends AbstractParser
 {
-    public function parse(string $file, bool $needConvert = true): Collection
+    public function parse(string $file): Collection
     {
         $fileName = tempnam(sys_get_temp_dir(), 'TMP_');
         file_put_contents($fileName, $file);

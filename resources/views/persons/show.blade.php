@@ -1,5 +1,5 @@
 @php
-    use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionAction;use App\Bridge\Laravel\Http\Controllers\Event\ShowEventAction;use App\Bridge\Laravel\Http\Controllers\Person\ExtractPersonAction;use App\Bridge\Laravel\Http\Controllers\Person\ShowEditPersonAction;use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonPaymentsListAction;use App\Bridge\Laravel\Http\Controllers\PersonPrompt\ShowPersonPromptsListAction;use App\Bridge\Laravel\Http\Controllers\Rank\ShowPersonRanksAction;use App\Domain\Person\Person;use App\Domain\PersonPayment\PersonPayment;use App\Models\Rank;use Illuminate\Support\Collection;use Illuminate\Support\Str;
+    use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionAction;use App\Bridge\Laravel\Http\Controllers\Event\ShowEventDistanceAction;use App\Bridge\Laravel\Http\Controllers\Person\ExtractPersonAction;use App\Bridge\Laravel\Http\Controllers\Person\ShowEditPersonAction;use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonPaymentsListAction;use App\Bridge\Laravel\Http\Controllers\PersonPrompt\ShowPersonPromptsListAction;use App\Bridge\Laravel\Http\Controllers\Rank\ShowPersonRanksAction;use App\Domain\Person\Person;use App\Domain\PersonPayment\PersonPayment;use App\Models\Rank;use Illuminate\Support\Collection;use Illuminate\Support\Str;
 
     /**
      * @var Person $person
@@ -106,7 +106,7 @@
                             </a>
                         </td>
                         <td>
-                            <a href="{{ action(ShowEventAction::class, [$line->distance->event_id, $line->distance_id]) }}#{{ $line->id }}">
+                            <a href="{{ action(ShowEventDistanceAction::class, [$line->distance->event_id, $line->distance_id]) }}#{{ $line->id }}">
                                 {{ Str::limit($line->distance->event->name, 20, '...') }}
                             </a>
                         </td>

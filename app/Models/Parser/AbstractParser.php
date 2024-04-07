@@ -10,13 +10,7 @@ abstract class AbstractParser implements ParserInterface
 {
     protected Collection $groups;
 
-    /**
-     * @param string $file
-     * @param bool $needConvert
-     *
-     * @return Collection
-     */
-    abstract public function parse(string $file, bool $needConvert = true): Collection;
+    abstract public function parse(string $file): Collection;
 
     abstract public function check(string $file, string $extension): bool;
 

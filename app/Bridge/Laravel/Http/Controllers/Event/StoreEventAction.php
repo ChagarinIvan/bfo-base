@@ -5,61 +5,26 @@ declare(strict_types=1);
 namespace App\Bridge\Laravel\Http\Controllers\Event;
 
 use App\Application\Dto\Auth\UserId;
-use App\Domain\Auth\Impression;
-use App\Domain\Event\Event;
-use App\Domain\Shared\Clock;
+use App\Application\Dto\Event\EventDto;
+use App\Application\Dto\Event\EventProtocolDto;
+use App\Application\Service\Event\AddEvent;
+use App\Application\Service\Event\AddEventService;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Str;
+use Illuminate\Routing\Controller as BaseController;
 
-class StoreEventAction extends AbstractEventAction
+class StoreEventAction extends BaseController
 {
+    use EventAction;
+    use UploadHelper;
+
     public function __invoke(
-        string $competitionId,
-        Request $request,
+        EventDto $eventDto,
+        EventProtocolDto $protocolDto,
+        AddEventService $service,
         UserId $userId,
-        Clock $clock,
     ): RedirectResponse {
-        $formParams = $request->validate([
-            'name' => 'required',
-            'flags' => 'array',
-            'description' => 'nullable',
-            'date' => 'required|date',
-        ]);
+        $event = $service->execute(new AddEvent($eventDto, $protocolDto, $userId));
 
-        $protocol = $request->file('protocol');
-        $url = $request->get('obelarus_net');
-        $event = new Event($formParams);
-
-        if ($protocol === null && $url === null) {
-            return $this->redirector->action(ShowCreateEventFormAction::class);
-        }
-
-        if ($url !== null) {
-            $needConvert = false;
-            $extension = 'html';
-            $protocol = $this->parserService->uploadProtocol($url);
-        } else {
-            $needConvert = true;
-            $extension = $protocol->getMimeType();
-            $protocol = $protocol->getContent();
-        }
-
-        $event->competition_id = (int) $competitionId;
-        $year = $event->date->format('Y');
-
-        $protocolPath = "{$year}/{$event->date->format('Y-m-d')}_" . Str::snake($event->name) . '.html';
-        $event->file = $protocolPath;
-        $event->created = $event->updated = new Impression($clock->now(), $userId->id);
-
-        $lineList = $this->parserService->parseProtocol($protocol, $needConvert, $extension);
-        $event->save();
-        $lineList = $this->protocolLineService->fillProtocolLines($event->id, $lineList);
-        $this->identService->identPersons($lineList);
-
-        $this->storage->put($protocolPath, $protocol);
-        $this->removeLastBackUrl();
-
-        return $this->redirector->action(ShowEventAction::class, [$event, $event->distances->first()]);
+        return $this->redirector->action(ShowEventAction::class, [$event->id]);
     }
 }

@@ -15,20 +15,20 @@ use App\Domain\Competition\Event\CompetitionDisabled;
 final readonly class DisableCompetitionHandler
 {
     public function __construct(
-        private ListEventsService $service,
-        private DisableEventService $eventService,
+        private ListEventsService $listEvents,
+        private DisableEventService $disableEventService,
     ) {
     }
 
-    public function handle(CompetitionDisabled $event): void
+    public function handle(CompetitionDisabled $systemEvent): void
     {
-        $events = $this->service->execute(
-            new ListEvents(new EventSearchDto(competitionId: (string) $event->competition->id))
+        $events = $this->listEvents->execute(
+            new ListEvents(new EventSearchDto(competitionId: (string) $systemEvent->competition->id))
         );
 
         foreach ($events as $eventDto) {
-            $this->eventService->execute(
-                new DisableEvent($eventDto->id, new UserId((int) $event->competition->updated->by))
+            $this->disableEventService->execute(
+                new DisableEvent($eventDto->id, new UserId($systemEvent->competition->updated->by))
             );
         }
     }

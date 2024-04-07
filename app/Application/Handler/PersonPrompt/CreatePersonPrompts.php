@@ -6,7 +6,6 @@ namespace App\Application\Handler\PersonPrompt;
 
 use App\Domain\Person\Person;
 use App\Services\PersonPromptService;
-use App\Services\PersonsService;
 use App\Services\ProtocolLineIdentService;
 use function array_diff;
 use function implode;

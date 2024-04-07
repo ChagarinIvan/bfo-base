@@ -41,7 +41,6 @@ final class ElkPathXlsxParserTest extends AbstractParser
                         true,
                     ],
                 ],
-                false,
                 'openxmlformats'
             ],
         ];

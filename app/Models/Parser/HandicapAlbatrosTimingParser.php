@@ -34,7 +34,7 @@ use function trim;
  */
 class HandicapAlbatrosTimingParser extends AbstractParser
 {
-    public function parse(string $file, bool $needConvert = true): Collection
+    public function parse(string $file): Collection
     {
         $doc = new DOMDocument();
         @$doc->loadHTML($file);
@@ -143,7 +143,7 @@ class HandicapAlbatrosTimingParser extends AbstractParser
 
     public function check(string $file, string $extension): bool
     {
-        if ($extension !== 'html') {
+        if (!str_contains($extension, 'html')) {
             return false;
         }
 

@@ -30,7 +30,7 @@ final class DeleteEventActionTest extends TestCase
      * @test
      * @see DeleteEventAction::class
      */
-    public function it_shows_competitions(): void
+    public function it_deletes_event(): void
     {
         $this->seed(ProtocolLinesSeeder::class);
 
@@ -38,18 +38,18 @@ final class DeleteEventActionTest extends TestCase
         $user = User::factory()->createOne();
         $this->actingAs($user);
 
-        $this->get("/events/1/delete")
+        $this->get("/events/101/delete")
             ->assertStatus(Response::HTTP_FOUND)
             ->assertRedirect('/competitions/1/show');
         ;
 
         $this->assertDatabaseHas('events', [
-            'id' => 1,
+            'id' => 101,
             'active' => false,
             'updated_by' => $user->id,
         ]);
 
-        $this->assertDatabaseMissing('distances', ['id' => 1,]);
-        $this->assertDatabaseMissing('protocol_lines', ['id' => 1,]);
+        $this->assertDatabaseMissing('distances', ['id' => 101,]);
+        $this->assertDatabaseMissing('protocol_lines', ['id' => 101,]);
     }
 }

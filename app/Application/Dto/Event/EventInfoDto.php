@@ -10,15 +10,15 @@ final class EventInfoDto extends AbstractDto
 {
     public string $name;
 
-    public ?string $description;
+    public string $description;
 
     public string $date;
 
-    public static function validationRules(): array
+    public static function requestValidationRules(): array
     {
         return [
             'name' => 'required|max:255',
-            'description' => 'max:255',
+            'description' => 'required|max:255',
             'date' => 'required|date',
         ];
     }

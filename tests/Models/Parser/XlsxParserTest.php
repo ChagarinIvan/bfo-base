@@ -40,7 +40,6 @@ final class XlsxParserTest extends AbstractParser
                         null,        //очки
                     ],
                 ],
-                false,
                 'openxmlformats'
             ],
             [
@@ -72,7 +71,6 @@ final class XlsxParserTest extends AbstractParser
                         null,        //выполненный разряд
                     ],
                 ],
-                false,
                 'openxmlformats'
             ],
             [
@@ -116,7 +114,6 @@ final class XlsxParserTest extends AbstractParser
                         450,        //очки
                     ],
                 ],
-                false,
                 'openxmlformats'
             ]
         ];

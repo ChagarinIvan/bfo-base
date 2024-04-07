@@ -8,7 +8,7 @@ use App\Application\Dto\AbstractDto;
 
 final class CompetitionSearchDto extends AbstractDto
 {
-    public static function validationRules(): array
+    public static function requestValidationRules(): array
     {
         return [
             'year' => 'numeric|digits:4',

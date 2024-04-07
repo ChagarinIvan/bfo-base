@@ -9,6 +9,7 @@ use App\Application\Dto\Auth\UserId;
 use App\Application\Dto\Event\EventAssembler;
 use App\Application\Dto\Event\EventDto;
 use App\Application\Dto\Event\EventInfoDto;
+use App\Application\Dto\Event\EventProtocolDto;
 use App\Application\Service\Event\AddEvent;
 use App\Application\Service\Event\AddEventService;
 use App\Domain\Event\Event;
@@ -16,6 +17,7 @@ use App\Domain\Event\EventInfo;
 use App\Domain\Event\EventRepository;
 use App\Domain\Event\Factory\EventFactory;
 use App\Domain\Event\Factory\EventInput;
+use App\Domain\Event\ProtocolStorage;
 use Carbon\Carbon;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
@@ -26,6 +28,8 @@ final class AddEventServiceTest extends TestCase
 
     private EventFactory&MockObject $factory;
 
+    private ProtocolStorage&MockObject $storage;
+
     private EventRepository&MockObject $events;
 
     protected function setUp(): void
@@ -34,6 +38,7 @@ final class AddEventServiceTest extends TestCase
 
         $this->service = new AddEventService(
             $this->factory = $this->createMock(EventFactory::class),
+            $this->storage = $this->createMock(ProtocolStorage::class),
             $this->events = $this->createMock(EventRepository::class),
             new EventAssembler(new AuthAssembler),
         );
@@ -64,6 +69,11 @@ final class AddEventServiceTest extends TestCase
             ->willReturn($event)
         ;
 
+        $this->storage
+            ->expects($this->once())
+            ->method('put')
+        ;
+
         $this->events
             ->expects($this->once())
             ->method('add')
@@ -78,7 +88,11 @@ final class AddEventServiceTest extends TestCase
         $dto->info = $infoDto;
         $dto->competitionId = '1';
 
-        $command = new AddEvent($dto, new UserId(1));
+        $protocolDto = new EventProtocolDto();
+        $protocolDto->content = 'content';
+        $protocolDto->extension = 'html';
+
+        $command = new AddEvent($dto, $protocolDto, new UserId(1));
         $eventDto = $this->service->execute($command);
 
         $this->assertEquals($event->id, $eventDto->id);

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Domain\Event\Protocol;
 use App\Models\Parser\ParserFactory;
 use DOMDocument;
 use DOMXPath;
@@ -17,25 +18,15 @@ class ParserService
     {
     }
 
-    /**
-     * По протоколу определяет необходимый парсер
-     * Парсер разбирает протокол на сырые массивы данных из строк
-     * Из сырых строк наполняются модели ProtocolLine
-     */
-    public function parseProtocol(string $protocol, bool $needConvert, string $extension): Collection
+    public function parse(Protocol $protocol): Collection
     {
         $parser = ParserFactory::createProtocolParser(
-            $protocol,
+            $protocol->content,
             $this->groupsService->getAllGroupsWithout()->pluck('name'),
-            $extension
+            $protocol->extension,
         );
 
-//        dump($parser);
-//        dump($needConvert);
-//        dump($extension);
-        $res = $parser->parse($protocol, $needConvert);
-//        dd($res);
-        return $res;
+        return $parser->parse($protocol->content);
     }
 
     /**
