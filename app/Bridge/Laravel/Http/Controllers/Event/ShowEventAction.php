@@ -16,7 +16,7 @@ class ShowEventAction extends AbstractEventAction
         $withPoints = false;
         $withVk = false;
         $distance = $event->distances->first();
-        dump($distance);
+        dd($distance);
         $protocolLines = $distance->protocolLines;
         $clubs = $this->clubsService->getAllClubs()->keyBy('normalize_name');
 
