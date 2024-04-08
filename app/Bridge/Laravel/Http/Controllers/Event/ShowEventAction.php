@@ -12,9 +12,11 @@ class ShowEventAction extends AbstractEventAction
 {
     public function __invoke(Event $event): View|RedirectResponse
     {
+        dump($event);
         $withPoints = false;
         $withVk = false;
         $distance = $event->distances->first();
+        dump($distance);
         $protocolLines = $distance->protocolLines;
         $clubs = $this->clubsService->getAllClubs()->keyBy('normalize_name');
 
