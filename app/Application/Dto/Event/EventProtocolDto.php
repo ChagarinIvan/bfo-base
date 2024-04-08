@@ -38,7 +38,6 @@ final class EventProtocolDto extends AbstractDto
             $this->extension = $protocol->extension;
         }
 
-        dd($this);
         return $this;
     }
 }

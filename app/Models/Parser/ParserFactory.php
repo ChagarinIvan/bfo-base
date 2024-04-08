@@ -41,6 +41,7 @@ class ParserFactory
                 return $parser;
             }
         }
+
         throw new RuntimeException('нету подходящего парсера!!');
     }
 

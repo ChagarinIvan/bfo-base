@@ -25,7 +25,7 @@ class ParserService
             $this->groupsService->getAllGroupsWithout()->pluck('name'),
             $protocol->extension,
         );
-
+        dd($parser);
         return $parser->parse($protocol->content);
     }
 
