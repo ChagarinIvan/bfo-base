@@ -7,6 +7,7 @@ namespace App\Application\Handler\Event;
 use App\Domain\Event\Event\EventCreated;
 use App\Domain\Event\ProtocolStorage;
 use App\Services\ParserService;
+use App\Services\ProtocolLineIdentService;
 use App\Services\ProtocolLineService;
 
 final readonly class ParseProtocolHandler
@@ -15,6 +16,7 @@ final readonly class ParseProtocolHandler
         private ProtocolStorage $storage,
         private ParserService $parser,
         private ProtocolLineService $protocolLineService,
+        private ProtocolLineIdentService $identService,
     ) {
     }
 
@@ -23,5 +25,6 @@ final readonly class ParseProtocolHandler
         $protocol = $systemEvent->event->protocol($this->storage);
         $lineList = $this->parser->parse($protocol);
         $this->protocolLineService->fillProtocolLines($systemEvent->event->id, $lineList);
+        $this->identService->identPersons($lineList);
     }
 }
