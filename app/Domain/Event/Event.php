@@ -108,12 +108,12 @@ class Event extends Model
 
     private function protocolPath(Protocol $protocol): string
     {
-        return "{$this->date->format('Y')}/{$this->date->format('Y-m-d')}_" . Str::snake($this->name) . ".$protocol->extension";
+        return "{$this->date->format('Y')}/{$this->date->format('Y-m-d')}_" . Str::snake($this->name) . "@@$protocol->extension";
     }
 
     public function protocol(ProtocolStorage $storage): Protocol
     {
-        $data = explode('.', $this->file);
+        $data = explode('@@', $this->file);
         $extension = array_pop($data);
 
         return new Protocol($storage->get($this->file), $extension);

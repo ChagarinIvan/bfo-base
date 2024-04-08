@@ -12,9 +12,9 @@ use Illuminate\Support\Collection;
 use RuntimeException;
 use function file_get_contents;
 
-class ParserService
+readonly class ParserService
 {
-    public function __construct(private readonly GroupsService $groupsService)
+    public function __construct(private GroupsService $groupsService)
     {
     }
 
@@ -25,7 +25,7 @@ class ParserService
             $this->groupsService->getAllGroupsWithout()->pluck('name'),
             $protocol->extension,
         );
-        dd($parser);
+
         return $parser->parse($protocol->content);
     }
 

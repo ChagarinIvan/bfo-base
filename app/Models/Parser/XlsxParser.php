@@ -108,10 +108,7 @@ class XlsxParser extends AbstractParser
 
     public function check(string $file, string $extension): bool
     {
-        dump($extension);
-        dump(str_contains($extension, 'openxmlformats'));
-
-        return $str_contains;
+        return str_contains($extension, 'openxmlformats');
     }
 
     private function getColumn(?string $field): string
