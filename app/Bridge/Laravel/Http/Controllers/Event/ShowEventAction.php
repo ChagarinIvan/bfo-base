@@ -10,13 +10,12 @@ use Illuminate\Http\RedirectResponse;
 
 class ShowEventAction extends AbstractEventAction
 {
-    public function __invoke(Event $event): View|RedirectResponse
+    public function __invoke(string $eventId): View
     {
-        dump($event);
+        $event = Event::findOrFail($eventId);
         $withPoints = false;
         $withVk = false;
         $distance = $event->distances->first();
-        dd($distance);
         $protocolLines = $distance->protocolLines;
         $clubs = $this->clubsService->getAllClubs()->keyBy('normalize_name');
 
