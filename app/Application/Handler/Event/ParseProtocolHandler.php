@@ -9,6 +9,7 @@ use App\Domain\Event\ProtocolStorage;
 use App\Services\ParserService;
 use App\Services\ProtocolLineIdentService;
 use App\Services\ProtocolLineService;
+use JetBrains\PhpStorm\NoReturn;
 
 final readonly class ParseProtocolHandler
 {
@@ -20,9 +21,11 @@ final readonly class ParseProtocolHandler
     ) {
     }
 
+    #[NoReturn]
     public function handle(EventCreated $systemEvent): void
     {
         $protocol = $systemEvent->event->protocol($this->storage);
+        dump($protocol);
         $lineList = $this->parser->parse($protocol);
         dd($lineList);
         $this->protocolLineService->fillProtocolLines($systemEvent->event->id, $lineList);
