@@ -24,15 +24,18 @@ trait UploadHelper
         @$doc->loadHTML($pageContent);
         $xpath = new DOMXpath($doc);
         $resultNode = $xpath->query('//div[@id="results-body"]');
-
+        dump($resultNode);
         if ($resultNode->length === 0) {
             throw new BadRequestException('wrong protocol content');
         }
 
         $content = $doc->saveHTML($resultNode->item(0));
+        dump($content);
 
+        $content1 = mb_convert_encoding($content, 'utf-8', 'windows-1251');
+        dd($content1);
         return new Protocol(
-            mb_convert_encoding($content, 'utf-8', 'windows-1251'),
+            $content1,
             'html'
         );
 

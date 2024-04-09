@@ -59,6 +59,24 @@ final class OBelarusSpanParserTest extends AbstractParser
                     ],
                 ],
             ],
+            [
+                '2024/07042024.html',
+                141,
+                [
+                    0 => [
+                        'Мельникова', // фамилия
+                        'Полина',  // имя
+                        'Родничок',    // клуб
+                        2014,         // год
+                        null,         // разряд
+                        182,          // номер
+                        '00:15:59',    // время
+                        1,            // место
+                        null,         // выполненный разряд
+                        null,          // очки
+                    ],
+                ],
+            ],
         ];
     }
     protected function getParser(): string

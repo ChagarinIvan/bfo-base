@@ -25,9 +25,7 @@ final readonly class ParseProtocolHandler
     public function handle(EventCreated $systemEvent): void
     {
         $protocol = $systemEvent->event->protocol($this->storage);
-        dump($protocol);
         $lineList = $this->parser->parse($protocol);
-        dd($lineList);
         $this->protocolLineService->fillProtocolLines($systemEvent->event->id, $lineList);
         $this->identService->identPersons($lineList);
     }

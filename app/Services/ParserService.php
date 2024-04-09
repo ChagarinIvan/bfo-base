@@ -26,7 +26,6 @@ readonly class ParserService
             $protocol->extension,
         );
 
-        dump($parser);
         return $parser->parse($protocol->content);
     }
 
