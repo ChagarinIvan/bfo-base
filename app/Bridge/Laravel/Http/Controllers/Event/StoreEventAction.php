@@ -23,7 +23,6 @@ class StoreEventAction extends BaseController
         AddEventService $service,
         UserId $userId,
     ): RedirectResponse {
-        dd($protocolDto);
         $event = $service->execute(new AddEvent($eventDto, $protocolDto, $userId));
 
         return $this->redirector->action(ShowEventAction::class, [$event->id]);
