@@ -52,6 +52,7 @@ class ProtocolLineIdentService
         'анна' => ['аня'],
         'елена' => ['лена'],
     ];
+
     private static Collection $prompts;
 
     /**
@@ -85,8 +86,9 @@ class ProtocolLineIdentService
         private readonly RankService $rankService,
         private readonly ProtocolLineService $protocolLineService,
         private readonly PersonPromptService $personPromptService,
-        private readonly Phonetics $phonetics
+        private readonly Phonetics $phonetics,
     ) {
+        self::$prompts = Collection::make();
     }
 
     /**
@@ -139,7 +141,7 @@ class ProtocolLineIdentService
     public function identPerson(string $searchLine): int
     {
         self::$prompts = $this->personPromptService->all();
-        dd($prompts);
+        dump(self::$prompts->count());
 
         $metaphone = $this->phonetics->metaphour($searchLine);
         $ranks = new Collection();
@@ -185,7 +187,7 @@ class ProtocolLineIdentService
     private function identByPersonPrompt(string $searchLine, Collection $prompts): int
     {
         $ranks = new Collection();
-
+        dump($prompts->count());
         foreach ($prompts as $prompt) {
             $rank = levenshtein($searchLine, $prompt->prompt);
             $ranks->push([

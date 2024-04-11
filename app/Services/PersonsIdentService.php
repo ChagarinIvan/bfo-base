@@ -44,7 +44,6 @@ class PersonsIdentService
     {
         //ищем людей по прямому совпадению подготовленный имён
         $linePersons = $this->promptService->identPersonsByPrompts($lines);
-        dump($linePersons);
         //определяем у кого нет совпадения и прогоняем их через identPerson
         foreach ($lines as $preparedLine) {
             if (!isset($linePersons[$preparedLine])) {
