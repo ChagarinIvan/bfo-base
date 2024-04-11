@@ -185,7 +185,7 @@ class ProtocolLineIdentService
     private function identByPersonPrompt(string $searchLine, Collection $prompts): int
     {
         $ranks = new Collection();
-        dump($prompts->count());
+
         foreach ($prompts as $prompt) {
             $rank = levenshtein($searchLine, $prompt->prompt);
             $ranks->push([
