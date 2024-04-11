@@ -88,7 +88,6 @@ class ProtocolLineIdentService
         private readonly PersonPromptService $personPromptService,
         private readonly Phonetics $phonetics,
     ) {
-        self::$prompts = Collection::make();
     }
 
     /**
