@@ -59,7 +59,6 @@ class CsvListParser implements ParserInterface
             $list->push(array_combine($headers, $values));
         }
 
-        dd($list);
         return $list;
     }
 
