@@ -139,6 +139,7 @@ class ProtocolLineIdentService
     public function identPerson(string $searchLine): int
     {
         self::$prompts = $this->personPromptService->all();
+        dd($prompts);
 
         $metaphone = $this->phonetics->metaphour($searchLine);
         $ranks = new Collection();
