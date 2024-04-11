@@ -51,6 +51,7 @@ class ParserFactory
             /** @var ParserInterface $parser */
             $parser = new $parser();
             if ($parser->check($list, $extension)) {
+                dump($parser);
                 return $parser;
             }
         }
