@@ -28,7 +28,7 @@ class CsvListParser implements ParserInterface
             'number',
             'year',
         ];
-        dd($content);
+
         foreach ($result as $index => $line) {
             if ($index === 0) {
                 $values = explode(';', $line);
@@ -59,6 +59,7 @@ class CsvListParser implements ParserInterface
             $list->push(array_combine($headers, $values));
         }
 
+        dd($list);
         return $list;
     }
 
