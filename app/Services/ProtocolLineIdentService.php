@@ -140,8 +140,7 @@ class ProtocolLineIdentService
      */
     public function identPerson(string $searchLine): int
     {
-        self::$prompts = $this->personPromptService->all();
-        dump(self::$prompts->count());
+        self::$prompts = self::$prompts ?? $this->personPromptService->all();
 
         $metaphone = $this->phonetics->metaphour($searchLine);
         $ranks = new Collection();
@@ -187,7 +186,7 @@ class ProtocolLineIdentService
     private function identByPersonPrompt(string $searchLine, Collection $prompts): int
     {
         $ranks = new Collection();
-        dump($prompts->count());
+
         foreach ($prompts as $prompt) {
             $rank = levenshtein($searchLine, $prompt->prompt);
             $ranks->push([
