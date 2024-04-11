@@ -140,7 +140,6 @@ class ProtocolLineIdentService
     public function identPerson(string $searchLine): int
     {
         self::$prompts = self::$prompts ?? $this->personPromptService->all();
-        dump(self::$prompts->count());
 
         $metaphone = $this->phonetics->metaphour($searchLine);
         $ranks = new Collection();
@@ -153,7 +152,6 @@ class ProtocolLineIdentService
             ]);
         }
 
-        dump($ranks);
         /** @var array<string, string|int> $minRank */
         $minRank = $ranks->sortBy('rank')->first();
         if ($minRank['rank'] <= 2) {
