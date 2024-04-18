@@ -133,7 +133,7 @@ class Rank extends Model
 
     public static function autoActivation(string $rank): bool
     {
-        return !in_array($rank, [self::SM_RANK, self::WSM_RANK], true);
+        return !in_array($rank, [self::SMC_RANK, self::SM_RANK, self::WSM_RANK], true);
     }
 
     private static function getPreparedRanks(): array
