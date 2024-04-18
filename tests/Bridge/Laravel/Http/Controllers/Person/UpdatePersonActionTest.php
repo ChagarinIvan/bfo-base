@@ -36,8 +36,7 @@ final class UpdatePersonActionTest extends TestCase
         $user = User::factory()->createOne();
         $this->actingAs($user);
 
-        /** @var Person $person */
-        $person = Person::factory(state: ['id' => 1, 'club_id' => 2, 'birthday' => '1989-01-01'])->createOne();
+        Person::factory(state: ['id' => 1, 'club_id' => 2, 'birthday' => '1989-01-01'])->createOne();
 
         $this->post('/persons/1/update', [
             'firstname' => 'test name',

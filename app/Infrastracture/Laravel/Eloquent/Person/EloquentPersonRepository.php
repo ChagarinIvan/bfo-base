@@ -42,9 +42,9 @@ final class EloquentPersonRepository implements PersonRepository
             ;
         }
 
-        if ($criteria->hasParam('input')) {
+        if ($criteria->hasParam('info')) {
             /** @var PersonInfo $info */
-            $info = $criteria->param('input');
+            $info = $criteria->param('info');
 
             $query
                 ->where('lastname', $info->lastname)
@@ -53,7 +53,6 @@ final class EloquentPersonRepository implements PersonRepository
             ;
         }
 
-        dd($query);
         return $query->get();
     }
 
