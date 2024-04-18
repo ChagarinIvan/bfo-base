@@ -53,6 +53,7 @@ final class EloquentPersonRepository implements PersonRepository
             ;
         }
 
+        dd($query);
         return $query->get();
     }
 
