@@ -16,7 +16,7 @@ final readonly class StandardPersonFactory implements PersonFactory
 
     public function create(PersonInput $input): Person
     {
-        $person = new Person();
+        $person = new Person;
         $person->lastname = $input->info->lastname;
         $person->firstname = $input->info->firstname;
         $person->birthday = $input->info->birthday;

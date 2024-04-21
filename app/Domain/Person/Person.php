@@ -11,6 +11,7 @@ use App\Domain\Person\Event\PersonInfoUpdated;
 use App\Domain\PersonPayment\PersonPayment;
 use App\Domain\PersonPrompt\PersonPrompt;
 use App\Domain\ProtocolLine\ProtocolLine;
+use App\Domain\Shared\AggregatedModel;
 use App\Infrastracture\Laravel\Eloquent\Auth\ImpressionCast;
 use App\Models\Rank;
 use Carbon\Carbon;
@@ -40,7 +41,7 @@ use Illuminate\Support\Facades\App;
  * @property-read PersonPayment[]|Collection $payments
  * @property-read Rank[]|Collection $ranks
  */
-class Person extends Model
+class Person extends AggregatedModel
 {
     use HasFactory;
 
@@ -89,15 +90,12 @@ class Person extends Model
 
         $this->updated = $impression;
 
-        if (App::environment() !== 'testing') {
-            event(new PersonInfoUpdated($this));
-        }
+        $this->recordThat(new PersonInfoUpdated($this));
     }
 
     public function create(): void
     {
+        $this->recordThat(new PersonCreated($this));
         $this->save();
-
-        event(new PersonCreated($this));
     }
 }

@@ -2,19 +2,20 @@
 
 namespace Tests\Bridge\Laravel\Http\Controllers\Event;
 
-use App\Bridge\Laravel\Http\Controllers\Event\StoreEventAction;
+
+use App\Bridge\Laravel\Http\Controllers\Event\UpdateEventAction;
 use App\Domain\User\User;
 use Database\Seeders\ProtocolLinesSeeder;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\Response;
-use Tests\TestCase;
 use Tests\CreatesApplication;
-use Illuminate\Contracts\Auth\Authenticatable;
+use Tests\TestCase;
 
-final class StoreEventActionTest extends TestCase
+final class UpdateEventActionTest extends TestCase
 {
     use CreatesApplication;
     use RefreshDatabase;
@@ -35,9 +36,42 @@ final class StoreEventActionTest extends TestCase
 
     /**
      * @test
-     * @see StoreEventAction::class
+     * @see UpdateEventAction::class
      */
-    public function it_stores_event_with_file(): void
+    public function it_updates_event_without_file(): void
+    {
+        $this->seed(ProtocolLinesSeeder::class);
+
+        /** @var Authenticatable&User $user */
+        $user = User::factory()->createOne();
+        $this->actingAs($user);
+
+        $this->post('events/101/update', [
+            'name' => 'test event',
+            'description' => 'test event description',
+            'date' => '2023-01-01'
+        ])
+            ->assertStatus(Response::HTTP_FOUND)
+            ->assertRedirect('/events/101')
+        ;
+
+        $this->assertDatabaseHas('events', [
+            'name' => 'test event',
+            'description' => 'test event description',
+            'date' => '2023-01-01',
+            'active' => true,
+            'updated_by' => $user->id,
+        ]);
+
+        $this->assertDatabaseCount('distances', 3);
+        $this->assertDatabaseCount('protocol_lines', 5);
+    }
+
+    /**
+     * @test
+     * @see UpdateEventAction::class
+     */
+    public function it_updates_event_with_protocol(): void
     {
         $this->seed(ProtocolLinesSeeder::class);
 
@@ -47,44 +81,20 @@ final class StoreEventActionTest extends TestCase
 
         $file = UploadedFile::fake()->createWithContent('test.html', $this->content());
 
-        $this->post('events/2/store', [
+        $this->post('events/101/update', [
             'name' => 'test event',
             'description' => 'test event description',
             'date' => '2023-01-01',
             'protocol' => $file,
         ])
             ->assertStatus(Response::HTTP_FOUND)
-            ->assertRedirect('/events/1')
+            ->assertRedirect('/events/101')
         ;
 
         Storage::delete('2023/2023-01-01_test_event.text/html');
 
-        $this->assertDatabaseHas('events', [
-            'name' => 'test event',
-            'active' => true,
-            'created_by' => $user->id,
-            'updated_by' => $user->id,
-        ]);
-
-        $this->assertDatabaseHas('protocol_lines', [
-            'lastname' => 'Зайцев',
-            'firstname' => 'Игорь',
-            'club' => 'КО «Ультра»',
-            'rank' => 'II',
-            'runner_number' => 39,
-            'year' => 1973,
-            'time' => '00:16:26',
-            'place' => 1,
-            'complete_rank' => 'I',
-            'points' => 100,
-        ]);
-        $this->assertDatabaseCount('protocol_lines', 7);
-
-        $this->assertDatabaseHas('distances', [
-            'event_id' => '1',
-            'length' => '1100',
-            'points' => '23',
-        ]);
+        $this->assertDatabaseCount('distances', 2);
+        $this->assertDatabaseCount('protocol_lines', 2);
     }
 
     private function content(): string

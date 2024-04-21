@@ -6,24 +6,25 @@ namespace App\Application\Handler\Event;
 
 use App\Domain\Event\Event;
 use App\Domain\Event\Event\EventDisabled;
+use App\Services\CupsService;
 use App\Services\DistanceService;
 use App\Services\ProtocolLineService;
 use App\Services\RankService;
 
 final readonly class DisableEventHandler
 {
+    use DisableEventHandlerTrait;
+
     public function __construct(
-        // TODO replace old services with new
         private RankService $ranksService,
         private ProtocolLineService $protocolLineService,
         private DistanceService $distanceService,
+        private CupsService $cupsService,
     ) {
     }
 
     public function handle(EventDisabled $event): void
     {
-        $this->distanceService->deleteEventDistances($event->event);
-        $this->protocolLineService->deleteEventLines($event->event);
-        $this->ranksService->deleteEventRanks($event->event);
+        $this->cleanUp($event->event);
     }
 }

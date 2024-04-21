@@ -20,7 +20,7 @@ class StoreCupEventAction extends AbstractCupAction
             'points' => 'required|numeric',
         ]);
 
-        $cupEvent = new CupEvent();
+        $cupEvent = new CupEvent;
         $cupEvent->event_id = $formData['event'];
         $cupEvent->cup_id = $cup->id;
         $cupEvent->points = $formData['points'];

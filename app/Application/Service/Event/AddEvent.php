@@ -27,10 +27,11 @@ final readonly class AddEvent
             $this->info(),
             (int) $this->event->competitionId,
             $this->userId->id,
+            $this->protocol(),
         );
     }
 
-    public function protocolInput(): Protocol
+    public function protocol(): Protocol
     {
         return new Protocol(
             $this->protocol->content,

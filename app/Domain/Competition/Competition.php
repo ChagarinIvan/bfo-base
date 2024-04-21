@@ -7,10 +7,10 @@ namespace App\Domain\Competition;
 use App\Domain\Auth\Impression;
 use App\Domain\Competition\Event\CompetitionDisabled;
 use App\Domain\Event\Event;
+use App\Domain\Shared\AggregatedModel;
 use App\Infrastracture\Laravel\Eloquent\Auth\ImpressionCast;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 
@@ -27,7 +27,7 @@ use Illuminate\Support\Collection;
  *
  * @property-read Collection|Event[] $events
  */
-class Competition extends Model
+class Competition extends AggregatedModel
 {
     use HasFactory;
 
@@ -60,6 +60,6 @@ class Competition extends Model
         $this->updated = $impression;
         $this->active = false;
 
-        event(new CompetitionDisabled($this));
+        $this->recordThat(new CompetitionDisabled($this));
     }
 }

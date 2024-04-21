@@ -7,9 +7,9 @@ namespace App\Domain\Event\Event;
 use App\Domain\Event\Event;
 use App\Domain\Shared\AggregatedEvent;
 
-final readonly class EventDisabled extends AggregatedEvent
+final readonly class EventUpdated extends AggregatedEvent
 {
-    public function __construct(public Event $event)
+    public function __construct(public Event $event, public bool $withProtocolUpdate)
     {
     }
 }

@@ -5,13 +5,10 @@ declare(strict_types=1);
 namespace App\Domain\Event\Event;
 
 use App\Domain\Event\Event;
-use Illuminate\Foundation\Events\Dispatchable;
-use Illuminate\Queue\SerializesModels;
+use App\Domain\Shared\AggregatedEvent;
 
-final readonly class EventCreated
+final readonly class EventCreated extends AggregatedEvent
 {
-    use Dispatchable, SerializesModels;
-
     public function __construct(public Event $event)
     {
     }

@@ -10,7 +10,7 @@ use App\Services\ParserService;
 use App\Services\ProtocolLineIdentService;
 use App\Services\ProtocolLineService;
 
-final readonly class ParseProtocolHandler
+ abstract readonly class ParseProtocolHandler
 {
     public function __construct(
         private ProtocolStorage $storage,
@@ -20,11 +20,11 @@ final readonly class ParseProtocolHandler
     ) {
     }
 
-    public function handle(EventCreated $systemEvent): void
+    protected function parse(string $path, int $eventId): void
     {
-        $protocol = $systemEvent->event->protocol($this->storage);
+        $protocol = $this->storage->get($path);
         $lineList = $this->parser->parse($protocol);
-        $this->protocolLineService->fillProtocolLines($systemEvent->event->id, $lineList);
+        $this->protocolLineService->fillProtocolLines($eventId, $lineList);
         $this->identService->identPersons($lineList);
     }
 }

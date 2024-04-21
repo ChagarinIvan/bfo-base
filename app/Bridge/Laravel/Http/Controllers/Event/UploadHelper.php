@@ -20,7 +20,7 @@ trait UploadHelper
     public function uploadProtocol(string $url): Protocol
     {
         $pageContent = file_get_contents($url);
-        $doc = new DOMDocument();
+        $doc = new DOMDocument;
         @$doc->loadHTML($pageContent);
         $xpath = new DOMXpath($doc);
         $resultNode = $xpath->query('//div[@id="results-body"]');
@@ -30,8 +30,6 @@ trait UploadHelper
 
         $content = $doc->saveHTML($resultNode->item(0));
 
-//        $content1 = mb_convert_encoding($content, 'utf-8', 'windows-1251');
-//        dd($content1);
         return new Protocol(
             $content,
             'html'

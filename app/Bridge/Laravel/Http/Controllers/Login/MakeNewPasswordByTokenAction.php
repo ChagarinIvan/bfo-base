@@ -38,7 +38,7 @@ class MakeNewPasswordByTokenAction extends AbstractAction
 
         $users = User::whereEmail($email)->get();
         if ($users->isEmpty()) {
-            $user = new User();
+            $user = new User;
             $user->email = $email;
         } else {
             $user = $users->first();

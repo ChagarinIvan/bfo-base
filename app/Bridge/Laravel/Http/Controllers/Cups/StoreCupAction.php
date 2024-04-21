@@ -22,7 +22,7 @@ class StoreCupAction extends AbstractCupAction
             'visible' => 'in:on',
         ]);
 
-        $cup = new Cup();
+        $cup = new Cup;
         $cup->name = $formParams['name'];
         $cup->year = $formParams['year'];
         $cup->type = $formParams['type'];

@@ -60,7 +60,7 @@ class IdentProtocolLineCommand extends Command
 
             /** @var ProtocolLine $protocolLine */
             $protocolLine = $protocolLines->first();
-            $person = new Person();
+            $person = new Person;
             $person->lastname = $protocolLine->lastname;
             $person->firstname = $protocolLine->firstname;
 

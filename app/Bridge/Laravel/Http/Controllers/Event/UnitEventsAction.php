@@ -34,7 +34,7 @@ class UnitEventsAction extends AbstractEventAction
         /** @var Event $firstEvent */
         $firstEvent = $events->first();
 
-        $newEvent = new Event();
+        $newEvent = new Event;
         $name = $events->pluck('name')->implode(' + ');
         $newEvent->name = $name;
         $newEvent->description = "Аб'яднанне этапаў: {$name}";
@@ -119,7 +119,7 @@ class UnitEventsAction extends AbstractEventAction
             }
 
             $firstEventProtocolLines = $newProtocolLines->groupBy('distance.group_id');
-            $newProtocolLines = new Collection();
+            $newProtocolLines = new Collection;
             $firstEvent = $newEvent;
         }
 

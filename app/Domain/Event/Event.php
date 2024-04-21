@@ -8,7 +8,9 @@ use App\Domain\Auth\Impression;
 use App\Domain\Competition\Competition;
 use App\Domain\Event\Event\EventCreated;
 use App\Domain\Event\Event\EventDisabled;
+use App\Domain\Event\Event\EventUpdated;
 use App\Domain\ProtocolLine\ProtocolLine;
+use App\Domain\Shared\AggregatedModel;
 use App\Infrastracture\Laravel\Eloquent\Auth\ImpressionCast;
 use App\Models\CupEvent;
 use App\Models\Distance;
@@ -16,14 +18,12 @@ use App\Models\Flag;
 use App\Models\Rank;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 
 /**
  * @property int $id
@@ -43,7 +43,7 @@ use Illuminate\Support\Str;
  * @property-read Collection|CupEvent[] $cups
  * @property-read Collection|Flag[] $flags
  */
-class Event extends Model
+class Event extends AggregatedModel
 {
     use HasFactory;
 
@@ -94,35 +94,24 @@ class Event extends Model
         $this->updated = $impression;
         $this->active = false;
 
-        event(new EventDisabled($this));
+        $this->recordThat(new EventDisabled($this));
     }
 
-    public function storeProtocol(ProtocolStorage $storage, Protocol $protocol, Impression $impression): void
+    public function updateData(ProtocolUpdater $updater, UpdateInput $input, Impression $impression): void
     {
-        $path = $this->protocolPath($protocol);
-        $storage->put($path, $protocol->content);
-
-        $this->file = $path;
+        $this->name = $input->info->name;
+        $this->description = $input->info->description;
+        $this->date = $input->info->date;
+        $this->file = $input->protocol ? $updater->update($this, $input->protocol) : $this->file;
         $this->updated = $impression;
-    }
 
-    private function protocolPath(Protocol $protocol): string
-    {
-        return "{$this->date->format('Y')}/{$this->date->format('Y-m-d')}_" . Str::snake($this->name) . "@@$protocol->extension";
-    }
-
-    public function protocol(ProtocolStorage $storage): Protocol
-    {
-        $data = explode('@@', $this->file);
-        $extension = array_pop($data);
-
-        return new Protocol($storage->get($this->file), $extension);
+        $this->recordThat(new EventUpdated($this, (bool) $input->protocol));
     }
 
     public function create(): void
     {
-        $this->save();
+        $this->recordThat(new EventCreated($this));
 
-        event(new EventCreated($this));
+        $this->save();
     }
 }
