@@ -14,6 +14,7 @@
 
     /**
      * @var ViewPersonDto $person
+     * @var Collection $protocolLines
      * @var Collection $groupedProtocolLines
      * @var Rank $rank
      * @var ?PersonPayment $personPayment
@@ -79,7 +80,7 @@
             <x-back-button/>
         </div>
     </div>
-    @if($person->protocolLines->count() > 0)
+    @if($protocolLines->count() > 0)
         <table id="table"
                data-cookie="true"
                data-cookie-id-table="persons-show"

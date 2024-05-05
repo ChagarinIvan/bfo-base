@@ -34,6 +34,7 @@ class ShowPersonAction extends BaseController
         /** @see /resources/views/persons/show.blade.php */
         return $this->view('persons.show', [
             'person' => $assembler->toViewPersonDto($person),
+            'protocolLines' => $person->protocolLines,
             'groupedProtocolLines' => $groupedProtocolLines,
             'rank' => $rankService->getActiveRank($person->id),
             'personPayment' => $payments->first(),
