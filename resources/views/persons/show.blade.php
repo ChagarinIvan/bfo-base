@@ -47,6 +47,16 @@
         </div>
     </div>
     <div class="row mb-3">
+        @auth
+            <div class="col-12">
+                <h4>
+                    {{ __('app.common.created') }}:
+                    <x-impression :impression="$person->created"/>
+                    {{ __('app.common.updated') }}:
+                    <x-impression :impression="$person->updated"/>
+                </h4>
+            </div>
+        @endauth
         <div class="col-12">
             @auth
                 <x-edit-button url="{{ action(ShowEditPersonAction::class, [$person->id]) }}"/>

@@ -23,6 +23,7 @@
 
 @section('content')
     <div class="row">
+        @auth
         <div class="col-12">
             <h4>
                 {{ __('app.common.created') }}:
@@ -31,6 +32,7 @@
                 <x-impression :impression="$competition->updated"/>
             </h4>
         </div>
+        @endauth
         <div class="col-12">
             @auth
                 <x-button text="app.competition.add_event"
