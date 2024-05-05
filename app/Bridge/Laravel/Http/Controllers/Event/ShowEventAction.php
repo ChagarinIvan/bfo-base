@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Http\Controllers\Event;
 
+use App\Application\Dto\Auth\AuthAssembler;
 use App\Domain\Event\Event;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 
 class ShowEventAction extends AbstractEventAction
 {
-    public function __invoke(string $eventId): View
+    public function __invoke(string $eventId, AuthAssembler $assembler): View
     {
         $event = Event::findOrFail($eventId);
         $withPoints = false;
@@ -29,12 +30,14 @@ class ShowEventAction extends AbstractEventAction
 
         /** @see /resources/views/events/show.blade.php */
         return $this->view('events.show', [
-            'event' => $distance->event,
+            'event' => $event,
             'lines' => $protocolLines,
             'withPoints' => $withPoints,
             'withVk' => $withVk,
             'selectedDistance' => $distance,
             'clubs' => $clubs,
+            'created' => $assembler->toImpressionDto($event->created),
+            'updated' => $assembler->toImpressionDto($event->updated),
         ]);
     }
 }
