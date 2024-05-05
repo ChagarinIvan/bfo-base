@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Http\Controllers\Person;
 
+use App\Application\Dto\Person\PersonAssembler;
 use App\Domain\PersonPayment\PersonPayment;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Services\PersonsService;
@@ -20,6 +21,7 @@ class ShowPersonAction extends BaseController
         string $personId,
         PersonsService $personsService,
         RankService $rankService,
+        PersonAssembler $assembler,
     ): View {
         $person = $personsService->getPerson((int) $personId);
         $payments = $person->payments->sortByDesc(static fn (PersonPayment $payment) => $payment->date);
@@ -31,7 +33,7 @@ class ShowPersonAction extends BaseController
 
         /** @see /resources/views/persons/show.blade.php */
         return $this->view('persons.show', [
-            'person' => $person,
+            'person' => $assembler->toViewPersonDto($person),
             'groupedProtocolLines' => $groupedProtocolLines,
             'rank' => $rankService->getActiveRank($person->id),
             'personPayment' => $payments->first(),

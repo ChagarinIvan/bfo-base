@@ -7,7 +7,6 @@ namespace App\Bridge\Laravel\Http\Controllers\Event;
 use App\Application\Dto\Auth\AuthAssembler;
 use App\Domain\Event\Event;
 use Illuminate\Contracts\View\View;
-use Illuminate\Http\RedirectResponse;
 
 class ShowEventAction extends AbstractEventAction
 {
@@ -36,8 +35,6 @@ class ShowEventAction extends AbstractEventAction
             'withVk' => $withVk,
             'selectedDistance' => $distance,
             'clubs' => $clubs,
-            'created' => $assembler->toImpressionDto($event->created),
-            'updated' => $assembler->toImpressionDto($event->updated),
         ]);
     }
 }

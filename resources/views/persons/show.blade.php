@@ -6,14 +6,14 @@
     use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonPaymentsListAction;
     use App\Bridge\Laravel\Http\Controllers\PersonPrompt\ShowPersonPromptsListAction;
     use App\Bridge\Laravel\Http\Controllers\Rank\ShowPersonRanksAction;
-    use App\Domain\Person\Person;
+    use App\Application\Dto\Person\ViewPersonDto;
     use App\Domain\PersonPayment\PersonPayment;
     use App\Models\Rank;
     use Illuminate\Support\Collection;
     use Illuminate\Support\Str;
 
     /**
-     * @var Person $person
+     * @var ViewPersonDto $person
      * @var Collection $groupedProtocolLines
      * @var Rank $rank
      * @var ?PersonPayment $personPayment
@@ -24,7 +24,7 @@
 
 @extends('layouts.app')
 
-@section('title', $person->lastname.' '.$person->firstname)
+@section('title', $personName)
 
 @section('content')
     @if ($rank)
@@ -43,7 +43,7 @@
     @endif
     <div class="row mb-3">
         <div class="col-12">
-            <h4>{{ $person->birthday ? $person->birthday->format('Y') : '' }}</h4>
+            <h4>{{ $person->birthday ?? '' }}</h4>
         </div>
     </div>
     <div class="row mb-3">

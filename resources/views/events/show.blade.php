@@ -14,7 +14,6 @@
     use App\Models\Group;
     use App\Services\ClubsService;
     use Illuminate\Support\Collection;
-    use App\Application\Dto\Auth\ImpressionDto;
     /**
      * @var Event $event
      * @var Collection|Group[] $groupAnchors
@@ -23,8 +22,6 @@
      * @var bool $withPoints;
      * @var bool $withVk;
      * @var Collection|Club[] $clubs;
-     * @var ImpressionDto $created;
-     * @var ImpressionDto $updated;
      */
 @endphp
 
@@ -34,16 +31,6 @@
 
 @section('content')
     <div class="row mb-3">
-        @auth
-            <div class="col-12">
-                <h4>
-                    {{ __('app.common.created') }}:
-                    <x-impression :impression="$created"/>
-                    {{ __('app.common.updated') }}:
-                    <x-impression :impression="$updated"/>
-                </h4>
-            </div>
-        @endauth
         <div class="col-12">
             <h4>
                 <a href="{{ action(ShowCompetitionAction::class, [$event->competition]) }}">{{ $event->competition->name }}</a>
