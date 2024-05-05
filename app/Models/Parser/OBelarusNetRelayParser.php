@@ -14,7 +14,6 @@ use function explode;
 use function implode;
 use function in_array;
 use function is_numeric;
-use function mb_convert_encoding;
 use function mb_strtolower;
 use function preg_match;
 use function preg_match_all;
@@ -40,6 +39,10 @@ class OBelarusNetRelayParser extends AbstractParser
         $linesList = new Collection();
         $distancePoints = 0;
         $distanceLength = 0;
+
+        if (mb_check_encoding($file, 'windows-1251')) {
+            $file = mb_convert_encoding($file, 'utf-8', 'windows-1251');
+        }
 
         preg_match_all('#<h2>(.+?)</h2>.*?<pre>[^b]*(<b>.+?)</pre>#msi', $file, $nodesMatch);
 

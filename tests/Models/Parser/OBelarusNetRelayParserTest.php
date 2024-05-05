@@ -12,6 +12,22 @@ final class OBelarusNetRelayParserTest extends AbstractParser
     {
         return [
             [
+                '2024/240428_win.html',
+                41,
+                [
+                    0 => [
+                        'Жаховский',
+                        'Евгений',
+                        'КСО «Эридан»',
+                        null,
+                        'МС',
+                        9.1,
+                        '00:39:36',
+                        1,
+                    ],
+                ],
+            ],
+            [
                 '2020/200816_res.htm',
                 207,
                 [

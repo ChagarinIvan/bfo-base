@@ -12,7 +12,6 @@ use function array_slice;
 use function count;
 use function implode;
 use function is_numeric;
-use function mb_convert_encoding;
 use function mb_strtolower;
 use function preg_match;
 use function preg_match_all;
