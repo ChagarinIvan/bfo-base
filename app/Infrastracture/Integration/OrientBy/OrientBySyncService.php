@@ -55,6 +55,8 @@ class OrientBySyncService
         }
 
         $indicatedPersons = $this->identService->identLines(array_keys($personsPrompts));
+        $this->logger->info(sprintf("Found %d persons.", count($indicatedPersons)));
+
         foreach ($personsPrompts as $personsPrompt => $personDto) {
             $this->logger->info("Process $personDto->name");
 
