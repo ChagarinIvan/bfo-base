@@ -25,7 +25,7 @@
 
 @extends('layouts.app')
 
-@section('title', $personName)
+@section('title', $person->lastname . ' ' . $person->firstname)
 
 @section('content')
     @if ($rank)
