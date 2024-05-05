@@ -56,6 +56,10 @@ class SyncPersonCommand extends Command
                 'User Id for impression,'
             )
             ->addArgument(
+                'paid',
+                InputArgument::REQUIRED
+            )
+            ->addArgument(
                 'name',
                 InputArgument::REQUIRED
             )
@@ -70,10 +74,6 @@ class SyncPersonCommand extends Command
             ->addArgument(
                 'rank',
                 InputArgument::OPTIONAL
-            )
-            ->addArgument(
-                'paid',
-                InputArgument::REQUIRED
             )
             ->addArgument(
                 'paymentDate',
