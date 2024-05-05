@@ -62,6 +62,7 @@ class OrientBySyncService
 
             if (isset($indicatedPersons[$personsPrompt])) {
                 $personId = (int)$indicatedPersons[$personsPrompt];
+                $this->logger->info("Person found: $personId");
                 $person = $this->personsService->getPerson($personId);
                 $logPerson = $person->replicate();
 
