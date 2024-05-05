@@ -58,7 +58,7 @@ class OrientBySyncService
         $this->logger->info(sprintf("Found %d persons.", count($indicatedPersons)));
 
         foreach ($personsPrompts as $personsPrompt => $personDto) {
-            $this->logger->info("Process $personDto->name");
+            $this->logger->info("Process $personDto->name", ['dto' => $personDto]);
 
             if (isset($indicatedPersons[$personsPrompt])) {
                 $personId = (int)$indicatedPersons[$personsPrompt];
@@ -87,15 +87,15 @@ class OrientBySyncService
 //                    $person->firstname = $firstname;
                 }
 
-                $date = $personDto->getYear();
-                if ($date && (($person->birthday && !$person->birthday->eq($date)) || $person->birthday === null)) {
-                    $this->logger->info(
-                        "update birthday: " . ($logPerson->birthday ? $logPerson->birthday->format('Y') : '') . " => {$date->format('Y')}",
-                        ['person_id' => $personId]
-                    );
-                    continue;
-//                    $person->birthday = $date;
-                }
+//                $date = $personDto->getYear();
+//                if ($date && (($person->birthday && !$person->birthday->eq($date)) || $person->birthday === null)) {
+//                    $this->logger->info(
+//                        "update birthday: " . ($logPerson->birthday ? $logPerson->birthday->format('Y') : '') . " => {$date->format('Y')}",
+//                        ['person_id' => $personId]
+//                    );
+//                    continue;
+////                    $person->birthday = $date;
+//                }
 
                 if ($personDto->paid && $personDto->paymentDate()) {
                     $this->logger->info('update payment: ', ['person_id' => $personId]);
