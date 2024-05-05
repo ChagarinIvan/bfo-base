@@ -38,9 +38,9 @@
             <div class="col-12">
                 <h4>
                     {{ __('app.common.created') }}:
-                    <x-impression :impression="$event->created"/>
+                    <x-impression :impression="$created"/>
                     {{ __('app.common.updated') }}:
-                    <x-impression :impression="$event->updated"/>
+                    <x-impression :impression="$updated"/>
                 </h4>
             </div>
         @endauth
