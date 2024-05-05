@@ -25,6 +25,16 @@ final class OBelarusNetRelayParserTest extends AbstractParser
                         '00:39:36',
                         1,
                     ],
+                    22 => [
+                        'Салтанович',
+                        'Глеб',
+                        'КСО «Эридан»',
+                        null,
+                        null,
+                        12.1,
+                        null,
+                        null,
+                    ],
                 ],
             ],
             [
