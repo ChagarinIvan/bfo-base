@@ -14,6 +14,7 @@
     use App\Models\Group;
     use App\Services\ClubsService;
     use Illuminate\Support\Collection;
+    use App\Application\Dto\Auth\ImpressionDto;
     /**
      * @var Event $event
      * @var Collection|Group[] $groupAnchors
@@ -22,6 +23,8 @@
      * @var bool $withPoints;
      * @var bool $withVk;
      * @var Collection|Club[] $clubs;
+     * @var ImpressionDto $created;
+     * @var ImpressionDto $updated;
      */
 @endphp
 
