@@ -29,7 +29,7 @@
     </div>
     <div class="row">
         <ul class="nav nav-tabs">
-            @foreach($cup->getCupType()->getGroups() as $group)
+            @foreach($cup->type->instance()->getGroups() as $group)
                 @php
                     /** @var CupGroup $group */
                 @endphp
