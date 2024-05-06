@@ -41,7 +41,7 @@ final class ShowCreateCupFormActionTest extends TestCase
             ->assertSee('<select class="form-select" id="type" name="type">', false)
             ->assertSee('<option value="sprint"', false)
             ->assertSee('<option value="master"', false)
-            ->assertSee('<input class="form-control" id="events_count" name="events_count">', false)
+            ->assertSee('<input class="form-control" id="eventsCount" name="eventsCount">', false)
             ->assertSee('<select class="form-select" id="year" name="year">', false)
             ->assertSee('<input class="form-check-input" type="checkbox" id="visible" name="visible" checked>', false)
         ;

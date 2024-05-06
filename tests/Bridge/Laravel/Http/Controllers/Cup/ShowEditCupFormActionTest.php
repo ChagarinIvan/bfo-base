@@ -43,8 +43,7 @@ final class ShowEditCupFormActionTest extends TestCase
             ->assertSee('<input class="form-control" id="name" name="name" value="test master cup">', false)
             ->assertSee('<option value="master" selected>', false)
             ->assertSee('<option value="2022" selected>', false)
-            ->assertSee('<input class="form-control" id="events_count" name="events_count" value="3">', false)
-            ->assertSee('<input class="form-control" id="events_count" name="events_count" value="3">', false)
+            ->assertSee('<input class="form-control" id="eventsCount" name="eventsCount" value="3">', false)
             ->assertSee('<input class="form-check-input" type="checkbox" id="visible" name="visible" checked>', false)
         ;
     }
