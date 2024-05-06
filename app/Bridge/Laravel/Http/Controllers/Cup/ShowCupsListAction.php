@@ -7,6 +7,7 @@ namespace App\Bridge\Laravel\Http\Controllers\Cup;
 use App\Application\Dto\Cup\CupSearchDto;
 use App\Application\Service\Cup\ListCup;
 use App\Application\Service\Cup\ListCupService;
+use App\Models\Year;
 use Illuminate\Contracts\View\View;
 use Illuminate\Routing\Controller as BaseController;
 
@@ -22,7 +23,7 @@ class ShowCupsListAction extends BaseController
 
         /** @see /resources/views/cup/index.blade.php */
         return $this->view('cup.index', [
-            'selectedYear' => $search->year,
+            'selectedYear' => (int) ($search->year ?? Year::actualYear()->value),
             'cups' => $cups,
         ]);
     }

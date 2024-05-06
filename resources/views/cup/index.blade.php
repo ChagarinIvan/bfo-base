@@ -9,7 +9,7 @@
     use App\Models\Year;
     /**
      * @var ViewCupDto[] $cups;
-     * @var string $selectedYear;
+     * @var int $selectedYear;
      */
 @endphp
 
@@ -24,7 +24,7 @@
                 <x-button text="app.common.new"
                           color="success"
                           icon="bi-file-earmark-plus-fill"
-                          url="{{ action(ShowCreateCupFormAction::class, [$selectedYear]) }}"
+                          url="{{ action(ShowCreateCupFormAction::class) }}"
                 />
             </div>
         </div>
