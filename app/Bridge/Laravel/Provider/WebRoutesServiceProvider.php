@@ -8,7 +8,7 @@ use App\Bridge\Laravel\Http\Controllers\BackAction;
 use App\Bridge\Laravel\Http\Controllers\Club;
 use App\Bridge\Laravel\Http\Controllers\Competition;
 use App\Bridge\Laravel\Http\Controllers\CupEvents;
-use App\Bridge\Laravel\Http\Controllers\Cups;
+use App\Bridge\Laravel\Http\Controllers\Cup;
 use App\Bridge\Laravel\Http\Controllers\Error;
 use App\Bridge\Laravel\Http\Controllers\Event;
 use App\Bridge\Laravel\Http\Controllers\Faq;
@@ -132,7 +132,7 @@ class WebRoutesServiceProvider extends ServiceProvider
 
                 //localization
                 //only by locale
-                //                $this->route->get('/localization/{code}', Localization\ChangeLanguageAction::class);
+                // $this->route->get('/localization/{code}', Localization\ChangeLanguageAction::class);
 
                 //flags
                 $this->routeRegistrar->prefix('flags')->group(function (): void {
@@ -160,25 +160,25 @@ class WebRoutesServiceProvider extends ServiceProvider
 
                 //cups
                 $this->routeRegistrar->prefix('cups')->group(function (): void {
-                    $this->route->get('{year}', Cups\ShowCupsListAction::class);
-                    $this->route->get('{cup}/show', Cups\ShowCupAction::class);
-                    $this->route->get('{cup}/cache', Cups\ClearCacheAction::class);
-                    $this->route->get('{cup}/{group}/table', Cups\ShowCupTableAction::class);
+                    $this->route->get('', Cup\ShowCupsListAction::class);
+                    $this->route->get('{cupId}/show', Cup\ShowCupAction::class);
+                    $this->route->get('{cupId}/cache', Cup\ClearCacheAction::class);
+                    $this->route->get('{cup}/{group}/table', Cup\ShowCupTableAction::class);
                     $this->route->get('{cup}/{event}/{group}/show', CupEvents\ShowCupEventGroupAction::class);
 
                     //old auth
                     $this->middleware(['auth'])->group(function (): void {
-                        $this->route->get('{cup}/{group}/table-export', Cups\ExportCupGroupTableAction::class);
-                        $this->route->get('{cup}/export', Cups\ExportCupTableAction::class);
-                        $this->route->get('{year}/create', Cups\ShowCreateCupFormAction::class);
-                        $this->route->post('store', Cups\StoreCupAction::class);
-                        $this->route->get('{cup}/edit', Cups\ShowEditCupFormAction::class);
-                        $this->route->post('{cup}/update', Cups\UpdateCupAction::class);
-                        $this->route->get('{cup}/delete', Cups\DeleteCupAction::class);
-                        $this->route->get('{cup}/event/create', CupEvents\ShowCreateCupEventFormAction::class);
+                        $this->route->get('{cup}/{group}/table-export', Cup\ExportCupGroupTableAction::class);
+                        $this->route->get('{cup}/export', Cup\ExportCupTableAction::class);
+                        $this->route->get('create', Cup\ShowCreateCupFormAction::class);
+                        $this->route->post('store', Cup\StoreCupAction::class);
+                        $this->route->get('{cupId}/edit', Cup\ShowEditCupFormAction::class);
+                        $this->route->post('{cupId}/update', Cup\UpdateCupAction::class);
+                        $this->route->get('{cupId}/delete', Cup\DeleteCupAction::class);
+                        $this->route->get('{cupId}/event/create', CupEvents\ShowCreateCupEventFormAction::class);
                         $this->route->post('{cup}/event/store', CupEvents\StoreCupEventAction::class);
-                        $this->route->get('{cup}/{event}/delete', CupEvents\DeleteCupEventAction::class);
-                        $this->route->get('{cup}/{event}/edit', CupEvents\ShowEditCupEventFormAction::class);
+                        $this->route->get('{cupId}/{event}/delete', CupEvents\DeleteCupEventAction::class);
+                        $this->route->get('{cupId}/{cupEventId}/edit', CupEvents\ShowEditCupEventFormAction::class);
                         $this->route->post('{cup}/{event}/update', CupEvents\UpdateCupEventAction::class);
                     });
                 });

@@ -29,7 +29,7 @@ final class ShowCompetitionAction extends BaseController
             return $this->redirectTo404Error();
         }
 
-        $events = $eventsService->execute(new ListEvents(new EventSearchDto($competitionId)));
+        $events = $eventsService->execute(new ListEvents(new EventSearchDto(competitionId: $competitionId)));
 
         /** @see /resources/views/competitions/show.blade.php */
         return $this->view('competitions.show', [

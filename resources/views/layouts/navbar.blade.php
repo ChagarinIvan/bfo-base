@@ -1,7 +1,7 @@
 @php
     use App\Bridge\Laravel\Http\Controllers\Club\ShowClubsListAction;
     use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionsListAction;
-    use App\Bridge\Laravel\Http\Controllers\Cups\ShowCupsListAction;
+    use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupsListAction;
     use App\Bridge\Laravel\Http\Controllers\Faq\ShowApiFaqAction;
     use App\Bridge\Laravel\Http\Controllers\Faq\ShowFaqAction;
     use App\Bridge\Laravel\Http\Controllers\Flags\ShowFlagsListAction;

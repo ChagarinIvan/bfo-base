@@ -38,7 +38,7 @@ final class DeleteCompetitionActionTest extends TestCase
         $user = User::factory()->createOne();
         $this->actingAs($user);
 
-        $this->get("/competitions/2021/1/delete")
+        $this->get('/competitions/2021/1/delete')
             ->assertStatus(Response::HTTP_FOUND)
             ->assertRedirect('/competitions?year=2021')
         ;

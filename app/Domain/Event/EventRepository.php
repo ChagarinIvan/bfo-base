@@ -17,5 +17,7 @@ interface EventRepository
 
     public function byCriteria(Criteria $criteria): Collection;
 
+    public function oneByCriteria(Criteria $criteria): ?Event;
+
     public function byId(int $id): ?Event;
 }

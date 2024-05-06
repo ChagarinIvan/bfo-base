@@ -1,5 +1,5 @@
 @php
-    use App\Domain\Person\Person;use App\Models\Cup;use App\Models\CupEvent;use App\Models\CupEventPoint;use Illuminate\Support\Collection;
+    use App\Domain\Cup\Cup;use App\Domain\CupEvent\CupEvent;use App\Domain\Person\Person;use App\Models\CupEventPoint;use Illuminate\Support\Collection;
     /**
     * @var Cup $cup;
     * @var CupEvent[] $cupEvents;

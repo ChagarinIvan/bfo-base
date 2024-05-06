@@ -15,7 +15,14 @@ readonly class Criteria
     public function __construct(
         /** @var array<string, mixed> $params */
         private array $params,
+        /** @var array<string, mixed> $params */
+        private array $sorting = [],
     ) {
+    }
+
+    public function sorting(): array
+    {
+        return $this->sorting;
     }
 
     public function hasParam(string $param): bool

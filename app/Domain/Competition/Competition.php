@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Competition;
 
 use App\Domain\Auth\Impression;
+use App\Domain\Competition\Event\CompetitionCreated;
 use App\Domain\Competition\Event\CompetitionDisabled;
 use App\Domain\Event\Event;
 use App\Domain\Shared\AggregatedModel;
@@ -24,8 +25,6 @@ use Illuminate\Support\Collection;
  *
  * @property Impression $created
  * @property Impression $updated
- *
- * @property-read Collection|Event[] $events
  */
 class Competition extends AggregatedModel
 {
@@ -39,11 +38,6 @@ class Competition extends AggregatedModel
         'created' => ImpressionCast::class,
         'updated' => ImpressionCast::class,
     ];
-
-    public function events(): HasMany
-    {
-        return $this->hasMany(Event::class);
-    }
 
     public function updateInfo(CompetitionInfo $info, Impression $impression): void
     {
@@ -61,5 +55,12 @@ class Competition extends AggregatedModel
         $this->active = false;
 
         $this->recordThat(new CompetitionDisabled($this));
+    }
+
+    public function create(): void
+    {
+        $this->recordThat(new CompetitionCreated($this));
+
+        $this->save();
     }
 }

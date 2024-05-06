@@ -18,15 +18,14 @@ final readonly class UpdateEventHandler extends ParseProtocolHandler
     use DisableEventHandlerTrait;
 
     public function __construct(
-        private ProtocolStorage $storage,
-        private ParserService $parser,
-        private ProtocolLineService $protocolLineService,
-        private ProtocolLineIdentService $identService,
+        protected ProtocolStorage $storage,
+        protected ParserService $parser,
+        protected ProtocolLineService $protocolLineService,
+        protected ProtocolLineIdentService $identService,
         protected RankService $ranksService,
         protected DistanceService $distanceService,
         protected CupsService $cupsService,
     ) {
-        parent::__construct($storage, $parser, $protocolLineService, $identService);
     }
 
     public function handle(EventUpdated $systemEvent): void

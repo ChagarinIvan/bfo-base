@@ -1,11 +1,7 @@
 @php
-    use App\Bridge\Laravel\Http\Controllers\CupEvents\UpdateCupEventAction;
-    use App\Bridge\Laravel\Http\Controllers\Cups\ShowCupTableAction;
-    use App\Models\Cup;
-    use App\Models\CupEvent;
-    use App\Application\Dto\Event\ViewEventDto;
+    use App\Application\Dto\Cup\ViewCupDto;use App\Application\Dto\Event\ViewEventDto;use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupTableAction;use App\Bridge\Laravel\Http\Controllers\CupEvents\UpdateCupEventAction;use App\Domain\CupEvent\CupEvent;
     /**
-     * @var Cup $cup;
+     * @var ViewCupDto $cup;
      * @var CupEvent $cupEvent;
      * @var ViewEventDto[] $events;
      */
@@ -21,31 +17,26 @@
     </div>
     <div class="row mb-3">
         <div class="col-12">
-            @foreach($cup->getCupType()->getGroups() as $group)
-                <x-badge name="{{ $group->name() }}"
-                         url="{{ action(ShowCupTableAction::class, [$cup, $group->id()]) }}"
+            @foreach($cup->groups as $group)
+                <x-badge name="{{ $group->name }}"
+                         url="{{ action(ShowCupTableAction::class, [$cup->id, $group->id]) }}"
                 />
             @endforeach
         </div>
     </div>
     <div class="row">
-        <form method="POST"
-              action="{{ action(UpdateCupEventAction::class, [$cup, $cupEvent]) }}"
-        >
+        <form method="POST" action="{{ action(UpdateCupEventAction::class, [$cup->id, $cupEvent]) }}">
             @csrf
             <div class="form-floating mb-3">
                 <select class="form-select" id="event" name="event">
                     @foreach($events as $event)
-                        <option value="{{ $event->id }}"
-                                {{ $event->id === $cupEvent->event_id ? 'selected' : ''}}
-                        >{{ $event->date." - ".$event->competitionName.' - '.$event->name }}</option>
+                        <option value="{{ $event->id }}" {{ $event->id === (string) $cupEvent->event_id ? 'selected' : ''}}>{{ $event->date." - ".$event->competitionName.' - '.$event->name }}</option>
                     @endforeach
                 </select>
                 <label for="event">{{ __('app.event.title') }}</label>
             </div>
             <div class="form-floating mb-3">
-                <input class="form-control @error('points') is-invalid @enderror" id="points" name="points"
-                       value="{{ $cupEvent->points }}">
+                <input class="form-control @error('points') is-invalid @enderror" id="points" name="points" value="{{ $cupEvent->points }}">
                 <label for="points">@error('points') {{ __($message) }} @else {{ __('app.common.points') }} @enderror</label>
             </div>
             <div class="col-12">

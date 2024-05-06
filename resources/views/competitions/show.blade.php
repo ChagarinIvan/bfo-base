@@ -1,7 +1,7 @@
 @php
     use App\Application\Dto\Competition\ViewCompetitionDto;
     use App\Application\Dto\Event\ViewEventDto;
-    use App\Bridge\Laravel\Http\Controllers\Cups\ShowCupAction;
+    use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupAction;
     use App\Bridge\Laravel\Http\Controllers\Event\DeleteEventAction;
     use App\Bridge\Laravel\Http\Controllers\Event\ShowAddFlagToEventFormAction;
     use App\Bridge\Laravel\Http\Controllers\Event\ShowCreateEventFormAction;

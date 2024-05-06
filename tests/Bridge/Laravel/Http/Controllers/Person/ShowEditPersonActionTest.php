@@ -38,6 +38,6 @@ final class ShowEditPersonActionTest extends TestCase
         $user = User::factory()->createOne();
         $this->actingAs($user);
 
-        $this->get('/persons/1/edit')->assertStatus(Response::HTTP_OK);
+        $this->get('/persons/101/edit')->assertStatus(Response::HTTP_OK);
     }
 }

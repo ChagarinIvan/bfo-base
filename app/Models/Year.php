@@ -23,6 +23,11 @@ enum Year: int
         return self::from($this->value - 1);
     }
 
+    public function toString(): string
+    {
+        return (string) $this->value;
+    }
+
     case y2025 = 2025;
     case y2024 = 2024;
     case y2023 = 2023;

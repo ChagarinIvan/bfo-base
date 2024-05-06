@@ -38,13 +38,13 @@ final class ShowPersonPaymentsListActionTest extends TestCase
         $user = User::factory()->createOne();
         $this->actingAs($user);
 
-        $this->get('/persons/1/payments')
+        $this->get('/persons/101/payments')
             ->assertStatus(Response::HTTP_OK)
             ->assertSeeTextInOrder([
                 '2023',
                 '2023-01-11',
                 '2022',
-                '2022-03-13',
+                '2022-01-11',
                 '2021',
                 '2021-02-12',
             ])

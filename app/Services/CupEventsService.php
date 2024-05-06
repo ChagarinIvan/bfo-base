@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Models\Cup;
-use App\Models\CupEvent;
+use App\Domain\Cup\Cup;
+use App\Domain\Cup\Group\CupGroup;
+use App\Domain\CupEvent\CupEvent;
 use App\Models\CupEventPoint;
-use App\Models\Group\CupGroup;
 use Illuminate\Cache\Repository as CacheManager;
 use Illuminate\Support\Collection;
 use RuntimeException;
@@ -23,22 +23,9 @@ final readonly class CupEventsService
         return $cup->events()->with('event')->get();
     }
 
-    public function getCupEventPersonsCount(CupEvent $cupEvent): int
-    {
-        return $cupEvent->cup
-            ->getCupType()
-            ->getCupEventParticipatesCount($cupEvent)
-        ;
-    }
-
     public function getCupEvent(int $cupEventId): CupEvent
     {
         return CupEvent::find($cupEventId) ?? throw new RuntimeException('Wrong cup event id.');
-    }
-
-    public function storeCupEvent(CupEvent $cupEvent): void
-    {
-        $cupEvent->save();
     }
 
     /** @return array<string, CupEventPoint[]> */
@@ -48,7 +35,7 @@ final readonly class CupEventsService
             "{$cup->id}_{$group->id()}",
             1000000,
             static function () use ($cup, $cupEvents, $group) {
-                return $cup->getCupType()->calculateCup($cup, $cupEvents, $group);
+                return $cup->type->instance()->calculateCup($cup, $cupEvents, $group);
             }
         );
     }

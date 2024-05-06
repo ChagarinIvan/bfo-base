@@ -63,8 +63,8 @@ final class UpdateEventActionTest extends TestCase
             'updated_by' => $user->id,
         ]);
 
-        $this->assertDatabaseCount('distances', 3);
-        $this->assertDatabaseCount('protocol_lines', 5);
+        $this->assertDatabaseCount('distances', 4);
+        $this->assertDatabaseCount('protocol_lines', 6);
     }
 
     /**

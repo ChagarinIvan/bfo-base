@@ -13,7 +13,7 @@ final class EloquentCompetitionRepository implements CompetitionRepository
 {
     public function add(Competition $competition): void
     {
-        $competition->save();
+        $competition->create();
     }
 
     public function update(Competition $competition): void

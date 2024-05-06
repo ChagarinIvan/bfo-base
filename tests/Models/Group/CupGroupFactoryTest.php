@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Models\Group;
 
-use App\Models\Group\CupGroup;
-use App\Models\Group\CupGroupFactory;
-use App\Models\Group\GroupAge;
-use App\Models\Group\GroupMale;
+use App\Domain\Cup\Group\CupGroup;
+use App\Domain\Cup\Group\CupGroupFactory;
+use App\Domain\Cup\Group\GroupAge;
+use App\Domain\Cup\Group\GroupMale;
 use PHPUnit\Framework\TestCase;
 
 final class CupGroupFactoryTest extends TestCase

@@ -1,12 +1,10 @@
 @php
-    use App\Bridge\Laravel\Http\Controllers\Cups\UpdateCupAction;
-    use App\Models\Cup;
-    use App\Models\Cups\CupType;
-    use Carbon\Carbon;
+    use App\Bridge\Laravel\Http\Controllers\Cup\UpdateCupAction;
+    use App\Application\Dto\Cup\ViewCupDto;
+    use App\Domain\Cup\CupType;
     /**
-     * @var Cup $cup;
+     * @var ViewCupDto $cup;
      */
-    $year = Carbon::now()->year;
 @endphp
 
 @extends('layouts.app')
@@ -16,7 +14,7 @@
 @section('content')
     <div class="row">
         <form method="POST"
-              action="{{ action(UpdateCupAction::class, [$cup]) }}"
+              action="{{ action(UpdateCupAction::class, [$cup->id]) }}"
         >
             @csrf
             <div class="form-floating mb-3">
@@ -25,14 +23,14 @@
             </div>
             <div class="form-floating mb-3">
                 <select class="form-select" id="type" name="type">
-                    @foreach(CupType::getCupTypes() as $cupType)
-                        <option value="{{ $cupType->getId() }}" {{ $cup->type === $cupType->getId() ? 'selected' : '' }}>{{ __($cupType->getNameKey()) }}</option>
+                    @foreach(CupType::toArray() as $cupType)
+                        <option value="{{ $cupType }}" {{ $cup->type === $cupType ? 'selected' : '' }}>{{ __("app.cup.type.$cupType") }}</option>
                     @endforeach
                 </select>
                 <label for="type">{{ __('app.common.type') }}</label>
             </div>
             <div class="form-floating mb-3">
-                <input class="form-control" id="events_count" name="events_count" value="{{ $cup->events_count }}">
+                <input class="form-control" id="events_count" name="events_count" value="{{ $cup->eventsCount }}">
                 <label for="events_count">{{ __('app.cup.events_count') }}</label>
             </div>
             <div class="form-floating mb-3">

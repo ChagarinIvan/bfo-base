@@ -1,9 +1,9 @@
 @php
-    use App\Bridge\Laravel\Http\Controllers\CupEvents\StoreCupEventAction;
-    use App\Models\Cup;
     use App\Application\Dto\Event\ViewEventDto;
+    use App\Application\Dto\Cup\ViewCupDto;
+    use App\Bridge\Laravel\Http\Controllers\CupEvents\StoreCupEventAction;
     /**
-     * @var Cup $cup;
+     * @var ViewCupDto $cup;
      * @var ViewEventDto[] $events;
      */
 @endphp
@@ -18,15 +18,13 @@
     </div>
     <div class="row mb-3">
         <div class="col-12">
-            @foreach($cup->getCupType()->getGroups() as $group)
-                <x-badge name="{{ $group->name() }}"/>
+            @foreach($cup->groups as $group)
+                <x-badge name="{{ $group->name }}"/>
             @endforeach
         </div>
     </div>
     <div class="row">
-        <form method="POST"
-              action="{{ action(StoreCupEventAction::class, [$cup]) }}"
-        >
+        <form method="POST" action="{{ action(StoreCupEventAction::class, [$cup->id]) }}">
             @csrf
             <div class="form-floating mb-3">
                 <select class="form-select" id="event" name="event">
@@ -37,8 +35,7 @@
                 <label for="event">{{ __('app.event.title') }}</label>
             </div>
             <div class="form-floating mb-3">
-                <input class="form-control @error('points') is-invalid @enderror" id="points" name="points"
-                       value="{{ 1000 }}">
+                <input class="form-control @error('points') is-invalid @enderror" id="points" name="points" value="{{ 1000 }}">
                 <label for="points">@error('points') {{ __($message) }} @else {{ __('app.common.points') }} @enderror</label>
             </div>
             <div class="col-12">

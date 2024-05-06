@@ -1,9 +1,6 @@
 @php
-    use App\Bridge\Laravel\Http\Controllers\Cups\StoreCupAction;
-    use App\Models\Cups\CupType;
-    /**
-     * @var int $selectedYear;
-     */
+    use App\Bridge\Laravel\Http\Controllers\Cup\StoreCupAction;
+    use App\Domain\Cup\CupType;
 @endphp
 
 @extends('layouts.app')
@@ -20,8 +17,8 @@
             </div>
             <div class="form-floating mb-3">
                 <select class="form-select" id="type" name="type">
-                    @foreach(CupType::getCupTypes() as $cupType)
-                        <option value="{{ $cupType->getId() }}" {{ $loop->first ? 'selected' : '' }}>{{ __($cupType->getNameKey()) }}</option>
+                    @foreach(CupType::cases() as $cupType)
+                        <option value="{{ $cupType->value }}" {{ $loop->first ? 'selected' : '' }}>{{ __("app.cup.type.$cupType->value") }}</option>
                     @endforeach
                 </select>
                 <label for="type">{{ __('app.common.type') }}</label>
@@ -33,9 +30,7 @@
             <div class="form-floating mb-3">
                 <select class="form-select" id="year" name="year">
                     @foreach(App\Models\Year::cases() as $year)
-                        <option value="{{ $year->value }}"
-                                {{ $year->value === $selectedYear ? 'selected' : '' }}
-                        >{{ $year->value }}</option>
+                        <option value="{{ $year->value }}">{{ $year->value }}</option>
                     @endforeach
                 </select>
                 <label for="year">{{ __('app.common.year') }}</label>

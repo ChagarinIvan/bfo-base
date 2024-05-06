@@ -24,10 +24,11 @@ final readonly class UpdateEventService
     ) {
     }
 
+    /** @throws EventNotFound */
     public function execute(UpdateEvent $command): ViewEventDto
     {
         return $this->transactional->run(function () use ($command): ViewEventDto {
-            $event = $this->events->lockById($command->id()) ?? throw new EventNotFound();
+            $event = $this->events->lockById($command->id()) ?? throw new EventNotFound;
             $impression = new Impression($this->clock->now(), $command->userId());
             $event->updateData($this->protocolUpdater, $command->input(), $impression);
             $this->events->update($event);

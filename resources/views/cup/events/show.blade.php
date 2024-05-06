@@ -1,12 +1,5 @@
 @php
-    use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionAction;
-    use App\Bridge\Laravel\Http\Controllers\CupEvents\ShowCupEventGroupAction;
-    use App\Bridge\Laravel\Http\Controllers\Event\ShowEventDistanceAction;
-    use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonAction;
-    use App\Models\Cup;
-    use App\Models\CupEvent;
-    use App\Models\CupEventPoint;
-    use App\Models\Group\CupGroup;
+    use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionAction;use App\Bridge\Laravel\Http\Controllers\CupEvents\ShowCupEventGroupAction;use App\Bridge\Laravel\Http\Controllers\Event\ShowEventDistanceAction;use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonAction;use App\Domain\Cup\Cup;use App\Domain\Cup\Group\CupGroup;use App\Domain\CupEvent\CupEvent;use App\Models\CupEventPoint;
     /**
      * @var Cup $cup;
      * @var CupEvent $cupEvent;

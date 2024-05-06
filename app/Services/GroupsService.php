@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Models\CupEvent;
+use App\Domain\CupEvent\CupEvent;
 use App\Models\Group;
 use App\Repositories\GroupsRepository;
 use Illuminate\Support\Collection;

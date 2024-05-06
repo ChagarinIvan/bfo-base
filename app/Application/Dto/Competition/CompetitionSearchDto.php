@@ -5,13 +5,15 @@ declare(strict_types=1);
 namespace App\Application\Dto\Competition;
 
 use App\Application\Dto\AbstractDto;
+use App\Models\Year;
+use Illuminate\Validation\Rules\Enum;
 
 final class CompetitionSearchDto extends AbstractDto
 {
     public static function requestValidationRules(): array
     {
         return [
-            'year' => 'numeric|digits:4',
+            'year' => [new Enum(Year::class)],
         ];
     }
     public function __construct(public ?string $year = null)

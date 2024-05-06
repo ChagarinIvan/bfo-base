@@ -4,25 +4,33 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Http\Controllers\CupEvents;
 
-use App\Bridge\Laravel\Http\Controllers\Cups\AbstractCupAction;
-use App\Bridge\Laravel\Http\Controllers\Cups\ShowCupAction;
+use App\Bridge\Laravel\Http\Controllers\Cup\CupAction;
+use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupAction;
+use App\Services\CupEventsService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller as BaseController;
 
-class UpdateCupEventAction extends AbstractCupAction
+class UpdateCupEventAction extends BaseController
 {
-    public function __invoke(string $cupId, string $cupEventId, Request $request): RedirectResponse
-    {
+    use CupAction;
+
+    public function __invoke(
+        string $cupId,
+        string $cupEventId,
+        Request $request,
+        CupEventsService $service,
+    ): RedirectResponse {
         $formData = $request->validate([
             'event' => 'required|numeric',
             'points' => 'required|numeric',
         ]);
 
-        $cupEvent = $this->cupEventsService->getCupEvent((int) $cupEventId);
+        $cupEvent = $service->getCupEvent((int) $cupEventId);
         $cupEvent->event_id = $formData['event'];
         $cupEvent->cup_id = (int) $cupId;
         $cupEvent->points = $formData['points'];
-        $this->cupEventsService->storeCupEvent($cupEvent);
+        $cupEvent->save();
 
         return $this->redirector->action(ShowCupAction::class, [$cupId]);
     }

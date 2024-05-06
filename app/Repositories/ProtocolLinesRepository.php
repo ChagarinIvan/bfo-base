@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Repositories;
 
+use App\Domain\CupEvent\CupEvent;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\Shared\Criteria;
-use App\Models\CupEvent;
 use App\Models\Year;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Query\Expression;
@@ -87,7 +87,7 @@ final readonly class ProtocolLinesRepository
                 ->addSelect('persons_payments.date')
                 ->join('persons_payments', 'person.id', '=', 'persons_payments.person_id')
                 ->where('persons_payments.year', '=', $cupEvent->cup->year)
-                ->havingRaw('persons_payments.date <= ?', [$cupEvent->event->date])
+                ->where('persons_payments.date', '<=', $cupEvent->event->date)
             ;
         }
 

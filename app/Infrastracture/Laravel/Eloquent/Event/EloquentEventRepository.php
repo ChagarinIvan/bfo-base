@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Infrastracture\Laravel\Eloquent\Event;
 
+use App\Domain\Club\Club;
 use App\Domain\Event\Event;
 use App\Domain\Event\EventRepository;
 use App\Domain\Shared\Criteria;
 use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Builder;
 
 final class EloquentEventRepository implements EventRepository
 {
@@ -33,7 +35,12 @@ final class EloquentEventRepository implements EventRepository
 
     public function byCriteria(Criteria $criteria): Collection
     {
-        $query = Event::where('active', true)->orderBy('date', 'asc');
+        return $this->buildQuery($criteria)->get();
+    }
+
+    private function buildQuery(Criteria $criteria): Builder
+    {
+        $query = Event::where('active', true);
 
         if ($criteria->hasParam('year')) {
             $query->where('date', 'LIKE', "%{$criteria->param('year')}%");
@@ -43,6 +50,29 @@ final class EloquentEventRepository implements EventRepository
             $query->where('competition_id', $criteria->param('competitionId'));
         }
 
-        return $query->get();
+        if ($criteria->hasParam('cupId')) {
+            $query
+                ->join('cup_events', 'cup_events.event_id', '=', 'events.id')
+                ->where('cup_events.cup_id', $criteria->param('cupId'))
+            ;
+        }
+
+        if ($criteria->sorting()) {
+            foreach ($criteria->sorting() as $key => $order) {
+                $query->orderBy($key, $order);
+            }
+        } else {
+            $query->orderBy('date', 'asc');
+        }
+
+        return $query;
+    }
+
+    public function oneByCriteria(Criteria $criteria): ?Event
+    {
+        /** @var Event|null $event */
+        $event =  $this->buildQuery($criteria)->first();
+
+        return $event;
     }
 }

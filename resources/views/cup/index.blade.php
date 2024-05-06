@@ -1,15 +1,15 @@
 @php
-    use App\Bridge\Laravel\Http\Controllers\Cups\DeleteCupAction;
-    use App\Bridge\Laravel\Http\Controllers\Cups\ShowCreateCupFormAction;
-    use App\Bridge\Laravel\Http\Controllers\Cups\ShowCupAction;
-    use App\Bridge\Laravel\Http\Controllers\Cups\ShowCupsListAction;
-    use App\Bridge\Laravel\Http\Controllers\Cups\ShowCupTableAction;
-    use App\Bridge\Laravel\Http\Controllers\Cups\ShowEditCupFormAction;
-    use App\Models\Cup;use App\Models\Year;
-    use Illuminate\Support\Collection;
+    use App\Bridge\Laravel\Http\Controllers\Cup\DeleteCupAction;
+    use App\Bridge\Laravel\Http\Controllers\Cup\ShowCreateCupFormAction;
+    use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupAction;
+    use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupsListAction;
+    use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupTableAction;
+    use App\Bridge\Laravel\Http\Controllers\Cup\ShowEditCupFormAction;
+    use App\Application\Dto\Cup\ViewCupDto;
+    use App\Models\Year;
     /**
-     * @var Collection|Cup[] $cups;
-     * @var Year $selectedYear;
+     * @var ViewCupDto[] $cups;
+     * @var string $selectedYear;
      */
 @endphp
 
@@ -24,7 +24,7 @@
                 <x-button text="app.common.new"
                           color="success"
                           icon="bi-file-earmark-plus-fill"
-                          url="{{ action(ShowCreateCupFormAction::class, [$selectedYear->value]) }}"
+                          url="{{ action(ShowCreateCupFormAction::class, [$selectedYear]) }}"
                 />
             </div>
         </div>
@@ -34,7 +34,7 @@
             @foreach(Year::cases() as $year)
                 <li class="nav-item">
                     <a href="{{ action(ShowCupsListAction::class, [$year->value]) }}"
-                       class="text-decoration-none nav-link {{ $year === $selectedYear ? 'active' : '' }}"
+                       class="text-decoration-none nav-link {{ $year->value === $selectedYear ? 'active' : '' }}"
                     >
                         <b>{{ $year->value }}</b>
                     </a>
@@ -43,10 +43,10 @@
         </ul>
         <div class="tab-content">
             <div class="tab-pane fade show active">
-                @if ($cups->count() > 0)
+                @if (count($cups) > 0)
                     <table id="table"
                            data-cookie="true"
-                           data-cookie-id-table="cups-list-{{ $selectedYear->value }}"
+                           data-cookie-id-table="cups-list-{{ $selectedYear }}"
                            data-mobile-responsive="true"
                            data-check-on-init="true"
                            data-min-width="800"
@@ -68,27 +68,24 @@
                         @foreach ($cups as $cup)
                             <tr>
                                 <td>
-                                    <a href="{{ action(ShowCupAction::class, [$cup]) }}">{{ $cup->name }}</a>
+                                    <a href="{{ action(ShowCupAction::class, [$cup->id]) }}">{{ $cup->name }}</a>
                                 </td>
-                                <td>{{ $cup->events->sortByDesc('cup_event.event.date')->count() > 0
-                                        ? $cup->events->sortByDesc('cup_event.event.date')->last()->event->date->format('Y-m-d')
-                                        : '' }}</td>
+                                <td>{{ $cup->lastEventDate }}</td>
                                 <td>
-                                    @foreach($cup->getCupType()->getGroups() as $group)
+                                    @foreach($cup->groups as $group)
                                         @php
-                                            /** @var \App\Models\Group\CupGroup $group */
                                         @endphp
-                                        <x-badge name="{{ $group->name() }}"
-                                                 url="{{ action(ShowCupTableAction::class, [$cup, $group->id()]) }}"
+                                        <x-badge name="{{ $group->name }}"
+                                                 url="{{ action(ShowCupTableAction::class, [$cup->id, $group->id]) }}"
                                         />
                                     @endforeach
                                 </td>
                                 <td>
                                     <x-button text="app.cup.table" color="secondary" icon="bi-table"
-                                              url="{{ action(ShowCupTableAction::class, [$cup, $cup->getCupType()->getGroups()->first()->id()]) }}"/>
+                                              url="{{ action(ShowCupTableAction::class, [$cup->id, $cup->groups[0]->id]) }}"/>
                                     @auth
                                         <x-edit-button
-                                                url="{{ action(ShowEditCupFormAction::class, [$cup]) }}"/>
+                                                url="{{ action(ShowEditCupFormAction::class, [$cup->id]) }}"/>
                                         <x-modal-button modal-id="deleteModal{{ $cup->id }}"/>
                                     @endauth
                                 </td>
@@ -102,7 +99,7 @@
     </div>
     @foreach ($cups as $cup)
         <x-modal modal-id="deleteModal{{ $cup->id }}"
-                 url="{{ action(DeleteCupAction::class, [$cup]) }}"
+                 url="{{ action(DeleteCupAction::class, [$cup->id]) }}"
         />
     @endforeach
 @endsection
