@@ -8,8 +8,8 @@ use App\Domain\Club\Club;
 use App\Domain\Event\Event;
 use App\Domain\Event\EventRepository;
 use App\Domain\Shared\Criteria;
-use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 
 final class EloquentEventRepository implements EventRepository
 {
@@ -36,6 +36,14 @@ final class EloquentEventRepository implements EventRepository
     public function byCriteria(Criteria $criteria): Collection
     {
         return $this->buildQuery($criteria)->get();
+    }
+
+    public function oneByCriteria(Criteria $criteria): ?Event
+    {
+        /** @var Event|null $event */
+        $event =  $this->buildQuery($criteria)->first();
+
+        return $event;
     }
 
     private function buildQuery(Criteria $criteria): Builder
@@ -66,13 +74,5 @@ final class EloquentEventRepository implements EventRepository
         }
 
         return $query;
-    }
-
-    public function oneByCriteria(Criteria $criteria): ?Event
-    {
-        /** @var Event|null $event */
-        $event =  $this->buildQuery($criteria)->first();
-
-        return $event;
     }
 }

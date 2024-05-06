@@ -13,17 +13,15 @@ use App\Domain\Cup\CupType\MasterCupType;
 use App\Domain\Cup\CupType\SkiCupType;
 use App\Domain\Cup\CupType\SprintCupType;
 use App\Domain\Cup\CupType\YouthCupType;
+use function array_map;
 
 enum CupType: string
 {
-    case ELITE = 'elite';
-    case MASTER = 'master';
-    case SPRINT = 'sprint';
-    case BIKE = 'bike';
-    case JUNIORS = 'juniors';
-    case YOUTH = 'youth';
-    case SKI = 'ski';
-    case ELK_PATH = 'elk_path';
+    /** @return string[] */
+    public static function toArray(): array
+    {
+        return array_map(static fn (self $case) => $case->value, self::cases());
+    }
 
     public function instance(): CupTypeInterface
     {
@@ -38,10 +36,12 @@ enum CupType: string
             self::ELK_PATH => ElkPathCup::class,
         });
     }
-
-    /** @return string[] */
-    public static function toArray(): array
-    {
-        return array_map(static fn (self $case) => $case->value, self::cases());
-    }
+    case ELITE = 'elite';
+    case MASTER = 'master';
+    case SPRINT = 'sprint';
+    case BIKE = 'bike';
+    case JUNIORS = 'juniors';
+    case YOUTH = 'youth';
+    case SKI = 'ski';
+    case ELK_PATH = 'elk_path';
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Domain\Event\Factory;
 
 use App\Domain\Event\Event;
@@ -16,7 +18,6 @@ use Tests\TestCase;
 
 final class StoreProtocolEventFactoryTest extends TestCase
 {
-
     private EventFactory&MockObject $decorated;
 
     private ProtocolStorage&MockObject $protocols;

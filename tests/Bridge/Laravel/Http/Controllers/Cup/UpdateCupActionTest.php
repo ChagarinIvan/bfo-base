@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Bridge\Laravel\Http\Controllers\Cup;
 
 use App\Bridge\Laravel\Http\Controllers\Cup\UpdateCupAction;

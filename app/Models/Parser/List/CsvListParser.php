@@ -12,6 +12,7 @@ use function count;
 use function explode;
 use function mb_convert_encoding;
 use function preg_split;
+use function str_contains;
 
 class CsvListParser implements ParserInterface
 {

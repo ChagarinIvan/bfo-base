@@ -1,7 +1,8 @@
 <?php
 
-namespace Tests\Bridge\Laravel\Http\Controllers\Event;
+declare(strict_types=1);
 
+namespace Tests\Bridge\Laravel\Http\Controllers\Event;
 
 use App\Bridge\Laravel\Http\Controllers\Event\UpdateEventAction;
 use App\Domain\User\User;
@@ -20,18 +21,18 @@ final class UpdateEventActionTest extends TestCase
     use CreatesApplication;
     use RefreshDatabase;
 
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-
-        Storage::delete('2023/2023-01-01_test_event.text/html');
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
         $this->createApplication();
         RefreshDatabaseState::$migrated = false;
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+
+        Storage::delete('2023/2023-01-01_test_event.text/html');
     }
 
     /**

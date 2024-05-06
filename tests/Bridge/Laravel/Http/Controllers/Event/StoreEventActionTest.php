@@ -1,36 +1,38 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Bridge\Laravel\Http\Controllers\Event;
 
 use App\Bridge\Laravel\Http\Controllers\Event\StoreEventAction;
 use App\Domain\User\User;
 use Database\Seeders\ProtocolLinesSeeder;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\Response;
-use Tests\TestCase;
 use Tests\CreatesApplication;
-use Illuminate\Contracts\Auth\Authenticatable;
+use Tests\TestCase;
 
 final class StoreEventActionTest extends TestCase
 {
     use CreatesApplication;
     use RefreshDatabase;
 
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-
-        Storage::delete('2023/2023-01-01_test_event.text/html');
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
         $this->createApplication();
         RefreshDatabaseState::$migrated = false;
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+
+        Storage::delete('2023/2023-01-01_test_event.text/html');
     }
 
     /**

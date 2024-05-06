@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Bridge\Laravel\Http\Controllers\Cup;
 
 use App\Bridge\Laravel\Http\Controllers\Cup\StoreCupAction;
 use App\Domain\User\User;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Contracts\Auth\Authenticatable;
 use Tests\CreatesApplication;
 use Tests\TestCase;
 

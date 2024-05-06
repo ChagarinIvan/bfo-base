@@ -7,6 +7,8 @@ namespace App\Infrastracture\Laravel\Storage\Event;
 use App\Domain\Event\Protocol;
 use App\Domain\Event\ProtocolStorage;
 use Illuminate\Contracts\Filesystem\Filesystem;
+use function array_pop;
+use function explode;
 
 final readonly class FileProtocolStorage implements ProtocolStorage
 {

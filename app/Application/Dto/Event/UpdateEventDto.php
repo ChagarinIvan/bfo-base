@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Dto\Event;
 
 use App\Application\Dto\AbstractDto;
+use function array_key_exists;
 
 final class UpdateEventDto extends AbstractDto
 {

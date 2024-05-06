@@ -34,6 +34,5 @@ trait UploadHelper
             $content,
             'html'
         );
-
     }
 }

@@ -14,6 +14,7 @@ use App\Bridge\Laravel\Http\Controllers\Cup\CupAction;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller as BaseController;
+use function array_column;
 
 class ShowCreateCupEventFormAction extends BaseController
 {

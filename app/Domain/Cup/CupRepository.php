@@ -19,5 +19,4 @@ interface CupRepository
     public function byCriteria(Criteria $criteria): Collection;
 
     public function update(Cup $cup): void;
-
 }

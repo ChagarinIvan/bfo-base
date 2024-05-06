@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Application\Service\Cup;
 
 use App\Application\Dto\Auth\AuthAssembler;

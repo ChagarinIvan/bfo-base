@@ -12,6 +12,7 @@ use App\Domain\Cup\Group\CupGroup;
 use App\Domain\CupEvent\CupEvent;
 use App\Domain\Event\EventRepository;
 use App\Domain\Shared\Criteria;
+use function array_map;
 
 final readonly class CupAssembler
 {

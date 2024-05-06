@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Bridge\Laravel\Http\Controllers\CupEvents;
 
 use App\Bridge\Laravel\Http\Controllers\CupEvents\ShowEditCupEventFormAction;
@@ -9,8 +11,8 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use Illuminate\Http\Response;
-use Tests\TestCase;
 use Tests\CreatesApplication;
+use Tests\TestCase;
 
 final class ShowEditCupEventFormActionTest extends TestCase
 {

@@ -7,6 +7,7 @@ namespace App\Application\Dto\Event;
 use App\Application\Dto\AbstractDto;
 use App\Bridge\Laravel\Http\Controllers\Event\UploadHelper;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use function array_key_exists;
 
 final class EventProtocolDto extends AbstractDto
 {
