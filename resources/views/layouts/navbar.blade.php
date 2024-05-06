@@ -54,7 +54,7 @@
                         </li>
                         <li>
                             <a class="dropdown-item {{ $isCupsRoute ? 'active' : '' }}"
-                               href="{{ action(ShowCupsListAction::class, ['year' => (string)Year::actualYear()->value]) }}"
+                               href="{{ action(ShowCupsListAction::class, ['year' => (string)Year::actualYear()->value, 'visible' => true]) }}"
                             >{{ __('app.navbar.cups') }}</a>
                         </li>
                         @auth

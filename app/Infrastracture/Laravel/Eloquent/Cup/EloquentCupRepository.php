@@ -30,6 +30,10 @@ final class EloquentCupRepository implements CupRepository
     {
         $query = Cup::where('active', true)->orderByDesc('id');
 
+        if ($criteria->hasParam('visible')) {
+            $query->where('visible', $criteria->param('visible'));
+        }
+
         if ($criteria->hasParam('year')) {
             $query->where('year', $criteria->param('year'));
         }

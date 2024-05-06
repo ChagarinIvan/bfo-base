@@ -33,7 +33,7 @@
         <ul class="nav nav-tabs">
             @foreach(Year::cases() as $year)
                 <li class="nav-item">
-                    <a href="{{ action(ShowCupsListAction::class, ['year' => $year->value]) }}"
+                    <a href="{{ action(ShowCupsListAction::class, ['year' => $year->value, 'visible' => true]) }}"
                        class="text-decoration-none nav-link {{ $year->value === $selectedYear ? 'active' : '' }}"
                     >
                         <b>{{ $year->value }}</b>

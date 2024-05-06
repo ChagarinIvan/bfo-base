@@ -14,15 +14,17 @@ final class CupSearchDto extends AbstractDto
     {
         return [
             'year' => [new Enum(Year::class)],
+            'visible' => 'bool',
         ];
     }
-    public function __construct(public ?string $year = null)
+    public function __construct(public ?string $year = null, public bool $visible = true)
     {
     }
 
     public function fromArray(array $data): AbstractDto
     {
         $this->setStringParam('year', $data);
+        $this->visible = $data['visible'] ?? $this->visible;
 
         return $this;
     }
