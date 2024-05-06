@@ -54,7 +54,6 @@ final class ListCupEventServiceTest extends TestCase
             $cupEvent->event = $event;
         }
 
-
         $this->cupEvents
             ->expects($this->once())
             ->method('byCriteria')

@@ -92,7 +92,7 @@
                 <tr>
                     <td>{{ $index + 1 }}</td>
                     <td>
-                        <a href="{{ action(ShowCupEventGroupAction::class, [$cup->id, $cupEvent, $cup->groups[0]->id]) }}">
+                        <a href="{{ action(ShowCupEventGroupAction::class, [$cup->id, $cupEvent->id, $cup->groups[0]->id]) }}">
                             <u class="">{{ Str::limit($cupEvent->event->competitionName, 30).' - '.Str::limit($cupEvent->event->name, 30) }}</u>
                         </a>
                     </td>
