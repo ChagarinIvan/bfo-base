@@ -34,7 +34,7 @@ final class CupDto extends AbstractDto
         $this->eventsCount = (int) $data['eventsCount'];
         $this->year = (int) $data['year'];
         $this->type = $data['type'];
-        $this->visible = (bool) ($data['visible'] ?? true);
+        $this->visible = isset($data['visible']) ? (bool) $data['visible'] : $this->visible;
 
         return $this;
     }
