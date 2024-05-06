@@ -94,8 +94,8 @@ final class UpdateEventActionTest extends TestCase
 
         Storage::delete('2023/2023-01-01_test_event.text/html');
 
-        $this->assertDatabaseCount('distances', 2);
-        $this->assertDatabaseCount('protocol_lines', 2);
+        $this->assertDatabaseCount('distances', 3);
+        $this->assertDatabaseCount('protocol_lines', 3);
     }
 
     private function content(): string
