@@ -11,7 +11,16 @@ final class EloquentCupEventRepository implements CupEventRepository
 {
     public function byId(int $id): ?CupEvent
     {
-        // TODO ADD ACTIVE CHECK
-        return CupEvent::find($id);
+        return CupEvent::where('active', true)->find($id);
+    }
+
+    public function lockById(int $id): ?CupEvent
+    {
+        return CupEvent::where('active', true)->lockForUpdate()->find($id);
+    }
+
+    public function update(CupEvent $cupEvent): void
+    {
+        $cupEvent->save();
     }
 }

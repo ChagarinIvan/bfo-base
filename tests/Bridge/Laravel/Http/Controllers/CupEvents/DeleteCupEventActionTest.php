@@ -43,8 +43,10 @@ final class DeleteCupEventActionTest extends TestCase
             ->assertRedirect('/cups/101/show')
         ;
 
-        $this->assertDatabaseMissing('cup_events', [
+        $this->assertDatabaseHas('cup_events', [
             'id' => 101,
+            'active' => false,
+            'updated_by' => $user->id,
         ]);
     }
 }
