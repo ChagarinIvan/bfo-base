@@ -24,7 +24,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int $events_count
  * @property Year $year
  * @property CupType $type
- * @property bool $visible
+ * @property boolean $visible
  * @property null|array $result
  * @property boolean $active
  *
