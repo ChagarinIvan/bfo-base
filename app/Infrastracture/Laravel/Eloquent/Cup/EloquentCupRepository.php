@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace App\Infrastracture\Laravel\Eloquent\Cup;
 
-use App\Domain\Competition\Competition;
 use App\Domain\Cup\Cup;
 use App\Domain\Cup\CupRepository;
-use App\Domain\Event\Event;
 use App\Domain\Shared\Criteria;
 use Illuminate\Support\Collection;
 

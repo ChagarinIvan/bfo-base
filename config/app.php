@@ -6,6 +6,7 @@ use App\Bridge\Laravel\Provider\ApiRoutesServiceProvider;
 use App\Bridge\Laravel\Provider\Club\ClubProvider;
 use App\Bridge\Laravel\Provider\Competition\CompetitionProvider;
 use App\Bridge\Laravel\Provider\Cup\CupProvider;
+use App\Bridge\Laravel\Provider\CupEvent\CupEventProvider;
 use App\Bridge\Laravel\Provider\Event\EventProvider;
 use App\Bridge\Laravel\Provider\EventHandlerServiceProvider;
 use App\Bridge\Laravel\Provider\Person\PersonProvider;
@@ -179,6 +180,7 @@ return [
         ClubProvider::class,
         CompetitionProvider::class,
         CupProvider::class,
+        CupEventProvider::class,
         EventProvider::class,
         PersonProvider::class,
         PersonPaymentProvider::class,
