@@ -37,6 +37,7 @@ final class ShowCupsListActionTest extends TestCase
             ->assertSee('<a href="http://localhost/cups/101/show">test master cup</a>', false)
             ->assertSee('<a href="http://localhost/cups/101/M_35_/table" class="text-decoration-none">', false)
             ->assertSee('<a href="http://localhost/cups/102/show">test youth cup</a>', false)
+            ->assertDontSee('<a href="http://localhost/cups/103/show">unvisible cup</a>', false)
             ->assertSee('<a href="http://localhost/cups/102/M_12_/table" class="text-decoration-none">', false)
         ;
     }

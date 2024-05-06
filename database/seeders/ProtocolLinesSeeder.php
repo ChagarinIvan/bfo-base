@@ -57,6 +57,7 @@ class ProtocolLinesSeeder extends Seeder
 
         Cup::factory(state: ['id' => 101, 'name' => 'test master cup', 'year' => Year::y2022, 'type' => CupType::MASTER, 'events_count' => 3])->createOne();
         Cup::factory(state: ['id' => 102, 'name' => 'test youth cup', 'year' => Year::y2022, 'type' => CupType::YOUTH])->createOne();
+        Cup::factory(state: ['id' => 103, 'name' => 'unvisible cup', 'year' => Year::y2022, 'type' => CupType::ELK_PATH, 'visible' => false])->createOne();
 
         CupEvent::factory(state: ['id' => 101, 'cup_id' => 101, 'event_id' => 102, 'points' => 1001])->createOne();
         CupEvent::factory(state: ['id' => 102, 'cup_id' => 101, 'event_id' => 102, 'points' => 1001, 'active' => false])->createOne();
