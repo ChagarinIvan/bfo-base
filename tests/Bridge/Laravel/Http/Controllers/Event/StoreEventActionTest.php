@@ -80,7 +80,7 @@ final class StoreEventActionTest extends TestCase
             'complete_rank' => 'I',
             'points' => 100,
         ]);
-        $this->assertDatabaseCount('protocol_lines', 7);
+        $this->assertDatabaseCount('protocol_lines', 8);
 
         $this->assertDatabaseHas('distances', [
             'event_id' => '1',

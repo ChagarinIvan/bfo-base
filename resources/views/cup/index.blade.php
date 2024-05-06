@@ -61,6 +61,10 @@
                             <th data-sortable="true">{{ __('app.common.title') }}</th>
                             <th data-sortable="true">{{ __('app.cup.last_date') }}</th>
                             <th>{{ __('app.common.groups') }}</th>
+                            @auth
+                                <th data-sortable="true">{{ __('app.common.created') }}</th>
+                                <th data-sortable="true">{{ __('app.common.updated') }}</th>
+                            @endauth
                             <th></th>
                         </tr>
                         </thead>
@@ -80,6 +84,14 @@
                                         />
                                     @endforeach
                                 </td>
+                                @auth
+                                    <td>
+                                        <x-impression :impression="$cup->created"/>
+                                    </td>
+                                    <td>
+                                        <x-impression :impression="$cup->updated"/>
+                                    </td>
+                                @endauth
                                 <td>
                                     <x-button text="app.cup.table" color="secondary" icon="bi-table"
                                               url="{{ action(ShowCupTableAction::class, [$cup->id, $cup->groups[0]->id]) }}"/>

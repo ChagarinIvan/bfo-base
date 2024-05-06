@@ -49,7 +49,7 @@ final class StorePersonActionTest extends TestCase
         ;
 
         $this->assertDatabaseHas('person', [
-            'id' => 1,
+            'id' => 102,
             'firstname' => 'test name',
             'created_by' => $user->id,
         ]);
