@@ -19,7 +19,7 @@ class ShowCupTableAction extends BaseController
 
     public function __invoke(Cup $cup, string $cupGroupId, CupEventsService $service): View|RedirectResponse
     {
-        $cupEvents = $service->getCupEvents($cup)->sortBy('event.date');
+        $cupEvents = $service->getCupEvents((string) $cup->id)->sortBy('event.date');
         $cupGroup = CupGroupFactory::fromId($cupGroupId);
         $cupPoints = $service->calculateCup($cup, $cupEvents, $cupGroup);
 

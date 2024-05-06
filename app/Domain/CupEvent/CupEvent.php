@@ -25,7 +25,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property Impression $updated
  *
  * @property-read Cup $cup
- * @property-read Event $event
+ * @property Event $event
  */
 class CupEvent extends AggregatedModel
 {

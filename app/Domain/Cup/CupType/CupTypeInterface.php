@@ -22,7 +22,7 @@ interface CupTypeInterface
     /**
      * @param array<int, CupGroup> $groups
      */
-    public function getCupEventParticipatesCount(CupEvent $cupEvent, array $groups): int;
+    public function getCupEventParticipatesCount(CupEvent $cupEvent, ?array $groups = null): int;
 
     /**
      * @return Collection|CupGroup[]

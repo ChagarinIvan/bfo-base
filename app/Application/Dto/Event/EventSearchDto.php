@@ -13,13 +13,13 @@ final class EventSearchDto extends AbstractDto
         return [
             'competitionId' => 'numeric',
             'year' => 'numeric|digits:4',
-            'idNotIn' => 'array|each:numeric',
+            'notRelatedToCup' => 'numeric',
         ];
     }
     public function __construct(
         public ?string $competitionId = null,
         public ?string $year = null,
-        public ?array $idNotIn = null,
+        public ?string $notRelatedToCup = null,
     ) {
     }
 
@@ -27,7 +27,7 @@ final class EventSearchDto extends AbstractDto
     {
         $this->setStringParam('competitionId', $data);
         $this->setStringParam('year', $data);
-        $this->idNotIn = $data['idNotIn'] ?? null;
+        $this->notRelatedToCup = $data['notRelatedToCup'] ?? null;
 
         return $this;
     }

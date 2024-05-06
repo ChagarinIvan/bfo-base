@@ -44,7 +44,6 @@ final class UpdateCupServiceTest extends TestCase
             new CupAssembler(
                 $this->events = $this->createMock(EventRepository::class),
                 $authAssembler,
-                new CupEventAssembler(new EventAssembler($authAssembler)),
             ),
             new DummyTransactional,
         );

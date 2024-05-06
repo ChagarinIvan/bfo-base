@@ -14,7 +14,6 @@ use App\Bridge\Laravel\Http\Controllers\Cup\CupAction;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller as BaseController;
-use function array_column;
 
 class ShowCreateCupEventFormAction extends BaseController
 {
@@ -33,7 +32,7 @@ class ShowCreateCupEventFormAction extends BaseController
 
         $events = $listEvents->execute(new ListEvents(new EventSearchDto(
             year: (string) $cup->year,
-            idNotIn: array_column($cup->cupEvents, 'eventId'),
+            notRelatedToCup: $cupId,
         )));
 
         /** @see /resources/views/cup/events/create.blade.php */

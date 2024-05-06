@@ -35,12 +35,12 @@ final class ListCupServiceTest extends TestCase
 
         $this->service = new ListCupService(
             $this->cups = $this->createMock(CupRepository::class),
-            new CupAssembler($this->events, $authAssembler, new CupEventAssembler(new EventAssembler($authAssembler)))
+            new CupAssembler($this->events, $authAssembler)
         );
     }
 
     /** @test */
-    public function it_gets_list_of_competitions(): void
+    public function it_gets_list_of_cups(): void
     {
         /** @var Cup[] $cups */
         $cups = Cup::factory(count: 2)->make();

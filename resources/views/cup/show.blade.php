@@ -9,9 +9,11 @@
     use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupTableAction;
     use App\Bridge\Laravel\Http\Controllers\Cup\ShowEditCupFormAction;
     use App\Application\Dto\Cup\ViewCupDto;
+    use App\Application\Dto\CupEvent\ViewCupEventDto;
     use Illuminate\Support\Str;
     /**
      * @var ViewCupDto $cup;
+     * @var ViewCupEventDto[] $cupEvents;
      */
 @endphp
 
@@ -37,14 +39,14 @@
                 <x-button text="app.cup.table.export"
                           color="info"
                           icon="download"
-                          url="{{ action(ExportCupTableAction::class, [$cup]) }}"
+                          url="{{ action(ExportCupTableAction::class, [$cup->id]) }}"
                 />
                 <x-modal-button modal-id="deleteModalCup{{ $cup->id }}"/>
             @endauth
             <x-button text="app.cup.table"
                       color="secondary"
                       icon="bi-table"
-                      url="{{ action(ShowCupTableAction::class, [$cup, $cup->groups[0]->id]) }}"
+                      url="{{ action(ShowCupTableAction::class, [$cup->id, $cup->groups[0]->id]) }}"
             />
             <x-back-button/>
         </div>
@@ -53,7 +55,7 @@
         <div class="col-12">
             @foreach($cup->groups as $group)
                 <x-badge name="{{ $group->name }}"
-                         url="{{ action(ShowCupTableAction::class, [$cup, $group->id]) }}"/>
+                         url="{{ action(ShowCupTableAction::class, [$cup->id, $group->id]) }}"/>
             @endforeach
         </div>
     </div>
@@ -86,21 +88,21 @@
             </tr>
             </thead>
             <tbody>
-            @foreach($cup->cupEvents as $index => $cupEvent)
+            @foreach($cupEvents as $index => $cupEvent)
                 <tr>
                     <td>{{ $index + 1 }}</td>
                     <td>
-                        <a href="{{ action(ShowCupEventGroupAction::class, [$cup, $cupEvent, $cup->groups[0]->id]) }}">
+                        <a href="{{ action(ShowCupEventGroupAction::class, [$cup->id, $cupEvent, $cup->groups[0]->id]) }}">
                             <u class="">{{ Str::limit($cupEvent->event->competitionName, 30).' - '.Str::limit($cupEvent->event->name, 30) }}</u>
                         </a>
                     </td>
                     <td>{{ $cupEvent->event->date }}</td>
-                    <td>{{ $cupEventsParticipateCount[$cupEvent->id] ?? 0 }}</td>
+                    <td>{{ $cupEvent->participatesCount }}</td>
                     <td>{{ $cupEvent->points }}</td>
                     @auth
                         <td>
                             <x-edit-button
-                                    url="{{ action(ShowEditCupEventFormAction::class, [$cup, $cupEvent->id]) }}"/>
+                                    url="{{ action(ShowEditCupEventFormAction::class, [$cup->id, $cupEvent->id]) }}"/>
                             <x-modal-button modal-id="deleteModal{{ $cupEvent->id }}"/>
                         </td>
                     @endauth
@@ -111,7 +113,7 @@
     </div>
     @foreach ($cupEvents as $cupEvent)
         <x-modal modal-id="deleteModal{{ $cupEvent->id }}"
-                 url="{{ action(DeleteCupEventAction::class, [$cup, $cupEvent->id]) }}"
+                 url="{{ action(DeleteCupEventAction::class, [$cup->id, $cupEvent->id]) }}"
         />
     @endforeach
     <x-modal modal-id="deleteModalCup{{ $cup->id }}"

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Application\Dto\Cup;
 
 use App\Application\Dto\Auth\ImpressionDto;
-use App\Application\Dto\CupEvent\ViewCupEventDto;
 
 final readonly class ViewCupDto
 {
@@ -21,12 +20,6 @@ final readonly class ViewCupDto
         public bool $visible,
         public ImpressionDto $created,
         public ImpressionDto $updated,
-
-        // TODO replace with CupEventRepository or cupEventListService
-        /** @var ViewCupEventDto[] */
-        public array $cupEvents,
-        /** @var array<int, int> */
-        public array $cupEventsParticipatesCount,
     ) {
     }
 }

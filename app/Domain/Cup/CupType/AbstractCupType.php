@@ -20,6 +20,7 @@ use function uasort;
 abstract class AbstractCupType implements CupTypeInterface
 {
     abstract protected function getGroupProtocolLines(CupEvent $cupEvent, CupGroup $group): Collection;
+
     public function __construct(
         protected readonly DistanceService $distanceService,
         protected readonly ProtocolLinesRepository $protocolLinesRepository,
@@ -65,10 +66,10 @@ abstract class AbstractCupType implements CupTypeInterface
         return $results;
     }
 
-    public function getCupEventParticipatesCount(CupEvent $cupEvent, array $groups): int
+    public function getCupEventParticipatesCount(CupEvent $cupEvent, ?array $groups = null): int
     {
         $lines = new Collection();
-        foreach ($groups as $group) {
+        foreach ($groups ?? $this->getGroups() as $group) {
             $lines = $lines->merge($this->getGroupProtocolLines($cupEvent, $group));
         }
 

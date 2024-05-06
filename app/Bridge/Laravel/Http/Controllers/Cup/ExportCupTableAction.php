@@ -22,7 +22,7 @@ class ExportCupTableAction extends BaseController
     {
         $content = '';
         foreach ($cup->type->instance()->getGroups() as $group) {
-            $cupEvents = $service->getCupEvents($cup)->sortBy('event.date');
+            $cupEvents = $service->getCupEvents((string) $cup->id)->sortBy('event.date');
             $cupPoints = $service->calculateCup($cup, $cupEvents, $group);
 
             $content .= "<b>{$group->name()}</b><br/><br/>";

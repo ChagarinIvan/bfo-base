@@ -19,15 +19,12 @@ final readonly class CupAssembler
     public function __construct(
         private EventRepository $events,
         private AuthAssembler $authAssembler,
-        private CupEventAssembler $cupEventAssembler,
     ) {
     }
 
     public function toViewCupDto(Cup $cup): ViewCupDto
     {
         $eventCriteria = new Criteria(['cupId' => $cup->id], ['date' => 'desc']);
-        /** @var CupEvent[] $cupEvents */
-        $cupEvents = $cup->events()->with('event')->get()->all();
         $cupTypeInstance = $cup->type->instance();
         $cupGroups = $cupTypeInstance->getGroups()->toArray();
 
@@ -42,10 +39,6 @@ final readonly class CupAssembler
             visible: $cup->visible,
             created: $this->authAssembler->toImpressionDto($cup->created),
             updated: $this->authAssembler->toImpressionDto($cup->updated),
-
-            // TODO replace with CupEventRepository or cupEventListService
-            cupEvents: array_map($this->cupEventAssembler->toViewCupEventDto(...), $cupEvents),
-            cupEventsParticipatesCount: $this->cupEventParticipatesCount($cupTypeInstance, $cupEvents, $cupGroups),
         );
     }
 
@@ -55,21 +48,5 @@ final readonly class CupAssembler
             id: $group->id(),
             name: $group->name(),
         );
-    }
-
-    /**
-     * @param array<int, CupEvent> $cupEvents
-     * @param array<int, CupGroup> $cupGroups
-     * @return array<int, int>
-     */
-    private function cupEventParticipatesCount(CupTypeInterface $cupInstance, array $cupEvents, array $cupGroups): array
-    {
-        $participantsCount = [];
-
-        foreach ($cupEvents as $cupEvent) {
-            $participantsCount[$cupEvent->id] = $cupInstance->getCupEventParticipatesCount($cupEvent, $cupGroups);
-        }
-
-        return $participantsCount;
     }
 }

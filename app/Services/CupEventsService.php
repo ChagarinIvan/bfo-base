@@ -7,6 +7,8 @@ namespace App\Services;
 use App\Domain\Cup\Cup;
 use App\Domain\Cup\Group\CupGroup;
 use App\Domain\CupEvent\CupEvent;
+use App\Domain\CupEvent\CupEventRepository;
+use App\Domain\Shared\Criteria;
 use App\Models\CupEventPoint;
 use Illuminate\Cache\Repository as CacheManager;
 use Illuminate\Support\Collection;
@@ -14,18 +16,20 @@ use RuntimeException;
 
 final readonly class CupEventsService
 {
-    public function __construct(private CacheManager $cache)
-    {
+    public function __construct(
+        private CacheManager $cache,
+        private CupEventRepository $cupEvents,
+    ) {
     }
 
-    public function getCupEvents(Cup $cup): Collection
+    public function getCupEvents(string $cupId): Collection
     {
-        return $cup->events()->with('event')->get();
+        return $this->cupEvents->byCriteria(new Criteria(['cupId' => $cupId]));
     }
 
     public function getCupEvent(int $cupEventId): CupEvent
     {
-        return CupEvent::find($cupEventId) ?? throw new RuntimeException('Wrong cup event id.');
+        return $this->cupEvents->byId($cupEventId) ?? throw new RuntimeException('Wrong cup event id.');
     }
 
     /** @return array<string, CupEventPoint[]> */

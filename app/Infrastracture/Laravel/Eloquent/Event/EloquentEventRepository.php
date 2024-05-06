@@ -48,7 +48,7 @@ final class EloquentEventRepository implements EventRepository
 
     private function buildQuery(Criteria $criteria): Builder
     {
-        $query = Event::where('active', true);
+        $query = Event::where('events.active', true);
 
         if ($criteria->hasParam('year')) {
             $query->where('date', 'LIKE', "%{$criteria->param('year')}%");
@@ -58,10 +58,17 @@ final class EloquentEventRepository implements EventRepository
             $query->where('competition_id', $criteria->param('competitionId'));
         }
 
-        if ($criteria->hasParam('cupId')) {
+        if ($criteria->hasParam('notRelatedToCup')) {
             $query
-                ->join('cup_events', 'cup_events.event_id', '=', 'events.id')
-                ->where('cup_events.cup_id', $criteria->param('cupId'))
+                ->select('events.*')
+                ->leftjoin('cup_events', 'cup_events.event_id', '=', 'events.id')
+                ->whereNull('cup_events.id')
+                ->orWhere(static function ($query) use ($criteria): void {
+                    $query
+                        ->where('cup_events.active', true)
+                        ->whereNot('cup_events.cup_id', $criteria->param('notRelatedToCup'))
+                    ;
+                })
             ;
         }
 

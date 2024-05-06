@@ -47,12 +47,6 @@ class Cup extends AggregatedModel
         'updated' => ImpressionCast::class,
     ];
 
-    // TODO REMOVE
-    public function events(): HasMany|Builder
-    {
-        return $this->hasMany(CupEvent::class);
-    }
-
     public function disable(Impression $impression): void
     {
         $this->updated = $impression;
