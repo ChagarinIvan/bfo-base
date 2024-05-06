@@ -32,7 +32,7 @@ final class ShowCupsListActionTest extends TestCase
     {
         $this->seed(ProtocolLinesSeeder::class);
 
-        $this->get('/cups?year=2022')
+        $this->get('/cups?year=2022&visible=1')
             ->assertStatus(Response::HTTP_OK)
             ->assertSee('<a href="http://localhost/cups/101/show">test master cup</a>', false)
             ->assertSee('<a href="http://localhost/cups/101/M_35_/table" class="text-decoration-none">', false)

@@ -24,7 +24,7 @@ final class CupSearchDto extends AbstractDto
     public function fromArray(array $data): AbstractDto
     {
         $this->setStringParam('year', $data);
-        $this->visible = $data['visible'] ?? $this->visible;
+        $this->visible = (bool) ($data['visible'] ?? $this->visible);
 
         return $this;
     }
