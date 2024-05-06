@@ -12,7 +12,7 @@
 
 @extends('layouts.app')
 
-@section('title', $cup->name.' - '.$cup->year)
+@section('title', $cup->name.' - '.$cup->year->toString())
 
 @section('content')
     <div class="row mb-3">
