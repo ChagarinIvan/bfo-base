@@ -41,6 +41,8 @@ class Cup extends AggregatedModel
         'result' => 'array',
         'type' => CupType::class,
         'year' => Year::class,
+        'active' => 'boolean',
+        'visible' => 'boolean',
         'created' => ImpressionCast::class,
         'updated' => ImpressionCast::class,
     ];
