@@ -46,13 +46,14 @@ final class ListCupEventServiceTest extends TestCase
         $cupEvents = CupEvent::factory(count: 2)->make();
         /** @var Event $event */
         $event = Event::factory()->makeOne();
+        /** @var Cup $cup */
+        $cup = Cup::factory()->makeOne();
 
         foreach ($cupEvents as $cupEvent) {
+            $cupEvent->cup = $cup;
             $cupEvent->event = $event;
         }
 
-        /** @var Cup $cup */
-        $cup = Cup::factory()->makeOne();
 
         $this->cupEvents
             ->expects($this->once())
