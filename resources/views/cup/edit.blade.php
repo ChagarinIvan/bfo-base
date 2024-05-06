@@ -30,7 +30,7 @@
                 <label for="type">{{ __('app.common.type') }}</label>
             </div>
             <div class="form-floating mb-3">
-                <input class="form-control" id="events_count" name="events_count" value="{{ $cup->eventsCount }}">
+                <input class="form-control" id="eventsCount" name="eventsCount" value="{{ $cup->eventsCount }}">
                 <label for="events_count">{{ __('app.cup.events_count') }}</label>
             </div>
             <div class="form-floating mb-3">

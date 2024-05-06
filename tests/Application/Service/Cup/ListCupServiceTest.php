@@ -48,7 +48,7 @@ final class ListCupServiceTest extends TestCase
         $this->cups
             ->expects($this->once())
             ->method('byCriteria')
-            ->with($this->equalTo(new Criteria(['year' => '2021'])))
+            ->with($this->equalTo(new Criteria(['year' => '2021', 'visible' => true])))
             ->willReturn($cups)
         ;
 
