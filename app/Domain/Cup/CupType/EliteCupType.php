@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\Domain\Cup\CupType;
 
 use App\Domain\Cup\Cup;
+use App\Domain\Cup\CupEvent\CupEvent;
+use App\Domain\Cup\CupEvent\CupEventPoint;
 use App\Domain\Cup\Group\CupGroup;
 use App\Domain\Cup\Group\CupGroupFactory;
 use App\Domain\Cup\Group\GroupMale;
-use App\Domain\CupEvent\CupEvent;
 use App\Domain\Distance\Distance;
 use App\Domain\ProtocolLine\Criteria\CupEventDistancesProtocolLinesCriteria;
-use App\Models\CupEventPoint;
 use App\Models\Year;
 use Illuminate\Support\Collection;
 use function array_merge;

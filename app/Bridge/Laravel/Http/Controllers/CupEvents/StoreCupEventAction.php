@@ -6,7 +6,7 @@ namespace App\Bridge\Laravel\Http\Controllers\CupEvents;
 
 use App\Bridge\Laravel\Http\Controllers\Cup\CupAction;
 use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupAction;
-use App\Domain\CupEvent\CupEvent;
+use App\Domain\Cup\CupEvent\CupEvent;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;

@@ -7,12 +7,12 @@ namespace Tests\Application\Service\Cup;
 use App\Application\Dto\Auth\AuthAssembler;
 use App\Application\Dto\Cup\CupAssembler;
 use App\Application\Dto\Cup\ViewCupDto;
-use App\Application\Dto\CupEvent\CupEventAssembler;
 use App\Application\Dto\Event\EventAssembler;
 use App\Application\Service\Cup\Exception\CupNotFound;
 use App\Application\Service\Cup\ViewCup;
 use App\Application\Service\Cup\ViewCupService;
 use App\Domain\Cup\Cup;
+use App\Domain\Cup\CupEvent\CupEvent;
 use App\Domain\Cup\CupRepository;
 use App\Domain\Event\Event;
 use App\Domain\Event\EventRepository;
@@ -37,6 +37,7 @@ final class ViewCupServiceTest extends TestCase
             $this->cups = $this->createMock(CupRepository::class),
             new CupAssembler(
                 $this->events = $this->createMock(EventRepository::class),
+                new EventAssembler($authAssembler),
                 $authAssembler,
             ),
         );
@@ -63,8 +64,13 @@ final class ViewCupServiceTest extends TestCase
     {
         /** @var Cup $cup */
         $cup = Cup::factory()->makeOne();
+        /** @var CupEvent $cupEvent */
+        $cupEvent = CupEvent::factory()->makeOne();
         /** @var Event $event */
         $event = Event::factory()->makeOne();
+        $cupEvent->event = $event;
+        $cupEvent->cup = $cup;
+        $cup->events->add($cupEvent);
 
         $this->cups
             ->expects($this->once())

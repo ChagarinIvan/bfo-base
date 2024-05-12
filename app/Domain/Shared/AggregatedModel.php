@@ -10,7 +10,7 @@ use function array_map;
 abstract class AggregatedModel extends Model
 {
     /** @var AggregatedEvent[] */
-    private array $events = [];
+    private array $modelEvents = [];
 
     public function save(array $options = []): bool
     {
@@ -23,16 +23,16 @@ abstract class AggregatedModel extends Model
     /** @return AggregatedEvent[] */
     public function releasedEvents(): array
     {
-        return $this->events;
+        return $this->modelEvents;
     }
 
     protected function recordThat(AggregatedEvent $event): void
     {
-        $this->events[] = $event;
+        $this->modelEvents[] = $event;
     }
 
     private function releaseEvents(): void
     {
-        array_map(event(...), $this->events);
+        array_map(event(...), $this->modelEvents);
     }
 }

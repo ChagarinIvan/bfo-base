@@ -4,11 +4,7 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Provider\CupEvent;
 
-use App\Domain\Cup\CupRepository;
-use App\Domain\Cup\Factory\CupFactory;
-use App\Domain\Cup\Factory\StandardCupFactory;
-use App\Domain\CupEvent\CupEventRepository;
-use App\Infrastracture\Laravel\Eloquent\Cup\EloquentCupRepository;
+use App\Domain\Cup\CupEvent\CupEventRepository;
 use App\Infrastracture\Laravel\Eloquent\CupEvent\EloquentCupEventRepository;
 use Illuminate\Support\ServiceProvider;
 

@@ -164,7 +164,7 @@ class WebRoutesServiceProvider extends ServiceProvider
                     $this->route->get('{cupId}/show', Cup\ShowCupAction::class);
                     $this->route->get('{cupId}/cache', Cup\ClearCacheAction::class);
                     $this->route->get('{cup}/{group}/table', Cup\ShowCupTableAction::class);
-                    $this->route->get('{cup}/{event}/{group}/show', CupEvents\ShowCupEventGroupAction::class);
+                    $this->route->get('{cup}/{event}/{group}/show', Cup\ShowCupEventGroupAction::class);
 
                     //old auth
                     $this->middleware(['auth'])->group(function (): void {

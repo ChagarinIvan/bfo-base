@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\CupEvent;
+namespace App\Domain\Cup\CupEvent;
 
 use App\Domain\Shared\Criteria;
 use Illuminate\Support\Collection;

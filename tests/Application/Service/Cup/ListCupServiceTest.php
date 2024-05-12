@@ -8,7 +8,6 @@ use App\Application\Dto\Auth\AuthAssembler;
 use App\Application\Dto\Cup\CupAssembler;
 use App\Application\Dto\Cup\CupSearchDto;
 use App\Application\Dto\Cup\ViewCupDto;
-use App\Application\Dto\CupEvent\CupEventAssembler;
 use App\Application\Dto\Event\EventAssembler;
 use App\Application\Service\Cup\ListCup;
 use App\Application\Service\Cup\ListCupService;
@@ -35,7 +34,11 @@ final class ListCupServiceTest extends TestCase
 
         $this->service = new ListCupService(
             $this->cups = $this->createMock(CupRepository::class),
-            new CupAssembler($this->events, $authAssembler)
+            new CupAssembler(
+                $this->events,
+                new EventAssembler($authAssembler),
+                $authAssembler,
+            )
         );
     }
 

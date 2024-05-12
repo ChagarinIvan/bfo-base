@@ -8,7 +8,6 @@ use App\Application\Dto\Auth\AuthAssembler;
 use App\Application\Dto\Auth\UserId;
 use App\Application\Dto\Cup\CupAssembler;
 use App\Application\Dto\Cup\CupDto;
-use App\Application\Dto\CupEvent\CupEventAssembler;
 use App\Application\Dto\Event\EventAssembler;
 use App\Application\Service\Cup\Exception\CupNotFound;
 use App\Application\Service\Cup\UpdateCup;
@@ -43,6 +42,7 @@ final class UpdateCupServiceTest extends TestCase
             new FrozenClock(Carbon::parse('2023-04-01')),
             new CupAssembler(
                 $this->events = $this->createMock(EventRepository::class),
+                new EventAssembler($authAssembler),
                 $authAssembler,
             ),
             new DummyTransactional,

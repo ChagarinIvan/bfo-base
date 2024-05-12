@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Bridge\Laravel\Http\Controllers\CupEvents;
 
-use App\Bridge\Laravel\Http\Controllers\CupEvents\ShowCupEventGroupAction;
+use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupEventGroupAction;
 use App\Domain\User\User;
 use Database\Seeders\CupLineSeeder;
 use Illuminate\Contracts\Auth\Authenticatable;

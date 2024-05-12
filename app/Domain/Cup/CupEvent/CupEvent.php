@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\CupEvent;
+namespace App\Domain\Cup\CupEvent;
 
 use App\Domain\Auth\Impression;
 use App\Domain\Cup\Cup;
-use App\Domain\CupEvent\Event\CupEventDisabled;
-use App\Domain\CupEvent\Event\CupEventUpdated;
+use App\Domain\Cup\CupEvent\Event\CupEventDisabled;
+use App\Domain\Cup\CupEvent\Event\CupEventUpdated;
 use App\Domain\Event\Event;
 use App\Domain\Shared\AggregatedModel;
 use App\Infrastracture\Laravel\Eloquent\Auth\ImpressionCast;

@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace App\Infrastracture\Laravel\Eloquent\CupEvent;
 
-use App\Domain\Cup\Cup;
-use App\Domain\CupEvent\CupEvent;
-use App\Domain\CupEvent\CupEventRepository;
+use App\Domain\Cup\CupEvent\CupEvent;
+use App\Domain\Cup\CupEvent\CupEventRepository;
 use App\Domain\Shared\Criteria;
 use Illuminate\Support\Collection;
 

@@ -1,5 +1,15 @@
 @php
-    use App\Bridge\Laravel\Http\Controllers\Cup\ExportCupGroupTableAction;use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupTableAction;use App\Bridge\Laravel\Http\Controllers\CupEvents\ShowCupEventGroupAction;use App\Bridge\Laravel\Http\Controllers\Event\ShowEventDistanceAction;use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonAction;use App\Domain\Cup\Cup;use App\Domain\Cup\Group\CupGroup;use App\Domain\CupEvent\CupEvent;use App\Domain\Person\Person;use App\Models\CupEventPoint;use Illuminate\Support\Collection;
+    use App\Bridge\Laravel\Http\Controllers\Cup\ExportCupGroupTableAction;
+    use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupEventGroupAction;
+    use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupTableAction;
+    use App\Bridge\Laravel\Http\Controllers\Event\ShowEventDistanceAction;
+    use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonAction;
+    use App\Domain\Cup\Cup;
+    use App\Domain\Cup\CupEvent\CupEvent;
+    use App\Domain\Cup\CupEvent\CupEventPoint;
+    use App\Domain\Cup\Group\CupGroup;
+    use App\Domain\Person\Person;
+    use Illuminate\Support\Collection;
     /**
      * @var Cup $cup;
      * @var CupEvent[] $cupEvents;
@@ -103,7 +113,7 @@
                                 @php
                                     $find = false;
                                     foreach ($cupEventPoints as $cupEventPoint) {
-                                        if ($cupEventPoint->eventCupId === $cupEvent->id) {
+                                        if ($cupEventPoint->cupEventId === $cupEvent->id) {
                                             $find = true;
                                             break;
                                         }

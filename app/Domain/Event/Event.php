@@ -6,7 +6,7 @@ namespace App\Domain\Event;
 
 use App\Domain\Auth\Impression;
 use App\Domain\Competition\Competition;
-use App\Domain\CupEvent\CupEvent;
+use App\Domain\Cup\CupEvent\CupEvent;
 use App\Domain\Distance\Distance;
 use App\Domain\Event\Event\EventCreated;
 use App\Domain\Event\Event\EventDisabled;

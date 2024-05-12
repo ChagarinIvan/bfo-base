@@ -6,11 +6,10 @@ namespace Database\Seeders;
 
 use App\Domain\Competition\Competition;
 use App\Domain\Cup\Cup;
+use App\Domain\Cup\CupEvent\CupEvent;
 use App\Domain\Cup\CupType;
-use App\Domain\CupEvent\CupEvent;
 use App\Domain\Distance\Distance;
 use App\Domain\Event\Event;
-use App\Domain\Group\Group;
 use App\Domain\Person\Person;
 use App\Domain\PersonPayment\PersonPayment;
 use App\Domain\ProtocolLine\ProtocolLine;

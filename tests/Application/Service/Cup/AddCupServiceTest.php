@@ -8,7 +8,6 @@ use App\Application\Dto\Auth\AuthAssembler;
 use App\Application\Dto\Auth\UserId;
 use App\Application\Dto\Cup\CupAssembler;
 use App\Application\Dto\Cup\CupDto;
-use App\Application\Dto\CupEvent\CupEventAssembler;
 use App\Application\Dto\Event\EventAssembler;
 use App\Application\Service\Cup\AddCup;
 use App\Application\Service\Cup\AddCupService;
@@ -45,6 +44,7 @@ final class AddCupServiceTest extends TestCase
             $this->cups = $this->createMock(CupRepository::class),
             new CupAssembler(
                 $this->events = $this->createMock(EventRepository::class),
+                new EventAssembler($authAssembler),
                 $authAssembler,
             ),
         );

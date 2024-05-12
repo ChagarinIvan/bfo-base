@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Database\Factories\Domain\CupEvent;
+namespace Database\Factories\Domain\Cup\CupEvent;
 
-use App\Domain\CupEvent\CupEvent;
+use App\Domain\Cup\CupEvent\CupEvent;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class CupEventFactory extends Factory

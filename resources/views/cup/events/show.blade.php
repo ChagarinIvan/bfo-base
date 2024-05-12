@@ -1,16 +1,12 @@
 @php
     use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionAction;
-    use App\Bridge\Laravel\Http\Controllers\CupEvents\ShowCupEventGroupAction;
+    use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupEventGroupAction;
     use App\Bridge\Laravel\Http\Controllers\Event\ShowEventDistanceAction;
     use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonAction;
-    use App\Domain\Cup\Cup;
-    use App\Domain\Cup\Group\CupGroup;
-    use App\Domain\CupEvent\CupEvent;
-    use App\Models\CupEventPoint;
+    use App\Application\Dto\Cup\ViewCalculatedCupEventDto;
+
     /**
-     * @var Cup $cup;
-     * @var CupEvent $cupEvent;
-     * @var array<int, CupEventPoint> $cupEventPoints;
+     * @var ViewCalculatedCupEventDto $calculatedCupEvent;
      * @var string $groupId;
      */
     $index = 0;
@@ -18,17 +14,17 @@
 
 @extends('layouts.app')
 
-@section('title', $cup->name.' - '.$cup->year->toString())
+@section('title', $calculatedCupEvent->cupName.' - '.$calculatedCupEvent->cupYear)
 
 @section('content')
     <div class="row mb-3">
         <h4>
-            <a href="{{ action(ShowCompetitionAction::class, [$cupEvent->event->competition_id]) }}">{{ $cupEvent->event->competition->name }}</a>
+            <a href="{{ action(ShowCompetitionAction::class, [$calculatedCupEvent->cupEvent->event->competitionId]) }}">{{ $calculatedCupEvent->cupEvent->event->competitionName }}</a>
         </h4>
     </div>
     <div class="row mb-3">
         <h5>
-            <a href="{{ action(ShowEventDistanceAction::class, [$cupEvent->event->distances->first()]) }}">{{ $cupEvent->event->name }} - {{ $cupEvent->event->date->format('Y-m-d') }}</a>
+            <a href="{{ action(ShowEventDistanceAction::class, [$calculatedCupEvent->cupEvent->event->firstDistance]) }}">{{ $calculatedCupEvent->cupEvent->event->name }} - {{ $calculatedCupEvent->cupEvent->event->date }}</a>
         </h5>
     </div>
     <div class="row mb-3">
@@ -38,13 +34,10 @@
     </div>
     <div class="row">
         <ul class="nav nav-tabs">
-            @foreach($cup->type->instance()->getGroups() as $group)
-                @php
-                    /** @var CupGroup $group */
-                @endphp
+            @foreach($calculatedCupEvent->cupGroups as $group)
                 <li class="nav-item">
-                    <a href="{{ action(ShowCupEventGroupAction::class, [$cup, $cupEvent, $group->id()]) }}" class="text-decoration-none nav-link {{ $groupId === $group->id() ? 'active' : ''}}">
-                        <b>{{ $group->name() }}</b>
+                    <a href="{{ action(ShowCupEventGroupAction::class, [$calculatedCupEvent->cupEvent->cupId, $calculatedCupEvent->cupEvent->id, $group->id]) }}" class="text-decoration-none nav-link {{ $groupId === $group->id ? 'active' : ''}}">
+                        <b>{{ $group->name }}</b>
                     </a>
                 </li>
             @endforeach
@@ -75,21 +68,21 @@
                     </tr>
                     </thead>
                     <tbody>
-                    @foreach($cupEventPoints as $cupEventPoint)
+                    @foreach($calculatedCupEvent->points as $point)
                         <tr>
                             <td>{{ ++$index }}</td>
                             <td>
-                                <a href="{{ action(ShowPersonAction::class, [$cupEventPoint->protocolLine->person_id]) }}">{{ $cupEventPoint->protocolLine->lastname }} {{ $cupEventPoint->protocolLine->firstname }}</a>
+                                <a href="{{ action(ShowPersonAction::class, [$point->personId]) }}">{{ $point->personName }}</a>
                             </td>
-                            <td>{{ $cupEventPoint->protocolLine->year }}</td>
+                            <td>{{ $point->personYear }}</td>
                             <td>
-                                <x-club-link :clubId="$cupEventPoint->protocolLine->person->club_id"></x-club-link>
+                                <x-club-link :clubId="$point->personClubId"></x-club-link>
                             </td>
-                            <td>{{ $cupEventPoint->protocolLine->time ? $cupEventPoint->protocolLine->time->format('H:i:s') : '-' }}</td>
-                            @if($cupEventPoint->points === $cupEvent->points)
-                                <td><b class="text-info">{{ $cupEventPoint->points }}</b></td>
+                            <td>{{ $point->time }}</td>
+                            @if($point->points === $calculatedCupEvent->cupEvent->points)
+                                <td><b class="text-info">{{ $point->points }}</b></td>
                             @else
-                                <td>{{ $cupEventPoint->points }}</td>
+                                <td>{{ $point->points }}</td>
                             @endif
                         </tr>
                     @endforeach

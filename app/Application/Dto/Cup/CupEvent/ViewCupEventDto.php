@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Dto\CupEvent;
+namespace App\Application\Dto\Cup\CupEvent;
 
 use App\Application\Dto\Auth\ImpressionDto;
 use App\Application\Dto\Event\ViewEventDto;

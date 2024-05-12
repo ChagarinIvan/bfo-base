@@ -5,17 +5,19 @@ declare(strict_types=1);
 namespace App\Domain\Cup;
 
 use App\Domain\Auth\Impression;
+use App\Domain\Cup\CupEvent\CupEvent;
+use App\Domain\Cup\CupEvent\CupEventPoint;
 use App\Domain\Cup\Event\CupCreated;
 use App\Domain\Cup\Event\CupDisabled;
 use App\Domain\Cup\Event\CupUpdated;
 use App\Domain\Cup\Factory\CupInput;
-use App\Domain\CupEvent\CupEvent;
 use App\Domain\Shared\AggregatedModel;
 use App\Infrastracture\Laravel\Eloquent\Auth\ImpressionCast;
 use App\Models\Year;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 
 /**
  * @property int $id
@@ -27,6 +29,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property boolean $visible
  * @property null|array $result
  * @property boolean $active
+ *
+ * @property-read Collection|CupEvent[] $events
  *
  * @property Impression $created
  * @property Impression $updated
@@ -77,5 +81,14 @@ class Cup extends AggregatedModel
     public function events(): HasMany|Builder
     {
         return $this->hasMany(CupEvent::class);
+    }
+
+    /**
+     * @param mixed $group
+     * @return Collection|CupEventPoint[]
+     */
+    public function calculateEvent(CupEvent $cupEvent, $group): Collection
+    {
+        return $this->type->instance()->calculateEvent($cupEvent, $group);
     }
 }

@@ -6,8 +6,8 @@ namespace Database\Seeders;
 
 use App\Domain\Competition\Competition;
 use App\Domain\Cup\Cup;
+use App\Domain\Cup\CupEvent\CupEvent;
 use App\Domain\Cup\CupType;
-use App\Domain\CupEvent\CupEvent;
 use App\Domain\Distance\Distance;
 use App\Domain\Event\Event;
 use App\Domain\Group\Group;

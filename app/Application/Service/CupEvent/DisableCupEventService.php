@@ -6,7 +6,7 @@ namespace App\Application\Service\CupEvent;
 
 use App\Application\Service\CupEvent\Exception\CupEventNotFound;
 use App\Domain\Auth\Impression;
-use App\Domain\CupEvent\CupEventRepository;
+use App\Domain\Cup\CupEvent\CupEventRepository;
 use App\Domain\Shared\Clock;
 use App\Domain\Shared\TransactionManager;
 

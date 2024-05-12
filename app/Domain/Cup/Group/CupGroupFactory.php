@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Cup\Group;
 
+use App\Application\Service\Group\Exception\GroupNotFound;
 use Illuminate\Support\Collection;
 use RuntimeException;
 use function count;
@@ -32,12 +33,15 @@ class CupGroupFactory
         return $groups;
     }
 
+    /**
+     * @throws GroupNotFound
+     */
     public static function fromId(string $id): CupGroup
     {
         if (preg_match('#(\D)_(\d+)_(.*)#', $id, $m)) {
             return new CupGroup(GroupMale::from($m[1]), ((int)$m[2] > 0) ? GroupAge::from((int)$m[2]) : null, ($m[3] === '') ? null : $m[3]);
         }
 
-        throw new RuntimeException('Wrong group');
+        throw new GroupNotFound('Wrong group');
     }
 }

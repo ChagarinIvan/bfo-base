@@ -1,5 +1,9 @@
 @php
-    use App\Application\Dto\Cup\ViewCupDto;use App\Application\Dto\Event\ViewEventDto;use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupTableAction;use App\Bridge\Laravel\Http\Controllers\CupEvents\UpdateCupEventAction;use App\Domain\CupEvent\CupEvent;
+    use App\Application\Dto\Cup\ViewCupDto;
+    use App\Application\Dto\Event\ViewEventDto;
+    use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupTableAction;
+    use App\Bridge\Laravel\Http\Controllers\CupEvents\UpdateCupEventAction;
+    use App\Domain\Cup\CupEvent\CupEvent;
     /**
      * @var ViewCupDto $cup;
      * @var CupEvent $cupEvent;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\ProtocolLine\Criteria;
 
-use App\Domain\CupEvent\CupEvent;
+use App\Domain\Cup\CupEvent\CupEvent;
 use App\Domain\Shared\Criteria;
 use App\Models\Year;
 use Illuminate\Support\Collection;

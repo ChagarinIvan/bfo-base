@@ -36,6 +36,7 @@ enum CupType: string
             self::ELK_PATH => ElkPathCup::class,
         });
     }
+
     case ELITE = 'elite';
     case MASTER = 'master';
     case SPRINT = 'sprint';

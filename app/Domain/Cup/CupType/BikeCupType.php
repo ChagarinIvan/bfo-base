@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Domain\Cup\CupType;
 
+use App\Domain\Cup\CupEvent\CupEvent;
+use App\Domain\Cup\CupEvent\CupEventPoint;
 use App\Domain\Cup\Group\CupGroup;
 use App\Domain\Cup\Group\GroupMale;
-use App\Domain\CupEvent\CupEvent;
-use App\Models\CupEventPoint;
 use Illuminate\Support\Collection;
 
 class BikeCupType extends EliteCupType

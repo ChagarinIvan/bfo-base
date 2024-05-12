@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Domain\Cup\CupType;
 
+use App\Domain\Cup\CupEvent\CupEvent;
 use App\Domain\Cup\Group\CupGroup;
 use App\Domain\Cup\Group\GroupAge;
 use App\Domain\Cup\Group\GroupMale;
-use App\Domain\CupEvent\CupEvent;
 use App\Domain\ProtocolLine\Criteria\CupEventDistancesProtocolLinesCriteria;
 use Illuminate\Support\Collection;
 

@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Bridge\Laravel\Http\Controllers\Cup;
 
 use App\Domain\Cup\Cup;
+use App\Domain\Cup\CupEvent\CupEventPoint;
 use App\Domain\Cup\Group\CupGroupFactory;
 use App\Domain\Person\Person;
-use App\Models\CupEventPoint;
 use App\Services\CupEventsService;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\File;
