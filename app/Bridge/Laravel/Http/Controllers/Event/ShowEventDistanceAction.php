@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Http\Controllers\Event;
 
-use App\Models\Distance;
+use App\Domain\Distance\Distance;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 

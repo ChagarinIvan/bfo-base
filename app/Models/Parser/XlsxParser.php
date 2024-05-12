@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Models\Parser;
 
-use App\Models\Group;
 use App\Models\Rank;
 use Exception;
 use Illuminate\Support\Carbon;

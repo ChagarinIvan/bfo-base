@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Domain\CupEvent\CupEvent;
-use App\Models\Group;
+use App\Domain\Group\Group;
 use App\Repositories\GroupsRepository;
 use Illuminate\Support\Collection;
 use RuntimeException;

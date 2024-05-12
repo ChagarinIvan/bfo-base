@@ -6,7 +6,7 @@ namespace App\Application\Dto\Event;
 
 use App\Application\Dto\Auth\ImpressionDto;
 use App\Domain\CupEvent\CupEvent;
-use App\Models\Distance;
+use App\Domain\Distance\Distance;
 use App\Models\Flag;
 
 final readonly class ViewEventDto

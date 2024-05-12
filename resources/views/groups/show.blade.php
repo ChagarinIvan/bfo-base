@@ -1,8 +1,5 @@
 @php
-    use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionAction;
-    use App\Bridge\Laravel\Http\Controllers\Event\ShowEventDistanceAction;
-    use App\Bridge\Laravel\Http\Controllers\Groups\ShowUnitGroupsAction;
-    use App\Models\Group;
+    use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionAction;use App\Bridge\Laravel\Http\Controllers\Event\ShowEventDistanceAction;use App\Bridge\Laravel\Http\Controllers\Groups\ShowUnitGroupsAction;use App\Domain\Group\Group;
     /**
      * @var Group $group
      */

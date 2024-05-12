@@ -1,8 +1,5 @@
 @php
-    use App\Bridge\Laravel\Facades\Color;
-    use App\Bridge\Laravel\Http\Controllers\Groups\UnitGroupsAction;
-    use App\Models\Group;
-    use Illuminate\Support\Collection;
+    use App\Bridge\Laravel\Facades\Color;use App\Bridge\Laravel\Http\Controllers\Groups\UnitGroupsAction;use App\Domain\Group\Group;use Illuminate\Support\Collection;
     /**
      * @var Group $unitedGroup;
      * @var Collection|Group[] $groups;

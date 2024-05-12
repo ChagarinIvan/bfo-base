@@ -6,10 +6,10 @@ namespace App\Bridge\Laravel\Http\Controllers\Event;
 
 use App\Application\Dto\Auth\UserId;
 use App\Domain\Auth\Impression;
+use App\Domain\Distance\Distance;
 use App\Domain\Event\Event;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\Shared\Clock;
-use App\Models\Distance;
 use App\Services\DistanceService;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;

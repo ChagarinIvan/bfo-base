@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repositories;
 
-use App\Models\Group;
-use Illuminate\Database\Query\Expression;
+use App\Domain\Group\Group;
 use Illuminate\Support\Collection;
 use function count;
 

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Database\Factories;
+namespace Database\Factories\Domain\Distance;
 
-use App\Models\Distance;
+use App\Domain\Distance\Distance;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class DistanceFactory extends Factory

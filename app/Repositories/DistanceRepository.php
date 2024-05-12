@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Repositories;
 
 use App\Domain\CupEvent\CupEvent;
-use App\Models\Distance;
+use App\Domain\Distance\Distance;
 use Illuminate\Support\Collection;
 
 class DistanceRepository

@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Models;
+namespace App\Domain\Distance;
 
 use App\Domain\Event\Event;
+use App\Domain\Group\Group;
 use App\Domain\ProtocolLine\ProtocolLine;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;

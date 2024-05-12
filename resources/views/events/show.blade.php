@@ -1,19 +1,5 @@
 @php
-    use App\Bridge\Laravel\Http\Controllers\Club\ShowClubAction;
-    use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionAction;
-    use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupAction;
-    use App\Bridge\Laravel\Http\Controllers\Event\ShowEditEventFormAction;
-    use App\Bridge\Laravel\Http\Controllers\Event\ShowEventDistanceAction;
-    use App\Bridge\Laravel\Http\Controllers\Flags\ShowFlagEventsAction;
-    use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonAction;
-    use App\Bridge\Laravel\Http\Controllers\Person\ShowSetPersonToProtocolLineAction;
-    use App\Domain\Event\Event;
-    use App\Domain\Club\Club;
-    use App\Domain\ProtocolLine\ProtocolLine;
-    use App\Models\Distance;
-    use App\Models\Group;
-    use App\Services\ClubsService;
-    use Illuminate\Support\Collection;
+    use App\Bridge\Laravel\Http\Controllers\Club\ShowClubAction;use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionAction;use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupAction;use App\Bridge\Laravel\Http\Controllers\Event\ShowEditEventFormAction;use App\Bridge\Laravel\Http\Controllers\Event\ShowEventDistanceAction;use App\Bridge\Laravel\Http\Controllers\Flags\ShowFlagEventsAction;use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonAction;use App\Bridge\Laravel\Http\Controllers\Person\ShowSetPersonToProtocolLineAction;use App\Domain\Club\Club;use App\Domain\Distance\Distance;use App\Domain\Event\Event;use App\Domain\Group\Group;use App\Domain\ProtocolLine\ProtocolLine;use App\Services\ClubsService;use Illuminate\Support\Collection;
     /**
      * @var Event $event
      * @var Collection|Group[] $groupAnchors

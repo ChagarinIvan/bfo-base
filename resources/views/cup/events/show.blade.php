@@ -23,14 +23,12 @@
 @section('content')
     <div class="row mb-3">
         <h4>
-            <a href="{{ action(ShowCompetitionAction::class, [$cupEvent->event->competition_id]) }}"
-            >{{ $cupEvent->event->competition->name }}</a>
+            <a href="{{ action(ShowCompetitionAction::class, [$cupEvent->event->competition_id]) }}">{{ $cupEvent->event->competition->name }}</a>
         </h4>
     </div>
     <div class="row mb-3">
         <h5>
-            <a href="{{ action(ShowEventDistanceAction::class, [$cupEvent->event->distances->first()]) }}"
-            >{{ $cupEvent->event->name }} - {{ $cupEvent->event->date->format('Y-m-d') }}</a>
+            <a href="{{ action(ShowEventDistanceAction::class, [$cupEvent->event->distances->first()]) }}">{{ $cupEvent->event->name }} - {{ $cupEvent->event->date->format('Y-m-d') }}</a>
         </h5>
     </div>
     <div class="row mb-3">
@@ -45,9 +43,7 @@
                     /** @var CupGroup $group */
                 @endphp
                 <li class="nav-item">
-                    <a href="{{ action(ShowCupEventGroupAction::class, [$cup, $cupEvent, $group->id()]) }}"
-                       class="text-decoration-none nav-link {{ $groupId === $group->id() ? 'active' : ''}}"
-                    >
+                    <a href="{{ action(ShowCupEventGroupAction::class, [$cup, $cupEvent, $group->id()]) }}" class="text-decoration-none nav-link {{ $groupId === $group->id() ? 'active' : ''}}">
                         <b>{{ $group->name() }}</b>
                     </a>
                 </li>
@@ -83,9 +79,7 @@
                         <tr>
                             <td>{{ ++$index }}</td>
                             <td>
-                                <a href="{{ action(ShowPersonAction::class, [$cupEventPoint->protocolLine->person_id]) }}">
-                                    {{ $cupEventPoint->protocolLine->lastname }} {{ $cupEventPoint->protocolLine->firstname }}
-                                </a>
+                                <a href="{{ action(ShowPersonAction::class, [$cupEventPoint->protocolLine->person_id]) }}">{{ $cupEventPoint->protocolLine->lastname }} {{ $cupEventPoint->protocolLine->firstname }}</a>
                             </td>
                             <td>{{ $cupEventPoint->protocolLine->year }}</td>
                             <td>

@@ -1,9 +1,5 @@
 @php
-    use App\Bridge\Laravel\Http\Controllers\Groups\DeleteGroupAction;
-    use App\Bridge\Laravel\Http\Controllers\Groups\ShowGroupAction;
-    use App\Bridge\Laravel\Http\Controllers\Groups\ShowUnitGroupsAction;
-    use App\Models\Group;
-    use Illuminate\Support\Collection;
+    use App\Bridge\Laravel\Http\Controllers\Groups\DeleteGroupAction;use App\Bridge\Laravel\Http\Controllers\Groups\ShowGroupAction;use App\Bridge\Laravel\Http\Controllers\Groups\ShowUnitGroupsAction;use App\Domain\Group\Group;use Illuminate\Support\Collection;
     /**
      * @var Collection|Group[] $groups
      */

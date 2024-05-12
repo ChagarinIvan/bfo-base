@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Domain\Distance\Distance;
 use App\Domain\Event\Event;
+use App\Domain\Group\Group;
 use App\Domain\ProtocolLine\ProtocolLine;
-use App\Models\Distance;
-use App\Models\Group;
 use App\Models\Rank;
 use App\Models\Year;
 use App\Repositories\GroupsRepository;
