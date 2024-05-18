@@ -24,7 +24,7 @@ final class CupDto extends AbstractDto
             'eventsCount' => 'required|numeric|min:1|max:100',
             'year' => [new Enum(Year::class)],
             'type' => [new Enum(CupType::class)],
-            'visible' => 'bool',
+            'visible' => '',
         ];
     }
 
@@ -34,7 +34,7 @@ final class CupDto extends AbstractDto
         $this->eventsCount = (int) $data['eventsCount'];
         $this->year = (int) $data['year'];
         $this->type = $data['type'];
-        $this->visible = isset($data['visible']) ? (bool) $data['visible'] : $this->visible;
+        $this->visible = isset($data['visible']) ? $data['visible'] === 'on' : $this->visible;
 
         return $this;
     }
