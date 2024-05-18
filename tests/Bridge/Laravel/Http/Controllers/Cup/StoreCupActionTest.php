@@ -40,7 +40,7 @@ final class StoreCupActionTest extends TestCase
             'eventsCount' => '3',
             'year' => '2023',
             'type' => 'master',
-            'visible' => '1',
+            'visible' => 'on',
         ])
             ->assertStatus(Response::HTTP_FOUND)
             ->assertRedirect('/cups/1/show')
