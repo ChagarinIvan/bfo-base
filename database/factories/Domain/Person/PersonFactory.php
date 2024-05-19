@@ -15,8 +15,8 @@ final class PersonFactory extends Factory
     {
         return [
             'id' => $this->faker->numberBetween(1, 100),
-            'lastname' => $this->faker->lastName,
-            'firstname' => $this->faker->firstName,
+            'lastname' => $this->faker->lastName(),
+            'firstname' => $this->faker->firstName(),
             'birthday' => $this->faker->date,
             'club_id' => null,
             'from_base' => false,

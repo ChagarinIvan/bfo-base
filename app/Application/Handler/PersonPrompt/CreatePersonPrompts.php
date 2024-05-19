@@ -22,7 +22,7 @@ readonly class CreatePersonPrompts
         $existPrompts = $person->prompts->pluck('prompt')->toArray();
         $prompts = [];
 
-        $hasNameSake = Person::whereFirstname($person->firstname)->whereLastname($person->lastname)->count() > 1;
+        $hasNameSake = Person::where('active', true)->whereFirstname($person->firstname)->whereLastname($person->lastname)->count() > 1;
 
         $personData = [
             ProtocolLineIdentService::prepareLine(mb_strtolower($person->lastname)),

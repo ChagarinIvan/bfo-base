@@ -7,6 +7,7 @@ namespace App\Domain\Person;
 use App\Domain\Auth\Impression;
 use App\Domain\Club\Club;
 use App\Domain\Person\Event\PersonCreated;
+use App\Domain\Person\Event\PersonDisabled;
 use App\Domain\Person\Event\PersonInfoUpdated;
 use App\Domain\PersonPayment\PersonPayment;
 use App\Domain\PersonPrompt\PersonPrompt;
@@ -16,11 +17,9 @@ use App\Infrastracture\Laravel\Eloquent\Auth\ImpressionCast;
 use App\Models\Rank;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\App;
 
 /**
  * @property int $id
@@ -29,6 +28,7 @@ use Illuminate\Support\Facades\App;
  * @property Carbon|null $birthday
  * @property int|null $club_id
  * @property bool $from_base
+ * @property bool $active
  *
  * @property Impression $created
  * @property Impression $updated
@@ -96,6 +96,15 @@ class Person extends AggregatedModel
     public function create(): void
     {
         $this->recordThat(new PersonCreated($this));
+
         $this->save();
+    }
+
+    public function disable(Impression $impression): void
+    {
+        $this->updated = $impression;
+        $this->active = false;
+
+        $this->recordThat(new PersonDisabled($this));
     }
 }

@@ -14,12 +14,12 @@ final class EloquentPersonRepository implements PersonRepository
 {
     public function byId(int $id): ?Person
     {
-        return Person::find($id);
+        return Person::where('active', true)->find($id);
     }
 
     public function lockById(int $id): ?Person
     {
-        return Person::lockForUpdate()->find($id);
+        return Person::where('active', true)->lockForUpdate()->find($id);
     }
 
     public function add(Person $person): void
@@ -34,11 +34,19 @@ final class EloquentPersonRepository implements PersonRepository
 
     public function byCriteria(Criteria $criteria): Collection
     {
-        $query = Person::orderBy('lastname');
+        $query = Person::where('person.active', true)
+            ->select('person.*')
+            ->orderBy('person.lastname')
+        ;
 
         if ($criteria->hasParam('clubId')) {
+            $query->where('person.club_id', $criteria->param('clubId'));
+        }
+
+        if ($criteria->hasParam('withoutLines')) {
             $query
-                ->where('club_id', $criteria->param('clubId'))
+                ->leftjoin('protocol_lines', 'protocol_lines.person_id', '=', 'person.id')
+                ->whereNull('protocol_lines.id')
             ;
         }
 
@@ -47,9 +55,9 @@ final class EloquentPersonRepository implements PersonRepository
             $info = $criteria->param('info');
 
             $query
-                ->where('lastname', $info->lastname)
-                ->where('firstname', $info->firstname)
-                ->where('birthday', $info->birthday)
+                ->where('person.lastname', $info->lastname)
+                ->where('person.firstname', $info->firstname)
+                ->where('person.birthday', $info->birthday)
             ;
         }
 

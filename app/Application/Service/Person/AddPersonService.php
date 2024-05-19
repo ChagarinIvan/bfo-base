@@ -26,7 +26,7 @@ final readonly class AddPersonService
         try {
             $person = $this->factory->create($command->personInput());
         } catch (PersonInfoAlreadyExist $e) {
-            throw FailedToAddPerson::dueError($e);
+            throw FailedToAddPerson::personAlreadyExist($e);
         }
 
         $this->persons->add($person);

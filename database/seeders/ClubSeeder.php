@@ -68,7 +68,8 @@ class ClubSeeder extends Seeder
             }
 
             /** @var Person $person */
-            $person = Person::whereLastname(mb_convert_encoding($lastname, "utf-8", "windows-1251"))
+            $person = Person::where('active', true)
+                ->whereLastname(mb_convert_encoding($lastname, "utf-8", "windows-1251"))
                 ->whereFirstname(mb_convert_encoding($firstname, "utf-8", "windows-1251"))
                 ->first();
 

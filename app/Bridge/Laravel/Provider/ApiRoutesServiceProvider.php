@@ -23,6 +23,7 @@ class ApiRoutesServiceProvider extends ServiceProvider
                     $this->route->get('/api/competition/{competition_id}/events', [Api\EventsController::class, 'index']);
                     $this->route->get('/api/event/{event_id}/results', [Api\ResultsController::class, 'index']);
                     $this->route->get('/api/person', [Api\PersonController::class, 'index']);
+                    $this->route->get('/api/persons', Api\ListPersonAction::class);
                     $this->route->get('/api/club', [Api\ClubController::class, 'index']);
                 })
             ;

@@ -12,6 +12,7 @@ use App\Bridge\Laravel\Console\Commands\SimpleIndentCommand;
 use App\Bridge\Laravel\Console\Commands\StartBigIdentCommand;
 use App\Bridge\Laravel\Console\Commands\SyncPersonsCommand;
 use App\Bridge\Laravel\Console\Commands\SyncStoredPersonsCommand;
+use App\Domain\User\User;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use function sleep;
@@ -40,7 +41,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        $schedule->command(SimpleIndentCommand::class)->dailyAt('01:00')->runInBackground();
+        $schedule->command(SimpleIndentCommand::class, ['userId' => User::SYSTEM_USER_ID])->dailyAt('01:00')->runInBackground();
         $schedule->command(StartBigIdentCommand::class)->monthly()->at('03:00')->runInBackground();
         $schedule->command(RankValidationCommand::class)->weekly()->at('02:00')->runInBackground();
         //        $schedule->command(SyncPersonsCommand::class)->weekly()->runInBackground();

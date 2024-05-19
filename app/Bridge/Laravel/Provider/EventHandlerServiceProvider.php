@@ -12,10 +12,14 @@ final class EventHandlerServiceProvider extends EventServiceProvider
     {
         return true;
     }
+
     protected function discoverEventsWithin(): array
     {
         return [
             $this->app->path('Application/Handler/Event'),
+            $this->app->path('Application/Handler/Cup'),
+            $this->app->path('Application/Handler/Person'),
+            $this->app->path('Application/Handler/PersonPrompt'),
         ];
     }
 }

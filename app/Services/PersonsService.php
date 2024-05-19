@@ -30,12 +30,12 @@ class PersonsService
 
     public function getPerson(int $personId): Person
     {
-        return Person::find($personId) ?? throw new RuntimeException('Wrong person id.');
+        return Person::where('active', true)->find($personId) ?? throw new RuntimeException('Wrong person id.');
     }
 
     public function getPersons(Collection $personsIds): Collection
     {
-        return Person::whereIn('id', $personsIds)->get();
+        return Person::where('active', true)->whereIn('id', $personsIds)->get();
     }
 
     /**
@@ -46,7 +46,7 @@ class PersonsService
         $sortBy = in_array($sortBy, self::SORT_BY_COLUMNS, true) ? $sortBy : 'fio';
         $sort = $sortMode === 1 ? 'DESC' : 'ASC';
 
-        $persons = Person::withCount('protocolLines')->with('club');
+        $persons = Person::where('active', true)->withCount('protocolLines')->with('club');
 
         $persons = match ($sortBy) {
             'fio' => $persons->orderBy('lastname', $sort)->orderBy('firstname', $sort),
@@ -66,17 +66,6 @@ class PersonsService
         }
 
         return $persons;
-    }
-
-    public function deletePerson(int $personId): void
-    {
-        $person = $this->getPerson($personId);
-        $protocolLines = ProtocolLine::wherePersonId($personId)->get();
-        $protocolLines->each(static function (ProtocolLine $line): void {
-            $line->person_id = null;
-            $line->save();
-        });
-        $person->delete();
     }
 
     public function extractPersonFromLine(ProtocolLine $protocolLine, Impression $impression): Person

@@ -21,6 +21,8 @@ class User extends Authenticatable
     use HasFactory;
     use Notifiable;
 
+    public const SYSTEM_USER_ID = 10;
+
     protected $fillable = [
         'name',
         'email',

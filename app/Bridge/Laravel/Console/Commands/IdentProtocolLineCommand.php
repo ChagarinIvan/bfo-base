@@ -4,18 +4,19 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Console\Commands;
 
-use App\Domain\Auth\Impression;
-use App\Domain\Person\Person;
+use App\Application\Dto\Auth\UserId;
+use App\Application\Dto\Person\PersonDto;
+use App\Application\Dto\Person\PersonInfoDto;
+use App\Application\Service\Person\AddPerson;
+use App\Application\Service\Person\AddPersonService;
+use App\Application\Service\Person\Exception\FailedToAddPerson;
 use App\Domain\ProtocolLine\ProtocolLine;
-use App\Domain\Shared\Clock;
 use App\Models\IdentLine;
 use App\Services\ClubsService;
 use App\Services\ProtocolLineIdentService;
 use App\Services\ProtocolLineService;
 use App\Services\RankService;
-use Carbon\Exceptions\InvalidFormatException;
 use Illuminate\Console\Command;
-use Illuminate\Support\Carbon;
 use Symfony\Component\Console\Input\InputArgument;
 
 /**
@@ -23,17 +24,21 @@ use Symfony\Component\Console\Input\InputArgument;
  * Запуск 4 раза в минуту
  * независимо от результата запись удаляется из очереди
  */
-class IdentProtocolLineCommand extends Command
+final class IdentProtocolLineCommand extends Command
 {
     protected $signature = 'protocol-lines:queue-ident';
 
-    //стартует каждую минуту
+    public function __construct(
+        private readonly AddPersonService $addPersonService,
+    ) {
+        parent::__construct();
+    }
+
     public function handle(
         RankService $rankService,
         ClubsService $clubsService,
         ProtocolLineService $protocolLineService,
         ProtocolLineIdentService $protocolLineIdentService,
-        Clock $clock,
     ): void {
         $userId = (int) $this->argument('user_id');
         $identLine = IdentLine::first();
@@ -60,27 +65,25 @@ class IdentProtocolLineCommand extends Command
 
             /** @var ProtocolLine $protocolLine */
             $protocolLine = $protocolLines->first();
-            $person = new Person;
-            $person->lastname = $protocolLine->lastname;
-            $person->firstname = $protocolLine->firstname;
+            $club = $clubsService->findClub($protocolLine->club);
+
+            $personInfo = new PersonInfoDto;
+            $personInfo->lastname = $protocolLine->lastname;
+            $personInfo->firstname = $protocolLine->firstname;
+            $personInfo->birthday = $protocolLine->year ? (string) $protocolLine->year : null;
+            $personInfo->clubId = $club ? (string) $club->id : null;
+            $personDto = new PersonDto;
+            $personDto->info = $personInfo;
 
             try {
-                if ($birthday = Carbon::createFromFormat('Y', (string) $protocolLine->year)) {
-                    $person->birthday = $birthday->startOfYear();
-                }
-            } catch (InvalidFormatException) {
+                $person = $this->addPersonService->execute(new AddPerson($personDto, new UserId($userId)));
+                $personId = (int) $person->id;
+            } catch (FailedToAddPerson $e) {
+                $personId = $e->previousPersonId;
             }
 
-            $club = $clubsService->findClub($protocolLine->club);
-            if ($club) {
-                $person->club_id = $club->id;
-            }
-
-            $person->created = $person->updated = new Impression($clock->now(), $userId);
-            $person->create();
-
-            $protocolLines->each(static function (ProtocolLine $protocolLine) use ($person): void {
-                $protocolLine->person_id = $person->id;
+            $protocolLines->each(static function (ProtocolLine $protocolLine) use ($personId): void {
+                $protocolLine->person_id = $personId;
                 $protocolLine->save();
             });
 

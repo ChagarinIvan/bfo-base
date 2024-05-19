@@ -45,11 +45,11 @@ final class StorePersonActionTest extends TestCase
             'clubId' => '1',
         ])
             ->assertStatus(Response::HTTP_FOUND)
-            ->assertRedirect('/persons/102/show')
+            ->assertRedirect('/persons/1/show')
         ;
 
         $this->assertDatabaseHas('person', [
-            'id' => 102,
+            'id' => 1,
             'firstname' => 'test name',
             'created_by' => $user->id,
         ]);

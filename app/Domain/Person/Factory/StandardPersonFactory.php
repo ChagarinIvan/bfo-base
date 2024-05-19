@@ -22,6 +22,7 @@ final readonly class StandardPersonFactory implements PersonFactory
         $person->birthday = $input->info->birthday;
         $person->club_id = $input->info->clubId;
         $person->from_base = $input->fromBase;
+        $person->active = true;
         $person->created = $person->updated = new Impression($this->clock->now(), $input->userId);
 
         return $person;

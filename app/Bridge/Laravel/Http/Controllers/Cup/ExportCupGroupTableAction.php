@@ -38,7 +38,7 @@ class ExportCupGroupTableAction extends BaseController
             'cup' => $cup,
             'cupEvents' => $cupEvents,
             'cupPoints' => $cupPoints,
-            'persons' => Person::whereIn('id', array_keys($cupPoints))->get()->keyBy('id'),
+            'persons' => Person::where('active', true)->whereIn('id', array_keys($cupPoints))->get()->keyBy('id'),
         ]);
 
         $tempFilePath = tempnam(sys_get_temp_dir(), 'tempfile');
