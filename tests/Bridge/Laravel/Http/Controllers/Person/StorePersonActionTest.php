@@ -36,7 +36,7 @@ final class StorePersonActionTest extends TestCase
         $user = User::factory()->createOne();
         $this->actingAs($user);
 
-        Person::factory(state: ['id' => 101, 'firstname' => 'test name', 'lastname' => 'test lastname', 'club_id' => 2, 'birthday' => '1989-01-01'])->createOne();
+        Person::factory(state: ['id' => 102, 'firstname' => 'test name', 'lastname' => 'test lastname', 'club_id' => 2, 'birthday' => '1989-01-01'])->createOne();
 
         $this->post('/persons/store', [
             'firstname' => 'test name',
@@ -45,11 +45,11 @@ final class StorePersonActionTest extends TestCase
             'clubId' => '1',
         ])
             ->assertStatus(Response::HTTP_FOUND)
-            ->assertRedirect('/persons/1/show')
+            ->assertRedirect('/persons/102/show')
         ;
 
         $this->assertDatabaseHas('person', [
-            'id' => 1,
+            'id' => 102,
             'firstname' => 'test name',
             'created_by' => $user->id,
         ]);

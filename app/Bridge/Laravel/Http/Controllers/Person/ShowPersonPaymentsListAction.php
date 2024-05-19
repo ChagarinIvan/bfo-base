@@ -20,9 +20,9 @@ final class ShowPersonPaymentsListAction extends BaseController
     use PersonAction;
 
     public function __invoke(
-        string                     $personId,
+        string $personId,
         ListPersonsPaymentsService $personPaymentsService,
-        ViewPersonService          $personService,
+        ViewPersonService $personService,
     ): View|RedirectResponse {
         try {
             $person = $personService->execute(new ViewPerson($personId));
