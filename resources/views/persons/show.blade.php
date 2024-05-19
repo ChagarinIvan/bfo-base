@@ -7,17 +7,12 @@
     use App\Bridge\Laravel\Http\Controllers\PersonPrompt\ShowPersonPromptsListAction;
     use App\Bridge\Laravel\Http\Controllers\Rank\ShowPersonRanksAction;
     use App\Application\Dto\Person\ViewPersonDto;
-    use App\Domain\PersonPayment\PersonPayment;
     use App\Models\Rank;
-    use Illuminate\Support\Collection;
     use Illuminate\Support\Str;
 
     /**
      * @var ViewPersonDto $person
-     * @var Collection $protocolLines
-     * @var Collection $groupedProtocolLines
      * @var Rank $rank
-     * @var ?PersonPayment $personPayment
      */
 
     $personName = "{$person->lastname}_$person->firstname";
@@ -35,10 +30,10 @@
             </div>
         </div>
     @endif
-    @if ($personPayment)
+    @if ($person->lastPaymentDate)
         <div class="row mb-3">
             <div class="col-12">
-                <h4>{{ __('app.common.last_payment') }}: {{ $personPayment->date->format('Y-m-d') }}</h4>
+                <h4>{{ __('app.common.last_payment') }}: {{ $person->lastPaymentDate }}</h4>
             </div>
         </div>
     @endif
@@ -80,7 +75,7 @@
             <x-back-button/>
         </div>
     </div>
-    @if($protocolLines->count() > 0)
+    @if(count($person->groupedByYearProtocolLines) > 0)
         <table id="table"
                data-cookie="true"
                data-cookie-id-table="persons-show"
@@ -112,24 +107,23 @@
             </tr>
             </thead>
             <tbody>
-            @foreach ($groupedProtocolLines as $year => $lines)
+            @foreach ($person->groupedByYearProtocolLines as $year => $lines)
                 <tr>
                     <td class="text-center" colspan="9"><b id="{{ $year }}">{{ $year }}</b></td>
                 </tr>
                 @foreach($lines as $line)
                     @php
-                        /** @var \App\Domain\ProtocolLine\ProtocolLine $line */
                         $lineName = "{$line->lastname}_$line->firstname";
                     @endphp
                     <tr>
                         <td>
-                            <a href="{{ action(ShowCompetitionAction::class, [$line->distance->event->competition_id]) }}">
-                                {{ Str::limit($line->distance->event->competition->name, 20, '...') }}
+                            <a href="{{ action(ShowCompetitionAction::class, [$line->competitionId]) }}">
+                                {{ Str::limit($line->competitionName, 20, '...') }}
                             </a>
                         </td>
                         <td>
-                            <a href="{{ action(ShowEventDistanceAction::class, [$line->distance_id]) }}#{{ $line->id }}">
-                                {{ Str::limit($line->distance->event->name, 20, '...') }}
+                            <a href="{{ action(ShowEventDistanceAction::class, [$line->distanceId]) }}#{{ $line->id }}">
+                                {{ Str::limit($line->eventName, 20, '...') }}
                             </a>
                         </td>
                         <td>
@@ -142,12 +136,12 @@
                                 @endauth
                             @endif
                         </td>
-                        <td>{{ $line->distance->event->date->format('Y-m-d') }}</td>
-                        <td>{{ $line->distance->group->name ?? '' }}</td>
+                        <td>{{ $line->eventDate }}</td>
+                        <td>{{ $line->groupName }}</td>
                         <td>{{ $line->year ?: '' }}</td>
-                        <td>{{ $line->time ? $line->time->format('H:i:s') : '-' }}</td>
-                        <td>{{ $line->place }}</td>
-                        <td>{{ $line->complete_rank }}</td>
+                        <td>{{ $line->time ?  : '-' }}</td>
+                        <td>{{ $line->place ?? '-' }}</td>
+                        <td>{{ $line->completeRank }}</td>
                     </tr>
                 @endforeach
             @endforeach

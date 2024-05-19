@@ -4,40 +4,35 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Http\Controllers\Person;
 
-use App\Application\Dto\Person\PersonAssembler;
-use App\Domain\PersonPayment\PersonPayment;
-use App\Domain\ProtocolLine\ProtocolLine;
+use App\Application\Service\Person\Exception\PersonNotFound;
+use App\Application\Service\Person\ViewPerson;
+use App\Application\Service\Person\ViewPersonService;
 use App\Services\PersonsService;
 use App\Services\RankService;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller as BaseController;
-use Illuminate\Support\Collection;
 
 class ShowPersonAction extends BaseController
 {
     use PersonAction;
 
     public function __invoke(
-        string $personId,
+        string $id,
         PersonsService $personsService,
+        ViewPersonService $service,
         RankService $rankService,
-        PersonAssembler $assembler,
-    ): View {
-        $person = $personsService->getPerson((int) $personId);
-        $payments = $person->payments->sortByDesc(static fn (PersonPayment $payment) => $payment->date);
-        $groupedProtocolLines = $person->protocolLines->groupBy(static fn (ProtocolLine $line) => $line->distance->event->date->format('Y'));
-        $groupedProtocolLines->transform(static function (Collection $protocolLines) {
-            return $protocolLines->sortByDesc(static fn (ProtocolLine $line) => $line->distance->event->date);
-        });
-        $groupedProtocolLines = $groupedProtocolLines->sortKeysDesc();
+    ): View|RedirectResponse {
+        try {
+            $person = $service->execute(new ViewPerson($id, true));
+        } catch (PersonNotFound) {
+            return $this->redirector->action(ShowPersonsListAction::class);
+        }
 
         /** @see /resources/views/persons/show.blade.php */
         return $this->view('persons.show', [
-            'person' => $assembler->toViewPersonDto($person),
-            'protocolLines' => $person->protocolLines,
-            'groupedProtocolLines' => $groupedProtocolLines,
-            'rank' => $rankService->getActiveRank($person->id),
-            'personPayment' => $payments->first(),
+            'person' => $person,
+            'rank' => $rankService->getActiveRank((int) $person->id),
         ]);
     }
 }

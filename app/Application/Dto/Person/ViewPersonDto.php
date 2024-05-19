@@ -17,6 +17,10 @@ final readonly class ViewPersonDto
         public int $eventsCount,
         public ImpressionDto $created,
         public ImpressionDto $updated,
+        // TODO remove
+        public ?string $lastPaymentDate,
+        /** @var array<string, ViewPersonProtocolLineDto[]> */
+        public array $groupedByYearProtocolLines = [],
     ) {
     }
 }

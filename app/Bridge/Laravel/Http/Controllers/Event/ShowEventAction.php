@@ -10,7 +10,7 @@ use Illuminate\Contracts\View\View;
 
 class ShowEventAction extends AbstractEventAction
 {
-    public function __invoke(string $eventId, AuthAssembler $assembler): View
+    public function __invoke(string $eventId): View
     {
         $event = Event::findOrFail($eventId);
         $withPoints = false;

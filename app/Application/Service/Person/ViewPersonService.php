@@ -22,6 +22,6 @@ final readonly class ViewPersonService
     {
         $person = $this->persons->byId($command->id()) ?? throw new PersonNotFound();
 
-        return $this->assembler->toViewPersonDto($person);
+        return $this->assembler->toViewPersonDto($person, $command->includeProtocolLines());
     }
 }

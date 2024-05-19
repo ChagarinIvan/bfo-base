@@ -10,6 +10,7 @@ use App\Domain\Cup\CupEvent\CupEvent;
 use App\Domain\Cup\CupType;
 use App\Domain\Distance\Distance;
 use App\Domain\Event\Event;
+use App\Domain\Group\Group;
 use App\Domain\Person\Person;
 use App\Domain\PersonPayment\PersonPayment;
 use App\Domain\ProtocolLine\ProtocolLine;
@@ -31,10 +32,10 @@ class ProtocolLinesSeeder extends Seeder
         Event::factory(state: ['id' => 102, 'competition_id' => 1, 'name' => 'name2', 'date' => '2022-03-02'])->createOne();
         Event::factory(state: ['id' => 103, 'competition_id' => 2, 'name' => 'name3', 'description' => 'test3'])->createOne();
 
-        Distance::factory(state: ['id' => 101, 'event_id' => 101])->createOne();
-        Distance::factory(state: ['id' => 102, 'event_id' => 101])->createOne();
-        Distance::factory(state: ['id' => 103, 'event_id' => 101])->createOne();
-        Distance::factory(state: ['id' => 104, 'event_id' => 102])->createOne();
+        Distance::factory(state: ['id' => 101, 'event_id' => 101, 'group_id' => 101])->createOne();
+        Distance::factory(state: ['id' => 102, 'event_id' => 101, 'group_id' => 101])->createOne();
+        Distance::factory(state: ['id' => 103, 'event_id' => 101, 'group_id' => 101])->createOne();
+        Distance::factory(state: ['id' => 104, 'event_id' => 102, 'group_id' => 101])->createOne();
 
         Person::factory(state: ['id' => 101, 'birthday' => '1987-01-01'])->createOne();
         Person::factory(state: ['id' => 102])->createOne();
@@ -62,5 +63,7 @@ class ProtocolLinesSeeder extends Seeder
 
         CupEvent::factory(state: ['id' => 101, 'cup_id' => 101, 'event_id' => 102, 'points' => 1001])->createOne();
         CupEvent::factory(state: ['id' => 102, 'cup_id' => 101, 'event_id' => 102, 'points' => 1001, 'active' => false])->createOne();
+
+        Group::factory(state: ['id' => 101, 'name' => 'M21'])->createOne();
     }
 }
