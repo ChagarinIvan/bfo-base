@@ -30,6 +30,7 @@ class ShowCreateCupEventFormAction extends BaseController
             return $this->redirectTo404Error();
         }
 
+        dd($cup);
         $events = $listEvents->execute(new ListEvents(new EventSearchDto(
             year: (string) $cup->year,
             notRelatedToCup: $cupId,
