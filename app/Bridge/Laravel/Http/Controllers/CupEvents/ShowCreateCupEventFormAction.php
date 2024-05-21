@@ -30,17 +30,12 @@ class ShowCreateCupEventFormAction extends BaseController
             return $this->redirectTo404Error();
         }
 
-        try {
-            $events = $listEvents->execute(new ListEvents(new EventSearchDto(
-                year: (string) $cup->year,
-                notRelatedToCup: $cupId,
-            )));
-        } catch (\Throwable|\Exception|\TypeError $e) {
-            dd($e);
-        }
+        $events = $listEvents->execute(new ListEvents(new EventSearchDto(
+            year: (string) $cup->year,
+            notRelatedToCup: $cupId,
+        )));
 
 
-        dd($events);
         /** @see /resources/views/cup/events/create.blade.php */
         return $this->view('cup.events.create', [
             'cup' => $cup,
