@@ -80,7 +80,10 @@ final class EloquentEventRepository implements EventRepository
             $query->orderBy('date', 'asc');
         }
 
-        dump($query->toSql());
+        $vars = $query->ddrawsql();
+        $dump = $query->dump();
+        dump($vars);
+        dump($dump);
         return $query;
     }
 }
