@@ -51,7 +51,7 @@ final class EloquentEventRepository implements EventRepository
         $query = Event::where('events.active', true);
 
         if ($criteria->hasParam('year')) {
-            $query->where('date', 'LIKE', "%{$criteria->param('year')}%");
+            $query->where('events.date', 'LIKE', "%{$criteria->param('year')}%");
         }
 
         if ($criteria->hasParam('competitionId')) {

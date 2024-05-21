@@ -35,7 +35,7 @@ class ShowCreateCupEventFormAction extends BaseController
                 year: (string) $cup->year,
                 notRelatedToCup: $cupId,
             )));
-        } catch (\Throwable $e) {
+        } catch (\Throwable|\Exception|\TypeError $e) {
             dd($e);
         }
 
