@@ -48,6 +48,7 @@ final class EloquentEventRepository implements EventRepository
 
     private function buildQuery(Criteria $criteria): Builder
     {
+        dd($criteria);
         $query = Event::where('events.active', true);
 
         if ($criteria->hasParam('year')) {
