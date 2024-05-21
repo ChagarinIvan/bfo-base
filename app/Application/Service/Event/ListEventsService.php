@@ -22,13 +22,13 @@ final readonly class ListEventsService
     {
         $criteria = $command->criteria();
         dump($criteria);
-        $all = $this->events->byCriteria($criteria)->all();
+        $all = $this->events->byCriteria($criteria);
         dump($all->get(1));
         dump($all->get(2));
         dump($all->get(3));
         return array_map(
             $this->assembler->toViewEventDto(...),
-            $all
+            $all->all(),
         );
     }
 }
