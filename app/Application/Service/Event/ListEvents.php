@@ -17,10 +17,6 @@ final readonly class ListEvents
 
     public function criteria(): Criteria
     {
-        $get_object_vars = get_object_vars($this->search);
-        dump($get_object_vars);
-        $array_filter = array_filter($get_object_vars);
-        dump($array_filter);
-        return new Criteria($array_filter);
+        return new Criteria(array_filter(get_object_vars($this->search)));
     }
 }
