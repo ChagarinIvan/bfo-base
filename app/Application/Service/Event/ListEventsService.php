@@ -20,9 +20,11 @@ final readonly class ListEventsService
     /** @return ViewEventDto[] */
     public function execute(ListEvents $command): array
     {
+        $all = $this->events->byCriteria($command->criteria())->all();
+        dd($all);
         return array_map(
             $this->assembler->toViewEventDto(...),
-            $this->events->byCriteria($command->criteria())->all(),
+            $all,
         );
     }
 }
