@@ -35,7 +35,7 @@
             <div class="form-floating mb-3">
                 <select class="form-select" id="event" name="event">
                     @foreach($events as $event)
-                        <option value="{{ $event->id }}" {{ $event->id === (string) $cupEvent->event_id ? 'selected' : ''}}>{{ $event->date." - ".$event->competitionName.' - '.$event->name . '(' . Str::limit($event->description, 30). ')' }}</option>
+                        <option value="{{ $event->id }}" {{ $event->id === (string) $cupEvent->event_id ? 'selected' : ''}}>{{ $event->date." - ".$event->competitionName.' - '.$event->name . ' (' . Str::limit($event->description, 30). ')' }}</option>
                     @endforeach
                 </select>
                 <label for="event">{{ __('app.event.title') }}</label>
