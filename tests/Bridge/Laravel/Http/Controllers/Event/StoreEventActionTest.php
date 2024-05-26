@@ -83,7 +83,7 @@ final class StoreEventActionTest extends TestCase
         $this->assertDatabaseCount('protocol_lines', 8);
 
         $this->assertDatabaseHas('distances', [
-            'event_id' => '104',
+            'event_id' => '105',
             'length' => '1100',
             'points' => '23',
         ]);
