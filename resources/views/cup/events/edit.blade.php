@@ -4,6 +4,7 @@
     use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupTableAction;
     use App\Bridge\Laravel\Http\Controllers\CupEvents\UpdateCupEventAction;
     use App\Domain\Cup\CupEvent\CupEvent;
+    use Illuminate\Support\Str;
     /**
      * @var ViewCupDto $cup;
      * @var CupEvent $cupEvent;
@@ -34,7 +35,7 @@
             <div class="form-floating mb-3">
                 <select class="form-select" id="event" name="event">
                     @foreach($events as $event)
-                        <option value="{{ $event->id }}" {{ $event->id === (string) $cupEvent->event_id ? 'selected' : ''}}>{{ $event->date." - ".$event->competitionName.' - '.$event->name }}</option>
+                        <option value="{{ $event->id }}" {{ $event->id === (string) $cupEvent->event_id ? 'selected' : ''}}>{{ $event->date." - ".$event->competitionName.' - '.$event->name . ' (' . Str::limit($event->description, 30). ')' }}</option>
                     @endforeach
                 </select>
                 <label for="event">{{ __('app.event.title') }}</label>

@@ -43,7 +43,7 @@ final class ShowCreateCupEventFormActionTest extends TestCase
             ->assertSee('<b class="text-decoration-none text-dark">М35</b>', false)
             ->assertSee('<b class="text-decoration-none text-dark">Ж80</b>', false)
             ->assertSee('<form method="POST" action="http://localhost/cups/101/event/store">', false)
-            ->assertSee('<option value="101">2022-01-01 - test - name1</option>', false)
+            ->assertSee('<option value="101">2022-01-01 - test - name1 (test description)</option>', false)
             ->assertSee('<input class="form-control " id="points" name="points" value="1000">', false)
         ;
     }
