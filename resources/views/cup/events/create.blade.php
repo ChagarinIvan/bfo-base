@@ -2,6 +2,7 @@
     use App\Application\Dto\Event\ViewEventDto;
     use App\Application\Dto\Cup\ViewCupDto;
     use App\Bridge\Laravel\Http\Controllers\CupEvents\StoreCupEventAction;
+    use Illuminate\Support\Str;
     /**
      * @var ViewCupDto $cup;
      * @var ViewEventDto[] $events;
@@ -29,7 +30,7 @@
             <div class="form-floating mb-3">
                 <select class="form-select" id="event" name="event">
                     @foreach($events as $event)
-                        <option value="{{ $event->id }}">{{ $event->date." - ".$event->competitionName.' - '.$event->name }}</option>
+                        <option value="{{ $event->id }}">{{ $event->date." - ".$event->competitionName.' - '.$event->name . '(' . Str::limit($event->description, 30). ')' }}</option>
                     @endforeach
                 </select>
                 <label for="event">{{ __('app.event.title') }}</label>
