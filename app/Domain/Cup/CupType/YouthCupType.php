@@ -213,8 +213,8 @@ class YouthCupType extends MasterCupType
 
         return $this->protocolLinesRepository->getCupEventProtocolLinesForPersonsCertainAge(
             cupEvent: $cupEvent,
-            startYear: (string) $startYear,
-            finishYear: (string) $finishYear,
+            startYear: $startYear,
+            finishYear: $finishYear,
         );
     }
 

@@ -62,8 +62,8 @@ final readonly class ProtocolLinesRepository
 
     public function getCupEventProtocolLinesForPersonsCertainAge(
         CupEvent $cupEvent,
-        ?string $startYear = null,
-        ?string $finishYear = null,
+        ?int $startYear = null,
+        ?int $finishYear = null,
         bool $withPayments = false,
         ?Collection $groups = null,
     ): Collection {
