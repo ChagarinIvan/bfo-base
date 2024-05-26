@@ -48,7 +48,7 @@ final class EloquentEventRepository implements EventRepository
 
     private function buildQuery(Criteria $criteria): Builder
     {
-        $query = Event::select('events.*')->where('events.active', true);
+        $query = Event::select('events.*')->distinct()->where('events.active', true);
 
         if ($criteria->hasParam('year')) {
             $query->where('events.date', 'LIKE', "{$criteria->param('year')}-%");
@@ -87,7 +87,6 @@ final class EloquentEventRepository implements EventRepository
         $sqlWithPlaceholders = $query->toSql();
         $bindings = $query->getBindings();
 
-        dump($sqlWithPlaceholders, $bindings);
         return $query;
     }
 }
