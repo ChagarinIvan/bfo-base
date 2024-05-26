@@ -28,7 +28,7 @@ final class UpdatePersonActionTest extends TestCase
 
     /**
      * @test
-     * @see UpdatePersonInfo::class
+     * @see UpdatePersonAction::class
      */
     public function it_updates_person_info(): void
     {
@@ -41,6 +41,8 @@ final class UpdatePersonActionTest extends TestCase
         $this->post('/persons/1/update', [
             'firstname' => 'test name',
             'lastname' => 'test lastname',
+            'clubId' => '3',
+            'birthday' => '1988-01-01',
         ])
             ->assertStatus(Response::HTTP_FOUND)
             ->assertRedirect('/persons/1/show')
@@ -49,8 +51,8 @@ final class UpdatePersonActionTest extends TestCase
         $this->assertDatabaseHas('person', [
             'id' => 1,
             'firstname' => 'test name',
-            'club_id' => null,
-            'birthday' => null,
+            'club_id' => 3,
+            'birthday' => '1988-01-01',
             'updated_by' => $user->id,
         ]);
     }

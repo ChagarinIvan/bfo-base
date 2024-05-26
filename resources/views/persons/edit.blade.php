@@ -45,8 +45,8 @@
             </div>
             <div class="form-floating mb-3">
                 <select class="form-control @error('club_id') is-invalid @enderror"
-                        id="club_id"
-                        name="club_id"
+                        id="clubId"
+                        name="clubId"
                 >
                     <option value="0"
                             @if(empty($person->clubId))
@@ -61,7 +61,7 @@
                         >{{ $club->name }}</option>
                     @endforeach
                 </select>
-                <label for="club_id">{{ __('app.club.name') }}</label>
+                <label for="clubId">{{ __('app.club.name') }}</label>
             </div>
             <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3 col-xxl-2">
                 <input type="submit" class="btn btn-outline-primary btn-sm" value="{{ __('app.common.save') }}">
