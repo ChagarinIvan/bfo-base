@@ -36,6 +36,7 @@ class ShowCreateCupEventFormAction extends BaseController
         )));
 
 
+        dd($events);
         /** @see /resources/views/cup/events/create.blade.php */
         return $this->view('cup.events.create', [
             'cup' => $cup,
