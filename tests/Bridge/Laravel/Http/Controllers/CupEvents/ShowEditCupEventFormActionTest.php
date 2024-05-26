@@ -41,8 +41,8 @@ final class ShowEditCupEventFormActionTest extends TestCase
         $this->get('/cups/101/101/edit')
             ->assertStatus(Response::HTTP_OK)
             ->assertSee('<form method="POST" action="http://localhost/cups/101/101/update">', false)
-            ->assertSee('<option value="101" >2022-01-01 - test - name1</option>', false)
-            ->assertSee('<option value="102" selected>2022-03-02 - test - name2</option>', false)
+            ->assertSee('<option value="101" >2022-01-01 - test - name1 (test description)</option>', false)
+            ->assertSee('<option value="102" selected>2022-03-02 - test - name2 (long text description for test...)</option>', false)
             ->assertSee('<input class="form-control " id="points" name="points" value="1001">', false)
         ;
     }
