@@ -87,7 +87,7 @@ final class EloquentEventRepository implements EventRepository
         $sqlWithPlaceholders = $query->toSql();
         $bindings = $query->getBindings();
 
-        dd($sqlWithPlaceholders, $bindings);
+        dump($sqlWithPlaceholders, $bindings);
         return $query;
     }
 }
