@@ -79,11 +79,11 @@ final class ShowCupEventGroupActionTest extends TestCase
             ->assertSee('<a href="http://localhost/competitions/101/show">Grodno cup</a>', false)
             ->assertSee('<a href="http://localhost/events/d/101">Спринт - 2024-04-12</a>', false)
             ->assertSee('<a href="http://localhost/cups/101/101/M_12_/show" class="text-decoration-none nav-link ">', false)
-            ->assertSee('<a href="http://localhost/persons/101/show">Миссюревич Алексей</a>', false)
+            ->assertSee('<a href="http://localhost/persons/102/show">Волчкевич Ярослав</a>', false)
             ->assertSee('<td>900</td>', false)
-            ->assertDontSee('Волчкевич', false)
+            ->assertDontSee('Миссюревич', false)
             ->assertSee('<a href="http://localhost/persons/103/show">Виненко Александр</a>', false)
-            ->assertSee('<td>628</td>', false)
+            ->assertSee('<td>880</td>', false)
         ;
     }
 }
