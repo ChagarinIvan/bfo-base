@@ -40,6 +40,7 @@ class JuniorCupType extends MasterCupType
         'M_20_' => [
             'М21Е',
             'М21E',
+            'МE(35)',
             'МЕ',
             'Мужчины группа Е',
             'М21',
@@ -63,6 +64,7 @@ class JuniorCupType extends MasterCupType
             'W21',
             'ЖЕ',
             'ЖE',
+            'ЖE(35)',
             'Ж21E',
             'W21E',
             'Ж21 Фин Е',
@@ -87,6 +89,7 @@ class JuniorCupType extends MasterCupType
         'М21' => 1,
         'M21E' => 1,
         'МE' => 1,
+        'МE(35)' => 1,
         'М21 Фин Е' => 1,
         'M21' => 1,
         //М21А
@@ -105,6 +108,7 @@ class JuniorCupType extends MasterCupType
         'Ж21Е' => 1,
         'W21' => 1,
         'ЖЕ' => 1,
+        'ЖE(35)' => 1,
         'ЖE' => 1,
         'Ж21E' => 1,
         'W21E' => 1,
