@@ -18,7 +18,7 @@ use App\Models\Year;
 use Illuminate\Database\Seeder;
 use Illuminate\Foundation\Testing\WithFaker;
 
-class CupLineSeeder extends Seeder
+class SprintCupLineSeeder extends Seeder
 {
     use WithFaker;
 

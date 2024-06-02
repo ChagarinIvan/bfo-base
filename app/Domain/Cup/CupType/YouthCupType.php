@@ -215,6 +215,7 @@ class YouthCupType extends MasterCupType
             cupEvent: $cupEvent,
             startYear: $startYear,
             finishYear: $finishYear,
+            citizhenship: true
         );
     }
 
