@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repositories;
 
 use App\Domain\Cup\CupEvent\CupEvent;
+use App\Domain\Person\Citizenship;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\Shared\Criteria;
 use App\Models\Year;
@@ -66,6 +67,7 @@ final readonly class ProtocolLinesRepository
         ?int $finishYear = null,
         bool $withPayments = false,
         ?Collection $groups = null,
+        bool $citizhenship = false,
     ): Collection {
         $protocolLinesQuery = ProtocolLine::selectRaw('protocol_lines.*')
             ->join('person', 'person.id', '=', 'protocol_lines.person_id')
@@ -80,6 +82,10 @@ final readonly class ProtocolLinesRepository
 
         if ($startYear) {
             $protocolLinesQuery->where('person.birthday', '>=', "$startYear-01-01");
+        }
+
+        if ($citizhenship) {
+            $protocolLinesQuery->where('person.citizenship', Citizenship::BELARUS->value);
         }
 
         if ($withPayments) {

@@ -43,10 +43,10 @@
             <h4>{{ $person->birthday ?? '' }}</h4>
         </div>
     </div>
-    @if($person->citizenship !== Citizenship::BELARUS)
+    @if($person->citizenship !== Citizenship::BELARUS->value)
         <div class="row mb-3" >
             <div class="col-12">
-                <h4>{{ __('app.common.citizenship') }}: {{ __('app.common.citizenship.' . $person->citizenship) }}:</h4>
+                <h4>{{ __('app.common.citizenship') }}: {{ __('app.common.citizenship.' . $person->citizenship) }}</h4>
             </div>
         </div>
     @endif
