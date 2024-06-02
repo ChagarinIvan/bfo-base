@@ -13,6 +13,7 @@ final readonly class ViewPersonDto
         public string $lastname,
         public string $firstname,
         public ?string $birthday,
+        public string $citizenship,
         public ?string $clubId,
         public int $eventsCount,
         public ImpressionDto $created,

@@ -6,6 +6,7 @@ namespace App\Application\Service\Person;
 
 use App\Application\Dto\Auth\UserId;
 use App\Application\Dto\Person\PersonDto;
+use App\Domain\Person\Citizenship;
 use App\Domain\Person\Factory\PersonInput;
 use App\Domain\Person\PersonInfo;
 use Carbon\Carbon;
@@ -33,6 +34,7 @@ final readonly class AddPerson
             firstname: $this->dto->info->firstname,
             lastname: $this->dto->info->lastname,
             birthday: $this->dto->info->birthday ? Carbon::parse($this->dto->info->birthday) : null,
+            citizenship: Citizenship::from($this->dto->info->citizenship),
             clubId: $this->dto->info->clubId ? (int) $this->dto->info->clubId : null,
         );
     }

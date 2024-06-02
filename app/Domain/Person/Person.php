@@ -16,6 +16,7 @@ use App\Domain\Shared\AggregatedModel;
 use App\Infrastracture\Laravel\Eloquent\Auth\ImpressionCast;
 use App\Models\Rank;
 use Carbon\Carbon;
+use Database\Factories\Domain\Person\PersonFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -27,6 +28,7 @@ use Illuminate\Support\Collection;
  * @property string $firstname
  * @property Carbon|null $birthday
  * @property int|null $club_id
+ * @property Citizenship $citizenship
  * @property bool $from_base
  * @property bool $active
  *
@@ -40,6 +42,8 @@ use Illuminate\Support\Collection;
  * @property-read PersonPrompt[]|Collection $prompts
  * @property-read PersonPayment[]|Collection $payments
  * @property-read Rank[]|Collection $ranks
+ *
+ * @see PersonFactory
  */
 class Person extends AggregatedModel
 {
@@ -49,6 +53,7 @@ class Person extends AggregatedModel
 
     protected $casts = [
         'prompt' => 'array',
+        'citizenship' => Citizenship::class,
         'birthday' => 'datetime:Y-m-d',
         'created' => ImpressionCast::class,
         'updated' => ImpressionCast::class,
@@ -87,6 +92,7 @@ class Person extends AggregatedModel
         $this->firstname = $info->firstname;
         $this->club_id = $info->clubId;
         $this->birthday = $info->birthday;
+        $this->citizenship = $info->citizenship;
 
         $this->updated = $impression;
 

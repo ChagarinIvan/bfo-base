@@ -1,6 +1,7 @@
 @php
     use App\Bridge\Laravel\Http\Controllers\Person\StorePersonAction;
     use App\Application\Dto\Club\ViewClubDto;
+    use App\Domain\Person\Citizenship;
     /**
      * @var ViewClubDto[] $clubs
      */
@@ -50,7 +51,17 @@
                 </select>
                 <label for="club_id">{{ __('app.club.name') }}</label>
             </div>
-
+            <div class="form-floating mb-3">
+                <select class="form-select"
+                        id="citizenship"
+                        name="citizenship"
+                >
+                    @foreach(Citizenship::cases() as $citizenship)
+                        <option value="{{ $citizenship->value }}">{{ __('app.common.citizenship.' . $citizenship->value) }}</option>
+                    @endforeach
+                </select>
+                <label for="citizenship">{{ __('app.common.citizenship') }}</label>
+            </div>
             <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3 col-xxl-2">
                 <button type="submit"
                         class="btn btn-sm btn-outline-primary me-1"

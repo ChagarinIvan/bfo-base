@@ -11,6 +11,7 @@ use App\Application\Dto\Person\PersonDto;
 use App\Application\Dto\Person\PersonInfoDto;
 use App\Application\Service\Person\AddPerson;
 use App\Application\Service\Person\AddPersonService;
+use App\Domain\Person\Citizenship;
 use App\Domain\Person\Factory\PersonFactory;
 use App\Domain\Person\Factory\PersonInput;
 use App\Domain\Person\Person;
@@ -46,6 +47,7 @@ final class AddPersonServiceTest extends TestCase
             firstname: 'test firstname',
             lastname: 'test lastname',
             birthday: Carbon::parse('1988-01-02'),
+            citizenship: Citizenship::BELARUS,
             clubId: 1,
         );
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Database\Factories\Domain\Person;
 
+use App\Domain\Person\Citizenship;
 use App\Domain\Person\Person;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -18,6 +19,7 @@ final class PersonFactory extends Factory
             'lastname' => $this->faker->lastName(),
             'firstname' => $this->faker->firstName(),
             'birthday' => $this->faker->date,
+            'citizenship' => $this->faker->randomElement(Citizenship::cases()),
             'club_id' => null,
             'from_base' => false,
             'created_at' => $this->faker->date,

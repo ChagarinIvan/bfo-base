@@ -12,6 +12,7 @@ final readonly class PersonInfo
         public string $firstname,
         public string $lastname,
         public ?Carbon $birthday,
+        public Citizenship $citizenship,
         public ?int $clubId,
     ) {
     }

@@ -1,10 +1,8 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Tests\Bridge\Laravel\Http\Controllers\Person;
 
-use App\Bridge\Laravel\Http\Controllers\Person\ShowEditPersonAction;
+use App\Bridge\Laravel\Http\Controllers\Person\ShowCreatePersonAction;
 use App\Domain\User\User;
 use Database\Seeders\ProtocolLinesSeeder;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -14,7 +12,7 @@ use Illuminate\Http\Response;
 use Tests\CreatesApplication;
 use Tests\TestCase;
 
-final class ShowEditPersonActionTest extends TestCase
+final class ShowCreatePersonActionTest extends TestCase
 {
     use CreatesApplication;
     use RefreshDatabase;
@@ -28,7 +26,7 @@ final class ShowEditPersonActionTest extends TestCase
 
     /**
      * @test
-     * @see ShowEditPersonAction::class
+     * @see ShowCreatePersonAction::class
      */
     public function it_shows_person_update_page(): void
     {
@@ -39,9 +37,9 @@ final class ShowEditPersonActionTest extends TestCase
         $this->actingAs($user);
 
         $this
-            ->get('/persons/101/edit')
+            ->get('/persons/create')
             ->assertStatus(Response::HTTP_OK)
-            ->assertSee('<option value="belarus"  selected >app.common.citizenship.belarus</option>', false)
+            ->assertSee('<option value="belarus">app.common.citizenship.belarus</option>', false)
         ;
     }
 }
