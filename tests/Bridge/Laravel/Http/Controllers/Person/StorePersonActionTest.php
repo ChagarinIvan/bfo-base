@@ -40,6 +40,7 @@ final class StorePersonActionTest extends TestCase
             'firstname' => 'test name',
             'lastname' => 'test lastname',
             'birthday' => '1989-03-01',
+            'citizenship' => 'other',
             'clubId' => '1',
         ])
             ->assertStatus(Response::HTTP_FOUND)
@@ -49,6 +50,7 @@ final class StorePersonActionTest extends TestCase
         $this->assertDatabaseHas('person', [
             'id' => 1,
             'firstname' => 'test name',
+            'citizenship' => 'other',
             'created_by' => $user->id,
         ]);
     }
@@ -68,6 +70,7 @@ final class StorePersonActionTest extends TestCase
         $this->post('/persons/store', [
             'firstname' => 'test name',
             'lastname' => 'test lastname',
+            'citizenship' => 'other',
             'birthday' => '1989-01-01',
         ])
             ->assertStatus(Response::HTTP_FOUND)

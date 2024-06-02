@@ -58,6 +58,7 @@ final class EloquentPersonRepository implements PersonRepository
                 ->where('person.lastname', $info->lastname)
                 ->where('person.firstname', $info->firstname)
                 ->where('person.birthday', $info->birthday)
+                ->where('person.citizenship', $info->citizenship)
             ;
         }
 

@@ -38,7 +38,7 @@ class ProtocolLinesSeeder extends Seeder
         Distance::factory(state: ['id' => 103, 'event_id' => 101, 'group_id' => 101])->createOne();
         Distance::factory(state: ['id' => 104, 'event_id' => 102, 'group_id' => 101])->createOne();
 
-        Person::factory(state: ['id' => 101, 'birthday' => '1987-01-01'])->createOne();
+        Person::factory(state: ['id' => 101, 'birthday' => '1987-01-01', 'citizenship' => 'belarus'])->createOne();
         Person::factory(state: ['id' => 102])->createOne();
         Person::factory(state: ['id' => 103])->createOne();
         Person::factory(state: ['id' => 104])->createOne();

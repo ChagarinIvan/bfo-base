@@ -7,6 +7,7 @@
     use App\Bridge\Laravel\Http\Controllers\PersonPrompt\ShowPersonPromptsListAction;
     use App\Bridge\Laravel\Http\Controllers\Rank\ShowPersonRanksAction;
     use App\Application\Dto\Person\ViewPersonDto;
+    use App\Domain\Person\Citizenship;
     use App\Models\Rank;
     use Illuminate\Support\Str;
 
@@ -38,6 +39,18 @@
         </div>
     @endif
     <div class="row mb-3">
+        <div class="col-12">
+            <h4>{{ $person->birthday ?? '' }}</h4>
+        </div>
+    </div>
+    @if($person->citizenship !== Citizenship::BELARUS)
+        <div class="row mb-3" >
+            <div class="col-12">
+                <h4>{{ __('app.common.citizenship') }}: {{ __('app.common.citizenship.' . $person->citizenship) }}:</h4>
+            </div>
+        </div>
+    @endif
+    <div class="row mb-3" >
         <div class="col-12">
             <h4>{{ $person->birthday ?? '' }}</h4>
         </div>

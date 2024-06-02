@@ -20,6 +20,7 @@ final readonly class StandardPersonFactory implements PersonFactory
         $person->lastname = $input->info->lastname;
         $person->firstname = $input->info->firstname;
         $person->birthday = $input->info->birthday;
+        $person->citizenship = $input->info->citizenship;
         $person->club_id = $input->info->clubId;
         $person->from_base = $input->fromBase;
         $person->active = true;

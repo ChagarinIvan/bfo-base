@@ -53,6 +53,7 @@ final class UpdatePersonInfoServiceTest extends TestCase
         $info->lastname = 'lastname';
         $info->firstname = 'firstname';
         $info->birthday = '1989-01-01';
+        $info->citizenship = 'belarus';
         $info->clubId = '1';
 
         $command = new UpdatePersonInfo('1', $info, new UserId(1));
@@ -78,6 +79,7 @@ final class UpdatePersonInfoServiceTest extends TestCase
         $info->lastname = 'lastname';
         $info->firstname = 'firstname';
         $info->birthday = '1989-01-01';
+        $info->citizenship = 'belarus';
         $info->clubId = '1';
 
         $command = new UpdatePersonInfo('1', $info, new UserId(1));

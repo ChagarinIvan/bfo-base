@@ -2,6 +2,7 @@
     use App\Bridge\Laravel\Http\Controllers\Person\UpdatePersonAction;
     use App\Application\Dto\Person\ViewPersonDto;
     use App\Application\Dto\Club\ViewClubDto;
+    use App\Domain\Person\Citizenship;
     /**
      * @var ViewPersonDto $person
      * @var ViewClubDto[] $clubs
@@ -62,6 +63,17 @@
                     @endforeach
                 </select>
                 <label for="clubId">{{ __('app.club.name') }}</label>
+            </div>
+            <div class="form-floating mb-3">
+                <select class="form-select"
+                        id="citizenship"
+                        name="citizenship"
+                >
+                    @foreach(Citizenship::cases() as $citizenship)
+                        <option value="{{ $citizenship->value }}" @if($person->citizenship === $citizenship->value) selected @endif>{{ __('app.common.citizenship.' . $citizenship->value) }}</option>
+                    @endforeach
+                </select>
+                <label for="citizenship">{{ __('app.common.citizenship') }}</label>
             </div>
             <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3 col-xxl-2">
                 <input type="submit" class="btn btn-outline-primary btn-sm" value="{{ __('app.common.save') }}">
