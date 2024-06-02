@@ -50,11 +50,6 @@
             </div>
         </div>
     @endif
-    <div class="row mb-3" >
-        <div class="col-12">
-            <h4>{{ $person->birthday ?? '' }}</h4>
-        </div>
-    </div>
     <div class="row mb-3">
         @auth
             <div class="col-12">
