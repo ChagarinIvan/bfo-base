@@ -50,18 +50,19 @@ class MasterCupType extends AbstractCupType
     {
         $results = new Collection();
         $cupEventProtocolLines = $this->getGroupProtocolLines($cupEvent, $mainGroup);
-        dd($cupEventProtocolLines);
         $eventGroupsId = $this->getEventGroups($mainGroup->male())->pluck('id');
-
+        dump($eventGroupsId);
         $eventDistances = $this->distanceService
             ->getCupEventDistancesByGroups($cupEvent, $eventGroupsId)
             ->pluck('id')
             ->toArray()
         ;
+        dump($eventDistances);
 
         $cupEventProtocolLines = $cupEventProtocolLines->filter(
             static fn (ProtocolLine $protocolLine) => in_array($protocolLine->distance_id, $eventDistances, true)
         );
+        dd($cupEventProtocolLines);
 
         $cupEventProtocolLines = $cupEventProtocolLines->groupBy('distance.group_id');
         $validGroups = $eventGroupsId->flip();
