@@ -76,6 +76,7 @@ final class AddPersonServiceTest extends TestCase
         $infoDto = new PersonInfoDto();
         $infoDto->firstname = 'test firstname';
         $infoDto->lastname = 'test lastname';
+        $infoDto->citizenship = 'belarus';
         $infoDto->birthday = '1988-01-02';
         $infoDto->clubId = '1';
 
