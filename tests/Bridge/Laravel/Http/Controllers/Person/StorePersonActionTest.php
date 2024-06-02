@@ -65,7 +65,7 @@ final class StorePersonActionTest extends TestCase
         $user = User::factory()->createOne();
         $this->actingAs($user);
 
-        Person::factory(state: ['id' => 1, 'firstname' => 'test name', 'lastname' => 'test lastname', 'club_id' => 2, 'birthday' => '1989-01-01'])->createOne();
+        Person::factory(state: ['id' => 1, 'firstname' => 'test name', 'lastname' => 'test lastname', 'club_id' => 2, 'birthday' => '1989-01-01', 'citizenship' => 'other'])->createOne();
 
         $this->post('/persons/store', [
             'firstname' => 'test name',
