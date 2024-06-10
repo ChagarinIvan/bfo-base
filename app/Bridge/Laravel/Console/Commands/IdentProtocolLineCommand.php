@@ -10,6 +10,7 @@ use App\Application\Dto\Person\PersonInfoDto;
 use App\Application\Service\Person\AddPerson;
 use App\Application\Service\Person\AddPersonService;
 use App\Application\Service\Person\Exception\FailedToAddPerson;
+use App\Domain\Person\Citizenship;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Models\IdentLine;
 use App\Services\ClubsService;
@@ -72,6 +73,7 @@ final class IdentProtocolLineCommand extends Command
             $personInfo->firstname = $protocolLine->firstname;
             $personInfo->birthday = $protocolLine->year ? (string) $protocolLine->year : null;
             $personInfo->clubId = $club ? (string) $club->id : null;
+            $personInfo->citizenship = Citizenship::BELARUS->value;
             $personDto = new PersonDto;
             $personDto->info = $personInfo;
 
