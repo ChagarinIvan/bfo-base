@@ -43,6 +43,10 @@ final class EloquentPersonRepository implements PersonRepository
             $query->where('person.club_id', $criteria->param('clubId'));
         }
 
+        if ($criteria->hasParam('year')) {
+            $query->where('person.year', $criteria->param('year'));
+        }
+
         if ($criteria->hasParam('withoutLines')) {
             $query
                 ->leftjoin('protocol_lines', 'protocol_lines.person_id', '=', 'person.id')
