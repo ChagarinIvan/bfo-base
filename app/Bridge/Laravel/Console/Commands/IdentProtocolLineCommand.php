@@ -71,7 +71,7 @@ final class IdentProtocolLineCommand extends Command
             $personInfo = new PersonInfoDto;
             $personInfo->lastname = $protocolLine->lastname;
             $personInfo->firstname = $protocolLine->firstname;
-            $personInfo->birthday = $protocolLine->year ? (string) $protocolLine->year : null;
+            $personInfo->birthday = $protocolLine->year ? sprintf('%d-01-01', $protocolLine->year)  : null;
             $personInfo->clubId = $club ? (string) $club->id : null;
             $personInfo->citizenship = Citizenship::BELARUS->value;
             $personDto = new PersonDto;
