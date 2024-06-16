@@ -54,23 +54,20 @@ class JuniorCupType extends EliteCupType
         );
 
         $mainGroupsNames = $group->male() === GroupMale::Man ? self::MEN_MAIN_GROUPS_NAMES : self::WOMEN_MAIN_GROUPS_NAMES;
-        $mainGroups = $this->groupsService->getGroups($mainGroupsNames);
-        $eliteGroupsNames = $group->male() === GroupMale::Man ? EliteCupType::ELITE_MEN_GROUPS : EliteCupType::ELITE_WOMEN_GROUPS;
-        $eliteGroupsList = $this->groupsService->getGroups($eliteGroupsNames);
+        $mainGroupsDistance = $this->distanceService->findDistance($mainGroupsNames, $cupEvent->event_id);
 
-        if ($mainGroups->isEmpty()) {
-            $mainGroups = $eliteGroupsList;
+        if (!$mainGroupsDistance) {
+            $eliteGroupsNames = $group->male() === GroupMale::Man ? EliteCupType::ELITE_MEN_GROUPS : EliteCupType::ELITE_WOMEN_GROUPS;
+            $mainGroupsDistance = $this->distanceService->findDistance($eliteGroupsNames, $cupEvent->event_id);
         }
 
-        $groupNames = $mainGroups->pluck('name')->all();
-        $mainDistance = $this->distanceService->findDistance($groupNames, $cupEvent->event_id);
-        if ($mainDistance === null) {
+        if (!$mainGroupsDistance) {
             return new Collection();
         }
 
         $distances = $this->distanceService
-            ->getEqualDistances($mainDistance)
-            ->add($mainDistance)
+            ->getEqualDistances($mainGroupsDistance)
+            ->add($mainGroupsDistance)
             ->filter(fn (Distance $distance) => in_array($distance->group->name, $this->getAllGroupsMap($group), true))
             ->pluck('id')
             ->all()
