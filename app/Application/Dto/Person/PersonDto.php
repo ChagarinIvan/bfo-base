@@ -26,7 +26,6 @@ final class PersonDto extends AbstractDto
         $this->info = new PersonInfoDto();
         $this->info = $this->info->fromArray($data);
 
-        $this->setStringParam('clubId', $data);
         $this->fromBase = (bool) ($data['fromBase'] ?? false);
 
         return $this;

@@ -32,8 +32,8 @@ class YouthCupLineSeeder extends Seeder
 
         Distance::factory(state: ['id' => 101, 'group_id' => 101, 'event_id' => 101, 'length' => 2600, 'points' => 26])->createOne();
 
-        Person::factory(state: ['id' => 101, 'lastname' => 'Миссюревич', 'firstname' => 'Алексей', 'citizenship' => 'belarus', 'birthday' => '2006-01-01'])->createOne();
-        Person::factory(state: ['id' => 102, 'lastname' => 'Волчкевич', 'firstname' => 'Ярослав', 'citizenship' => 'other', 'birthday' => '2006-01-01'])->createOne();
+        Person::factory(state: ['id' => 101, 'lastname' => 'Миссюревич', 'firstname' => 'Алексей', 'citizenship' => 'other', 'birthday' => '2006-01-01'])->createOne();
+        Person::factory(state: ['id' => 102, 'lastname' => 'Волчкевич', 'firstname' => 'Ярослав', 'citizenship' => 'belarus', 'birthday' => '2006-01-01'])->createOne();
         Person::factory(state: ['id' => 103, 'lastname' => 'Виненко', 'firstname' => 'Александр', 'citizenship' => 'belarus', 'birthday' => '2007-01-01'])->createOne();
 
         ProtocolLine::factory(state: ['id' => 101, 'lastname' => 'Миссюревич', 'firstname' => 'Алексей', 'club' => 'СК «Камволь»-РЦЭиК', 'year' => '2004', 'rank' => 'МС', 'time' => '00:17:20', 'place' => '1', 'complete_rank' => 'КМС', 'distance_id' => 101, 'person_id' => 101])->createOne();

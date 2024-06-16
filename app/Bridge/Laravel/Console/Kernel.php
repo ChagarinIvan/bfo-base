@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Bridge\Laravel\Console;
 
 use App\Bridge\Laravel\Console\Commands\FixRankCommand;
+use App\Bridge\Laravel\Console\Commands\FixYearCommand;
 use App\Bridge\Laravel\Console\Commands\IdentProtocolLineCommand;
 use App\Bridge\Laravel\Console\Commands\RankValidationCommand;
 use App\Bridge\Laravel\Console\Commands\RecalculatingRanks;
@@ -31,6 +32,7 @@ class Kernel extends ConsoleKernel
         SyncStoredPersonsCommand::class,
         RecalculatingRanks::class,
         FixRankCommand::class,
+        FixYearCommand::class,
     ];
 
     /**

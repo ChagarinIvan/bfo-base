@@ -7,8 +7,6 @@ namespace App\Application\Dto\Person;
 use App\Application\Dto\AbstractDto;
 use App\Domain\Person\Citizenship;
 use Illuminate\Validation\Rules\Enum;
-use Psr\Cache\CacheItemInterface;
-use Symfony\Component\Mailer\Envelope;
 
 final class PersonInfoDto extends AbstractDto
 {
