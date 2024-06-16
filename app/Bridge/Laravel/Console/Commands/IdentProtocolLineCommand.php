@@ -19,6 +19,7 @@ use App\Services\ProtocolLineService;
 use App\Services\RankService;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
+use function sprintf;
 
 /**
  * Будем определять людей из очереди на определение.
