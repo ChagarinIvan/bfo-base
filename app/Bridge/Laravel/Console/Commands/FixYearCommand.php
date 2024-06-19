@@ -27,6 +27,9 @@ use App\Services\ProtocolLineService;
 use App\Services\RankService;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
+use function array_shift;
+use function count;
+use function sprintf;
 
 final class FixYearCommand extends Command
 {
@@ -63,7 +66,7 @@ final class FixYearCommand extends Command
             $info->birthday = sprintf('%d-01-01', array_shift($protocolLines)->year);
             $info->clubId = $person->clubId;
 
-            $this->service->execute(new UpdatePersonInfo($person->id,$info,new UserId($userId)));
+            $this->service->execute(new UpdatePersonInfo($person->id, $info, new UserId($userId)));
         }
     }
 

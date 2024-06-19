@@ -44,7 +44,7 @@ final class EloquentPersonRepository implements PersonRepository
         }
 
         if ($criteria->hasParam('year')) {
-            $query->where('person.birthday', 'LIKE', $criteria->param('year').'%');
+            $query->where('person.birthday', 'LIKE', $criteria->param('year') . '%');
         }
 
         if ($criteria->hasParam('withoutLines')) {
