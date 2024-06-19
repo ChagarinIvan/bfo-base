@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Application\Service\Person\Exception\PersonNotFound;
+use App\Application\Service\Person\ViewPerson;
+use App\Application\Service\Person\ViewPersonService;
 use App\Domain\Event\Event;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Filters\RanksFilter;
@@ -32,7 +35,8 @@ class RankService
     public function __construct(
         private readonly RanksRepository $ranksRepository,
         private readonly ProtocolLineService $protocolLineService,
-        private readonly PersonsService $personsService
+        private readonly PersonsService $personsService,
+        private readonly ViewPersonService $viewPersonService,
     ) {
     }
 
@@ -62,6 +66,12 @@ class RankService
 
     public function reFillRanksForPerson(int $personId): void
     {
+        try {
+            $this->viewPersonService->execute(new ViewPerson((string)$personId));
+        } catch (PersonNotFound) {
+            return;
+        }
+
         $ranks = $this->getPersonRanks($personId);
         $this->ranksRepository->deleteRanks($ranks);
 
