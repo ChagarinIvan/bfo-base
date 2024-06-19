@@ -81,12 +81,11 @@ class OBelarusNetRelayWithHeadersParser extends AbstractParser
                 }
                 $protocolLine = ['group' => $groupName];
                 $indent = 1;
-                try {
-                    $protocolLine['lastname'] = $lineData[1];
-                    $protocolLine['firstname'] = $lineData[2];
-                } catch (\Error) {
+                if (!isset($lineData[1])) {
                     dd($lineData);
                 }
+                $protocolLine['lastname'] = $lineData[1];
+                $protocolLine['firstname'] = $lineData[2];
 
                 $value = $lineData[$fieldsCount - $indent];
                 try {
