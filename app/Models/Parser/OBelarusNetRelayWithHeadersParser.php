@@ -81,8 +81,13 @@ class OBelarusNetRelayWithHeadersParser extends AbstractParser
                 }
                 $protocolLine = ['group' => $groupName];
                 $indent = 1;
-                $protocolLine['lastname'] = $lineData[1];
-                $protocolLine['firstname'] = $lineData[2];
+                try {
+                    $protocolLine['lastname'] = $lineData[1];
+                    $protocolLine['firstname'] = $lineData[2];
+                } catch (\Error) {
+                    dd($lineData);
+                }
+
                 $value = $lineData[$fieldsCount - $indent];
                 try {
                     $time = Carbon::createFromTimeString($value);
