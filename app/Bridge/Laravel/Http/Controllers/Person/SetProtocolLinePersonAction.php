@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Http\Controllers\Person;
 
+use App\Application\Dto\Auth\UserId;
+use App\Application\Service\Person\DisablePerson;
+use App\Application\Service\Person\DisablePersonService;
 use App\Domain\Person\Person;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Services\PersonPromptService;
@@ -19,9 +22,11 @@ class SetProtocolLinePersonAction extends BaseController
     public function __invoke(
         Person $person,
         string $protocolLineId,
+        UserId $userId,
         ProtocolLineService $protocolLineService,
         PersonPromptService $personPromptService,
         RankService $rankService,
+        DisablePersonService $disablePersonService,
     ): RedirectResponse {
         /** @var ProtocolLine $protocolLine */
         $protocolLine = ProtocolLine::find($protocolLineId);
@@ -43,8 +48,8 @@ class SetProtocolLinePersonAction extends BaseController
         $oldPersons->each(static fn (int $personId) => $rankService->reFillRanksForPerson($personId));
 
         if (ProtocolLine::wherePersonId($oldPersonId)->count() === 0) {
-            Person::destroy($oldPersonId);
-        };
+            $disablePersonService->execute(new DisablePerson((string)$oldPersonId, $userId));
+        }
 
         return $this->redirector->to($this->removeLastBackUrl());
     }
