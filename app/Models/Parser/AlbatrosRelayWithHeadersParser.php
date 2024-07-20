@@ -57,9 +57,9 @@ class AlbatrosRelayWithHeadersParser extends AbstractParser
 
             $paramsLine = $lines[0];
             [,$distance] = explode(':', $paramsLine);
-            preg_match('#(\d+)\s*КП,\s+(\d+(.|,)\d+) м#msiu', $distance, $linesMatch);
-            $distancePoints = (int)$linesMatch[1];
-            $distanceLength = (float) ($linesMatch[2]) * 1000;
+            preg_match('#(\d+)\s*КП,\s+.+-?(\d+(.|,)\d+)\s+к?м#msiu', $distance, $linesMatch);
+            $distancePoints = (int)($linesMatch[1] ?? 0);
+            $distanceLength = (float) ($linesMatch[2] ?? 0) * 1000;
             if (str_contains($groupName, ',')) {
                 $groupName = substr($groupName, 0, strpos($groupName, ','));
             }
