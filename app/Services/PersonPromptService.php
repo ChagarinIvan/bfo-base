@@ -61,7 +61,7 @@ class PersonPromptService
      */
     public function identPersonsByPrompts(array $preparedLines): array
     {
-        return Person::where('person,active', true)
+        return Person::where('person.active', true)
             ->select('person.id')
             ->distinct()
             ->join('persons_prompt', 'person.id', '=', 'persons_prompt.person_id')
