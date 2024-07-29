@@ -60,7 +60,12 @@ class PersonPromptService
      */
     public function identPersonsByPrompts(array $preparedLines): array
     {
-        $prompts = PersonPrompt::whereIn('prompt', $preparedLines)->get();
+        $prompts = PersonPrompt::whereIn('prompt', $preparedLines)
+            ->whereHas('person', function ($query) {
+                $query->where('active', true);
+            })
+            ->get()
+        ;
 
         return $prompts->pluck('person_id', 'prompt')->toArray();
     }
