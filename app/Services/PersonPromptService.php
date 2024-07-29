@@ -66,6 +66,7 @@ class PersonPromptService
             ->distinct()
             ->join('person_prompt', 'person.id', '=', 'person_prompt.person_id')
             ->whereIn('person_prompt.prompt', $preparedLines)
+            ->get()
             ->toArray()
         ;
     }
