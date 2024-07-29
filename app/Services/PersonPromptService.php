@@ -64,8 +64,8 @@ class PersonPromptService
         return Person::where('person,active', true)
             ->select('person.id')
             ->distinct()
-            ->join('person_prompt', 'person.id', '=', 'person_prompt.person_id')
-            ->whereIn('person_prompt.prompt', $preparedLines)
+            ->join('persons_prompt', 'person.id', '=', 'persons_prompt.person_id')
+            ->whereIn('persons_prompt.prompt', $preparedLines)
             ->get()
             ->toArray()
         ;
