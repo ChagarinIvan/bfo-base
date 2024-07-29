@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Domain\Person\Person;
 use App\Domain\PersonPrompt\PersonPrompt;
 use Illuminate\Support\Collection;
 use Mav\Slovo\Phonetics;
@@ -60,14 +61,13 @@ class PersonPromptService
      */
     public function identPersonsByPrompts(array $preparedLines): array
     {
-        $prompts = PersonPrompt::whereIn('prompt', $preparedLines)
-            ->whereHas('person', function ($query) {
-                $query->where('active', true);
-            })
-            ->get()
+        return Person::where('person,active', true)
+            ->select('person.id')
+            ->distinct()
+            ->join('person_prompt', 'person.id', '=', 'person_prompt.person_id')
+            ->whereIn('person_prompt.prompt', $preparedLines)
+            ->toArray()
         ;
-
-        return $prompts->pluck('person_id', 'prompt')->toArray();
     }
 
     /**
