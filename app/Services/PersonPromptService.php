@@ -9,10 +9,10 @@ use Illuminate\Support\Collection;
 use Mav\Slovo\Phonetics;
 use RuntimeException;
 
-class PersonPromptService
+final readonly class PersonPromptService
 {
     public function __construct(
-        private readonly Phonetics $phonetics
+        private Phonetics $phonetics
     ) {
     }
 
@@ -60,7 +60,12 @@ class PersonPromptService
      */
     public function identPersonsByPrompts(array $preparedLines): array
     {
-        $prompts = PersonPrompt::whereIn('prompt', $preparedLines)->get();
+        $prompts = PersonPrompt::select()
+            ->join('person', 'person.id', '=', 'persons_prompt.person_id')
+            ->whereIn('persons_prompt.prompt', $preparedLines)
+            ->where('person.active', true)
+            ->get()
+        ;
 
         return $prompts->pluck('person_id', 'prompt')->toArray();
     }
