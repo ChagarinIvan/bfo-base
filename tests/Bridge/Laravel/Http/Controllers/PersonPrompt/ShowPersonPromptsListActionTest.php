@@ -50,4 +50,25 @@ final class ShowPersonPromptsListActionTest extends TestCase
             ])
         ;
     }
+
+    /**
+     * @test
+     * @see ShowPersonPromptsListAction::class
+     */
+    public function it_doesnt_show_person_prompts_for_deleted_person(): void
+    {
+        /** @var Authenticatable&User $user */
+        $user = User::factory()->createOne();
+        $this->actingAs($user);
+
+        /** @var Person $person */
+        $person = Person::factory(['active' => false])->createOne();
+        PersonPrompt::factory(state: ['person_id' => $person->id, 'prompt' => 'test1'])->createOne();
+        PersonPrompt::factory(state: ['person_id' => $person->id, 'prompt' => 'test2'])->createOne();
+
+        $this->get("/persons/$person->id/prompts")
+            ->assertStatus(Response::HTTP_OK)
+            ->assertDontSeeText(['test1', 'test2'])
+        ;
+    }
 }

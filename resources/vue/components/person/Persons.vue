@@ -34,7 +34,7 @@
                     <td><a :href="'/persons/' + person.id + '/show'"><span v-html="markedText(person.lastname + ' ' + person.firstname)"></span></a></td>
                     <td><a :href="'/ranks/person/' + person.id"><span v-html="markedText(person.rank)"></span></a></td>
                     <td><span v-html="markedText(person.events_count)"></span></td>
-                    <td v-if="person.club_id > 0"><a :href="'/club/' + person.club_id + '/show'"><span v-html="markedText(person.club_name)"></span></a></td>
+                    <td v-if="person.club_id > 0"><a :href="'/clubs/' + person.club_id + '/show'"><span v-html="markedText(person.club_name)"></span></a></td>
                     <td v-else><span v-html="markedText(person.club_name)"></span></td>
                     <td><span v-html="markedText(year(person.birthday))"></span></td>
                     <td v-if="isAuth">
