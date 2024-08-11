@@ -6,7 +6,7 @@ namespace App\Repositories;
 
 use App\Domain\Person\Person;
 use App\Filters\RanksFilter;
-use App\Models\Rank;
+use App\Domain\Rank\Rank;
 use Carbon\Carbon;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Eloquent\Builder;

@@ -11,7 +11,7 @@
     use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonsListAction;
     use App\Bridge\Laravel\Http\Controllers\Rank\ShowRanksListAction;
     use App\Bridge\Laravel\Http\Controllers\Registration\ShowRegistrationFormAction;
-    use App\Models\Rank;
+    use App\Domain\Rank\Rank;
     use App\Models\Year;
     /**
      * @var bool $isAuth;

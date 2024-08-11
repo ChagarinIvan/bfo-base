@@ -10,7 +10,7 @@ use App\Application\Service\Person\ViewPersonService;
 use App\Domain\Event\Event;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Filters\RanksFilter;
-use App\Models\Rank;
+use App\Domain\Rank\Rank;
 use App\Models\Year;
 use App\Repositories\RanksRepository;
 use Carbon\Carbon;

@@ -7,7 +7,7 @@ namespace App\Domain\ProtocolLine;
 use App\Domain\Distance\Distance;
 use App\Domain\Event\Event;
 use App\Domain\Person\Person;
-use App\Models\Rank;
+use App\Domain\Rank\Rank;
 use App\Services\PersonsIdentService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

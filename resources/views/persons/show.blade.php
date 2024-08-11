@@ -8,7 +8,7 @@
     use App\Bridge\Laravel\Http\Controllers\Rank\ShowPersonRanksAction;
     use App\Application\Dto\Person\ViewPersonDto;
     use App\Domain\Person\Citizenship;
-    use App\Models\Rank;
+    use App\Domain\Rank\Rank;
     use Illuminate\Support\Str;
 
     /**
@@ -44,7 +44,7 @@
         </div>
     </div>
     @if($person->citizenship !== Citizenship::BELARUS->value)
-        <div class="row mb-3" >
+        <div class="row mb-3">
             <div class="col-12">
                 <h4>{{ __('app.common.citizenship') }}: {{ __('app.common.citizenship.' . $person->citizenship) }}</h4>
             </div>

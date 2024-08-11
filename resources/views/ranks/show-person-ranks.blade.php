@@ -2,7 +2,7 @@
     use App\Bridge\Laravel\Http\Controllers\Event\ShowEventDistanceAction;
     use App\Bridge\Laravel\Http\Controllers\Rank\ActivatePersonRankAction;
     use App\Domain\Person\Person;
-    use App\Models\Rank;
+    use App\Domain\Rank\Rank;
     use Illuminate\Support\Collection;
     /**
      * @var Rank[]|Collection $ranks;

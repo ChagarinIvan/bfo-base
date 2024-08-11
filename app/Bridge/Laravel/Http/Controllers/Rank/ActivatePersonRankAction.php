@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Bridge\Laravel\Http\Controllers\Rank;
 
 use App\Domain\Person\Person;
-use App\Models\Rank;
+use App\Domain\Rank\Rank;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;

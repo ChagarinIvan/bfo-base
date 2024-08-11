@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Models;
 
-use App\Models\Rank;
+use App\Domain\Rank\Rank;
 use PHPUnit\Framework\TestCase;
 
 final class RankTest extends TestCase
