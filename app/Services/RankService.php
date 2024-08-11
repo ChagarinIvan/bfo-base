@@ -181,14 +181,12 @@ class RankService
                 $ranks = $this->ranksRepository->getRanksList($ranksFilter);
                 $finishDate = $event->date->clone()->addDays(-1);
 
-                $ranks->each(function (Rank $rank) use ($finishDate): void {
-                    if (!$rank->activated_date) {
-                        return;
-                    }
-
-                    $rank->finish_date = $finishDate;
-                    $this->ranksRepository->storeRank($rank);
-                });
+                if ($protocolLine->activate_rank) {
+                    $ranks->each(function (Rank $rank) use ($finishDate): void {
+                        $rank->finish_date = $finishDate;
+                        $this->ranksRepository->storeRank($rank);
+                    });
+                }
 
                 // Надо взять все разряды которые после этой даты
                 // Отсортировать их по дате евента и заново пересохранить
