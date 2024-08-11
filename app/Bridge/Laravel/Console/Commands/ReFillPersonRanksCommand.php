@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Console\Commands;
 
+use App\Domain\Person\Person;
 use App\Services\RankService;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -21,8 +22,15 @@ final class ReFillPersonRanksCommand extends Command
     public function handle(): void
     {
         $this->info('Start');
-        $personId = (int) $this->argument('person_id');
-        $this->service->reFillRanksForPerson($personId);
+        $personId = $this->argument('person_id');
+        if ($personId) {
+            $this->service->reFillRanksForPerson((int) $personId);
+        } else {
+            $persons = Person::where('active', true)->cursor();
+            foreach ($persons as $person) {
+                $this->service->reFillRanksForPerson($person->id);
+            }
+        }
         $this->info("Finish");
     }
 
@@ -32,7 +40,7 @@ final class ReFillPersonRanksCommand extends Command
             ->setName('ranks:person:re-fill')
             ->addArgument(
                 'person_id',
-                InputArgument::REQUIRED,
+                InputArgument::OPTIONAL,
                 'Person Id.'
             )
         ;
