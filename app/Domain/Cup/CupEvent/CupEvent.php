@@ -66,4 +66,9 @@ class CupEvent extends AggregatedModel
     {
         return $this->hasOne(Event::class, 'id', 'event_id');
     }
+
+    public function scopeActive($query)
+    {
+        return $query->where('active', true);
+    }
 }
