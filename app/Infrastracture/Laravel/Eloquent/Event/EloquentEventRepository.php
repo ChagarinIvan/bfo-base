@@ -67,7 +67,7 @@ final class EloquentEventRepository implements EventRepository
                         ->orWhere(static function ($query) use ($criteria): void {
                             $query
                                 ->whereNotNUll('cup_events.id', true)
-                                ->whereNotNUll('cup_events.active', false)
+                                ->where('cup_events.active', false)
                             ;
                         })
                         ->orWhere(static function ($query) use ($criteria): void {
