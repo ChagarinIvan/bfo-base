@@ -80,7 +80,7 @@ class Cup extends AggregatedModel
 
     public function events(): HasMany|Builder
     {
-        return $this->hasMany(CupEvent::class);
+        return $this->hasMany(CupEvent::class)->active();
     }
 
     /**

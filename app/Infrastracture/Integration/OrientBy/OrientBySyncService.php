@@ -11,7 +11,7 @@ use App\Application\Service\PersonPayment\CreateOrUpdatePersonPaymentsService;
 use App\Domain\Auth\Impression;
 use App\Domain\Person\Person;
 use App\Domain\Shared\Clock;
-use App\Models\Rank;
+use App\Domain\Rank\Rank;
 use App\Models\Year;
 use App\Services\ClubsService;
 use App\Services\PersonsIdentService;

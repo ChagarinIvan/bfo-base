@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\Parser;
 
-use App\Models\Rank;
+use App\Domain\Rank\Rank;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use function array_key_exists;

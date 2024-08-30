@@ -15,7 +15,7 @@ use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\Shared\AggregatedModel;
 use App\Infrastracture\Laravel\Eloquent\Auth\ImpressionCast;
 use App\Models\Flag;
-use App\Models\Rank;
+use App\Domain\Rank\Rank;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;

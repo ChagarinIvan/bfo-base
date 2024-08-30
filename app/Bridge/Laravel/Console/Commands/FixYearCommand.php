@@ -43,12 +43,8 @@ final class FixYearCommand extends Command
         parent::__construct();
     }
 
-    public function handle(
-        RankService $rankService,
-        ClubsService $clubsService,
-        ProtocolLineService $protocolLineService,
-        ProtocolLineIdentService $protocolLineIdentService,
-    ): void {
+    public function handle(): void
+    {
         $this->info('Start');
         $userId = (int) $this->argument('user_id');
         $year = $this->argument('year');

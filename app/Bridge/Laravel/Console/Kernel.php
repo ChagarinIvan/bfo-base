@@ -9,6 +9,7 @@ use App\Bridge\Laravel\Console\Commands\FixYearCommand;
 use App\Bridge\Laravel\Console\Commands\IdentProtocolLineCommand;
 use App\Bridge\Laravel\Console\Commands\RankValidationCommand;
 use App\Bridge\Laravel\Console\Commands\RecalculatingRanks;
+use App\Bridge\Laravel\Console\Commands\ReFillPersonRanksCommand;
 use App\Bridge\Laravel\Console\Commands\SimpleIndentCommand;
 use App\Bridge\Laravel\Console\Commands\StartBigIdentCommand;
 use App\Bridge\Laravel\Console\Commands\SyncPersonsCommand;
@@ -33,6 +34,7 @@ class Kernel extends ConsoleKernel
         RecalculatingRanks::class,
         FixRankCommand::class,
         FixYearCommand::class,
+        ReFillPersonRanksCommand::class,
     ];
 
     /**

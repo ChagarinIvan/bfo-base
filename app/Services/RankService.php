@@ -10,7 +10,7 @@ use App\Application\Service\Person\ViewPersonService;
 use App\Domain\Event\Event;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Filters\RanksFilter;
-use App\Models\Rank;
+use App\Domain\Rank\Rank;
 use App\Models\Year;
 use App\Repositories\RanksRepository;
 use Carbon\Carbon;
@@ -181,14 +181,12 @@ class RankService
                 $ranks = $this->ranksRepository->getRanksList($ranksFilter);
                 $finishDate = $event->date->clone()->addDays(-1);
 
-                $ranks->each(function (Rank $rank) use ($finishDate): void {
-                    if (!$rank->activated_date) {
-                        return;
-                    }
-
-                    $rank->finish_date = $finishDate;
-                    $this->ranksRepository->storeRank($rank);
-                });
+                if ($protocolLine->activate_rank) {
+                    $ranks->each(function (Rank $rank) use ($finishDate): void {
+                        $rank->finish_date = $finishDate;
+                        $this->ranksRepository->storeRank($rank);
+                    });
+                }
 
                 // Надо взять все разряды которые после этой даты
                 // Отсортировать их по дате евента и заново пересохранить

@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Models;
+namespace App\Domain\Rank;
 
 use App\Domain\Event\Event;
 use App\Domain\Person\Person;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use function array_flip;
@@ -25,13 +26,14 @@ use function str_replace;
  * @property Carbon $start_date
  * @property Carbon $finish_date
  * @property Carbon|null $activated_date
- * @property Carbon $active
  *
  * @property-read Event|null $event
  * @property-read Person $person
  */
 class Rank extends Model
 {
+    use HasFactory;
+
     public const WSM_RANK = 'МСМК';
     public const SM_RANK = 'МС';
     public const SMC_RANK = 'КМС';

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Services;
 
 use App\Services\ProtocolLineIdentService;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 
 class ProtocolLineIdentServiceTest extends TestCase
 {
@@ -18,12 +18,9 @@ class ProtocolLineIdentServiceTest extends TestCase
             ['алёна', 'алена'],
         ];
     }
+
     /**
-     * @param string $name
-     * @param string $expectedName
-     *
      * @dataProvider prepareLineDataProvider
-     *
      * @test
      */
     public function prepare_line(string $name, string $expectedName): void

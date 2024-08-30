@@ -9,10 +9,10 @@ use Illuminate\Support\Collection;
 use Mav\Slovo\Phonetics;
 use RuntimeException;
 
-final readonly class PersonPromptService
+class PersonPromptService
 {
     public function __construct(
-        private Phonetics $phonetics
+        private readonly Phonetics $phonetics
     ) {
     }
 
