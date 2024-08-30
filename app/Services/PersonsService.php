@@ -56,13 +56,15 @@ class PersonsService
         };
 
         if ($search) {
-            $persons = $persons->where('firstname', 'like', "%$search%")
-                ->orWhere('lastname', 'like', "%$search%")
-                ->orWhere(DB::raw("CONCAT(`lastname`, ' ', `firstname`)"), 'like', "%$search%")
-                ->orWhereHas('club', static function ($query) use ($search): void {
-                    $query->where('name', 'like', "%$search%");
-                })
-                ->orWhere('birthday', 'like', "%$search%");
+            $persons = $persons->where(function ($query) use ($search) {
+                $query->where('firstname', 'like', "%$search%")
+                    ->orWhere('lastname', 'like', "%$search%")
+                    ->orWhere(DB::raw("CONCAT(`lastname`, ' ', `firstname`)"), 'like', "%$search%")
+                    ->orWhereHas('club', static function ($query) use ($search): void {
+                        $query->where('name', 'like', "%$search%");
+                    })
+                    ->orWhere('birthday', 'like', "%$search%");
+            });
         }
 
         return $persons;
