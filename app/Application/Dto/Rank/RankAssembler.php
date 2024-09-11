@@ -29,6 +29,7 @@ final readonly class RankAssembler
         return new ViewRankDto(
             id: (string) $rank->id,
             rank: $rank->rank,
+            startDate: $rank->start_date->format('Y-m-d'),
             personId: (string) $rank->person_id,
         );
     }

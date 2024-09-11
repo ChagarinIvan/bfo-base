@@ -9,6 +9,7 @@ final readonly class ViewRankDto
     public function __construct(
         public string $id,
         public string $rank,
+        public string $startDate,
         public string $personId,
     ) {
     }
