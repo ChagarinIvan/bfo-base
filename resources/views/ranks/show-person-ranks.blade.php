@@ -83,7 +83,7 @@
                     @auth
                         <td>
                             @if(!Rank::autoActivation($rank->rank) && $rank->activated_date)
-                                <x-button text="app.rank.submit.edit"
+                                <x-button text="app.rank.activation.edit"
                                           color="success"
                                           icon="radioactive"
                                           url="{{ action(ShowEditActivationDateFormAction::class, [$rank->id]) }}"
