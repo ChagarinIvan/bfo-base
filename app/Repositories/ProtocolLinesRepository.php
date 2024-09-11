@@ -7,14 +7,17 @@ namespace App\Repositories;
 use App\Domain\Cup\CupEvent\CupEvent;
 use App\Domain\Person\Citizenship;
 use App\Domain\ProtocolLine\ProtocolLine;
+use App\Domain\ProtocolLine\ProtocolLineRepository;
 use App\Domain\Shared\Criteria;
 use App\Models\Year;
 use Illuminate\Database\ConnectionInterface;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Collection;
 use function count;
 
-final readonly class ProtocolLinesRepository
+// TODO replace me in integration
+final readonly class ProtocolLinesRepository implements ProtocolLineRepository
 {
     public function __construct(private ConnectionInterface $db)
     {
@@ -43,22 +46,7 @@ final readonly class ProtocolLinesRepository
 
     public function byCriteria(Criteria $criteria): Collection
     {
-        $query = ProtocolLine::selectRaw('protocol_lines.*, max(persons_payments.date)')
-            ->join('person', 'person.id', '=', 'protocol_lines.person_id')
-            ->leftJoin('persons_payments', 'person.id', '=', 'persons_payments.person_id')
-            ->where('protocol_lines.vk', false)
-            ->whereIn('distance_id', $criteria->param('distances'))
-            ->groupBy('protocol_lines.id')
-        ;
-
-        if ($criteria->hasParam('paymentYear')) {
-            $query
-                ->where('persons_payments.year', '>=', $criteria->param('paymentYear'))
-                ->where('persons_payments.date', '<=', $criteria->param('eventDate'))
-            ;
-        }
-
-        return $query->get();
+        return $this->buildQuery($criteria)->get();
     }
 
     public function getCupEventProtocolLinesForPersonsCertainAge(
@@ -161,5 +149,58 @@ final readonly class ProtocolLinesRepository
         }
 
         return $query->get();
+    }
+
+    public function lockOneByCriteria(Criteria $criteria): ?ProtocolLine
+    {
+        /** @var ProtocolLine|null $protocolLine */
+        $protocolLine = $this
+            ->buildQuery($criteria)
+            ->lockForUpdate()
+            ->first()
+        ;
+
+        return $protocolLine;
+    }
+
+    public function update(ProtocolLine $protocolLine): void
+    {
+        $protocolLine->save();
+    }
+
+    private function buildQuery(Criteria $criteria): Builder
+    {
+        $query = ProtocolLine::select('protocol_lines.*');
+
+        if ($criteria->hasParam('personId')) {
+            $query->where('person_id', $criteria->param('personId'));
+        }
+
+        if ($criteria->hasParam('eventId')) {
+            $query
+                ->join('distances AS d', 'd.id', '=', 'protocol_lines.distance_id')
+                ->where('d.event_id', $criteria->param('eventId'))
+            ;
+        }
+
+        if ($criteria->hasParam('distances')) {
+            $query
+                ->selectRaw('protocol_lines.*, max(persons_payments.date)')
+                ->join('person', 'person.id', '=', 'protocol_lines.person_id')
+                ->leftJoin('persons_payments', 'person.id', '=', 'persons_payments.person_id')
+                ->where('protocol_lines.vk', false)
+                ->whereIn('distance_id', $criteria->param('distances'))
+                ->groupBy('protocol_lines.id')
+            ;
+        }
+
+        if ($criteria->hasParam('paymentYear')) {
+            $query
+                ->where('persons_payments.year', '>=', $criteria->param('paymentYear'))
+                ->where('persons_payments.date', '<=', $criteria->param('eventDate'))
+            ;
+        }
+
+        return $query;
     }
 }

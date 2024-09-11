@@ -11,6 +11,7 @@ use App\Domain\Event\Event;
 use App\Domain\Shared\AggregatedModel;
 use App\Infrastracture\Laravel\Eloquent\Auth\ImpressionCast;
 use Carbon\Carbon;
+use Database\Factories\Domain\Competition\CompetitionFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
@@ -28,6 +29,7 @@ use Illuminate\Support\Collection;
  */
 class Competition extends AggregatedModel
 {
+    /** @see CompetitionFactory */
     use HasFactory;
 
     protected $table = 'competitions';

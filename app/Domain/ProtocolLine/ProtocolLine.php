@@ -7,11 +7,13 @@ namespace App\Domain\ProtocolLine;
 use App\Domain\Distance\Distance;
 use App\Domain\Event\Event;
 use App\Domain\Person\Person;
+use App\Domain\ProtocolLine\Event\ProtocolLineRankActivated;
 use App\Domain\Rank\Rank;
+use App\Domain\Shared\AggregatedModel;
 use App\Services\PersonsIdentService;
 use Carbon\Carbon;
+use Database\Factories\Domain\ProtocolLine\ProtocolLineFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -37,8 +39,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property-read Distance $distance
  * @property-read Person|null $person
  */
-class ProtocolLine extends Model
+class ProtocolLine extends AggregatedModel
 {
+    /** @see ProtocolLineFactory */
     use HasFactory;
 
     public $timestamps = false;
@@ -91,5 +94,12 @@ class ProtocolLine extends Model
         $this->rank = Rank::getRank($this->rank) ?? '';
         $this->complete_rank = Rank::getRank($this->complete_rank) ?? '';
         $this->distance_id = $distanceId;
+    }
+
+    public function activateRank(Carbon $date): void
+    {
+        $this->activate_rank = $date;
+
+        $this->recordThat(new ProtocolLineRankActivated($this));
     }
 }

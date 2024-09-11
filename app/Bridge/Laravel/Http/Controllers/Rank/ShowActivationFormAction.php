@@ -4,15 +4,28 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Http\Controllers\Rank;
 
-use App\Domain\Person\Person;
-use App\Domain\Rank\Rank;
+use App\Application\Service\Rank\Exception\RankNotFound;
+use App\Application\Service\Rank\ViewRank;
+use App\Application\Service\Rank\ViewRankService;
 use Illuminate\Contracts\View\View;
-use function compact;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Routing\Controller as BaseController;
 
-class ShowActivationFormAction extends AbstractRankAction
+class ShowActivationFormAction extends BaseController
 {
-    public function __invoke(Person $person, Rank $rank): View
-    {
-        return $this->view('ranks.show-person-rank-activation', compact('person', 'rank'));
+    use RankAction;
+
+    public function __invoke(
+        string $rankId,
+        ViewRankService $service,
+    ): View|RedirectResponse {
+        try {
+            $rank = $service->execute(new ViewRank($rankId));
+        } catch (RankNotFound) {
+            return $this->redirectTo404Error();
+        }
+
+        /** @see /resources/views/ranks/show-person-rank-activation.blade.php */
+        return $this->view('ranks.show-person-rank-activation', ['rank' => $rank]);
     }
 }

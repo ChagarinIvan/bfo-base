@@ -12,9 +12,9 @@ use App\Domain\Person\Event\PersonInfoUpdated;
 use App\Domain\PersonPayment\PersonPayment;
 use App\Domain\PersonPrompt\PersonPrompt;
 use App\Domain\ProtocolLine\ProtocolLine;
+use App\Domain\Rank\Rank;
 use App\Domain\Shared\AggregatedModel;
 use App\Infrastracture\Laravel\Eloquent\Auth\ImpressionCast;
-use App\Domain\Rank\Rank;
 use Carbon\Carbon;
 use Database\Factories\Domain\Person\PersonFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -47,6 +47,7 @@ use Illuminate\Support\Collection;
  */
 class Person extends AggregatedModel
 {
+    /** @see PersonFactory */
     use HasFactory;
 
     protected $table = 'person';

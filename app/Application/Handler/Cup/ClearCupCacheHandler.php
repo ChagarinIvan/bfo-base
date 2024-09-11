@@ -16,7 +16,7 @@ abstract readonly class ClearCupCacheHandler
     ) {
     }
 
-     public function handle(CupEventCreated|CupEventDisabled|CupEventUpdated $event): void
+    public function handle(CupEventCreated|CupEventDisabled|CupEventUpdated $event): void
     {
         $this->service->clearCupCache($event->cupEvent->cup_id);
     }

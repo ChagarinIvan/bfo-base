@@ -8,7 +8,6 @@ use App\Application\Dto\Auth\UserId;
 use App\Application\Dto\Competition\CompetitionDto;
 use App\Domain\Competition\CompetitionInfo;
 use Carbon\Carbon;
-use DateTimeImmutable;
 
 final readonly class UpdateCompetitionInfo
 {

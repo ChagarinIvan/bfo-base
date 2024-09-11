@@ -7,6 +7,7 @@ namespace App\Domain\Rank;
 use App\Domain\Event\Event;
 use App\Domain\Person\Person;
 use Carbon\Carbon;
+use Database\Factories\Domain\Rank\RankFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -32,6 +33,7 @@ use function str_replace;
  */
 class Rank extends Model
 {
+    /** @see RankFactory */
     use HasFactory;
 
     public const WSM_RANK = 'МСМК';

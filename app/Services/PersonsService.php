@@ -56,7 +56,7 @@ class PersonsService
         };
 
         if ($search) {
-            $persons = $persons->where(function ($query) use ($search) {
+            $persons = $persons->where(static function ($query) use ($search): void {
                 $query->where('firstname', 'like', "%$search%")
                     ->orWhere('lastname', 'like', "%$search%")
                     ->orWhere(DB::raw("CONCAT(`lastname`, ' ', `firstname`)"), 'like', "%$search%")

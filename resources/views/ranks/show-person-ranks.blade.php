@@ -1,6 +1,7 @@
 @php
     use App\Bridge\Laravel\Http\Controllers\Event\ShowEventDistanceAction;
-    use App\Bridge\Laravel\Http\Controllers\Rank\ActivatePersonRankAction;
+    use App\Bridge\Laravel\Http\Controllers\Rank\ShowActivationFormAction;
+    use App\Bridge\Laravel\Http\Controllers\Rank\ShowEditActivationDateFormAction;
     use App\Domain\Person\Person;
     use App\Domain\Rank\Rank;
     use Illuminate\Support\Collection;
@@ -81,11 +82,18 @@
                     </td>
                     @auth
                         <td>
-                            @if(!$rank->activated_date)
-                                <x-button text="app.rank.submit"
+                            @if(!Rank::autoActivation($rank->rank) && $rank->activated_date)
+                                <x-button text="app.rank.activation.edit"
                                           color="success"
                                           icon="radioactive"
-                                          url="{{ action(ActivatePersonRankAction::class, [$person, $rank]) }}"
+                                          url="{{ action(ShowEditActivationDateFormAction::class, [$rank->id]) }}"
+                                />
+                            @endif
+                            @if(!$rank->activated_date)
+                                <x-button text="app.rank.activation"
+                                          color="info"
+                                          icon="radioactive"
+                                          url="{{ action(ShowActivationFormAction::class, [$rank->id]) }}"
                                 />
                             @endif
                         </td>

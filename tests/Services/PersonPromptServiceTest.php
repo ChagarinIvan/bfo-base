@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Services;
 
 use App\Domain\Person\Person;
@@ -24,7 +26,10 @@ final class PersonPromptServiceTest extends TestCase
         RefreshDatabaseState::$migrated = false;
     }
 
-    public function testIdentPersonsByPrompts(): void
+    /**
+     * @test
+     */
+    public function ident_persons_by_prompts(): void
     {
         Person::factory(state: ['id' => 1, 'active' => false])->createOne();
         Person::factory(state: ['id' => 2, 'active' => true])->createOne();

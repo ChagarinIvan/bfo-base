@@ -1,8 +1,8 @@
 @php
-    use App\Bridge\Laravel\Http\Controllers\Rank\ActivatePersonRankAction;use App\Domain\Person\Person;use App\Domain\Rank\Rank;
+    use App\Bridge\Laravel\Http\Controllers\Rank\ActivatePersonRankAction;
+    use App\Application\Dto\Rank\ViewRankDto;
     /**
-     * @var Person $year;
-     * @var Rank $rank;
+     * @var ViewRankDto $rank;
      */
 @endphp
 
@@ -12,18 +12,14 @@
 
 @section('content')
     <div class="row">
-        <form method="POST"
-              action="{{ action(ActivatePersonRankAction::class, [$person, $rank]) }}"
-        >
+        <form method="POST" action="{{ action(ActivatePersonRankAction::class, [$rank->id]) }}">
             @csrf
             <div class="form-floating mb-3">
                 <input class="form-control" type="date" id="date" name="date">
                 <label for="date">{{ __('app.common.date') }}</label>
             </div>
             <div class="col-12">
-                <button type="submit"
-                        class="btn btn-sm btn-outline-primary me-1"
-                >
+                <button type="submit" class="btn btn-sm btn-outline-primary me-1">
                     <i class="bi bi-clipboard-check me-1"
                        data-bs-toggle="tooltip"
                        data-bs-placement="top"
