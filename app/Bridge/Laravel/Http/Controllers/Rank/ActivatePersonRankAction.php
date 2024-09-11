@@ -4,26 +4,23 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Http\Controllers\Rank;
 
-use App\Domain\Person\Person;
-use App\Domain\Rank\Rank;
-use Carbon\Carbon;
+use App\Application\Dto\Rank\ActivationDto;
+use App\Application\Service\Rank\ActivateRank;
+use App\Application\Service\Rank\ActivateRankService;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
+use Illuminate\Routing\Controller as BaseController;
 
-final class ActivatePersonRankAction extends AbstractRankAction
+final class ActivatePersonRankAction extends BaseController
 {
-    public function __invoke(Person $person, Rank $rank, Request $request): RedirectResponse
-    {
-        if ($rank->activated_date) {
-            return $this->redirector->action(ShowPersonRanksAction::class, [$person]);
-        }
+    use RankAction;
 
-        $formParams = $request->validate([
-            'date' => 'required|date',
-        ]);
+    public function __invoke(
+        string $id,
+        ActivationDto $activation,
+        ActivateRankService $service,
+    ): RedirectResponse {
+        $rank = $service->execute(new ActivateRank($id, $activation));
 
-        $this->rankService->activateRank($rank, Carbon::createFromFormat('Y-m-d', $formParams['date']));
-
-        return $this->redirector->action(ShowPersonRanksAction::class, [$person]);
+        return $this->redirector->action(ShowPersonRanksAction::class, [$rank->personId]);
     }
 }

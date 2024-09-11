@@ -1,6 +1,6 @@
 @php
     use App\Bridge\Laravel\Http\Controllers\Event\ShowEventDistanceAction;
-    use App\Bridge\Laravel\Http\Controllers\Rank\ActivatePersonRankAction;
+    use App\Bridge\Laravel\Http\Controllers\Rank\ShowActivationFormAction;
     use App\Domain\Person\Person;
     use App\Domain\Rank\Rank;
     use Illuminate\Support\Collection;
@@ -85,7 +85,7 @@
                                 <x-button text="app.rank.submit"
                                           color="success"
                                           icon="radioactive"
-                                          url="{{ action(ActivatePersonRankAction::class, [$person, $rank]) }}"
+                                          url="{{ action(ShowActivationFormAction::class, [$rank->id]) }}"
                                 />
                             @endif
                         </td>

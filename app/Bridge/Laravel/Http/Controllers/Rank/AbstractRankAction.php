@@ -13,6 +13,7 @@ use App\Services\RankService;
 use App\Services\ViewActionsService;
 use Illuminate\Routing\Redirector;
 
+// TODO replace me with RankAction
 class AbstractRankAction extends AbstractAction
 {
     public function __construct(

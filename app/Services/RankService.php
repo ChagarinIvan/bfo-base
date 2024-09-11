@@ -9,8 +9,8 @@ use App\Application\Service\Person\ViewPerson;
 use App\Application\Service\Person\ViewPersonService;
 use App\Domain\Event\Event;
 use App\Domain\ProtocolLine\ProtocolLine;
-use App\Filters\RanksFilter;
 use App\Domain\Rank\Rank;
+use App\Filters\RanksFilter;
 use App\Models\Year;
 use App\Repositories\RanksRepository;
 use Carbon\Carbon;
@@ -47,21 +47,6 @@ class RankService
         $filter->isOrderDescByFinishDate = true;
 
         return $this->ranksRepository->getRanksList($filter);
-    }
-
-    public function activateRank(Rank $rank, Carbon $startDate): void
-    {
-        $protocolLineId = $this->protocolLineService->getProtocolLineIdForRank($rank);
-        $protocolLine = $this->protocolLineService->getProtocolLineWithEvent($protocolLineId);
-
-        if (!$protocolLine) {
-            return;
-        }
-
-        $protocolLine->activate_rank = $startDate;
-        $protocolLine->save();
-
-        $this->reFillRanksForPerson($rank->person_id);
     }
 
     public function reFillRanksForPerson(int $personId): void
