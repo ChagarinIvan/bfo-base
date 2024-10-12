@@ -10,7 +10,7 @@ use App\Services\ParserService;
 use App\Services\ProtocolLineIdentService;
 use App\Services\ProtocolLineService;
 
- abstract readonly class ParseProtocolHandler
+abstract readonly class ParseProtocolHandler
 {
     public function __construct(
         protected ProtocolStorage $storage,

@@ -12,6 +12,8 @@ use App\Bridge\Laravel\Provider\EventHandlerServiceProvider;
 use App\Bridge\Laravel\Provider\Person\PersonProvider;
 use App\Bridge\Laravel\Provider\PersonPayment\PersonPaymentProvider;
 use App\Bridge\Laravel\Provider\PersonPrompt\PersonPromptProvider;
+use App\Bridge\Laravel\Provider\ProtocolLine\ProtocolLineProvider;
+use App\Bridge\Laravel\Provider\Rank\RankProvider;
 use App\Bridge\Laravel\Provider\Shared\SharedProvider;
 use App\Bridge\Laravel\Provider\User\UserProvider;
 use App\Bridge\Laravel\Provider\WebRoutesServiceProvider;
@@ -186,6 +188,8 @@ return [
         PersonPaymentProvider::class,
         PersonPromptProvider::class,
         SharedProvider::class,
+        ProtocolLineProvider::class,
+        RankProvider::class,
         UserProvider::class,
 
         // event handlers

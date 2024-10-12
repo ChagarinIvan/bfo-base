@@ -11,7 +11,7 @@ use Illuminate\Support\Collection;
 
 final readonly class CupEventDistancesProtocolLinesCriteria
 {
-    public static function create(Collection $distances, CupEvent $cupEvent, Year $paymentYear = null)
+    public static function create(Collection $distances, CupEvent $cupEvent, Year $paymentYear = null): Criteria
     {
         return new Criteria([
             'distances' => $distances->pluck('id')->unique(),

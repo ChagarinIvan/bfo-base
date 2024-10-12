@@ -20,6 +20,7 @@ final class EventHandlerServiceProvider extends EventServiceProvider
             $this->app->path('Application/Handler/Cup'),
             $this->app->path('Application/Handler/Person'),
             $this->app->path('Application/Handler/PersonPrompt'),
+            $this->app->path('Application/Handler/Rank'),
         ];
     }
 }

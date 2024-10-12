@@ -12,11 +12,12 @@ use App\Domain\Event\Event\EventCreated;
 use App\Domain\Event\Event\EventDisabled;
 use App\Domain\Event\Event\EventUpdated;
 use App\Domain\ProtocolLine\ProtocolLine;
+use App\Domain\Rank\Rank;
 use App\Domain\Shared\AggregatedModel;
 use App\Infrastracture\Laravel\Eloquent\Auth\ImpressionCast;
 use App\Models\Flag;
-use App\Domain\Rank\Rank;
 use Carbon\Carbon;
+use Database\Factories\Domain\Event\EventFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -45,6 +46,7 @@ use Illuminate\Support\Collection;
  */
 class Event extends AggregatedModel
 {
+    /** @see EventFactory */
     use HasFactory;
 
     protected $table = 'events';
