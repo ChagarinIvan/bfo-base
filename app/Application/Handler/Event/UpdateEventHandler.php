@@ -26,7 +26,6 @@ final readonly class UpdateEventHandler extends ParseProtocolHandler
         protected DistanceService $distanceService,
         protected CupsService $cupsService,
     ) {
-        parent::__construct($storage, $parser, $protocolLineService, $identService);
     }
 
     public function handle(EventUpdated $systemEvent): void

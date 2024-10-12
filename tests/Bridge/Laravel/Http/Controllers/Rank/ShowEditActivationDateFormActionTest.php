@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Bridge\Laravel\Http\Controllers\Rank;
 
 use App\Bridge\Laravel\Http\Controllers\Rank\ShowEditActivationDateFormAction;
@@ -8,12 +10,13 @@ use App\Domain\Event\Event;
 use App\Domain\Person\Person;
 use App\Domain\Rank\Rank;
 use App\Domain\User\User;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
-use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Http\Response;
 use Tests\CreatesApplication;
 use Tests\TestCase;
-use Illuminate\Http\Response;
+use function sprintf;
 
 final class ShowEditActivationDateFormActionTest extends TestCase
 {
