@@ -21,6 +21,7 @@ class ParserFactory
         HandicapAlbatrosTimingParser::class,
         AlbatrosRelayParser::class,
         AlbatrosRelayWithHeadersParser::class,
+        AlbatrosTimingWithRegionParser::class,
         AlbatrosTimingParser::class,
         OBelarusNetRelayWithHeadersParser::class,
         OBelarusNetRelayParser::class,
