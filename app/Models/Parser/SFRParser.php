@@ -61,10 +61,17 @@ class SFRParser extends AbstractParser
                 $distancePoints = (int)$match[2];
                 $distanceLength = (float)str_replace(',', '.', $match[1]) * 1000;
             }
+
+            //Ж10, 7КП, 0,9 км, контрольное время 75 мин.
+            if (preg_match('#(\d+)\D+?,\s+(\d+,\d+)\s+\D+#', $nodesMatch[1][$nodeIndex], $match)) {
+                $distancePoints = (int)$match[1];
+                $distanceLength = (float)str_replace(',', '.', $match[2]) * 1000;
+            }
+
             for ($index = 1; $index < $linesCount; $index++) {
                 $skip = false;
                 $line = trim($linesMatch[1][$index]);
-                preg_match_all('#<td[^>]*><nobr>(.*?)</td>#msi', $line, $lineMatch);
+                preg_match_all('#<td[^>]*>(?:<nobr>)?(.*?)(?:<nobr>)?</td>#msi', $line, $lineMatch);
                 $protocolLine = [
                     'group' => $groupName,
                     'distance' => [
@@ -136,6 +143,10 @@ class SFRParser extends AbstractParser
             return 'year';
         }
 
+        if (str_contains($field, 'ып.') && str_contains($field, 'азр.')) {
+            return 'complete_rank';
+        }
+
         if (str_contains($field, 'азр.')) {
             return 'rank';
         }
@@ -152,9 +163,10 @@ class SFRParser extends AbstractParser
             return 'place';
         }
 
-        if (str_contains($field, 'ып.')) {
-            return 'complete_rank';
+        if (str_contains($field, 'чки')) {
+            return 'points';
         }
+
         return '';
     }
 
@@ -183,6 +195,7 @@ class SFRParser extends AbstractParser
             case 'runner_number':
             case 'serial_number':
             case 'year':
+            case 'points':
                 return (int)$columnData;
             case 'lastname':
             case 'club':
