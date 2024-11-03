@@ -114,9 +114,10 @@ class MasterCupType extends AbstractCupType
             $results = $results->merge($eventGroupResults->intersectByKeys($groupProtocolLines->keyBy('person_id')));
         }
 
-        dump($results);
+        dump($equalGroupResults);
         $eventGroupResults = $this->calculateLines($cupEvent, $equalGroupResults);
-        $results = $results->merge($eventGroupResults->intersectByKeys($groupProtocolLines->keyBy('person_id')));
+        dump($eventGroupResults);
+        $results = $results->merge($eventGroupResults->intersectByKeys($equalGroupResults->keyBy('person_id')));
         dump($results);
 
         return $results->sortByDesc(static fn (CupEventPoint $cupEventResult) => $cupEventResult->points);
