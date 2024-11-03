@@ -67,7 +67,6 @@ class MasterCupType extends AbstractCupType
         $validGroups = $eventGroupsId->flip();
         /** @var Collection<string, mixed> $validGroups */
         $cupEventProtocolLines = $cupEventProtocolLines->intersectByKeys($validGroups);
-        dump($cupEventProtocolLines);
         $groups = $this->groupsService->getCupEventGroups($cupEvent);
 
         $mainGroupExist = $groups
@@ -88,6 +87,13 @@ class MasterCupType extends AbstractCupType
             ->count() > 0
         ;
 
+        $equalDistances = Collection::make();
+        $mainDistance = $this->distanceService->findDistance(self::GROUPS_MAP[$mainGroup->id()], $cupEvent->event_id);
+        if ($mainDistance) {
+            $equalDistances = $this->distanceService->getEqualDistances($mainDistance);
+        }
+
+        dump($equalDistances);
         foreach ($cupEventProtocolLines as $groupId => $groupProtocolLines) {
             $this->groupsService->getGroup($groupId);
             if (
