@@ -89,11 +89,14 @@ class MasterCupType extends AbstractCupType
 
         $equalDistances = Collection::make();
         $mainDistance = $this->distanceService->findDistance(self::GROUPS_MAP[$mainGroup->id()], $cupEvent->event_id);
+        dump($mainDistance);
         if ($mainDistance) {
             $equalDistances = $this->distanceService->getEqualDistances($mainDistance);
+            dump($equalDistances);
         }
 
         $equalGroupsIds = $equalDistances->pluck('group_id');
+        $equalGroupResults = Collection::make();
         foreach ($cupEventProtocolLines as $groupId => $groupProtocolLines) {
             if (
                 // это объединение групп
@@ -103,14 +106,18 @@ class MasterCupType extends AbstractCupType
             ) {
                 $eventGroupResults = $this->calculateLines($cupEvent, $groupProtocolLines);
             } else if ($equalGroupsIds->contains($groupId)) {
-                $eventGroupResults = $this->calculateLines($cupEvent, $groupProtocolLines);
-                dump($eventGroupResults);
+                $equalGroupResults->push(...$groupProtocolLines);
             } else {
                 $eventGroupResults = $this->calculateGroup($cupEvent, $groupId);
             }
 
             $results = $results->merge($eventGroupResults->intersectByKeys($groupProtocolLines->keyBy('person_id')));
         }
+
+        dump($results);
+        $eventGroupResults = $this->calculateLines($cupEvent, $equalGroupResults);
+        $results = $results->merge($eventGroupResults->intersectByKeys($groupProtocolLines->keyBy('person_id')));
+        dump($results);
 
         return $results->sortByDesc(static fn (CupEventPoint $cupEventResult) => $cupEventResult->points);
     }
