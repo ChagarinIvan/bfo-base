@@ -93,9 +93,8 @@ class MasterCupType extends AbstractCupType
             $equalDistances = $this->distanceService->getEqualDistances($mainDistance);
         }
 
-        dump($equalDistances);
+        $equalGroupsIds = $equalDistances->pluck('group_id');
         foreach ($cupEventProtocolLines as $groupId => $groupProtocolLines) {
-            $this->groupsService->getGroup($groupId);
             if (
                 // это объединение групп
                 // тут надо разделять
@@ -103,6 +102,9 @@ class MasterCupType extends AbstractCupType
                 || (!$mainGroupExist && $previousGroupExist)
             ) {
                 $eventGroupResults = $this->calculateLines($cupEvent, $groupProtocolLines);
+            } else if ($equalGroupsIds->contains($groupId)) {
+                $eventGroupResults = $this->calculateLines($cupEvent, $groupProtocolLines);
+                dump($eventGroupResults);
             } else {
                 $eventGroupResults = $this->calculateGroup($cupEvent, $groupId);
             }
