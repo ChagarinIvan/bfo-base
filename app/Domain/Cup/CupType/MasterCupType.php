@@ -87,11 +87,11 @@ class MasterCupType extends AbstractCupType
             ->count() > 0
         ;
 
-        $equalDistances = Collection::make();
         $mainDistance = $this->distanceService->findDistance(self::GROUPS_MAP[$mainGroup->id()], $cupEvent->event_id);
+        $equalDistances = Collection::make([$mainDistance]);
 
         if ($mainDistance) {
-            $equalDistances = $this->distanceService->getEqualDistances($mainDistance);
+            $equalDistances->push(...$this->distanceService->getEqualDistances($mainDistance));
         }
 
         $equalGroupsIds = $equalDistances->pluck('group_id');
