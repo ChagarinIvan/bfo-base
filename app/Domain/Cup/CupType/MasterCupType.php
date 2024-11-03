@@ -97,6 +97,7 @@ class MasterCupType extends AbstractCupType
 
         $equalGroupsIds = $equalDistances->pluck('group_id');
         $equalGroupResults = Collection::make();
+        $eventGroupResults = Collection::make();
         foreach ($cupEventProtocolLines as $groupId => $groupProtocolLines) {
             if (
                 // это объединение групп
