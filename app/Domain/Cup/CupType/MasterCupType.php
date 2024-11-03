@@ -50,6 +50,7 @@ class MasterCupType extends AbstractCupType
     {
         $results = new Collection();
         $cupEventProtocolLines = $this->getGroupProtocolLines($cupEvent, $mainGroup);
+        dump($cupEventProtocolLines);
         $eventGroupsId = $this->getEventGroups($mainGroup->male())->pluck('id');
 
         $eventDistances = $this->distanceService
