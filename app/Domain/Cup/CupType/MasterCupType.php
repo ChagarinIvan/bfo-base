@@ -13,6 +13,7 @@ use App\Domain\Cup\Group\GroupMale;
 use App\Domain\ProtocolLine\ProtocolLine;
 use Illuminate\Support\Collection;
 use function in_array;
+use function PHPStan\dumpType;
 
 class MasterCupType extends AbstractCupType
 {
@@ -50,7 +51,6 @@ class MasterCupType extends AbstractCupType
     {
         $results = new Collection();
         $cupEventProtocolLines = $this->getGroupProtocolLines($cupEvent, $mainGroup);
-        dump($cupEventProtocolLines);
         $eventGroupsId = $this->getEventGroups($mainGroup->male())->pluck('id');
 
         $eventDistances = $this->distanceService
@@ -59,6 +59,7 @@ class MasterCupType extends AbstractCupType
             ->toArray()
         ;
 
+        dump($eventDistances);
         $cupEventProtocolLines = $cupEventProtocolLines->filter(
             static fn (ProtocolLine $protocolLine) => in_array($protocolLine->distance_id, $eventDistances, true)
         );
