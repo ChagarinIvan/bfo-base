@@ -59,7 +59,6 @@ class MasterCupType extends AbstractCupType
             ->toArray()
         ;
 
-        dump($eventDistances);
         $cupEventProtocolLines = $cupEventProtocolLines->filter(
             static fn (ProtocolLine $protocolLine) => in_array($protocolLine->distance_id, $eventDistances, true)
         );
@@ -68,6 +67,7 @@ class MasterCupType extends AbstractCupType
         $validGroups = $eventGroupsId->flip();
         /** @var Collection<string, mixed> $validGroups */
         $cupEventProtocolLines = $cupEventProtocolLines->intersectByKeys($validGroups);
+        dump($cupEventProtocolLines);
         $groups = $this->groupsService->getCupEventGroups($cupEvent);
 
         $mainGroupExist = $groups
