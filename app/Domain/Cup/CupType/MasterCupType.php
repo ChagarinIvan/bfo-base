@@ -13,6 +13,7 @@ use App\Domain\Cup\Group\GroupMale;
 use App\Domain\ProtocolLine\ProtocolLine;
 use Illuminate\Support\Collection;
 use function in_array;
+use function PHPStan\dumpType;
 
 class MasterCupType extends AbstractCupType
 {
@@ -86,8 +87,17 @@ class MasterCupType extends AbstractCupType
             ->count() > 0
         ;
 
+        $mainDistance = $this->distanceService->findDistance(self::GROUPS_MAP[$mainGroup->id()], $cupEvent->event_id);
+        $equalDistances = Collection::make([$mainDistance]);
+
+        if ($mainDistance) {
+            $equalDistances->push(...$this->distanceService->getEqualDistances($mainDistance));
+        }
+
+        $equalGroupsIds = $equalDistances->pluck('group_id');
+        $equalGroupResults = Collection::make();
+        $eventGroupResults = Collection::make();
         foreach ($cupEventProtocolLines as $groupId => $groupProtocolLines) {
-            $this->groupsService->getGroup($groupId);
             if (
                 // это объединение групп
                 // тут надо разделять
@@ -95,12 +105,17 @@ class MasterCupType extends AbstractCupType
                 || (!$mainGroupExist && $previousGroupExist)
             ) {
                 $eventGroupResults = $this->calculateLines($cupEvent, $groupProtocolLines);
+            } else if ($equalGroupsIds->contains($groupId)) {
+                $equalGroupResults->push(...$groupProtocolLines);
             } else {
                 $eventGroupResults = $this->calculateGroup($cupEvent, $groupId);
             }
 
             $results = $results->merge($eventGroupResults->intersectByKeys($groupProtocolLines->keyBy('person_id')));
         }
+
+        $eventGroupResults = $this->calculateLines($cupEvent, $equalGroupResults);
+        $results = $results->merge($eventGroupResults->intersectByKeys($equalGroupResults->keyBy('person_id')));
 
         return $results->sortByDesc(static fn (CupEventPoint $cupEventResult) => $cupEventResult->points);
     }
