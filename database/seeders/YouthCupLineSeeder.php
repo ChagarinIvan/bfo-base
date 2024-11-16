@@ -32,7 +32,7 @@ class YouthCupLineSeeder extends Seeder
 
         Distance::factory(state: ['id' => 101, 'group_id' => 101, 'event_id' => 101, 'length' => 2600, 'points' => 26])->createOne();
 
-        Person::factory(state: ['id' => 101, 'lastname' => 'Миссюревич', 'firstname' => 'Алексей', 'citizenship' => 'other', 'birthday' => '2006-01-01'])->createOne();
+        Person::factory(state: ['id' => 101, 'lastname' => 'Миссюревич', 'firstname' => 'Алексей', 'citizenship' => 'other', 'birthday' => '2006-02-02'])->createOne();
         Person::factory(state: ['id' => 102, 'lastname' => 'Волчкевич', 'firstname' => 'Ярослав', 'citizenship' => 'belarus', 'birthday' => '2006-01-01'])->createOne();
         Person::factory(state: ['id' => 103, 'lastname' => 'Виненко', 'firstname' => 'Александр', 'citizenship' => 'belarus', 'birthday' => '2007-01-01'])->createOne();
 
