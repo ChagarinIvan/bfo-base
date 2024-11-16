@@ -65,7 +65,7 @@ final readonly class ProtocolLinesRepository implements ProtocolLineRepository
         ;
 
         if ($finishYear) {
-            $protocolLinesQuery->where('person.birthday', '<=', "$finishYear-01-01");
+            $protocolLinesQuery->where('person.birthday', '<=', "$finishYear-12-31");
         }
 
         if ($startYear) {
