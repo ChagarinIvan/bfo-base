@@ -9,6 +9,7 @@
     use App\Bridge\Laravel\Http\Controllers\Event\ShowEventDistanceAction;
     use App\Bridge\Laravel\Http\Controllers\Event\ShowUnitEventsFormAction;
     use App\Bridge\Laravel\Http\Controllers\Flags\ShowFlagEventsAction;
+    use App\Bridge\Laravel\Http\Controllers\Event\DownloadEventProtocolAction;
     use App\Bridge\Laravel\Http\Controllers\Event\ShowEventAction;
     use Illuminate\Support\Str;
     /**
@@ -24,14 +25,14 @@
 @section('content')
     <div class="row">
         @auth
-        <div class="col-12">
-            <h4>
-                {{ __('app.common.created') }}:
-                <x-impression :impression="$competition->created"/>
-                {{ __('app.common.updated') }}:
-                <x-impression :impression="$competition->updated"/>
-            </h4>
-        </div>
+            <div class="col-12">
+                <h4>
+                    {{ __('app.common.created') }}:
+                    <x-impression :impression="$competition->created"/>
+                    {{ __('app.common.updated') }}:
+                    <x-impression :impression="$competition->updated"/>
+                </h4>
+            </div>
         @endauth
         <div class="col-12">
             @auth
@@ -114,6 +115,11 @@
                                           url="{{ action(ShowAddFlagToEventFormAction::class, [$event->id]) }}"
                                 />
                                 <x-edit-button url="{{ action(ShowEditEventFormAction::class, [$event->id]) }}"/>
+                                <x-button text="app.common.download"
+                                          color="warning"
+                                          icon="download"
+                                          url="{{ action(DownloadEventAction::class, [$event->id]) }}"
+                                />
                                 <x-modal-button modal-id="deleteModal{{ $event->id }}"/>
                             </td>
                         @endauth

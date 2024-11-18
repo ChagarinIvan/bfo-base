@@ -68,6 +68,7 @@ class WebRoutesServiceProvider extends ServiceProvider
                         $this->route->post('{competition}/unit', Event\UnitEventsAction::class);
                         $this->route->get('{event}/delete', Event\DeleteEventAction::class);
                         $this->route->get('{event}/edit', Event\ShowEditEventFormAction::class);
+                        $this->route->get('{event}/download', Event\DownloadEventProtocolAction::class);
                         $this->route->post('{eventId}/update', Event\UpdateEventAction::class);
                         $this->route->get('{event}/add-flags', Event\ShowAddFlagToEventFormAction::class);
                         $this->route->get('{event}/{flag}/set', Event\AddFlagToEventAction::class);
