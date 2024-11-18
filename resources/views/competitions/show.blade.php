@@ -118,7 +118,7 @@
                                 <x-button text="app.common.download"
                                           color="warning"
                                           icon="download"
-                                          url="{{ action(DownloadEventAction::class, [$event->id]) }}"
+                                          url="{{ action(DownloadEventProtocolAction::class, [$event->id]) }}"
                                 />
                                 <x-modal-button modal-id="deleteModal{{ $event->id }}"/>
                             </td>
