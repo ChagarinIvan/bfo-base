@@ -6,6 +6,7 @@ namespace App\Application\Dto\Event;
 
 use App\Application\Dto\Auth\AuthAssembler;
 use App\Domain\Event\Event;
+use App\Domain\Event\Protocol;
 
 final readonly class EventAssembler
 {
@@ -28,6 +29,15 @@ final readonly class EventAssembler
             flags: $event->flags->all(),
             created: $this->authAssembler->toImpressionDto($event->created),
             updated: $this->authAssembler->toImpressionDto($event->updated)
+        );
+    }
+
+    public function toViewEventProtocolDto(Event $event, Protocol $eventProtocol): ViewEventProtocolDto
+    {
+        return new ViewEventProtocolDto(
+            name: $event->date . '_' . $event->name,
+            content: $eventProtocol->content,
+            extension: $eventProtocol->extension,
         );
     }
 }
