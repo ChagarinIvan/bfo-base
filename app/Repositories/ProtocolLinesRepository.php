@@ -109,7 +109,9 @@ final readonly class ProtocolLinesRepository implements ProtocolLineRepository
     public function getCupEventDistanceProtocolLines(int $distanceId): Collection
     {
         return ProtocolLine::where('protocol_lines.distance_id', $distanceId)
+            ->join('person', 'person.id', '=', 'protocol_lines.person_id')
             ->where('protocol_lines.vk', false)
+            ->where('person.citizenship', Citizenship::BELARUS->value)
             ->get()
         ;
     }
