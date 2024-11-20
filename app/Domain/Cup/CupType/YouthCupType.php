@@ -181,6 +181,7 @@ class YouthCupType extends MasterCupType
     {
         $results = new Collection();
         $ageParticipants = $this->getGroupProtocolLines($cupEvent, $mainGroup);
+        dd($ageParticipants);
         $ageParticipants = $ageParticipants->groupBy('distance_id');
         $mainGroups = $this->getEventGroups($mainGroup->male())->pluck('id');
         $eventDistances = $this->distanceService
