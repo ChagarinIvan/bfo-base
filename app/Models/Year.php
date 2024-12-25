@@ -36,4 +36,12 @@ enum Year: int
     case y2020 = 2020;
     case y2019 = 2019;
     case y2018 = 2018;
+    case y2017 = 2017;
+    case y2016 = 2016;
+    case y2015 = 2015;
+    case y2014 = 2014;
+    case y2013 = 2013;
+    case y2012 = 2012;
+    case y2011 = 2011;
+    case y2010 = 2010;
 }

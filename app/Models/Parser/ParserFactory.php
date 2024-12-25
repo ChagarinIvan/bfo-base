@@ -16,6 +16,7 @@ class ParserFactory
     private const PROTOCOL_PARSERS = [
         ElkPathXlsxParser::class,
         XlsParser::class,
+        OldObelarusNetXlsxParser::class,
         XlsxParser::class,
         SFRParser::class,
         HandicapAlbatrosTimingParser::class,
