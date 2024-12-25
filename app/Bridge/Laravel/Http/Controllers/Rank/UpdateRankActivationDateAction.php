@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Bridge\Laravel\Http\Controllers\Rank;
 
 use App\Application\Dto\Rank\ActivationDto;
+use App\Application\Dto\Rank\UpdateActivationDto;
 use App\Application\Service\Rank\ActivateRank;
 use App\Application\Service\Rank\ActivateRankService;
 use App\Application\Service\Rank\UpdateRankActivationDate;
@@ -18,7 +19,7 @@ final class UpdateRankActivationDateAction extends BaseController
 
     public function __invoke(
         string $id,
-        ActivationDto $activation,
+        UpdateActivationDto $activation,
         UpdateRankActivationDateService $service,
     ): RedirectResponse {
         $rank = $service->execute(new UpdateRankActivationDate($id, $activation));

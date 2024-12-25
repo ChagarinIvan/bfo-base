@@ -44,4 +44,14 @@ enum Year: int
     case y2012 = 2012;
     case y2011 = 2011;
     case y2010 = 2010;
+    case y2009 = 2009;
+    case y2008 = 2008;
+    case y2007 = 2007;
+    case y2006 = 2006;
+    case y2005 = 2005;
+    case y2004 = 2004;
+    case y2003 = 2003;
+    case y2002 = 2002;
+    case y2001 = 2001;
+    case y2000 = 2000;
 }
