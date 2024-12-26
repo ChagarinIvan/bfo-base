@@ -36,6 +36,7 @@ trait Action
             if ($parameter instanceof AbstractDto) {
                 try {
                     if (!empty($parameter->requestValidationRules())) {
+                        dd($_POST);
                         $validated = array_merge($this->request->validate($parameter::requestValidationRules()), $validated);
                     }
                     if (!empty($parameter->parametersValidationRules())) {
