@@ -13,7 +13,7 @@ final class UpdateActivationDto extends AbstractDto
     public static function requestValidationRules(): array
     {
         return [
-            'date' => 'date',
+            'date' => 'nullable|date',
         ];
     }
 

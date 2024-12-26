@@ -77,7 +77,7 @@ final class UpdateRankActivationDateActionTest extends TestCase
         /** @var Rank $rank */
         $rank = Rank::factory()->createOne(['person_id' => 102, 'rank' => Rank::SMC_RANK, 'event_id' => 102, 'start_date' => '2024-02-20', 'activated_date' => '2024-02-20']);
 
-        $this->post("/ranks/$rank->id/update-activation")->assertStatus(Response::HTTP_FOUND);
+        $this->post("/ranks/$rank->id/update-activation", ['date' => ''])->assertStatus(Response::HTTP_FOUND);
 
         $this->assertDatabaseHas('protocol_lines', [
             'id' => 107,
