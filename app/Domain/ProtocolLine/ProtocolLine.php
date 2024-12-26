@@ -96,7 +96,7 @@ class ProtocolLine extends AggregatedModel
         $this->distance_id = $distanceId;
     }
 
-    public function activateRank(Carbon $date): void
+    public function activateRank(?Carbon $date): void
     {
         $this->activate_rank = $date;
 

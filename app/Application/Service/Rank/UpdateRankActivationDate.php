@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace App\Application\Service\Rank;
 
 use App\Application\Dto\Rank\ActivationDto;
+use App\Application\Dto\Rank\UpdateActivationDto;
 use Carbon\Carbon;
 
 final readonly class UpdateRankActivationDate
 {
     public function __construct(
         private string $id,
-        private ActivationDto $dto,
+        private UpdateActivationDto $dto,
     ) {
     }
 
@@ -20,8 +21,8 @@ final readonly class UpdateRankActivationDate
         return (int) $this->id;
     }
 
-    public function date(): Carbon
+    public function date(): ?Carbon
     {
-        return Carbon::parse($this->dto->date);
+        return $this->dto->date ? Carbon::parse($this->dto->date) : null;
     }
 }

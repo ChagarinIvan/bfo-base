@@ -36,7 +36,7 @@ final class OldObelarusNetXlsxParserTest extends AbstractParser
                         'КМС',       //разряд
                         30,          //номер
                         null,        //время
-                        '-',        //место
+                        null,        //место
                         null,        //выполненный разряд
                         null,        //очки
                     ],
