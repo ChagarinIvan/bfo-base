@@ -29,6 +29,7 @@ class CheckPersonsRanksAction extends AbstractRankAction
         $persons = $this->personsService->getPersons($personsList->values())->keyBy('id');
         $ranks = $this->rankService->getActualRanks($personsList->values());
 
+        /** @see /resources/views/ranks/check-list.blade.php */
         return $this->view(
             'ranks.check-list',
             compact('list', 'ranks', 'personsList', 'persons')

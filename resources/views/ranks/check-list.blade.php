@@ -1,8 +1,13 @@
 @php
-    use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonAction;use App\Bridge\Laravel\Http\Controllers\Rank\ShowPersonRanksAction;use App\Domain\Person\Person;use App\Domain\Rank\Rank;use Illuminate\Support\Collection;
+    use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonAction;
+    use App\Bridge\Laravel\Http\Controllers\Rank\ShowPersonRanksAction;
+    use App\Domain\Person\Person;
+    use App\Domain\Rank\Rank;
+    use App\Application\Dto\Rank\ViewRankDto;
+    use Illuminate\Support\Collection;
     /**
      * @var Collection $list;
-     * @var Collection|Rank[] $ranks;
+     * @var Collection|ViewRankDto[] $ranks;
      * @var Collection|Person[] $persons;
      * @var Collection $personsList;
      */

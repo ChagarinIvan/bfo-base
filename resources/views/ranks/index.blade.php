@@ -3,10 +3,10 @@
     use App\Bridge\Laravel\Http\Controllers\Rank\ShowCheckPersonsRanksFormAction;
     use App\Bridge\Laravel\Http\Controllers\Rank\ShowPersonRanksAction;
     use App\Bridge\Laravel\Http\Controllers\Rank\ShowRanksListAction;
-    use App\Domain\Rank\Rank;
+    use App\Application\Dto\Rank\ViewRankDto;
     use Illuminate\Support\Collection;
     /**
-     * @var Collection|Rank[] $ranks;
+     * @var Collection|ViewRankDto[] $ranks;
      * @var string $selectedRank;
      */
 @endphp
@@ -67,22 +67,22 @@
                         <th data-sortable="true">{{ __('app.rank.finished_date') }}</th>
                     </tr>
                     </thead>
-                    <tbody>
+                    <tbody>personFirstName
                     @foreach ($ranks as $rank)
                         <tr>
                             <td>
-                                <a href="{{ action(ShowPersonRanksAction::class, [$rank->person_id]) }}"
-                                >{{ $rank->person->lastname }} {{ $rank->person->firstname }}</a>
+                                <a href="{{ action(ShowPersonRanksAction::class, [$rank->personId]) }}"
+                                >{{ $rank->personLastname }} {{ $rank->personFirstname }}</a>
                             </td>
-                            <td>{{ $rank->start_date->format('Y-m-d') }}</td>
-                            <td>{{ $rank->activated_date->format('Y-m-d') }}</td>
+                            <td>{{ $rank->startDate) }}</td>
+                            <td>{{ $rank->activatedDate }}</td>
                             <td>
-                                @if ($rank->event_id !== null)
-                                    <a href="{{ action(ShowEventDistanceAction::class, [$rank->event->distances->first()]) }}"
-                                    >{{ $rank->event->date->format('Y-m-d') }}</a>
+                                @if ($rank->distanceId)
+                                    <a href="{{ action(ShowEventDistanceAction::class, [$rank->distanceId]) }}"
+                                    >{{ $rank->eventDate }}</a>
                                 @endif
                             </td>
-                            <td>{{ $rank->finish_date->format('Y-m-d') }}</td>
+                            <td>{{ $rank->finishDate }}</td>
                         </tr>
                     @endforeach
                     </tbody>

@@ -18,6 +18,8 @@ use function mb_convert_case;
 use function mb_strtolower;
 use function preg_match;
 use function str_contains;
+use function str_replace;
+use function strlen;
 use function strtolower;
 use function sys_get_temp_dir;
 use function tempnam;

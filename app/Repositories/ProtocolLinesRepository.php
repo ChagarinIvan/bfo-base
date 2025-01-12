@@ -165,6 +165,17 @@ final readonly class ProtocolLinesRepository implements ProtocolLineRepository
         return $protocolLine;
     }
 
+    public function oneByCriteria(Criteria $criteria): ?ProtocolLine
+    {
+        /** @var ProtocolLine|null $protocolLine */
+        $protocolLine = $this
+            ->buildQuery($criteria)
+            ->first()
+        ;
+
+        return $protocolLine;
+    }
+
     public function update(ProtocolLine $protocolLine): void
     {
         $protocolLine->save();
@@ -176,6 +187,10 @@ final readonly class ProtocolLinesRepository implements ProtocolLineRepository
 
         if ($criteria->hasParam('personId')) {
             $query->where('person_id', $criteria->param('personId'));
+        }
+
+        if ($criteria->hasParam('year')) {
+            $query->where('events.date', 'LIKE', $criteria->param('year')->value . '-%');
         }
 
         if ($criteria->hasParam('eventId')) {

@@ -6,6 +6,8 @@ namespace App\Domain\Rank;
 
 use App\Domain\Event\Event;
 use App\Domain\Person\Person;
+use App\Domain\Rank\Event\RankCreated;
+use App\Domain\Shared\AggregatedModel;
 use Carbon\Carbon;
 use Database\Factories\Domain\Rank\RankFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -31,7 +33,7 @@ use function str_replace;
  * @property-read Event|null $event
  * @property-read Person $person
  */
-class Rank extends Model
+class Rank extends AggregatedModel
 {
     /** @see RankFactory */
     use HasFactory;
@@ -170,5 +172,12 @@ class Rank extends Model
     public function person(): HasOne
     {
         return $this->hasOne(Person::class, 'id', 'person_id');
+    }
+
+    public function create(): void
+    {
+        $this->recordThat(new RankCreated($this));
+
+        $this->save();
     }
 }

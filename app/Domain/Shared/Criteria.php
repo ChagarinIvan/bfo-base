@@ -41,4 +41,9 @@ readonly class Criteria
     {
         return $this->params[$key] ?? new OutOfRangeException('Has no param.');
     }
+
+    public function paramOrDefault(string $key, mixed $default = null): mixed
+    {
+        return $this->params[$key] ?? $default;
+    }
 }

@@ -4,21 +4,22 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Http\Resources;
 
+use App\Application\Service\Rank\ActivePersonRank;
+use App\Application\Service\Rank\ActivePersonRankService;
 use App\Domain\Person\Person;
-use App\Services\RankService;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * @mixin Person
  */
-class PersonResource extends JsonResource
+final class PersonResource extends JsonResource
 {
-    private RankService $rankService;
+    private ActivePersonRankService $activePersonRank;
 
     public function __construct($resource)
     {
         parent::__construct($resource);
-        $this->rankService = app(RankService::class);
+        $this->activePersonRank = app(ActivePersonRankService::class);
     }
 
     public function toArray($request): array
@@ -31,7 +32,7 @@ class PersonResource extends JsonResource
             'events_count' => $this->protocol_lines_count,
             'club_id' => $this->club_id,
             'club_name' => $this->club?->name,
-            'rank' => $this->rankService->getActiveRank($this->id)?->rank
+            'rank' => $this->activePersonRank->execute(new ActivePersonRank((string)$this->id))?->rank
         ];
     }
 }

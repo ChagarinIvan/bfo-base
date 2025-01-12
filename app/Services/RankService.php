@@ -7,15 +7,19 @@ namespace App\Services;
 use App\Application\Service\Person\Exception\PersonNotFound;
 use App\Application\Service\Person\ViewPerson;
 use App\Application\Service\Person\ViewPersonService;
+use App\Application\Service\Rank\ActivePersonRank;
+use App\Application\Service\Rank\ActivePersonRankService;
 use App\Domain\Event\Event;
 use App\Domain\ProtocolLine\ProtocolLine;
+use App\Domain\Rank\Factory\RankFactory;
+use App\Domain\Rank\Factory\RankInput;
+use App\Domain\Rank\JuniorRankAgeValidator;
 use App\Domain\Rank\Rank;
 use App\Filters\RanksFilter;
 use App\Models\Year;
 use App\Repositories\RanksRepository;
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
-use function in_array;
 
 class RankService
 {
@@ -35,8 +39,10 @@ class RankService
     public function __construct(
         private readonly RanksRepository $ranksRepository,
         private readonly ProtocolLineService $protocolLineService,
-        private readonly PersonsService $personsService,
         private readonly ViewPersonService $viewPersonService,
+        private readonly JuniorRankAgeValidator $juniorRankAgeChecker,
+        private readonly ActivePersonRankService $activePersonRankService,
+        private readonly RankFactory $factory,
     ) {
     }
 
@@ -91,7 +97,7 @@ class RankService
         $ranks = Collection::empty();
 
         foreach ($personsIds as $personId) {
-            $actualRank = $this->getActiveRank($personId, $nowDate);
+            $actualRank = $this->activePersonRankService->execute(new ActivePersonRank($personId));
             if ($actualRank && $actualRank->rank === $rank) {
                 $ranks->put($personId, $actualRank);
             }
@@ -100,30 +106,11 @@ class RankService
         return $ranks;
     }
 
-    public function getActiveRank(int $personId, Carbon $date = null): ?Rank
-    {
-        $rank = $this->ranksRepository->getDateRank($personId, $date);
-
-        if ($rank === null) {
-            $rank = $this->ranksRepository->getDateRank($personId);
-        }
-
-        if ($rank === null) {
-            $rank = $this->checkThirdRank($personId);
-        }
-
-        if ($rank !== null) {
-            $rank = $this->createPreviousRank($rank, $date);
-        }
-
-        return $rank;
-    }
-
     public function getActualRanks(Collection $personIds): Collection
     {
         $actualRanks = new Collection();
         foreach ($personIds as $personId) {
-            $rank = $this->getActiveRank($personId);
+            $rank = $this->activePersonRankService->execute(new ActivePersonRank($personId));
             if ($rank) {
                 $actualRanks->put($personId, $rank);
             }
@@ -143,25 +130,31 @@ class RankService
             return;
         }
 
-        if (!$this->checkMaxJuniorAge($protocolLine->person_id, $protocolLine->complete_rank)) {
+        if (!$this->juniorRankAgeChecker->validate($protocolLine->person_id, $protocolLine->complete_rank, Year::actualYear())) {
             return;
         }
 
         $event = $protocolLine->event;
-        $actualRank = $this->getActiveRank($protocolLine->person_id, $protocolLine->event->date);
+        $actualRankDto = $this->activePersonRankService->execute(new ActivePersonRank((string)$protocolLine->person_id, $protocolLine->event->date));
 
-        if ($actualRank) {
-            if ($actualRank->rank === $protocolLine->complete_rank) {
-                $newRank = $actualRank->replicate();
-                $newRank->event_id = $event->id;
-                if ($event->date > ($actualRank->event_id === null ? $actualRank->start_date : $actualRank->event->date)) {
+        if ($actualRankDto) {
+            if ($actualRankDto->rank === $protocolLine->complete_rank) {
+                $newRank = $this->factory->create(new RankInput(
+                    personId: (int) $actualRankDto->personId,
+                    eventId: $event->id,
+                    rank: $actualRankDto->rank,
+                    startDate: Carbon::createFromFormat('Y-m-d', $actualRankDto->startDate),
+                    activatedDate: $protocolLine->activate_rank,
+                ));
+
+                if ($event->date > Carbon::createFromFormat('Y-m-d', ($actualRankDto->eventId === null ? $actualRankDto->startDate : $actualRankDto->eventDate))) {
                     $newRank->finish_date = $event->date->clone()->addYears(2);
                 }
                 $this->ranksRepository->storeRank($newRank);
-            } elseif (self::RANKS_POWER[$protocolLine->complete_rank] > self::RANKS_POWER[$actualRank->rank]) {
+            } elseif (self::RANKS_POWER[$protocolLine->complete_rank] > self::RANKS_POWER[$actualRankDto->rank]) {
                 $ranksFilter = new RanksFilter();
-                $ranksFilter->personId = $actualRank->person_id;
-                $ranksFilter->rank = $actualRank->rank;
+                $ranksFilter->personId = (int) $actualRankDto->personId;
+                $ranksFilter->rank = $actualRankDto->rank;
                 $ranksFilter->startDateLess = $event->date;
                 $ranks = $this->ranksRepository->getRanksList($ranksFilter);
                 $finishDate = $event->date->clone()->addDays(-1);
@@ -176,7 +169,7 @@ class RankService
                 // Надо взять все разряды которые после этой даты
                 // Отсортировать их по дате евента и заново пересохранить
                 $ranksFilter = new RanksFilter();
-                $ranksFilter->personId = $actualRank->person_id;
+                $ranksFilter->personId = (int) $actualRankDto->personId;
                 $ranksFilter->startDateMore = $event->date;
                 $ranks = $this->ranksRepository->getRanksList($ranksFilter);
                 $protocolLines = new Collection();
@@ -218,51 +211,6 @@ class RankService
         $rank->save();
     }
 
-    //еслі разряд просрочілся то создаётся новый с более низким разрядом
-    private function createPreviousRank(Rank $rank, Carbon $date = null): ?Rank
-    {
-        if ($date === null) {
-            $date = new Carbon('now');
-        }
-        if ($rank->finish_date < $date) {
-            if (!isset(Rank::PREVIOUS_RANKS[$rank->rank])) {
-                return null;
-            }
-
-            $newRank = $rank->replicate();
-            $newRank->start_date = $newRank->finish_date->addDay();
-            $newRank->finish_date = $newRank->start_date->addYears(2);
-            $newRank->activated_date = $newRank->start_date;
-            $newRank->event_id = null;
-            $newRank->rank = Rank::PREVIOUS_RANKS[$rank->rank];
-
-            if (!$this->checkMaxJuniorAge($newRank->person_id, $newRank->rank)) {
-                return null;
-            }
-
-            $newRank = $this->ranksRepository->storeRank($newRank);
-
-            return $this->createPreviousRank($newRank, $date);
-        }
-
-        return $rank;
-    }
-
-    /**
-     * подходит ли этот юношеский разряд под возраст, или это вообще не юношеский разряд
-     */
-    private function checkMaxJuniorAge(int $personId, string $rank): bool
-    {
-        if (!in_array($rank, Rank::JUNIOR_RANKS, true)) {
-            return true;
-        }
-
-        $person = $this->personsService->getPerson($personId);
-        $age = Year::actualYear()->value - $person->birthday?->year;
-
-        return $age <= Rank::MAX_JUNIOR_AGE;
-    }
-
     private function createNewRank(ProtocolLine $protocolLine): Rank
     {
         $lastRank = new Rank();
@@ -274,35 +222,5 @@ class RankService
         $lastRank->activated_date = $protocolLine->activate_rank;
 
         return $lastRank;
-    }
-
-    /**
-     * Присвоение 3ю разряда за 3 успешных старта
-     */
-    private function checkThirdRank(int $personId): ?Rank
-    {
-        foreach(Year::cases() as $year) {
-            if (!$this->checkMaxJuniorAge($personId, Rank::JUNIOR_THIRD_RANK)) {
-                continue;
-            }
-
-            $results = $this->protocolLineService->getPersonProtocolLines($personId, $year);
-            $results = $results->filter(static fn (ProtocolLine $line) => $line->time !== null && !$line->vk);
-            if ($results->count() >= 3) {
-                $results = $results
-                    ->sortBy(static fn (ProtocolLine $line) => $line->event->date)
-                    ->slice(0, 3)
-                    ->values()
-                ;
-
-                $rank = $this->createNewRank($results->get(2));
-                $rank->rank = Rank::JUNIOR_THIRD_RANK;
-                $rank->save();
-
-                return $rank;
-            }
-        }
-
-        return null;
     }
 }

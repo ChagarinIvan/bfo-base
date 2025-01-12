@@ -35,7 +35,7 @@ final class ActivateRankServiceTest extends TestCase
             $this->ranks = $this->createMock(RankRepository::class),
             $this->protocolLines = $this->createMock(ProtocolLineRepository::class),
             new DummyTransactional,
-            new RankAssembler,
+            new RankAssembler( $this->protocolLines ),
         );
     }
 
