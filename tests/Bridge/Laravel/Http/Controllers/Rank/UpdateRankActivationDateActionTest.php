@@ -60,4 +60,37 @@ final class UpdateRankActivationDateActionTest extends TestCase
             'activated_date' => '2024-02-21',
         ]);
     }
+
+    /**
+     * @test
+     * @see UpdateRankActivationDateAction::class
+     */
+    public function it_removes_ranks_activation_date(): void
+    {
+        /** @var Authenticatable&User $user */
+        $user = User::factory()->createOne();
+        $this->actingAs($user);
+
+        $this->seed(ProtocolLinesSeeder::class);
+
+        ProtocolLine::factory()->createOne(['id' => 107, 'distance_id' => 104, 'complete_rank' => Rank::SMC_RANK, 'person_id' => 102]);
+        /** @var Rank $rank */
+        $rank = Rank::factory()->createOne(['person_id' => 102, 'rank' => Rank::SMC_RANK, 'event_id' => 102, 'start_date' => '2024-02-20', 'activated_date' => '2024-02-20']);
+
+        $this->post("/ranks/$rank->id/update-activation", ['date' => ''])->assertStatus(Response::HTTP_FOUND);
+
+        $this->assertDatabaseHas('protocol_lines', [
+            'id' => 107,
+            'person_id' => 102,
+            'activate_rank' => null,
+        ]);
+
+        $this->assertDatabaseHas('ranks', [
+            'person_id' => 102,
+            'event_id' => 102,
+            'rank' => Rank::SMC_RANK,
+            'start_date' => '2022-03-02',
+            'activated_date' => null,
+        ]);
+    }
 }

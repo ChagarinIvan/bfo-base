@@ -15,7 +15,7 @@
         <form method="POST" action="{{ action(ActivatePersonRankAction::class, [$rank->id]) }}">
             @csrf
             <div class="form-floating mb-3">
-                <input class="form-control" type="date" id="date" name="date">
+                <input class="form-control" type="date" id="date" name="date" required>
                 <label for="date">{{ __('app.common.date') }}</label>
             </div>
             <div class="col-12">
