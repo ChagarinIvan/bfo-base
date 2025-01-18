@@ -93,6 +93,7 @@ final class ActivateRankServiceTest extends TestCase
         /** @var Rank $rank */
         $rank = Rank::factory()->makeOne(['person_id' => 1, 'event_id' => 2, 'activated_date' => null]);
         $person = Person::factory()->makeOne(['id' => 1]);
+        // @phpstan-ignore-next-line
         $rank->person = $person;
 
         /** @var ProtocolLine $line */

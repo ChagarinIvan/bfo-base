@@ -16,6 +16,7 @@ use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use Illuminate\Http\Response;
 use Tests\CreatesApplication;
 use Tests\TestCase;
+use function sprintf;
 
 final class ShowPersonRanksActionTest extends TestCase
 {

@@ -56,6 +56,7 @@ final class ViewRankServiceTest extends TestCase
         /** @var Rank $rank */
         $rank = Rank::factory()->makeOne();
         $person = Person::factory()->makeOne(['id' => 1]);
+        // @phpstan-ignore-next-line
         $rank->person = $person;
 
         $this->ranks
