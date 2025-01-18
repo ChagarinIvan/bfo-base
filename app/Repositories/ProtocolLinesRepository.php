@@ -190,7 +190,11 @@ final readonly class ProtocolLinesRepository implements ProtocolLineRepository
         }
 
         if ($criteria->hasParam('year')) {
-            $query->where('events.date', 'LIKE', $criteria->param('year')->value . '-%');
+            $query
+                ->join('distances', 'distances.id', '=', 'protocol_lines.distance_id')
+                ->join('events', 'events.id', '=', 'distances.event_id')
+                ->where('events.date', 'LIKE', $criteria->param('year')->value . '-%')
+            ;
         }
 
         if ($criteria->hasParam('eventId')) {

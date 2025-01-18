@@ -31,7 +31,7 @@ use function str_replace;
  * @property Carbon|null $activated_date
  *
  * @property-read Event|null $event
- * @property-read Person $person
+ * @property Person $person
  */
 class Rank extends AggregatedModel
 {

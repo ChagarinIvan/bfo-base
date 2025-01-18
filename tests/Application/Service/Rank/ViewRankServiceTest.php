@@ -9,6 +9,7 @@ use App\Application\Dto\Rank\ViewRankDto;
 use App\Application\Service\Rank\Exception\RankNotFound;
 use App\Application\Service\Rank\ViewRank;
 use App\Application\Service\Rank\ViewRankService;
+use App\Domain\Person\Person;
 use App\Domain\ProtocolLine\ProtocolLineRepository;
 use App\Domain\Rank\Rank;
 use App\Domain\Rank\RankRepository;
@@ -54,6 +55,8 @@ final class ViewRankServiceTest extends TestCase
     {
         /** @var Rank $rank */
         $rank = Rank::factory()->makeOne();
+        $person = Person::factory()->makeOne(['id' => 1]);
+        $rank->person = $person;
 
         $this->ranks
             ->expects($this->once())

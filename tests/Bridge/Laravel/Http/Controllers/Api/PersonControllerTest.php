@@ -39,7 +39,7 @@ final class PersonControllerTest extends TestCase
 
         $this->get('/api/person')
             ->assertOk()
-            ->assertJsonCount(5)
+            ->assertJsonCount(5, 'data')
         ;
     }
 }
