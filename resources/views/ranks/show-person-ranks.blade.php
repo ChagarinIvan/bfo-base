@@ -1,15 +1,14 @@
 @php
+    use App\Application\Dto\Person\ViewPersonDto;
     use App\Bridge\Laravel\Http\Controllers\Event\ShowEventDistanceAction;
     use App\Bridge\Laravel\Http\Controllers\Rank\ShowActivationFormAction;
     use App\Bridge\Laravel\Http\Controllers\Rank\ShowEditActivationDateFormAction;
-    use App\Domain\Person\Person;
+    use App\Application\Dto\Rank\ViewRankDto;
     use App\Domain\Rank\Rank;
-    use Illuminate\Support\Collection;
     /**
-     * @var Rank[]|Collection $ranks;
-     * @var Person $person;
-     * @var Rank|null $actualRank;
-     * @var array $protocolLinesIds;
+     * @var ViewRankDto[] $ranks;
+     * @var ViewPersonDto $person;
+     * @var ViewRankDto|null $actualRank;
      */
 @endphp
 
@@ -21,7 +20,7 @@
     <div class="row"><h4>{{ $person->lastname }} {{ $person->firstname }}</h4></div>
     @if ($actualRank)
         <div class="row">
-            <h4>{{ $actualRank->rank ?? '' }} {{ __('app.common.do') }} {{ $actualRank->finish_date->format('Y-m-d') }}</h4>
+            <h4>{{ $actualRank->rank ?? '' }} {{ __('app.common.do') }} {{ $actualRank->finishDate }}</h4>
         </div>
     @else
         <div class="row"><h4>{{ Rank::WITHOUT_RANK }}</h4></div>
@@ -64,32 +63,32 @@
             </thead>
             <tbody>
             @foreach ($ranks as $rank)
-                <tr @if($rank->activated_date) class="table-info" @else class="table-secondary" @endif>
+                <tr @if($rank->activatedDate) class="table-info" @else class="table-secondary" @endif>
                     <td>{{ $rank->rank }}</td>
-                    <td>{{ $rank->event ? $rank->event->date->format('Y-m-d') : $rank->start_date->format('Y-m-d') }}</td>
-                    <td>{{ $rank->activated_date ? $rank->activated_date->format('Y-m-d') : '-' }}</td>
+                    <td>{{ $rank->eventDate ?: $rank->startDate}}</td>
+                    <td>{{ $rank->activatedDate ?: '-' }}</td>
                     <td>
-                        @if ($rank->event_id !== null)
-                            {{ $rank->event->date->format('Y-m-d') }}
+                        @if ($rank->eventDate !== null)
+                            {{ $rank->eventDate }}
                         @endif
                     </td>
-                    <td>{{ $rank->finish_date->format('Y-m-d') }}</td>
+                    <td>{{ $rank->finishDate }}</td>
                     <td>
-                        @if ($rank->event_id !== null)
-                            <a href="{{ action(ShowEventDistanceAction::class, [$rank->event->distances->first()]) }}#{{ $protocolLinesIds[$rank->id] }}"
-                            >{{ $rank->event->competition->name }} ({{ $rank->event->name }})</a>
+                        @if ($rank->distanceId !== null)
+                            <a href="{{ action(ShowEventDistanceAction::class, [$rank->distanceId]) }}#{{ $rank->protocolLineId }}"
+                            >{{ $rank->competitionName }} ({{ $rank->eventName }})</a>
                         @endif
                     </td>
                     @auth
                         <td>
-                            @if(!Rank::autoActivation($rank->rank) && $rank->activated_date)
+                            @if($rank->activatedDate && !Rank::autoActivation($rank->rank))
                                 <x-button text="app.rank.activation.edit"
                                           color="success"
                                           icon="radioactive"
                                           url="{{ action(ShowEditActivationDateFormAction::class, [$rank->id]) }}"
                                 />
                             @endif
-                            @if(!$rank->activated_date)
+                            @if(!$rank->activatedDate)
                                 <x-button text="app.rank.activation"
                                           color="info"
                                           icon="radioactive"

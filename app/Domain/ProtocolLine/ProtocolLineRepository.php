@@ -19,5 +19,7 @@ interface ProtocolLineRepository
 
     public function lockOneByCriteria(Criteria $criteria): ?ProtocolLine;
 
+    public function oneByCriteria(Criteria $criteria): ?ProtocolLine;
+
     public function update(ProtocolLine $protocolLine): void;
 }

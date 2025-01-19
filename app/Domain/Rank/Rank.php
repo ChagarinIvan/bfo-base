@@ -6,6 +6,8 @@ namespace App\Domain\Rank;
 
 use App\Domain\Event\Event;
 use App\Domain\Person\Person;
+use App\Domain\Rank\Event\RankCreated;
+use App\Domain\Shared\AggregatedModel;
 use Carbon\Carbon;
 use Database\Factories\Domain\Rank\RankFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -29,9 +31,9 @@ use function str_replace;
  * @property Carbon|null $activated_date
  *
  * @property-read Event|null $event
- * @property-read Person $person
+ * @property Person $person
  */
-class Rank extends Model
+class Rank extends AggregatedModel
 {
     /** @see RankFactory */
     use HasFactory;
@@ -58,16 +60,6 @@ class Rank extends Model
         self::JUNIOR_SECOND_RANK => self::JUNIOR_SECOND_RANK,
         self::JUNIOR_THIRD_RANK => self::JUNIOR_THIRD_RANK,
         self::WITHOUT_RANK => self::WITHOUT_RANK,
-    ];
-
-    public const PREVIOUS_RANKS = [
-        self::WSM_RANK => self::SM_RANK,
-        self::SM_RANK => self::SMC_RANK,
-        self::SMC_RANK => self::FIRST_RANK,
-        self::FIRST_RANK => self::SECOND_RANK,
-        self::SECOND_RANK => self::THIRD_RANK,
-        self::JUNIOR_FIRST_RANK => self::JUNIOR_SECOND_RANK,
-        self::JUNIOR_SECOND_RANK => self::JUNIOR_THIRD_RANK,
     ];
 
     public const NEXT_RANKS = [
@@ -170,5 +162,12 @@ class Rank extends Model
     public function person(): HasOne
     {
         return $this->hasOne(Person::class, 'id', 'person_id');
+    }
+
+    public function create(): void
+    {
+        $this->recordThat(new RankCreated($this));
+
+        $this->save();
     }
 }

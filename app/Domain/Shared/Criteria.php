@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace App\Domain\Shared;
 
 use OutOfRangeException;
+use function array_flip;
+use function array_intersect_key;
+use function count;
 
 readonly class Criteria
 {
@@ -25,6 +28,12 @@ readonly class Criteria
         return $this->sorting;
     }
 
+    /** @param string[] $param */
+    public function hasOneParam(array $param): bool
+    {
+        return count(array_intersect_key($this->params, array_flip($param))) > 0;
+    }
+
     public function hasParam(string $param): bool
     {
         return isset($this->params[$param]);
@@ -40,5 +49,10 @@ readonly class Criteria
     public function param(string $key): mixed
     {
         return $this->params[$key] ?? new OutOfRangeException('Has no param.');
+    }
+
+    public function paramOrDefault(string $key, mixed $default = null): mixed
+    {
+        return $this->params[$key] ?? $default;
     }
 }

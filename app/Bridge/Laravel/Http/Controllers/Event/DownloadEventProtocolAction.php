@@ -8,8 +8,8 @@ use App\Application\Service\Event\DownloadEventProtocol;
 use App\Application\Service\Event\DownloadEventProtocolService;
 use App\Application\Service\Event\Exception\EventNotFound;
 use Illuminate\Contracts\Routing\ResponseFactory;
-use Illuminate\Http\Response;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Response;
 use Illuminate\Routing\Controller as BaseController;
 
 final class DownloadEventProtocolAction extends BaseController

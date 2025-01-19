@@ -14,6 +14,7 @@ class ShowRanksListAction extends AbstractRankAction
     {
         $ranks = $this->rankService->getFinishedRanks($selectedRank);
 
+        /** @see /resources/views/ranks/index.blade.php */
         return $this->view('ranks.index', [
             'selectedRank' => $selectedRank,
             'ranks' => $ranks,

@@ -46,12 +46,12 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         $schedule->command(SimpleIndentCommand::class, ['userId' => User::SYSTEM_USER_ID])->dailyAt('01:00')->runInBackground();
-        $schedule->command(StartBigIdentCommand::class)->monthly()->at('03:00')->runInBackground();
-        $schedule->command(RankValidationCommand::class)->weekly()->at('02:00')->runInBackground();
+        $schedule->command(StartBigIdentCommand::class, ['userId' => User::SYSTEM_USER_ID])->monthly()->at('03:00')->runInBackground();
+        $schedule->command(RankValidationCommand::class, ['userId' => User::SYSTEM_USER_ID])->weekly()->at('02:00')->runInBackground();
         //        $schedule->command(SyncPersonsCommand::class)->weekly()->runInBackground();
 
         for ($i = 0; $i < 4; $i++) {
-            $schedule->command(IdentProtocolLineCommand::class, ['user_id' => 10])
+            $schedule->command(IdentProtocolLineCommand::class, ['user_id' => User::SYSTEM_USER_ID])
                 ->everyMinute()
                 ->before(static function () use ($i): void {sleep($i * 15);})
                 ->runInBackground();

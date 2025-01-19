@@ -10,6 +10,7 @@ use App\Application\Service\Rank\ActivateRank;
 use App\Application\Service\Rank\ActivateRankService;
 use App\Application\Service\Rank\Exception\ProtocolLineNotFound;
 use App\Application\Service\Rank\Exception\RankNotFound;
+use App\Domain\Person\Person;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\ProtocolLine\ProtocolLineRepository;
 use App\Domain\Rank\Rank;
@@ -35,7 +36,7 @@ final class ActivateRankServiceTest extends TestCase
             $this->ranks = $this->createMock(RankRepository::class),
             $this->protocolLines = $this->createMock(ProtocolLineRepository::class),
             new DummyTransactional,
-            new RankAssembler,
+            new RankAssembler( $this->protocolLines ),
         );
     }
 
@@ -91,6 +92,10 @@ final class ActivateRankServiceTest extends TestCase
     {
         /** @var Rank $rank */
         $rank = Rank::factory()->makeOne(['person_id' => 1, 'event_id' => 2, 'activated_date' => null]);
+        $person = Person::factory()->makeOne(['id' => 1]);
+        // @phpstan-ignore-next-line
+        $rank->person = $person;
+
         /** @var ProtocolLine $line */
         $line = ProtocolLine::factory()->makeOne(['person_id' => 1]);
 

@@ -8,12 +8,12 @@
     use App\Bridge\Laravel\Http\Controllers\Rank\ShowPersonRanksAction;
     use App\Application\Dto\Person\ViewPersonDto;
     use App\Domain\Person\Citizenship;
-    use App\Domain\Rank\Rank;
+    use App\Application\Dto\Rank\ViewRankDto;
     use Illuminate\Support\Str;
 
     /**
      * @var ViewPersonDto $person
-     * @var Rank $rank
+     * @var ViewRankDto $rank
      */
 
     $personName = "{$person->lastname}_$person->firstname";
@@ -27,7 +27,7 @@
     @if ($rank)
         <div class="row mb-3">
             <div class="col-12">
-                <h4>{{ $rank->rank }} {{ __('app.common.do') }} {{ $rank->finish_date->format('Y-m-d') }}</h4>
+                <h4>{{ $rank->rank }} {{ __('app.common.do') }} {{ $rank->finishDate }}</h4>
             </div>
         </div>
     @endif
