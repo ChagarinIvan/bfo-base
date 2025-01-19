@@ -4,6 +4,7 @@
     use App\Bridge\Laravel\Http\Controllers\Rank\ShowPersonRanksAction;
     use App\Bridge\Laravel\Http\Controllers\Rank\ShowRanksListAction;
     use App\Application\Dto\Rank\ViewRankDto;
+    use App\Domain\Rank\Rank;
     use Illuminate\Support\Collection;
     /**
      * @var Collection|ViewRankDto[] $ranks;
