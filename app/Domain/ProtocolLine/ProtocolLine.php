@@ -71,10 +71,10 @@ class ProtocolLine extends AggregatedModel
         'activate_rank',
     ];
 
-    public function getDateFormat(): string
-    {
-        return 'H:i:s';
-    }
+//    public function getDateFormat(): string
+//    {
+//        return 'H:i:s';
+//    }
 
     public function distance(): BelongsTo
     {
