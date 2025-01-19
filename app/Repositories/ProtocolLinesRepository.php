@@ -14,6 +14,7 @@ use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Collection;
+use function array_key_exists;
 use function count;
 
 // TODO replace me in integration
@@ -185,23 +186,58 @@ final readonly class ProtocolLinesRepository implements ProtocolLineRepository
     {
         $query = ProtocolLine::select('protocol_lines.*');
 
+        if (array_key_exists('completedRank', $criteria->sorting())) {
+            $query->orderByRaw("
+        CASE complete_rank
+            WHEN 'МСМК' THEN 1
+            WHEN 'МС' THEN 2
+            WHEN 'КМС' THEN 3
+            WHEN 'I' THEN 4
+            WHEN 'II' THEN 5
+            WHEN 'III' THEN 6
+            WHEN 'Iю' THEN 7
+            WHEN 'IIю' THEN 8
+            WHEN 'IIIю' THEN 9
+            ELSE 10
+        END ASC
+    ");
+        }
+
         if ($criteria->hasParam('personId')) {
             $query->where('person_id', $criteria->param('personId'));
         }
 
-        if ($criteria->hasParam('year')) {
+        if (
+            $criteria->hasOneParam(['dateFrom', 'dateTo', 'year', 'eventId'])
+        ) {
             $query
                 ->join('distances', 'distances.id', '=', 'protocol_lines.distance_id')
                 ->join('events', 'events.id', '=', 'distances.event_id')
-                ->where('events.date', 'LIKE', $criteria->param('year')->value . '-%')
             ;
         }
 
+        if ($criteria->hasParam('dateFrom')) {
+            $query->where('events.date', '>=', $criteria->param('dateFrom'));
+        }
+
+        if ($criteria->hasParam('completedRank')) {
+            if ($criteria->param('completedRank')) {
+                $query->whereNotNull('complete_rank');
+            } else {
+                $query->whereNull('complete_rank');
+            }
+        }
+
+        if ($criteria->hasParam('dateTo')) {
+            $query->where('events.date', '<=', $criteria->param('dateTo'));
+        }
+
+        if ($criteria->hasParam('year')) {
+            $query->where('events.date', 'LIKE', $criteria->param('year')->value . '-%');
+        }
+
         if ($criteria->hasParam('eventId')) {
-            $query
-                ->join('distances AS d', 'd.id', '=', 'protocol_lines.distance_id')
-                ->where('d.event_id', $criteria->param('eventId'))
-            ;
+            $query->where('d.event_id', $criteria->param('eventId'));
         }
 
         if ($criteria->hasParam('distances')) {

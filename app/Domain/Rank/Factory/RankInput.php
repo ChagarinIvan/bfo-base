@@ -14,6 +14,7 @@ final readonly class RankInput
         public string $rank,
         public Carbon $startDate,
         public ?Carbon $activatedDate,
+        public ?Carbon $finishDate = null,
     ) {
     }
 }

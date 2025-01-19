@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domain\Rank;
 
+use App\Domain\ProtocolLine\ProtocolLine;
+use App\Domain\ProtocolLine\ProtocolLineRepository;
 use App\Domain\Rank\Factory\RankFactory;
 use App\Domain\Rank\Factory\RankInput;
 use App\Domain\Shared\Clock;
@@ -17,6 +19,7 @@ final readonly class PreviousCompletedRankFiller
         private Clock $clock,
         private RankFactory $factory,
         private RankRepository $ranks,
+        private ProtocolLineRepository $protocolLines,
         private JuniorRankAgeValidator $juniorRankAgeValidator,
     ) {
     }
@@ -27,18 +30,25 @@ final readonly class PreviousCompletedRankFiller
             $date = $this->clock->now();
         }
 
-        if ($rank->finish_date < $date) {
-            $rank = $this->ranks->oneByCriteria(new Criteria([
-                'person_id' => $rank->person_id,
-                'activated' => true,
-                'finish_date_to' => $rank->start_date,
-            ]));
+        $finishDate = $rank->finish_date;
 
-            if (!$rank) {
+        if ($finishDate < $date) {
+            // тут трэба узять протокол лініі за 2 года, дзе было выполненіе разряда меньше чем прошлый
+            $protocolLine = $this->protocolLines->oneByCriteria(new Criteria(
+                [
+                    'person_id' => $rank->person_id,
+                    'dateFrom' => $rank->start_date,
+                    'dateTo' => $finishDate,
+                    'completedRank' => true,
+                ],
+                ['completedRank' => 'desc'],
+            ));
+
+            if (!$protocolLine) {
                 return null;
             }
 
-            $newRank = $this->factory->create($this->createRankInput($rank));
+            $newRank = $this->factory->create($this->createRankInput($protocolLine, $finishDate->addDay()));
 
             if (!$this->juniorRankAgeValidator->validate($newRank->person_id, $newRank->rank, Year::actualYear())) {
                 return null;
@@ -46,22 +56,21 @@ final readonly class PreviousCompletedRankFiller
 
             $this->ranks->add($newRank);
 
-            return $this->fill($newRank, $date);
+            return $newRank;
         }
 
         return $rank;
     }
 
-    private function createRankInput(Rank $rank): RankInput
+    private function createRankInput(ProtocolLine $protocolLine, Carbon $startDate): RankInput
     {
-        $startDate = $rank->finish_date->addDay();
-
         return new RankInput(
-            personId: $rank->person_id,
+            personId: $protocolLine->person_id,
             eventId: null,
-            rank: $rank->rank,
+            rank: $protocolLine->complete_rank,
             startDate: $startDate,
-            activatedDate:$startDate,
+            activatedDate: $startDate,
+            finishDate: $protocolLine->event->date->clone()->addYears(2),
         );
     }
 }

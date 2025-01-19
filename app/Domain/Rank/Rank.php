@@ -62,16 +62,6 @@ class Rank extends AggregatedModel
         self::WITHOUT_RANK => self::WITHOUT_RANK,
     ];
 
-    public const PREVIOUS_RANKS = [
-        self::WSM_RANK => self::SM_RANK,
-        self::SM_RANK => self::SMC_RANK,
-        self::SMC_RANK => self::FIRST_RANK,
-        self::FIRST_RANK => self::SECOND_RANK,
-        self::SECOND_RANK => self::THIRD_RANK,
-        self::JUNIOR_FIRST_RANK => self::JUNIOR_SECOND_RANK,
-        self::JUNIOR_SECOND_RANK => self::JUNIOR_THIRD_RANK,
-    ];
-
     public const NEXT_RANKS = [
         self::SM_RANK => self::WSM_RANK,
         self::SMC_RANK => self::SM_RANK,

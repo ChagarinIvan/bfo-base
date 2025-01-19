@@ -18,7 +18,7 @@ final readonly class StandardRankFactory implements RankFactory
         $rank->event_id = $input->eventId;
         $rank->rank = $input->rank;
         $rank->start_date = $input->startDate;
-        $rank->finish_date = $input->startDate->clone()->addYears(2);
+        $rank->finish_date = $input->finishDate ?: $input->startDate->clone()->addYears(2);
         $rank->activated_date = $input->activatedDate;
 
         return $rank;

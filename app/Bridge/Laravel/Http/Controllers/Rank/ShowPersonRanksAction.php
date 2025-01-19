@@ -32,8 +32,8 @@ class ShowPersonRanksAction extends BaseController
             return $this->redirectTo404Error();
         }
 
-        $ranks = $ranksService->execute(new PersonRanks($personId));
         $activeRank = $activeRankService->execute(new ActivePersonRank($personId));
+        $ranks = $ranksService->execute(new PersonRanks($personId));
 
         /** @see /resources/views/ranks/show-person-ranks.blade.php */
         return $this->view('ranks.show-person-ranks', [

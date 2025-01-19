@@ -4,6 +4,7 @@
     use App\Bridge\Laravel\Http\Controllers\Rank\ShowActivationFormAction;
     use App\Bridge\Laravel\Http\Controllers\Rank\ShowEditActivationDateFormAction;
     use App\Application\Dto\Rank\ViewRankDto;
+    use App\Domain\Rank\Rank;
     /**
      * @var ViewRankDto[] $ranks;
      * @var ViewPersonDto $person;
