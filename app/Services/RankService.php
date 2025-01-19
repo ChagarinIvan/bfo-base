@@ -97,7 +97,7 @@ class RankService
         $ranks = Collection::empty();
 
         foreach ($personsIds as $personId) {
-            $actualRank = $this->activePersonRankService->execute(new ActivePersonRank($personId));
+            $actualRank = $this->activePersonRankService->execute(new ActivePersonRank((string)$personId));
             if ($actualRank && $actualRank->rank === $rank) {
                 $ranks->put($personId, $actualRank);
             }
@@ -110,7 +110,7 @@ class RankService
     {
         $actualRanks = new Collection();
         foreach ($personIds as $personId) {
-            $rank = $this->activePersonRankService->execute(new ActivePersonRank($personId));
+            $rank = $this->activePersonRankService->execute(new ActivePersonRank((string)$personId));
             if ($rank) {
                 $actualRanks->put($personId, $rank);
             }
