@@ -237,7 +237,7 @@ final readonly class ProtocolLinesRepository implements ProtocolLineRepository
         }
 
         if ($criteria->hasParam('eventId')) {
-            $query->where('d.event_id', $criteria->param('eventId'));
+            $query->where('distances.event_id', $criteria->param('eventId'));
         }
 
         if ($criteria->hasParam('distances')) {
