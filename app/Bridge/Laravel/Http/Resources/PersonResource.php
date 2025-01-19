@@ -14,13 +14,13 @@ use Illuminate\Http\Resources\Json\JsonResource;
  */
 final class PersonResource extends JsonResource
 {
-    private ActivePersonRankService $activePersonRank;
+//    private ActivePersonRankService $activePersonRank;
 
-    public function __construct($resource)
-    {
-        parent::__construct($resource);
-        $this->activePersonRank = app(ActivePersonRankService::class);
-    }
+//    public function __construct($resource)
+//    {
+//        parent::__construct($resource);
+//        $this->activePersonRank = app(ActivePersonRankService::class);
+//    }
 
     public function toArray($request): array
     {
@@ -32,7 +32,7 @@ final class PersonResource extends JsonResource
             'events_count' => $this->protocol_lines_count,
             'club_id' => $this->club_id,
             'club_name' => $this->club?->name,
-            'rank' => $this->activePersonRank->execute(new ActivePersonRank((string)$this->id))?->rank
+            'rank' => null, //$this->activePersonRank->execute(new ActivePersonRank((string)$this->id))?->rank
         ];
     }
 }
