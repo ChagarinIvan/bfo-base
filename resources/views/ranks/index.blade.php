@@ -68,7 +68,7 @@
                         <th data-sortable="true">{{ __('app.rank.finished_date') }}</th>
                     </tr>
                     </thead>
-                    <tbody>personFirstName
+                    <tbody>
                     @foreach ($ranks as $rank)
                         <tr>
                             <td>
