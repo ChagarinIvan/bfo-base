@@ -21,12 +21,6 @@ return new class extends Migration
         Schema::table('person', static function (Blueprint $table): void {
             $table->index('active');
         });
-
-        Schema::table('protocol_lines', static function (Blueprint $table): void {
-            $table->index('person_id');
-            $table->index('prepared_line');
-            $table->index('activate_rank');
-        });
     }
 
     /**
@@ -43,12 +37,6 @@ return new class extends Migration
 
         Schema::table('person', static function (Blueprint $table): void {
             $table->dropIndex('active');
-        });
-
-        Schema::table('protocol_lines', static function (Blueprint $table): void {
-            $table->dropIndex('person_id');
-            $table->dropIndex('prepared_line');
-            $table->dropIndex('activate_rank');
         });
     }
 };
