@@ -101,7 +101,7 @@ final class StandardThirdRankCheckerTest extends TestCase
         $this->protocols
             ->expects($this->once())
             ->method('byCriteria')
-            ->with(new Criteria(['person_id' => 1, 'year' => Year::y2025]))
+            ->with(new Criteria(['personId' => 1, 'year' => Year::y2025]))
             ->willReturn(new Collection())
         ;
 
