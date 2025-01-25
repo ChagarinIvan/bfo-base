@@ -12,8 +12,6 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('protocol_lines', static function (Blueprint $table): void {
-            $table->index('person_id');
-            $table->index('prepared_line');
             $table->index('activate_rank');
         });
     }
@@ -24,8 +22,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('protocol_lines', static function (Blueprint $table): void {
-            $table->dropIndex('person_id');
-            $table->dropIndex('prepared_line');
             $table->dropIndex('activate_rank');
         });
     }
