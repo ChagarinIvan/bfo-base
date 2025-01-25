@@ -10,9 +10,10 @@ use App\Domain\Rank\Factory\RankFactory;
 use App\Domain\Rank\Factory\RankInput;
 use App\Domain\Shared\Clock;
 use App\Domain\Shared\Criteria;
+use function array_slice;
 
 /**
- * Прысваенне 3ю разрада за 3 паспяховых старта у гадзе
+ * Прысваенне 3ю разрада за 3 паспяховых старта у годзе
  */
 final readonly class StandardJuniorJuniorThirdRankChecker implements JuniorThirdRankChecker
 {
@@ -28,8 +29,9 @@ final readonly class StandardJuniorJuniorThirdRankChecker implements JuniorThird
     {
         $actualYear = $this->clock->actualYear();
 
-        foreach($this->clock->years() as $year) {
-            if (!$this->validator->validate($personId, Rank::JUNIOR_THIRD_RANK, $actualYear)) {
+        $isItJuniorRankAndCompletedAge = $this->validator->validate($personId, Rank::JUNIOR_THIRD_RANK, $actualYear);
+        foreach(array_slice($this->clock->years(), 0, 3) as $year) {
+            if (!$isItJuniorRankAndCompletedAge) {
                 continue;
             }
 
