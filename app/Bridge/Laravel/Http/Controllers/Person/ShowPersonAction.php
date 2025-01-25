@@ -32,7 +32,6 @@ class ShowPersonAction extends BaseController
             return $this->redirector->action(ShowPersonsListAction::class);
         }
 
-        dump($person);
         /** @see /resources/views/persons/show.blade.php */
         return $this->view('persons.show', [
             'person' => $person,

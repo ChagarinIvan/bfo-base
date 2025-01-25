@@ -30,15 +30,12 @@ final readonly class StandardJuniorJuniorThirdRankChecker implements JuniorThird
         $actualYear = $this->clock->actualYear();
 
         $isItJuniorRankAndCompletedAge = $this->validator->validate($personId, Rank::JUNIOR_THIRD_RANK, $actualYear);
-        dump($isItJuniorRankAndCompletedAge);
         foreach(array_slice($this->clock->years(), 0, 3) as $year) {
             if (!$isItJuniorRankAndCompletedAge) {
                 continue;
             }
 
-            dump('year', $year);
             $lines = $this->protocols->byCriteria(new Criteria(['person_id' => $personId, 'year' => $year]));
-            dump($lines);
             $results = $lines->filter(static fn (ProtocolLine $line) => $line->time !== null && !$line->vk);
             if ($results->count() >= 3) {
                 $results = $results
@@ -46,7 +43,6 @@ final readonly class StandardJuniorJuniorThirdRankChecker implements JuniorThird
                     ->slice(offset: 0, length: 3)
                     ->values()
                 ;
-                dump('createRank', $results);
                 return $this->factory->create($this->createRankInputFromProtocolLine($results->get(2)));
             }
         }
