@@ -35,7 +35,7 @@ final readonly class StandardJuniorJuniorThirdRankChecker implements JuniorThird
                 continue;
             }
 
-            $lines = $this->protocols->byCriteria(new Criteria(['person_id' => $personId, 'year' => $year]));
+            $lines = $this->protocols->byCriteria(new Criteria(['personId' => $personId, 'year' => $year]));
             $results = $lines->filter(static fn (ProtocolLine $line) => $line->time !== null && !$line->vk);
             if ($results->count() >= 3) {
                 $results = $results

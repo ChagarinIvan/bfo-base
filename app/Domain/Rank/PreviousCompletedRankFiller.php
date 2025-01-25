@@ -36,7 +36,7 @@ final readonly class PreviousCompletedRankFiller
             // тут трэба узять протокол лініі за 2 года, дзе было выполненіе разряда меньше чем прошлый
             $protocolLine = $this->protocolLines->oneByCriteria(new Criteria(
                 [
-                    'person_id' => $rank->person_id,
+                    'personId' => $rank->person_id,
                     'dateFrom' => $rank->start_date,
                     'dateTo' => $finishDate,
                     'completedRank' => true,

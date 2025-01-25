@@ -32,7 +32,7 @@ final readonly class RankAssembler
     public function toViewRankDto(Rank $rank): ViewRankDto
     {
         $protocolLine = $rank->event_id
-            ? $this->protocolLines->oneByCriteria(new Criteria(['person_id' => $rank->person_id, 'event_id' => $rank->event_id]))
+            ? $this->protocolLines->oneByCriteria(new Criteria(['personId' => $rank->person_id, 'eventId' => $rank->event_id]))
             : null
         ;
 
