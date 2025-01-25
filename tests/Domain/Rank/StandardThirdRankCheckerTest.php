@@ -60,7 +60,7 @@ final class StandardThirdRankCheckerTest extends TestCase
         ;
 
         $this->persons
-            ->expects($this->once(2))
+            ->expects($this->once())
             ->method('byId')
             ->with(1)
             ->willReturnOnConsecutiveCalls($person, $person)
