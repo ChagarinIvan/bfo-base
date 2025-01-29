@@ -101,7 +101,7 @@ class OrientBySyncService
                     $this->logger->info('update payment: ', ['person_id' => $personId]);
 
                     $this->createOrUpdatePersonPaymentsService->execute(new CreateOrUpdatePersonPayments(
-                        new PersonPaymentDto((string) $personId, (string) $year->value, $personDto->paymentDate()->format('Y-m-d')),
+                        new PersonPaymentDto((string) $personId, (string) $personDto->paymentDate()->year, $personDto->paymentDate()->format('Y-m-d')),
                         $userId,
                     ));
                 }
@@ -136,7 +136,7 @@ class OrientBySyncService
 
                 if ($personDto->paid && $personDto->paymentDate()) {
                     $this->createOrUpdatePersonPaymentsService->execute(new CreateOrUpdatePersonPayments(
-                        new PersonPaymentDto((string) $person->id, (string) $year->value, $personDto->paymentDate()->format('Y-m-d')),
+                        new PersonPaymentDto((string) $person->id, (string) $personDto->paymentDate()->year, $personDto->paymentDate()->format('Y-m-d')),
                         $userId,
                     ));
                 }
