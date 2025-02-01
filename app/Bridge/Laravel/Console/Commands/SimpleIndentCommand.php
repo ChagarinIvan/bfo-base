@@ -4,12 +4,6 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Console\Commands;
 
-use App\Application\Dto\Auth\UserId;
-use App\Application\Dto\Person\PersonSearchDto;
-use App\Application\Service\Person\DisablePerson;
-use App\Application\Service\Person\DisablePersonService;
-use App\Application\Service\Person\ListPersons;
-use App\Application\Service\Person\ListPersonsService;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Services\ProtocolLineIdentService;
 use Illuminate\Console\Command;
@@ -24,13 +18,6 @@ class SimpleIndentCommand extends Command
 {
     protected $signature = 'protocol-lines:simple-ident';
 
-    public function __construct(
-        private ListPersonsService $listPersonsService,
-        private DisablePersonService $disablePersonService,
-    ) {
-        parent::__construct();
-    }
-
     public function handle(ProtocolLineIdentService $identService): void
     {
         $this->info('Start');
@@ -43,19 +30,6 @@ class SimpleIndentCommand extends Command
         $this->info('Affected rows count is ' . ($protocolLines->count() - $notIndentCount));
         $time = time() - $startTime;
         $this->info("Time for query: $time");
-
-        $count = 0;
-        // Почистим людей у которых 0 протокольных линий
-        $persons = $this->listPersonsService->execute(
-            new ListPersons(new PersonSearchDto(withoutLines: true))
-        );
-
-        foreach ($persons as $person) {
-            $this->disablePersonService->execute(new DisablePerson($person->id, new UserId($userId)));
-            $count++;
-        }
-
-        $this->info('Disabled persons count is ' . $count);
         $this->info("Finish");
     }
 
