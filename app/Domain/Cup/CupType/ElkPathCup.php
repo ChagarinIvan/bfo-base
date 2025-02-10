@@ -24,6 +24,8 @@ class ElkPathCup extends EliteCupType
         'W_0_Kids–W' => ['Kids–Дзяўчыны', 'KidsTrail-Ж'],
         'M_0_Youth–M' => ['Youth–Хлопцы', 'YouthTrail-М'],
         'W_0_Youth–W' => ['Youth–Дзяўчыны', 'YouthTrail-Ж'],
+        'W_0_OpenTrail–W' => ['OpenTrail-М', 'Open-Хлопцы'],
+        'M_0_OpenTrail–M' => ['OpenTrail-Ж', 'Open-Дзяўчыны'],
     ];
 
     public function getNameKey(): string
@@ -45,6 +47,8 @@ class ElkPathCup extends EliteCupType
         $groups->push(new CupGroup(GroupMale::Woman, name: 'Kids–W'));
         $groups->push(new CupGroup(GroupMale::Man, name: 'Youth–M'));
         $groups->push(new CupGroup(GroupMale::Woman, name: 'Youth–W'));
+        $groups->push(new CupGroup(GroupMale::Woman, name: 'OpenTrail-W'));
+        $groups->push(new CupGroup(GroupMale::Woman, name: 'OpenTrail-M'));
 
         return $groups;
     }
