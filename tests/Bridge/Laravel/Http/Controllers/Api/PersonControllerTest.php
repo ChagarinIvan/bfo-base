@@ -4,17 +4,16 @@ declare(strict_types=1);
 
 namespace Tests\Bridge\Laravel\Http\Controllers\Api;
 
-use App\Bridge\Laravel\Http\Controllers\Api\ListPersonAction;
+use App\Bridge\Laravel\Http\Controllers\Api\PersonController;
 use App\Domain\User\User;
 use Database\Seeders\ProtocolLinesSeeder;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
-use Illuminate\Http\Response;
 use Tests\CreatesApplication;
 use Tests\TestCase;
 
-final class ListPersonActionTest extends TestCase
+final class PersonControllerTest extends TestCase
 {
     use CreatesApplication;
     use RefreshDatabase;
@@ -28,7 +27,7 @@ final class ListPersonActionTest extends TestCase
 
     /**
      * @test
-     * @see ListPersonAction::class
+     * @see PersonController::index
      */
     public function it_gets_persons_list(): void
     {
@@ -38,9 +37,9 @@ final class ListPersonActionTest extends TestCase
         $user = User::factory()->createOne();
         $this->actingAs($user);
 
-        $this->get('/api/persons?withoutLines=1')
-            ->assertStatus(Response::HTTP_OK)
-            ->assertJsonCount(5)
+        $this->get('/api/person')
+            ->assertOk()
+            ->assertJsonCount(5, 'data')
         ;
     }
 }

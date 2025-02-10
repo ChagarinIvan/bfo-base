@@ -17,6 +17,7 @@ use function explode;
 use function implode;
 use function in_array;
 use function is_numeric;
+use function mb_strtolower;
 use function preg_match;
 use function preg_replace;
 use function preg_split;

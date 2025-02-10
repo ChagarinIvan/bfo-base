@@ -47,10 +47,12 @@ final class EloquentPersonRepository implements PersonRepository
             $query->where('person.birthday', 'LIKE', $criteria->param('year') . '%');
         }
 
-        if ($criteria->hasParam('withoutLines')) {
+        if ($criteria->hasParam('withoutLinesAndPayments')) {
             $query
                 ->leftjoin('protocol_lines', 'protocol_lines.person_id', '=', 'person.id')
                 ->whereNull('protocol_lines.id')
+                ->leftjoin('persons_payments', 'persons_payments.person_id', '=', 'person.id')
+                ->whereNull('persons_payments.id')
             ;
         }
 

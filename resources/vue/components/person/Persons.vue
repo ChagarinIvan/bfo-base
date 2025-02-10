@@ -22,7 +22,6 @@
                 <thead class="table-dark">
                 <tr>
                     <th @click="sort('fio')">{{ $t('app.common.fio') }} <i class="fas float-end" :class="sortColumn('fio')"></i></th>
-                    <th>{{ $t('app.common.rank') }}</th>
                     <th @click="sort('events_count')">{{ $t('app.common.events_count') }} <i class="fas float-end" :class="sortColumn('events_count')"></i></th>
                     <th @click="sort('club_name')">{{ $t('app.club.name') }} <i class="fas float-end" :class="sortColumn('club_name')"></i></th>
                     <th @click="sort('birthday')">{{ $t('app.common.birthday_year') }} <i class="fas float-end" :class="sortColumn('birthday')"></i></th>
@@ -32,7 +31,6 @@
                 <tbody>
                 <tr v-for="person in this.persons">
                     <td><a :href="'/persons/' + person.id + '/show'"><span v-html="markedText(person.lastname + ' ' + person.firstname)"></span></a></td>
-                    <td><a :href="'/ranks/person/' + person.id"><span v-html="markedText(person.rank)"></span></a></td>
                     <td><span v-html="markedText(person.events_count)"></span></td>
                     <td v-if="person.club_id > 0"><a :href="'/clubs/' + person.club_id + '/show'"><span v-html="markedText(person.club_name)"></span></a></td>
                     <td v-else><span v-html="markedText(person.club_name)"></span></td>

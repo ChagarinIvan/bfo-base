@@ -13,14 +13,14 @@ final class PersonSearchDto extends AbstractDto
         return [
             'clubId' => 'numeric',
             'year' => 'numeric',
-            'withoutLines' => '',
+            'withoutLinesAndPayments' => '',
         ];
     }
 
     public function __construct(
         public ?string $clubId = null,
         public ?string $year = null,
-        public bool $withoutLines = false,
+        public bool $withoutLinesAndPayments = false,
     ) {
     }
 
@@ -28,7 +28,7 @@ final class PersonSearchDto extends AbstractDto
     {
         $this->setStringParam('clubId', $data);
         $this->setStringParam('year', $data);
-        $this->withoutLines = (bool) ($data['withoutLines'] ?? false);
+        $this->withoutLinesAndPayments = (bool) ($data['withoutLinesAndPayments'] ?? false);
 
         return $this;
     }
