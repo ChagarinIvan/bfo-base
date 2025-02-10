@@ -40,9 +40,7 @@ final class ListPersonActionTest extends TestCase
 
         $this->get('/api/persons?withoutLines=1')
             ->assertStatus(Response::HTTP_OK)
-            ->assertJson([[
-                'id' => 105,
-            ]])
+            ->assertJsonCount(5)
         ;
     }
 }
