@@ -23,6 +23,7 @@ final readonly class ActivePersonRankService
     public function execute(ActivePersonRank $command): ?ViewRankDto
     {
         $lastRank = $this->ranks->oneByCriteria($command->criteria());
+
         if ($lastRank === null) {
             $thirdJuniorRank = $this->thirdRankChecker->check($command->personId());
 

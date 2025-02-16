@@ -33,7 +33,7 @@ final readonly class PreviousCompletedRankFiller
         $finishDate = $rank->finish_date;
 
         if ($finishDate < $date) {
-            // тут трэба узять протокол лініі за 2 года, дзе было выполненіе разряда меньше чем прошлый
+            // тут трэба узять протокол лініі за 2 года, дзе было выкананне разряда меньш чым папярэдні
             $protocolLine = $this->protocolLines->oneByCriteria(new Criteria(
                 [
                     'personId' => $rank->person_id,
@@ -66,7 +66,7 @@ final readonly class PreviousCompletedRankFiller
     {
         return new RankInput(
             personId: $protocolLine->person_id,
-            eventId: null,
+            eventId: $protocolLine->distance->event_id,
             rank: $protocolLine->complete_rank,
             startDate: $startDate,
             activatedDate: $startDate,
