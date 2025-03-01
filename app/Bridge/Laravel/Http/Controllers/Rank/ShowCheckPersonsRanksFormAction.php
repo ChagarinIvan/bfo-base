@@ -10,6 +10,7 @@ class ShowCheckPersonsRanksFormAction extends AbstractRankAction
 {
     public function __invoke(): View
     {
+        /** @see /resources/views/ranks/check.blade.php */
         return $this->view('ranks.check');
     }
 }

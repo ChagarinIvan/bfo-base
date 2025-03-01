@@ -17,17 +17,15 @@
 @section('title', __('app.navbar.ranks'))
 
 @section('content')
-    @auth
-        <div class="row mb-3">
-            <div class="col-12">
-                <x-button text="app.rank.check"
-                          color="info"
-                          icon="bi-patch-question-fill"
-                          url="{{ action(ShowCheckPersonsRanksFormAction::class) }}"
-                />
-            </div>
+    <div class="row mb-3">
+        <div class="col-12">
+            <x-button text="app.rank.check"
+                      color="info"
+                      icon="bi-patch-question-fill"
+                      url="{{ action(ShowCheckPersonsRanksFormAction::class) }}"
+            />
         </div>
-    @endauth
+    </div>
     <div class="row">
         <ul class="nav nav-tabs pt-2">
             @foreach(Rank::RANKS as $rank)
