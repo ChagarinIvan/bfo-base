@@ -73,7 +73,6 @@ final readonly class RanksRepository
 
     public function storeRank(Rank $rank): Rank
     {
-        dump(sprintf('store rank %s', $rank->rank));
         $rank->save();
 
         return $rank;

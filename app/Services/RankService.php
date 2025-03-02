@@ -141,7 +141,6 @@ class RankService
 
         $event = $protocolLine->event;
         $actualRankDto = $this->activePersonRankService->execute(new ActivePersonRank((string)$protocolLine->person_id, $protocolLine->event->date));
-        dump(sprintf('Actual rank: ' . $actualRankDto?->rank ?? null));
 
         if ($actualRankDto) {
             if ($actualRankDto->rank === $protocolLine->complete_rank) {
@@ -206,7 +205,6 @@ class RankService
             }
         } else {
             $newRank = $this->createNewRank($protocolLine);
-            dump('create new rank ' . $newRank->rank);
             $this->ranksRepository->storeRank($newRank);
         }
     }
