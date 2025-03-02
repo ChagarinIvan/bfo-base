@@ -163,11 +163,12 @@ class RankService
                 // трэба абнавіць усе папярэднія разряды
                 $ranksFilter = new RanksFilter();
                 $ranksFilter->personId = (int) $actualRankDto->personId;
-                $ranksFilter->rank = $actualRankDto->rank;
+                $ranksFilter->rank = $newRank->rank;
                 $ranksFilter->startDateLess = $newRank->start_date;
                 $ranksFilter->finishDateMore = $newRank->finish_date;
                 $ranks = $this->ranksRepository->getRanksList($ranksFilter);
 
+                dump('Update previous ranks ', count($ranks));
                 $ranks->each(function (Rank $rank) use ($newRank): void {
                     $rank->finish_date = $newRank->finish_date;
                     $this->ranksRepository->storeRank($rank);
