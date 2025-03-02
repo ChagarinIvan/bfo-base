@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Console\Commands;
 
+use App\Domain\Person\Person;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\Rank\Rank;
 use App\Services\RankService;
@@ -14,7 +15,7 @@ use Illuminate\Console\Command;
  */
 final class RecalculatingRanks extends Command
 {
-    protected $signature = 'protocol-lines:rank-recalculating {--limit=1000} {--offset=0}';
+    protected $signature = 'protocol-lines:rank-recalculating {--limit=10} {--offset=0}';
     protected $description = 'Recalculates ranks for protocol lines with optional limit and offset';
 
     public function handle(RankService $service): void
@@ -30,15 +31,15 @@ final class RecalculatingRanks extends Command
             Rank::truncate();
         }
 
-        $query = ProtocolLine::query()
+        $query = Person::query()
             ->orderBy('id')
             ->limit($limit)
             ->offset($offset)
         ;
 
-        foreach ($query->cursor() as $index => $protocolLine) {
+        foreach ($query->cursor() as $index => $person) {
             $this->info("Process " . ($offset + $index) . ".");
-            $service->reFillRanksForPerson($protocolLine->person_id);
+            $service->reFillRanksForPerson($person->id);
         }
 
         $this->info('Finish.');
