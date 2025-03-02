@@ -179,6 +179,7 @@ class RankService
                 dump('prolongate rank ' . $actualRankDto->rank);
                 $this->ranksRepository->storeRank($newRank);
             } elseif (!empty(trim($actualRankDto->rank)) && (self::RANKS_POWER[$protocolLine->complete_rank] > self::RANKS_POWER[$actualRankDto->rank])) {
+                dump(sptrinf('Enreach rank %s > %s', $actualRankDto->rank, $protocolLine->complete_rank));
                 // трэба зачыніць усе папярэднія разряды
                 $ranksFilter = new RanksFilter();
                 $ranksFilter->personId = (int) $actualRankDto->personId;
@@ -205,7 +206,7 @@ class RankService
                 $ranksFilter->personId = (int) $actualRankDto->personId;
                 $ranksFilter->startDateMore = $event->date;
                 $ranks = $this->ranksRepository->getRanksList($ranksFilter);
-
+                dd('Count ranks for recalculating'. count($ranks));
                 $protocolLines = new Collection();
 
                 $ranks->each(function (Rank $rank) use (&$protocolLines): void {
