@@ -48,12 +48,18 @@ final readonly class PreviousCompletedRankFiller
                 return null;
             }
 
+            dump('Found completed rank in 2 years.')
+            dump($protocolLine->distance->event->date);
+            dump($protocolLine->complete_rank);
+
             $newRank = $this->factory->create($this->createRankInput($protocolLine, $finishDate->addDay()));
 
             if (!$this->juniorRankAgeValidator->validate($newRank->person_id, $newRank->rank, Year::actualYear())) {
                 return null;
             }
 
+            dump('Add new rank by downgrade '. $newRank->rank);
+            dump('Finish date: '. $newRank->finish_date);
             $this->ranks->add($newRank);
 
             return $newRank;
