@@ -145,6 +145,7 @@ final readonly class ProtocolLinesRepository implements ProtocolLineRepository
             ->join('events', 'events.id', '=', 'distances.event_id')
             ->where('protocol_lines.person_id', $personId)
             ->orderBy('events.date')
+            ->orderBy('distance_id')
         ;
 
         if ($year) {
