@@ -14,6 +14,6 @@ final readonly class PersonRanks
 
     public function criteria(): Criteria
     {
-        return new Criteria(['person_id' => $this->personId], ['startDate' => 'DESC']);
+        return new Criteria(['person_id' => $this->personId], ['start_date' => 'DESC']);
     }
 }
