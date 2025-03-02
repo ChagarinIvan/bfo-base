@@ -224,7 +224,6 @@ class RankService
 
                 $protocolLines = $protocolLines->sortBy('distance.event.date');
                 foreach ($protocolLines as $line) {
-                    dd($ranks);
                     /** @var ProtocolLine $line */
                     $this->fillRank($line);
                 }
@@ -259,7 +258,7 @@ class RankService
         $lastRank->event_id = $protocolLine->event->id;
         $lastRank->rank = $protocolLine->complete_rank;
         $lastRank->start_date = $protocolLine->event->date;
-        $lastRank->finish_date = $lastRank->start_date->clone()->addYears(2);
+        $lastRank->finish_date = ($protocolLine->activate_rank ?? $lastRank->start_date)->clone()->addYears(2);
         $lastRank->activated_date = $protocolLine->activate_rank;
 
         return $lastRank;
