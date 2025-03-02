@@ -158,7 +158,6 @@ class RankService
                 }
                 $this->ranksRepository->storeRank($newRank);
             } elseif (!empty(trim($actualRankDto->rank)) && (self::RANKS_POWER[$protocolLine->complete_rank] > self::RANKS_POWER[$actualRankDto->rank])) {
-                dump(sprintf('increase rank %s > %s' . $actualRankDto->rank, $protocolLine->complete_rank));
                 $ranksFilter = new RanksFilter();
                 $ranksFilter->personId = (int) $actualRankDto->personId;
                 $ranksFilter->rank = $actualRankDto->rank;
