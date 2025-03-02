@@ -67,6 +67,7 @@ class RankService
         $this->ranksRepository->deleteRanks($ranks);
 
         foreach ($this->protocolLineService->getPersonProtocolLines($personId) as $protocolLine) {
+            dump($protocolLine->id);
             $this->fillRank($protocolLine);
         }
     }

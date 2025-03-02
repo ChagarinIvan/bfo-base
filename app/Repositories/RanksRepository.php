@@ -73,6 +73,8 @@ final readonly class RanksRepository
 
     public function storeRank(Rank $rank): Rank
     {
+        dump('Store rank '. $rank->rank);
+        dump('Rank acticvation '. $rank->activated_date?->format('Y-m-d'));
         $rank->save();
 
         return $rank;
