@@ -169,6 +169,7 @@ class RankService
 
                 if ($protocolLine->activate_rank) {
                     dump(sprintf('Close previous ranks: %d', $ranks->count()));
+                    dump(sprintf('Finish date: %s', $finishDate->format('Y-m-d')));
                     $ranks->each(function (Rank $rank) use ($finishDate): void {
                         $rank->finish_date = $finishDate;
                         $this->ranksRepository->storeRank($rank);
