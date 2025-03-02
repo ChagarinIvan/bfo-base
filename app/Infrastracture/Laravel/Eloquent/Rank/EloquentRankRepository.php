@@ -38,7 +38,6 @@ final class EloquentRankRepository implements RankRepository
     private function buildQuery(Criteria $criteria): Builder
     {
         $query = Rank::select('*');
-        $query->orderBy('finish_date', 'desc');
 
         if ($criteria->hasParam('person_id')) {
             $query->where('person_id', $criteria->param('person_id'));
@@ -66,9 +65,12 @@ final class EloquentRankRepository implements RankRepository
         }
 
         if ($criteria->sorting()) {
+            $query->join('events', 'events.id', '=', 'ranks.event_id');
             foreach ($criteria->sorting() as $key => $order) {
                 $query->orderBy($key, $order);
             }
+        } else {
+            $query->orderBy('finish_date', 'desc');
         }
 
         return $query;
