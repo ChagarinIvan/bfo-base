@@ -164,6 +164,7 @@ class RankService
                 $ranksFilter->personId = (int) $actualRankDto->personId;
                 $ranksFilter->rank = $actualRankDto->rank;
                 $ranksFilter->startDateLess = $event->date;
+                $ranksFilter->finishDateMore = $event->date;
                 $ranks = $this->ranksRepository->getRanksList($ranksFilter);
                 $finishDate = $event->date->clone()->addDays(-1);
 
@@ -176,7 +177,6 @@ class RankService
                     });
                 }
 
-                dd('stop');
                 // Надо взять все разряды которые после этой даты
                 // Отсортировать их по дате евента и заново пересохранить
                 $ranksFilter = new RanksFilter();
