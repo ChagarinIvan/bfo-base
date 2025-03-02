@@ -48,7 +48,7 @@ final readonly class PreviousCompletedRankFiller
                 return null;
             }
 
-            dump('Found completed rank in 2 years.')
+            dump('Found completed rank in 2 years.');
             dump($protocolLine->distance->event->date);
             dump($protocolLine->complete_rank);
 
