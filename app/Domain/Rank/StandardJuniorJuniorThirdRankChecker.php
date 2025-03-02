@@ -46,6 +46,7 @@ final readonly class StandardJuniorJuniorThirdRankChecker implements JuniorThird
                     ->slice(offset: 0, length: 3)
                     ->values()
                 ;
+
                 return $this->factory->create($this->createRankInputFromProtocolLine($results->get(2)));
             }
         }
