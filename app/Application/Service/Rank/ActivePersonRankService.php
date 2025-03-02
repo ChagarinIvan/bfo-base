@@ -39,7 +39,9 @@ final readonly class ActivePersonRankService
 
         if (!$lastRank) {
             $lastCompletedRank = $this->ranks->oneByCriteria($command->criteriaWithoutDate());
-            dump('Last completed rank ' . $lastRank->rank);
+            if ($lastCompletedRank) {
+                dump('Last completed rank ' . $lastRank->rank);
+            }
 
             if ($lastCompletedRank) {
                 $lastRank = $this->previousCompletedRankFiller->fill($lastCompletedRank, $command->date());
