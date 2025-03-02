@@ -69,7 +69,7 @@ class RankService
         dump('deleted: ' . count($ranks));
 
         foreach ($this->protocolLineService->getPersonProtocolLines($personId) as $protocolLine) {
-            dump('fill: ' . $protocolLine->event_id);
+            dump('fill: ' . $protocolLine->distance->event->id);
             $this->fillRank($protocolLine);
         }
     }
