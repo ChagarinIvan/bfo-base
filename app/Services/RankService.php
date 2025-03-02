@@ -167,7 +167,9 @@ class RankService
                 $ranksFilter->rank = $newRank->rank;
                 $ranksFilter->startDateLess = $newRank->start_date;
                 $ranksFilter->finishDateMore = $newRank->finish_date;
+                dump($ranksFilter);
                 $ranks = $this->ranksRepository->getRanksList($ranksFilter);
+                dump($ranks);
 
                 dump('previous ranks ' . $ranks->count());
                 $ranks->each(function (Rank $rank) use ($finishDate): void {
