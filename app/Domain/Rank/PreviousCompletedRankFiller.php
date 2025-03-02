@@ -49,7 +49,7 @@ final readonly class PreviousCompletedRankFiller
             }
 
             dump('Found completed rank in 2 years.');
-            dump($protocolLine->distance->event->date);
+            dump($protocolLine->distance->event->date->format('Y-m-d'));
             dump($protocolLine->complete_rank);
 
             $newRank = $this->factory->create($this->createRankInput($protocolLine, $finishDate->addDay()));
