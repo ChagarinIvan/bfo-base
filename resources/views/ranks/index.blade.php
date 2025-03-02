@@ -62,7 +62,7 @@
                         <th data-sortable="true">{{ __('app.common.fio') }}</th>
                         <th data-sortable="true">{{ __('app.rank.completed_date') }}</th>
                         <th data-sortable="true">{{ __('app.rank.activated_date') }}</th>
-                        <th data-sortable="true">{{ __('app.rank.recompleted_date') }}</th>
+                        <th data-sortable="true">{{ __('app.event.title') }}</th>
                         <th data-sortable="true">{{ __('app.rank.finished_date') }}</th>
                     </tr>
                     </thead>

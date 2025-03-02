@@ -157,9 +157,23 @@ class RankService
                 if ($event->date > Carbon::createFromFormat('Y-m-d', ($actualRankDto->eventId === null ? $actualRankDto->startDate : $actualRankDto->eventDate))) {
                     $newRank->finish_date = $event->date->clone()->addYears(2);
                 }
-                dump('enreach rank ' . $newRank->rank);
+                dump('prolongate rank ' . $actualRankDto->rank);
                 $this->ranksRepository->storeRank($newRank);
+
+                // трэба абнавіць усе папярэднія разряды
+                $ranksFilter = new RanksFilter();
+                $ranksFilter->personId = (int) $actualRankDto->personId;
+                $ranksFilter->rank = $actualRankDto->rank;
+                $ranksFilter->startDateLess = $newRank->start_date;
+                $ranksFilter->finishDateMore = $newRank->finish_date;
+                $ranks = $this->ranksRepository->getRanksList($ranksFilter);
+
+                $ranks->each(function (Rank $rank) use ($newRank): void {
+                    $rank->finish_date = $newRank->finish_date;
+                    $this->ranksRepository->storeRank($rank);
+                });
             } elseif (!empty(trim($actualRankDto->rank)) && (self::RANKS_POWER[$protocolLine->complete_rank] > self::RANKS_POWER[$actualRankDto->rank])) {
+                // трэба зачыніць усе папярэднія разряды
                 $ranksFilter = new RanksFilter();
                 $ranksFilter->personId = (int) $actualRankDto->personId;
                 $ranksFilter->rank = $actualRankDto->rank;
