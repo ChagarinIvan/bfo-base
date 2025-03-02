@@ -206,7 +206,7 @@ class RankService
                 $ranksFilter->personId = (int) $actualRankDto->personId;
                 $ranksFilter->startDateMore = $event->date;
                 $ranks = $this->ranksRepository->getRanksList($ranksFilter);
-                dd('Count ranks for recalculating'. count($ranks));
+                dump('Count ranks for recalculating'. count($ranks));
                 $protocolLines = new Collection();
 
                 $ranks->each(function (Rank $rank) use (&$protocolLines): void {
@@ -223,7 +223,6 @@ class RankService
 
                 $protocolLines = $protocolLines->sortBy('distance.event.date');
                 foreach ($protocolLines as $line) {
-                    dd($protocolLines);
                     /** @var ProtocolLine $line */
                     $this->fillRank($line);
                 }
