@@ -221,6 +221,7 @@ class RankService
 
     public function storeRank(Rank $rank): void
     {
+        dump('storeRank in RanksService ' . $this->rank);
         $rank->save();
     }
 
