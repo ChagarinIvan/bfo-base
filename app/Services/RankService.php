@@ -156,7 +156,7 @@ class RankService
                 ));
 
                 $finishDate = $event->date > Carbon::createFromFormat('Y-m-d', ($actualRankDto->eventId === null ? $actualRankDto->startDate : $actualRankDto->eventDate))
-                    ? $event->date->clone()->addYears(2)
+                    ? ($protocolLine->activate_rank ?? $event->date)->clone()->addYears(2)
                     : $newRank->finish_date
                 ;
 
