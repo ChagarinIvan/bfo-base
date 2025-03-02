@@ -126,7 +126,7 @@ class RankService
      */
     public function fillRank(ProtocolLine $protocolLine): void
     {
-        if (!Rank::validateRank($protocolLine->complete_rank)) {
+        if (!Rank::validateRank($protocolLine->complete_rank) || empty($protocolLine->complete_rank)) {
             return;
         }
 
