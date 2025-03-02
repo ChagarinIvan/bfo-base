@@ -170,7 +170,7 @@ class RankService
 
                 dump('Update previous ranks ', count($ranks));
                 $ranks->each(function (Rank $rank) use ($newRank): void {
-                    $rank->finish_date = $newRank->finish_date;
+                    $rank->finish_date = $newRank->finish_date->clone();
                     $this->ranksRepository->storeRank($rank);
                 });
             } elseif (!empty(trim($actualRankDto->rank)) && (self::RANKS_POWER[$protocolLine->complete_rank] > self::RANKS_POWER[$actualRankDto->rank])) {

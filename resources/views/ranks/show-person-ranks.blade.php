@@ -64,7 +64,7 @@
             @foreach ($ranks as $rank)
                 <tr @if($rank->activatedDate) class="table-info" @else class="table-secondary" @endif>
                     <td>{{ $rank->rank }}</td>
-                    <td>{{ $rank->eventDate ?: $rank->startDate}}</td>
+                    <td>{{ $rank->eventDate ?: $rank->startDate }}</td>
                     <td>{{ $rank->activatedDate ?: '-' }}</td>
                     <td>{{ $rank->finishDate }}</td>
                     <td>

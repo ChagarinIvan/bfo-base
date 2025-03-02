@@ -73,7 +73,6 @@ final readonly class RanksRepository
 
     public function storeRank(Rank $rank): Rank
     {
-        dump(sprintf('storeRank %s, startDate %s, finishDate %s', $rank->rank, $rank->start_date->format('Y-m-d'), $rank->finish_date->format('Y-m-d')));
         $rank->save();
 
         return $rank;
