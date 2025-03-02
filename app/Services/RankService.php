@@ -128,6 +128,7 @@ class RankService
     {
         if (
             $protocolLine->complete_rank === null
+            || empty(trim($protocolLine->complete_rank))
             || !array_key_exists($protocolLine->complete_rank, self::RANKS_POWER)
             || !Rank::validateRank($protocolLine->complete_rank)
         ) {
