@@ -28,7 +28,7 @@ final readonly class ActivePersonRankService
             $thirdJuniorRank = $this->thirdRankChecker->check($command->personId(), $command->date());
 
             if ($thirdJuniorRank && $thirdJuniorRank->start_date < $command->date()) {
-                dump('add third junior rank');
+//                dump('add third junior rank');
                 $this->ranks->add($thirdJuniorRank);
                 $lastRank = $thirdJuniorRank;
             }

@@ -167,7 +167,7 @@ class Rank extends AggregatedModel
 
     public function create(): void
     {
-        dump('Create rank ' . $this->rank);
+//        dump('Create rank ' . $this->rank);
         $this->recordThat(new RankCreated($this));
 
         $this->save();

@@ -73,10 +73,10 @@ final readonly class RanksRepository
 
     public function storeRank(Rank $rank): Rank
     {
-        dump('Store rank '. $rank->rank);
+//        dump('Store rank '. $rank->rank);
         $rank->save();
-        dump('Is durty ' . $rank->isDirty('activated_date'));
-        dump('Rank activation '. $rank->activated_date?->format('Y-m-d'));
+//        dump('Is durty ' . $rank->isDirty('activated_date'));
+//        dump('Rank activation '. $rank->activated_date?->format('Y-m-d'));
 
         return $rank;
     }
