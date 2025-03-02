@@ -53,6 +53,10 @@ final class EloquentRankRepository implements RankRepository
             $query->where('finish_date', '<=', $criteria->param('finish_date_to'));
         }
 
+        if ($criteria->hasParam('startDateLess')) {
+            $query->where('start_date', '<=', $criteria->param('startDateLess'));
+        }
+
         if ($criteria->hasParam('activated')) {
             if ($criteria->param('activated')) {
                 $query->whereNotNull('activated_date');

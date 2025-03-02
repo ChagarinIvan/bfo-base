@@ -15,6 +15,7 @@ readonly class Criteria
     {
         return new self([]);
     }
+
     public function __construct(
         /** @var array<string, mixed> $params */
         private array $params,

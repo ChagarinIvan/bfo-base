@@ -15,9 +15,14 @@ final readonly class ActivePersonRank
     ) {
     }
 
-    public function criteria(): Criteria
+    public function criteriaWithDate(): Criteria
     {
         return new Criteria(['person_id' => $this->personId, 'activated' => true, 'date' => $this->date]);
+    }
+
+    public function criteriaWithoutDate(): Criteria
+    {
+        return new Criteria(['person_id' => $this->personId, 'activated' => true, 'startDateLess' => $this->date]);
     }
 
     public function personId(): int

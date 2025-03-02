@@ -71,22 +71,6 @@ final readonly class RanksRepository
         return $ranks->get();
     }
 
-    public function getDateRank(int $personId, Carbon $date = null): ?Rank
-    {
-        $rankQuery = Rank::where('person_id', '=', $personId)
-            ->orderBy('finish_date', 'desc')
-            ->whereNotNull('activated_date')
-            ->limit(1)
-        ;
-
-        if ($date !== null) {
-            $rankQuery->where('finish_date', '>=', $date);
-            $rankQuery->where('start_date', '<=', $date);
-        }
-
-        return $rankQuery->first();
-    }
-
     public function storeRank(Rank $rank): Rank
     {
         $rank->save();
