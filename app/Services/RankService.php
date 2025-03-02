@@ -161,9 +161,6 @@ class RankService
 
                 $newRank->finish_date = $finishDate;
 
-                dump('prolongate rank ' . $actualRankDto->rank);
-                $this->ranksRepository->storeRank($newRank);
-
                 // трэба абнавіць усе папярэднія разряды
                 $ranksFilter = new RanksFilter();
                 $ranksFilter->personId = (int) $actualRankDto->personId;
@@ -172,11 +169,15 @@ class RankService
                 $ranksFilter->finishDateMore = $newRank->finish_date;
                 $ranks = $this->ranksRepository->getRanksList($ranksFilter);
 
+                dump('previous ranks ' . $ranks->count());
                 $ranks->each(function (Rank $rank) use ($finishDate): void {
                     $rank->finish_date = $finishDate;
                     $rank->setAttribute('finish_date', $finishDate);
                     $this->ranksRepository->storeRank($rank);
                 });
+
+                dump('prolongate rank ' . $actualRankDto->rank);
+                $this->ranksRepository->storeRank($newRank);
             } elseif (!empty(trim($actualRankDto->rank)) && (self::RANKS_POWER[$protocolLine->complete_rank] > self::RANKS_POWER[$actualRankDto->rank])) {
                 // трэба зачыніць усе папярэднія разряды
                 $ranksFilter = new RanksFilter();
