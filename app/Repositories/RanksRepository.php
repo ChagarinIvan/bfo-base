@@ -73,7 +73,12 @@ final readonly class RanksRepository
 
     public function storeRank(Rank $rank): Rank
     {
-        $rank->save();
+        if ($rank->isDirty('finish_date')) {
+            dump('Finish date changed, saving...');
+            $rank->save();
+        } else {
+            dump('Finish date not changed, skipping save');
+        }
 
         return $rank;
     }
