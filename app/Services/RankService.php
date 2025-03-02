@@ -154,9 +154,13 @@ class RankService
                     activatedDate: $protocolLine->activate_rank,
                 ));
 
-                if ($event->date > Carbon::createFromFormat('Y-m-d', ($actualRankDto->eventId === null ? $actualRankDto->startDate : $actualRankDto->eventDate))) {
-                    $newRank->finish_date = $event->date->clone()->addYears(2);
-                }
+                $finishDate = $event->date > Carbon::createFromFormat('Y-m-d', ($actualRankDto->eventId === null ? $actualRankDto->startDate : $actualRankDto->eventDate))
+                    ? $event->date->clone()->addYears(2)
+                    : $newRank->finish_date
+                ;
+
+                $newRank->finish_date = $finishDate;
+
                 dump('prolongate rank ' . $actualRankDto->rank);
                 $this->ranksRepository->storeRank($newRank);
 
@@ -168,9 +172,9 @@ class RankService
                 $ranksFilter->finishDateMore = $newRank->finish_date;
                 $ranks = $this->ranksRepository->getRanksList($ranksFilter);
 
-                $ranks->each(function (Rank $rank) use ($newRank): void {
-                    $rank->finish_date = $newRank->finish_date->clone();
-                    $rank->setAttribute('finish_date', $newRank->finish_date->clone());
+                $ranks->each(function (Rank $rank) use ($finishDate): void {
+                    $rank->finish_date = $finishDate;
+                    $rank->setAttribute('finish_date', $finishDate);
                     $this->ranksRepository->storeRank($rank);
                 });
             } elseif (!empty(trim($actualRankDto->rank)) && (self::RANKS_POWER[$protocolLine->complete_rank] > self::RANKS_POWER[$actualRankDto->rank])) {
