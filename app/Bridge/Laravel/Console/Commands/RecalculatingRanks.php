@@ -31,6 +31,7 @@ final class RecalculatingRanks extends Command
         }
 
         $query = Person::query()
+            ->where('active', true)
             ->orderBy('id')
             ->limit($limit)
             ->offset($offset)

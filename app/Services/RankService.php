@@ -63,10 +63,13 @@ class RankService
             return;
         }
 
+        dump('Refill ranks for person: ' . $personId);
         $ranks = $this->getPersonRanks($personId);
         $this->ranksRepository->deleteRanks($ranks);
+        dump('deleted: ' . count($ranks));
 
         foreach ($this->protocolLineService->getPersonProtocolLines($personId) as $protocolLine) {
+            dump('fill: ' . $protocolLine->event_id);
             $this->fillRank($protocolLine);
         }
     }
