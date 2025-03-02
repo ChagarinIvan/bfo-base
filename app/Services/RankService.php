@@ -129,7 +129,7 @@ class RankService
         if (
             $protocolLine->complete_rank === null
             || empty(trim($protocolLine->complete_rank))
-            || !array_key_exists($protocolLine->complete_rank, self::RANKS_POWER)
+            || !isset(self::RANKS_POWER[$protocolLine->complete_rank])
             || !Rank::validateRank($protocolLine->complete_rank)
         ) {
             return;
@@ -141,6 +141,7 @@ class RankService
 
         $event = $protocolLine->event;
         $actualRankDto = $this->activePersonRankService->execute(new ActivePersonRank((string)$protocolLine->person_id, $protocolLine->event->date));
+        dump(sprintf('Actual rank: ' . $actualRankDto->rank));
 
         if ($actualRankDto) {
             if ($actualRankDto->rank === $protocolLine->complete_rank) {
@@ -157,6 +158,7 @@ class RankService
                 }
                 $this->ranksRepository->storeRank($newRank);
             } elseif (self::RANKS_POWER[$protocolLine->complete_rank] > self::RANKS_POWER[$actualRankDto->rank]) {
+                dump(sprintf('increase rank %s > %s' . $actualRankDto->rank, $protocolLine->complete_rank));
                 $ranksFilter = new RanksFilter();
                 $ranksFilter->personId = (int) $actualRankDto->personId;
                 $ranksFilter->rank = $actualRankDto->rank;
@@ -205,6 +207,7 @@ class RankService
             }
         } else {
             $newRank = $this->createNewRank($protocolLine);
+            dump('create new rank ' . $newRank->rank);
             $this->ranksRepository->storeRank($newRank);
         }
     }
