@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Bridge\Laravel\Console\Commands;
 
 use App\Domain\Person\Person;
-use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\Rank\Rank;
 use App\Services\RankService;
 use Illuminate\Console\Command;
@@ -39,6 +38,7 @@ final class RecalculatingRanks extends Command
 
         foreach ($query->cursor() as $index => $person) {
             $this->info("Process " . ($offset + $index) . ".");
+            $this->info("Person id " . $person->id .".");
             $service->reFillRanksForPerson($person->id);
         }
 
