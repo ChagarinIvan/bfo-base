@@ -54,6 +54,7 @@ final readonly class PreviousCompletedRankFiller
                 return null;
             }
 
+            dump('PreviousCompletedRankFiller:fill');
             $this->ranks->add($newRank);
 
             return $newRank;

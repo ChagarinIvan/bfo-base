@@ -28,6 +28,7 @@ final readonly class ActivePersonRankService
             $thirdJuniorRank = $this->thirdRankChecker->check($command->personId());
 
             if ($thirdJuniorRank) {
+                dump('ThirdJunior rank');
                 $this->ranks->add($thirdJuniorRank);
             }
 
