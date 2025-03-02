@@ -99,7 +99,6 @@ class Rank extends AggregatedModel
         '3' => 'iii',
     ];
 
-    public $timestamps = false;
     protected $table = 'ranks';
     protected $casts = [
         'start_date' => 'datetime:Y-m-d',
