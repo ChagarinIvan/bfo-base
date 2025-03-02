@@ -71,6 +71,7 @@ class RankService
         foreach ($this->protocolLineService->getPersonProtocolLines($personId) as $protocolLine) {
             dump('fill: ' . $protocolLine->distance_id);
             dump('fill: ' . $protocolLine->distance->event->competition_id);
+            dump('fill: ' . $protocolLine->distance->event->date->format('Y-m-d'));
             $this->fillRank($protocolLine);
         }
     }
@@ -141,9 +142,9 @@ class RankService
         $event = $protocolLine->event;
         $actualRankDto = $this->activePersonRankService->execute(new ActivePersonRank((string)$protocolLine->person_id, $protocolLine->event->date));
 
-        dump($actualRankDto);
         if ($actualRankDto) {
             if ($actualRankDto->rank === $protocolLine->complete_rank) {
+                dump('Extending the current rank.');
                 $newRank = $this->factory->create(new RankInput(
                     personId: (int) $actualRankDto->personId,
                     eventId: $event->id,
@@ -157,6 +158,7 @@ class RankService
                 }
                 $this->ranksRepository->storeRank($newRank);
             } elseif (self::RANKS_POWER[$protocolLine->complete_rank] > self::RANKS_POWER[$actualRankDto->rank]) {
+                dump(sprintf('Enreach rank level from %s > %s', $actualRankDto->rank, $protocolLine->complete_rank));
                 $ranksFilter = new RanksFilter();
                 $ranksFilter->personId = (int) $actualRankDto->personId;
                 $ranksFilter->rank = $actualRankDto->rank;
@@ -165,6 +167,7 @@ class RankService
                 $finishDate = $event->date->clone()->addDays(-1);
 
                 if ($protocolLine->activate_rank) {
+                    dump(sprintf('Close previous ranks: %d', $ranks->count()));
                     $ranks->each(function (Rank $rank) use ($finishDate): void {
                         $rank->finish_date = $finishDate;
                         $this->ranksRepository->storeRank($rank);
@@ -177,26 +180,30 @@ class RankService
                 $ranksFilter->personId = (int) $actualRankDto->personId;
                 $ranksFilter->startDateMore = $event->date;
                 $ranks = $this->ranksRepository->getRanksList($ranksFilter);
+                dump(sprintf('Delete future ranks: %d', $ranks->count()));
                 $protocolLines = new Collection();
+
                 $ranks->each(function (Rank $rank) use (&$protocolLines): void {
                     $protocolLineId = $this->protocolLineService->getProtocolLineIdForRank($rank);
-                    $protocolLine = $this->protocolLineService->getProtocolLineWithEvent($protocolLineId);
-                    if ($protocolLine) {
-                        $protocolLines->push($protocolLine);
+                    $pl = $this->protocolLineService->getProtocolLineWithEvent($protocolLineId);
+                    if ($pl) {
+                        $protocolLines->push($pl);
                     }
                 });
+
                 $this->ranksRepository->deleteRanks($ranks);
                 $newRank = $this->createNewRank($protocolLine);
                 $this->ranksRepository->storeRank($newRank);
 
                 $protocolLines = $protocolLines->sortBy('distance.event.date');
-                dump(count($protocolLines));
                 foreach ($protocolLines as $line) {
+                    dd($protocolLines);
                     /** @var ProtocolLine $line */
                     $this->fillRank($line);
                 }
             }
         } else {
+            dump('Creating a new rank.');
             $newRank = $this->createNewRank($protocolLine);
             $this->ranksRepository->storeRank($newRank);
         }
