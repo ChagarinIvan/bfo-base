@@ -24,6 +24,7 @@ final readonly class ActivePersonRankService
     {
         $lastRank = $this->ranks->oneByCriteria($command->criteria());
 
+        dump(sprintf('LastRank: %s, startDate: %s, finsihDate: %s', $lastRank->rank, $lastRank->start_date->format('Y-m-d'), $lastRank->finish_date->format('Y-m-d')));
         if ($lastRank === null) {
             $thirdJuniorRank = $this->thirdRankChecker->check($command->personId());
 
