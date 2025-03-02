@@ -222,9 +222,9 @@ final readonly class ProtocolLinesRepository implements ProtocolLineRepository
 
         if ($criteria->hasParam('completedRank')) {
             if ($criteria->param('completedRank')) {
-                $query->whereNotNull('complete_rank');
+                $query->whereNotNull('complete_rank')->where('complete_rank', '!=', '');
             } else {
-                $query->whereNull('complete_rank');
+                $query->whereNull('complete_rank')->orWhere('complete_rank', '');
             }
         }
 
