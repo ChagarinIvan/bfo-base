@@ -223,6 +223,7 @@ class RankService
 
                 $protocolLines = $protocolLines->sortBy('distance.event.date');
                 foreach ($protocolLines as $line) {
+                    dd($protocolLines);
                     /** @var ProtocolLine $line */
                     $this->fillRank($line);
                 }
