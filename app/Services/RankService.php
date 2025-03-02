@@ -71,6 +71,7 @@ class RankService
         foreach ($this->protocolLineService->getPersonProtocolLines($personId) as $protocolLine) {
             dump('Distance Id: ' . $protocolLine->distance_id);
             dump('Compatition Id: ' . $protocolLine->distance->event->competition_id);
+            dump('Completed rank: ' . $protocolLine->completed_rank);
             dump('Date: ' . $protocolLine->distance->event->date->format('Y-m-d'));
             $this->fillRank($protocolLine);
         }
@@ -203,7 +204,7 @@ class RankService
                 }
             }
         } else {
-            dump('Creating a new rank.');
+            dump('Creating a new rank ' . $protocolLine->complete_rank);
             $newRank = $this->createNewRank($protocolLine);
             $this->ranksRepository->storeRank($newRank);
         }
