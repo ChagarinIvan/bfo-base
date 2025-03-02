@@ -139,11 +139,11 @@ class RankService
             return;
         }
 
-        dump('Search acutal rankt for date ' . $protocolLine->event->date->format('Y-m-d'));
+//        dump('Search acutal rankt for date ' . $protocolLine->event->date->format('Y-m-d'));
         $event = $protocolLine->event;
         $actualRankDto = $this->activePersonRankService->execute(new ActivePersonRank((string)$protocolLine->person_id, $protocolLine->event->date));
 
-        dump('Actual rank ' . $actualRankDto?->rank ?? '---');
+//        dump('Actual rank ' . $actualRankDto?->rank ?? '---');
         if ($actualRankDto) {
             if ($actualRankDto->rank === $protocolLine->complete_rank) {
                 $newRank = $this->factory->create(new RankInput(
@@ -169,14 +169,14 @@ class RankService
                 $ranksFilter->finishDateMore = $newRank->start_date;
                 $ranks = $this->ranksRepository->getRanksList($ranksFilter);
 
-                dump('previous ranks ' . $ranks->count());
+//                dump('previous ranks ' . $ranks->count());
                 $ranks->each(function (Rank $rank) use ($finishDate): void {
                     $rank->finish_date = $finishDate;
                     $rank->setAttribute('finish_date', $finishDate);
                     $this->ranksRepository->storeRank($rank);
                 });
 
-                dump('prolongate rank ' . $actualRankDto->rank);
+//                dump('prolongate rank ' . $actualRankDto->rank);
                 $this->ranksRepository->storeRank($newRank);
             } elseif (!empty(trim($actualRankDto->rank)) && (self::RANKS_POWER[$protocolLine->complete_rank] > self::RANKS_POWER[$actualRankDto->rank])) {
                 // трэба зачыніць усе папярэднія разряды
@@ -227,7 +227,7 @@ class RankService
                 }
             }
         } else {
-            dump('Create new rank');
+//            dump('Create new rank');
             $newRank = $this->createNewRank($protocolLine);
             $this->ranksRepository->storeRank($newRank);
         }
@@ -245,7 +245,7 @@ class RankService
 
     public function storeRank(Rank $rank): void
     {
-        dump('storeRank in RanksService ' . $this->rank);
+//        dump('storeRank in RanksService ' . $this->rank);
         $rank->save();
     }
 

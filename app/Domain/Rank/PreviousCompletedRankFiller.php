@@ -44,7 +44,6 @@ final readonly class PreviousCompletedRankFiller
                 ['completedRank' => 'desc'],
             ));
 
-            dump($protocolLine);
             if (!$protocolLine) {
                 return null;
             }
@@ -55,7 +54,6 @@ final readonly class PreviousCompletedRankFiller
                 return null;
             }
 
-            dump('PreviousCompletedRankFiller:fill');
             $this->ranks->add($newRank);
 
             return $newRank;
