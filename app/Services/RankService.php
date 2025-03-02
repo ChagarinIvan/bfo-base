@@ -141,6 +141,7 @@ class RankService
         $event = $protocolLine->event;
         $actualRankDto = $this->activePersonRankService->execute(new ActivePersonRank((string)$protocolLine->person_id, $protocolLine->event->date));
 
+        dump($actualRankDto);
         if ($actualRankDto) {
             if ($actualRankDto->rank === $protocolLine->complete_rank) {
                 $newRank = $this->factory->create(new RankInput(
@@ -189,6 +190,7 @@ class RankService
                 $this->ranksRepository->storeRank($newRank);
 
                 $protocolLines = $protocolLines->sortBy('distance.event.date');
+                dump(count($protocolLines));
                 foreach ($protocolLines as $line) {
                     /** @var ProtocolLine $line */
                     $this->fillRank($line);
