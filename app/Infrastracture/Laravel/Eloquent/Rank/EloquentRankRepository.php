@@ -65,6 +65,12 @@ final class EloquentRankRepository implements RankRepository
             }
         }
 
+        if ($criteria->sorting()) {
+            foreach ($criteria->sorting() as $key => $order) {
+                $query->orderBy($key, $order);
+            }
+        }
+
         return $query;
     }
 }
