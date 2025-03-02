@@ -143,6 +143,7 @@ class RankService
         $event = $protocolLine->event;
         $actualRankDto = $this->activePersonRankService->execute(new ActivePersonRank((string)$protocolLine->person_id, $protocolLine->event->date));
 
+        dump('Actual rank ' . $actualRankDto?->rank ?? '---');
         if ($actualRankDto) {
             if ($actualRankDto->rank === $protocolLine->complete_rank) {
                 $newRank = $this->factory->create(new RankInput(
@@ -156,6 +157,7 @@ class RankService
                 if ($event->date > Carbon::createFromFormat('Y-m-d', ($actualRankDto->eventId === null ? $actualRankDto->startDate : $actualRankDto->eventDate))) {
                     $newRank->finish_date = $event->date->clone()->addYears(2);
                 }
+                dump('enreach rank ' . $newRank->rank);
                 $this->ranksRepository->storeRank($newRank);
             } elseif (!empty(trim($actualRankDto->rank)) && (self::RANKS_POWER[$protocolLine->complete_rank] > self::RANKS_POWER[$actualRankDto->rank])) {
                 $ranksFilter = new RanksFilter();
@@ -205,6 +207,7 @@ class RankService
                 }
             }
         } else {
+            dump('Create new rank');
             $newRank = $this->createNewRank($protocolLine);
             $this->ranksRepository->storeRank($newRank);
         }
