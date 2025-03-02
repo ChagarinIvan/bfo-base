@@ -168,11 +168,9 @@ class RankService
                 $ranksFilter->finishDateMore = $newRank->finish_date;
                 $ranks = $this->ranksRepository->getRanksList($ranksFilter);
 
-                dump('Update previous ranks ', count($ranks));
                 $ranks->each(function (Rank $rank) use ($newRank): void {
-                    dump($newRank->finish_date->format('Y-m-d'));
                     $rank->finish_date = $newRank->finish_date->clone();
-                    dump($rank->finish_date->format('Y-m-d'));
+                    $rank->setAttribute('finish_date', $newRank->finish_date->clone());
                     $this->ranksRepository->storeRank($rank);
                 });
             } elseif (!empty(trim($actualRankDto->rank)) && (self::RANKS_POWER[$protocolLine->complete_rank] > self::RANKS_POWER[$actualRankDto->rank])) {
