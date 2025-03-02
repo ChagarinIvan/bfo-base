@@ -217,7 +217,7 @@ final readonly class ProtocolLinesRepository implements ProtocolLineRepository
         }
 
         if ($criteria->hasParam('dateFrom')) {
-            $query->where('events.date', '>=', $criteria->param('dateFrom'));
+            $query->where('events.date', '>', $criteria->param('dateFrom'));
         }
 
         if ($criteria->hasParam('completedRank')) {
