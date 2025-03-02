@@ -166,7 +166,11 @@ class RankService
                 $ranksFilter->startDateLess = $event->date;
                 $ranksFilter->finishDateMore = $event->date;
                 $ranks = $this->ranksRepository->getRanksList($ranksFilter);
-                $finishDate = $event->date->clone()->addDays(-1);
+                if ($event->date->format('Y-m-d') !== $protocolLine->activate_rank->format('Y-m-d')) {
+                    $finishDate = $protocolLine->activate_rank;
+                } else {
+                    $finishDate = $event->date->clone()->addDays(-1);
+                }
 
                 if ($protocolLine->activate_rank) {
                     dump(sprintf('Close previous ranks: %d', $ranks->count()));
