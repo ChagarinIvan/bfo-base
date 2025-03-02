@@ -44,6 +44,7 @@ final readonly class PreviousCompletedRankFiller
                 ['completedRank' => 'desc'],
             ));
 
+            dump($protocolLine);
             if (!$protocolLine) {
                 return null;
             }

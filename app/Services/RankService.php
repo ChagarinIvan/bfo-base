@@ -139,6 +139,7 @@ class RankService
             return;
         }
 
+        dump('Search acutal rankt for date ' . $protocolLine->event->date->format('Y-m-d'));
         $event = $protocolLine->event;
         $actualRankDto = $this->activePersonRankService->execute(new ActivePersonRank((string)$protocolLine->person_id, $protocolLine->event->date));
 
