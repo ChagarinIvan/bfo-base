@@ -99,7 +99,7 @@ class Rank extends AggregatedModel
         '3' => 'iii',
     ];
 
-    protected $fillable = ['finish_date'];
+    protected $fillable = ['finish_date', 'activated_date'];
 
     protected $table = 'ranks';
     protected $casts = [

@@ -258,7 +258,7 @@ class RankService
         $lastRank->person_id = $protocolLine->person_id;
         $lastRank->event_id = $protocolLine->event->id;
         $lastRank->rank = $protocolLine->complete_rank;
-        $lastRank->start_date = $protocolLine->activate_rank ?: $protocolLine->event->date;
+        $lastRank->start_date = $protocolLine->event->date;
         $lastRank->finish_date = $lastRank->start_date->clone()->addYears(2);
         $lastRank->activated_date = $protocolLine->activate_rank;
 
