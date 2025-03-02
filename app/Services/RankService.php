@@ -66,12 +66,12 @@ class RankService
         dump('Refill ranks for person: ' . $personId);
         $ranks = $this->getPersonRanks($personId);
         $this->ranksRepository->deleteRanks($ranks);
-        dump('deleted: ' . count($ranks));
+        dump('Deleted ranks count: ' . count($ranks));
 
         foreach ($this->protocolLineService->getPersonProtocolLines($personId) as $protocolLine) {
-            dump('fill: ' . $protocolLine->distance_id);
-            dump('fill: ' . $protocolLine->distance->event->competition_id);
-            dump('fill: ' . $protocolLine->distance->event->date->format('Y-m-d'));
+            dump('Distance Id: ' . $protocolLine->distance_id);
+            dump('Compatition Id: ' . $protocolLine->distance->event->competition_id);
+            dump('Date: ' . $protocolLine->distance->event->date->format('Y-m-d'));
             $this->fillRank($protocolLine);
         }
     }
