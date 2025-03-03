@@ -9,6 +9,8 @@ use App\Application\Dto\Rank\ViewRankDto;
 use App\Domain\Rank\JuniorThirdRankChecker;
 use App\Domain\Rank\PreviousCompletedRankFiller;
 use App\Domain\Rank\RankRepository;
+use App\Domain\Shared\Clock;
+use App\Domain\Shared\Criteria;
 
 final readonly class ActivePersonRankService
 {
@@ -17,16 +19,14 @@ final readonly class ActivePersonRankService
         private JuniorThirdRankChecker $thirdRankChecker,
         private RankAssembler $assembler,
         private PreviousCompletedRankFiller $previousCompletedRankFiller,
+        private Clock $clock,
     ) {
     }
 
     public function execute(ActivePersonRank $command): ?ViewRankDto
     {
-        $criteria = $command->criteriaWithDate();
-        dump($criteria);
-        $lastRank = $this->ranks->oneByCriteria($criteria);
+        $lastRank = $this->ranks->oneByCriteria($this->criteriaWithDate($command));
 
-        dump($lastRank);
         if ($lastRank === null) {
             $thirdJuniorRank = $this->thirdRankChecker->check($command->personId(), $command->date());
 
@@ -38,14 +38,22 @@ final readonly class ActivePersonRankService
         }
 
         if (!$lastRank) {
-            $lastCompletedRank = $this->ranks->oneByCriteria($command->criteriaWithoutDate());
-            dump($lastCompletedRank);
+            $lastCompletedRank = $this->ranks->oneByCriteria($this->criteriaWithoutDate($command));
             if ($lastCompletedRank) {
                 $lastRank = $this->previousCompletedRankFiller->fill($lastCompletedRank, $command->date());
             }
-            dump($lastRank);
         }
 
         return $lastRank ? $this->assembler->toViewRankDto($lastRank) : null;
+    }
+
+    public function criteriaWithDate(ActivePersonRank $command): Criteria
+    {
+        return new Criteria(['person_id' => $command->personId(), 'activated' => true, 'date' => $command->date() ?? $this->clock->now()]);
+    }
+
+    public function criteriaWithoutDate(ActivePersonRank $command): Criteria
+    {
+        return new Criteria(['person_id' => $command->personId(), 'activated' => true, 'startDateLess' => $command->date() ?? $this->clock->now()]);
     }
 }
