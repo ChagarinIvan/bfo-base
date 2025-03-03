@@ -37,7 +37,7 @@ final class EloquentRankRepository implements RankRepository
 
     private function buildQuery(Criteria $criteria): Builder
     {
-        $query = Rank::select('rank.*');
+        $query = Rank::select('ranks.*');
 
         if ($criteria->hasParam('person_id')) {
             $query->where('person_id', $criteria->param('person_id'));
