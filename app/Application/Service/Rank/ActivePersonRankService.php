@@ -22,7 +22,9 @@ final readonly class ActivePersonRankService
 
     public function execute(ActivePersonRank $command): ?ViewRankDto
     {
-        $lastRank = $this->ranks->oneByCriteria($command->criteriaWithDate());
+        $criteria = $command->criteriaWithDate();
+        dump($criteria);
+        $lastRank = $this->ranks->oneByCriteria($criteria);
 
         dump($lastRank);
         if ($lastRank === null) {
