@@ -24,6 +24,7 @@ final readonly class ActivePersonRankService
     {
         $lastRank = $this->ranks->oneByCriteria($command->criteriaWithDate());
 
+        dump($lastRank);
         if ($lastRank === null) {
             $thirdJuniorRank = $this->thirdRankChecker->check($command->personId(), $command->date());
 
@@ -36,10 +37,11 @@ final readonly class ActivePersonRankService
 
         if (!$lastRank) {
             $lastCompletedRank = $this->ranks->oneByCriteria($command->criteriaWithoutDate());
-
+            dump($lastCompletedRank);
             if ($lastCompletedRank) {
                 $lastRank = $this->previousCompletedRankFiller->fill($lastCompletedRank, $command->date());
             }
+            dump($lastRank);
         }
 
         return $lastRank ? $this->assembler->toViewRankDto($lastRank) : null;
