@@ -12,6 +12,7 @@
      */
 @endphp
 
+@dump($ranks)
 @extends('layouts.app')
 
 @section('title', __('app.ranks'))
