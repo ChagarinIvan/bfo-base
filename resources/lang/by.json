@@ -19,7 +19,7 @@
     "app.ranks" : "Разрады",
     "app.rank.recompleted_date" : "Дата апошняга падтвярджэння",
     "app.rank.activated_date" : "Дата актывацыі",
-    "app.rank.completed_date" : "Дата выканання",
+    "app.rank.completed_date" : "Дата выканання/пацверджання",
     "app.rank.finished_date" : "Дата заканчэння",
     "app.rank.check" : "Праверка разрадаў",
     "app.rank.check_button" : "Праверыць",
