@@ -48,7 +48,7 @@ final class StandardThirdRankCheckerTest extends TestCase
         $person->birthday = Carbon::createFromFormat('Y', '2005');
 
         $this->clock
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('years')
             ->willReturn([Year::y2024, Year::y2025])
         ;
@@ -80,7 +80,7 @@ final class StandardThirdRankCheckerTest extends TestCase
         $person->birthday = Carbon::createFromFormat('Y', '2007');
 
         $this->clock
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('years')
             ->willReturn([Year::y2025])
         ;

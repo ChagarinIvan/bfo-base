@@ -145,6 +145,7 @@ final readonly class ProtocolLinesRepository implements ProtocolLineRepository
             ->join('events', 'events.id', '=', 'distances.event_id')
             ->where('protocol_lines.person_id', $personId)
             ->orderBy('events.date')
+            ->orderBy('distance_id')
         ;
 
         if ($year) {
@@ -217,14 +218,14 @@ final readonly class ProtocolLinesRepository implements ProtocolLineRepository
         }
 
         if ($criteria->hasParam('dateFrom')) {
-            $query->where('events.date', '>=', $criteria->param('dateFrom'));
+            $query->where('events.date', '>', $criteria->param('dateFrom'));
         }
 
         if ($criteria->hasParam('completedRank')) {
             if ($criteria->param('completedRank')) {
-                $query->whereNotNull('complete_rank');
+                $query->whereNotNull('complete_rank')->where('complete_rank', '!=', '');
             } else {
-                $query->whereNull('complete_rank');
+                $query->whereNull('complete_rank')->orWhere('complete_rank', '');
             }
         }
 

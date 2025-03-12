@@ -56,7 +56,7 @@ final class ActivatePersonRankActionTest extends TestCase
             'person_id' => 102,
             'event_id' => 102,
             'rank' => Rank::SMC_RANK,
-            'start_date' => '2024-02-20',
+            'start_date' => '2022-03-02',
         ]);
     }
 }
