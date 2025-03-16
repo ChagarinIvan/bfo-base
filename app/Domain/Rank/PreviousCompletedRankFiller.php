@@ -45,16 +45,16 @@ final readonly class PreviousCompletedRankFiller
                 ['completedRank' => 'desc', 'eventDate' => 'asc'],
             ));
 
-            dump('$protocolLines->count(): ' . $protocolLines->count());
             if ($protocolLines->isEmpty()) {
                 return null;
             }
 
-            $protocolLines = $protocolLines->groupBy('complete_rank');
+            $first = $protocolLines->first();
+            $protocolLines = $protocolLines->filter(fn (ProtocolLine $pl) => $pl->rank === $first->rank);
+            dump('$protocolLines->count(): ' . $protocolLines->count());
 
             $startDate = $finishDate->addDay();
             foreach ($protocolLines->first() as $protocolLine) {
-
                 $newRank = $this->factory->create($this->createRankInput($protocolLine, $startDate));
 
                 if (!$this->juniorRankAgeValidator->validate($newRank->person_id, $newRank->rank, Year::actualYear())) {
