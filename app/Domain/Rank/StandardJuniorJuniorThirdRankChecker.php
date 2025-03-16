@@ -30,9 +30,12 @@ final readonly class StandardJuniorJuniorThirdRankChecker implements JuniorThird
     public function check(int $personId, ?Carbon $date = null): ?Rank
     {
         $actualYear = $date ? Year::fromDate($date) : $this->clock->actualYear();
+        dump('$actualYear: '. $actualYear->toString());
 
         $isItJuniorRankAndCompletedAge = $this->validator->validate($personId, Rank::JUNIOR_THIRD_RANK, $actualYear);
+        dump('$isItJuniorRankAndCompletedAge: '. $isItJuniorRankAndCompletedAge ? 'true' : 'false');
         $offset = array_search($actualYear, $this->clock->years());
+        dump($offset);
 
         foreach(array_slice($this->clock->years(), $offset, 3) as $year) {
             if (!$isItJuniorRankAndCompletedAge) {
