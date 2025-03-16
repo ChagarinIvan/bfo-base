@@ -204,18 +204,19 @@ class RankService
                 dump('previous ranks for closing' . count($ranks));
                 if ($event->date->toDateString() !== $protocolLine->activate_rank?->toDateString()) {
                     if ($event->date->toDateString() > $protocolLine->activate_rank?->toDateString()) {
-                        $finishDate = $event->date->clone()->addDays(-1);
+                        $newRankStartDate = $event->date->clone();
                     } else {
-                        $finishDate = $protocolLine->activate_rank;
+                        $newRankStartDate = $protocolLine->activate_rank;
                     }
                 } else {
-                    $finishDate = $event->date->clone()->addDays(-1);
+                    $newRankStartDate = $event->date->clone();
                 }
+                $previousRanksFinishDate = $newRankStartDate->addDays(-1);
 
                 if ($protocolLine->activate_rank) {
-                    dump('close previous ranks with finish date' . $finishDate->toDateString());
-                    $ranks->each(function (Rank $rank) use ($finishDate): void {
-                        $rank->finish_date = $finishDate;
+                    dump('close previous ranks with finish date' . $previousRanksFinishDate->toDateString());
+                    $ranks->each(function (Rank $rank) use ($previousRanksFinishDate): void {
+                        $rank->finish_date = $previousRanksFinishDate;
                         $this->ranksRepository->storeRank($rank);
                     });
                 }
@@ -240,7 +241,13 @@ class RankService
                 dump('Recalculating protocol lines '. count($protocolLines));
 
                 $this->ranksRepository->deleteRanks($ranks);
-                $newRank = $this->createNewRank($protocolLine);
+                $newRank = $this->factory->create(new RankInput(
+                    personId: (int) $protocolLine->person_id,
+                    eventId: $protocolLine->event->id,
+                    rank: $protocolLine->complete_rank,
+                    startDate: $newRankStartDate,
+                    activatedDate: $protocolLine->activate_rank,
+                ));
                 $r = $this->ranksRepository->storeRank($newRank);
                 dump('Enriched rank id: ' . $r->id);
 
