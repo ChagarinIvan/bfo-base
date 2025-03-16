@@ -45,7 +45,7 @@ final readonly class PreviousCompletedRankFiller
                 ['completedRank' => 'desc'],
             ));
 
-//            dump('$protocolLines->count(): ' . $protocolLines->count());
+            dump('$protocolLines->count(): ' . $protocolLines->count());
             if ($protocolLines->isEmpty()) {
                 return null;
             }
@@ -54,6 +54,7 @@ final readonly class PreviousCompletedRankFiller
 
             $startDate = $finishDate->addDay();
             foreach ($protocolLines->first() as $protocolLine) {
+
                 $newRank = $this->factory->create($this->createRankInput($protocolLine, $startDate));
 
                 if (!$this->juniorRankAgeValidator->validate($newRank->person_id, $newRank->rank, Year::actualYear())) {
@@ -61,6 +62,10 @@ final readonly class PreviousCompletedRankFiller
                 }
 
                 $this->ranks->add($newRank);
+
+                dump('activation date ' . $newRank->activated_date->toDateString());
+                dump('finish date ' . $newRank->finish_date->toDateString());
+                dump('start date ' . $newRank->start_date->toDateString());
 
                 // трэба абнавіць усе папярэднія разряды
                 $this->updater->update(
