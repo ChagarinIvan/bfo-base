@@ -178,6 +178,9 @@ class RankService
                 });
 
                 dump('prolongate rank ' . $actualRankDto->rank);
+                dump('activation date ' . $newRank->activated_date->format('Y-m-d'));
+                dump('finish date ' . $newRank->finish_date->format('Y-m-d'));
+                dump('start date ' . $newRank->start_date->format('Y-m-d'));
                 $this->ranksRepository->storeRank($newRank);
             } elseif (!empty(trim($actualRankDto->rank)) && (self::RANKS_POWER[$protocolLine->complete_rank] > self::RANKS_POWER[$actualRankDto->rank])) {
                 dump(sprintf('Enreach rank %s > %s', $actualRankDto->rank, $protocolLine->complete_rank));
