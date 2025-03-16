@@ -21,7 +21,7 @@ final readonly class PreviousRanksFinishDateUpdater
     {
     }
 
-    public function update(int $personId, string $rank, Carbon $startDate, Carbon $finishDate): ?Rank
+    public function update(int $personId, string $rank, Carbon $startDate, Carbon $finishDate): void
     {
         $ranksFilter = new RanksFilter();
         $ranksFilter->personId = $personId;
