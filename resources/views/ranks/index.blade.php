@@ -73,7 +73,7 @@
                                 <a href="{{ action(ShowPersonRanksAction::class, [$rank->personId]) }}"
                                 >{{ $rank->personLastname }} {{ $rank->personFirstname }}</a>
                             </td>
-                            <td>{{ $rank->startDate }}</td>
+                            <td>{{ $rank->eventDate ?: $rank->startDate }}</td>
                             <td>{{ $rank->activatedDate }}</td>
                             <td>
                                 @if ($rank->distanceId)
