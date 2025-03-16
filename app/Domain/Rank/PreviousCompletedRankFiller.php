@@ -49,16 +49,18 @@ final readonly class PreviousCompletedRankFiller
                 return null;
             }
 
-            $protocolLines = $protocolLines->groupBy('ranks');
-            dd($protocolLines);
+            $protocolLines = $protocolLines->groupBy('complete_rank');
+            dd($protocolLines->count());
 
-            $newRank = $this->factory->create($this->createRankInput($protocolLine, $finishDate->addDay()));
+            foreach ($protocolLines->first() as $protocolLine) {
+                $newRank = $this->factory->create($this->createRankInput($protocolLine, $finishDate->addDay()));
 
-            if (!$this->juniorRankAgeValidator->validate($newRank->person_id, $newRank->rank, Year::actualYear())) {
-                return null;
+                if (!$this->juniorRankAgeValidator->validate($newRank->person_id, $newRank->rank, Year::actualYear())) {
+                    return null;
+                }
+
+                $this->ranks->add($newRank);
             }
-
-            $this->ranks->add($newRank);
 
             return $newRank;
         }
