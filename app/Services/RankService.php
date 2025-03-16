@@ -203,7 +203,11 @@ class RankService
 
                 dump('previous ranks for closing' . count($ranks));
                 if ($event->date->toDateString() !== $protocolLine->activate_rank?->toDateString()) {
-                    $finishDate = $protocolLine->activate_rank;
+                    if ($event->date->toDateString() > $protocolLine->activate_rank?->toDateString()) {
+                        $finishDate = $event->date->clone()->addDays(-1);
+                    } else {
+                        $finishDate = $protocolLine->activate_rank;
+                    }
                 } else {
                     $finishDate = $event->date->clone()->addDays(-1);
                 }
