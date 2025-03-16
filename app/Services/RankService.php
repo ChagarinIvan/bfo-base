@@ -69,6 +69,7 @@ class RankService
         foreach ($this->protocolLineService->getPersonProtocolLines($personId) as $protocolLine) {
             /** @var ProtocolLine $protocolLine */
             dump($protocolLine->distance->event->name);
+            sleep(1);
             $this->fillRank($protocolLine);
         }
     }
