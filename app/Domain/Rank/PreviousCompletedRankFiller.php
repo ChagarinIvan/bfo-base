@@ -42,7 +42,7 @@ final readonly class PreviousCompletedRankFiller
                     'dateTo' => $finishDate,
                     'completedRank' => true,
                 ],
-                ['completedRank' => 'desc'],
+                ['completedRank' => 'desc', 'eventDate' => 'asc'],
             ));
 
             dump('$protocolLines->count(): ' . $protocolLines->count());
