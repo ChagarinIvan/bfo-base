@@ -74,7 +74,7 @@ final readonly class RanksRepository
     public function storeRank(Rank $rank): Rank
     {
         $rank->save();
-        dump('Store rank '. $rank->id);
+//        dump('Store rank '. $rank->id);
 
         return $rank;
     }

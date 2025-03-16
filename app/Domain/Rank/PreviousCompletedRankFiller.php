@@ -45,7 +45,7 @@ final readonly class PreviousCompletedRankFiller
                 ['completedRank' => 'desc'],
             ));
 
-            dump('$protocolLines->count(): ' . $protocolLines->count());
+//            dump('$protocolLines->count(): ' . $protocolLines->count());
             if ($protocolLines->isEmpty()) {
                 return null;
             }
