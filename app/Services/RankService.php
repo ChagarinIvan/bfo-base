@@ -158,8 +158,11 @@ class RankService
                 ));
 
                 $actualRankStartDate = Carbon::createFromFormat('Y-m-d', $actualRankDto->eventId === null ? $actualRankDto->startDate : $actualRankDto->eventDate);
+                dump('$actualRankDto->eventId '. $actualRankDto->eventId);
+                dump('$actualRankDto->eventDate '. $actualRankDto->eventDate);
                 dump(sprintf('Compare %s > %s: ', $event->date->format('Y-m-d'), $actualRankStartDate->format('Y-m-d')) . ($event->date > $actualRankStartDate ? 'true' : 'false'));
-                $finishDate = $event->date > $actualRankStartDate
+                dump(sprintf('Grater than %s > %s: ', $event->date->format('Y-m-d'), $actualRankStartDate->format('Y-m-d')) . ($event->date->greaterThan($actualRankStartDate) ? 'true' : 'false'));
+                $finishDate = $event->date->greaterThan($actualRankStartDate)
                     ? ($protocolLine->activate_rank ?? $event->date)->clone()->addYears(2)
                     : $newRank->finish_date
                 ;
