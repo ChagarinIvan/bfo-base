@@ -55,6 +55,7 @@ class UnitEventsAction extends AbstractEventAction
 
             $groupsIds = $firstEventProtocolLines->keys()->merge($eventsProtocolLines->keys())->unique();
 
+            /** @var int $groupId */
             foreach ($groupsIds as $groupId) {
                 /** @var null|Distance $firstEventDistance */
                 $firstEventDistance = $distanceService->getEventGroupDistance($firstEvent, $groupId);
@@ -126,13 +127,17 @@ class UnitEventsAction extends AbstractEventAction
         $number = 1;
         foreach ($firstEventProtocolLines as $groupProtocolLines) {
             /** @var Collection $groupProtocolLines */
-            $groupProtocolLines = $groupProtocolLines->transform(static function (ProtocolLine $line) use (&$number) {
-                $line->runner_number = $number++;
-                $line->time = $line->time === null ?
-                    null :
-                    Carbon::createFromFormat('H:i:s', $line->time->format('H:i:s'));
-                return $line;
-            });
+            $groupProtocolLines->transform(
+                function (ProtocolLine $line) use (&$number) {
+                    $line->runner_number = $number++;
+                    $line->time = $line->time === null ?
+                        null :
+                        Carbon::createFromFormat('H:i:s', $line->time->format('H:i:s'))
+                    ;
+
+                    return $line;
+                }
+            );
 
             $groupProtocolLines = $groupProtocolLines->sortBy(static fn (ProtocolLine $line) => $line->time ? $line->time->secondsSinceMidnight() : 86400);
 

@@ -84,7 +84,7 @@ class ProtocolLineService
         throw new RuntimeException('Wrong protocolLine id.');
     }
 
-    public function getPersonProtocolLines(int $personId, Year $year = null): Collection
+    public function getPersonProtocolLines(int $personId, ?Year $year = null): Collection
     {
         return $this->protocolLinesRepository->getProtocolLines($personId, $year);
     }
