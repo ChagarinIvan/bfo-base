@@ -30,24 +30,24 @@ final readonly class StandardJuniorJuniorThirdRankChecker implements JuniorThird
     public function check(int $personId, ?Carbon $date = null): ?Rank
     {
         $actualYear = $date ? Year::fromDate($date) : $this->clock->actualYear();
-        dump('$actualYear: '. $actualYear->toString());
+        //dump('$actualYear: '. $actualYear->toString());
 
         $offset = array_search($actualYear, $this->clock->years());
-        dump($offset);
-        dump(array_slice($this->clock->years(), $offset, 3));
+        //dump($offset);
+        //dump(array_slice($this->clock->years(), $offset, 3));
 
         foreach(array_slice($this->clock->years(), $offset, 3) as $year) {
-            dump('$year: '. $year->toString());
-            dump('$isItJuniorRankAndCompletedAge: '. ($this->validator->validate($personId, Rank::JUNIOR_THIRD_RANK, $year) ? 'true' : 'false'));
+            //dump('$year: '. $year->toString());
+            //dump('$isItJuniorRankAndCompletedAge: '. ($this->validator->validate($personId, Rank::JUNIOR_THIRD_RANK, $year) ? 'true' : 'false'));
             if (!$this->validator->validate($personId, Rank::JUNIOR_THIRD_RANK, $year)) {
                 continue;
             }
 
             $lines = $this->protocols->byCriteria(new Criteria(['personId' => $personId, 'year' => $year]));
-            dump('$lines: '. $lines->count());
+            //dump('$lines: '. $lines->count());
 
             $results = $lines->filter(static fn (ProtocolLine $line) => $line->time !== null && !$line->vk);
-            dump('$results: '. $results->count());
+            //dump('$results: '. $results->count());
             if ($results->count() >= 3) {
                 $results = $results
                     ->sortBy(static fn (ProtocolLine $line) => $line->event->date)
