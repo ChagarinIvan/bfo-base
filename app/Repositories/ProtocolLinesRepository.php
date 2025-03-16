@@ -219,7 +219,7 @@ final readonly class ProtocolLinesRepository implements ProtocolLineRepository
         }
 
         if (array_key_exists('eventDate', $criteria->sorting())) {
-            $query->orderBy('events.date', $criteria->param('eventDate'));
+            $query->orderBy('events.date', $criteria->sorting()['eventDate']);
         }
 
         if ($criteria->hasParam('dateFrom')) {
