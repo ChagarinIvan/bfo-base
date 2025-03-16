@@ -141,7 +141,7 @@ class RankService
             return;
         }
 
-        dump('Search acutal rankt for date ' . $protocolLine->event->date->format('Y-m-d'));
+        dump('Search actual rank for date ' . $protocolLine->event->date->format('Y-m-d'));
         $event = $protocolLine->event;
         $actualRankDto = $this->activePersonRankService->execute(new ActivePersonRank((string)$protocolLine->person_id, $protocolLine->event->date));
 
@@ -171,14 +171,16 @@ class RankService
                 $ranksFilter->finishDateMore = $newRank->start_date;
                 $ranks = $this->ranksRepository->getRanksList($ranksFilter);
 
+                dump('prolongate rank ' . $actualRankDto->rank);
                 dump('previous ranks ' . $ranks->count());
+                dump('prolongate finish date for previous ranks ' . $finishDate->format('Y-m-d'));
+
                 $ranks->each(function (Rank $rank) use ($finishDate): void {
                     $rank->finish_date = $finishDate;
                     $rank->setAttribute('finish_date', $finishDate);
                     $this->ranksRepository->storeRank($rank);
                 });
 
-                dump('prolongate rank ' . $actualRankDto->rank);
                 dump('activation date ' . $newRank->activated_date->format('Y-m-d'));
                 dump('finish date ' . $newRank->finish_date->format('Y-m-d'));
                 dump('start date ' . $newRank->start_date->format('Y-m-d'));
@@ -192,6 +194,8 @@ class RankService
                 $ranksFilter->startDateLess = $event->date;
                 $ranksFilter->finishDateMore = $event->date;
                 $ranks = $this->ranksRepository->getRanksList($ranksFilter);
+
+                dump('previous ranks for closing' . count($ranks));
                 if ($event->date->format('Y-m-d') !== $protocolLine->activate_rank?->format('Y-m-d')) {
                     $finishDate = $protocolLine->activate_rank;
                 } else {
@@ -199,6 +203,7 @@ class RankService
                 }
 
                 if ($protocolLine->activate_rank) {
+                    dump('close previous ranks with finish date' . $finishDate->format('Y-m-d'));
                     $ranks->each(function (Rank $rank) use ($finishDate): void {
                         $rank->finish_date = $finishDate;
                         $this->ranksRepository->storeRank($rank);
@@ -221,6 +226,8 @@ class RankService
                         $protocolLines->push($pl);
                     }
                 });
+
+                dump('Recalculating protocol lines '. count($protocolLines));
 
                 $this->ranksRepository->deleteRanks($ranks);
                 $newRank = $this->createNewRank($protocolLine);
