@@ -50,9 +50,9 @@ final readonly class PreviousCompletedRankFiller
             }
 
             $protocolLines = $protocolLines->groupBy('complete_rank');
-            dd($protocolLines->count());
 
             foreach ($protocolLines->first() as $protocolLine) {
+                dd($protocolLine);
                 $newRank = $this->factory->create($this->createRankInput($protocolLine, $finishDate->addDay()));
 
                 if (!$this->juniorRankAgeValidator->validate($newRank->person_id, $newRank->rank, Year::actualYear())) {
