@@ -141,7 +141,7 @@ class RankService
             return;
         }
 
-        dump('Search actual rank for date ' . $protocolLine->event->date->format('Y-m-d'));
+        dump('Search actual rank for date ' . $protocolLine->event->date->toDateString());
         $event = $protocolLine->event;
         dump('Search for event ' . $event->id);
         $actualRankDto = $this->activePersonRankService->execute(new ActivePersonRank((string)$protocolLine->person_id, $protocolLine->event->date));
@@ -160,8 +160,8 @@ class RankService
                 $actualRankStartDate = Carbon::createFromFormat('Y-m-d', $actualRankDto->eventId === null ? $actualRankDto->startDate : $actualRankDto->eventDate);
                 dump('$actualRankDto->eventId '. $actualRankDto->eventId);
                 dump('$actualRankDto->eventDate '. $actualRankDto->eventDate);
-                dump(sprintf('Compare %s >= %s: ', $event->date->format('Y-m-d'), $actualRankStartDate->format('Y-m-d')) . ($event->date >= $actualRankStartDate ? 'true' : 'false'));
-                $finishDate = $event->date >= $actualRankStartDate
+                dump(sprintf('Compare %s >= %s: ', $event->date->toDateString(), $actualRankStartDate->toDateString()) . ($event->date->toDateString() >= $actualRankStartDate->toDateString() ? 'true' : 'false'));
+                $finishDate = $event->date->toDateString() >= $actualRankStartDate->toDateString()
                     ? ($protocolLine->activate_rank ?? $event->date)->clone()->addYears(2)
                     : $newRank->finish_date
                 ;
@@ -178,7 +178,7 @@ class RankService
 
                 dump('prolongate rank ' . $actualRankDto->rank);
                 dump('previous ranks ' . $ranks->count());
-                dump('prolongate finish date for previous ranks ' . $finishDate->format('Y-m-d'));
+                dump('prolongate finish date for previous ranks ' . $finishDate->toDateString());
 
                 $ranks->each(function (Rank $rank) use ($finishDate): void {
                     $rank->finish_date = $finishDate;
@@ -186,9 +186,9 @@ class RankService
                     $this->ranksRepository->storeRank($rank);
                 });
 
-                dump('activation date ' . $newRank->activated_date->format('Y-m-d'));
-                dump('finish date ' . $newRank->finish_date->format('Y-m-d'));
-                dump('start date ' . $newRank->start_date->format('Y-m-d'));
+                dump('activation date ' . $newRank->activated_date->toDateString());
+                dump('finish date ' . $newRank->finish_date->toDateString());
+                dump('start date ' . $newRank->start_date->toDateString());
                 $r = $this->ranksRepository->storeRank($newRank);
                 dump('New prolongate id ' . $r->id);
             } elseif (!empty(trim($actualRankDto->rank)) && (self::RANKS_POWER[$protocolLine->complete_rank] > self::RANKS_POWER[$actualRankDto->rank])) {
@@ -202,14 +202,14 @@ class RankService
                 $ranks = $this->ranksRepository->getRanksList($ranksFilter);
 
                 dump('previous ranks for closing' . count($ranks));
-                if ($event->date->format('Y-m-d') !== $protocolLine->activate_rank?->format('Y-m-d')) {
+                if ($event->date->toDateString() !== $protocolLine->activate_rank?->toDateString()) {
                     $finishDate = $protocolLine->activate_rank;
                 } else {
                     $finishDate = $event->date->clone()->addDays(-1);
                 }
 
                 if ($protocolLine->activate_rank) {
-                    dump('close previous ranks with finish date' . $finishDate->format('Y-m-d'));
+                    dump('close previous ranks with finish date' . $finishDate->toDateString());
                     $ranks->each(function (Rank $rank) use ($finishDate): void {
                         $rank->finish_date = $finishDate;
                         $this->ranksRepository->storeRank($rank);
