@@ -83,7 +83,7 @@ class PersonPromptService
         ;
     }
 
-    public function fillPrompt(PersonPrompt $prompt, array $formParams, int $personId = null): PersonPrompt
+    public function fillPrompt(PersonPrompt $prompt, array $formParams, ?int $personId = null): PersonPrompt
     {
         $prompt->fill($formParams);
         if ($personId) {

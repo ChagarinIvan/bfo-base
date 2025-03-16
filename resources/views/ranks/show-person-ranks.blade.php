@@ -53,7 +53,6 @@
                 <th>{{ __('app.common.rank') }}</th>
                 <th data-sortable="true">{{ __('app.rank.completed_date') }}</th>
                 <th data-sortable="true">{{ __('app.rank.activated_date') }}</th>
-                <th data-sortable="true">{{ __('app.rank.recompleted_date') }}</th>
                 <th data-sortable="true">{{ __('app.rank.finished_date') }}</th>
                 <th data-sortable="true">{{ __('app.event.title') }}</th>
                 @auth
@@ -65,13 +64,8 @@
             @foreach ($ranks as $rank)
                 <tr @if($rank->activatedDate) class="table-info" @else class="table-secondary" @endif>
                     <td>{{ $rank->rank }}</td>
-                    <td>{{ $rank->eventDate ?: $rank->startDate}}</td>
+                    <td>{{ $rank->eventDate ?: $rank->startDate }}</td>
                     <td>{{ $rank->activatedDate ?: '-' }}</td>
-                    <td>
-                        @if ($rank->eventDate !== null)
-                            {{ $rank->eventDate }}
-                        @endif
-                    </td>
                     <td>{{ $rank->finishDate }}</td>
                     <td>
                         @if ($rank->distanceId !== null)

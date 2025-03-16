@@ -10,6 +10,8 @@ use App\Domain\Rank\Factory\RankFactory;
 use App\Domain\Rank\Factory\RankInput;
 use App\Domain\Shared\Clock;
 use App\Domain\Shared\Criteria;
+use App\Models\Year;
+use Carbon\Carbon;
 use function array_slice;
 
 /**
@@ -25,12 +27,14 @@ final readonly class StandardJuniorJuniorThirdRankChecker implements JuniorThird
     ) {
     }
 
-    public function check(int $personId): ?Rank
+    public function check(int $personId, ?Carbon $date = null): ?Rank
     {
-        $actualYear = $this->clock->actualYear();
+        $actualYear = $date ? Year::fromDate($date) : $this->clock->actualYear();
 
         $isItJuniorRankAndCompletedAge = $this->validator->validate($personId, Rank::JUNIOR_THIRD_RANK, $actualYear);
-        foreach(array_slice($this->clock->years(), 0, 3) as $year) {
+        $offset = array_search($actualYear, $this->clock->years());
+
+        foreach(array_slice($this->clock->years(), $offset, 3) as $year) {
             if (!$isItJuniorRankAndCompletedAge) {
                 continue;
             }
@@ -43,6 +47,7 @@ final readonly class StandardJuniorJuniorThirdRankChecker implements JuniorThird
                     ->slice(offset: 0, length: 3)
                     ->values()
                 ;
+
                 return $this->factory->create($this->createRankInputFromProtocolLine($results->get(2)));
             }
         }

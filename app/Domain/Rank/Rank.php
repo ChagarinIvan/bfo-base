@@ -99,7 +99,8 @@ class Rank extends AggregatedModel
         '3' => 'iii',
     ];
 
-    public $timestamps = false;
+    protected $fillable = ['finish_date', 'activated_date'];
+
     protected $table = 'ranks';
     protected $casts = [
         'start_date' => 'datetime:Y-m-d',
@@ -166,6 +167,7 @@ class Rank extends AggregatedModel
 
     public function create(): void
     {
+//        dump('Create rank ' . $this->rank);
         $this->recordThat(new RankCreated($this));
 
         $this->save();

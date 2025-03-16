@@ -4,37 +4,45 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Console\Commands;
 
-use App\Domain\ProtocolLine\ProtocolLine;
+use App\Domain\Person\Person;
 use App\Domain\Rank\Rank;
 use App\Services\RankService;
 use Illuminate\Console\Command;
-use Illuminate\Log\LogManager;
-use Psr\Log\LoggerInterface;
 
 /**
  * Пересоздаем разряды.
  */
 final class RecalculatingRanks extends Command
 {
-    protected $signature = 'protocol-lines:rank-recalculating';
-    private readonly LoggerInterface $logger;
+    protected $signature = 'protocol-lines:rank-recalculating {--limit=10} {--offset=0}';
+    protected $description = 'Recalculates ranks for protocol lines with optional limit and offset';
 
-    public function __construct(
-        LogManager $loggerManager,
-    ) {
-        parent::__construct();
-        $this->logger = $loggerManager->channel('ranks');
-    }
     public function handle(RankService $service): void
     {
-        $this->logger->info('Start.');
+        $this->info('Start.');
 
-        Rank::truncate();
-        foreach (ProtocolLine::cursor() as $index => $protocolLine) {
-            $this->logger->info("Process $index.");
-            $service->fillRank($protocolLine);
+        $limit = (int) $this->option('limit');
+        $offset = (int) $this->option('offset');
+
+        $this->info("Processing with limit: $limit, offset: $offset");
+
+        if ($offset === 0)  {
+            Rank::truncate();
         }
 
-        $this->logger->info('Finish.');
+        $query = Person::query()
+            ->where('active', true)
+            ->orderBy('id')
+            ->limit($limit)
+            ->offset($offset)
+        ;
+
+        foreach ($query->cursor() as $index => $person) {
+            $this->info("Process " . ($offset + $index) . ".");
+            $this->info("Person id " . $person->id .".");
+            $service->reFillRanksForPerson($person->id);
+        }
+
+        $this->info('Finish.');
     }
 }
