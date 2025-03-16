@@ -63,6 +63,7 @@ final readonly class PreviousCompletedRankFiller
 
                 $this->ranks->add($newRank);
 
+                dump('event date ' . $protocolLine->distance->event->date->toDateString());
                 dump('activation date ' . $newRank->activated_date->toDateString());
                 dump('finish date ' . $newRank->finish_date->toDateString());
                 dump('start date ' . $newRank->start_date->toDateString());
