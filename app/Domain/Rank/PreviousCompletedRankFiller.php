@@ -33,8 +33,8 @@ final readonly class PreviousCompletedRankFiller
         $finishDate = $rank->finish_date;
 
         if ($finishDate < $date) {
-            // тут трэба узять протокол лініі за 2 года, дзе было выкананне разряда меньш чым папярэдні
-            $protocolLine = $this->protocolLines->oneByCriteria(new Criteria(
+            // тут трэба узять протокол лініі за 2 года, дзе было выкананне адсартырованные па моцы разраду
+            $protocolLines = $this->protocolLines->byCriteria(new Criteria(
                 [
                     'personId' => $rank->person_id,
                     'dateFrom' => $rank->start_date,
@@ -44,9 +44,13 @@ final readonly class PreviousCompletedRankFiller
                 ['completedRank' => 'desc'],
             ));
 
-            if (!$protocolLine) {
+            dump('$protocolLines->count(): ' . $protocolLines->count());
+            if ($protocolLines->isEmpty()) {
                 return null;
             }
+
+            $protocolLines = $protocolLines->groupBy('ranks');
+            dd($protocolLines);
 
             $newRank = $this->factory->create($this->createRankInput($protocolLine, $finishDate->addDay()));
 
