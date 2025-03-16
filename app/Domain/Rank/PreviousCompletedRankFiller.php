@@ -50,7 +50,7 @@ final readonly class PreviousCompletedRankFiller
             }
 
             $first = $protocolLines->first();
-            $protocolLines = $protocolLines->filter(fn (ProtocolLine $pl) => $pl->rank === $first->rank);
+            $protocolLines = $protocolLines->filter(fn (ProtocolLine $pl) => $pl->complete_rank === $first->complete_rank);
             dump('$protocolLines->count(): ' . $protocolLines->count());
 
             $startDate = $finishDate->addDay();
