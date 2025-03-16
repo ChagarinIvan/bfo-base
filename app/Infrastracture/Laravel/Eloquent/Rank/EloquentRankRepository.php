@@ -64,13 +64,13 @@ final class EloquentRankRepository implements RankRepository
             }
         }
 
+        $query->join('events', 'events.id', '=', 'ranks.event_id');
         if ($criteria->sorting()) {
-            $query->join('events', 'events.id', '=', 'ranks.event_id');
             foreach ($criteria->sorting() as $key => $order) {
                 $query->orderBy($key, $order);
             }
         } else {
-            $query->orderBy('finish_date', 'desc');
+            $query->orderBy('finish_date', 'desc')->orderBy('events.date', 'desc');
         }
 
         return $query;
