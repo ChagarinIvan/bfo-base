@@ -143,12 +143,12 @@ class RankService
             return;
         }
 
-//        dump('Search actual rank for date ' . $protocolLine->event->date->toDateString());
+        dump('Search actual rank for date ' . $protocolLine->event->date->toDateString());
         $event = $protocolLine->event;
-//        dump('Search for event ' . $event->id);
+        dump('Search for event ' . $event->id);
         $actualRankDto = $this->activePersonRankService->execute(new ActivePersonRank((string)$protocolLine->person_id, $protocolLine->event->date));
 
-//        dump('Actual rank ' . $actualRankDto?->rank ?? '---');
+        dump('Actual rank ' . ($actualRankDto?->rank ?? '---'));
         if ($actualRankDto) {
             if ($actualRankDto->rank === $protocolLine->complete_rank) {
                 $newRank = $this->factory->create(new RankInput(
