@@ -186,7 +186,8 @@ class RankService
                 dump('activation date ' . $newRank->activated_date->format('Y-m-d'));
                 dump('finish date ' . $newRank->finish_date->format('Y-m-d'));
                 dump('start date ' . $newRank->start_date->format('Y-m-d'));
-                $this->ranksRepository->storeRank($newRank);
+                $r = $this->ranksRepository->storeRank($newRank);
+                dump('New prolongate id ' . $r->id);
             } elseif (!empty(trim($actualRankDto->rank)) && (self::RANKS_POWER[$protocolLine->complete_rank] > self::RANKS_POWER[$actualRankDto->rank])) {
                 dump(sprintf('Enreach rank %s > %s', $actualRankDto->rank, $protocolLine->complete_rank));
                 // трэба зачыніць усе папярэднія разряды
@@ -242,9 +243,9 @@ class RankService
                 }
             }
         } else {
-            dump('Create new rank');
             $newRank = $this->createNewRank($protocolLine);
-            $this->ranksRepository->storeRank($newRank);
+            $r = $this->ranksRepository->storeRank($newRank);
+            dump('Create new rank ' . $r->id);
         }
     }
 
