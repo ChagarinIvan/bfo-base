@@ -234,7 +234,8 @@ class RankService
 
                 $this->ranksRepository->deleteRanks($ranks);
                 $newRank = $this->createNewRank($protocolLine);
-                $this->ranksRepository->storeRank($newRank);
+                $r = $this->ranksRepository->storeRank($newRank);
+                dump('Enriched rank id: ' . $r->id);
 
                 $protocolLines = $protocolLines->sortBy('distance.event.date');
                 foreach ($protocolLines as $line) {
@@ -245,7 +246,7 @@ class RankService
         } else {
             $newRank = $this->createNewRank($protocolLine);
             $r = $this->ranksRepository->storeRank($newRank);
-            dump('Create new rank ' . $r->id);
+            dump('Create NEW rank ' . $r->id);
         }
     }
 
