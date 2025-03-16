@@ -69,7 +69,6 @@ class RankService
         foreach ($this->protocolLineService->getPersonProtocolLines($personId) as $protocolLine) {
             /** @var ProtocolLine $protocolLine */
             dump($protocolLine->distance->event->name);
-            sleep(1);
             $this->fillRank($protocolLine);
         }
     }
@@ -159,7 +158,7 @@ class RankService
                 ));
 
                 $actualRankStartDate = Carbon::createFromFormat('Y-m-d', $actualRankDto->eventId === null ? $actualRankDto->startDate : $actualRankDto->eventDate);
-                dump(sprintf('Compare %s > %s: ', $event->date->format('Y-m-d'), $actualRankStartDate->format('Y-m-d')) . $event->date > $actualRankStartDate);
+                dump(sprintf('Compare %s > %s: ', $event->date->format('Y-m-d'), $actualRankStartDate->format('Y-m-d')) . ($event->date > $actualRankStartDate ? 'true' : 'false'));
                 $finishDate = $event->date > $actualRankStartDate
                     ? ($protocolLine->activate_rank ?? $event->date)->clone()->addYears(2)
                     : $newRank->finish_date
