@@ -34,6 +34,7 @@ final readonly class StandardJuniorJuniorThirdRankChecker implements JuniorThird
 
         $offset = array_search($actualYear, $this->clock->years());
         dump($offset);
+        dump(array_slice($this->clock->years(), $offset, 3));
 
         foreach(array_slice($this->clock->years(), $offset, 3) as $year) {
             dump('$year: '. $actualYear->toString());
@@ -43,7 +44,10 @@ final readonly class StandardJuniorJuniorThirdRankChecker implements JuniorThird
             }
 
             $lines = $this->protocols->byCriteria(new Criteria(['personId' => $personId, 'year' => $year]));
+            dump('$lines: '. $lines->count());
+
             $results = $lines->filter(static fn (ProtocolLine $line) => $line->time !== null && !$line->vk);
+            dump('$results: '. $results->count());
             if ($results->count() >= 3) {
                 $results = $results
                     ->sortBy(static fn (ProtocolLine $line) => $line->event->date)
