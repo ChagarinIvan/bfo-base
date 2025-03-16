@@ -21,6 +21,7 @@ final readonly class PreviousCompletedRankFiller
         private RankRepository $ranks,
         private ProtocolLineRepository $protocolLines,
         private JuniorRankAgeValidator $juniorRankAgeValidator,
+        private PreviousRanksFinishDateUpdater $updater,
     ) {
     }
 
@@ -56,13 +57,21 @@ final readonly class PreviousCompletedRankFiller
                 $newRank = $this->factory->create($this->createRankInput($protocolLine, $startDate));
 
                 if (!$this->juniorRankAgeValidator->validate($newRank->person_id, $newRank->rank, Year::actualYear())) {
-                    return null;
+                    continue;
                 }
 
                 $this->ranks->add($newRank);
+
+                // трэба абнавіць усе папярэднія разряды
+                $this->updater->update(
+                    personId: $newRank->person_id,
+                    rank: $newRank->rank,
+                    startDate: $newRank->start_date,
+                    finishDate: $newRank->finish_date,
+                );
             }
 
-            return $newRank;
+            return $newRank ?? null;
         }
 
         return $rank;

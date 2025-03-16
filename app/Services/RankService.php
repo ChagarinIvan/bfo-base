@@ -14,6 +14,7 @@ use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\Rank\Factory\RankFactory;
 use App\Domain\Rank\Factory\RankInput;
 use App\Domain\Rank\JuniorRankAgeValidator;
+use App\Domain\Rank\PreviousRanksFinishDateUpdater;
 use App\Domain\Rank\Rank;
 use App\Filters\RanksFilter;
 use App\Models\Year;
@@ -43,6 +44,7 @@ class RankService
         private readonly JuniorRankAgeValidator $juniorRankAgeChecker,
         private readonly ActivePersonRankService $activePersonRankService,
         private readonly RankFactory $factory,
+        private readonly PreviousRanksFinishDateUpdater $updater,
     ) {
     }
 
@@ -169,22 +171,12 @@ class RankService
                 $newRank->finish_date = $finishDate->clone();
 
                 // трэба абнавіць усе папярэднія разряды
-                $ranksFilter = new RanksFilter();
-                $ranksFilter->personId = (int) $actualRankDto->personId;
-                $ranksFilter->rank = $newRank->rank;
-                $ranksFilter->startDateLess = $newRank->start_date->clone();
-                $ranksFilter->finishDateMore = $newRank->start_date->clone();
-                $ranks = $this->ranksRepository->getRanksList($ranksFilter);
-
-                dump('prolongate rank ' . $actualRankDto->rank);
-                dump('previous ranks ' . $ranks->count());
-                dump('prolongate finish date for previous ranks ' . $finishDate->toDateString());
-
-                $ranks->each(function (Rank $rank) use ($finishDate): void {
-                    $rank->finish_date = $finishDate->clone();
-                    $rank->setAttribute('finish_date', $finishDate->clone());
-                    $this->ranksRepository->storeRank($rank);
-                });
+                $this->updater->update(
+                    personId: (int) $actualRankDto->personId,
+                    rank: $newRank->rank,
+                    startDate: $newRank->start_date,
+                    finishDate: $finishDate,
+                );
 
                 dump('activation date ' . $newRank->activated_date->toDateString());
                 dump('finish date ' . $newRank->finish_date->toDateString());
