@@ -238,7 +238,7 @@ class RankService
                     eventId: $protocolLine->event->id,
                     rank: $protocolLine->complete_rank,
                     startDate: $newRankStartDate->clone(),
-                    activatedDate: $protocolLine->activate_rank->clone(),
+                    activatedDate: $protocolLine->activate_rank?->clone(),
                 ));
                 $r = $this->ranksRepository->storeRank($newRank);
 //                //dump('Enriched rank id: ' . $r->id);
