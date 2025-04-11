@@ -26,10 +26,10 @@ final readonly class ActivePersonRankService
     public function execute(ActivePersonRank $command): ?ViewRankDto
     {
         $lastRank = $this->ranks->oneByCriteria($this->criteriaWithDate($command));
+        dump($lastRank);
 
         if ($lastRank === null) {
             $thirdJuniorRank = $this->thirdRankChecker->check($command->personId(), $command->date());
-//            dump($thirdJuniorRank);
             if ($thirdJuniorRank && (($command->date() === null) || ($thirdJuniorRank->start_date < $command->date()))) {
 //                dump('add third junior rank');
                 $this->ranks->add($thirdJuniorRank);
@@ -39,7 +39,7 @@ final readonly class ActivePersonRankService
 
         if (!$lastRank) {
             $lastCompletedRank = $this->ranks->oneByCriteria($this->criteriaWithoutDate($command));
-//            dump('$lastCompletedRank: ' . $lastCompletedRank?->id ?? '---');
+            dump('$lastCompletedRank: ' . $lastCompletedRank?->id ?? '---');
             if ($lastCompletedRank) {
                 $lastRank = $this->previousCompletedRankFiller->fill($lastCompletedRank, $command->date());
             }
