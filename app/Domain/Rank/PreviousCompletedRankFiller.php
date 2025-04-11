@@ -35,6 +35,8 @@ final readonly class PreviousCompletedRankFiller
 
         if ($finishDate < $date) {
             // тут трэба узять протокол лініі за 2 года, дзе было выкананне адсартырованные па моцы разраду
+            dump('$rank->start_date: ' . $rank->start_date);
+            dump('$finishDate: ' . $finishDate);
             $protocolLines = $this->protocolLines->byCriteria(new Criteria(
                 [
                     'personId' => $rank->person_id,
