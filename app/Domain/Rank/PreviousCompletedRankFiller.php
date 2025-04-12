@@ -38,7 +38,7 @@ final readonly class PreviousCompletedRankFiller
             $criteria = new Criteria(
                 [
                     'personId' => $rank->person_id,
-                    'dateFrom' => $finishDate->addYears(-2),
+                    'dateFrom' => $finishDate->clone()->addYears(-2),
                     'dateTo' => $finishDate,
                     'completedRank' => true,
                 ],
