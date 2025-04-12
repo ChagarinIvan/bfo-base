@@ -29,7 +29,7 @@ final class EloquentRankRepository implements RankRepository
 
     public function oneByCriteria(Criteria $criteria): ?Rank
     {
-        dump($criteria);
+//        dump($criteria);
         /** @var null|Rank $rank */
         $rank = $this->buildQuery($criteria)->first();
 
