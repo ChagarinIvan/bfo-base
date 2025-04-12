@@ -29,7 +29,7 @@
     @auth
         <div class="row mb-3">
             <div class="col-12">
-                <form method="POST" action="{{ action(RefillPersonRanksAction::class) }}">
+                <form method="POST" action="{{ action(RefillPersonRanksAction::class, [$person->id]) }}">
                     <input type="submit" class="fadeIn fourth" value="{{ __('app.rank.refill') }}">
                 </form>
             </div>
