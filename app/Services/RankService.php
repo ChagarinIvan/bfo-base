@@ -151,7 +151,7 @@ class RankService
 //        dump('Search for event ' . $event->id);
         $actualRankDto = $this->activePersonRankService->execute(new ActivePersonRank((string)$protocolLine->person_id, $protocolLine->event->date));
 
-        dump('Actual rank ' . ($actualRankDto?->rank ?? '---'));
+//        dump('Actual rank ' . ($actualRankDto?->rank ?? '---'));
         if ($actualRankDto) {
             if ($actualRankDto->rank === $protocolLine->complete_rank) {
                 $newRank = $this->factory->create(new RankInput(
@@ -257,7 +257,7 @@ class RankService
                 }
 
                 $this->storeRank($newRank);
-                dump('1) Enriched rank id: ' . $newRank->rank);
+//                dump('1) Enriched rank id: ' . $newRank->rank);
 
 //                $protocolLines$protocolLines = $protocolLines->sortBy('distance.event.date');
 //                foreach ($protocolLines as $line) {
@@ -274,14 +274,14 @@ class RankService
                 ],['events.date' => 'asc'])
             );
 
-            dump($previous);
+//            dump($previous);
             $newRank = $this->createNewRank($protocolLine);
             if ($previous) {
                 $newRank->activated_date = $previous->activated_date;
             }
 
             $this->storeRank($newRank);
-            dump('2) Enriched rank id: ' . $newRank->rank);
+//            dump('2) Enriched rank id: ' . $newRank->rank);
         }
     }
 
