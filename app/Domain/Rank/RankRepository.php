@@ -11,6 +11,8 @@ interface RankRepository
 {
     public function add(Rank $rank): void;
 
+    public function delete(Rank $rank): void;
+
     public function byId(int $id): ?Rank;
 
     public function byCriteria(Criteria $criteria): Collection;

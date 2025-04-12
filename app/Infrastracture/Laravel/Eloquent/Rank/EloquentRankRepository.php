@@ -17,6 +17,11 @@ final class EloquentRankRepository implements RankRepository
         $rank->create();
     }
 
+    public function delete(Rank $rank): void
+    {
+        $rank->delete();
+    }
+
     public function byId(int $id): ?Rank
     {
         return Rank::find($id);

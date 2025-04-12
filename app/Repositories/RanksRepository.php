@@ -7,20 +7,12 @@ namespace App\Repositories;
 use App\Domain\Person\Person;
 use App\Domain\Rank\Rank;
 use App\Filters\RanksFilter;
-use Carbon\Carbon;
-use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Collection;
 
 final readonly class RanksRepository
 {
-    private const TABLE = 'ranks';
-
-    public function __construct(private ConnectionInterface $db)
-    {
-    }
-
     /**
      * Выборка действующих актуальных разрядов с фильтром по типу разряда
      */
@@ -69,24 +61,6 @@ final readonly class RanksRepository
         }
 
         return $ranks->get();
-    }
-
-    public function storeRank(Rank $rank): Rank
-    {
-        $rank->save();
-//        dump('Store rank '. $rank->id);
-
-        return $rank;
-    }
-
-    public function cleanAll(): void
-    {
-        $this->db->table(self::TABLE)->truncate();
-    }
-
-    public function deleteRanks(Collection $ranks): void
-    {
-        $ranks->each(static fn (Rank $rank) => $rank->delete());
     }
 
     public function getPersonsIdsWithoutRanks(): Collection
