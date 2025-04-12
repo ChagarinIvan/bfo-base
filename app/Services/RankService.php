@@ -262,7 +262,7 @@ class RankService
                 ],['events.date' => 'asc'])
             );
 
-            dd($previous);
+            dump($previous);
             $newRank = $this->createNewRank($protocolLine);
             if ($previous) {
                 $newRank->activated_date = $previous->activated_date;
