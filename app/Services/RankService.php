@@ -240,8 +240,9 @@ class RankService
                     startDate: $newRankStartDate->clone(),
                     activatedDate: $protocolLine->activate_rank?->clone(),
                 ));
+
                 $r = $this->ranksRepository->storeRank($newRank);
-//                dump('Enriched rank id: ' . $r->id);
+                dump('Enriched rank id: ' . $newRank->rank);
 
 //                $protocolLines$protocolLines = $protocolLines->sortBy('distance.event.date');
 //                foreach ($protocolLines as $line) {
@@ -252,7 +253,7 @@ class RankService
         } else {
             $newRank = $this->createNewRank($protocolLine);
             $r = $this->ranksRepository->storeRank($newRank);
-//            dump('Create NEW rank ' . $r->rank);
+            dump('Create NEW rank ' . $r->rank);
         }
     }
 
