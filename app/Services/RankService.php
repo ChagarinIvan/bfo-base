@@ -215,24 +215,24 @@ class RankService
 
                 // Надо взять все разряды которые после этой даты
                 // Отсортировать их по дате евента и заново пересохранить
-                $ranksFilter = new RanksFilter();
-                $ranksFilter->personId = (int) $actualRankDto->personId;
-                $ranksFilter->startDateMore = $event->date->clone();
-                $ranks = $this->ranksRepository->getRanksList($ranksFilter);
+//                $ranksFilter = new RanksFilter();
+//                $ranksFilter->personId = (int) $actualRankDto->personId;
+//                $ranksFilter->startDateMore = $event->date->clone();
+//                $ranks = $this->ranksRepository->getRanksList($ranksFilter);
 //                dump('Count ranks for recalculating'. count($ranks));
-                $protocolLines = new Collection();
+//                $protocolLines = new Collection();
 
-                $ranks->each(function (Rank $rank) use (&$protocolLines): void {
-                    $protocolLineId = $this->protocolLineService->getProtocolLineIdForRank($rank);
-                    $pl = $this->protocolLineService->getProtocolLineWithEvent($protocolLineId);
-                    if ($pl) {
-                        $protocolLines->push($pl);
-                    }
-                });
+//                $ranks->each(function (Rank $rank) use (&$protocolLines): void {
+//                    $protocolLineId = $this->protocolLineService->getProtocolLineIdForRank($rank);
+//                    $pl = $this->protocolLineService->getProtocolLineWithEvent($protocolLineId);
+//                    if ($pl) {
+//                        $protocolLines->push($pl);
+//                    }
+//                });
 
 //                dump('Recalculating protocol lines '. count($protocolLines));
 
-                $this->ranksRepository->deleteRanks($ranks);
+//                $this->ranksRepository->deleteRanks($ranks);
                 $newRank = $this->factory->create(new RankInput(
                     personId: (int) $protocolLine->person_id,
                     eventId: $protocolLine->event->id,
@@ -243,11 +243,11 @@ class RankService
                 $r = $this->ranksRepository->storeRank($newRank);
 //                dump('Enriched rank id: ' . $r->id);
 
-                $protocolLines = $protocolLines->sortBy('distance.event.date');
-                foreach ($protocolLines as $line) {
-                    /** @var ProtocolLine $line */
-                    $this->fillRank($line);
-                }
+//                $protocolLines$protocolLines = $protocolLines->sortBy('distance.event.date');
+//                foreach ($protocolLines as $line) {
+//                    /** @var ProtocolLine $line */
+//                    $this->fillRank($line);
+//                }
             }
         } else {
             $newRank = $this->createNewRank($protocolLine);
