@@ -264,7 +264,6 @@ final readonly class ProtocolLinesRepository implements ProtocolLineRepository
             ;
         }
 
-        dump($query);
         return $query;
     }
 }
