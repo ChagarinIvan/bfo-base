@@ -75,8 +75,6 @@ final readonly class PreviousCompletedRankFiller
                 return null;
             }
 
-dd($previous);
-
             foreach ($protocolLines as $protocolLine) {
                 $newRank = $this->factory->create($this->createRankInput($protocolLine, $startDate, $previous->activated_date));
 
