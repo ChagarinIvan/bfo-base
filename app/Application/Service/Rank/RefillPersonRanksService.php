@@ -19,7 +19,7 @@ final readonly class RefillPersonRanksService
     ) {
     }
 
-    public function execute(RefillPersonRanks $command): ?ViewRankDto
+    public function execute(RefillPersonRanks $command): void
     {
         $this->ranks->deleteByCriteria($command->criteria());
 
