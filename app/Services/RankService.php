@@ -151,7 +151,7 @@ class RankService
 //        dump('Search for event ' . $event->id);
         $actualRankDto = $this->activePersonRankService->execute(new ActivePersonRank((string)$protocolLine->person_id, $protocolLine->event->date));
 
-//        dump('Actual rank ' . ($actualRankDto?->rank ?? '---'));
+        dump('Actual rank ' . ($actualRankDto?->rank ?? '---'));
         if ($actualRankDto) {
             if ($actualRankDto->rank === $protocolLine->complete_rank) {
                 $newRank = $this->factory->create(new RankInput(
@@ -262,6 +262,7 @@ class RankService
                 ],['events.date' => 'asc'])
             );
 
+            dd($previous);
             $newRank = $this->createNewRank($protocolLine);
             if ($previous) {
                 $newRank->activated_date = $previous->activated_date;
