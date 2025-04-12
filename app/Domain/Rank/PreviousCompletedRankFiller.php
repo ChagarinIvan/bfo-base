@@ -52,13 +52,33 @@ final readonly class PreviousCompletedRankFiller
                 return null;
             }
 
+            /** @var ProtocolLine $first */
             $first = $protocolLines->first();
             $protocolLines = $protocolLines->filter(fn (ProtocolLine $pl) => $pl->complete_rank === $first->complete_rank);
 //            dump('$protocolLines->count(): ' . $protocolLines->count());
 
+            if (!$protocolLines->count()) {
+                return null;
+            }
+
             $startDate = $finishDate->addDay();
+
+            $previous = $this->ranks->oneByCriteria(
+                new Criteria([
+                    'person_id' => $rank->person_id,
+                    'activated' => true,
+                    'rank' => $first->complete_rank,
+                ],['events.date' => 'asc'])
+            );
+
+            if (!$previous) {
+                return null;
+            }
+
+dd($previous);
+
             foreach ($protocolLines as $protocolLine) {
-                $newRank = $this->factory->create($this->createRankInput($protocolLine, $startDate));
+                $newRank = $this->factory->create($this->createRankInput($protocolLine, $startDate, $previous->activated_date));
 
                 if (!$this->juniorRankAgeValidator->validate($newRank->person_id, $newRank->rank, Year::actualYear())) {
                     continue;
@@ -86,14 +106,14 @@ final readonly class PreviousCompletedRankFiller
         return $rank;
     }
 
-    private function createRankInput(ProtocolLine $protocolLine, Carbon $startDate): RankInput
+    private function createRankInput(ProtocolLine $protocolLine, Carbon $startDate, Carbon $activatedDate): RankInput
     {
         return new RankInput(
             personId: $protocolLine->person_id,
             eventId: $protocolLine->distance->event_id,
             rank: $protocolLine->complete_rank,
             startDate: $startDate,
-            activatedDate: $startDate,
+            activatedDate: $activatedDate,
             finishDate: $protocolLine->event->date->clone()->addYears(2),
         );
     }
