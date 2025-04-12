@@ -45,7 +45,7 @@ final class EloquentRankRepository implements RankRepository
         $query = Rank::select('ranks.*');
 
         if ($criteria->hasParam('person_id') || $criteria->hasParam('personId')) {
-            $query->where('person_id', $criteria->param('person_id') ?? $criteria->param('personId'));
+            $query->where('person_id', $criteria->paramOrDefault('person_id') ?? $criteria->param('personId'));
         }
 
         if ($date = $criteria->paramOrDefault('date')) {
