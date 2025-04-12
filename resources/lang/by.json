@@ -17,6 +17,7 @@
     "app.distance.length" : "км",
     "app.distance.points" : "КП",
     "app.ranks" : "Разрады",
+    "app.rank.refill" : "Пераразлік",
     "app.rank.recompleted_date" : "Дата апошняга падтвярджэння",
     "app.rank.activated_date" : "Дата актывацыі",
     "app.rank.completed_date" : "Дата выканання/пацверджання",

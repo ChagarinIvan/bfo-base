@@ -16,4 +16,6 @@ interface RankRepository
     public function byCriteria(Criteria $criteria): Collection;
 
     public function oneByCriteria(Criteria $criteria): ?Rank;
+
+    public function deleteByCriteria(Criteria $criteria): void;
 }

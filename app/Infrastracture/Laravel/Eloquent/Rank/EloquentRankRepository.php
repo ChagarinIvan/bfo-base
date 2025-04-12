@@ -35,6 +35,11 @@ final class EloquentRankRepository implements RankRepository
         return $rank;
     }
 
+    public function deleteByCriteria(Criteria $criteria): void
+    {
+        $this->buildQuery($criteria)->delete();
+    }
+
     private function buildQuery(Criteria $criteria): Builder
     {
         $query = Rank::select('ranks.*');

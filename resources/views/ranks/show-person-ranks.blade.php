@@ -5,6 +5,7 @@
     use App\Bridge\Laravel\Http\Controllers\Rank\ShowEditActivationDateFormAction;
     use App\Application\Dto\Rank\ViewRankDto;
     use App\Domain\Rank\Rank;
+    use App\Bridge\Laravel\Http\Controllers\Rank\RefillPersonRanksAction
     /**
      * @var ViewRankDto[] $ranks;
      * @var ViewPersonDto $person;
@@ -25,6 +26,15 @@
     @else
         <div class="row"><h4>{{ Rank::WITHOUT_RANK }}</h4></div>
     @endif
+    @auth
+        <div class="row mb-3">
+            <div class="col-12">
+                <form method="POST" action="{{ action(RefillPersonRanksAction::class) }}">
+                    <input type="submit" class="fadeIn fourth" value="{{ __('app.rank.refill') }}">
+                </form>
+            </div>
+        </div>
+    @endauth
     <div class="row mb-3">
         <div class="col-12">
             <x-back-button/>
