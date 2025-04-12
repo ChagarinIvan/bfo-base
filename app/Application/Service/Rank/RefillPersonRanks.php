@@ -19,6 +19,6 @@ final readonly class RefillPersonRanks
 
     public function criteria(): Criteria
     {
-        return new Criteria(['person_id' => $this->personId]);
+        return new Criteria(['personId' => $this->personId]);
     }
 }

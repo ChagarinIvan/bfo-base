@@ -25,7 +25,6 @@ final readonly class RefillPersonRanksService
 
         foreach ($this->protocolLines->byCriteria($command->criteria()) as $protocolLine) {
             /** @var ProtocolLine $protocolLine */
-            dump($protocolLine->id);
             $this->rankService->fillRank($protocolLine);
         }
     }

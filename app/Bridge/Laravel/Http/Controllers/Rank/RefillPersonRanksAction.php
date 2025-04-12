@@ -29,7 +29,6 @@ class RefillPersonRanksAction extends BaseController
         }
 
         $ranksService->execute(new RefillPersonRanks($personId));
-        dd('finished');
 
         return $this->redirector->action(ShowPersonRanksAction::class, [$personId]);
     }
