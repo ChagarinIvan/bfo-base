@@ -30,7 +30,7 @@
         <div class="row mb-3">
             <div class="col-12">
                 <form method="POST" action="{{ action(RefillPersonRanksAction::class, [$person->id]) }}">
-                    <input type="submit" class="btn btn-outline-primary btn-sm" value="{{ __('app.rank.refill') }}">
+                    <input type="submit" class="btn btn-outline-primary btn-sm m-1" value="{{ __('app.rank.refill') }}">
                     <x-back-button/>
                 </form>
             </div>
