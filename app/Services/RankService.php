@@ -244,6 +244,18 @@ class RankService
                     activatedDate: $protocolLine->activate_rank?->clone(),
                 ));
 
+                $previous = $this->ranks->oneByCriteria(
+                    new Criteria([
+                        'person_id' => $protocolLine->person_id,
+                        'activated' => true,
+                        'rank' => $protocolLine->complete_rank,
+                    ],['events.date' => 'asc'])
+                );
+
+                if ($previous) {
+                    $newRank->activated_date = $previous->activated_date;
+                }
+
                 $this->storeRank($newRank);
                 dump('1) Enriched rank id: ' . $newRank->rank);
 
