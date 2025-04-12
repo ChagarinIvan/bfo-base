@@ -6,8 +6,9 @@ namespace App\Application\Handler\Person;
 
 use App\Domain\Person\Event\PersonDisabled;
 use App\Domain\ProtocolLine\ProtocolLine;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-final readonly class PersonDisabledHandler
+final readonly class PersonDisabledHandler implements ShouldQueue
 {
     public function handle(PersonDisabled $event): void
     {

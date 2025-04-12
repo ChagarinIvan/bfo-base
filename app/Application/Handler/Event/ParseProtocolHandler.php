@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Application\Handler\Event;
 
-use App\Domain\Event\Event\EventCreated;
 use App\Domain\Event\ProtocolStorage;
 use App\Services\ParserService;
 use App\Services\ProtocolLineIdentService;

@@ -12,8 +12,9 @@ use App\Services\ParserService;
 use App\Services\ProtocolLineIdentService;
 use App\Services\ProtocolLineService;
 use App\Services\RankService;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-final readonly class UpdateEventHandler extends ParseProtocolHandler
+final readonly class UpdateEventHandler extends ParseProtocolHandler implements ShouldQueue
 {
     use DisableEventHandlerTrait;
 
@@ -26,6 +27,12 @@ final readonly class UpdateEventHandler extends ParseProtocolHandler
         protected DistanceService $distanceService,
         protected CupsService $cupsService,
     ) {
+        parent::__construct(
+            storage: $storage,
+            parser: $parser,
+            protocolLineService: $protocolLineService,
+            identService: $identService,
+        );
     }
 
     public function handle(EventUpdated $systemEvent): void

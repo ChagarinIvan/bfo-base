@@ -1,0 +1,11 @@
+[program:laravel-worker]
+process_name=%(program_name)s_%(process_num)02d
+command=/home/ubuntu/bfo-base/docker-compose exec -T app php artisan queue:work --sleep=10 --tries=1
+autostart=true
+autorestart=true
+stderr_logfile=/var/log/supervisor/laravel-worker.err.log
+stdout_logfile=/var/log/supervisor/laravel-worker.out.log
+numprocs=1
+startsecs=0
+startretries=3
+user=ubuntu
