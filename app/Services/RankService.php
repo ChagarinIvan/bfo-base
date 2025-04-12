@@ -148,7 +148,7 @@ class RankService
 //        dump('Search for event ' . $event->id);
         $actualRankDto = $this->activePersonRankService->execute(new ActivePersonRank((string)$protocolLine->person_id, $protocolLine->event->date));
 
-//        dump('Actual rank ' . ($actualRankDto?->rank ?? '---'));
+        dump('Actual rank ' . ($actualRankDto?->rank ?? '---'));
         if ($actualRankDto) {
             if ($actualRankDto->rank === $protocolLine->complete_rank) {
                 $newRank = $this->factory->create(new RankInput(
@@ -182,7 +182,7 @@ class RankService
 //                dump('finish date ' . $newRank->finish_date->toDateString());
 //                dump('start date ' . $newRank->start_date->toDateString());
                 $r = $this->ranksRepository->storeRank($newRank);
-//                dump('New prolongate id ' . $r->id);
+                dump('New prolongate id ' . $r->id);
             } elseif (!empty(trim($actualRankDto->rank)) && (self::RANKS_POWER[$protocolLine->complete_rank] > self::RANKS_POWER[$actualRankDto->rank])) {
 //                dump(sprintf('Enreach rank %s > %s', $actualRankDto->rank, $protocolLine->complete_rank));
 //                 трэба зачыніць усе папярэднія разряды
