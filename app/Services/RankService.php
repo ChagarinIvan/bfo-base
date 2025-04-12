@@ -245,7 +245,7 @@ class RankService
                 ));
 
                 $this->storeRank($newRank);
-//                dump('Enriched rank id: ' . $newRank->rank);
+                dump('1) Enriched rank id: ' . $newRank->rank);
 
 //                $protocolLines$protocolLines = $protocolLines->sortBy('distance.event.date');
 //                foreach ($protocolLines as $line) {
@@ -269,6 +269,7 @@ class RankService
             }
 
             $this->storeRank($newRank);
+            dump('2) Enriched rank id: ' . $newRank->rank);
         }
     }
 
