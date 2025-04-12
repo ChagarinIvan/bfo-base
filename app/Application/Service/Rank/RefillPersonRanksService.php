@@ -27,5 +27,6 @@ final readonly class RefillPersonRanksService
             /** @var ProtocolLine $protocolLine */
             $this->rankService->fillRank($protocolLine);
         }
+        dd('finish');
     }
 }
