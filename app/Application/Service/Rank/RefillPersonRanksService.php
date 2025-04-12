@@ -22,9 +22,11 @@ final readonly class RefillPersonRanksService
     public function execute(RefillPersonRanks $command): void
     {
         $this->ranks->deleteByCriteria($command->criteria());
+        dump('deleted');
 
         foreach ($this->protocolLines->byCriteria($command->criteria()) as $protocolLine) {
             /** @var ProtocolLine $protocolLine */
+            dump($protocolLine->id);
             $this->rankService->fillRank($protocolLine);
         }
     }

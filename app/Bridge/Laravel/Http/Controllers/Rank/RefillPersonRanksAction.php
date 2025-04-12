@@ -28,8 +28,8 @@ class RefillPersonRanksAction extends BaseController
             return $this->redirectTo404Error();
         }
 
-        dd($personId);
         $ranksService->execute(new RefillPersonRanks($personId));
+        dd('finished');
 
         return $this->redirector->action(ShowPersonRanksAction::class, [$personId]);
     }
