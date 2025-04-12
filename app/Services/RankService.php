@@ -252,7 +252,7 @@ class RankService
         } else {
             $newRank = $this->createNewRank($protocolLine);
             $r = $this->ranksRepository->storeRank($newRank);
-            dump('Create NEW rank ' . $r->id);
+            dump('Create NEW rank ' . $r->rank);
         }
     }
 
