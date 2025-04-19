@@ -1,14 +1,14 @@
 @php
+    use App\Application\Dto\Event\ViewEventDto;
     use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionAction;
     use App\Bridge\Laravel\Http\Controllers\Event\ShowAddFlagToEventFormAction;
     use App\Bridge\Laravel\Http\Controllers\Event\ShowEventDistanceAction;
-    use App\Domain\Event\Event;
     use App\Models\Flag;
     use Illuminate\Support\Collection;
     use Illuminate\Support\Str;
     /**
      * @var Flag $flag;
-     * @var Collection|Event[] $events;
+     * @var Collection|ViewEventDto[] $events;
      */
 @endphp
 
@@ -57,24 +57,24 @@
                 <tr>
                     <td>
                         <a class="d-none d-md-inline"
-                           href="{{ action(ShowCompetitionAction::class, [$event->competition]) }}">{{ Str::limit($event->competition->name, 30) }}</a>
+                           href="{{ action(ShowCompetitionAction::class, [$event->competitionId]) }}">{{ Str::limit($event->competitionName, 30) }}</a>
                     </td>
                     <td>
                         @if($event->distances->first())
-                            <a href="{{ action(ShowEventDistanceAction::class, [$event->distances->first()]) }}">{{ Str::limit($event->name, 30) }}</a>
+                            <a href="{{ action(ShowEventDistanceAction::class, [$event->firstDistance->id]) }}">{{ Str::limit($event->name, 30) }}</a>
                         @endif
                     </td>
                     <td>
                         <small class="d-none d-xl-inline">{{ Str::limit($event->description, 80) }}</small>
                     </td>
-                    <td>{{ $event->date->format('Y-m-d') }}</td>
-                    <td>{{ count($event->protocolLines) }}</td>
+                    <td>{{ $event->date }}</td>
+                    <td>{{ count($event->protocolLinesCount) }}</td>
                     @auth
                         <td>
                             <x-button text="app.common.add_flags"
                                       color="info"
                                       icon="bi-flag-fill"
-                                      url="{{ action(ShowAddFlagToEventFormAction::class, [$event]) }}"
+                                      url="{{ action(ShowAddFlagToEventFormAction::class, [$event->id]) }}"
                             />
                         </td>
                     @endauth
