@@ -60,7 +60,9 @@
                            href="{{ action(ShowCompetitionAction::class, [$event->competition]) }}">{{ Str::limit($event->competition->name, 30) }}</a>
                     </td>
                     <td>
-                        <a href="{{ action(ShowEventDistanceAction::class, [$event->distances->first()]) }}">{{ Str::limit($event->name, 30) }}</a>
+                        @if($event->distances->first())
+                            <a href="{{ action(ShowEventDistanceAction::class, [$event->distances->first()]) }}">{{ Str::limit($event->name, 30) }}</a>
+                        @endif
                     </td>
                     <td>
                         <small class="d-none d-xl-inline">{{ Str::limit($event->description, 80) }}</small>

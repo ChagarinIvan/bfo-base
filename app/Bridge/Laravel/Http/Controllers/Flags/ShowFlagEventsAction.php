@@ -17,6 +17,7 @@ class ShowFlagEventsAction extends AbstractFlagsAction
             ->find($flag->events->pluck('id'))
         ;
 
+        /** @see /resources/views/flags/events.blade.php */
         return $this->view('flags.events', [
             'flag' => $flag,
             'events' => $events,
