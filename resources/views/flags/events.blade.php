@@ -68,7 +68,7 @@
                         <small class="d-none d-xl-inline">{{ Str::limit($event->description, 80) }}</small>
                     </td>
                     <td>{{ $event->date }}</td>
-                    <td>{{ count($event->protocolLinesCount) }}</td>
+                    <td>{{ $event->protocolLinesCount }}</td>
                     @auth
                         <td>
                             <x-button text="app.common.add_flags"
