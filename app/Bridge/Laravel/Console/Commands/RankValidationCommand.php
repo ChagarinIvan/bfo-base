@@ -17,7 +17,9 @@ class RankValidationCommand extends Command
 
     public function handle(): void
     {
-        $this->info('Start');
+        $userId = (int) $this->argument('user_id');
+
+        $this->info('Start by user: ' . $userId);
         foreach (ProtocolLine::all() as $protocolLine) {
             if (Rank::validateRank($protocolLine->rank) || $protocolLine->rank === '') {
                 $protocolLine->rank = Rank::getRank($protocolLine->rank) ?: '';
