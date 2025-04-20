@@ -23,6 +23,9 @@ final class CompetitionSearchDto extends AbstractDto
     public function fromArray(array $data): AbstractDto
     {
         $this->setStringParam('year', $data);
+        if (!$this->year) {
+            $this->year = Year::actualYear()->toString();
+        }
 
         return $this;
     }
