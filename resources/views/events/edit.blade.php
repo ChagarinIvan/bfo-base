@@ -18,16 +18,16 @@
         >
             @csrf
             <div class="form-floating mb-3">
-                <input class="form-control" id="name" name="name" value="{{ $event->name }}" />
+                <input class="form-control" id="name" name="name" value="{{ $event->name }}" required/>
                 <label for="name">{{ __('app.common.title') }}</label>
             </div>
             <div class="form-floating mb-3">
-                <input class="form-control" id="description" name="description" value="{{ $event->description }}" />
+                <input class="form-control" id="description" name="description" value="{{ $event->description }}" required/>
                 <label for="description">{{ __('app.competition.description') }}</label>
             </div>
             <div class="form-floating mb-3">
                 <input class="form-control" type="date" id="date" name="date"
-                       value="{{ $event->date }}">
+                       value="{{ $event->date }}" required>
                 <label for="date">{{ __('app.common.date') }}</label>
             </div>
 

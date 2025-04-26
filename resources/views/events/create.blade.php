@@ -17,15 +17,15 @@
         >
             @csrf
             <div class="form-floating mb-3">
-                <input class="form-control" id="name" name="name">
+                <input class="form-control" id="name" name="name" required>
                 <label for="name">{{ __('app.common.title') }}</label>
             </div>
             <div class="form-floating mb-3">
-                <input class="form-control" id="description" name="description">
+                <input class="form-control" id="description" name="description" required>
                 <label for="description">{{ __('app.common.description') }}</label>
             </div>
             <div class="form-floating mb-3">
-                <input class="form-control" type="date" id="date" name="date">
+                <input class="form-control" type="date" id="date" name="date" required>
                 <label for="date">{{ __('app.common.date') }}</label>
             </div>
 
