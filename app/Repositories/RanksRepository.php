@@ -65,7 +65,7 @@ final readonly class RanksRepository
 
     public function getPersonsIdsWithoutRanks(): Collection
     {
-        return Person::where('active', true)
+        return Person::where('person.active', true)
             ->selectRaw('person.id')
             ->join('ranks', 'ranks.person_id', '=', 'person.id', 'left outer')
             ->get()
