@@ -7,7 +7,7 @@ namespace App\Application\Handler\Event;
 use App\Domain\Event\Event\EventCreated;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-final readonly class CreateProtocolHandler extends ParseProtocolHandler implements ShouldQueue
+final class CreateProtocolHandler extends ParseProtocolHandler implements ShouldQueue
 {
     public function handle(EventCreated $systemEvent): void
     {

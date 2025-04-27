@@ -9,13 +9,13 @@ use App\Services\ParserService;
 use App\Services\ProtocolLineIdentService;
 use App\Services\ProtocolLineService;
 
-abstract readonly class ParseProtocolHandler
+abstract class ParseProtocolHandler
 {
     public function __construct(
-        protected ProtocolStorage $storage,
-        protected ParserService $parser,
-        protected ProtocolLineService $protocolLineService,
-        protected ProtocolLineIdentService $identService,
+        protected readonly ProtocolStorage $storage,
+        protected readonly ParserService $parser,
+        protected readonly ProtocolLineService $protocolLineService,
+        protected readonly ProtocolLineIdentService $identService,
     ) {
     }
 

@@ -14,7 +14,7 @@ use App\Services\ProtocolLineService;
 use App\Services\RankService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-final readonly class UpdateEventHandler extends ParseProtocolHandler implements ShouldQueue
+final class UpdateEventHandler extends ParseProtocolHandler implements ShouldQueue
 {
     use DisableEventHandlerTrait;
 
@@ -23,9 +23,9 @@ final readonly class UpdateEventHandler extends ParseProtocolHandler implements 
         ParserService $parser,
         ProtocolLineService $protocolLineService,
         ProtocolLineIdentService $identService,
-        protected RankService $ranksService,
-        protected DistanceService $distanceService,
-        protected CupsService $cupsService,
+        protected readonly RankService $ranksService,
+        protected readonly DistanceService $distanceService,
+        protected readonly CupsService $cupsService,
     ) {
         parent::__construct(
             storage: $storage,
