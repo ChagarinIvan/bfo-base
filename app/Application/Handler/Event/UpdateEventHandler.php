@@ -19,10 +19,10 @@ final readonly class UpdateEventHandler extends ParseProtocolHandler implements 
     use DisableEventHandlerTrait;
 
     public function __construct(
-        protected ProtocolStorage $storage,
-        protected ParserService $parser,
-        protected ProtocolLineService $protocolLineService,
-        protected ProtocolLineIdentService $identService,
+        ProtocolStorage $storage,
+        ParserService $parser,
+        ProtocolLineService $protocolLineService,
+        ProtocolLineIdentService $identService,
         protected RankService $ranksService,
         protected DistanceService $distanceService,
         protected CupsService $cupsService,
