@@ -19,6 +19,11 @@ class ShowCupTableAction extends BaseController
 
     public function __invoke(Cup $cup, string $cupGroupId, CupEventsService $service): View|RedirectResponse
     {
+        // fix wrong group
+        if (preg_match('#^(\D)_(\d+)$#', $cupGroupId)) {
+            $cupGroupId .= '_';
+        }
+
         $cupEvents = $service->getCupEvents((string) $cup->id)->sortBy('event.date');
         $cupGroup = CupGroupFactory::fromId($cupGroupId);
         $cupPoints = $service->calculateCup($cup, $cupEvents, $cupGroup);
