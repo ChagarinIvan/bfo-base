@@ -50,6 +50,7 @@ class SyncStoredPersonsCommand extends Command
                 $this->storage->delete($path);
             }
         } catch (Throwable $e) {
+            dd($e);
             $this->logger->error($e->getMessage());
         }
 
