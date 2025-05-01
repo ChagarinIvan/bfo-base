@@ -20,6 +20,8 @@ class StartBigIdentCommand extends Command
     public function handle(ProtocolLineIdentService $service): void
     {
         $this->info('Start');
+        $userId = (int) $this->argument('user_id');
+
         $startTime = time();
         $protocolLines = ProtocolLine::whereNull('person_id')->get();
         $this->info("Has {$protocolLines->count()} lines");
