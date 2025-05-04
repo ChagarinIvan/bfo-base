@@ -66,7 +66,7 @@ class OldObelarusNetXlsxParser extends AbstractParser
                 'points' => is_numeric($line[9]) ? (int)$line[9] : 0,
                 'time' => str_contains($line[5], ':') ? Carbon::createFromTimeString(str_replace('.', ':', $line[5])) : null,
                 'lastname' => mb_convert_case(mb_strtolower(explode(' ', $line[1])[0]), MB_CASE_TITLE, "UTF-8"),
-                'firstname' => mb_convert_case(mb_strtolower(explode(' ', $line[1])[1]), MB_CASE_TITLE, "UTF-8"),
+                'firstname' => mb_convert_case(mb_strtolower(explode(' ', $line[1])[1] ?? ''), MB_CASE_TITLE, "UTF-8"),
                 'year' => (int)(strlen($line[2]) === 2 ? '19' . $line[2] : $line[2]),
                 'group' => $group,
                 'distance' => [
