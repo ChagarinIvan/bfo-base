@@ -139,7 +139,7 @@ class SFRParser extends AbstractParser
             return 'firstname';
         }
 
-        if (str_contains($field, '.р.')) {
+        if (str_contains($field, '.р.') || str_contains($field, 'рожд.')) {
             return 'year';
         }
 

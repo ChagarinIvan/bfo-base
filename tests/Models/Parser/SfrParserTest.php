@@ -30,6 +30,24 @@ final class SfrParserTest extends AbstractParser
                 ],
             ],
             [
+                '2025/27042025.htm',
+                46,
+                [
+                    0 => [
+                        'Рубан',        // фамилия
+                        'Андрей',     // имя
+                        'ГОЦТЭДиМ', // клуб
+                        2011,           // год
+                        '2р',           // разряд
+                        607,            // номер
+                        '00:40:55',     // время
+                        1,              // место
+                        null,           // выполненный разряд
+                        100,            // очки
+                    ],
+                ],
+            ],
+            [
                 '2024/12102024.htm',
                 219,
                 [
@@ -57,7 +75,8 @@ final class SfrParserTest extends AbstractParser
                         null,
                     ],
                 ],
-            ],
+                'htm'
+            ]
         ];
     }
     protected function getParser(): string
