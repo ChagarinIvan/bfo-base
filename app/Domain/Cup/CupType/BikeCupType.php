@@ -35,11 +35,6 @@ class BikeCupType extends EliteCupType
         ;
     }
 
-    protected function getAllGroupsMap(CupGroup $group): array
-    {
-        return $this->getGroupsMap($group);
-    }
-
     protected function getGroupsMap(CupGroup $group): array
     {
         $map = [
@@ -48,5 +43,22 @@ class BikeCupType extends EliteCupType
         ];
 
         return $map[$group->id()] ?? [];
+    }
+
+    protected function getAllGroupsMap(CupGroup $group): array
+    {
+        $map = [
+            (new CupGroup(GroupMale::Man))->id() => array_merge(
+                self::ELITE_MEN_GROUPS,
+                ['M20', 'М20']
+            ),
+            (new CupGroup(GroupMale::Woman))->id() => array_merge(
+                self::ELITE_WOMEN_GROUPS,
+                ['Ж20', 'W20']
+            )
+        ];
+
+        return $map[$group->id()] ?? [];
+
     }
 }
