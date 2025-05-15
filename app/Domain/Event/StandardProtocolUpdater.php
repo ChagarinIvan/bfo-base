@@ -15,6 +15,7 @@ final readonly class StandardProtocolUpdater implements ProtocolUpdater
     public function update(Event $event, Protocol $protocol): string
     {
         $this->storage->delete($event->file);
+        dd($protocol->extension);
         $path = $this->path->protocolPath($event->date, $event->name, $protocol->extension);
         $this->storage->put($path, $protocol);
 
