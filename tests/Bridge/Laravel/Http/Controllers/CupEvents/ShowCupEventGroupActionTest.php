@@ -6,11 +6,13 @@ namespace Tests\Bridge\Laravel\Http\Controllers\CupEvents;
 
 use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupEventGroupAction;
 use App\Domain\Cup\CupType\JuniorCupType;
+use App\Domain\Cup\CupType\NewMasterCupType;
 use App\Domain\Cup\CupType\SprintCupType;
 use App\Domain\Cup\CupType\YouthCupType;
 use App\Domain\User\User;
 use Database\Seeders\JuniorCupLineSeeder;
 use Database\Seeders\JuniorCupLineSeeder2;
+use Database\Seeders\NewMasterCupLineSeeder;
 use Database\Seeders\SprintCupLineSeeder;
 use Database\Seeders\YouthCupLine2Seeder;
 use Database\Seeders\YouthCupLineSeeder;
@@ -178,6 +180,58 @@ final class ShowCupEventGroupActionTest extends TestCase
             ->assertSee('<td>404</td>', false)
             ->assertSee('<a href="http://localhost/persons/103/show">Test1 Test1</a>', false)
             ->assertSee('<td>252</td>', false)
+        ;
+    }
+
+    /**
+     * @test
+     * @see ShowCupEventGroupAction::class
+     * @see NewMasterCupType::class
+     */
+    public function it_shows_new_master_cup_event_group_action(): void
+    {
+        $this->seed(NewMasterCupLineSeeder::class);
+
+        /** @var Authenticatable&User $user */
+        $user = User::factory()->createOne();
+        $this->actingAs($user);
+
+        $this->get('/cups/101/101/M_55_/show')
+            ->assertStatus(Response::HTTP_OK)
+            ->assertSee('<h2 id="up">Master Cup 2024 - 2024</h2>', false)
+            ->assertSee('<a href="http://localhost/competitions/101/show">Grodno cup</a>', false)
+            ->assertSee('<a href="http://localhost/events/d/101">Спринт - 2024-04-12</a>', false)
+            ->assertSee('<a href="http://localhost/cups/101/101/M_35_/show" class="text-decoration-none nav-link ">', false)
+            ->assertSee('<a href="http://localhost/cups/101/101/M_55_/show" class="text-decoration-none nav-link active">', false)
+            ->assertSee('<a href="http://localhost/persons/103/show">Сияльский Владислав</a>', false)
+            ->assertSee('<td><b class="text-info">1000</b></td>', false)
+        ;
+    }
+
+    /**
+     * @test
+     * @see ShowCupEventGroupAction::class
+     * @see NewMasterCupType::class
+     */
+    public function it_shows_new_master_cup_event_group_action2(): void
+    {
+        $this->seed(NewMasterCupLineSeeder::class);
+
+        /** @var Authenticatable&User $user */
+        $user = User::factory()->createOne();
+        $this->actingAs($user);
+
+        $this->get('/cups/101/101/M_60_/show')
+            ->assertStatus(Response::HTTP_OK)
+            ->assertSee('<h2 id="up">Master Cup 2024 - 2024</h2>', false)
+            ->assertSee('<a href="http://localhost/competitions/101/show">Grodno cup</a>', false)
+            ->assertSee('<a href="http://localhost/events/d/101">Спринт - 2024-04-12</a>', false)
+            ->assertSee('<a href="http://localhost/cups/101/101/M_35_/show" class="text-decoration-none nav-link ">', false)
+            ->assertSee('<a href="http://localhost/cups/101/101/M_60_/show" class="text-decoration-none nav-link active">', false)
+            ->assertSee('<a href="http://localhost/persons/101/show">Триденский Генадий</a>', false)
+            ->assertSee('<td><b class="text-info">1000</b></td>', false)
+            ->assertSee('<a href="http://localhost/persons/102/show">Макаревич Иосиф</a>', false)
+            ->assertSee('<td>891</td>', false)
         ;
     }
 }

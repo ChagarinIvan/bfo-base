@@ -6,7 +6,6 @@ namespace App\Domain\Cup\Group;
 
 use App\Application\Service\Group\Exception\GroupNotFound;
 use Illuminate\Support\Collection;
-use RuntimeException;
 use function count;
 use function preg_match;
 
