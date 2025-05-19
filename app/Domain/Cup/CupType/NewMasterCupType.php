@@ -252,9 +252,14 @@ class NewMasterCupType extends AbstractCupType
     protected function getProtocolLines(CupEvent $cupEvent, CupGroup $group): Collection
     {
         $mainDistance = $this->distanceService->findDistance(self::GROUPS_MAP[$group->id()], $cupEvent->event_id);
+        $equalDistances = Collection::make([$mainDistance]);
+
+        if ($mainDistance) {
+            $equalDistances->push(...$this->distanceService->getEqualDistances($mainDistance));
+        }
 
         return $this->protocolLinesRepository->byCriteria(
-            CupEventDistancesProtocolLinesCriteria::create(new Collection([$mainDistance]), $cupEvent, $this->paymentYear($cupEvent->cup))
+            CupEventDistancesProtocolLinesCriteria::create($equalDistances, $cupEvent, $this->paymentYear($cupEvent->cup))
         );
     }
 
