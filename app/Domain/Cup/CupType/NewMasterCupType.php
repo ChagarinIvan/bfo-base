@@ -86,6 +86,8 @@ class NewMasterCupType extends AbstractCupType
 
     protected function getGroupProtocolLines(CupEvent $cupEvent, CupGroup $group): Collection
     {
+        return collect();
+
         // пытаемся посчитать для группы которая есть на соревнования М55
         // берём всех спортсменов из группы (они есть).
         // группируем их по возрастным группам типа М55 => [], M60 => [], М65 => []
@@ -168,6 +170,7 @@ class NewMasterCupType extends AbstractCupType
 
                     $mergedLines = ($groupedByGroupNameLines->get($key) ?? collect())->merge($groupLines);
 
+                    // добавіть ремув логік
                     // Обновим коллекцию
                     $groupedByGroupNameLines = $groupedByGroupNameLines
                         ->forget($key)
