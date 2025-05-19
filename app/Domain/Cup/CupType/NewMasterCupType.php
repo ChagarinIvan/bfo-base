@@ -131,6 +131,7 @@ class NewMasterCupType extends AbstractCupType
                 ->sortKeys(descending: true)
             ;
 
+            dump($groupedByGroupNameLines);
             $firstKey = $groupedByGroupNameLines->keys()->first();
             if (!$firstKey) {
                 return collect();
@@ -141,9 +142,7 @@ class NewMasterCupType extends AbstractCupType
                 return collect();
             }
 
-            $i = 5;
-            while ($groupedByGroupNameLines->isNotEmpty() && $i > 0) {
-                $i--;
+            while ($groupedByGroupNameLines->isNotEmpty()) {
                 /**
                  * @var ProtocolLine[] $groupLines
                  * @var string $ageGroup
