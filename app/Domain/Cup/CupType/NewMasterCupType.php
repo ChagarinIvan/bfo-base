@@ -10,6 +10,7 @@ use App\Domain\Cup\CupEvent\CupEventPoint;
 use App\Domain\Cup\Group\CupGroup;
 use App\Domain\Cup\Group\CupGroupFactory;
 use App\Domain\Cup\Group\GroupAge;
+use App\Domain\Cup\Group\GroupMale;
 use App\Domain\ProtocolLine\Criteria\CupEventDistancesProtocolLinesCriteria;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Models\Year;
@@ -272,9 +273,35 @@ class NewMasterCupType extends AbstractCupType
             $equalDistances->push(...$this->distanceService->getEqualDistances($mainDistance));
         }
 
-        return $this->protocolLinesRepository->byCriteria(
+        $lines = $this->protocolLinesRepository->byCriteria(
             CupEventDistancesProtocolLinesCriteria::create($equalDistances, $cupEvent, $this->paymentYear($cupEvent->cup))
         );
+
+        $eventGroupsId = $this->getEventGroups($group->male())->pluck('id');
+
+        $eventDistances = $this->distanceService
+            ->getCupEventDistancesByGroups($cupEvent, $eventGroupsId)
+            ->pluck('id')
+            ->toArray()
+        ;
+
+        return $lines->filter(
+            static fn (ProtocolLine $protocolLine) => in_array($protocolLine->distance_id, $eventDistances, true)
+        );
+    }
+
+    protected function getEventGroups(GroupMale $male): Collection
+    {
+        $groups = Collection::make();
+
+        /** @var CupGroup $cupGroup */
+        foreach ($this->getGroups() as $cupGroup) {
+            if ($cupGroup->male() === $male) {
+                $groups = $groups->merge($this->groupsService->getGroups(static::GROUPS_MAP[$cupGroup->id()]));
+            }
+        }
+
+        return $groups;
     }
 
     protected function paymentYear(Cup $cup): Year
