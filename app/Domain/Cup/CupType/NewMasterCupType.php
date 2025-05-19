@@ -106,7 +106,7 @@ class NewMasterCupType extends AbstractCupType
 
         while (true) {
             $prevGroup = $prevGroup->prev();
-            if (!array_key_exists($prevGroup->id(), self::GROUPS_MAP) || $prevGroup->id() === 'M_21_' || $prevGroup->id() === 'W_21_') {
+            if (!array_key_exists($prevGroup->id(), self::GROUPS_MAP) && $prevGroup->id() !== 'M_21_' && $prevGroup->id() !== 'W_21_') {
                 return $result;
             }
 
