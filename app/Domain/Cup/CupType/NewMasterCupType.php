@@ -120,7 +120,7 @@ class NewMasterCupType extends AbstractCupType
     {
         $mainDistance = $this->distanceService->findDistance(self::GROUPS_MAP[$searchGroup->id()], $cupEvent->event_id);
         $lines = $this->getProtocolLines($cupEvent, $mainGroup);
-        dd($lines);
+
         if (!$lines->isEmpty()) {
             $groupedByGroupNameLines = $lines
                 ->groupBy(static fn(ProtocolLine $line): string => (new CupGroup(
@@ -260,9 +260,8 @@ class NewMasterCupType extends AbstractCupType
             $equalDistances->push(...$this->distanceService->getEqualDistances($mainDistance));
         }
 
-        dump($equalDistances);
         return $this->protocolLinesRepository->byCriteria(
-            CupEventDistancesProtocolLinesCriteria::create(Collection::make([$mainDistance]), $cupEvent, $this->paymentYear($cupEvent->cup))
+            CupEventDistancesProtocolLinesCriteria::create($equalDistances, $cupEvent, $this->paymentYear($cupEvent->cup))
         );
     }
 
