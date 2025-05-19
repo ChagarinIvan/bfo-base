@@ -14,7 +14,6 @@ final readonly class ViewCupEventDto
         public string $cupId,
         public string $eventId,
         public string $points,
-        public int $participatesCount,
         public ImpressionDto $created,
         public ImpressionDto $updated,
 

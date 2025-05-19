@@ -38,7 +38,7 @@ final readonly class CupAssembler
             year: $cup->year->value,
             type: $cup->type->value,
             groups: $this->toViewCupGroupsDto($cup),
-            cupEvents: $cup->events->map(fn (CupEvent $e) => $this->toViewCupEventDto($e, $cup))->all(),
+            cupEvents: $cup->events->map($this->toViewCupEventDto(...))->all(),
             lastEventDate: $this->events->oneByCriteria($eventCriteria)?->date->format('Y-m-d') ?? '',
             visible: $cup->visible,
             created: $this->authAssembler->toImpressionDto($cup->created),
@@ -61,19 +61,18 @@ final readonly class CupAssembler
             cupName: $cup->name,
             cupYear: $cup->year->toString(),
             cupGroups: $this->toViewCupGroupsDto($cup),
-            cupEvent: $this->toViewCupEventDto($cupEvent, $cup),
+            cupEvent: $this->toViewCupEventDto($cupEvent),
             points: array_map($this->toViewCupEventPointDto(...), $points),
         );
     }
 
-    public function toViewCupEventDto(CupEvent $cupEvent, Cup $cup): ViewCupEventDto
+    public function toViewCupEventDto(CupEvent $cupEvent): ViewCupEventDto
     {
         return new ViewCupEventDto(
             id: (string) $cupEvent->id,
             cupId: (string) $cupEvent->cup_id,
             eventId: (string) $cupEvent->event_id,
             points: (string) $cupEvent->points,
-            participatesCount: $cup->type->instance()->getCupEventParticipatesCount($cupEvent),
             created: $this->authAssembler->toImpressionDto($cupEvent->created),
             updated: $this->authAssembler->toImpressionDto($cupEvent->updated),
 

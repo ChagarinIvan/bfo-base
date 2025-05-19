@@ -68,16 +68,6 @@ abstract class AbstractCupType implements CupTypeInterface
         return $results;
     }
 
-    public function getCupEventParticipatesCount(CupEvent $cupEvent, ?array $groups = null): int
-    {
-        $lines = new Collection();
-        foreach ($groups ?? $this->getGroups() as $group) {
-            $lines = $lines->merge($this->getGroupProtocolLines($cupEvent, $group));
-        }
-
-        return $lines->pluck('id')->unique()->count();
-    }
-
     protected function calculateLines(CupEvent $cupEvent, Collection $protocolLines): Collection
     {
         $cupEventPointsList = Collection::make();

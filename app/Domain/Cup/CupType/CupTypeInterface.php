@@ -20,11 +20,6 @@ interface CupTypeInterface
     public function calculateEvent(CupEvent $cupEvent, CupGroup $mainGroup): Collection;
 
     /**
-     * @param array<int, CupGroup> $groups
-     */
-    public function getCupEventParticipatesCount(CupEvent $cupEvent, ?array $groups = null): int;
-
-    /**
      * @return Collection|CupGroup[]
      */
     public function getGroups(): Collection|array;
