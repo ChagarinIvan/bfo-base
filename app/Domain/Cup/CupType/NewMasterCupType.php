@@ -61,7 +61,7 @@ class NewMasterCupType extends AbstractCupType
     public function calculateEvent(CupEvent $cupEvent, CupGroup $mainGroup): Collection
     {
         $cupEventProtocolLines = $this->getGroupProtocolLines($cupEvent, $mainGroup);
-        dd($cupEventProtocolLines);
+
         return $this
             ->calculateLines($cupEvent, $cupEventProtocolLines)
             ->sortByDesc(static fn (CupEventPoint $cupEventResult) => $cupEventResult->points)
