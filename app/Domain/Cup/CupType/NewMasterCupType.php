@@ -130,6 +130,7 @@ class NewMasterCupType extends AbstractCupType
                 )
                 ->sortKeys(descending: true)
             ;
+            dd($groupedByGroupNameLines);
 
             $firstKey = $groupedByGroupNameLines->keys()->first();
             if (!$firstKey) {
