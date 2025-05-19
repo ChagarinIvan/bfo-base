@@ -139,7 +139,9 @@ class NewMasterCupType extends AbstractCupType
                 return collect();
             }
 
-            while ($groupedByGroupNameLines->isNotEmpty()) {
+            $i = 5;
+            while ($groupedByGroupNameLines->isNotEmpty() && $i > 0) {
+                $i--;
                 /**
                  * @var ProtocolLine[] $groupLines
                  * @var string $ageGroup
