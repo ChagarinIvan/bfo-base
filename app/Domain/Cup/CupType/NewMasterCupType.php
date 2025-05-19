@@ -63,7 +63,7 @@ class NewMasterCupType extends AbstractCupType
     public function calculateEvent(CupEvent $cupEvent, CupGroup $mainGroup): Collection
     {
         $cupEventProtocolLines = $this->getGroupProtocolLines($cupEvent, $mainGroup);
-
+        dd($cupEventProtocolLines);
         return $this
             ->calculateLines($cupEvent, $cupEventProtocolLines)
             ->sortByDesc(static fn (CupEventPoint $cupEventResult) => $cupEventResult->points)
@@ -126,15 +126,15 @@ class NewMasterCupType extends AbstractCupType
                 ->filter(static fn(ProtocolLine $line): bool =>
                     35 <= ($cupEvent->cup->year->value - $line->person?->birthday?->year)
                     && ($cupEvent->cup->year->value - $line->person?->birthday?->year) <= 100)
-                ->groupBy(static fn(ProtocolLine $line): string => (new CupGroup(
-                    $mainGroup->male(),
-                    self::calculateGroupAge($cupEvent->cup->year->value - $line->person?->birthday?->year),
-                ))->id()
+                ->groupBy(static fn(ProtocolLine $line): string => (
+                    new CupGroup(
+                        $mainGroup->male(),
+                        self::calculateGroupAge($cupEvent->cup->year->value - $line->person?->birthday?->year),
+                    ))->id()
                 )
                 ->sortKeys(descending: true)
             ;
 
-            dump($groupedByGroupNameLines);
             $firstKey = $groupedByGroupNameLines->keys()->first();
             if (!$firstKey) {
                 return collect();
@@ -170,6 +170,7 @@ class NewMasterCupType extends AbstractCupType
                         continue;
                     }
 
+                    dump('ALARM');
                     $key = $aGroup->prev()->id();
 
                     $mergedLines = ($groupedByGroupNameLines->get($key) ?? collect())->merge($groupLines);
