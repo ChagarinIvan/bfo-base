@@ -123,6 +123,9 @@ class NewMasterCupType extends AbstractCupType
 
         if (!$lines->isEmpty()) {
             $groupedByGroupNameLines = $lines
+                ->filter(static fn(ProtocolLine $line): bool =>
+                    35 <= ($cupEvent->cup->year->value - $line->person?->birthday?->year)
+                    && ($cupEvent->cup->year->value - $line->person?->birthday?->year) <= 100)
                 ->groupBy(static fn(ProtocolLine $line): string => (new CupGroup(
                     $mainGroup->male(),
                     self::calculateGroupAge($cupEvent->cup->year->value - $line->person?->birthday?->year),
@@ -245,7 +248,18 @@ class NewMasterCupType extends AbstractCupType
             81 => GroupAge::a80,
             82 => GroupAge::a80,
             83 => GroupAge::a80,
+            84 => GroupAge::a80,
             85 => GroupAge::a80,
+            86 => GroupAge::a80,
+            87 => GroupAge::a80,
+            88 => GroupAge::a80,
+            89 => GroupAge::a80,
+            90 => GroupAge::a80,
+            91 => GroupAge::a80,
+            92 => GroupAge::a80,
+            93 => GroupAge::a80,
+            94 => GroupAge::a80,
+            95 => GroupAge::a80,
         ];
 
         return $map[$age] ?? GroupAge::a80;
