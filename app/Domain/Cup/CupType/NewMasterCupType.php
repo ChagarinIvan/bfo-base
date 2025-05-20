@@ -61,12 +61,34 @@ class NewMasterCupType extends AbstractCupType
 
     public function calculateEvent(CupEvent $cupEvent, CupGroup $mainGroup): Collection
     {
-        $cupEventProtocolLines = $this->getGroupProtocolLines($cupEvent, $mainGroup);
+        $cupEventProtocolLinesWithGroups = $this->getAllGroupProtocolLines($cupEvent, $mainGroup);
+        $groupedCupEventProtocolLinesWithGroups = $cupEventProtocolLinesWithGroups->groupBy(static fn(CupEventProtocolLine $item) => $item->calculatedGroup->id());
 
-        return $this
-            ->calculateLines($cupEvent, $cupEventProtocolLines)
-            ->sortByDesc(static fn (CupEventPoint $cupEventResult) => $cupEventResult->points)
-        ;
+        $result = collect();
+
+        foreach ($groupedCupEventProtocolLinesWithGroups as $lines) {
+            $first = $lines->first(static fn(CupEventProtocolLine $item) => $item->actualGroup->equal($mainGroup));;
+
+            if (!$first) {
+                continue;
+            }
+
+            $protocolLines = $lines->map(static fn(CupEventProtocolLine $item) => $item->line);
+            $cupGroupResults = $this->calculateLines($cupEvent, $protocolLines);
+
+            /** @var CupEventPoint $cupResult */
+            foreach ($cupGroupResults as $cupResult) {
+                if ($lines
+                    ->first(static fn(CupEventProtocolLine $item) => $item->line->id === $cupResult->protocolLine->id)
+                    ->actualGroup
+                    ->equal($mainGroup)
+                ) {
+                    $result->push($cupResult);
+                }
+            }
+        }
+
+        return $result->sortByDesc(static fn (CupEventPoint $cupEventResult) => $cupEventResult->points);
     }
 
     public function getGroups(): Collection|array
@@ -85,17 +107,32 @@ class NewMasterCupType extends AbstractCupType
         ]);
     }
 
+    /** @return Collection<int, CupEventProtocolLine> */
+    protected function getAllGroupProtocolLines(CupEvent $cupEvent, CupGroup $group): Collection
+    {
+        $results = $this
+            ->getGroupProtocolLines($cupEvent, $group)
+            ->map(static fn(ProtocolLineCupGroup $item) => new CupEventProtocolLine($item->line, $group, $item->group))
+        ;
+
+        $prevGroup = $group;
+
+        while (true) {
+            $prevGroup = $prevGroup->prev();
+            if (!array_key_exists($prevGroup->id(), self::GROUPS_MAP)) {
+                return $results;
+            }
+
+            $results = $results->merge($this
+                ->getGroupProtocolLines($cupEvent, $prevGroup)
+                ->map(static fn(ProtocolLineCupGroup $item) => new CupEventProtocolLine($item->line, $prevGroup, $item->group))
+            );
+        }
+    }
+
+    /** @return Collection<int, ProtocolLineCupGroup> */
     protected function getGroupProtocolLines(CupEvent $cupEvent, CupGroup $group): Collection
     {
-        // пытаемся посчитать для группы которая есть на соревнования М55
-        // берём всех спортсменов из группы (они есть).
-        // группируем их по возрастным группам типа М55 => [], M60 => [], М65 => []
-        // смотрим были ли на соревнования эти группы, от большей,
-        // например если М65 не было или были эквиваленты дистанции, то может туда отправить тех кто сгруппирован под этой группой,
-        // если такая группа есть, то идём к следующией и в более нижнюю добавляем спортсменов сверху.
-        // если находится группа которой не было на соревнованиях, то спортсмены попадают туда и не считаются для нашей группы
-        // если не находится "свободной", то все считаются по запрашиваемой группе М55
-
         $lines = $this->getProtocolLines($cupEvent, $group);
 
         if (!$lines->isEmpty()) {
@@ -115,6 +152,7 @@ class NewMasterCupType extends AbstractCupType
         }
     }
 
+    /** @return Collection<int, ProtocolLineCupGroup> */
     private function getAgeProtocolLines(CupEvent $cupEvent, CupGroup $mainGroup, CupGroup $searchGroup): Collection
     {
         $mainDistance = $this->distanceService->findDistance(self::GROUPS_MAP[$searchGroup->id()], $cupEvent->event_id);
@@ -125,12 +163,14 @@ class NewMasterCupType extends AbstractCupType
                 ->filter(static fn(ProtocolLine $line): bool =>
                     35 <= ($cupEvent->cup->year->value - $line->person?->birthday?->year)
                     && ($cupEvent->cup->year->value - $line->person?->birthday?->year) <= 100)
-                ->groupBy(static fn(ProtocolLine $line): string => (
+                ->map(static fn(ProtocolLine $line): ProtocolLineCupGroup => new ProtocolLineCupGroup(
+                    $line,
                     new CupGroup(
                         $mainGroup->male(),
                         self::calculateGroupAge($cupEvent->cup->year->value - $line->person?->birthday?->year),
-                    ))->id()
-                )
+                    )
+                ))
+                ->groupBy(static fn(ProtocolLineCupGroup $lcg): string => $lcg->group->id())
                 ->sortKeys(descending: true)
             ;
 
@@ -146,7 +186,7 @@ class NewMasterCupType extends AbstractCupType
 
             while ($groupedByGroupNameLines->isNotEmpty()) {
                 /**
-                 * @var ProtocolLine[] $groupLines
+                 * @var Collection|ProtocolLineCupGroup[] $groupLines
                  * @var string $ageGroup
                  */
                 foreach ($groupedByGroupNameLines as $ageGroup => $groupLines) {
@@ -169,7 +209,6 @@ class NewMasterCupType extends AbstractCupType
                         continue;
                     }
 
-                    dump('ALARM');
                     $key = $aGroup->prev()->id();
 
                     $mergedLines = ($groupedByGroupNameLines->get($key) ?? collect())->merge($groupLines);
