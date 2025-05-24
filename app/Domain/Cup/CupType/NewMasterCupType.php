@@ -283,18 +283,16 @@ class NewMasterCupType extends AbstractCupType
                     $aDistance = $this->findDistance($cupEvent, $aGroup);
 
                     if ($aDistance && $mainDistance && $mainDistance->equal($aDistance)) {
-                        dd($aDistance);
                         if ($aGroup->older($mainGroup)) {
                             $groupedByGroupNameLines = $groupedByGroupNameLines->forget($aGroup->id());
                             continue;
                         }
                     }
-                    dd('ALARM');
 
-//                    if ($aGroup->older($mainGroup)) {
-//                        $groupedByGroupNameLines = $groupedByGroupNameLines->forget($aGroup->id());
-//                        continue;
-//                    }
+                    if ($aGroup->older($mainGroup)) {
+                        $groupedByGroupNameLines = $groupedByGroupNameLines->forget($aGroup->id());
+                        continue;
+                    }
 
                     $key = $aGroup->prev()->id();
 
