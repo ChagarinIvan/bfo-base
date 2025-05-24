@@ -180,7 +180,6 @@ class NewMasterCupType extends AbstractCupType
                 ->getGroupProtocolLines($cupEvent, $prevGroup)
                 ->map(static fn(ProtocolLineCupGroup $item) => new CupEventProtocolLine($item->line, $prevGroup, $item->group))
             );
-            dd($results);
         }
     }
 
@@ -191,6 +190,7 @@ class NewMasterCupType extends AbstractCupType
             return self::$groupProtocolLines[$group->id()];
         }
 
+        dump($group);
         $lines = $this->getProtocolLines($cupEvent, $group);
 
         if (!$lines->isEmpty()) {
