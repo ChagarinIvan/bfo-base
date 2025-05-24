@@ -268,7 +268,7 @@ class NewMasterCupType extends AbstractCupType
 
                     dump($aGroup);
                     if ($aGroup->equal($searchGroup)) {
-                        dd($groupLines);
+                        dump($groupLines);
                         return $groupLines;
                     }
 
