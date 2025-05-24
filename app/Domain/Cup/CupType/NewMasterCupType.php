@@ -261,6 +261,8 @@ class NewMasterCupType extends AbstractCupType
                         return $groupLines;
                     }
 
+                    dump($mainGroup);
+                    dump($searchGroup);
                     dd($aGroup);
                     $ageGroupLines = $this->getProtocolLines($cupEvent, $aGroup);
 
