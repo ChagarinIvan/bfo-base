@@ -54,6 +54,10 @@ class NewMasterCupType extends AbstractCupType
         'W_80_' => ['Ж80', 'W80'],
     ];
 
+    private static array $protocolLines = [];
+    private static array $equalDistances = [];
+    private static array $lines = [];
+
     public function getNameKey(): string
     {
         return 'app.cup.type.master.new';
@@ -305,16 +309,31 @@ class NewMasterCupType extends AbstractCupType
     }
     protected function getProtocolLines(CupEvent $cupEvent, CupGroup $group): Collection
     {
-        $mainDistance = $this->distanceService->findDistance(self::GROUPS_MAP[$group->id()], $cupEvent->event_id);
-        $equalDistances = Collection::make([$mainDistance]);
-
-        if ($mainDistance) {
-            $equalDistances->push(...$this->distanceService->getEqualDistances($mainDistance));
+        if (array_key_exists($group->id(), self::$protocolLines)) {
+            return self::$protocolLines[$group->id()];
         }
 
-        $lines = $this->protocolLinesRepository->byCriteria(
-            CupEventDistancesProtocolLinesCriteria::create($equalDistances, $cupEvent, $this->paymentYear($cupEvent->cup))
-        );
+        if (array_key_exists($group->id(), self::$equalDistances)) {
+            $equalDistances = self::$equalDistances[$group->id()];
+        } else {
+            $mainDistance = $this->distanceService->findDistance(self::GROUPS_MAP[$group->id()], $cupEvent->event_id);
+            $equalDistances = Collection::make([$mainDistance]);
+
+            if ($mainDistance) {
+                $equalDistances->push(...$this->distanceService->getEqualDistances($mainDistance));
+            }
+
+            self::$equalDistances[$group->id()] = $equalDistances;
+        }
+
+        $criteria = CupEventDistancesProtocolLinesCriteria::create($equalDistances, $cupEvent, $this->paymentYear($cupEvent->cup));
+
+        if (array_key_exists($criteria->hash(), self::$lines)) {
+            $lines = self::$lines[$criteria->hash()];
+        } else {
+            $lines = $this->protocolLinesRepository->byCriteria($criteria);
+            self::$lines[$criteria->hash()] = $lines;
+        }
 
         $eventGroupsId = $this->getEventGroups($group->male())->pluck('id');
 
@@ -324,9 +343,10 @@ class NewMasterCupType extends AbstractCupType
             ->toArray()
         ;
 
-        return $lines->filter(
-            static fn (ProtocolLine $protocolLine) => in_array($protocolLine->distance_id, $eventDistances, true)
-        );
+        $result = $lines->filter(static fn(ProtocolLine $protocolLine) => in_array($protocolLine->distance_id, $eventDistances, true));
+        self::$protocolLines[$group->id()] = $result;
+
+        return $result;
     }
 
     protected function getEventGroups(GroupMale $male): Collection
