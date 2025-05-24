@@ -108,7 +108,6 @@ class NewMasterCupType extends AbstractCupType
             ->sortBy(fn(CupGroup $group) => $group->age()->value)
         ;
 
-        dump($groups);
         if ($groups->isEmpty()) {
             return collect();
         }
@@ -202,7 +201,6 @@ class NewMasterCupType extends AbstractCupType
 
         $lines = $this->getProtocolLines($cupEvent, $group);
 
-        dump($lines);
         if (!$lines->isEmpty()) {
             return $this->getAgeProtocolLines($cupEvent, $group, $group);
         }
@@ -215,7 +213,6 @@ class NewMasterCupType extends AbstractCupType
             if (!array_key_exists($prevGroup->id(), self::GROUPS_MAP)) {
                 self::$groupProtocolLines[$group->id()] = $result;
 
-                dd($result);
                 return $result;
             }
 
@@ -248,9 +245,6 @@ class NewMasterCupType extends AbstractCupType
                 ->sortKeys(descending: true)
             ;
 
-            dump($mainGroup);
-            dump($searchGroup);
-            dump($groupedByGroupNameLines);
             $firstKey = $groupedByGroupNameLines->keys()->first();
             if (!$firstKey) {
                 return collect();
@@ -269,7 +263,9 @@ class NewMasterCupType extends AbstractCupType
                 foreach ($groupedByGroupNameLines as $ageGroup => $groupLines) {
                     $aGroup = $this->groupFactory->fromId($ageGroup);
 
+                    dump($aGroup);
                     if ($aGroup->equal($searchGroup)) {
+                        dd($groupLines);
                         return $groupLines;
                     }
 
@@ -289,13 +285,8 @@ class NewMasterCupType extends AbstractCupType
                         }
                     }
 
-                    if ($aGroup->older($mainGroup)) {
-                        $groupedByGroupNameLines = $groupedByGroupNameLines->forget($aGroup->id());
-                        continue;
-                    }
-
                     $key = $aGroup->prev()->id();
-
+                    dump($key);
                     $mergedLines = ($groupedByGroupNameLines->get($key) ?? collect())->merge($groupLines);
 
                     // добавіть ремув логік
