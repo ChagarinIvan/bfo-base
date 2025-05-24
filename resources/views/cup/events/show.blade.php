@@ -23,9 +23,9 @@
         </h4>
     </div>
     <div class="row mb-3">
-        <h5>
-            <a href="{{ action(ShowEventDistanceAction::class, [$calculatedCupEvent->cupEvent->event->firstDistance]) }}">{{ $calculatedCupEvent->cupEvent->event->name }} - {{ $calculatedCupEvent->cupEvent->event->date }}</a>
-        </h5>
+{{--        <h5>--}}
+{{--            <a href="{{ action(ShowEventDistanceAction::class, [$calculatedCupEvent->cupEvent->event->firstDistance]) }}">{{ $calculatedCupEvent->cupEvent->event->name }} - {{ $calculatedCupEvent->cupEvent->event->date }}</a>--}}
+{{--        </h5>--}}
     </div>
     <div class="row mb-3">
         <div class="col-12">
