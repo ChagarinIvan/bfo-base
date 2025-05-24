@@ -101,9 +101,10 @@ class NewMasterCupType extends AbstractCupType
         $validGroups = $eventGroupsId->flip();
         /** @var Collection<string, mixed> $validGroups */
         $cupEventProtocolLines = $cupEventProtocolLines->intersectByKeys($validGroups);
+        /** @var Collection $groups */
         $groups = $cupEventProtocolLines->keys()
             ->map(fn (string $id) => $this->groupFactory->fromId($eventGroups->firstWhere('id', $id)['cupGroupId']));
-        $groups = $groups->sortBy('age.value');
+        $groups = $groups->sortBy(fn(CupGroup $group) => $group->age()->value);
         dd($groups);
         if ($groups->isEmpty()) {
             return collect();
