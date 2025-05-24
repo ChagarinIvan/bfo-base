@@ -101,11 +101,13 @@ class NewMasterCupType extends AbstractCupType
         $validGroups = $eventGroupsId->flip();
         /** @var Collection<string, mixed> $validGroups */
         $cupEventProtocolLines = $cupEventProtocolLines->intersectByKeys($validGroups);
+
         /** @var Collection $groups */
         $groups = $cupEventProtocolLines->keys()
-            ->map(fn (string $id) => $this->groupFactory->fromId($eventGroups->firstWhere('id', $id)['cupGroupId']));
-        $groups = $groups->sortBy(fn(CupGroup $group) => $group->age()->value);
-        dd($groups);
+            ->map(fn (string $id) => $this->groupFactory->fromId($eventGroups->firstWhere('id', $id)['cupGroupId']))
+            ->sortBy(fn(CupGroup $group) => $group->age()->value)
+        ;
+
         if ($groups->isEmpty()) {
             return collect();
         }
@@ -167,7 +169,6 @@ class NewMasterCupType extends AbstractCupType
             ->map(static fn(ProtocolLineCupGroup $item) => new CupEventProtocolLine($item->line, $group, $item->group))
         ;
 
-        dump($results);
         $prevGroup = $group;
         /** @var CupGroup $smallestGroup */
         $smallestGroup = $groups->first();
@@ -198,14 +199,12 @@ class NewMasterCupType extends AbstractCupType
             return self::$groupProtocolLines[$group->id()];
         }
 
-        dump($group);
         $lines = $this->getProtocolLines($cupEvent, $group);
 
         if (!$lines->isEmpty()) {
             return $this->getAgeProtocolLines($cupEvent, $group, $group);
         }
 
-        dd();
         $result = collect();
         $prevGroup = $group;
 
