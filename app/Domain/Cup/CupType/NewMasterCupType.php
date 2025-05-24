@@ -268,13 +268,13 @@ class NewMasterCupType extends AbstractCupType
                  */
                 foreach ($groupedByGroupNameLines as $ageGroup => $groupLines) {
                     $aGroup = $this->groupFactory->fromId($ageGroup);
-                    dd($aGroup);
+
                     if ($aGroup->equal($searchGroup)) {
                         return $groupLines;
                     }
 
                     $ageGroupLines = $this->getProtocolLines($cupEvent, $aGroup);
-
+                    dd($ageGroupLines);
                     if ($ageGroupLines->isEmpty()) {
                         // то группа свободна и можно этих не считать, они уйдут в неё
                         continue;
