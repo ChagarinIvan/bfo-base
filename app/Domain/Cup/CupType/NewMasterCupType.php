@@ -242,6 +242,7 @@ class NewMasterCupType extends AbstractCupType
                 ->sortKeys(descending: true)
             ;
 
+            dump($groupedByGroupNameLines);
             $firstKey = $groupedByGroupNameLines->keys()->first();
             if (!$firstKey) {
                 return collect();
