@@ -108,6 +108,7 @@ class NewMasterCupType extends AbstractCupType
             ->sortBy(fn(CupGroup $group) => $group->age()->value)
         ;
 
+        dump($groups);
         if ($groups->isEmpty()) {
             return collect();
         }
@@ -169,6 +170,7 @@ class NewMasterCupType extends AbstractCupType
             ->map(static fn(ProtocolLineCupGroup $item) => new CupEventProtocolLine($item->line, $group, $item->group))
         ;
 
+        dd($results);
         $prevGroup = $group;
         /** @var CupGroup $smallestGroup */
         $smallestGroup = $groups->first();
