@@ -274,7 +274,7 @@ class NewMasterCupType extends AbstractCupType
                         if ($aGroup->age()->value < $mainGroup->age()->value) {
                             return collect();
                         } else {
-                            return $ageGroupLines;
+                            return $groupLines;
                         }
                     }
 
