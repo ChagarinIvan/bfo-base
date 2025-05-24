@@ -101,7 +101,8 @@ class NewMasterCupType extends AbstractCupType
         $validGroups = $eventGroupsId->flip();
         /** @var Collection<string, mixed> $validGroups */
         $cupEventProtocolLines = $cupEventProtocolLines->intersectByKeys($validGroups);
-        $groups = $cupEventProtocolLines->keys()->map(fn (string $id) => $this->groupFactory->fromId($eventGroups->firstWhere('id', $id)['cupGroupId']));
+        $groups = $cupEventProtocolLines->keys()
+            ->map(fn (string $id) => $this->groupFactory->fromId($eventGroups->firstWhere('id', $id)['cupGroupId']));
 
         $cupEventProtocolLinesWithGroups = $this->getAllGroupProtocolLines($cupEvent, $mainGroup, $groups);
         $groupedCupEventProtocolLinesWithGroups = $cupEventProtocolLinesWithGroups->groupBy(static fn(CupEventProtocolLine $item) => $item->calculatedGroup->id());
@@ -190,8 +191,9 @@ class NewMasterCupType extends AbstractCupType
             return self::$groupProtocolLines[$group->id()];
         }
 
-        dump($group);
         $lines = $this->getProtocolLines($cupEvent, $group);
+        dump($group);
+        dump($lines);
 
         if (!$lines->isEmpty()) {
             return $this->getAgeProtocolLines($cupEvent, $group, $group);
@@ -236,7 +238,7 @@ class NewMasterCupType extends AbstractCupType
                 ->sortKeys(descending: true)
             ;
 
-            dd($groupedByGroupNameLines);
+            dump($groupedByGroupNameLines);
             $firstKey = $groupedByGroupNameLines->keys()->first();
             if (!$firstKey) {
                 return collect();
@@ -259,6 +261,7 @@ class NewMasterCupType extends AbstractCupType
                         return $groupLines;
                     }
 
+                    dd($aGroup);
                     $ageGroupLines = $this->getProtocolLines($cupEvent, $aGroup);
 
                     if ($ageGroupLines->isEmpty()) {
@@ -434,7 +437,11 @@ class NewMasterCupType extends AbstractCupType
             if ($cupGroup->male() === $male) {
                 $cupGroupId = $cupGroup->id();
                 $group = $this->groupsService->getGroups(static::GROUPS_MAP[$cupGroupId]);
-                $group = $group->map(static fn(Group $i) => ['id' => $i->id, 'name' => $i->name, 'cupGroupId' => $cupGroup->id()]);
+                $group = $group->map(static fn(Group $i) => [
+                    'id' => $i->id,
+                    'name' => $i->name,
+                    'cupGroupId' => $cupGroup->id(),
+                ]);
                 $groups = $groups->merge($group);
             }
         }
