@@ -274,7 +274,7 @@ class NewMasterCupType extends AbstractCupType
                     }
 
                     $ageGroupLines = $this->getProtocolLines($cupEvent, $aGroup);
-                    dd($ageGroupLines);
+
                     if ($ageGroupLines->isEmpty()) {
                         // то группа свободна и можно этих не считать, они уйдут в неё
                         continue;
@@ -283,11 +283,13 @@ class NewMasterCupType extends AbstractCupType
                     $aDistance = $this->findDistance($cupEvent, $aGroup);
 
                     if ($aDistance && $mainDistance && $mainDistance->equal($aDistance)) {
+                        dd($aDistance);
                         if ($aGroup->older($mainGroup)) {
                             $groupedByGroupNameLines = $groupedByGroupNameLines->forget($aGroup->id());
                             continue;
                         }
                     }
+                    dd('ALARM');
 
 //                    if ($aGroup->older($mainGroup)) {
 //                        $groupedByGroupNameLines = $groupedByGroupNameLines->forget($aGroup->id());
