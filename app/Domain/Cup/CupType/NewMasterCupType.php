@@ -285,6 +285,7 @@ class NewMasterCupType extends AbstractCupType
                     if ($aDistance && $mainDistance && $mainDistance->equal($aDistance)) {
                         if ($aGroup->older($mainGroup)) {
                             $groupedByGroupNameLines = $groupedByGroupNameLines->forget($aGroup->id());
+                            dd($groupedByGroupNameLines);
                             continue;
                         }
                     }
