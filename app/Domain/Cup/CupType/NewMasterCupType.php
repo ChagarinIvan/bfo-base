@@ -54,8 +54,13 @@ class NewMasterCupType extends AbstractCupType
         'W_80_' => ['Ж80', 'W80'],
     ];
 
+    /** @var Collection[] */
+    private static array $groupProtocolLines = [];
+    /** @var Collection[] */
     private static array $protocolLines = [];
+    /** @var Collection[] */
     private static array $equalDistances = [];
+    /** @var Collection[] */
     private static array $lines = [];
 
     public function getNameKey(): string
@@ -137,6 +142,10 @@ class NewMasterCupType extends AbstractCupType
     /** @return Collection<int, ProtocolLineCupGroup> */
     protected function getGroupProtocolLines(CupEvent $cupEvent, CupGroup $group): Collection
     {
+        if (array_key_exists($group->id(), self::$groupProtocolLines)) {
+            return self::$groupProtocolLines[$group->id()];
+        }
+
         $lines = $this->getProtocolLines($cupEvent, $group);
 
         if (!$lines->isEmpty()) {
@@ -149,6 +158,8 @@ class NewMasterCupType extends AbstractCupType
         while (true) {
             $prevGroup = $prevGroup->prev();
             if (!array_key_exists($prevGroup->id(), self::GROUPS_MAP)) {
+                self::$groupProtocolLines[$group->id()] = $result;
+
                 return $result;
             }
 
