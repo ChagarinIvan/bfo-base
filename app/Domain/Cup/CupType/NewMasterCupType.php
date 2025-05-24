@@ -11,6 +11,7 @@ use App\Domain\Cup\Group\CupGroup;
 use App\Domain\Cup\Group\CupGroupFactory;
 use App\Domain\Cup\Group\GroupAge;
 use App\Domain\Cup\Group\GroupMale;
+use App\Domain\Group\Group;
 use App\Domain\ProtocolLine\Criteria\CupEventDistancesProtocolLinesCriteria;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Models\Year;
@@ -62,6 +63,8 @@ class NewMasterCupType extends AbstractCupType
     private static array $equalDistances = [];
     /** @var Collection[] */
     private static array $lines = [];
+    /** @var Collection[] */
+    private static array $eventGroups = [];
 
     public function getNameKey(): string
     {
@@ -70,7 +73,33 @@ class NewMasterCupType extends AbstractCupType
 
     public function calculateEvent(CupEvent $cupEvent, CupGroup $mainGroup): Collection
     {
-        $cupEventProtocolLinesWithGroups = $this->getAllGroupProtocolLines($cupEvent, $mainGroup);
+        self::$groupProtocolLines = [];
+        self::$protocolLines = [];
+        self::$equalDistances = [];
+        self::$lines = [];
+        self::$eventGroups = [];
+
+        $cupEventProtocolLines = $this->getAgeGroupProtocolLines($cupEvent, $mainGroup);
+        $eventGroups = $this->getEventGroups($mainGroup->male());
+        $eventGroupsId = $eventGroups->pluck('id');
+
+        $eventDistances = $this->distanceService
+            ->getCupEventDistancesByGroups($cupEvent, $eventGroupsId)
+            ->pluck('id')
+            ->toArray()
+        ;
+
+        $cupEventProtocolLines = $cupEventProtocolLines->filter(
+            static fn (ProtocolLine $protocolLine) => in_array($protocolLine->distance_id, $eventDistances, true)
+        );
+
+        $cupEventProtocolLines = $cupEventProtocolLines->groupBy('distance.group_id');
+        $validGroups = $eventGroupsId->flip();
+        /** @var Collection<string, mixed> $validGroups */
+        $cupEventProtocolLines = $cupEventProtocolLines->intersectByKeys($validGroups);
+        $groups = $cupEventProtocolLines->keys()->map(fn (string $id) => $this->groupFactory->fromId($eventGroups->firstWhere('id', $id)['cupGroupId']));
+
+        $cupEventProtocolLinesWithGroups = $this->getAllGroupProtocolLines($cupEvent, $mainGroup, $groups);
         $groupedCupEventProtocolLinesWithGroups = $cupEventProtocolLinesWithGroups->groupBy(static fn(CupEventProtocolLine $item) => $item->calculatedGroup->id());
 
         $result = collect();
@@ -117,7 +146,7 @@ class NewMasterCupType extends AbstractCupType
     }
 
     /** @return Collection<int, CupEventProtocolLine> */
-    protected function getAllGroupProtocolLines(CupEvent $cupEvent, CupGroup $group): Collection
+    protected function getAllGroupProtocolLines(CupEvent $cupEvent, CupGroup $group, Collection $groups): Collection
     {
         $results = $this
             ->getGroupProtocolLines($cupEvent, $group)
@@ -128,7 +157,10 @@ class NewMasterCupType extends AbstractCupType
 
         while (true) {
             $prevGroup = $prevGroup->prev();
-            if (!array_key_exists($prevGroup->id(), self::GROUPS_MAP)) {
+            if (
+                !array_key_exists($prevGroup->id(), self::GROUPS_MAP)
+                || $groups->first(static fn(CupGroup $item) => $item->equal($prevGroup)) === false
+            ) {
                 return $results;
             }
 
@@ -360,16 +392,38 @@ class NewMasterCupType extends AbstractCupType
         return $result;
     }
 
+    protected function getAgeGroupProtocolLines(CupEvent $cupEvent, CupGroup $group): Collection
+    {
+        $startYear = $cupEvent->cup->year->value - ($group->age()?->value ?: 0);
+        $finishYear = $group->age() === $group->age()?->next() ? null : $startYear - 4;
+
+        return $this->protocolLinesRepository->getCupEventProtocolLinesForPersonsCertainAge(
+            cupEvent: $cupEvent,
+            startYear: $finishYear,
+            finishYear: $startYear,
+            withPayments: true
+        );
+    }
+
     protected function getEventGroups(GroupMale $male): Collection
     {
+        if (array_key_exists($male->value, self::$eventGroups)) {
+            return self::$eventGroups[$male->value];
+        }
+
         $groups = Collection::make();
 
         /** @var CupGroup $cupGroup */
         foreach ($this->getGroups() as $cupGroup) {
             if ($cupGroup->male() === $male) {
-                $groups = $groups->merge($this->groupsService->getGroups(static::GROUPS_MAP[$cupGroup->id()]));
+                $cupGroupId = $cupGroup->id();
+                $group = $this->groupsService->getGroups(static::GROUPS_MAP[$cupGroupId]);
+                $group = $group->map(static fn(Group $i) => ['id' => $i->id, 'name' => $i->name, 'cupGroupId' => $cupGroup->id()]);
+                $groups = $groups->merge($group);
             }
         }
+
+        self::$eventGroups[$male->value] = $groups;
 
         return $groups;
     }
