@@ -268,6 +268,11 @@ class NewMasterCupType extends AbstractCupType
                 foreach ($groupedByGroupNameLines as $ageGroup => $groupLines) {
                     $aGroup = $this->groupFactory->fromId($ageGroup);
 
+                    if ($aGroup->less($mainGroup)) {
+                        $groupedByGroupNameLines = $groupedByGroupNameLines->forget($aGroup->id());
+                        continue;
+                    }
+
                     dump($aGroup);
                     if ($aGroup->equal($searchGroup)) {
                         dump($groupLines);
@@ -285,7 +290,6 @@ class NewMasterCupType extends AbstractCupType
 
                     if ($aDistance && $mainDistance && $mainDistance->equal($aDistance)) {
                         if ($aGroup->older($mainGroup)) {
-                            dd();
                             $groupedByGroupNameLines = $groupedByGroupNameLines->forget($aGroup->id());
                             continue;
                         }
