@@ -103,7 +103,6 @@ class NewMasterCupType extends AbstractCupType
         $cupEventProtocolLines = $cupEventProtocolLines->intersectByKeys($validGroups);
         $groups = $cupEventProtocolLines->keys()->map(fn (string $id) => $this->groupFactory->fromId($eventGroups->firstWhere('id', $id)['cupGroupId']));
 
-        dd($groups);
         $cupEventProtocolLinesWithGroups = $this->getAllGroupProtocolLines($cupEvent, $mainGroup, $groups);
         $groupedCupEventProtocolLinesWithGroups = $cupEventProtocolLinesWithGroups->groupBy(static fn(CupEventProtocolLine $item) => $item->calculatedGroup->id());
 
@@ -161,6 +160,7 @@ class NewMasterCupType extends AbstractCupType
             ->map(static fn(ProtocolLineCupGroup $item) => new CupEventProtocolLine($item->line, $group, $item->group))
         ;
 
+        dd($results);
         $prevGroup = $group;
         /** @var CupGroup $smallestGroup */
         $smallestGroup = $groups->first();
