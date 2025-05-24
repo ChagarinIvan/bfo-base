@@ -201,6 +201,7 @@ class NewMasterCupType extends AbstractCupType
 
         $lines = $this->getProtocolLines($cupEvent, $group);
 
+        dump($lines);
         if (!$lines->isEmpty()) {
             return $this->getAgeProtocolLines($cupEvent, $group, $group);
         }
@@ -212,11 +213,13 @@ class NewMasterCupType extends AbstractCupType
             $prevGroup = $prevGroup->prev();
             if (!array_key_exists($prevGroup->id(), self::GROUPS_MAP)) {
                 self::$groupProtocolLines[$group->id()] = $result;
-
+                dd($result);
                 return $result;
             }
 
-            $result = $result->merge($this->getAgeProtocolLines($cupEvent, $prevGroup, $group));
+            $items = $this->getAgeProtocolLines($cupEvent, $prevGroup, $group);
+            dump($items);
+            $result = $result->merge($items);
         }
     }
 
