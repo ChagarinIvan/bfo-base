@@ -270,13 +270,11 @@ class NewMasterCupType extends AbstractCupType
 
                     $aDistance = $this->findDistance($cupEvent, $aGroup);
 
-                    dump($mainGroup->age()->value);
-                    dd($aGroup->age()->value);
                     if ($aDistance && $mainDistance && $mainDistance->equal($aDistance)) {
                         if ($aGroup->age()->value < $mainGroup->age()->value) {
                             return collect();
                         } else {
-                            continue;
+                            return $ageGroupLines;
                         }
                     }
 
