@@ -192,14 +192,11 @@ class NewMasterCupType extends AbstractCupType
         }
 
         $lines = $this->getProtocolLines($cupEvent, $group);
-        dump($group);
-        dump($lines);
 
         if (!$lines->isEmpty()) {
             return $this->getAgeProtocolLines($cupEvent, $group, $group);
         }
 
-        dd();
         $result = collect();
         $prevGroup = $group;
 
@@ -218,7 +215,7 @@ class NewMasterCupType extends AbstractCupType
     /** @return Collection<int, ProtocolLineCupGroup> */
     private function getAgeProtocolLines(CupEvent $cupEvent, CupGroup $mainGroup, CupGroup $searchGroup): Collection
     {
-        $mainDistance = $this->findGroup($cupEvent, $searchGroup);
+        $mainDistance = $this->findDistance($cupEvent, $searchGroup);
 
         $lines = $this->getProtocolLines($cupEvent, $mainGroup);
 
@@ -238,7 +235,6 @@ class NewMasterCupType extends AbstractCupType
                 ->sortKeys(descending: true)
             ;
 
-            dump($groupedByGroupNameLines);
             $firstKey = $groupedByGroupNameLines->keys()->first();
             if (!$firstKey) {
                 return collect();
@@ -261,9 +257,6 @@ class NewMasterCupType extends AbstractCupType
                         return $groupLines;
                     }
 
-                    dump($mainGroup);
-                    dump($searchGroup);
-                    dd($aGroup);
                     $ageGroupLines = $this->getProtocolLines($cupEvent, $aGroup);
 
                     if ($ageGroupLines->isEmpty()) {
@@ -271,10 +264,10 @@ class NewMasterCupType extends AbstractCupType
                         continue;
                     }
 
-                    $aDistance = $this->findGroup($cupEvent, $aGroup);
+                    $aDistance = $this->findDistance($cupEvent, $aGroup);
 
                     if ($aDistance && $mainDistance && $mainDistance->equal($aDistance)) {
-                        continue;
+                        return $groupLines;
                     }
 
                     $key = $aGroup->prev()->id();
@@ -380,7 +373,7 @@ class NewMasterCupType extends AbstractCupType
         if (array_key_exists($group->id(), self::$equalDistances)) {
             $equalDistances = self::$equalDistances[$group->id()];
         } else {
-            $mainDistance = $this->findGroup($cupEvent, $group);
+            $mainDistance = $this->findDistance($cupEvent, $group);
             $equalDistances = Collection::make([$mainDistance]);
 
             if ($mainDistance) {
@@ -453,7 +446,7 @@ class NewMasterCupType extends AbstractCupType
         return $groups;
     }
 
-    public function findGroup(CupEvent $cupEvent, CupGroup $group): ?Distance
+    public function findDistance(CupEvent $cupEvent, CupGroup $group): ?Distance
     {
         if (array_key_exists($group->id(), self::$groups)) {
             return self::$groups[$group->id()];
