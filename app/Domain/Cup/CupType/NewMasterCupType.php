@@ -184,7 +184,9 @@ class NewMasterCupType extends AbstractCupType
             $results = $results->merge($this
                 ->getGroupProtocolLines($cupEvent, $prevGroup)
                 ->map(static fn(ProtocolLineCupGroup $item) => new CupEventProtocolLine($item->line, $prevGroup, $item->group))
-            );
+            )
+                ->unique('line.id')
+            ;;
         }
     }
 
