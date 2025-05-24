@@ -170,7 +170,6 @@ class NewMasterCupType extends AbstractCupType
             ->map(static fn(ProtocolLineCupGroup $item) => new CupEventProtocolLine($item->line, $group, $item->group))
         ;
 
-        dd($results);
         $prevGroup = $group;
         /** @var CupGroup $smallestGroup */
         $smallestGroup = $groups->first();
@@ -215,6 +214,7 @@ class NewMasterCupType extends AbstractCupType
             if (!array_key_exists($prevGroup->id(), self::GROUPS_MAP)) {
                 self::$groupProtocolLines[$group->id()] = $result;
 
+                dd($result);
                 return $result;
             }
 

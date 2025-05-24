@@ -54,7 +54,7 @@ class Kernel extends ConsoleKernel
         //        $schedule->command(SyncPersonsCommand::class)->weekly()->runInBackground();
 
         for ($i = 0; $i < 4; $i++) {
-            $schedule->command(IdentProtocolLineCommand::class, ['user_id' => User::SYSTEM_USER_ID])
+            $schedule->command(IdentProtocolLineCommand::class, ['userId' => User::SYSTEM_USER_ID])
                 ->everyMinute()
                 ->before(static function () use ($i): void {sleep($i * 15);})
                 ->runInBackground();

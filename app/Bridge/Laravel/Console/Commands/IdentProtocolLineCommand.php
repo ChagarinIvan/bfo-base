@@ -28,7 +28,7 @@ use function sprintf;
  */
 final class IdentProtocolLineCommand extends Command
 {
-    protected $signature = 'protocol-lines:queue-ident';
+    protected $signature = 'protocol-lines:queue-ident {userId}';
 
     public function __construct(
         private readonly AddPersonService $addPersonService,
@@ -42,7 +42,7 @@ final class IdentProtocolLineCommand extends Command
         ProtocolLineService $protocolLineService,
         ProtocolLineIdentService $protocolLineIdentService,
     ): void {
-        $userId = (int) $this->argument('user_id');
+        $userId = (int) $this->argument('userId');
         $identLine = IdentLine::first();
         if ($identLine) {
             $identLine->delete();
@@ -92,17 +92,5 @@ final class IdentProtocolLineCommand extends Command
 
             $rankService->reFillRanksForPerson($personId);
         }
-    }
-
-    protected function configure(): void
-    {
-        $this
-            ->setName('protocol-lines:queue-ident')
-            ->setDescription('Ident protocol line.')
-            ->addArgument(
-                'user_id',
-                InputArgument::REQUIRED,
-                'User Id for impression,'
-            );
     }
 }
