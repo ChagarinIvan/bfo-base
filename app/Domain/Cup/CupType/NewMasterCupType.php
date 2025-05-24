@@ -104,7 +104,6 @@ class NewMasterCupType extends AbstractCupType
         $groups = $cupEventProtocolLines->keys()
             ->map(fn (string $id) => $this->groupFactory->fromId($eventGroups->firstWhere('id', $id)['cupGroupId']));
 
-        dump($groups);
         if ($groups->isEmpty()) {
             return collect();
         }
@@ -199,10 +198,12 @@ class NewMasterCupType extends AbstractCupType
 
         $lines = $this->getProtocolLines($cupEvent, $group);
 
+        dump($lines);
         if (!$lines->isEmpty()) {
             return $this->getAgeProtocolLines($cupEvent, $group, $group);
         }
 
+        dd();
         $result = collect();
         $prevGroup = $group;
 
