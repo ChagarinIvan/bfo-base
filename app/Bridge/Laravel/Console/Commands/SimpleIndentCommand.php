@@ -16,12 +16,12 @@ use function time;
  */
 class SimpleIndentCommand extends Command
 {
-    protected $signature = 'protocol-lines:simple-ident';
+    protected $signature = 'protocol-lines:simple-ident {userId}';
 
     public function handle(ProtocolLineIdentService $identService): void
     {
         $this->info('Start');
-        $userId = (int) $this->argument('user_id');
+        $userId = (int) $this->argument('userId');
 
         $startTime = time();
         $protocolLines = ProtocolLine::whereNull('person_id')->get();
@@ -31,18 +31,5 @@ class SimpleIndentCommand extends Command
         $time = time() - $startTime;
         $this->info("Time for query: $time");
         $this->info("Finish");
-    }
-
-    protected function configure(): void
-    {
-        $this
-            ->setName('protocol-lines:simple-ident')
-            ->setDescription('Simple ident protocol line.')
-            ->addArgument(
-                'user_id',
-                InputArgument::REQUIRED,
-                'User Id for impression,'
-            )
-        ;
     }
 }

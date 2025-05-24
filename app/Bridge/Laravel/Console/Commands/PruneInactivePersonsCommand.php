@@ -21,7 +21,7 @@ use function time;
  */
 class PruneInactivePersonsCommand extends Command
 {
-    protected $signature = 'persons:prune';
+    protected $signature = 'persons:prune {userId}';
 
     public function __construct(
         private readonly ListPersonsService $listPersonsService,
@@ -30,10 +30,10 @@ class PruneInactivePersonsCommand extends Command
         parent::__construct();
     }
 
-    public function handle(ProtocolLineIdentService $identService): void
+    public function handle(): void
     {
         $this->info('Start');
-        $userId = (int) $this->argument('user_id');
+        $userId = (int) $this->argument('userId');
 
         $count = 0;
 
@@ -55,11 +55,6 @@ class PruneInactivePersonsCommand extends Command
         $this
             ->setName('persons:prune')
             ->setDescription('Prune persons.')
-            ->addArgument(
-                'user_id',
-                InputArgument::REQUIRED,
-                'User Id for impression,'
-            )
         ;
     }
 }

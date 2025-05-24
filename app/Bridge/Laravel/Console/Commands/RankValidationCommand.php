@@ -13,11 +13,11 @@ use Illuminate\Console\Command;
  */
 class RankValidationCommand extends Command
 {
-    protected $signature = 'protocol-lines:rank-validation';
+    protected $signature = 'protocol-lines:rank-validation {userId}';
 
     public function handle(): void
     {
-        $userId = (int) $this->argument('user_id');
+        $userId = (int) $this->argument('userId');
 
         $this->info('Start by user: ' . $userId);
         foreach (ProtocolLine::all() as $protocolLine) {
