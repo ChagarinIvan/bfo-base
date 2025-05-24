@@ -202,6 +202,7 @@ class NewMasterCupType extends AbstractCupType
 
         $lines = $this->getProtocolLines($cupEvent, $group);
 
+        dump($lines);
         if (!$lines->isEmpty()) {
             return $this->getAgeProtocolLines($cupEvent, $group, $group);
         }
@@ -247,6 +248,9 @@ class NewMasterCupType extends AbstractCupType
                 ->sortKeys(descending: true)
             ;
 
+            dump($mainGroup);
+            dump($searchGroup);
+            dump($groupedByGroupNameLines);
             $firstKey = $groupedByGroupNameLines->keys()->first();
             if (!$firstKey) {
                 return collect();
