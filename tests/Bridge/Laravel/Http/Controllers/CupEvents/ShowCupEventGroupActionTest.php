@@ -282,7 +282,7 @@ final class ShowCupEventGroupActionTest extends TestCase
             ->assertSee('<a href="http://localhost/events/d/101">Спринт - 2024-04-12</a>', false)
             ->assertSee('<a href="http://localhost/cups/101/101/M_35_/show" class="text-decoration-none nav-link ">', false)
             ->assertSee('<a href="http://localhost/cups/101/101/M_65_/show" class="text-decoration-none nav-link active">', false)
-            ->assertSee('<a href="http://localhost/persons/104/show">Колядко Иван</a>', false)
+            ->assertSee('<a href="http://localhost/persons/103/show">Колядко Иван</a>', false)
             ->assertSee('<td><b class="text-info">1000</b></td>', false)
             ->assertSee('<a href="http://localhost/persons/101/show">Триденский Генадий</a>', false)
             ->assertSee('<td><b class="text-info">1000</b></td>', false)

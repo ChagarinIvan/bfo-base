@@ -184,9 +184,7 @@ class NewMasterCupType extends AbstractCupType
             $results = $results->merge($this
                 ->getGroupProtocolLines($cupEvent, $prevGroup)
                 ->map(static fn(ProtocolLineCupGroup $item) => new CupEventProtocolLine($item->line, $prevGroup, $item->group))
-            )
-                ->unique('line.id')
-            ;;
+            );
         }
     }
 
@@ -230,13 +228,15 @@ class NewMasterCupType extends AbstractCupType
                 ->filter(static fn(ProtocolLine $line): bool =>
                     35 <= ($cupEvent->cup->year->value - $line->person?->birthday?->year)
                     && ($cupEvent->cup->year->value - $line->person?->birthday?->year) <= 100)
-                ->map(static fn(ProtocolLine $line): ProtocolLineCupGroup => new ProtocolLineCupGroup(
-                    $line,
-                    new CupGroup(
-                        $mainGroup->male(),
-                        self::calculateGroupAge($cupEvent->cup->year->value - $line->person?->birthday?->year),
-                    )
-                ))
+                ->map(static function (ProtocolLine $line) use ($mainGroup, $cupEvent): ProtocolLineCupGroup {
+                    return new ProtocolLineCupGroup(
+                        $line,
+                        new CupGroup(
+                            $mainGroup->male(),
+                            self::calculateGroupAge($cupEvent->cup->year->value - $line->person?->birthday?->year),
+                        )
+                    );
+                })
                 ->groupBy(static fn(ProtocolLineCupGroup $lcg): string => $lcg->group->id())
                 ->sortKeys(descending: true)
             ;
@@ -273,12 +273,16 @@ class NewMasterCupType extends AbstractCupType
                     $aDistance = $this->findDistance($cupEvent, $aGroup);
 
                     if ($aDistance && $mainDistance && $mainDistance->equal($aDistance)) {
-                        if ($aGroup->age()->value < $mainGroup->age()->value) {
-                            return collect();
-                        } else {
-                            return $groupLines;
+                        if ($aGroup->older($mainGroup)) {
+                            $groupedByGroupNameLines = $groupedByGroupNameLines->forget($aGroup->id());
+                            continue;
                         }
                     }
+
+//                    if ($aGroup->older($mainGroup)) {
+//                        $groupedByGroupNameLines = $groupedByGroupNameLines->forget($aGroup->id());
+//                        continue;
+//                    }
 
                     $key = $aGroup->prev()->id();
 

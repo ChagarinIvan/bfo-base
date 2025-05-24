@@ -26,6 +26,7 @@ class NewMasterCupLineSeeder extends Seeder
     {
         Group::factory(state: ['id' => 101, 'name' => 'М55'])->createOne();
         Group::factory(state: ['id' => 102, 'name' => 'М65'])->createOne();
+        Group::factory(state: ['id' => 103, 'name' => 'М60'])->createOne();
 
         Competition::factory(state: ['id' => 101, 'name' => 'Grodno cup', 'from' => '2024-04-12', 'to' => '2024-04-14'])->createOne();
 
@@ -33,6 +34,7 @@ class NewMasterCupLineSeeder extends Seeder
 
         Distance::factory(state: ['id' => 101, 'group_id' => 101, 'event_id' => 101, 'length' => 2600, 'points' => 26])->createOne();
         Distance::factory(state: ['id' => 102, 'group_id' => 102, 'event_id' => 101, 'length' => 2700, 'points' => 27])->createOne();
+        Distance::factory(state: ['id' => 103, 'group_id' => 103, 'event_id' => 101, 'length' => 270, 'points' => 27])->createOne();
 
         Person::factory(state: ['id' => 101, 'lastname' => 'Триденский', 'firstname' => 'Генадий', 'citizenship' => 'belarus', 'birthday' => '1955-01-01'])->createOne();
         Person::factory(state: ['id' => 102, 'lastname' => 'Макаревич', 'firstname' => 'Иосиф', 'citizenship' => 'belarus', 'birthday' => '1960-01-01'])->createOne();
