@@ -164,7 +164,7 @@ class NewMasterCupType extends AbstractCupType
         $prevGroup = $group;
         /** @var CupGroup $smallestGroup */
         $smallestGroup = $groups->first();
-
+        dd($smallestGroup);
         while (true) {
             $prevGroup = $prevGroup->prev();
             if ($prevGroup->age()->value < $smallestGroup->age()->value) {
