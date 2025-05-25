@@ -169,11 +169,10 @@ class NewMasterCupType extends AbstractCupType
             ->map(static fn(ProtocolLineCupGroup $item) => new CupEventProtocolLine($item->line, $group, $item->group))
         ;
 
-        dump($results);
+        dd($results);
         $prevGroup = $group;
         /** @var CupGroup $smallestGroup */
         $smallestGroup = $groups->first();
-        dump($smallestGroup);
         while (true) {
             $prevGroup = $prevGroup->prev();
             if ($prevGroup->age()->value < $smallestGroup->age()->value) {
@@ -191,7 +190,6 @@ class NewMasterCupType extends AbstractCupType
                 ->map(static fn(ProtocolLineCupGroup $item) => new CupEventProtocolLine($item->line, $prevGroup, $item->group))
             ;
 
-            dump($items);
             $results = $results->merge($items);
         }
     }
@@ -273,9 +271,7 @@ class NewMasterCupType extends AbstractCupType
                         continue;
                     }
 
-                    dump($aGroup);
                     if ($aGroup->equal($searchGroup)) {
-                        dump($groupLines);
                         return $groupLines;
                     }
 
@@ -296,7 +292,6 @@ class NewMasterCupType extends AbstractCupType
                     }
 
                     $key = $aGroup->prev()->id();
-                    dump($key);
                     $mergedLines = ($groupedByGroupNameLines->get($key) ?? collect())->merge($groupLines);
 
                     // добавіть ремув логік
