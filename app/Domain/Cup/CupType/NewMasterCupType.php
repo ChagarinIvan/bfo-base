@@ -225,7 +225,8 @@ class NewMasterCupType extends AbstractCupType
     /** @return Collection<int, ProtocolLineCupGroup> */
     private function getAgeProtocolLines(CupEvent $cupEvent, CupGroup $mainGroup, CupGroup $searchGroup): Collection
     {
-        $mainDistance = $this->findDistance($cupEvent, $searchGroup);
+        $searchDistance = $this->findDistance($cupEvent, $searchGroup);
+        $mainDistance = $this->findDistance($cupEvent, $mainGroup);
 
         $lines = $this->getProtocolLines($cupEvent, $mainGroup);
 
@@ -284,11 +285,16 @@ class NewMasterCupType extends AbstractCupType
 
                     $aDistance = $this->findDistance($cupEvent, $aGroup);
 
-                    if ($aDistance && $mainDistance && $mainDistance->equal($aDistance)) {
+                    if ($aDistance && $searchDistance && $searchDistance->equal($aDistance)) {
                         if ($aGroup->older($mainGroup)) {
                             $groupedByGroupNameLines = $groupedByGroupNameLines->forget($aGroup->id());
                             continue;
                         }
+                    }
+
+                    if ($mainDistance && $mainDistance->equal($aDistance)) {
+                        $groupedByGroupNameLines = $groupedByGroupNameLines->forget($aGroup->id());
+                        continue;
                     }
 
                     $key = $aGroup->prev()->id();

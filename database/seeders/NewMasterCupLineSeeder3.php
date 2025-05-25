@@ -32,6 +32,7 @@ class NewMasterCupLineSeeder3 extends Seeder
 
         Event::factory(state: ['id' => 101, 'competition_id' => 101, 'name' => 'Спринт', 'date' => '2024-04-12'])->createOne();
 
+        // эквивалентные М60 и М70
         Distance::factory(state: ['id' => 101, 'group_id' => 101, 'event_id' => 101, 'length' => 2600, 'points' => 27])->createOne();
         Distance::factory(state: ['id' => 102, 'group_id' => 103, 'event_id' => 101, 'length' => 2600, 'points' => 27])->createOne();
 

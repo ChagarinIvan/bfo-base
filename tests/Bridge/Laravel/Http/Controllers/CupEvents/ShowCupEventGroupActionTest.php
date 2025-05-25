@@ -16,6 +16,7 @@ use Database\Seeders\NewMasterCupLineSeeder;
 use Database\Seeders\NewMasterCupLineSeeder2;
 use Database\Seeders\NewMasterCupLineSeeder3;
 use Database\Seeders\NewMasterCupLineSeeder4;
+use Database\Seeders\NewMasterCupLineSeeder5;
 use Database\Seeders\SprintCupLineSeeder;
 use Database\Seeders\YouthCupLine2Seeder;
 use Database\Seeders\YouthCupLineSeeder;
@@ -297,6 +298,7 @@ final class ShowCupEventGroupActionTest extends TestCase
      */
     public function it_shows_new_master_cup_event_group_action5(): void
     {
+        // М65 отсутствует, есть эквивалентные М60 и М70. Триденский бежит М60 по возрасту М65 и должен попадать в М65 с очками
         $this->seed(NewMasterCupLineSeeder3::class);
 
         /** @var Authenticatable&User $user */
@@ -311,7 +313,7 @@ final class ShowCupEventGroupActionTest extends TestCase
             ->assertSee('<a href="http://localhost/cups/101/101/M_35_/show" class="text-decoration-none nav-link ">', false)
             ->assertSee('<a href="http://localhost/cups/101/101/M_65_/show" class="text-decoration-none nav-link active">', false)
             ->assertSee('<a href="http://localhost/persons/101/show">Триденский Генадий</a>', false)
-            ->assertSee('<td>613</td>', false)
+            ->assertSee('<td><b class="text-info">1000</b></td>', false)
             ->assertDontSee('<a href="http://localhost/persons/103/show">Колядко Иван</a>', false)
         ;
     }
@@ -340,6 +342,33 @@ final class ShowCupEventGroupActionTest extends TestCase
             ->assertSee('<td><b class="text-info">1000</b></td>', false)
             ->assertSee('<a href="http://localhost/persons/101/show">Триденский Генадий</a>', false)
             ->assertSee('<td>277</td>', false)
+        ;
+    }
+
+    /**
+     * @test
+     * @see ShowCupEventGroupAction::class
+     * @see NewMasterCupType::class
+     */
+    public function it_shows_new_master_cup_event_group_action7(): void
+    {
+        // http://bfo-base.orient.by/cups/47/486/M_65_/show
+        // М65 нету, есть эквивалентные М60 и М70. 70 летний Триденский бежит М60 должен попадать в 70 и не влюять на очки 65
+        $this->seed(NewMasterCupLineSeeder5::class);
+
+        /** @var Authenticatable&User $user */
+        $user = User::factory()->createOne();
+        $this->actingAs($user);
+
+        $this->get('/cups/101/101/M_65_/show')
+            ->assertStatus(Response::HTTP_OK)
+            ->assertSee('<h2 id="up">Master Cup 2025 - 2025</h2>', false)
+            ->assertSee('<a href="http://localhost/competitions/101/show">Grodno cup</a>', false)
+            ->assertSee('<a href="http://localhost/events/d/101">Спринт - 2025-04-12</a>', false)
+            ->assertSee('<a href="http://localhost/cups/101/101/M_35_/show" class="text-decoration-none nav-link ">', false)
+            ->assertSee('<a href="http://localhost/cups/101/101/M_65_/show" class="text-decoration-none nav-link active">', false)
+            ->assertSee('<a href="http://localhost/persons/102/show">Карась Олег</a>', false)
+            ->assertSee('<td><b class="text-info">1000</b></td>', false)
         ;
     }
 }
