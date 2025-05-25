@@ -36,7 +36,7 @@ class NewMasterCupLineSeeder3 extends Seeder
         Distance::factory(state: ['id' => 102, 'group_id' => 103, 'event_id' => 101, 'length' => 2600, 'points' => 27])->createOne();
 
         Person::factory(state: ['id' => 101, 'lastname' => 'Триденский', 'firstname' => 'Генадий', 'citizenship' => 'belarus', 'birthday' => '1955-01-01'])->createOne();
-        Person::factory(state: ['id' => 102, 'lastname' => 'Макаревич', 'firstname' => 'Иосиф', 'citizenship' => 'belarus', 'birthday' => '1960-01-01'])->createOne();
+        Person::factory(state: ['id' => 102, 'lastname' => 'Макаревич', 'firstname' => 'Иосиф', 'citizenship' => 'belarus', 'birthday' => '1950-01-01'])->createOne();
         Person::factory(state: ['id' => 103, 'lastname' => 'Колядко', 'firstname' => 'Иван', 'citizenship' => 'belarus', 'birthday' => '1950-01-01'])->createOne();
         Person::factory(state: ['id' => 104, 'lastname' => 'Test', 'firstname' => 'Иван', 'citizenship' => 'belarus', 'birthday' => '1950-01-01'])->createOne();
 
