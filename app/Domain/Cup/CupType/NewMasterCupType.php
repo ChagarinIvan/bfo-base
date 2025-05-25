@@ -169,7 +169,6 @@ class NewMasterCupType extends AbstractCupType
             ->map(static fn(ProtocolLineCupGroup $item) => new CupEventProtocolLine($item->line, $group, $item->group))
         ;
 
-        dd($results);
         $prevGroup = $group;
         /** @var CupGroup $smallestGroup */
         $smallestGroup = $groups->first();
@@ -185,6 +184,7 @@ class NewMasterCupType extends AbstractCupType
                 return $results;
             }
 
+            dd($results);
             $items = $this
                 ->getGroupProtocolLines($cupEvent, $prevGroup)
                 ->map(static fn(ProtocolLineCupGroup $item) => new CupEventProtocolLine($item->line, $prevGroup, $item->group))
@@ -230,6 +230,7 @@ class NewMasterCupType extends AbstractCupType
 
         $lines = $this->getProtocolLines($cupEvent, $mainGroup);
 
+        dump($mainGroup->age()->value, $searchGroup->age()->value);
         if (!$lines->isEmpty()) {
             $groupedByGroupNameLines = $lines
                 ->filter(static fn(ProtocolLine $line): bool =>
@@ -248,6 +249,7 @@ class NewMasterCupType extends AbstractCupType
                 ->sortKeys(descending: true)
             ;
 
+            dump($groupedByGroupNameLines);
             $firstKey = $groupedByGroupNameLines->keys()->first();
             if (!$firstKey) {
                 return collect();
@@ -266,6 +268,7 @@ class NewMasterCupType extends AbstractCupType
                 foreach ($groupedByGroupNameLines as $ageGroup => $groupLines) {
                     $aGroup = $this->groupFactory->fromId($ageGroup);
 
+                    dump('aGroup', $aGroup);
                     if ($aGroup->less($mainGroup)) {
                         $groupedByGroupNameLines = $groupedByGroupNameLines->forget($aGroup->id());
                         continue;
