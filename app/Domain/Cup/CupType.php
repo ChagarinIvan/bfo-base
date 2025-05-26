@@ -11,6 +11,7 @@ use App\Domain\Cup\CupType\ElkPathCup;
 use App\Domain\Cup\CupType\JuniorCupType;
 use App\Domain\Cup\CupType\MasterCupType;
 use App\Domain\Cup\CupType\NewMasterCupType;
+use App\Domain\Cup\CupType\NewYouthCupType;
 use App\Domain\Cup\CupType\SkiCupType;
 use App\Domain\Cup\CupType\SprintCupType;
 use App\Domain\Cup\CupType\YouthCupType;
@@ -33,6 +34,7 @@ enum CupType: string
             self::BIKE => BikeCupType::class,
             self::JUNIORS => JuniorCupType::class,
             self::YOUTH => YouthCupType::class,
+            self::NEW_YOUTH => NewYouthCupType::class,
             self::SKI => SkiCupType::class,
             self::ELK_PATH => ElkPathCup::class,
             self::NEW_MASTER => NewMasterCupType::class,
@@ -45,6 +47,7 @@ enum CupType: string
     case BIKE = 'bike';
     case JUNIORS = 'juniors';
     case YOUTH = 'youth';
+    case NEW_YOUTH = 'new_youth';
     case NEW_MASTER = 'new_master';
     case SKI = 'ski';
     case ELK_PATH = 'elk_path';

@@ -20,6 +20,7 @@ use Database\Seeders\NewMasterCupLineSeeder5;
 use Database\Seeders\SprintCupLineSeeder;
 use Database\Seeders\YouthCupLine2Seeder;
 use Database\Seeders\YouthCupLineSeeder;
+use Database\Seeders\YouthCupLineSeeder3;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
@@ -370,6 +371,33 @@ final class ShowCupEventGroupActionTest extends TestCase
             ->assertSee('<a href="http://localhost/cups/101/101/M_65_/show" class="text-decoration-none nav-link active">', false)
             ->assertSee('<a href="http://localhost/persons/102/show">Карась Олег</a>', false)
             ->assertSee('<td><b class="text-info">1000</b></td>', false)
+        ;
+    }
+
+    /**
+     * @test
+     * @see ShowCupEventGroupAction::class
+     * @see NewYouthCupType::class
+     */
+    public function it_shows_new_youth_cup_event_group_action(): void
+    {
+        $this->seed(YouthCupLineSeeder3::class);
+
+        /** @var Authenticatable&User $user */
+        $user = User::factory()->createOne();
+        $this->actingAs($user);
+
+        $this->get('/cups/101/101/M_18_/show')
+            ->assertStatus(Response::HTTP_OK)
+            ->assertSee('<h2 id="up">Youth Cup 2024 - 2024</h2>', false)
+            ->assertSee('<a href="http://localhost/competitions/101/show">Grodno cup</a>', false)
+            ->assertSee('<a href="http://localhost/events/d/101">Спринт - 2024-04-12</a>', false)
+            ->assertSee('<a href="http://localhost/cups/101/101/M_18_/show" class="text-decoration-none nav-link active">', false)
+            ->assertSee('<a href="http://localhost/persons/102/show">Волчкевич Ярослав</a>', false)
+            ->assertSee('<td><b class="text-info">1000</b></td>', false)
+            ->assertDontSee('Миссюревич', false)
+            ->assertSee('<a href="http://localhost/persons/103/show">Виненко Александр</a>', false)
+            ->assertSee('<td>971</td>', false)
         ;
     }
 }

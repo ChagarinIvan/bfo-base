@@ -71,7 +71,7 @@ class NewMasterCupType extends AbstractCupType
 
     public function getNameKey(): string
     {
-        return 'app.cup.type.master.new';
+        return 'app.cup.type.new_master';
     }
 
     public function calculateEvent(CupEvent $cupEvent, CupGroup $mainGroup): Collection
