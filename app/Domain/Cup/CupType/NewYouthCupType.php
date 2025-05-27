@@ -91,7 +91,6 @@ class NewYouthCupType extends MasterCupType
 
     public function calculateEvent(CupEvent $cupEvent, CupGroup $mainGroup): Collection
     {
-        dump($mainGroup);
         $results = new Collection();
         $cupEventProtocolLines = $this->getGroupProtocolLines($cupEvent, $mainGroup);
         $eventGroupsId = $this->getEventGroups($mainGroup->male())->pluck('id');
@@ -111,14 +110,11 @@ class NewYouthCupType extends MasterCupType
         /** @var Collection<string, mixed> $validGroups */
         $cupEventProtocolLines = $cupEventProtocolLines->intersectByKeys($validGroups);
         $cupEventProtocolLines = $cupEventProtocolLines->flatten(1)->groupBy('distance_id');
-        dump('$cupEventProtocolLines', $cupEventProtocolLines);
 
         foreach ($cupEventProtocolLines as $distanceId => $groupProtocolLines) {
             $ids = $groupProtocolLines->pluck('person_id');
             $eventGroupResults = $this->calculateDistance($cupEvent, $distanceId);
-            dump('$eventGroupResults', $eventGroupResults);
             $eventGroupResults = $eventGroupResults->filter(static fn (CupEventPoint $cupEventResult) => $ids->contains($cupEventResult->protocolLine->id));
-            dump('dd', $eventGroupResults);
             $results = $results->merge($eventGroupResults->intersectByKeys($groupProtocolLines->keyBy('person_id')));
         }
 
@@ -155,7 +151,7 @@ class NewYouthCupType extends MasterCupType
     private function calculateDistance(CupEvent $cupEvent, int $distanceId): Collection
     {
         $distanceParticipants = $this->protocolLinesRepository->getCupEventDistanceProtocolLines($distanceId);
-        dump('$distanceParticipants', $distanceParticipants);
+
         return $this->calculateLines(
             $cupEvent,
             $distanceParticipants,
