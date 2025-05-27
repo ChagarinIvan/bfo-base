@@ -110,7 +110,7 @@ class NewYouthCupType extends MasterCupType
         $validGroups = $eventGroupsId->flip();
         /** @var Collection<string, mixed> $validGroups */
         $cupEventProtocolLines = $cupEventProtocolLines->intersectByKeys($validGroups);
-        $cupEventProtocolLines = $cupEventProtocolLines->flatten(1)->groupBy('distance_id')ж
+        $cupEventProtocolLines = $cupEventProtocolLines->flatten(1)->groupBy('distance_id');
         dump('$cupEventProtocolLines', $cupEventProtocolLines);
 
         foreach ($cupEventProtocolLines as $distanceId => $groupProtocolLines) {
