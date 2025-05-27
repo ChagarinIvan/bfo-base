@@ -106,7 +106,7 @@ class NewYouthCupType extends MasterCupType
             static fn (ProtocolLine $protocolLine) => in_array($protocolLine->distance_id, $eventDistances, true)
         );
 
-        $cupEventProtocolLines = $cupEventProtocolLines->groupBy('distance.group_id');
+        $cupEventProtocolLines = $cupEventProtocolLines->groupBy('distance_id');
         $validGroups = $eventGroupsId->flip();
         /** @var Collection<string, mixed> $validGroups */
         $cupEventProtocolLines = $cupEventProtocolLines->intersectByKeys($validGroups);
@@ -117,7 +117,7 @@ class NewYouthCupType extends MasterCupType
             $eventGroupResults = $this->calculateDistance($cupEvent, $distanceId);
             dump('$eventGroupResults', $eventGroupResults);
             $eventGroupResults = $eventGroupResults->filter(static fn (CupEventPoint $cupEventResult) => $ids->contains($cupEventResult->protocolLine->id));
-            dd('dd', $eventGroupResults);
+            dump('dd', $eventGroupResults);
             $results = $results->merge($eventGroupResults->intersectByKeys($groupProtocolLines->keyBy('person_id')));
         }
 
