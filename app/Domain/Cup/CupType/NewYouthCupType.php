@@ -91,6 +91,7 @@ class NewYouthCupType extends MasterCupType
 
     public function calculateEvent(CupEvent $cupEvent, CupGroup $mainGroup): Collection
     {
+        dump($mainGroup);
         $results = new Collection();
         $cupEventProtocolLines = $this->getGroupProtocolLines($cupEvent, $mainGroup);
         $eventGroupsId = $this->getEventGroups($mainGroup->male())->pluck('id');
@@ -113,8 +114,9 @@ class NewYouthCupType extends MasterCupType
         foreach ($cupEventProtocolLines as $distanceId => $groupProtocolLines) {
             $ids = $groupProtocolLines->pluck('person_id');
             $eventGroupResults = $this->calculateDistance($cupEvent, $distanceId);
-            dd($eventGroupResults);
+            dump($eventGroupResults);
             $eventGroupResults = $eventGroupResults->filter(static fn (CupEventPoint $cupEventResult) => $ids->contains($cupEventResult->protocolLine->id));
+            dd($eventGroupResults);
             $results = $results->merge($eventGroupResults->intersectByKeys($groupProtocolLines->keyBy('person_id')));
         }
 
