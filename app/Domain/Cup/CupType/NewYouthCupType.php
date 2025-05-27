@@ -93,7 +93,6 @@ class NewYouthCupType extends MasterCupType
     {
         $results = new Collection();
         $cupEventProtocolLines = $this->getGroupProtocolLines($cupEvent, $mainGroup);
-        dd($cupEventProtocolLines);
         $eventGroupsId = $this->getEventGroups($mainGroup->male())->pluck('id');
 
         $eventDistances = $this->distanceService
@@ -110,7 +109,7 @@ class NewYouthCupType extends MasterCupType
         $validGroups = $eventGroupsId->flip();
         /** @var Collection<string, mixed> $validGroups */
         $cupEventProtocolLines = $cupEventProtocolLines->intersectByKeys($validGroups);
-
+        dd($cupEventProtocolLines);
         foreach ($cupEventProtocolLines as $distanceId => $groupProtocolLines) {
             $ids = $groupProtocolLines->pluck('person_id');
             $eventGroupResults = $this->calculateDistance($cupEvent, $distanceId);
