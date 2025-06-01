@@ -44,7 +44,7 @@ class JuniorCupType extends EliteCupType
     protected function getGroupProtocolLines(CupEvent $cupEvent, CupGroup $group): Collection
     {
         $startYear = $cupEvent->cup->year->value - ($group->age()?->value ?: 0);
-        $finishYear = $startYear + 4;
+        $finishYear = $startYear + 8;
 
         $juniorProtocolLines = $this->protocolLinesRepository->getCupEventProtocolLinesForPersonsCertainAge(
             cupEvent: $cupEvent,
