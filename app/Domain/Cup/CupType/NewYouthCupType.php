@@ -9,6 +9,7 @@ use App\Domain\Cup\CupEvent\CupEventPoint;
 use App\Domain\Cup\Group\CupGroup;
 use App\Domain\Cup\Group\CupGroupFactory;
 use App\Domain\Cup\Group\GroupAge;
+use App\Domain\Cup\Group\GroupMale;
 use App\Domain\ProtocolLine\ProtocolLine;
 use Illuminate\Support\Collection;
 
@@ -35,21 +36,6 @@ class NewYouthCupType extends MasterCupType
             'МE',
             'М21 Фин Е',
             'M21',
-            'М21А',
-            'М21A',
-            'M21A',
-            'М21 Фин А',
-            'МА',
-            'МA',
-            'Мужчины группа А',
-            'Мужчины группа В',
-            'МB',
-            'M21B',
-            'МВ',
-            'М21B',
-            'М21Б',
-            'М20',
-            'M20',
         ],
         'W_12_' => ['Ж12', 'W12'],
         'W_14_' => ['Ж14', 'W14'],
@@ -67,20 +53,6 @@ class NewYouthCupType extends MasterCupType
             'W21E',
             'Ж21 Фин Е',
             'Женщины группа Е',
-            'Ж21А',
-            'Ж21A',
-            'ЖA',
-            'ЖА',
-            'W21A',
-            'Женщины группа А',
-            'Ж21Б',
-            'Женщины группа В',
-            'Ж21B',
-            'W21B',
-            'ЖB',
-            'ЖВ',
-            'Ж20',
-            'W20',
         ],
     ];
 
@@ -89,11 +61,35 @@ class NewYouthCupType extends MasterCupType
         return 'app.cup.type.new_youth';
     }
 
+    protected function getCupGroups(CupGroup $group): Collection
+    {
+        $ages = match ($group->age()) {
+            GroupAge::a12 => [GroupAge::a12, GroupAge::a14],
+            GroupAge::a14 => [GroupAge::a14, GroupAge::a16],
+            GroupAge::a16 => [GroupAge::a16, GroupAge::a18],
+            default => [GroupAge::a18, GroupAge::a20, GroupAge::a21],
+        };
+
+        return collect(array_map(static fn (GroupAge $age): CupGroup => new CupGroup($group->male(), $age), $ages));
+    }
+
+    protected function getCupEventGroups(CupGroup $group): Collection
+    {
+        $groups = Collection::make();
+
+        /** @var CupGroup $cupGroup */
+        foreach ($this->getCupGroups($group) as $cupGroup) {
+            $groups = $groups->merge($this->groupsService->getGroups(static::GROUPS_MAP[$cupGroup->id()]));
+        }
+
+        return $groups;
+    }
+
     public function calculateEvent(CupEvent $cupEvent, CupGroup $mainGroup): Collection
     {
         $results = new Collection();
         $cupEventProtocolLines = $this->getGroupProtocolLines($cupEvent, $mainGroup);
-        $eventGroupsId = $this->getEventGroups($mainGroup->male())->pluck('id');
+        $eventGroupsId = $this->getCupEventGroups($mainGroup)->pluck('id');
 
         $eventDistances = $this->distanceService
             ->getCupEventDistancesByGroups($cupEvent, $eventGroupsId)

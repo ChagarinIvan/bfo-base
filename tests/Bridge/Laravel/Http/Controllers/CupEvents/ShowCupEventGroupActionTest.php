@@ -387,17 +387,17 @@ final class ShowCupEventGroupActionTest extends TestCase
         $user = User::factory()->createOne();
         $this->actingAs($user);
 
-        $this->get('/cups/101/101/M_18_/show')
+        $this->get('/cups/101/101/M_12_/show')
             ->assertStatus(Response::HTTP_OK)
-            ->assertSee('<h2 id="up">Youth Cup 2024 - 2024</h2>', false)
+            ->assertSee('<h2 id="up">Youth Cup 2025 - 2025</h2>', false)
             ->assertSee('<a href="http://localhost/competitions/101/show">Grodno cup</a>', false)
-            ->assertSee('<a href="http://localhost/events/d/101">Спринт - 2024-04-12</a>', false)
-            ->assertSee('<a href="http://localhost/cups/101/101/M_18_/show" class="text-decoration-none nav-link active">', false)
-            ->assertSee('<a href="http://localhost/persons/102/show">Волчкевич Ярослав</a>', false)
+            ->assertSee('<a href="http://localhost/events/d/101">Спринт - 2025-04-12</a>', false)
+            ->assertSee('<a href="http://localhost/cups/101/101/M_12_/show" class="text-decoration-none nav-link active">', false)
+            ->assertSee('<a href="http://localhost/persons/101/show">Миссюревич Алексей</a>', false)
             ->assertSee('<td><b class="text-info">1000</b></td>', false)
-            ->assertDontSee('Миссюревич', false)
-            ->assertSee('<a href="http://localhost/persons/103/show">Виненко Александр</a>', false)
-            ->assertSee('<td>971</td>', false)
+            ->assertDontSee('Балабанов Александр', false)
+            ->assertSee('<a href="http://localhost/persons/102/show">Волчкевич Ярослав</a>', false)
+            ->assertSee('<td>773</td>', false)
         ;
     }
 }
