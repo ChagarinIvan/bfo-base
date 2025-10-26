@@ -12,6 +12,24 @@ final class SfrParserTest extends AbstractParser
     {
         return [
             [
+                '2025/11102025.htm',
+                225,
+                [
+                    0 => [
+                        'Волосевич',
+                        'Степан',
+                        'КО Случь',
+                        2016,
+                        '2ю',
+                        287,
+                        '00:12:50',
+                        1,
+                        '2ю',
+                        500,
+                    ],
+                ],
+            ],
+            [
                 '2023/26.08.2023.htm',
                 100,
                 [
@@ -19,7 +37,7 @@ final class SfrParserTest extends AbstractParser
                         'Уланов',
                         'Андрей',
                         'PULS-Nadejda',
-                        null,
+                        2013,
                         null,
                         290,
                         '00:17:08',

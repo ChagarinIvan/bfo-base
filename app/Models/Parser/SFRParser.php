@@ -28,7 +28,10 @@ class SFRParser extends AbstractParser
     public function parse(string $file): Collection
     {
         $content = $file;
-        $content = mb_convert_encoding($content, 'utf-8', 'windows-1251');
+
+        if (mb_check_encoding($content, 'windows-1251')) {
+            $content = mb_convert_encoding($content, 'utf-8', 'windows-1251');
+        }
 
         $linesList = new Collection();
         preg_match_all('#<h2>(.+?)</h2>.*?<table\s+class=.rezult.>(.+?)</table#msi', $content, $nodesMatch);
@@ -139,7 +142,7 @@ class SFRParser extends AbstractParser
             return 'firstname';
         }
 
-        if (str_contains($field, '.р.') || str_contains($field, 'рожд.')) {
+        if (str_contains($field, '.р.') || str_contains($field, 'рожд.') || trim($field) === 'г.р') {
             return 'year';
         }
 
