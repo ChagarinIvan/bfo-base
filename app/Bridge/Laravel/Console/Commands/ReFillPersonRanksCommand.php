@@ -29,6 +29,7 @@ final class ReFillPersonRanksCommand extends Command
             $persons = Person::where('active', true)->cursor();
             foreach ($persons as $person) {
                 $this->service->reFillRanksForPerson($person->id);
+                $this->info("Person {$person->id} refilld.");
             }
         }
         $this->info("Finish");

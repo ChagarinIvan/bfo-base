@@ -47,4 +47,9 @@ class Distance extends Model
     {
         return $this->hasMany(ProtocolLine::class, 'distance_id', 'id');
     }
+
+    public function equal(self $distance): bool
+    {
+        return $this->length === $distance->length && $this->points === $distance->points;
+    }
 }

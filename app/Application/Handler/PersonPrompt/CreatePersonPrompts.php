@@ -7,6 +7,7 @@ namespace App\Application\Handler\PersonPrompt;
 use App\Domain\Person\Person;
 use App\Services\PersonPromptService;
 use App\Services\ProtocolLineIdentService;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use function array_diff;
 use function implode;
 use function mb_strtolower;

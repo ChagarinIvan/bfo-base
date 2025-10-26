@@ -13,11 +13,13 @@ use Illuminate\Console\Command;
  */
 class RankValidationCommand extends Command
 {
-    protected $signature = 'protocol-lines:rank-validation';
+    protected $signature = 'protocol-lines:rank-validation {userId}';
 
     public function handle(): void
     {
-        $this->info('Start');
+        $userId = (int) $this->argument('userId');
+
+        $this->info('Start by user: ' . $userId);
         foreach (ProtocolLine::all() as $protocolLine) {
             if (Rank::validateRank($protocolLine->rank) || $protocolLine->rank === '') {
                 $protocolLine->rank = Rank::getRank($protocolLine->rank) ?: '';

@@ -75,7 +75,12 @@ class ElkPathXlsxParser extends AbstractParser
         $fileName = tempnam(sys_get_temp_dir(), 'TMP_');
         file_put_contents($fileName, $file);
         $xlsx = new Xlsx();
-        $spreadsheet = $xlsx->load($fileName);
+
+        try {
+            $spreadsheet = $xlsx->load($fileName);
+        } catch (\PhpOffice\PhpSpreadsheet\Reader\Exception) {
+            return [];
+        }
 
         return $spreadsheet->getActiveSheet()->toArray();
     }

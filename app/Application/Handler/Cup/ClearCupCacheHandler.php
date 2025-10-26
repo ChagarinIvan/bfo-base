@@ -8,8 +8,9 @@ use App\Domain\Cup\CupEvent\Event\CupEventCreated;
 use App\Domain\Cup\CupEvent\Event\CupEventDisabled;
 use App\Domain\Cup\CupEvent\Event\CupEventUpdated;
 use App\Services\CupsService;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-abstract readonly class ClearCupCacheHandler
+final readonly class ClearCupCacheHandler implements ShouldQueue
 {
     public function __construct(
         protected CupsService $service,

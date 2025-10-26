@@ -8,6 +8,7 @@ use App\Domain\Cup\Cup;
 use App\Domain\Cup\CupEvent\CupEvent;
 use App\Domain\Cup\CupEvent\CupEventPoint;
 use App\Domain\Cup\Group\CupGroup;
+use App\Domain\Cup\Group\CupGroupFactory;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Repositories\ProtocolLinesRepository;
 use App\Services\DistanceService;
@@ -25,6 +26,7 @@ abstract class AbstractCupType implements CupTypeInterface
         protected readonly DistanceService $distanceService,
         protected readonly ProtocolLinesRepository $protocolLinesRepository,
         protected readonly GroupsService $groupsService,
+        protected readonly CupGroupFactory $groupFactory,
     ) {
     }
 
@@ -64,16 +66,6 @@ abstract class AbstractCupType implements CupTypeInterface
         });
 
         return $results;
-    }
-
-    public function getCupEventParticipatesCount(CupEvent $cupEvent, ?array $groups = null): int
-    {
-        $lines = new Collection();
-        foreach ($groups ?? $this->getGroups() as $group) {
-            $lines = $lines->merge($this->getGroupProtocolLines($cupEvent, $group));
-        }
-
-        return $lines->pluck('id')->unique()->count();
     }
 
     protected function calculateLines(CupEvent $cupEvent, Collection $protocolLines): Collection

@@ -12,14 +12,16 @@
         "php": "^8.2",
         "ext-dom": "*",
         "ext-mbstring": "*",
+        "ext-pdo": "*",
         "doctrine/dbal": "^3.8",
         "guzzlehttp/guzzle": "^7.8",
         "laravel/framework": "^10.47",
+        "laravel/horizon": "^5.31",
         "mav/slovo": "^0.2.3",
         "phpoffice/phpspreadsheet": "^1.29",
         "phpunit/phpunit": "^10.5",
         "predis/predis": "^1.1",
-        "ext-pdo": "*"
+        "sentry/sentry-laravel": "^4.13"
     },
     "config": {
         "optimize-autoloader": true,

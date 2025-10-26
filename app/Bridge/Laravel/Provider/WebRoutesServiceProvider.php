@@ -24,6 +24,7 @@ use Illuminate\Contracts\Routing\Registrar;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Routing\Redirector;
 use Illuminate\Routing\RouteRegistrar;
+use Laravel\Horizon\Horizon;
 
 class WebRoutesServiceProvider extends ServiceProvider
 {
@@ -115,6 +116,7 @@ class WebRoutesServiceProvider extends ServiceProvider
                     $this->route->post('check', Rank\CheckPersonsRanksAction::class);
 
                     $this->middleware(['auth'])->group(function (): void {
+                        $this->route->post('person/{personId}/refill', Rank\RefillPersonRanksAction::class);
                         $this->route->get('{rankId}/activate', Rank\ShowActivationFormAction::class);
                         $this->route->get('{rankId}/update-activation', Rank\ShowEditActivationDateFormAction::class);
                         $this->route->post('{rankId}/activate', Rank\ActivatePersonRankAction::class);
@@ -204,6 +206,11 @@ class WebRoutesServiceProvider extends ServiceProvider
                 $this->routeRegistrar->middleware(['auth'])->prefix('registration')->group(function (): void {
                     $this->route->get('', Registration\ShowRegistrationFormAction::class);
                     $this->route->post('/data', Registration\SendRegistrationDataAction::class);
+                });
+
+                // Admin panel
+                $this->routeRegistrar->middleware(['auth'])->group(function () {
+                    Horizon::routeMailNotificationsTo('chagarin.ivan@gmail.com');
                 });
             });
         });

@@ -78,7 +78,6 @@
                 <th data-sortable="true">№</th>
                 <th data-sortable="true">{{ __('app.common.title') }}</th>
                 <th data-sortable="true">{{ __('app.common.date') }}</th>
-                <th data-sortable="true">{{ __('app.common.competitors') }}</th>
                 <th data-sortable="true">{{ __('app.common.points') }}</th>
                 @auth
                     <th></th>
@@ -95,7 +94,6 @@
                         </a>
                     </td>
                     <td>{{ $cupEvent->event->date }}</td>
-                    <td>{{ $cupEvent->participatesCount }}</td>
                     <td>{{ $cupEvent->points }}</td>
                     @auth
                         <td>

@@ -5,17 +5,27 @@ declare(strict_types=1);
 namespace App\Bridge\Laravel\Http\Controllers\Event;
 
 use App\Application\Dto\Auth\AuthAssembler;
+use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionAction;
+use App\Domain\Distance\Distance;
 use App\Domain\Event\Event;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 
 class ShowEventAction extends AbstractEventAction
 {
-    public function __invoke(string $eventId): View
+    public function __invoke(string $eventId): View|RedirectResponse
     {
+        /** @var Event $event */
         $event = Event::findOrFail($eventId);
         $withPoints = false;
         $withVk = false;
+        /** @var Distance|null $distance */
         $distance = $event->distances->first();
+
+        if ($distance === null) {
+            return $this->redirector->action(ShowCompetitionAction::class, [$event->competition_id]);
+        }
+
         $protocolLines = $distance->protocolLines;
         $clubs = $this->clubsService->getAllClubs()->keyBy('normalize_name');
 

@@ -17,6 +17,11 @@ final class EloquentRankRepository implements RankRepository
         $rank->create();
     }
 
+    public function delete(Rank $rank): void
+    {
+        $rank->delete();
+    }
+
     public function byId(int $id): ?Rank
     {
         return Rank::find($id);
@@ -29,18 +34,24 @@ final class EloquentRankRepository implements RankRepository
 
     public function oneByCriteria(Criteria $criteria): ?Rank
     {
+//        dump($criteria);
         /** @var null|Rank $rank */
         $rank = $this->buildQuery($criteria)->first();
 
         return $rank;
     }
 
+    public function deleteByCriteria(Criteria $criteria): void
+    {
+        $this->buildQuery($criteria)->delete();
+    }
+
     private function buildQuery(Criteria $criteria): Builder
     {
         $query = Rank::select('ranks.*');
 
-        if ($criteria->hasParam('person_id')) {
-            $query->where('person_id', $criteria->param('person_id'));
+        if ($criteria->hasParam('person_id') || $criteria->hasParam('personId')) {
+            $query->where('person_id', $criteria->paramOrDefault('person_id') ?? $criteria->param('personId'));
         }
 
         if ($date = $criteria->paramOrDefault('date')) {
@@ -56,6 +67,10 @@ final class EloquentRankRepository implements RankRepository
             $query->where('start_date', '<=', $criteria->param('startDateLess'));
         }
 
+        if ($criteria->hasParam('rank')) {
+            $query->where('rank', $criteria->param('rank'));
+        }
+
         if ($criteria->hasParam('activated')) {
             if ($criteria->param('activated')) {
                 $query->whereNotNull('activated_date');
@@ -64,13 +79,13 @@ final class EloquentRankRepository implements RankRepository
             }
         }
 
+        $query->join('events', 'events.id', '=', 'ranks.event_id');
         if ($criteria->sorting()) {
-            $query->join('events', 'events.id', '=', 'ranks.event_id');
             foreach ($criteria->sorting() as $key => $order) {
                 $query->orderBy($key, $order);
             }
         } else {
-            $query->orderBy('finish_date', 'desc');
+            $query->orderBy('finish_date', 'desc')->orderBy('events.date', 'desc');
         }
 
         return $query;

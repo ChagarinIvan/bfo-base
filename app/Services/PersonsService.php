@@ -46,7 +46,7 @@ class PersonsService
         $sortBy = in_array($sortBy, self::SORT_BY_COLUMNS, true) ? $sortBy : 'fio';
         $sort = $sortMode === 1 ? 'DESC' : 'ASC';
 
-        $persons = Person::where('active', true)->withCount('protocolLines')->with('club');
+        $persons = Person::where('person.active', true)->withCount('protocolLines')->with('club');
 
         $persons = match ($sortBy) {
             'fio' => $persons->orderBy('lastname', $sort)->orderBy('firstname', $sort),

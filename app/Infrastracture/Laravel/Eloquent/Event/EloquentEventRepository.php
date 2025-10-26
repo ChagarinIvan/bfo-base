@@ -58,6 +58,13 @@ final class EloquentEventRepository implements EventRepository
             $query->where('competition_id', $criteria->param('competitionId'));
         }
 
+        if ($criteria->hasParam('flagId')) {
+            $query
+                ->leftjoin('event_flags', 'events.id', '=', 'event_flags.event_id')
+                ->where('event_flags.flag_id', $criteria->param('flagId'));
+            ;
+        }
+
         if ($criteria->hasParam('notRelatedToCup')) {
             $query
                 ->leftjoin('cup_events', 'cup_events.event_id', '=', 'events.id')

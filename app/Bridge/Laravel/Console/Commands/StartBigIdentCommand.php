@@ -15,11 +15,13 @@ use function time;
  */
 class StartBigIdentCommand extends Command
 {
-    protected $signature = 'protocol-lines:big-ident';
+    protected $signature = 'protocol-lines:big-ident {userId}';
 
     public function handle(ProtocolLineIdentService $service): void
     {
         $this->info('Start');
+        $userId = (int) $this->argument('userId');
+
         $startTime = time();
         $protocolLines = ProtocolLine::whereNull('person_id')->get();
         $this->info("Has {$protocolLines->count()} lines");

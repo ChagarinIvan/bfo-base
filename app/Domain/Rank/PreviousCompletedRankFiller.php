@@ -21,6 +21,7 @@ final readonly class PreviousCompletedRankFiller
         private RankRepository $ranks,
         private ProtocolLineRepository $protocolLines,
         private JuniorRankAgeValidator $juniorRankAgeValidator,
+        private PreviousRanksFinishDateUpdater $updater,
     ) {
     }
 
@@ -33,43 +34,84 @@ final readonly class PreviousCompletedRankFiller
         $finishDate = $rank->finish_date;
 
         if ($finishDate < $date) {
-            // тут трэба узять протокол лініі за 2 года, дзе было выкананне разряда меньш чым папярэдні
-            $protocolLine = $this->protocolLines->oneByCriteria(new Criteria(
+            // тут трэба узять протокол лініі за 2 года, дзе было выкананне адсартырованные па моцы разраду
+            $criteria = new Criteria(
                 [
                     'personId' => $rank->person_id,
-                    'dateFrom' => $rank->start_date,
+                    'dateFrom' => $finishDate->clone()->addYears(-2),
                     'dateTo' => $finishDate,
                     'completedRank' => true,
                 ],
-                ['completedRank' => 'desc'],
-            ));
+                ['completedRank' => 'desc', 'eventDate' => 'asc'],
+            );
+//            dump($criteria);
+            $protocolLines = $this->protocolLines->byCriteria($criteria);
 
-            if (!$protocolLine) {
+//            dump('$protocolLines->count(): ' . $protocolLines->count());
+            if ($protocolLines->isEmpty()) {
                 return null;
             }
 
-            $newRank = $this->factory->create($this->createRankInput($protocolLine, $finishDate->addDay()));
+            /** @var ProtocolLine $first */
+            $first = $protocolLines->first();
+            $protocolLines = $protocolLines->filter(fn (ProtocolLine $pl) => $pl->complete_rank === $first->complete_rank);
+//            dump('$protocolLines->count(): ' . $protocolLines->count());
 
-            if (!$this->juniorRankAgeValidator->validate($newRank->person_id, $newRank->rank, Year::actualYear())) {
+            if (!$protocolLines->count()) {
                 return null;
             }
 
-            $this->ranks->add($newRank);
+            $startDate = $finishDate->addDay();
 
-            return $newRank;
+            $previous = $this->ranks->oneByCriteria(
+                new Criteria([
+                    'person_id' => $rank->person_id,
+                    'activated' => true,
+                    'rank' => $first->complete_rank,
+                ],['events.date' => 'asc'])
+            );
+
+            if (!$previous) {
+                return null;
+            }
+
+            foreach ($protocolLines as $protocolLine) {
+                $newRank = $this->factory->create($this->createRankInput($protocolLine, $startDate, $previous->activated_date));
+
+                if (!$this->juniorRankAgeValidator->validate($newRank->person_id, $newRank->rank, Year::actualYear())) {
+                    continue;
+                }
+
+                $this->ranks->add($newRank);
+
+//                dump('event date ' . $protocolLine->distance->event->date->toDateString());
+//                dump('activation date ' . $newRank->activated_date->toDateString());
+//                dump('finish date ' . $newRank->finish_date->toDateString());
+//                dump('start date ' . $newRank->start_date->toDateString());
+
+                // трэба абнавіць усе папярэднія разряды
+                $this->updater->update(
+                    personId: $newRank->person_id,
+                    rank: $newRank->rank,
+                    startDate: $newRank->start_date,
+                    finishDate: $newRank->finish_date,
+                );
+            }
+
+            return $newRank ?? null;
         }
 
         return $rank;
     }
 
-    private function createRankInput(ProtocolLine $protocolLine, Carbon $startDate): RankInput
+    private function createRankInput(ProtocolLine $protocolLine, Carbon $startDate, Carbon $activatedDate): RankInput
     {
         return new RankInput(
             personId: $protocolLine->person_id,
             eventId: $protocolLine->distance->event_id,
             rank: $protocolLine->complete_rank,
             startDate: $startDate,
-            activatedDate: $startDate,
+            activatedDate: $activatedDate,
             finishDate: $protocolLine->event->date->clone()->addYears(2),
         );
     }

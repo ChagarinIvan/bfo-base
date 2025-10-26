@@ -14,10 +14,13 @@ use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\Rank\Factory\RankFactory;
 use App\Domain\Rank\Factory\RankInput;
 use App\Domain\Rank\JuniorRankAgeValidator;
+use App\Domain\Rank\PreviousRanksFinishDateUpdater;
 use App\Domain\Rank\Rank;
+use App\Domain\Shared\Criteria;
 use App\Filters\RanksFilter;
 use App\Models\Year;
 use App\Repositories\RanksRepository;
+use App\Domain\Rank\RankRepository as RankRepositoryInterface;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
@@ -37,12 +40,14 @@ class RankService
     ];
 
     public function __construct(
+        private readonly RankRepositoryInterface $ranks,
         private readonly RanksRepository $ranksRepository,
         private readonly ProtocolLineService $protocolLineService,
         private readonly ViewPersonService $viewPersonService,
         private readonly JuniorRankAgeValidator $juniorRankAgeChecker,
         private readonly ActivePersonRankService $activePersonRankService,
         private readonly RankFactory $factory,
+        private readonly PreviousRanksFinishDateUpdater $updater,
     ) {
     }
 
@@ -64,10 +69,11 @@ class RankService
         }
 
         $ranks = $this->getPersonRanks($personId);
-        $this->ranksRepository->deleteRanks($ranks);
+        $ranks->each($this->ranks->delete(...));
 
         foreach ($this->protocolLineService->getPersonProtocolLines($personId) as $protocolLine) {
-//            dump($protocolLine->id);
+            /** @var ProtocolLine $protocolLine */
+//            //dump($protocolLine->distance->event->name);
             $this->fillRank($protocolLine);
         }
     }
@@ -140,11 +146,12 @@ class RankService
             return;
         }
 
-//        dump('Search acutal rankt for date ' . $protocolLine->event->date->format('Y-m-d'));
+//        dump('Search actual rank for date ' . $protocolLine->event->date->toDateString());
         $event = $protocolLine->event;
+//        dump('Search for event ' . $event->id);
         $actualRankDto = $this->activePersonRankService->execute(new ActivePersonRank((string)$protocolLine->person_id, $protocolLine->event->date));
 
-//        dump('Actual rank ' . $actualRankDto?->rank ?? '---');
+//        dump('Actual rank ' . ($actualRankDto?->rank ?? '---'));
         if ($actualRankDto) {
             if ($actualRankDto->rank === $protocolLine->complete_rank) {
                 $newRank = $this->factory->create(new RankInput(
@@ -155,89 +162,132 @@ class RankService
                     activatedDate: $actualRankDto->activatedDate ? Carbon::createFromFormat('Y-m-d', $actualRankDto->activatedDate) : $protocolLine->activate_rank,
                 ));
 
-                $finishDate = $event->date > Carbon::createFromFormat('Y-m-d', ($actualRankDto->eventId === null ? $actualRankDto->startDate : $actualRankDto->eventDate))
+                $actualRankStartDate = Carbon::createFromFormat('Y-m-d', $actualRankDto->eventId === null ? $actualRankDto->startDate : $actualRankDto->eventDate);
+//                dump('$actualRankDto->eventId '. $actualRankDto->eventId);
+//                dump('$actualRankDto->eventDate '. $actualRankDto->eventDate);
+//                dump(sprintf('Compare %s >= %s: ', $event->date->toDateString(), $actualRankStartDate->toDateString()) . ($event->date->toDateString() >= $actualRankStartDate->toDateString() ? 'true' : 'false'));
+                $finishDate = $event->date->toDateString() >= $actualRankStartDate->toDateString()
                     ? ($protocolLine->activate_rank ?? $event->date)->clone()->addYears(2)
-                    : $newRank->finish_date
+                    : $newRank->finish_date->clone()
                 ;
 
-                $newRank->finish_date = $finishDate;
+                $newRank->finish_date = $finishDate->clone();
 
                 // трэба абнавіць усе папярэднія разряды
-                $ranksFilter = new RanksFilter();
-                $ranksFilter->personId = (int) $actualRankDto->personId;
-                $ranksFilter->rank = $newRank->rank;
-                $ranksFilter->startDateLess = $newRank->start_date;
-                $ranksFilter->finishDateMore = $newRank->start_date;
-                $ranks = $this->ranksRepository->getRanksList($ranksFilter);
+                $this->updater->update(
+                    personId: (int) $actualRankDto->personId,
+                    rank: $newRank->rank,
+                    startDate: $newRank->start_date,
+                    finishDate: $finishDate,
+                );
 
-//                dump('previous ranks ' . $ranks->count());
-                $ranks->each(function (Rank $rank) use ($finishDate): void {
-                    $rank->finish_date = $finishDate;
-                    $rank->setAttribute('finish_date', $finishDate);
-                    $this->ranksRepository->storeRank($rank);
-                });
-
-//                dump('prolongate rank ' . $actualRankDto->rank);
-                $this->ranksRepository->storeRank($newRank);
+//                dump('activation date ' . $newRank->activated_date->toDateString());
+//                dump('finish date ' . $newRank->finish_date->toDateString());
+//                dump('start date ' . $newRank->start_date->toDateString());
+                $this->storeRank($newRank);
+//                dump('New prolongate id ' . $newRank->id);
             } elseif (!empty(trim($actualRankDto->rank)) && (self::RANKS_POWER[$protocolLine->complete_rank] > self::RANKS_POWER[$actualRankDto->rank])) {
 //                dump(sprintf('Enreach rank %s > %s', $actualRankDto->rank, $protocolLine->complete_rank));
-                // трэба зачыніць усе папярэднія разряды
+//                 трэба зачыніць усе папярэднія разряды
                 $ranksFilter = new RanksFilter();
                 $ranksFilter->personId = (int) $actualRankDto->personId;
                 $ranksFilter->rank = $actualRankDto->rank;
-                $ranksFilter->startDateLess = $event->date;
-                $ranksFilter->finishDateMore = $event->date;
+                $ranksFilter->startDateLess = $event->date->clone();
+                $ranksFilter->finishDateMore = $event->date->clone();
                 $ranks = $this->ranksRepository->getRanksList($ranksFilter);
-                if ($event->date->format('Y-m-d') !== $protocolLine->activate_rank?->format('Y-m-d')) {
-                    $finishDate = $protocolLine->activate_rank;
+
+//                dump('previous ranks for closing' . count($ranks));
+                if ($event->date->toDateString() !== $protocolLine->activate_rank?->toDateString()) {
+                    if ($event->date->toDateString() > $protocolLine->activate_rank?->toDateString()) {
+                        $newRankStartDate = $event->date->clone();
+                    } else {
+                        $newRankStartDate = $protocolLine->activate_rank->clone();
+                    }
                 } else {
-                    $finishDate = $event->date->clone()->addDays(-1);
+                    $newRankStartDate = $event->date->clone();
                 }
+                $previousRanksFinishDate = $newRankStartDate->clone()->addDays(-1);
 
                 if ($protocolLine->activate_rank) {
-                    $ranks->each(function (Rank $rank) use ($finishDate): void {
-                        $rank->finish_date = $finishDate;
-                        $this->ranksRepository->storeRank($rank);
+//                    dump('close previous ranks with finish date' . $previousRanksFinishDate->toDateString());
+                    $ranks->each(function (Rank $rank) use ($previousRanksFinishDate): void {
+                        $rank->finish_date = $previousRanksFinishDate;
+                        $this->storeRank($rank);
                     });
                 }
 
                 // Надо взять все разряды которые после этой даты
                 // Отсортировать их по дате евента и заново пересохранить
-                $ranksFilter = new RanksFilter();
-                $ranksFilter->personId = (int) $actualRankDto->personId;
-                $ranksFilter->startDateMore = $event->date;
-                $ranks = $this->ranksRepository->getRanksList($ranksFilter);
+//                $ranksFilter = new RanksFilter();
+//                $ranksFilter->personId = (int) $actualRankDto->personId;
+//                $ranksFilter->startDateMore = $event->date->clone();
+//                $ranks = $this->ranksRepository->getRanksList($ranksFilter);
 //                dump('Count ranks for recalculating'. count($ranks));
-                $protocolLines = new Collection();
+//                $protocolLines = new Collection();
 
-                $ranks->each(function (Rank $rank) use (&$protocolLines): void {
-                    $protocolLineId = $this->protocolLineService->getProtocolLineIdForRank($rank);
-                    $pl = $this->protocolLineService->getProtocolLineWithEvent($protocolLineId);
-                    if ($pl) {
-                        $protocolLines->push($pl);
-                    }
-                });
+//                $ranks->each(function (Rank $rank) use (&$protocolLines): void {
+//                    $protocolLineId = $this->protocolLineService->getProtocolLineIdForRank($rank);
+//                    $pl = $this->protocolLineService->getProtocolLineWithEvent($protocolLineId);
+//                    if ($pl) {
+//                        $protocolLines->push($pl);
+//                    }
+//                });
 
-                $this->ranksRepository->deleteRanks($ranks);
-                $newRank = $this->createNewRank($protocolLine);
-                $this->ranksRepository->storeRank($newRank);
+//                dump('Recalculating protocol lines '. count($protocolLines));
 
-                $protocolLines = $protocolLines->sortBy('distance.event.date');
-                foreach ($protocolLines as $line) {
-                    /** @var ProtocolLine $line */
-                    $this->fillRank($line);
+//                $this->ranksRepository->deleteRanks($ranks);
+                $newRank = $this->factory->create(new RankInput(
+                    personId: (int) $protocolLine->person_id,
+                    eventId: $protocolLine->event->id,
+                    rank: $protocolLine->complete_rank,
+                    startDate: $newRankStartDate->clone(),
+                    activatedDate: $protocolLine->activate_rank?->clone(),
+                ));
+
+                $previous = $this->ranks->oneByCriteria(
+                    new Criteria([
+                        'person_id' => $protocolLine->person_id,
+                        'activated' => true,
+                        'rank' => $protocolLine->complete_rank,
+                    ],['events.date' => 'asc'])
+                );
+
+                if ($previous) {
+                    $newRank->activated_date = $previous->activated_date;
                 }
+
+                $this->storeRank($newRank);
+//                dump('1) Enriched rank id: ' . $newRank->rank);
+
+//                $protocolLines$protocolLines = $protocolLines->sortBy('distance.event.date');
+//                foreach ($protocolLines as $line) {
+//                    /** @var ProtocolLine $line */
+//                    $this->fillRank($line);
+//                }
             }
         } else {
-//            dump('Create new rank');
+            $previous = $this->ranks->oneByCriteria(
+                new Criteria([
+                    'person_id' => $protocolLine->person_id,
+                    'activated' => true,
+                    'rank' => $protocolLine->complete_rank,
+                ],['events.date' => 'asc'])
+            );
+
+//            dump($previous);
             $newRank = $this->createNewRank($protocolLine);
-            $this->ranksRepository->storeRank($newRank);
+            if ($previous) {
+                $newRank->activated_date = $previous->activated_date;
+            }
+
+            $this->storeRank($newRank);
+//            dump('2) Enriched rank id: ' . $newRank->rank);
         }
     }
 
     public function cleanAll(): void
     {
-        $this->ranksRepository->cleanAll();
+        $this->ranks->deleteByCriteria(Criteria::empty());
     }
 
     public function deleteEventRanks(Event $event): void
@@ -247,8 +297,7 @@ class RankService
 
     public function storeRank(Rank $rank): void
     {
-//        dump('storeRank in RanksService ' . $this->rank);
-        $rank->save();
+        $this->ranks->add($rank);
     }
 
     private function createNewRank(ProtocolLine $protocolLine): Rank

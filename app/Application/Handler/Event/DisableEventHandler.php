@@ -9,8 +9,9 @@ use App\Services\CupsService;
 use App\Services\DistanceService;
 use App\Services\ProtocolLineService;
 use App\Services\RankService;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-final readonly class DisableEventHandler
+final readonly class DisableEventHandler implements ShouldQueue
 {
     use DisableEventHandlerTrait;
 

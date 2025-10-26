@@ -56,4 +56,9 @@ readonly class Criteria
     {
         return $this->params[$key] ?? $default;
     }
+
+    public function hash(): string
+    {
+        return md5(serialize($this->params) . serialize($this->sorting));
+    }
 }
