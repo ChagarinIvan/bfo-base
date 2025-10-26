@@ -109,7 +109,6 @@ class SFRParser extends AbstractParser
             }
         }
 
-        dd($linesList);
         return $linesList;
     }
 
