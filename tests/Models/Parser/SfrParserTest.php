@@ -12,6 +12,12 @@ final class SfrParserTest extends AbstractParser
     {
         return [
             [
+                '2025/12102025.htm',
+                186,
+                [],
+                'htm',
+            ],
+            [
                 '2025/11102025.htm',
                 225,
                 [
@@ -28,6 +34,7 @@ final class SfrParserTest extends AbstractParser
                         500,
                     ],
                 ],
+                'htm',
             ],
             [
                 '2023/26.08.2023.htm',
