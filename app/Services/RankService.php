@@ -16,13 +16,14 @@ use App\Domain\Rank\Factory\RankInput;
 use App\Domain\Rank\JuniorRankAgeValidator;
 use App\Domain\Rank\PreviousRanksFinishDateUpdater;
 use App\Domain\Rank\Rank;
+use App\Domain\Rank\RankRepository as RankRepositoryInterface;
 use App\Domain\Shared\Criteria;
 use App\Filters\RanksFilter;
 use App\Models\Year;
 use App\Repositories\RanksRepository;
-use App\Domain\Rank\RankRepository as RankRepositoryInterface;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use function trim;
 
 class RankService
 {
@@ -249,7 +250,7 @@ class RankService
                         'person_id' => $protocolLine->person_id,
                         'activated' => true,
                         'rank' => $protocolLine->complete_rank,
-                    ],['events.date' => 'asc'])
+                    ], ['events.date' => 'asc'])
                 );
 
                 if ($previous) {
@@ -271,7 +272,7 @@ class RankService
                     'person_id' => $protocolLine->person_id,
                     'activated' => true,
                     'rank' => $protocolLine->complete_rank,
-                ],['events.date' => 'asc'])
+                ], ['events.date' => 'asc'])
             );
 
 //            dump($previous);

@@ -37,6 +37,11 @@ class DistanceRepository
         ;
     }
 
+    public function byId(int $id): ?Distance
+    {
+        return Distance::find($id);
+    }
+
     public function getEventGroupDistance(int $eventId, int $groupId): ?Distance
     {
         return Distance::whereEventId($eventId)

@@ -54,13 +54,13 @@ final readonly class OrientByPersonDto
         }
 
         foreach (['d.m.Y H:i:s', 'd.m.Y'] as $format) {
-            try {
-                return Carbon::createFromFormat($format, $this->paymentDate);
-            } catch (InvalidFormatException $e) {
-                // Try next format
+            $date = Carbon::createFromFormat($format, $this->paymentDate);
+
+            if ($date !== false) {
+                return $date;
             }
         }
 
-        throw new InvalidArgumentException("Неверный формат даты: {$this->paymentDate}");
+        throw new InvalidArgumentException("Неверный формат даты: $this->paymentDate");
     }
 }

@@ -11,6 +11,7 @@ use Illuminate\Support\Collection;
 use function count;
 use function explode;
 use function is_numeric;
+use function mb_check_encoding;
 use function mb_convert_encoding;
 use function mb_strtolower;
 use function preg_match;

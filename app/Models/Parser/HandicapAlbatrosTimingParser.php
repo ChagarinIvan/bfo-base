@@ -38,7 +38,7 @@ class HandicapAlbatrosTimingParser extends AbstractParser
     {
         $doc = new DOMDocument();
         @$doc->loadHTML($file);
-        $xpath = new DOMXpath($doc);
+        $xpath = new DOMXPath($doc);
         $preNodes = $xpath->query('//pre');
         $linesList = new Collection();
         foreach ($preNodes as $node) {
@@ -150,7 +150,7 @@ class HandicapAlbatrosTimingParser extends AbstractParser
         $doc = new DOMDocument();
         if (str_contains($file, 'Albatros-Timing')) {
             @$doc->loadHTML($file);
-            $xpath = new DOMXpath($doc);
+            $xpath = new DOMXPath($doc);
             $preNodes = $xpath->query('//pre');
 
             foreach ($preNodes as $preNode) {

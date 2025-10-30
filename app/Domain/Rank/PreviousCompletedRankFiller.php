@@ -54,7 +54,7 @@ final readonly class PreviousCompletedRankFiller
 
             /** @var ProtocolLine $first */
             $first = $protocolLines->first();
-            $protocolLines = $protocolLines->filter(fn (ProtocolLine $pl) => $pl->complete_rank === $first->complete_rank);
+            $protocolLines = $protocolLines->filter(static fn (ProtocolLine $pl) => $pl->complete_rank === $first->complete_rank);
 //            dump('$protocolLines->count(): ' . $protocolLines->count());
 
             if (!$protocolLines->count()) {
@@ -68,7 +68,7 @@ final readonly class PreviousCompletedRankFiller
                     'person_id' => $rank->person_id,
                     'activated' => true,
                     'rank' => $first->complete_rank,
-                ],['events.date' => 'asc'])
+                ], ['events.date' => 'asc'])
             );
 
             if (!$previous) {

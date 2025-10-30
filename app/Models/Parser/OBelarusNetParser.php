@@ -35,7 +35,7 @@ class OBelarusNetParser extends AbstractParser
         $content = $file;
         $content = str_replace(["&nbsp;", " "], ' ', $content);
         @$doc->loadHTML($content);
-        $xpath = new DOMXpath($doc);
+        $xpath = new DOMXPath($doc);
         $preNodes = $xpath->query('//pre');
         $linesList = new Collection();
         foreach ($preNodes as $node) {

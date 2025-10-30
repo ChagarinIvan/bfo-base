@@ -22,6 +22,7 @@ use Database\Seeders\SprintCupLineSeeder;
 use Database\Seeders\YouthCupLine2Seeder;
 use Database\Seeders\YouthCupLineSeeder;
 use Database\Seeders\YouthCupLineSeeder3;
+use Database\Seeders\YouthCupLineSeeder4;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
@@ -427,6 +428,33 @@ final class ShowCupEventGroupActionTest extends TestCase
             ->assertDontSee('Балабанов Александр', false)
             ->assertSee('<a href="http://localhost/persons/102/show">Волчкевич Ярослав</a>', false)
             ->assertSee('<td>773</td>', false)
+        ;
+    }
+
+    /**
+     * @test
+     * @see ShowCupEventGroupAction::class
+     * @see NewYouthCupType::class
+     */
+    public function it_shows_new_youth_cup_event_group_action_3(): void
+    {
+        $this->seed(YouthCupLineSeeder4::class);
+
+        /** @var Authenticatable&User $user */
+        $user = User::factory()->createOne();
+        $this->actingAs($user);
+
+        $this->get('/cups/101/101/M_18_/show')
+            ->assertStatus(Response::HTTP_OK)
+            ->assertSee('<h2 id="up">Youth Cup 2025 - 2025</h2>', false)
+            ->assertSee('<a href="http://localhost/competitions/101/show">Grodno cup</a>', false)
+            ->assertSee('<a href="http://localhost/events/d/101">Спринт - 2025-04-12</a>', false)
+            ->assertSee('<a href="http://localhost/cups/101/101/M_12_/show" class="text-decoration-none nav-link ">', false)
+            ->assertSee('<a href="http://localhost/persons/101/show">Журомская Вероника</a>', false)
+            ->assertSee('<td><b class="text-info">1000</b></td>', false)
+            ->assertDontSee('Колядко', false)
+            ->assertSee('<a href="http://localhost/persons/102/show">Холод Ирина</a>', false)
+            ->assertSee('<td>891</td>', false)
         ;
     }
 }

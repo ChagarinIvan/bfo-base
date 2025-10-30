@@ -17,6 +17,8 @@ use App\Domain\ProtocolLine\Criteria\CupEventDistancesProtocolLinesCriteria;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Models\Year;
 use Illuminate\Support\Collection;
+use function array_key_exists;
+use function in_array;
 
 /**
  * При начислении очков Кубка БФО среди ветеранов спортсмен получает очки в зачет только своей возрастной группы.
@@ -66,8 +68,77 @@ class NewMasterCupType extends AbstractCupType
     private static array $lines = [];
     /** @var Collection[] */
     private static array $eventGroups = [];
-    /** @var ?Distance[] */
+    /** @var Distance[] */
     private static array $groups = [];
+
+    private static function calculateGroupAge(int $age): GroupAge
+    {
+        $map = [
+            35 => GroupAge::a35,
+            36 => GroupAge::a35,
+            37 => GroupAge::a35,
+            38 => GroupAge::a35,
+            39 => GroupAge::a35,
+            40 => GroupAge::a40,
+            41 => GroupAge::a40,
+            42 => GroupAge::a40,
+            43 => GroupAge::a40,
+            44 => GroupAge::a40,
+            45 => GroupAge::a45,
+            46 => GroupAge::a45,
+            47 => GroupAge::a45,
+            48 => GroupAge::a45,
+            49 => GroupAge::a45,
+            50 => GroupAge::a50,
+            51 => GroupAge::a50,
+            52 => GroupAge::a50,
+            53 => GroupAge::a50,
+            54 => GroupAge::a50,
+            55 => GroupAge::a55,
+            56 => GroupAge::a55,
+            57 => GroupAge::a55,
+            58 => GroupAge::a55,
+            59 => GroupAge::a55,
+            60 => GroupAge::a60,
+            61 => GroupAge::a60,
+            62 => GroupAge::a60,
+            63 => GroupAge::a60,
+            64 => GroupAge::a60,
+            65 => GroupAge::a65,
+            66 => GroupAge::a65,
+            67 => GroupAge::a65,
+            68 => GroupAge::a65,
+            69 => GroupAge::a65,
+            70 => GroupAge::a70,
+            71 => GroupAge::a70,
+            72 => GroupAge::a70,
+            73 => GroupAge::a70,
+            74 => GroupAge::a70,
+            75 => GroupAge::a75,
+            76 => GroupAge::a75,
+            77 => GroupAge::a75,
+            78 => GroupAge::a75,
+            79 => GroupAge::a75,
+            80 => GroupAge::a80,
+            81 => GroupAge::a80,
+            82 => GroupAge::a80,
+            83 => GroupAge::a80,
+            84 => GroupAge::a80,
+            85 => GroupAge::a80,
+            86 => GroupAge::a80,
+            87 => GroupAge::a80,
+            88 => GroupAge::a80,
+            89 => GroupAge::a80,
+            90 => GroupAge::a80,
+            91 => GroupAge::a80,
+            92 => GroupAge::a80,
+            93 => GroupAge::a80,
+            94 => GroupAge::a80,
+            95 => GroupAge::a80,
+        ];
+
+        return $map[$age] ?? GroupAge::a80;
+    }
 
     public function getNameKey(): string
     {
@@ -105,7 +176,7 @@ class NewMasterCupType extends AbstractCupType
         /** @var Collection $groups */
         $groups = $cupEventProtocolLines->keys()
             ->map(fn (string $id) => $this->groupFactory->fromId($eventGroups->firstWhere('id', $id)['cupGroupId']))
-            ->sortBy(fn(CupGroup $group) => $group->age()->value)
+            ->sortBy(static fn(CupGroup $group) => $group->age()->value)
         ;
 
         if ($groups->isEmpty()) {
@@ -158,6 +229,18 @@ class NewMasterCupType extends AbstractCupType
         ]);
     }
 
+    public function findDistance(CupEvent $cupEvent, CupGroup $group): ?Distance
+    {
+        if (array_key_exists($group->id(), self::$groups)) {
+            return self::$groups[$group->id()];
+        }
+
+        $distance = $this->distanceService->findDistance(self::GROUPS_MAP[$group->id()], $cupEvent->event_id);
+        self::$groups[$group->id()] = $distance;
+
+        return $distance;
+    }
+
     /**
      * @param Collection|CupGroup[] $groups
      * @return Collection<int, CupEventProtocolLine>
@@ -184,7 +267,8 @@ class NewMasterCupType extends AbstractCupType
                 return $results;
             }
 
-            $results = $results->merge($this
+            $results = $results->merge(
+                $this
                 ->getGroupProtocolLines($cupEvent, $prevGroup)
                 ->map(static fn(ProtocolLineCupGroup $item) => new CupEventProtocolLine($item->line, $prevGroup, $item->group))
             )
@@ -220,6 +304,92 @@ class NewMasterCupType extends AbstractCupType
             $items = $this->getAgeProtocolLines($cupEvent, $prevGroup, $group);
             $result = $result->merge($items);
         }
+    }
+    protected function getProtocolLines(CupEvent $cupEvent, CupGroup $group): Collection
+    {
+        if (array_key_exists($group->id(), self::$protocolLines)) {
+            return self::$protocolLines[$group->id()];
+        }
+
+        if (array_key_exists($group->id(), self::$equalDistances)) {
+            $equalDistances = self::$equalDistances[$group->id()];
+        } else {
+            $mainDistance = $this->findDistance($cupEvent, $group);
+            $equalDistances = Collection::make([$mainDistance]);
+
+            if ($mainDistance) {
+                $equalDistances->push(...$this->distanceService->getEqualDistances($mainDistance));
+            }
+
+            self::$equalDistances[$group->id()] = $equalDistances;
+        }
+
+        $criteria = CupEventDistancesProtocolLinesCriteria::create($equalDistances, $cupEvent, $this->paymentYear($cupEvent->cup));
+
+        if (array_key_exists($criteria->hash(), self::$lines)) {
+            $lines = self::$lines[$criteria->hash()];
+        } else {
+            $lines = $this->protocolLinesRepository->byCriteria($criteria);
+            self::$lines[$criteria->hash()] = $lines;
+        }
+
+        $eventGroupsId = $this->getEventGroups($group->male())->pluck('id');
+
+        $eventDistances = $this->distanceService
+            ->getCupEventDistancesByGroups($cupEvent, $eventGroupsId)
+            ->pluck('id')
+            ->toArray()
+        ;
+
+        $result = $lines->filter(static fn(ProtocolLine $protocolLine) => in_array($protocolLine->distance_id, $eventDistances, true));
+        self::$protocolLines[$group->id()] = $result;
+
+        return $result;
+    }
+
+    protected function getAgeGroupProtocolLines(CupEvent $cupEvent, CupGroup $group): Collection
+    {
+        $startYear = $cupEvent->cup->year->value - ($group->age()?->value ?: 0);
+        $finishYear = $group->age() === $group->age()?->next() ? null : $startYear - 4;
+
+        return $this->protocolLinesRepository->getCupEventProtocolLinesForPersonsCertainAge(
+            cupEvent: $cupEvent,
+            startYear: $finishYear,
+            finishYear: $startYear,
+            withPayments: true
+        );
+    }
+
+    protected function getEventGroups(GroupMale $male): Collection
+    {
+        if (array_key_exists($male->value, self::$eventGroups)) {
+            return self::$eventGroups[$male->value];
+        }
+
+        $groups = Collection::make();
+
+        /** @var CupGroup $cupGroup */
+        foreach ($this->getGroups() as $cupGroup) {
+            if ($cupGroup->male() === $male) {
+                $cupGroupId = $cupGroup->id();
+                $group = $this->groupsService->getGroups(static::GROUPS_MAP[$cupGroupId]);
+                $group = $group->map(static fn(Group $i) => [
+                    'id' => $i->id,
+                    'name' => $i->name,
+                    'cupGroupId' => $cupGroup->id(),
+                ]);
+                $groups = $groups->merge($group);
+            }
+        }
+
+        self::$eventGroups[$male->value] = $groups;
+
+        return $groups;
+    }
+
+    protected function paymentYear(Cup $cup): Year
+    {
+        return $cup->year;
     }
 
     /** @return Collection<int, ProtocolLineCupGroup> */
@@ -322,172 +492,5 @@ class NewMasterCupType extends AbstractCupType
         }
 
         return Collection::empty();
-    }
-
-    private static function calculateGroupAge(int $age): GroupAge
-    {
-        $map = [
-            35 => GroupAge::a35,
-            36 => GroupAge::a35,
-            37 => GroupAge::a35,
-            38 => GroupAge::a35,
-            39 => GroupAge::a35,
-            40 => GroupAge::a40,
-            41 => GroupAge::a40,
-            42 => GroupAge::a40,
-            43 => GroupAge::a40,
-            44 => GroupAge::a40,
-            45 => GroupAge::a45,
-            46 => GroupAge::a45,
-            47 => GroupAge::a45,
-            48 => GroupAge::a45,
-            49 => GroupAge::a45,
-            50 => GroupAge::a50,
-            51 => GroupAge::a50,
-            52 => GroupAge::a50,
-            53 => GroupAge::a50,
-            54 => GroupAge::a50,
-            55 => GroupAge::a55,
-            56 => GroupAge::a55,
-            57 => GroupAge::a55,
-            58 => GroupAge::a55,
-            59 => GroupAge::a55,
-            60 => GroupAge::a60,
-            61 => GroupAge::a60,
-            62 => GroupAge::a60,
-            63 => GroupAge::a60,
-            64 => GroupAge::a60,
-            65 => GroupAge::a65,
-            66 => GroupAge::a65,
-            67 => GroupAge::a65,
-            68 => GroupAge::a65,
-            69 => GroupAge::a65,
-            70 => GroupAge::a70,
-            71 => GroupAge::a70,
-            72 => GroupAge::a70,
-            73 => GroupAge::a70,
-            74 => GroupAge::a70,
-            75 => GroupAge::a75,
-            76 => GroupAge::a75,
-            77 => GroupAge::a75,
-            78 => GroupAge::a75,
-            79 => GroupAge::a75,
-            80 => GroupAge::a80,
-            81 => GroupAge::a80,
-            82 => GroupAge::a80,
-            83 => GroupAge::a80,
-            84 => GroupAge::a80,
-            85 => GroupAge::a80,
-            86 => GroupAge::a80,
-            87 => GroupAge::a80,
-            88 => GroupAge::a80,
-            89 => GroupAge::a80,
-            90 => GroupAge::a80,
-            91 => GroupAge::a80,
-            92 => GroupAge::a80,
-            93 => GroupAge::a80,
-            94 => GroupAge::a80,
-            95 => GroupAge::a80,
-        ];
-
-        return $map[$age] ?? GroupAge::a80;
-    }
-    protected function getProtocolLines(CupEvent $cupEvent, CupGroup $group): Collection
-    {
-        if (array_key_exists($group->id(), self::$protocolLines)) {
-            return self::$protocolLines[$group->id()];
-        }
-
-        if (array_key_exists($group->id(), self::$equalDistances)) {
-            $equalDistances = self::$equalDistances[$group->id()];
-        } else {
-            $mainDistance = $this->findDistance($cupEvent, $group);
-            $equalDistances = Collection::make([$mainDistance]);
-
-            if ($mainDistance) {
-                $equalDistances->push(...$this->distanceService->getEqualDistances($mainDistance));
-            }
-
-            self::$equalDistances[$group->id()] = $equalDistances;
-        }
-
-        $criteria = CupEventDistancesProtocolLinesCriteria::create($equalDistances, $cupEvent, $this->paymentYear($cupEvent->cup));
-
-        if (array_key_exists($criteria->hash(), self::$lines)) {
-            $lines = self::$lines[$criteria->hash()];
-        } else {
-            $lines = $this->protocolLinesRepository->byCriteria($criteria);
-            self::$lines[$criteria->hash()] = $lines;
-        }
-
-        $eventGroupsId = $this->getEventGroups($group->male())->pluck('id');
-
-        $eventDistances = $this->distanceService
-            ->getCupEventDistancesByGroups($cupEvent, $eventGroupsId)
-            ->pluck('id')
-            ->toArray()
-        ;
-
-        $result = $lines->filter(static fn(ProtocolLine $protocolLine) => in_array($protocolLine->distance_id, $eventDistances, true));
-        self::$protocolLines[$group->id()] = $result;
-
-        return $result;
-    }
-
-    protected function getAgeGroupProtocolLines(CupEvent $cupEvent, CupGroup $group): Collection
-    {
-        $startYear = $cupEvent->cup->year->value - ($group->age()?->value ?: 0);
-        $finishYear = $group->age() === $group->age()?->next() ? null : $startYear - 4;
-
-        return $this->protocolLinesRepository->getCupEventProtocolLinesForPersonsCertainAge(
-            cupEvent: $cupEvent,
-            startYear: $finishYear,
-            finishYear: $startYear,
-            withPayments: true
-        );
-    }
-
-    protected function getEventGroups(GroupMale $male): Collection
-    {
-        if (array_key_exists($male->value, self::$eventGroups)) {
-            return self::$eventGroups[$male->value];
-        }
-
-        $groups = Collection::make();
-
-        /** @var CupGroup $cupGroup */
-        foreach ($this->getGroups() as $cupGroup) {
-            if ($cupGroup->male() === $male) {
-                $cupGroupId = $cupGroup->id();
-                $group = $this->groupsService->getGroups(static::GROUPS_MAP[$cupGroupId]);
-                $group = $group->map(static fn(Group $i) => [
-                    'id' => $i->id,
-                    'name' => $i->name,
-                    'cupGroupId' => $cupGroup->id(),
-                ]);
-                $groups = $groups->merge($group);
-            }
-        }
-
-        self::$eventGroups[$male->value] = $groups;
-
-        return $groups;
-    }
-
-    public function findDistance(CupEvent $cupEvent, CupGroup $group): ?Distance
-    {
-        if (array_key_exists($group->id(), self::$groups)) {
-            return self::$groups[$group->id()];
-        }
-
-        $distance = $this->distanceService->findDistance(self::GROUPS_MAP[$group->id()], $cupEvent->event_id);
-        self::$groups[$group->id()] = $distance;
-
-        return $distance;
-    }
-
-    protected function paymentYear(Cup $cup): Year
-    {
-        return $cup->year;
     }
 }

@@ -33,7 +33,7 @@ class AlbatrosTimingWithRegionParser extends AbstractParser
     {
         $doc = new DOMDocument();
         @$doc->loadHTML($file);
-        $xpath = new DOMXpath($doc);
+        $xpath = new DOMXPath($doc);
         $preNodes = $xpath->query('//pre');
         $linesList = new Collection();
         foreach ($preNodes as $node) {
@@ -127,7 +127,7 @@ class AlbatrosTimingWithRegionParser extends AbstractParser
         $doc = new DOMDocument();
 
         @$doc->loadHTML($file);
-        $xpath = new DOMXpath($doc);
+        $xpath = new DOMXPath($doc);
         $preNodes = $xpath->query('//pre');
 
         if ($preNodes->length > 0) {

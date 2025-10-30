@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Domain\Rank;
 
+use App\Domain\Rank\RankRepository as RanksRepositoryInterface;
 use App\Filters\RanksFilter;
 use App\Repositories\RanksRepository;
-use App\Domain\Rank\RankRepository as RanksRepositoryInterface;
 use Carbon\Carbon;
 
 final readonly class PreviousRanksFinishDateUpdater
