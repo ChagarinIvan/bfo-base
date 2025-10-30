@@ -87,14 +87,13 @@ class NewYouthCupType extends MasterCupType
         $cupEventProtocolLines = $cupEventProtocolLines->flatten(1)->groupBy('distance_id');
 
         $haystack = self::GROUPS_MAP[$mainGroup->id()];
-        /** @var int|null $mainGroupId */
+        /** @var Group|null $mainGroupId */
         $mainGroupId = $this->getCupEventGroups($mainGroup)
             ->filter(static fn (Group $group) => in_array($group->name, $haystack, true))
             ->first()
         ;
 
-        dd($mainGroupId);
-        $mainGroupExists = $mainGroupId && $cupEventProtocolLines->has($mainGroupId);
+        $mainGroupExists = $mainGroupId && $cupEventProtocolLines->has($mainGroupId->id);
 
         foreach ($cupEventProtocolLines as $distanceId => $groupProtocolLines) {
             /** @var Collection $groupProtocolLines */
