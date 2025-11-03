@@ -34,7 +34,6 @@ final readonly class ListCupService
             dump($views[$i]->name);
         }
 
-        dd($views);
         return $views;
     }
 }
