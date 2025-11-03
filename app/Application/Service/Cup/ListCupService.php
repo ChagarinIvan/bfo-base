@@ -20,14 +20,9 @@ final readonly class ListCupService
     /** @return ViewCupDto[] */
     public function execute(ListCup $command): array
     {
-        $cups = [];
-
-        foreach ($this->cups->byCriteria($command->criteria())->all() as $cup) {
-            $viewCup = $this->assembler->toViewCupDto($cup);
-            dump($viewCup);
-            $cups[] = $viewCup;
-        }
-
-        return $cups;
+        return array_map(
+            $this->assembler->toViewCupDto(...),
+            $this->cups->byCriteria($command->criteria())->all()
+        );
     }
 }

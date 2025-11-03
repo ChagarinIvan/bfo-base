@@ -74,16 +74,16 @@
                                 <td>
                                     <a href="{{ action(ShowCupAction::class, [$cup->id]) }}">{{ $cup->name }}</a>
                                 </td>
-                                <td>{{ $cup->lastEventDate }}</td>
-                                <td>
-                                    @foreach($cup->groups as $group)
-                                        @php
-                                        @endphp
-                                        <x-badge name="{{ $group->name }}"
-                                                 url="{{ action(ShowCupTableAction::class, [$cup->id, $group->id]) }}"
-                                        />
-                                    @endforeach
-                                </td>
+{{--                                <td>{{ $cup->lastEventDate }}</td>--}}
+{{--                                <td>--}}
+{{--                                    @foreach($cup->groups as $group)--}}
+{{--                                        @php--}}
+{{--                                        @endphp--}}
+{{--                                        <x-badge name="{{ $group->name }}"--}}
+{{--                                                 url="{{ action(ShowCupTableAction::class, [$cup->id, $group->id]) }}"--}}
+{{--                                        />--}}
+{{--                                    @endforeach--}}
+{{--                                </td>--}}
                                 @auth
                                     <td>
                                         <x-impression :impression="$cup->created"/>
