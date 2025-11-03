@@ -20,7 +20,6 @@ class ShowCupsListAction extends BaseController
         ListCupService $service,
     ): View {
         $cups = $service->execute(new ListCup($search));
-        dd($cups);
 
         /** @see /resources/views/cup/index.blade.php */
         return $this->view('cup.index', [
