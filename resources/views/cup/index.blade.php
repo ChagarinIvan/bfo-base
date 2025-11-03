@@ -13,7 +13,6 @@
      */
 @endphp
 
-@dd($cups)
 @extends('layouts.app')
 
 @section('title', __('app.navbar.cups'))
@@ -70,51 +69,51 @@
                         </tr>
                         </thead>
                         <tbody>
-{{--                        @foreach ($cups as $cup)--}}
+                        @foreach ($cups as $cup)
                             <tr>
-{{--                                <td>--}}
-{{--                                    <a href="{{ action(ShowCupAction::class, [$cup->id]) }}">{{ $cup->name }}</a>--}}
-{{--                                </td>--}}
-{{--                                <td>{{ $cup->lastEventDate }}</td>--}}
-{{--                                <td>--}}
-{{--                                    @foreach($cup->groups as $group)--}}
-{{--                                        @php--}}
-{{--                                        @endphp--}}
-{{--                                        <x-badge name="{{ $group->name }}"--}}
-{{--                                                 url="{{ action(ShowCupTableAction::class, [$cup->id, $group->id]) }}"--}}
-{{--                                        />--}}
-{{--                                    @endforeach--}}
-{{--                                </td>--}}
-{{--                                @auth--}}
-{{--                                    <td>--}}
-{{--                                        <x-impression :impression="$cup->created"/>--}}
-{{--                                    </td>--}}
-{{--                                    <td>--}}
-{{--                                        <x-impression :impression="$cup->updated"/>--}}
-{{--                                    </td>--}}
-{{--                                @endauth--}}
-{{--                                <td>--}}
-{{--                                    <x-button text="app.cup.table" color="secondary" icon="bi-table"--}}
-{{--                                              url="{{ action(ShowCupTableAction::class, [$cup->id, $cup->groups[0]->id]) }}"/>--}}
-{{--                                    @auth--}}
-{{--                                        <x-edit-button--}}
-{{--                                                url="{{ action(ShowEditCupFormAction::class, [$cup->id]) }}"/>--}}
-{{--                                        <x-modal-button modal-id="deleteModal{{ $cup->id }}"/>--}}
-{{--                                    @endauth--}}
-{{--                                </td>--}}
+                                <td>
+                                    <a href="{{ action(ShowCupAction::class, [$cup->id]) }}">{{ $cup->name }}</a>
+                                </td>
+                                <td>{{ $cup->lastEventDate }}</td>
+                                <td>
+                                    @foreach($cup->groups as $group)
+                                        @php
+                                        @endphp
+                                        <x-badge name="{{ $group->name }}"
+                                                 url="{{ action(ShowCupTableAction::class, [$cup->id, $group->id]) }}"
+                                        />
+                                    @endforeach
+                                </td>
+                                @auth
+                                    <td>
+                                        <x-impression :impression="$cup->created"/>
+                                    </td>
+                                    <td>
+                                        <x-impression :impression="$cup->updated"/>
+                                    </td>
+                                @endauth
+                                <td>
+                                    <x-button text="app.cup.table" color="secondary" icon="bi-table"
+                                              url="{{ action(ShowCupTableAction::class, [$cup->id, $cup->groups[0]->id]) }}"/>
+                                    @auth
+                                        <x-edit-button
+                                                url="{{ action(ShowEditCupFormAction::class, [$cup->id]) }}"/>
+                                        <x-modal-button modal-id="deleteModal{{ $cup->id }}"/>
+                                    @endauth
+                                </td>
                             </tr>
-{{--                        @endforeach--}}
+                        @endforeach
                         </tbody>
                     </table>
                 @endif
             </div>
         </div>
     </div>
-{{--    @foreach ($cups as $cup)--}}
-{{--        <x-modal modal-id="deleteModal{{ $cup->id }}"--}}
-{{--                 url="{{ action(DeleteCupAction::class, [$cup->id]) }}"--}}
-{{--        />--}}
-{{--    @endforeach--}}
+    @foreach ($cups as $cup)
+        <x-modal modal-id="deleteModal{{ $cup->id }}"
+                 url="{{ action(DeleteCupAction::class, [$cup->id]) }}"
+        />
+    @endforeach
 @endsection
 
 @section('table_extracted_columns', '[0]')
