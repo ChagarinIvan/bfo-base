@@ -24,6 +24,7 @@ final readonly class ListCupService
 
         foreach ($this->cups->byCriteria($command->criteria())->all() as $cup) {
             $viewCup = $this->assembler->toViewCupDto($cup);
+            dump($viewCup);
             $cups[] = $viewCup;
         }
 
