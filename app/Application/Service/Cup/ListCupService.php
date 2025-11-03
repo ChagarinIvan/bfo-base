@@ -22,6 +22,7 @@ final readonly class ListCupService
     public function execute(ListCup $command): array
     {
         $all = $this->cups->byCriteria($command->criteria())->all();
+        dd($all[8]);
         $views = [];
 
         for ($i = 0; $i < 9; $i++) {
