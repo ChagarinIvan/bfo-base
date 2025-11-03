@@ -26,7 +26,13 @@ final readonly class ListCupService
 
         for ($i = 1; $i <= 13; $i++) {
             dump($i);
-            $views[$i] = $this->assembler->toViewCupDto($all[$i]);
+            try {
+                $views[$i] = $this->assembler->toViewCupDto($all[$i]);
+            } catch (\Throwable $e) {
+                dump("ERROR on index $i: " . $e::class . ' — ' . $e->getMessage());
+                dump($all[$i]);
+                break;
+            }
             dump($views[$i]->name);
         }
 
