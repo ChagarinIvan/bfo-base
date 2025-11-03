@@ -22,6 +22,6 @@ final readonly class ListCupService
         return array_map(
             $this->assembler->toViewCupDto(...),
             $this->cups->byCriteria($command->criteria())->all(),
-        )
+        );
     }
 }
