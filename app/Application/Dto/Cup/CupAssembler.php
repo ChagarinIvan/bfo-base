@@ -30,7 +30,6 @@ final readonly class CupAssembler
     public function toViewCupDto(Cup $cup): ViewCupDto
     {
         $eventCriteria = new Criteria(['cupId' => $cup->id], ['date' => 'desc']);
-        dd($cup);
 
         return new ViewCupDto(
             id: (string) $cup->id,
