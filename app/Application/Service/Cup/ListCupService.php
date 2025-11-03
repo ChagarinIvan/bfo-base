@@ -8,6 +8,7 @@ use App\Application\Dto\Cup\CupAssembler;
 use App\Application\Dto\Cup\ViewCupDto;
 use App\Domain\Cup\CupRepository;
 use function array_map;
+use function Laravel\Prompts\form;
 
 final readonly class ListCupService
 {
@@ -21,7 +22,12 @@ final readonly class ListCupService
     public function execute(ListCup $command): array
     {
         $all = $this->cups->byCriteria($command->criteria())->all();
+        $views = [];
 
-        return [$this->assembler->toViewCupDto(array_shift($all))];
+        for ($i = 0; $i < 2; $i++) {
+            $views[] = $this->assembler->toViewCupDto($all[$i]);
+        }
+
+        return $views;
     }
 }
