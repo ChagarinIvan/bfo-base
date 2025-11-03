@@ -17,12 +17,12 @@ final readonly class ViewCupDto
         public string $type,
         /** @var ViewCupGroupDto[] */
         public array $groups,
-//        /** @var ViewCupEventDto[] */
-//        public array $cupEvents,
         public string $lastEventDate,
         public bool $visible,
         public ImpressionDto $created,
         public ImpressionDto $updated,
+        /** @var ViewCupEventDto[] */
+        public array $cupEvents = [],
     ) {
     }
 }

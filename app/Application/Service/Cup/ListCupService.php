@@ -19,21 +19,9 @@ final readonly class ListCupService
     /** @return ViewCupDto[] */
     public function execute(ListCup $command): array
     {
-        $all = $this->cups->byCriteria($command->criteria())->all();
-        $views = [];
-
-        foreach ($all as $i => $cup) {
-            dump($i);
-            try {
-                $views[] = $this->assembler->toViewCupDto($cup);
-            } catch (\Throwable $e) {
-                dump("ERROR on index $i: " . $e::class . ' — ' . $e->getMessage());
-                dump($cup);
-                break;
-            }
-            dump($views[$i]->name);
-        }
-
-        return $views;
+        return array_map(
+            $this->assembler->toViewCupDto(...),
+            $this->cups->byCriteria($command->criteria())->all(),
+        )
     }
 }
