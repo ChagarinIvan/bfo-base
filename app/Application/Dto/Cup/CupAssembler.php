@@ -30,6 +30,7 @@ final readonly class CupAssembler
     public function toViewCupDto(Cup $cup): ViewCupDto
     {
         $eventCriteria = new Criteria(['cupId' => $cup->id], ['date' => 'desc']);
+        dump($cup);
 
         return new ViewCupDto(
             id: (string) $cup->id,
@@ -37,12 +38,12 @@ final readonly class CupAssembler
             eventsCount: (string) $cup->events_count,
             year: $cup->year->value,
             type: $cup->type->value,
-            groups: $this->toViewCupGroupsDto($cup),
-            cupEvents: $cup->events->map($this->toViewCupEventDto(...))->all(),
-            lastEventDate: $this->events->oneByCriteria($eventCriteria)?->date->format('Y-m-d') ?? '',
-            visible: $cup->visible,
-            created: $this->authAssembler->toImpressionDto($cup->created),
-            updated: $this->authAssembler->toImpressionDto($cup->updated),
+//            groups: $this->toViewCupGroupsDto($cup),
+//            cupEvents: $cup->events->map($this->toViewCupEventDto(...))->all(),
+//            lastEventDate: $this->events->oneByCriteria($eventCriteria)?->date->format('Y-m-d') ?? '',
+//            visible: $cup->visible,
+//            created: $this->authAssembler->toImpressionDto($cup->created),
+//            updated: $this->authAssembler->toImpressionDto($cup->updated),
         );
     }
 
