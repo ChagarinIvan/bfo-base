@@ -22,13 +22,13 @@ final readonly class ListCupService
         $all = $this->cups->byCriteria($command->criteria())->all();
         $views = [];
 
-        for ($i = 1; $i <= 13; $i++) {
+        foreach ($all as $i => $cup) {
             dump($i);
             try {
-                $views[$i] = $this->assembler->toViewCupDto($all[$i]);
+                $views[] = $this->assembler->toViewCupDto($cup);
             } catch (\Throwable $e) {
                 dump("ERROR on index $i: " . $e::class . ' — ' . $e->getMessage());
-                dump($all[$i]);
+                dump($cup);
                 break;
             }
             dump($views[$i]->name);
