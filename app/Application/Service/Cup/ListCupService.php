@@ -24,7 +24,7 @@ final readonly class ListCupService
         $all = $this->cups->byCriteria($command->criteria())->all();
         $views = [];
 
-        for ($i = 0; $i < 2; $i++) {
+        for ($i = 0; $i < 4; $i++) {
             $views[] = $this->assembler->toViewCupDto($all[$i]);
         }
 
