@@ -15,8 +15,8 @@ final readonly class ViewCupDto
         public string $eventsCount,
         public int $year,
         public string $type,
-//        /** @var ViewCupGroupDto[] */
-//        public array $groups,
+        /** @var ViewCupGroupDto[] */
+        public array $groups,
 //        /** @var ViewCupEventDto[] */
 //        public array $cupEvents,
         public string $lastEventDate,

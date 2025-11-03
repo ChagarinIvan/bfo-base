@@ -37,7 +37,7 @@ final readonly class CupAssembler
             eventsCount: (string) $cup->events_count,
             year: $cup->year->value,
             type: $cup->type->value,
-//            groups: $this->toViewCupGroupsDto($cup),
+            groups: $this->toViewCupGroupsDto($cup),
 //            cupEvents: $cup->events->map($this->toViewCupEventDto(...))->all(),
             lastEventDate: $this->events->oneByCriteria($eventCriteria)?->date->format('Y-m-d') ?? '',
             visible: $cup->visible,
