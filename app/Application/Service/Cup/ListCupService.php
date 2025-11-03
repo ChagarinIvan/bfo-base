@@ -25,7 +25,8 @@ final readonly class ListCupService
         $views = [];
 
         for ($i = 1; $i <= 9; $i++) {
-            $views[] = $this->assembler->toViewCupDto($all[$i]);
+            $views[$i] = $this->assembler->toViewCupDto($all[$i]);
+            dump($views[$i]->name);
         }
 
         return $views;
