@@ -19,8 +19,8 @@ final readonly class ViewCupDto
 //        public array $groups,
 //        /** @var ViewCupEventDto[] */
 //        public array $cupEvents,
-//        public string $lastEventDate,
-//        public bool $visible,
+        public string $lastEventDate,
+        public bool $visible,
         public ImpressionDto $created,
         public ImpressionDto $updated,
     ) {
