@@ -94,7 +94,7 @@ class NewYouthCupType extends MasterCupType
         ;
 
         $mainGroupExists = $mainGroupId && $cupEventProtocolLines->has($mainGroupId->id);
-dd($mainGroupExists);
+
         foreach ($cupEventProtocolLines as $distanceId => $groupProtocolLines) {
             /** @var Collection $groupProtocolLines */
             $ids = $groupProtocolLines->pluck('person_id');
