@@ -46,14 +46,12 @@ class GroupsService
      */
     public function getGroups(array $groupsNames): Collection
     {
-        dump($groupsNames);
         $groups = new Collection();
         foreach ($groupsNames as $groupName) {
             $searchedGroups = $this->groupsRepository->searchGroups($groupName);
             $groups = $groups->merge($searchedGroups);
         }
 
-        dump($groups);
         return $groups;
     }
 
