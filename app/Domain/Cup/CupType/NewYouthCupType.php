@@ -81,16 +81,18 @@ class NewYouthCupType extends MasterCupType
         );
 
         $cupEventProtocolLines = $cupEventProtocolLines->groupBy('distance.group_id');
+        $groupIds = $cupEventProtocolLines->keys();
         $validGroups = $eventGroupsId->flip();
         /** @var Collection<string, mixed> $validGroups */
         $cupEventProtocolLines = $cupEventProtocolLines->intersectByKeys($validGroups);
+        $cupEventProtocolLines = $cupEventProtocolLines->flatten(1)->groupBy('distance_id');
 
         $haystack = self::GROUPS_MAP[$mainGroup->id()];
         $mainGroups = $this->getCupEventGroups($mainGroup)
             ->filter(static fn (Group $group) => in_array($group->name, $haystack, true))
         ;
 
-        $mainGroupExists = $mainGroups->pluck('id')->intersect($cupEventProtocolLines->keys())->isNotEmpty();
+        $mainGroupExists = $mainGroups->pluck('id')->intersect($groupIds)->isNotEmpty();
         dump($mainGroupExists);
         foreach ($cupEventProtocolLines as $distanceId => $groupProtocolLines) {
             /** @var Collection $groupProtocolLines */
