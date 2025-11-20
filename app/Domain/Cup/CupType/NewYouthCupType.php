@@ -92,6 +92,9 @@ class NewYouthCupType extends MasterCupType
             ->filter(static fn (Group $group) => in_array($group->name, $haystack, true))
             ->first()
         ;
+        dump($haystack);
+        dump($mainGroupId);
+        dd($cupEventProtocolLines->keys());
 
         $mainGroupExists = $mainGroupId && $cupEventProtocolLines->has($mainGroupId->id);
 
