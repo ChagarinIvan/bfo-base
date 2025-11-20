@@ -90,7 +90,7 @@ class NewYouthCupType extends MasterCupType
             ->filter(static fn (Group $group) => in_array($group->name, $haystack, true))
         ;
 
-        $mainGroupExists = $mainGroupId && $mainGroups->intersect($cupEventProtocolLines->keys())->isNotEmpty();
+        $mainGroupExists = $mainGroups->pluck('id')->intersect($cupEventProtocolLines->keys())->isNotEmpty();
 
         foreach ($cupEventProtocolLines as $distanceId => $groupProtocolLines) {
             /** @var Collection $groupProtocolLines */
