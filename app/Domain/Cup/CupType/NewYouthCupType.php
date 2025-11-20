@@ -91,7 +91,8 @@ class NewYouthCupType extends MasterCupType
         ;
         dump($haystack);
         dump($mainGroups);
-        dump($mainGroups->intersect($cupEventProtocolLines->keys()));
+        dump($mainGroups->pluck('id'));
+        dump($mainGroups->pluck('id')->intersect($cupEventProtocolLines->keys()));
         dd($cupEventProtocolLines->keys());
 
         $mainGroupExists = $mainGroupId && $mainGroups->intersect($cupEventProtocolLines->keys());
