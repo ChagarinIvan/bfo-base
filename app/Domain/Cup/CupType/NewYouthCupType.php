@@ -91,13 +91,14 @@ class NewYouthCupType extends MasterCupType
         ;
 
         $mainGroupExists = $mainGroups->pluck('id')->intersect($cupEventProtocolLines->keys())->isNotEmpty();
-
+        dump($mainGroupExists);
         foreach ($cupEventProtocolLines as $distanceId => $groupProtocolLines) {
             /** @var Collection $groupProtocolLines */
             $ids = $groupProtocolLines->pluck('person_id');
             $eventGroupResults = $this->calculateDistance($cupEvent, $distanceId, $mainGroupExists ? null : $ids);
             $eventGroupResults = $eventGroupResults->filter(static fn (CupEventPoint $cupEventResult) => $ids->contains($cupEventResult->protocolLine->id));
             $results = $results->merge($eventGroupResults->intersectByKeys($groupProtocolLines->keyBy('person_id')));
+            dump($results);
         }
 
         return $results->sortByDesc(static fn (CupEventPoint $cupEventResult) => $cupEventResult->points);
