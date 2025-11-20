@@ -33,6 +33,11 @@ class GroupsRepository
         return Group::whereName($query)->first();
     }
 
+    public function searchGroups(string $query): Collection
+    {
+        return Group::whereName($query)->get();
+    }
+
     public function storeGroup(Group $group): Group
     {
         $group->save();
