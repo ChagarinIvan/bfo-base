@@ -43,22 +43,12 @@ class RankService
     public function __construct(
         private readonly RankRepositoryInterface $ranks,
         private readonly RanksRepository $ranksRepository,
-        private readonly ProtocolLineService $protocolLineService,
         private readonly ViewPersonService $viewPersonService,
         private readonly JuniorRankAgeValidator $juniorRankAgeChecker,
         private readonly ActivePersonRankService $activePersonRankService,
         private readonly RankFactory $factory,
         private readonly PreviousRanksFinishDateUpdater $updater,
     ) {
-    }
-
-    public function getPersonRanks(int $personId): Collection
-    {
-        $filter = new RanksFilter();
-        $filter->personId = $personId;
-        $filter->isOrderDescByFinishDate = true;
-
-        return $this->ranksRepository->getRanksList($filter);
     }
 
     public function reFillRanksForPerson(int $personId): void
@@ -69,12 +59,11 @@ class RankService
             return;
         }
 
-        $ranks = $this->getPersonRanks($personId);
-        $ranks->each($this->ranks->delete(...));
+        $criteria = new Criteria(['personId' => $personId], ['eventDate' => 'asc']);
+        $this->ranks->deleteByCriteria($criteria);
 
-        foreach ($this->protocolLineService->getPersonProtocolLines($personId) as $protocolLine) {
+        foreach ($this->ranks->byCriteria($criteria) as $protocolLine) {
             /** @var ProtocolLine $protocolLine */
-//            //dump($protocolLine->distance->event->name);
             $this->fillRank($protocolLine);
         }
     }

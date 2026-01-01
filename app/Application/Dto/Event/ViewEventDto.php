@@ -26,6 +26,8 @@ final readonly class ViewEventDto
         public array $cups,
         /** @var Flag[] $flags */
         public array $flags,
+        /** @var Distance[] $flags */
+        public array $distances,
         public ImpressionDto $created,
         public ImpressionDto $updated,
     ) {

@@ -26,7 +26,7 @@ final class UpdateEventDto extends AbstractDto
         $this->info = new EventInfoDto();
         $this->info = $this->info->fromArray($data);
         $this->protocol = new EventProtocolDto();
-        $this->protocol = array_key_exists('protocol', $data) || array_key_exists('protocol', $data)
+        $this->protocol = array_key_exists('protocol', $data) || array_key_exists('url', $data)
             ? $this->protocol->fromArray($data)
             : null;
 

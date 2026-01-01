@@ -14,7 +14,6 @@ use Illuminate\Routing\Controller as BaseController;
 class UpdateEventAction extends BaseController
 {
     use EventAction;
-    use UploadHelper;
 
     public function __invoke(
         string $id,
