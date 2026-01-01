@@ -16,6 +16,8 @@ final readonly class ProtocolLineRankActivatedHandler implements ShouldQueue
 
     public function handle(ProtocolLineRankActivated $event): void
     {
-        $this->service->reFillRanksForPerson($event->protocolLine->person_id);
+        if ($event->protocolLine->person_id) {
+            $this->service->reFillRanksForPerson($event->protocolLine->person_id);
+        }
     }
 }
