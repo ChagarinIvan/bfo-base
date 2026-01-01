@@ -8,7 +8,8 @@
     use App\Bridge\Laravel\Http\Controllers\Flags\ShowFlagEventsAction;
     use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonAction;
     use App\Bridge\Laravel\Http\Controllers\Person\ShowSetPersonToProtocolLineAction;
-    use App\Domain\Club\Club;use App\Domain\Distance\Distance;
+    use App\Domain\Club\Club;
+    use App\Domain\Distance\Distance;
     use App\Domain\Event\Event;
     use App\Domain\ProtocolLine\ProtocolLine;
     use App\Services\ClubsService;
@@ -16,14 +17,12 @@
     /**
      * @var ViewEventDto $event
      * @var Distance $selectedDistance
-     * @var Collection $lines;
-     * @var bool $withPoints;
-     * @var bool $withVk;
-     * @var Collection|Club[] $clubs;
+     * @var Collection $lines
+     * @var bool $withPoints
+     * @var bool $withVk
+     * @var Collection|Club[] $clubs
      */
 @endphp
-
-@dd($event->competitionId)
 
 @extends('layouts.app')
 
