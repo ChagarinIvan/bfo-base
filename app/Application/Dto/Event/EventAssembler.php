@@ -16,9 +16,6 @@ final readonly class EventAssembler
 
     public function toViewEventDto(Event $event): ViewEventDto
     {
-        dump($event->competition_id);
-        dump($event);
-
         return new ViewEventDto(
             id: (string) $event->id,
             competitionId: (string) $event->competition_id,
