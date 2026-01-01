@@ -61,7 +61,7 @@ class RankService
             return;
         }
 
-        $criteria = new Criteria(['personId' => $personId], ['events.date' => 'asc']);
+        $criteria = new Criteria(['personId' => $personId], ['eventDate' => 'asc']);
         $this->ranks->deleteByCriteria($criteria);
 
         foreach ($this->protocolLines->byCriteria($criteria) as $protocolLine) {

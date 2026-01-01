@@ -107,7 +107,7 @@ class ProtocolLineIdentService
         $protocolLines = $protocolLines->keyBy('id');
         $notIdentedLines = $notIdentedLines->keyBy('id');
         $identedLines = ProtocolLine::find($protocolLines->diffKeys($notIdentedLines)->keys());
-        Log::info(sprintf('Idented %d lines.', $notIdentedLines->count()));
+        Log::info(sprintf('Idented %d lines.', $identedLines->count()));
         // надо для определившихся добавить разряды
         foreach ($identedLines as $line) {
             Log::info(sprintf('Re fill person "%d" rank.', $line->person_id));
