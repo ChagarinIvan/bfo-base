@@ -39,7 +39,7 @@ final class UpdateEventHandler extends ParseProtocolHandler implements ShouldQue
     {
         if ($systemEvent->withProtocolUpdate) {
             $this->cleanUp($systemEvent->event);
-            $this->parse($systemEvent->event->file, $systemEvent->event->id);
+//            $this->parse($systemEvent->event->file, $systemEvent->event->id);
         }
     }
 }

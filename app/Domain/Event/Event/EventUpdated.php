@@ -11,6 +11,5 @@ final readonly class EventUpdated extends AggregatedEvent
 {
     public function __construct(public Event $event, public bool $withProtocolUpdate)
     {
-        dd($withProtocolUpdate);
     }
 }
