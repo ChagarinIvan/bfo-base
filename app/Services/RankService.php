@@ -9,7 +9,6 @@ use App\Application\Service\Person\ViewPerson;
 use App\Application\Service\Person\ViewPersonService;
 use App\Application\Service\Rank\ActivePersonRank;
 use App\Application\Service\Rank\ActivePersonRankService;
-use App\Application\Service\Rank\RefillPersonRanks;
 use App\Domain\Event\Event;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\ProtocolLine\ProtocolLineRepository;

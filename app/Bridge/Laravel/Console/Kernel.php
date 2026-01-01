@@ -49,7 +49,7 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command(SimpleIndentCommand::class, ['userId' => User::SYSTEM_USER_ID])->dailyAt('01:00')->runInBackground();
         $schedule->command(PruneInactivePersonsCommand::class, ['userId' => User::SYSTEM_USER_ID])->dailyAt('02:00')->runInBackground();
-        $schedule->command(StartBigIdentCommand::class, ['userId' => User::SYSTEM_USER_ID])->monthly()->at('03:00')->runInBackground();
+        $schedule->command(StartBigIdentCommand::class, ['userId' => User::SYSTEM_USER_ID])->dailyAt('03:00')->runInBackground();
         $schedule->command(RankValidationCommand::class, ['userId' => User::SYSTEM_USER_ID])->weekly()->at('02:00')->runInBackground();
         //        $schedule->command(SyncPersonsCommand::class)->weekly()->runInBackground();
 
