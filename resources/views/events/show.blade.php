@@ -1,6 +1,6 @@
 @php
     use App\Bridge\Laravel\Http\Controllers\Club\ShowClubAction;
-    use App\Application\Dto\Event\EventDto;
+    use App\Application\Dto\Event\ViewEventDto;
     use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionAction;
     use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupAction;
     use App\Bridge\Laravel\Http\Controllers\Event\ShowEditEventFormAction;
@@ -15,7 +15,7 @@
     use App\Services\ClubsService;
     use Illuminate\Support\Collection;
     /**
-     * @var EventDto $event
+     * @var ViewEventDto $event
      * @var Collection|Group[] $groupAnchors
      * @var Distance $selectedDistance
      * @var Collection $lines;
