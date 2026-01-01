@@ -23,6 +23,8 @@
      */
 @endphp
 
+@dd($event->competitionId)
+
 @extends('layouts.app')
 
 @section('title', $event->name.' ('.$event->date.')')
