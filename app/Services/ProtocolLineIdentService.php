@@ -8,6 +8,7 @@ use App\Domain\PersonPrompt\PersonPrompt;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Models\IdentLine;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use Mav\Slovo\Phonetics;
 use function in_array;
 use function levenshtein;
@@ -102,11 +103,14 @@ class ProtocolLineIdentService
     {
         // пробуем идентифицировать людей из нового протокола прямым подобием идентификационных строк
         $notIdentedLines = $this->simpleIdent($protocolLines);
+        Log::info(sprintf('Not idented %d lines.', $notIdentedLines->count()));
         $protocolLines = $protocolLines->keyBy('id');
         $notIdentedLines = $notIdentedLines->keyBy('id');
         $identedLines = ProtocolLine::find($protocolLines->diffKeys($notIdentedLines)->keys());
+        Log::info(sprintf('Idented %d lines.', $notIdentedLines->count()));
         // надо для определившихся добавить разряды
         foreach ($identedLines as $line) {
+            Log::info(sprintf('Re fill person "%d" rank.', $line->person_id));
             /** @var ProtocolLine $line */
             $this->rankService->reFillRanksForPerson($line->person_id);
         }

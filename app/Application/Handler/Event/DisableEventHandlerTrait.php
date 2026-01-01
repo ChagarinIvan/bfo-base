@@ -10,12 +10,14 @@ use App\Services\CupsService;
 use App\Services\DistanceService;
 use App\Services\ProtocolLineService;
 use App\Services\RankService;
+use Illuminate\Support\Facades\Log;
 
 trait DisableEventHandlerTrait
 {
     protected function cleanUp(Event $event): void
     {
-        dump('Cleaning up event '.$event->name);
+        Log::info('Cleaning up event '.$event->name);
+
         $this->distanceService->deleteEventDistances($event);
         $this->protocolLineService->deleteEventLines($event);
         $this->ranksService->deleteEventRanks($event);
