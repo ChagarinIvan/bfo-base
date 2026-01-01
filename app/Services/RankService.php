@@ -11,6 +11,7 @@ use App\Application\Service\Rank\ActivePersonRank;
 use App\Application\Service\Rank\ActivePersonRankService;
 use App\Domain\Event\Event;
 use App\Domain\ProtocolLine\ProtocolLine;
+use App\Domain\ProtocolLine\ProtocolLineRepository;
 use App\Domain\Rank\Factory\RankFactory;
 use App\Domain\Rank\Factory\RankInput;
 use App\Domain\Rank\JuniorRankAgeValidator;
@@ -43,6 +44,7 @@ class RankService
     public function __construct(
         private readonly RankRepositoryInterface $ranks,
         private readonly RanksRepository $ranksRepository,
+        private readonly ProtocolLineRepository $protocolLines,
         private readonly ViewPersonService $viewPersonService,
         private readonly JuniorRankAgeValidator $juniorRankAgeChecker,
         private readonly ActivePersonRankService $activePersonRankService,
@@ -62,7 +64,7 @@ class RankService
         $criteria = new Criteria(['personId' => $personId], ['events.date' => 'asc']);
         $this->ranks->deleteByCriteria($criteria);
 
-        foreach ($this->ranks->byCriteria($criteria) as $protocolLine) {
+        foreach ($this->protocolLines->byCriteria($criteria) as $protocolLine) {
             /** @var ProtocolLine $protocolLine */
             $this->fillRank($protocolLine);
         }
