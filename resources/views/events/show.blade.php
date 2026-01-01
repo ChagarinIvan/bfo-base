@@ -10,13 +10,11 @@
     use App\Bridge\Laravel\Http\Controllers\Person\ShowSetPersonToProtocolLineAction;
     use App\Domain\Club\Club;use App\Domain\Distance\Distance;
     use App\Domain\Event\Event;
-    use App\Domain\Group\Group;
     use App\Domain\ProtocolLine\ProtocolLine;
     use App\Services\ClubsService;
     use Illuminate\Support\Collection;
     /**
      * @var ViewEventDto $event
-     * @var Collection|Group[] $groupAnchors
      * @var Distance $selectedDistance
      * @var Collection $lines;
      * @var bool $withPoints;
@@ -33,7 +31,7 @@
     <div class="row mb-3">
         <div class="col-12">
             <h4>
-                <a href="{{ action(ShowCompetitionAction::class, [$event->competitionId]) }}">{{ $event->competitionName }}</a>
+                <a href="{{ action(ShowCompetitionAction::class, ['competitionId' => $event->competitionId]) }}">{{ $event->competitionName }}</a>
             </h4>
         </div>
     </div>
