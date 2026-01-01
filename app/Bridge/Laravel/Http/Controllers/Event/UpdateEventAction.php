@@ -21,7 +21,6 @@ class UpdateEventAction extends BaseController
         UpdateEventService $service,
         UserId $userId,
     ): RedirectResponse {
-        dd($eventDto);
         $event = $service->execute(new UpdateEvent($id, $eventDto, $userId));
 
         return $this->redirector->action(ShowEventAction::class, [$event->id]);
