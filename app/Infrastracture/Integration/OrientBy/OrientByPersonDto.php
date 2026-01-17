@@ -6,6 +6,7 @@ namespace App\Infrastracture\Integration\OrientBy;
 
 use Carbon\Carbon;
 use Carbon\Exceptions\InvalidFormatException;
+use Exception;
 use InvalidArgumentException;
 use function preg_split;
 
@@ -54,11 +55,9 @@ final readonly class OrientByPersonDto
         }
 
         foreach (['d.m.Y H:i:s', 'd.m.Y'] as $format) {
-            $date = Carbon::createFromFormat($format, $this->paymentDate);
-
-            if ($date !== false) {
-                return $date;
-            }
+            try {
+                return Carbon::createFromFormat($format, $this->paymentDate);
+            } catch (Exception) {}
         }
 
         throw new InvalidArgumentException("Неверный формат даты: $this->paymentDate");

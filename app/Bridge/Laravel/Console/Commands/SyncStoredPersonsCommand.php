@@ -34,7 +34,7 @@ class SyncStoredPersonsCommand extends Command
         $this->logger->info('Start.');
         $userId = (int) $this->argument('user_id');
 
-//        try {
+        try {
             for ($i = 0; $i < 6000; $i++) {
                 $path = '/sync/' . $i;
                 $person = $this->storage->get($path);
@@ -49,9 +49,9 @@ class SyncStoredPersonsCommand extends Command
                 $this->logger->info('Delete path.');
                 $this->storage->delete($path);
             }
-//        } catch (Throwable $e) {
-//            $this->logger->error($e->getMessage());
-//        }
+        } catch (Throwable $e) {
+            $this->logger->error($e->getMessage());
+        }
 
         $this->logger->info('Success.');
     }
