@@ -58,11 +58,11 @@ class OrientBySyncService
         $this->logger->info(sprintf("Found %d persons.", count($indicatedPersons)));
 
         foreach ($personsPrompts as $personsPrompt => $personDto) {
-            $this->logger->info("Process $personDto->name", ['dto' => $personDto]);
+            $this->logger->info("Process", ['dto' => $personDto]);
 
             if (isset($indicatedPersons[$personsPrompt])) {
                 $personId = (int)$indicatedPersons[$personsPrompt];
-                $this->logger->info("Person found: $personId");
+                $this->logger->info("Person found", ['id' => $personId]);
                 $person = $this->personsService->getPerson($personId);
                 $logPerson = $person->replicate();
 
