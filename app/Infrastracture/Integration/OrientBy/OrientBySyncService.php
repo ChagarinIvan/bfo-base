@@ -70,19 +70,19 @@ class OrientBySyncService
 
                 $lastname = $personDto->getLastName();
                 if ($person->lastname !== $lastname) {
-                    $this->logger->info(
-                        "update lastname: {$logPerson->lastname} => {$lastname}",
-                        ['person_id' => $personId]
-                    );
+//                    $this->logger->info(
+//                        "update lastname: {$logPerson->lastname} => {$lastname}",
+//                        ['person_id' => $personId]
+//                    );
                     $person->lastname = $lastname;
                 }
 
                 $firstname = $personDto->getFirstName();
                 if ($person->firstname !== $firstname) {
-                    $this->logger->info(
-                        "update firstname: {$logPerson->firstname} => {$firstname}",
-                        ['person_id' => $personId]
-                    );
+//                    $this->logger->info(
+//                        "update firstname: {$logPerson->firstname} => {$firstname}",
+//                        ['person_id' => $personId]
+//                    );
 //                    continue;
 //                    $person->firstname = $firstname;
                 }
@@ -98,7 +98,7 @@ class OrientBySyncService
 //                }
 
                 if ($personDto->paid && $personDto->paymentDate()) {
-                    $this->logger->info('update payment: ', ['person_id' => $personId]);
+//                    $this->logger->info('update payment: ', ['person_id' => $personId]);
 
                     $this->createOrUpdatePersonPaymentsService->execute(new CreateOrUpdatePersonPayments(
                         new PersonPaymentDto((string) $personId, (string) $personDto->paymentDate()->year, $personDto->paymentDate()->format('Y-m-d')),
@@ -107,18 +107,19 @@ class OrientBySyncService
                 }
 
                 if ($this->setClub($person, $personDto)) {
-                    $this->logger->info(
-                        "update club: " . ($logPerson->club->name ?? '') . " => {$personDto->club}",
-                        ['person_id' => $personId]
-                    );
+//                    $this->logger->info(
+//                        "update club: " . ($logPerson->club->name ?? '') . " => {$personDto->club}",
+//                        ['person_id' => $personId]
+//                    );
                 }
 
                 $person->updated = new Impression($this->clock->now(), $userId->id);
                 $person->save();
+                $this->logger->info('Update person.');
             } else {
-                $this->logger->info(
-                    "new person: {$personDto->getFirstName()} {$personDto->getLastName()}",
-                );
+//                $this->logger->info(
+//                    "new person: {$personDto->getFirstName()} {$personDto->getLastName()}",
+//                );
 
                 $person = new Person();
                 $person->from_base = true;
@@ -140,8 +141,11 @@ class OrientBySyncService
                         $userId,
                     ));
                 }
+
+                $this->logger->info('Save person.');
             }
         }
+
         $this->logger->info('Finish synchronisation.');
     }
 

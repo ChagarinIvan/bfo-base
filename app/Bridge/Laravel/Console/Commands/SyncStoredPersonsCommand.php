@@ -46,7 +46,7 @@ class SyncStoredPersonsCommand extends Command
                 $person = unserialize($person);
                 $this->logger->info('Process ' . $person->name);
                 $this->service->synchronize([$person], new UserId($userId));
-                $this->logger->info('Delete ' . $path);
+                $this->logger->info('Delete path.');
                 $this->storage->delete($path);
             }
         } catch (Throwable $e) {
