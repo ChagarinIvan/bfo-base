@@ -88,6 +88,12 @@ class AlbatrosTimingParser extends AbstractParser
                     if ($points === 'в/к') {
                         $protocolLine['vk'] = true;
                     }
+                    if (preg_match('#\d?\d:\d\d:\d\d#', $points)) {
+                        $points = $lineData[$fieldsCount - $indent++];
+                        if ($points === 'в/к') {
+                            $protocolLine['vk'] = true;
+                        }
+                    }
                     $protocolLine['points'] = is_numeric($points) ? (int)$points : null;
                 }
                 $completeRank = $lineData[$fieldsCount - $indent];
