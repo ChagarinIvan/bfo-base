@@ -174,10 +174,12 @@ class ProtocolLineIdentService
      */
     public function pushIdentLines(Collection $protocolLines): void
     {
-        /** @var ProtocolLine $line */
+        Log::info(sprintf('pushIdentLines %d.', $protocolLines->count()));
+
         foreach ($protocolLines as $line) {
             $identLinesCount = IdentLine::whereIdentLine($line)->count();
-            Log::info(sprintf('Line added %s %s lines.', $line->lastname, $line->firstname));
+            Log::info(sprintf('Line added %s.', $line));
+
             if ($identLinesCount === 0) {
                 $ident = new IdentLine();
                 $ident->ident_line = $line;
