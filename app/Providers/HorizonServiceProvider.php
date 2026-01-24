@@ -12,7 +12,7 @@ class HorizonServiceProvider extends HorizonApplicationServiceProvider
         parent::boot();
 
         Horizon::auth(function () {
-            return auth()->check() && auth()->id() === 1;
+            return auth()->check();
         });
     }
 }
