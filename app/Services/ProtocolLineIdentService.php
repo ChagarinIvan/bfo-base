@@ -6,6 +6,7 @@ namespace App\Services;
 
 use App\Domain\PersonPrompt\PersonPrompt;
 use App\Domain\ProtocolLine\ProtocolLine;
+use App\Jobs\RefillPersonRankJob;
 use App\Models\IdentLine;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
@@ -112,7 +113,7 @@ class ProtocolLineIdentService
         foreach ($identedLines as $line) {
             Log::info(sprintf('Re fill person "%d" rank.', $line->person_id));
             /** @var ProtocolLine $line */
-            $this->rankService->reFillRanksForPerson($line->person_id);
+            RefillPersonRankJob::dispatch($line->person_id);
         }
 
         // create ident line

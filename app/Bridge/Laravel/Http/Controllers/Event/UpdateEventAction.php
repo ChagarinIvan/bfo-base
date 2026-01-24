@@ -8,6 +8,7 @@ use App\Application\Dto\Auth\UserId;
 use App\Application\Dto\Event\UpdateEventDto;
 use App\Application\Service\Event\UpdateEvent;
 use App\Application\Service\Event\UpdateEventService;
+use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionAction;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller as BaseController;
 
@@ -23,6 +24,6 @@ class UpdateEventAction extends BaseController
     ): RedirectResponse {
         $event = $service->execute(new UpdateEvent($id, $eventDto, $userId));
 
-        return $this->redirector->action(ShowEventAction::class, [$event->id]);
+        return $this->redirector->action(ShowCompetitionAction::class, [$event->competitionId]);
     }
 }
