@@ -17,9 +17,19 @@ class DistanceRepository
      */
     public function findDistance(array $groupNames, int $eventId): ?Distance
     {
-        return Distance::selectRaw('distances.*')
-            ->join('groups', 'groups.id', '=', 'distances.group_id')
-            ->whereIn('groups.name', $groupNames)
+        $query = Distance::selectRaw('distances.*')->join('groups', 'groups.id', '=', 'distances.group_id');
+
+        if (str_contains(implode(array: $groupNames), '%')) {
+            $query = $query->where(function ($q) use ($groupNames) {
+                foreach ($groupNames as $name) {
+                    $q->orWhere('groups.name', 'like', $name);
+                }
+            });
+        } else {
+            $query = $query->whereIn('groups.name', $groupNames);
+        }
+
+        return $query
             ->whereEventId($eventId)
             ->first()
         ;
