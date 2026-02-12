@@ -19,7 +19,7 @@ class DistanceRepository
     {
         $query = Distance::selectRaw('distances.*')->join('groups', 'groups.id', '=', 'distances.group_id');
 
-        if (str_contains(implode(array: $groupNames), '%')) {
+        if (str_contains(implode('', $groupNames), '%')) {
             $query = $query->where(function ($q) use ($groupNames) {
                 foreach ($groupNames as $name) {
                     $q->orWhere('groups.name', 'like', $name);
