@@ -16,16 +16,16 @@ class ElkPathCup extends EliteCupType
     protected const GROUPS_MAP = [
         'M_0_Elite–M' => ['Elite–Mужчыны', 'EliteTrail-М', '%Elite-М'],
         'W_0_Elite–W' => ['Elite–Жанчыны', 'EliteTrail-Ж', '%Elite-Ж'],
-        'M_0_Short–M' => ['ShortTrail-М,15-34', 'Short–Mужчыны', '%Short-М'],
-        'W_0_Short–W' => ['ShortTrail-Ж,15-34', 'Short–Жанчыны', '%Short-Ж'],
-        'M_35_Short–M-35' => ['ShortTrail-М,35+'],
-        'W_35_Short–W-35' => ['ShortTrail-Ж,35+'],
+        'M_0_Short–M' => ['ShortTrail-М,15-34', 'Short–Mужчыны', '%Short-М%34'],
+        'W_0_Short–W' => ['ShortTrail-Ж,15-34', 'Short–Жанчыны', '%Short-Ж%34'],
+        'M_35_Short–M-35' => ['ShortTrail-М,35+', 'Short–M-35', '%Short-M%35%'],
+        'W_35_Short–W-35' => ['ShortTrail-Ж,35+', 'Short–M-35', '%Short-Ж%35%'],
         'M_0_Kids–M' => ['Kids–Хлопцы', 'KidsTrail-М', '%Kids-М'],
         'W_0_Kids–W' => ['Kids–Дзяўчыны', 'KidsTrail-Ж', '%Kids-Ж'],
         'M_0_Youth–M' => ['Youth–Хлопцы', 'YouthTrail-М', '%Youth-М'],
         'W_0_Youth–W' => ['Youth–Дзяўчыны', 'YouthTrail-Ж', '%Youth-Ж'],
-        'W_0_OpenTrail-W' => ['OpenTrail-Ж', 'Open-Дзяўчыны', '%Open-М'],
-        'M_0_OpenTrail-M' =>  ['OpenTrail-М', 'Open-Хлопцы', '%Open-Ж'],
+        'W_0_OpenTrail-W' => ['OpenTrail-Ж', 'Open-Дзяўчыны', '%Open-Ж'],
+        'M_0_OpenTrail-M' =>  ['OpenTrail-М', 'Open-Хлопцы', '%Open-М'],
     ];
 
     public function getNameKey(): string
