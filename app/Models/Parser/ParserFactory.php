@@ -14,6 +14,7 @@ class ParserFactory
         CsvListParser::class,
     ];
     private const PROTOCOL_PARSERS = [
+        SportOrgParser::class,
         ElkPathXlsxParser::class,
         XlsParser::class,
         OldObelarusNetXlsxParser::class,
