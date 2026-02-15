@@ -7,6 +7,7 @@ namespace App\Models\Parser;
 use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 use function count;
 use function file_put_contents;
@@ -26,7 +27,7 @@ class SportOrgParser extends AbstractParser
             return collect();
         }
 
-        info('matched');
+        Log::info('matched');
         preg_match('/var\s+Qualification\s*=\s*(\{.*?\});/s', $file, $m2);
         $qualifications = rtrim($m2[1], ';');
         // заменить одинарные кавычки на двойные

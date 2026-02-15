@@ -9,6 +9,7 @@ use App\Models\Parser\ParserFactory;
 use DOMDocument;
 use DOMXPath;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use RuntimeException;
 use function file_get_contents;
 
@@ -25,7 +26,7 @@ readonly class ParserService
             $this->groupsService->getAllGroupsWithout()->pluck('name'),
             $protocol->extension,
         );
-        info($parser::class);
+        Log::info('Parse class '.$parser::class);
 
         return $parser->parse($protocol->content);
     }
