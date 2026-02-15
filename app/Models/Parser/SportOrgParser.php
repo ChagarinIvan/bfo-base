@@ -26,6 +26,7 @@ class SportOrgParser extends AbstractParser
             return collect();
         }
 
+        info('matched');
         preg_match('/var\s+Qualification\s*=\s*(\{.*?\});/s', $file, $m2);
         $qualifications = rtrim($m2[1], ';');
         // заменить одинарные кавычки на двойные
