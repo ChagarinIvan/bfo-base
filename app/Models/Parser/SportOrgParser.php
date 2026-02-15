@@ -23,11 +23,7 @@ class SportOrgParser extends AbstractParser
 {
     public function parse(string $file): Collection
     {
-        if (!preg_match('/var\s+race\s*=\s*(\{.*?\});/s', $file, $m1)) {
-            return collect();
-        }
-
-        Log::info('matched');
+        preg_match('/var\s+race\s*=\s*(\{.*?\});/s', $file, $m1);
         preg_match('/var\s+Qualification\s*=\s*(\{.*?\});/s', $file, $m2);
         $qualifications = rtrim($m2[1], ';');
         // заменить одинарные кавычки на двойные

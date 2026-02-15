@@ -8,6 +8,7 @@ use App\Domain\Event\ProtocolStorage;
 use App\Services\ParserService;
 use App\Services\ProtocolLineIdentService;
 use App\Services\ProtocolLineService;
+use Exception;
 use Illuminate\Support\Facades\Log;
 
 abstract class ParseProtocolHandler
@@ -24,11 +25,16 @@ abstract class ParseProtocolHandler
     {
         Log::info('Parse protocol by path '.$path);
 
-        $protocol = $this->storage->get($path);
-        $lineList = $this->parser->parse($protocol);
-        Log::info(sprintf('Parsed %d lines.', $lineList->count()));
-        $lines = $this->protocolLineService->fillProtocolLines($eventId, $lineList);
-        Log::info(sprintf('Filled %d lines.', $lines->count()));
-        $this->identService->identPersons($lineList);
+        try {
+            $protocol = $this->storage->get($path);
+            $lineList = $this->parser->parse($protocol);
+            Log::info(sprintf('Parsed %d lines.', $lineList->count()));
+            $lines = $this->protocolLineService->fillProtocolLines($eventId, $lineList);
+            Log::info(sprintf('Filled %d lines.', $lines->count()));
+            $this->identService->identPersons($lineList);
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+        }
+
     }
 }
