@@ -23,7 +23,10 @@ class SportOrgParser extends AbstractParser
 {
     public function parse(string $file): Collection
     {
-        preg_match('/var\s+race\s*=\s*(\{.*?\});/s', $file, $m1);
+        if (!preg_match('/var\s+race\s*=\s*(\{.*?\});/s', $file, $m1)) {
+            return collect();
+        }
+
         preg_match('/var\s+Qualification\s*=\s*(\{.*?\});/s', $file, $m2);
         $qualifications = rtrim($m2[1], ';');
         // заменить одинарные кавычки на двойные
@@ -49,7 +52,9 @@ class SportOrgParser extends AbstractParser
 
         foreach ($groups as $group) {
             $serialNumber = 1;
-            foreach ($results->get($group['id']) as $result) {
+            $groupResults = $results->get($group['id'])->sortBy('result');
+
+            foreach ($groupResults as $result) {
                 $person = $persons->get($result['person_id']);
                 $group = $groups->get($person['group_id']);
                 $course = $courses->get($group['course_id']);
