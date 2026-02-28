@@ -66,12 +66,44 @@ final class SportOrgParserTest extends AbstractParser
                     ],
                 ],
             ],
+            [
+                '2026/20260221.html',
+                133,
+                [
+                    0 => [
+                        'Бильдюкевич',       // фамилия
+                        'Валерия',            // имя
+                        'КО «Случь»',  // клуб
+                        2014,               // год
+                        'Iю',               // разряд
+                        83,                  // номер
+                        '00:13:48',          // время
+                        1,                  // место
+                        null,               // выполненный разряд
+                        null,               // очки
+                    ],
+                    13 => [
+                        'Карпович',           // фамилия
+                        'Александра',               // имя
+                        'ГУДО "ЦТДиМ"',   // клуб
+                        2014,                 // год
+                        'IIIю',                 // разряд
+                        53,                  // номер
+                        null,              // время
+                        null,                 // место
+                        null,                 // очки
+                        null,                 // выполненный разряд
+                    ],
+                ],
+            ],
         ];
     }
+
     protected function getAllGroups(): array
     {
         return [];
     }
+
     protected function getParser(): string
     {
         return SportOrgParser::class;

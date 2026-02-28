@@ -7,7 +7,6 @@ namespace App\Models\Parser;
 use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 use function count;
 use function file_put_contents;
@@ -44,9 +43,12 @@ class SportOrgParser extends AbstractParser
         $courses = collect($race['courses'])->keyBy('id');
         $clubs = collect($race['organizations'])->keyBy('id');
         $groups = collect($race['groups'])->keyBy('id');
-        $results = collect($race['results'])->groupBy(function (array $item) use ($persons) {
-            return $persons->get($item['person_id'])['group_id'];
-        });
+        $results = collect($race['results'])
+            ->filter(static fn (array $item) => isset($item['person_id']))
+            ->groupBy(function (array $item) use ($persons) {
+                return $persons->get($item['person_id'])['group_id'];
+            })
+        ;
 
         $linesList = new Collection();
 
