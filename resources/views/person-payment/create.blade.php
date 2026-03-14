@@ -16,6 +16,9 @@
               action="{{ action(StorePersonPaymentAction::class, [$person->id]) }}"
         >
             @csrf
+            <div class="form-floating mb-3 hidden">
+                <input class="form-control" id="personId" name="personId" value="{{ $person->id }}"/>
+            </div>
             <div class="form-floating mb-3">
                 <input class="form-control @error('date') is-invalid @enderror" type="date" id="date" name="date"/>
                 <label for="date">{{ __('app.common.payments.add.date') }}</label>
