@@ -15,7 +15,6 @@ use Illuminate\Routing\Controller as BaseController;
 class StoreEventAction extends BaseController
 {
     use EventAction;
-    use UploadHelper;
 
     public function __invoke(
         EventDto $eventDto,

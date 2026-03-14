@@ -138,7 +138,7 @@ final readonly class ProtocolLinesRepository implements ProtocolLineRepository
         ;
     }
 
-    public function getProtocolLines(int $personId, ?Year $year): Collection
+    public function getProtocolLines(int $personId): Collection
     {
         $query = ProtocolLine::selectRaw('protocol_lines.*')
             ->join('distances', 'distances.id', '=', 'protocol_lines.distance_id')
@@ -147,10 +147,6 @@ final readonly class ProtocolLinesRepository implements ProtocolLineRepository
             ->orderBy('events.date')
             ->orderBy('distance_id')
         ;
-
-        if ($year) {
-            $query->where('events.date', 'LIKE', "$year->value-%");
-        }
 
         return $query->get();
     }

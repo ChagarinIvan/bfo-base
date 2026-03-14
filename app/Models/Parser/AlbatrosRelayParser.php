@@ -34,7 +34,7 @@ class AlbatrosRelayParser extends AbstractParser
             $file = '<?xml encoding="UTF-8">' . $file . '</xml>';
         }
         @$doc->loadHTML($file);
-        $xpath = new DOMXpath($doc);
+        $xpath = new DOMXPath($doc);
         $preNodes = $xpath->query('//pre');
         $linesList = new Collection();
 

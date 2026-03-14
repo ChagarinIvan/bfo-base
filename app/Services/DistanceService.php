@@ -56,4 +56,9 @@ class DistanceService
         $distance->save();
         return $distance;
     }
+
+    public function byId(int $id): ?Distance
+    {
+        return $this->distanceRepository->byId($id);
+    }
 }

@@ -32,7 +32,7 @@ class AlbatrosTimingParser extends AbstractParser
     {
         $doc = new DOMDocument();
         @$doc->loadHTML($file);
-        $xpath = new DOMXpath($doc);
+        $xpath = new DOMXPath($doc);
         $preNodes = $xpath->query('//pre');
         $linesList = new Collection();
         foreach ($preNodes as $node) {
@@ -87,6 +87,12 @@ class AlbatrosTimingParser extends AbstractParser
                     $points = $lineData[$fieldsCount - $indent++];
                     if ($points === 'в/к') {
                         $protocolLine['vk'] = true;
+                    }
+                    if (preg_match('#\d?\d:\d\d:\d\d#', $points)) {
+                        $points = $lineData[$fieldsCount - $indent++];
+                        if ($points === 'в/к') {
+                            $protocolLine['vk'] = true;
+                        }
                     }
                     $protocolLine['points'] = is_numeric($points) ? (int)$points : null;
                 }
@@ -155,7 +161,7 @@ class AlbatrosTimingParser extends AbstractParser
         }
 
         @$doc->loadHTML($file);
-        $xpath = new DOMXpath($doc);
+        $xpath = new DOMXPath($doc);
         $preNodes = $xpath->query('//pre');
 
         if ($preNodes->length > 0) {

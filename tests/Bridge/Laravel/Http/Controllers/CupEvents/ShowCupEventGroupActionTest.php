@@ -10,6 +10,7 @@ use App\Domain\Cup\CupType\NewMasterCupType;
 use App\Domain\Cup\CupType\SprintCupType;
 use App\Domain\Cup\CupType\YouthCupType;
 use App\Domain\User\User;
+use Database\Seeders\ElkPathCupLineSeeder;
 use Database\Seeders\JuniorCupLineSeeder;
 use Database\Seeders\JuniorCupLineSeeder2;
 use Database\Seeders\NewMasterCupLineSeeder;
@@ -22,6 +23,8 @@ use Database\Seeders\SprintCupLineSeeder;
 use Database\Seeders\YouthCupLine2Seeder;
 use Database\Seeders\YouthCupLineSeeder;
 use Database\Seeders\YouthCupLineSeeder3;
+use Database\Seeders\YouthCupLineSeeder4;
+use Database\Seeders\YouthCupLineSeeder5;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
@@ -429,4 +432,84 @@ final class ShowCupEventGroupActionTest extends TestCase
             ->assertSee('<td>773</td>', false)
         ;
     }
+
+    /**
+     * @test
+     * @see ShowCupEventGroupAction::class
+     * @see NewYouthCupType::class
+     */
+    public function it_shows_new_youth_cup_event_group_action_3(): void
+    {
+        $this->seed(YouthCupLineSeeder4::class);
+
+        /** @var Authenticatable&User $user */
+        $user = User::factory()->createOne();
+        $this->actingAs($user);
+
+        $this->get('/cups/101/101/M_18_/show')
+            ->assertStatus(Response::HTTP_OK)
+            ->assertSee('<h2 id="up">Youth Cup 2025 - 2025</h2>', false)
+            ->assertSee('<a href="http://localhost/competitions/101/show">Grodno cup</a>', false)
+            ->assertSee('<a href="http://localhost/events/d/101">Спринт - 2025-04-12</a>', false)
+            ->assertSee('<a href="http://localhost/cups/101/101/M_12_/show" class="text-decoration-none nav-link ">', false)
+            ->assertSee('<a href="http://localhost/persons/101/show">Журомская Вероника</a>', false)
+            ->assertSee('<td><b class="text-info">1000</b></td>', false)
+            ->assertDontSee('Колядко', false)
+            ->assertSee('<a href="http://localhost/persons/102/show">Холод Ирина</a>', false)
+            ->assertSee('<td>891</td>', false)
+        ;
+    }
+
+    /**
+     * @test
+     * @see ShowCupEventGroupAction::class
+     * @see NewYouthCupType::class
+     */
+    public function it_shows_new_youth_cup_event_group_action_5(): void
+    {
+        $this->seed(YouthCupLineSeeder5::class);
+
+        /** @var Authenticatable&User $user */
+        $user = User::factory()->createOne();
+        $this->actingAs($user);
+
+        $this->get('/cups/101/101/M_18_/show')
+            ->assertStatus(Response::HTTP_OK)
+            ->assertSee('<h2 id="up">Youth Cup 2025 - 2025</h2>', false)
+            ->assertSee('<a href="http://localhost/competitions/101/show">Grodno cup</a>', false)
+            ->assertSee('<a href="http://localhost/events/d/101">Спринт - 2025-04-12</a>', false)
+            ->assertSee('<a href="http://localhost/cups/101/101/M_12_/show" class="text-decoration-none nav-link ">', false)
+            ->assertSee('<a href="http://localhost/persons/101/show">Михалкин Игорь</a>', false)
+            ->assertSee('<td><b class="text-info">1000</b></td>', false)
+            ->assertSee('<a href="http://localhost/persons/101/show">Ильин Роман</a>', false)
+            ->assertSee('<td><b class="text-info">1000</b></td>', false)
+            ->assertSee('<a href="http://localhost/persons/102/show">Лабкович Иван</a>', false)
+            ->assertSee('<td>891</td>', false)
+            ->assertDontSee('Марков')
+        ;
+    }
+
+//    /**
+//     * @test
+//     * @see ShowCupEventGroupAction::class
+//     * @see ElkPathCup::class
+//     */
+//    public function it_shows_elk_path_cup_event_group_action_2(): void
+//    {
+//        $this->seed(ElkPathCupLineSeeder::class);
+//
+//        /** @var Authenticatable&User $user */
+//        $user = User::factory()->createOne();
+//        $this->actingAs($user);
+//
+//        $this->get('/cups/101/101/M_0_Elite–M/show')
+//            ->assertStatus(Response::HTTP_OK)
+//            ->assertSee('<h2 id="up">Elk path 2026 - 2026</h2>', false)
+//            ->assertSee('<a href="http://localhost/competitions/101/show">Паўночны вецер</a>', false)
+//            ->assertSee('<a href="http://localhost/events/d/101">дзень 1 - 2026-01-31</a>', false)
+//            ->assertSee('<a href="http://localhost/cups/101/101/M_0_Elite–M/show" class="text-decoration-none nav-link ">', false)
+//            ->assertSee('<a href="http://localhost/persons/101/show">Журомская Вероника</a>', false)
+//            ->assertSee('<td>1100</td>', false)
+//        ;
+//    }
 }

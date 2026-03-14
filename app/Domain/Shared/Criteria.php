@@ -8,6 +8,8 @@ use OutOfRangeException;
 use function array_flip;
 use function array_intersect_key;
 use function count;
+use function md5;
+use function serialize;
 
 readonly class Criteria
 {

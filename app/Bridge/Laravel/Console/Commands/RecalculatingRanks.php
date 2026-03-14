@@ -39,7 +39,7 @@ final class RecalculatingRanks extends Command
 
         foreach ($query->cursor() as $index => $person) {
             $this->info("Process " . ($offset + $index) . ".");
-            $this->info("Person id " . $person->id .".");
+            $this->info("Person id " . $person->id . ".");
             $service->reFillRanksForPerson($person->id);
         }
 

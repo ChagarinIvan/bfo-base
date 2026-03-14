@@ -48,10 +48,8 @@ class GroupsService
     {
         $groups = new Collection();
         foreach ($groupsNames as $groupName) {
-            $group = $this->groupsRepository->searchGroup($groupName);
-            if ($group) {
-                $groups->push($group);
-            }
+            $searchedGroups = $this->groupsRepository->searchGroups($groupName);
+            $groups = $groups->merge($searchedGroups);
         }
 
         return $groups;

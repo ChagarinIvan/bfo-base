@@ -12,6 +12,24 @@ final class AlbatrosTimingParserTest extends AbstractParser
     {
         return [
             [
+                '2025/251018.htm',
+                376,
+                [
+                    17 => [
+                        'Ярошевич',
+                        'Ева',
+                        'Клецкий р-н',
+                        2015,
+                        'б/р',
+                        218,
+                        null,
+                        null,
+                        '-',
+                        null,
+                    ],
+                ]
+            ],
+            [
                 '2024/20240303.htm',
                 352,
                 [

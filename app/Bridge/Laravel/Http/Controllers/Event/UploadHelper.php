@@ -22,7 +22,7 @@ trait UploadHelper
         $pageContent = file_get_contents($url);
         $doc = new DOMDocument;
         @$doc->loadHTML($pageContent);
-        $xpath = new DOMXpath($doc);
+        $xpath = new DOMXPath($doc);
         $resultNode = $xpath->query('//div[@id="results-body"]');
         if ($resultNode->length === 0) {
             throw new BadRequestException('wrong protocol content');

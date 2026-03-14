@@ -207,11 +207,6 @@ class WebRoutesServiceProvider extends ServiceProvider
                     $this->route->get('', Registration\ShowRegistrationFormAction::class);
                     $this->route->post('/data', Registration\SendRegistrationDataAction::class);
                 });
-
-                // Admin panel
-                $this->routeRegistrar->middleware(['auth'])->group(function () {
-                    Horizon::routeMailNotificationsTo('chagarin.ivan@gmail.com');
-                });
             });
         });
     }

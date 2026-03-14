@@ -1,25 +1,38 @@
 @php
-    use App\Bridge\Laravel\Http\Controllers\Club\ShowClubAction;use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionAction;use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupAction;use App\Bridge\Laravel\Http\Controllers\Event\ShowEditEventFormAction;use App\Bridge\Laravel\Http\Controllers\Event\ShowEventDistanceAction;use App\Bridge\Laravel\Http\Controllers\Flags\ShowFlagEventsAction;use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonAction;use App\Bridge\Laravel\Http\Controllers\Person\ShowSetPersonToProtocolLineAction;use App\Domain\Club\Club;use App\Domain\Distance\Distance;use App\Domain\Event\Event;use App\Domain\Group\Group;use App\Domain\ProtocolLine\ProtocolLine;use App\Services\ClubsService;use Illuminate\Support\Collection;
+    use App\Bridge\Laravel\Http\Controllers\Club\ShowClubAction;
+    use App\Application\Dto\Event\ViewEventDto;
+    use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionAction;
+    use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupAction;
+    use App\Bridge\Laravel\Http\Controllers\Event\ShowEditEventFormAction;
+    use App\Bridge\Laravel\Http\Controllers\Event\ShowEventDistanceAction;
+    use App\Bridge\Laravel\Http\Controllers\Flags\ShowFlagEventsAction;
+    use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonAction;
+    use App\Bridge\Laravel\Http\Controllers\Person\ShowSetPersonToProtocolLineAction;
+    use App\Domain\Club\Club;
+    use App\Domain\Distance\Distance;
+    use App\Domain\Event\Event;
+    use App\Domain\ProtocolLine\ProtocolLine;
+    use App\Services\ClubsService;
+    use Illuminate\Support\Collection;
     /**
-     * @var Event $event
-     * @var Collection|Group[] $groupAnchors
+     * @var ViewEventDto $event
      * @var Distance $selectedDistance
-     * @var Collection $lines;
-     * @var bool $withPoints;
-     * @var bool $withVk;
-     * @var Collection|Club[] $clubs;
+     * @var Collection $lines
+     * @var bool $withPoints
+     * @var bool $withVk
+     * @var Collection|Club[] $clubs
      */
 @endphp
 
 @extends('layouts.app')
 
-@section('title', $event->name.' ('.$event->date->format('d.m.Y').')')
+@section('title', $event->name.' ('.$event->date.')')
 
 @section('content')
     <div class="row mb-3">
         <div class="col-12">
             <h4>
-                <a href="{{ action(ShowCompetitionAction::class, [$event->competition]) }}">{{ $event->competition->name }}</a>
+                <a href="{{ action(ShowCompetitionAction::class, ['competitionId' => $event->competitionId]) }}">{{ $event->competitionName }}</a>
             </h4>
         </div>
     </div>
@@ -38,11 +51,21 @@
             @endforeach
         </div>
     </div>
+    @auth
+        <div class="row mb-3">
+            <h4>
+                {{ __('app.common.created') }}:
+                <x-impression :impression="$event->created"/>
+                {{ __('app.common.updated') }}:
+                <x-impression :impression="$event->updated"/>
+            </h4>
+        </div>
+    @endauth
     <div class="row mb-3">
         <div class="col-12">
             @auth
                 <x-edit-button
-                        url="{{ action(ShowEditEventFormAction::class, [$event]) }}"/>
+                        url="{{ action(ShowEditEventFormAction::class, [$event->id]) }}"/>
             @endauth
             <x-back-button/>
         </div>

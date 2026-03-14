@@ -12,6 +12,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller as BaseController;
 use function array_keys;
+use function preg_match;
 
 class ShowCupTableAction extends BaseController
 {

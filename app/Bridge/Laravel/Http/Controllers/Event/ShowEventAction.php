@@ -39,7 +39,7 @@ class ShowEventAction extends AbstractEventAction
 
         /** @see /resources/views/events/show.blade.php */
         return $this->view('events.show', [
-            'event' => $event,
+            'event' => $this->assembler->toViewEventDto($event),
             'lines' => $protocolLines,
             'withPoints' => $withPoints,
             'withVk' => $withVk,

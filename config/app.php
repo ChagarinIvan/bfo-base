@@ -152,6 +152,8 @@ return [
     */
 
     'providers' => [
+        App\Providers\HorizonServiceProvider::class,
+
         /*
          * Laravel Framework Service Providers...
          */
@@ -177,6 +179,7 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
+
 
         // Domain
         ClubProvider::class,

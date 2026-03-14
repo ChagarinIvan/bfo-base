@@ -27,6 +27,7 @@ final readonly class EventAssembler
             firstDistance: $event->distances->first(),
             cups: $event->cups->all(),
             flags: $event->flags->all(),
+            distances: $event->distances->all(),
             created: $this->authAssembler->toImpressionDto($event->created),
             updated: $this->authAssembler->toImpressionDto($event->updated)
         );

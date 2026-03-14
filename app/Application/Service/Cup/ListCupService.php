@@ -7,7 +7,6 @@ namespace App\Application\Service\Cup;
 use App\Application\Dto\Cup\CupAssembler;
 use App\Application\Dto\Cup\ViewCupDto;
 use App\Domain\Cup\CupRepository;
-use function array_map;
 
 final readonly class ListCupService
 {
@@ -22,7 +21,7 @@ final readonly class ListCupService
     {
         return array_map(
             $this->assembler->toViewCupDto(...),
-            $this->cups->byCriteria($command->criteria())->all()
+            $this->cups->byCriteria($command->criteria())->all(),
         );
     }
 }

@@ -12,6 +12,7 @@ use App\Domain\Shared\Clock;
 use App\Domain\Shared\Criteria;
 use App\Models\Year;
 use Carbon\Carbon;
+use function array_search;
 use function array_slice;
 
 /**

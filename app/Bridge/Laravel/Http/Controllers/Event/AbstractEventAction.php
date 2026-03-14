@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Http\Controllers\Event;
 
+use App\Application\Dto\Event\EventAssembler;
 use App\Bridge\Laravel\Http\Controllers\AbstractAction;
 use App\Services\ClubsService;
 use App\Services\CupsService;
@@ -25,6 +26,7 @@ class AbstractEventAction extends AbstractAction
         protected ProtocolLineIdentService $identService,
         protected ProtocolLineService $protocolLineService,
         protected Filesystem $storage,
+        protected EventAssembler $assembler,
     ) {
         parent::__construct($viewActionsService, $redirector);
     }

@@ -6,8 +6,10 @@ namespace App\Services;
 
 use App\Domain\PersonPrompt\PersonPrompt;
 use App\Domain\ProtocolLine\ProtocolLine;
+use App\Jobs\RefillPersonRankJob;
 use App\Models\IdentLine;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use Mav\Slovo\Phonetics;
 use function in_array;
 use function levenshtein;
@@ -102,13 +104,16 @@ class ProtocolLineIdentService
     {
         // пробуем идентифицировать людей из нового протокола прямым подобием идентификационных строк
         $notIdentedLines = $this->simpleIdent($protocolLines);
+        Log::info(sprintf('Not idented %d lines.', $notIdentedLines->count()));
         $protocolLines = $protocolLines->keyBy('id');
         $notIdentedLines = $notIdentedLines->keyBy('id');
         $identedLines = ProtocolLine::find($protocolLines->diffKeys($notIdentedLines)->keys());
+        Log::info(sprintf('Idented %d lines.', $identedLines->count()));
         // надо для определившихся добавить разряды
         foreach ($identedLines as $line) {
+            Log::info(sprintf('Re fill person "%d" rank.', $line->person_id));
             /** @var ProtocolLine $line */
-            $this->rankService->reFillRanksForPerson($line->person_id);
+            RefillPersonRankJob::dispatch($line->person_id);
         }
 
         // create ident line
@@ -139,6 +144,8 @@ class ProtocolLineIdentService
      */
     public function identPerson(string $searchLine): int
     {
+        Log::info(sprintf('Ident person %s.', $searchLine));
+
         self::$prompts = self::$prompts ?? $this->personPromptService->all();
 
         $metaphone = $this->phonetics->metaphour($searchLine);
@@ -168,8 +175,11 @@ class ProtocolLineIdentService
      */
     public function pushIdentLines(Collection $protocolLines): void
     {
+        Log::info(sprintf('pushIdentLines %d.', $protocolLines->count()));
+
         foreach ($protocolLines as $line) {
             $identLinesCount = IdentLine::whereIdentLine($line)->count();
+            Log::info(sprintf('Line added %s.', $line));
 
             if ($identLinesCount === 0) {
                 $ident = new IdentLine();

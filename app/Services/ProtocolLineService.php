@@ -61,20 +61,6 @@ class ProtocolLineService
         });
     }
 
-    public function getProtocolLineIdForRank(Rank $rank): int
-    {
-        if ($rank->event_id) {
-            return $this->protocolLinesRepository->getLineForPersonOnEvent($rank->person_id, $rank->event_id);
-        }
-
-        return 0;
-    }
-
-    public function getProtocolLineWithEvent(int $id): ?ProtocolLine
-    {
-        return $this->protocolLinesRepository->byId($id, ['distance.event']);
-    }
-
     public function getProtocolLine(int $id): ProtocolLine
     {
         $protocolLine = $this->protocolLinesRepository->byId($id);
@@ -84,9 +70,9 @@ class ProtocolLineService
         throw new RuntimeException('Wrong protocolLine id.');
     }
 
-    public function getPersonProtocolLines(int $personId, ?Year $year = null): Collection
+    public function getPersonProtocolLines(int $personId): Collection
     {
-        return $this->protocolLinesRepository->getProtocolLines($personId, $year);
+        return $this->protocolLinesRepository->getProtocolLines($personId);
     }
 
     /**

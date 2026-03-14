@@ -46,8 +46,6 @@ class OrientBySyncService
     public function synchronize(array $persons, UserId $userId): void
     {
         $this->logger->info('Start synchronisation.');
-        $this->logger->info(sprintf("Need process %d persons.", count($persons)));
-        $year = Year::actualYear();
 
         $personsPrompts = [];
         foreach ($persons as $personDto) {
@@ -58,11 +56,11 @@ class OrientBySyncService
         $this->logger->info(sprintf("Found %d persons.", count($indicatedPersons)));
 
         foreach ($personsPrompts as $personsPrompt => $personDto) {
-            $this->logger->info("Process $personDto->name", ['dto' => $personDto]);
+            $this->logger->info("Process", ['dto' => $personDto]);
 
             if (isset($indicatedPersons[$personsPrompt])) {
                 $personId = (int)$indicatedPersons[$personsPrompt];
-                $this->logger->info("Person found: $personId");
+                $this->logger->info("Person found", ['id' => $personId]);
                 $person = $this->personsService->getPerson($personId);
                 $logPerson = $person->replicate();
 
@@ -115,6 +113,7 @@ class OrientBySyncService
 
                 $person->updated = new Impression($this->clock->now(), $userId->id);
                 $person->save();
+                $this->logger->info('Update person.');
             } else {
                 $this->logger->info(
                     "new person: {$personDto->getFirstName()} {$personDto->getLastName()}",
@@ -140,8 +139,11 @@ class OrientBySyncService
                         $userId,
                     ));
                 }
+
+                $this->logger->info('Save person.');
             }
         }
+
         $this->logger->info('Finish synchronisation.');
     }
 

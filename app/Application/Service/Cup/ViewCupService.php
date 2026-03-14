@@ -22,6 +22,6 @@ final readonly class ViewCupService
     {
         $cup = $this->cups->byId($command->id()) ?? throw new CupNotFound;
 
-        return $this->assembler->toViewCupDto($cup);
+        return $this->assembler->toViewCupDto($cup, true);
     }
 }

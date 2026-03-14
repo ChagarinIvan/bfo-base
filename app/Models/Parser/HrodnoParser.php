@@ -25,7 +25,7 @@ class HrodnoParser extends AbstractParser
     {
         $doc = new DOMDocument();
         @$doc->loadHTML($file);
-        $xpath = new DOMXpath($doc);
+        $xpath = new DOMXPath($doc);
         $groupAnchorNodes = @$xpath->query('//a[@id]');
         $linesList = new Collection();
         foreach ($groupAnchorNodes as $node) {

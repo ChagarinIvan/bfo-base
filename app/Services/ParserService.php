@@ -9,6 +9,7 @@ use App\Models\Parser\ParserFactory;
 use DOMDocument;
 use DOMXPath;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use RuntimeException;
 use function file_get_contents;
 
@@ -25,6 +26,7 @@ readonly class ParserService
             $this->groupsService->getAllGroupsWithout()->pluck('name'),
             $protocol->extension,
         );
+        Log::info('Parse class '.$parser::class);
 
         return $parser->parse($protocol->content);
     }
@@ -48,7 +50,7 @@ readonly class ParserService
         $pageContent = file_get_contents($url);
         $doc = new DOMDocument();
         @$doc->loadHTML($pageContent);
-        $xpath = new DOMXpath($doc);
+        $xpath = new DOMXPath($doc);
         $resultNode = $xpath->query('//div[@id="results-body"]');
 
         if ($resultNode->length === 0) {

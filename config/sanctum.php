@@ -59,7 +59,7 @@ return [
     */
 
     'middleware' => [
-        'verify_csrf_token' => \App\Bridge\Laravel\Http\Middleware\VerifyCsrfToken::class,
-        'encrypt_cookies' => \App\Bridge\Laravel\Http\Middleware\EncryptCookies::class,
+        'verify_csrf_token' => App\Bridge\Laravel\Http\Middleware\VerifyCsrfToken::class,
+        'encrypt_cookies' => App\Bridge\Laravel\Http\Middleware\EncryptCookies::class,
     ],
 ];
