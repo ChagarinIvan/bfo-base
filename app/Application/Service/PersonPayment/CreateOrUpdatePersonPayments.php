@@ -24,7 +24,7 @@ final readonly class CreateOrUpdatePersonPayments
     {
         return new Criteria([
             'personId' => $this->dto->personId,
-            'year' => $this->dto->year,
+            'year' => $this->dto->year(),
         ]);
     }
 
@@ -32,7 +32,7 @@ final readonly class CreateOrUpdatePersonPayments
     {
         return new PersonPaymentInput(
             personId: (int) $this->dto->personId,
-            year: (int) $this->dto->year,
+            year: $this->dto->year(),
             date: $this->date(),
             userId: $this->userId->id,
         );

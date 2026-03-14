@@ -5,14 +5,9 @@ declare(strict_types=1);
 namespace App\Bridge\Laravel\Http\Controllers\PersonPayment;
 
 use App\Application\Dto\Auth\UserId;
-use App\Application\Dto\Cup\CupDto;
 use App\Application\Dto\PersonPayment\PersonPaymentDto;
-use App\Application\Service\Cup\AddCup;
-use App\Application\Service\Cup\AddCupService;
 use App\Application\Service\PersonPayment\CreateOrUpdatePersonPayments;
 use App\Application\Service\PersonPayment\CreateOrUpdatePersonPaymentsService;
-use App\Bridge\Laravel\Http\Controllers\Cup\CupAction;
-use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupAction;
 use App\Bridge\Laravel\Http\Controllers\Person\PersonAction;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller as BaseController;
