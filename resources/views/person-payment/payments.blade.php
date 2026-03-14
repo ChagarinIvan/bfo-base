@@ -1,5 +1,6 @@
 @php
     use App\Application\Dto\PersonPayment\ViewPersonPaymentDto;
+    use App\Bridge\Laravel\Http\Controllers\PersonPayment\ShowCreatePersonPaymentAction;
     use App\Application\Dto\Person\ViewPersonDto;
 
     /**
@@ -15,6 +16,13 @@
 @section('content')
     <div class="row mb-3">
         <div class="col-12">
+            @auth
+                <x-button text="app.common.payments.add"
+                          color="success"
+                          icon="bi-cash"
+                          url="{{ action(ShowCreatePersonPaymentAction::class, [$person->id]) }}"
+                />
+            @endauth
             <x-back-button/>
         </div>
     </div>

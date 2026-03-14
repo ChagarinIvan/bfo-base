@@ -35,6 +35,8 @@
     "app.common.disqual" : "Вынікі группы ануляваны",
     "app.common.prompts" : "Радкі пошуку",
     "app.common.payments" : "Аплаты",
+    "app.common.payments.add" : "Аплаты",
+    "app.common.payments.add.date" : "Дата аплаты (год бярэцца з даты)",
     "app.common.prompt" : "Радок пошуку",
     "app.common.metaphone" : "Гучанне",
     "app.common.lastname" : "Прозвішча",

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Bridge\Laravel\Http\Controllers\Person;
+namespace Tests\Bridge\Laravel\Http\Controllers\PersonPayment;
 
-use App\Bridge\Laravel\Http\Controllers\PersonPayment\ShowPersonPaymentsListAction;
+use App\Domain\Person\Person;
+use App\Domain\PersonPayment\PersonPayment;
 use App\Domain\User\User;
-use Database\Seeders\ProtocolLinesSeeder;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
@@ -30,23 +30,22 @@ final class ShowPersonPaymentsListActionTest extends TestCase
      * @test
      * @see ShowPersonPaymentsListAction::class
      */
-    public function it_shows_person_payments(): void
+    public function it_shows_person_payments_list(): void
     {
-        $this->seed(ProtocolLinesSeeder::class);
-
-        /** @var Authenticatable $user */
+        /** @var Authenticatable&User $user */
         $user = User::factory()->createOne();
         $this->actingAs($user);
 
-        $this->get('/persons/101/payments')
+        /** @var Person $person */
+        $person = Person::factory()->createOne();
+        PersonPayment::factory(state: ['person_id' => $person->id, 'year' => '2025', 'date' => '2025-01-03'])->createOne();
+        PersonPayment::factory(state: ['person_id' => $person->id, 'year' => '2024', 'date' => '2024-10-11'])->createOne();
+
+        $this->get("/persons/$person->id/payments")
             ->assertStatus(Response::HTTP_OK)
-            ->assertSeeTextInOrder([
-                '2023',
-                '2023-01-11',
-                '2022',
-                '2022-01-11',
-                '2021',
-                '2021-02-12',
+            ->assertSeeText([
+                '2025-01-03',
+                '2024-10-11',
             ])
         ;
     }

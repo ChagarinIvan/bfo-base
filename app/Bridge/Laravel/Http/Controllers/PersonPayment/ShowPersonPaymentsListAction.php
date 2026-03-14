@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Bridge\Laravel\Http\Controllers\Person;
+namespace App\Bridge\Laravel\Http\Controllers\PersonPayment;
 
 use App\Application\Dto\PersonPayment\SearchPersonPaymentsDto;
 use App\Application\Service\Person\Exception\PersonNotFound;
@@ -10,6 +10,8 @@ use App\Application\Service\Person\ViewPerson;
 use App\Application\Service\Person\ViewPersonService;
 use App\Application\Service\PersonPayment\ListPersonsPayments;
 use App\Application\Service\PersonPayment\ListPersonsPaymentsService;
+use App\Bridge\Laravel\Http\Controllers\Person\PersonAction;
+use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonsListAction;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller as BaseController;
@@ -32,7 +34,7 @@ final class ShowPersonPaymentsListAction extends BaseController
 
         $payments = $personPaymentsService->execute(new ListPersonsPayments(new SearchPersonPaymentsDto($personId)));
 
-        /** @see /resources/views/persons/payments.blade.php */
-        return $this->view('persons.payments', compact('person', 'payments'));
+        /** @see /resources/views/person-payment/payments.blade.php */
+        return $this->view('person-payment.payments', compact('person', 'payments'));
     }
 }
