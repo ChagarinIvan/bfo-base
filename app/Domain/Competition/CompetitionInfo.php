@@ -13,6 +13,7 @@ final readonly class CompetitionInfo
         public string $description,
         public Carbon $from,
         public Carbon $to,
+        public bool $mass,
     ) {
     }
 }

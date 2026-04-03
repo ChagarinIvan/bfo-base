@@ -28,6 +28,10 @@
                 <input class="form-control" type="date" id="to" name="to">
                 <label for="to">{{ __('app.competition.to_date') }}</label>
             </div>
+            <div class="form-floating mb-5 form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="mass" name="mass">
+                <label class="form-check-label" for="mass">{{ __('app.common.mass') }}</label>
+            </div>
             <div class="col-12">
                 <button type="submit"
                         class="btn btn-sm btn-outline-primary me-1"

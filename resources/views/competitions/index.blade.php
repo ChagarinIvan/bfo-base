@@ -65,6 +65,7 @@
                         <th data-sortable="true">{{ __('app.common.title') }}</th>
                         <th data-sortable="true">{{ __('app.common.dates') }}</th>
                         <th data-sortable="true">{{ __('app.common.description') }}</th>
+                        <th data-sortable="true">{{ __('app.common.mass') }}</th>
                         @auth
                             <th data-sortable="true">{{ __('app.common.created') }}</th>
                             <th data-sortable="true">{{ __('app.common.updated') }}</th>
@@ -81,6 +82,15 @@
                             </td>
                             <td>{{ $competition->from }} / {{ $competition->to }}</td>
                             <td><small>{{ Str::limit($competition->description) }}</small></td>
+                            <td>
+                            <td>
+                                @if($competition->mass)
+                                    <i class="bi bi-check-circle-fill text-success"></i>
+                                @else
+                                    <i class="bi bi-x-circle text-muted"></i>
+                                @endif
+                            </td>
+                            </td>
                             @auth
                                 <td><x-impression :impression="$competition->created"/></td>
                                 <td><x-impression :impression="$competition->updated"/></td>

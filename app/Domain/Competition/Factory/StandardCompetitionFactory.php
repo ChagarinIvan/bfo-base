@@ -21,6 +21,7 @@ final readonly class StandardCompetitionFactory implements CompetitionFactory
         $competition->description = $input->info->description;
         $competition->from = $input->info->from;
         $competition->to = $input->info->to;
+        $competition->mass = $input->info->mass;
         $competition->created = $competition->updated = new Impression($this->clock->now(), $input->userId);
 
         return $competition;

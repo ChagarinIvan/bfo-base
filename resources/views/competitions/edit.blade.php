@@ -34,6 +34,10 @@
                        value="{{ $competition->to }}">
                 <label for="to">{{ __('app.competition.to_date') }}</label>
             </div>
+            <div class="form-floating mb-5 form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="mass" name="mass" {{ $competition->mass ? 'checked' : '' }}>
+                <label class="form-check-label" for="mass">{{ __('app.common.mass') }}</label>
+            </div>
             <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3 col-xxl-2">
                 <input type="submit" class="btn btn-outline-primary btn-sm" value="{{ __('app.common.save') }}">
                 <x-back-button/>

@@ -23,6 +23,7 @@ use Illuminate\Support\Collection;
  * @property Carbon $from
  * @property Carbon $to
  * @property bool $active
+ * @property bool $mass
  *
  * @property Impression $created
  * @property Impression $updated
@@ -37,6 +38,7 @@ class Competition extends AggregatedModel
     protected $casts = [
         'from' => 'datetime:Y-m-d',
         'to' => 'datetime:Y-m-d',
+        'mass' => 'boolean',
         'created' => ImpressionCast::class,
         'updated' => ImpressionCast::class,
     ];
@@ -47,6 +49,7 @@ class Competition extends AggregatedModel
         $this->description = $info->description;
         $this->from = $info->from;
         $this->to = $info->to;
+        $this->mass = $info->mass;
 
         $this->updated = $impression;
     }
