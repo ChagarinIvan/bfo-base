@@ -31,7 +31,7 @@ final class CompetitionDto extends AbstractDto
         $this->description = $data['description'];
         $this->from = $data['from'];
         $this->to = $data['to'];
-        $this->mass = (bool) ($data['visible'] ?? $this->mass);
+        $this->mass = (bool) ($data['mass'] ?? $this->mass);
 
         return $this;
     }
