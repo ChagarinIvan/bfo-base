@@ -83,13 +83,11 @@
                             <td>{{ $competition->from }} / {{ $competition->to }}</td>
                             <td><small>{{ Str::limit($competition->description) }}</small></td>
                             <td>
-                            <td>
                                 @if($competition->mass)
                                     <i class="bi bi-check-circle-fill text-success"></i>
                                 @else
                                     <i class="bi bi-x-circle text-muted"></i>
                                 @endif
-                            </td>
                             </td>
                             @auth
                                 <td><x-impression :impression="$competition->created"/></td>
