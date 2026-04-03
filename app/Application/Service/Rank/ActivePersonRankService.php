@@ -29,19 +29,19 @@ final readonly class ActivePersonRankService
         dump('$lastRank?->rank: '. $lastRank?->rank);
 
         if ($lastRank === null) {
+            $lastCompletedRank = $this->ranks->oneByCriteria($this->criteriaWithoutDate($command));
+            dump('$lastCompletedRank: ' . $lastCompletedRank?->rank ?? '---');
+            if ($lastCompletedRank) {
+                $lastRank = $this->previousCompletedRankFiller->fill($lastCompletedRank, $command->date());
+            }
+        }
+
+        if ($lastRank === null) {
             $thirdJuniorRank = $this->thirdRankChecker->check($command->personId(), $command->date());
             if ($thirdJuniorRank && (($command->date() === null) || ($thirdJuniorRank->start_date < $command->date()))) {
                 dump('add third junior rank');
                 $this->ranks->add($thirdJuniorRank);
                 $lastRank = $thirdJuniorRank;
-            }
-        }
-
-        if (!$lastRank) {
-            $lastCompletedRank = $this->ranks->oneByCriteria($this->criteriaWithoutDate($command));
-            dump('$lastCompletedRank: ' . $lastCompletedRank?->rank ?? '---');
-            if ($lastCompletedRank) {
-                $lastRank = $this->previousCompletedRankFiller->fill($lastCompletedRank, $command->date());
             }
         }
 
