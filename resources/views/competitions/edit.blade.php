@@ -35,7 +35,7 @@
                 <label for="to">{{ __('app.competition.to_date') }}</label>
             </div>
             <div class="form-check form-switch mb-5">
-                <input class="form-check-input" type="checkbox" id="mass" name="mass" {{ $competition->mass ? 'value="1"' : 'value="0"' }}>
+                <input class="form-check-input" type="checkbox" id="mass" value="1" name="mass" {{ $competition->mass ? 'checked' : '' }}>
                 <label class="form-check-label" for="mass">
                     {{ __('app.common.mass') }}
                 </label>
