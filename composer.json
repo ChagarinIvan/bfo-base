@@ -14,14 +14,14 @@
         "ext-mbstring": "*",
         "ext-pdo": "*",
         "doctrine/dbal": "^3.10",
-        "guzzlehttp/guzzle": "^7.10",
+        "guzzlehttp/guzzle": "7.10.0",
         "laravel/framework": "^10.50",
         "laravel/horizon": "^5.45",
         "mav/slovo": "^0.2.3",
         "phpoffice/phpspreadsheet": "^1.30",
-        "phpunit/phpunit": "^10.5",
+        "phpunit/phpunit": "10.5.63",
         "predis/predis": "^1.1",
-        "sentry/sentry-laravel": "^4.14"
+        "sentry/sentry-laravel": "4.24.0"
     },
     "config": {
         "optimize-autoloader": true,

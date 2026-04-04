@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Http\Controllers\PersonPayment;
 
-use App\Application\Service\Club\ListClubsService;
 use App\Application\Service\Person\ViewPerson;
 use App\Application\Service\Person\ViewPersonService;
 use App\Bridge\Laravel\Http\Controllers\Person\PersonAction;

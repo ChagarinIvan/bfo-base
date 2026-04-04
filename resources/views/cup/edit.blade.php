@@ -42,7 +42,7 @@
                 <label for="year">{{ __('app.common.year') }}</label>
             </div>
             <div class="form-check form-switch mb-5">
-                <input class="form-check-input" type="checkbox" id="visible" name="visible" {{ $competition->visible ? 'checked' : '' }}>
+                <input class="form-check-input" type="checkbox" id="visible" name="visible" {{ $cup->visible ? 'checked' : '' }}>
                 <label class="form-check-label" for="visible">
                     {{ __('app.common.visible') }}
                 </label>

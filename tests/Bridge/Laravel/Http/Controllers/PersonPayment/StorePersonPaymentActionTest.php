@@ -53,24 +53,4 @@ final class StorePersonPaymentActionTest extends TestCase
             'updated_by' => $user->id,
         ]);
     }
-
-    /**
-     * @test
-     * @see StoreClubsAction::class
-     */
-    public function it_fails_when_club_with_same_name_already_exists(): void
-    {
-        /** @var Authenticatable|User $user */
-        $user = User::factory()->createOne();
-        $this->actingAs($user);
-
-        Club::factory()->createOne(['name' => 'test club']);
-
-        $this->post('/clubs/store', [
-            'name' => 'test club',
-        ])
-            ->assertStatus(Response::HTTP_FOUND)
-            ->assertRedirect('/500')
-        ;
-    }
 }

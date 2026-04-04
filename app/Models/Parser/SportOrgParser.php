@@ -29,7 +29,7 @@ class SportOrgParser extends AbstractParser
         $qualifications = str_replace("'", '"', $qualifications);
         // ключи-числа обернуть в кавычки
         $qualifications = preg_replace('/(\{|,)\s*(\d+)\s*:/', '$1 "$2":', $qualifications);
-        $qualifications = json_decode($qualifications, true, 512, JSON_THROW_ON_ERROR);
+        $qualifications = json_decode($qualifications, true, flags: JSON_THROW_ON_ERROR);
         $qualifications = collect($qualifications);
 
         $json = $m1[1];

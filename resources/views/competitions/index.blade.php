@@ -65,8 +65,8 @@
                         <th data-sortable="true">{{ __('app.common.title') }}</th>
                         <th data-sortable="true">{{ __('app.common.dates') }}</th>
                         <th data-sortable="true">{{ __('app.common.description') }}</th>
-                        <th data-sortable="true">{{ __('app.common.mass') }}</th>
                         @auth
+                            <th data-sortable="true">{{ __('app.common.mass') }}</th>
                             <th data-sortable="true">{{ __('app.common.created') }}</th>
                             <th data-sortable="true">{{ __('app.common.updated') }}</th>
                             <th></th>
