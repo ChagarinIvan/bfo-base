@@ -25,6 +25,7 @@ final readonly class UpdateCompetitionInfo
             description: $this->dto->description,
             from: Carbon::parse($this->dto->from),
             to: Carbon::parse($this->dto->to),
+            mass: $this->dto->mass,
         );
     }
 

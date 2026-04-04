@@ -4,26 +4,16 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Domain\Cup\CupEvent\CupEvent;
 use App\Domain\Group\Group;
 use App\Repositories\GroupsRepository;
 use Illuminate\Support\Collection;
 use RuntimeException;
 use function in_array;
 
-class GroupsService
+final readonly class GroupsService
 {
-    public function __construct(private readonly GroupsRepository $groupsRepository)
+    public function __construct(private GroupsRepository $groupsRepository)
     {
-    }
-
-    /**
-     * @param CupEvent $cupEvent
-     * @return Collection|Group[]
-     */
-    public function getCupEventGroups(CupEvent $cupEvent): Collection
-    {
-        return $this->groupsRepository->getEventGroups($cupEvent->event_id);
     }
 
     public function getGroupsList(array $with = []): Collection
@@ -38,21 +28,6 @@ class GroupsService
             return $group;
         }
         throw new RuntimeException('Wrong group id.');
-    }
-
-    /**
-     * @param string[] $groupsNames
-     * @return Collection|Group[]
-     */
-    public function getGroups(array $groupsNames): Collection
-    {
-        $groups = new Collection();
-        foreach ($groupsNames as $groupName) {
-            $searchedGroups = $this->groupsRepository->searchGroups($groupName);
-            $groups = $groups->merge($searchedGroups);
-        }
-
-        return $groups;
     }
 
     public function deleteGroup(Group $group): void

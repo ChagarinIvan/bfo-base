@@ -10,6 +10,7 @@ use App\Services\ProtocolLineIdentService;
 use App\Services\ProtocolLineService;
 use Exception;
 use Illuminate\Support\Facades\Log;
+use function sprintf;
 
 abstract class ParseProtocolHandler
 {
@@ -23,7 +24,7 @@ abstract class ParseProtocolHandler
 
     protected function parse(string $path, int $eventId): void
     {
-        Log::info('Parse protocol by path '.$path);
+        Log::info('Parse protocol by path ' . $path);
 
         try {
             $protocol = $this->storage->get($path);
@@ -35,6 +36,5 @@ abstract class ParseProtocolHandler
         } catch (Exception $e) {
             Log::error($e->getMessage());
         }
-
     }
 }

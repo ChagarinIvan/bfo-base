@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Service\PersonPayment;
 
 use App\Domain\PersonPayment\Factory\PersonPaymentFactory;
+use App\Domain\PersonPayment\PersonPayment;
 use App\Domain\PersonPayment\PersonPaymentRepository;
 use App\Domain\Shared\Clock;
 use App\Domain\Shared\TransactionManager;
@@ -19,10 +20,10 @@ final readonly class CreateOrUpdatePersonPaymentsService
     ) {
     }
 
-    public function execute(CreateOrUpdatePersonPayments $command): void
+    public function execute(CreateOrUpdatePersonPayments $command): PersonPayment
     {
-        $this->transaction->run(
-            function () use ($command): void {
+        return $this->transaction->run(
+            function () use ($command): PersonPayment {
                 $personPayment = $this->payments->lockOneByCriteria($command->criteria());
 
                 if ($personPayment === null) {
@@ -32,6 +33,8 @@ final readonly class CreateOrUpdatePersonPaymentsService
                     $personPayment->updateDate($command->date(), $command->impression($this->clock));
                     $this->payments->update($personPayment);
                 }
+
+                return $personPayment;
             }
         );
     }

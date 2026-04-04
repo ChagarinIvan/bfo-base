@@ -16,6 +16,7 @@ use App\Bridge\Laravel\Http\Controllers\Flags;
 use App\Bridge\Laravel\Http\Controllers\Groups;
 use App\Bridge\Laravel\Http\Controllers\Login;
 use App\Bridge\Laravel\Http\Controllers\Person;
+use App\Bridge\Laravel\Http\Controllers\PersonPayment;
 use App\Bridge\Laravel\Http\Controllers\PersonPrompt;
 use App\Bridge\Laravel\Http\Controllers\Rank;
 use App\Bridge\Laravel\Http\Controllers\Registration;
@@ -24,7 +25,6 @@ use Illuminate\Contracts\Routing\Registrar;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Routing\Redirector;
 use Illuminate\Routing\RouteRegistrar;
-use Laravel\Horizon\Horizon;
 
 class WebRoutesServiceProvider extends ServiceProvider
 {
@@ -90,7 +90,9 @@ class WebRoutesServiceProvider extends ServiceProvider
                         $this->route->get('/{person}/delete', Person\DeletePersonAction::class);
 
                         $this->route->get('{personId}/prompts', PersonPrompt\ShowPersonPromptsListAction::class);
-                        $this->route->get('{person}/payments', Person\ShowPersonPaymentsListAction::class);
+                        $this->route->get('{personId}/payments', PersonPayment\ShowPersonPaymentsListAction::class);
+                        $this->route->get('{personId}/payments/create', PersonPayment\ShowCreatePersonPaymentAction::class);
+                        $this->route->post('{personId}/payments/store', PersonPayment\StorePersonPaymentAction::class);
                         $this->route->get('person/{protocol}/show', Person\ShowSetPersonToProtocolLineAction::class);
                         $this->route->get('{person}/{protocol}/set', Person\SetProtocolLinePersonAction::class);
                         $this->route->get('extract/{protocol}/', Person\ExtractPersonAction::class);

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Models\Parser;
+namespace Tests\Models\Parser;
 
 use App\Models\Parser\OldObelarusNetXlsxParser;
 use Tests\Models\Parser\AbstractParser;

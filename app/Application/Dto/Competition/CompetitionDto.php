@@ -12,6 +12,7 @@ final class CompetitionDto extends AbstractDto
     public string $description;
     public string $from;
     public string $to;
+    public bool $mass = false;
 
     public static function requestValidationRules(): array
     {
@@ -20,6 +21,7 @@ final class CompetitionDto extends AbstractDto
             'description' => 'required|max:255',
             'from' => 'required|date',
             'to' => 'required|date',
+            'mass' => 'bool',
         ];
     }
 
@@ -29,6 +31,7 @@ final class CompetitionDto extends AbstractDto
         $this->description = $data['description'];
         $this->from = $data['from'];
         $this->to = $data['to'];
+        $this->mass = (bool) ($data['mass'] ?? $this->mass);
 
         return $this;
     }

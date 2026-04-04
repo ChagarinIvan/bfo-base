@@ -26,6 +26,7 @@ final readonly class AddCompetition
                 description: $this->dto->description,
                 from: Carbon::parse($this->dto->from),
                 to: Carbon::parse($this->dto->to),
+                mass: $this->dto->mass,
             ),
             userId: $this->userId->id
         );

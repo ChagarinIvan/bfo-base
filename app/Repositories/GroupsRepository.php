@@ -33,9 +33,13 @@ class GroupsRepository
         return Group::whereName($query)->first();
     }
 
-    public function searchGroups(string $query): Collection
+    /**
+     * @param string[] $names
+     * @return Collection|Group[]
+     */
+    public function searchGroups(array $names): Collection
     {
-        return Group::whereName($query)->get();
+        return Group::whereIn('name', $names)->get();
     }
 
     public function storeGroup(Group $group): Group

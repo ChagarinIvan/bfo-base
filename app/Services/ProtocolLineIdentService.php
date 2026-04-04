@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Log;
 use Mav\Slovo\Phonetics;
 use function in_array;
 use function levenshtein;
+use function sprintf;
 use function str_replace;
 
 class ProtocolLineIdentService
@@ -55,6 +56,8 @@ class ProtocolLineIdentService
         'елена' => ['лена'],
     ];
 
+    private static ?array $normalizedNamesMap = null;
+
     private static Collection $prompts;
 
     /**
@@ -65,27 +68,35 @@ class ProtocolLineIdentService
      */
     public static function prepareLine(string $line): string
     {
-        //Исправляем символы
+        // Исправляем символы
         foreach (self::SYMBOL_MAP as $symbol => $analogs) {
             $line = str_replace($analogs, $symbol, $line);
         }
 
-        //Заменяем формы имён
+        // Нормализация имени
+        $map = self::getNormalizedNamesMap();
+
+        return $map[$line] ?? $line;
+    }
+
+    private static function getNormalizedNamesMap(): array
+    {
+        if (self::$normalizedNamesMap !== null) {
+            return self::$normalizedNamesMap;
+        }
+
+        $map = [];
+
         foreach (self::EDIT_MAP as $name => $analogs) {
-            if (in_array($line, $analogs, true)) {
-                foreach ($analogs as $analog) {
-                    if ($line === $analog) {
-                        return $name;
-                    }
-                }
+            foreach ($analogs as $analog) {
+                $map[$analog] = $name;
             }
         }
 
-        return $line;
+        return self::$normalizedNamesMap = $map;
     }
 
     public function __construct(
-        private readonly RankService $rankService,
         private readonly ProtocolLineService $protocolLineService,
         private readonly PersonPromptService $personPromptService,
         private readonly Phonetics $phonetics,

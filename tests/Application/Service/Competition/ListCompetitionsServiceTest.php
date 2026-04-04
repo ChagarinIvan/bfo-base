@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Application\Service\Competition;
+namespace Tests\Application\Service\Competition;
 
 use App\Application\Dto\Auth\AuthAssembler;
 use App\Application\Dto\Competition\CompetitionAssembler;

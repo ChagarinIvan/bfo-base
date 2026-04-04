@@ -3,7 +3,7 @@
     use App\Bridge\Laravel\Http\Controllers\Event\ShowEventDistanceAction;
     use App\Bridge\Laravel\Http\Controllers\Person\ExtractPersonAction;
     use App\Bridge\Laravel\Http\Controllers\Person\ShowEditPersonAction;
-    use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonPaymentsListAction;
+    use App\Bridge\Laravel\Http\Controllers\PersonPayment\ShowPersonPaymentsListAction;
     use App\Bridge\Laravel\Http\Controllers\PersonPrompt\ShowPersonPromptsListAction;
     use App\Bridge\Laravel\Http\Controllers\Rank\ShowPersonRanksAction;
     use App\Application\Dto\Person\ViewPersonDto;

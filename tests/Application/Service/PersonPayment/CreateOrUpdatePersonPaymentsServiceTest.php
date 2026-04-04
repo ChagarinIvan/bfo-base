@@ -68,10 +68,11 @@ final class CreateOrUpdatePersonPaymentsServiceTest extends TestCase
             ->with($this->identicalTo($personPayment))
         ;
 
-        $this->service->execute(new CreateOrUpdatePersonPayments(
-            new PersonPaymentDto('1', '2021', '2021-01-01'),
-            new UserId(1),
-        ));
+        $dto = new PersonPaymentDto();
+        $dto->personId = '1';
+        $dto->date = '2021-01-01';
+
+        $this->service->execute(new CreateOrUpdatePersonPayments($dto, new UserId(1)));
     }
 
     /** @test */
@@ -91,10 +92,11 @@ final class CreateOrUpdatePersonPaymentsServiceTest extends TestCase
         $this->payments->expects($this->never())->method('update');
         $this->payments->expects($this->never())->method('add');
 
-        $this->service->execute(new CreateOrUpdatePersonPayments(
-            new PersonPaymentDto('1', '2021', '2021-01-01'),
-            new UserId(1),
-        ));
+        $dto = new PersonPaymentDto();
+        $dto->personId = '1';
+        $dto->date = '2021-01-01';
+
+        $this->service->execute(new CreateOrUpdatePersonPayments($dto, new UserId(1)));
     }
 
     /** @test */
@@ -127,9 +129,10 @@ final class CreateOrUpdatePersonPaymentsServiceTest extends TestCase
             ->method('update')
         ;
 
-        $this->service->execute(new CreateOrUpdatePersonPayments(
-            new PersonPaymentDto('1', '2021', '2021-01-01'),
-            new UserId(1),
-        ));
+        $dto = new PersonPaymentDto();
+        $dto->personId = '1';
+        $dto->date = '2021-01-01';
+
+        $this->service->execute(new CreateOrUpdatePersonPayments($dto, new UserId(1)));
     }
 }

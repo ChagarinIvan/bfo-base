@@ -7,6 +7,8 @@ namespace App\Repositories;
 use App\Domain\Cup\CupEvent\CupEvent;
 use App\Domain\Distance\Distance;
 use Illuminate\Support\Collection;
+use function implode;
+use function str_contains;
 
 class DistanceRepository
 {
@@ -20,7 +22,7 @@ class DistanceRepository
         $query = Distance::selectRaw('distances.*')->join('groups', 'groups.id', '=', 'distances.group_id');
 
         if (str_contains(implode('', $groupNames), '%')) {
-            $query = $query->where(function ($q) use ($groupNames) {
+            $query = $query->where(static function ($q) use ($groupNames): void {
                 foreach ($groupNames as $name) {
                     $q->orWhere('groups.name', 'like', $name);
                 }

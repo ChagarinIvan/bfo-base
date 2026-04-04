@@ -20,6 +20,7 @@ class CompetitionFactory extends Factory
             'from' => $this->faker->date,
             'to' => $this->faker->date,
             'active' => true,
+            'mass' => false,
             'created_at' => $this->faker->date,
             'created_by' => $this->faker->numberBetween(1, 100),
             'updated_at' => $this->faker->date,

@@ -9,7 +9,7 @@
 
 @extends('layouts.app')
 
-@section('title', __('app.person.edit_title'))
+@section('title', __('app.person.create_title'))
 
 @section('content')
     <div class="row">
