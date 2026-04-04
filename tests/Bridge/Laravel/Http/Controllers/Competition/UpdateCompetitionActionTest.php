@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Bridge\Laravel\Http\Controllers\Competition;
+namespace Tests\Bridge\Laravel\Http\Controllers\Competition;
 
 use App\Bridge\Laravel\Http\Controllers\Competition\UpdateCompetitionAction;
 use App\Domain\Competition\Competition;

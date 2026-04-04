@@ -133,7 +133,7 @@ class NewYouthCupType extends MasterCupType
 
         /** @var CupGroup $cupGroup */
         foreach ($this->getCupGroups($group) as $cupGroup) {
-            $groups = $groups->merge($this->groupsService->getGroups(static::GROUPS_MAP[$cupGroup->id()]));
+            $groups = $groups->merge($this->groupsRepository->searchGroups(static::GROUPS_MAP[$cupGroup->id()]));
         }
 
         return $groups;

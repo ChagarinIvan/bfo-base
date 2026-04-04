@@ -12,7 +12,6 @@ use App\Domain\Auth\Impression;
 use App\Domain\Person\Person;
 use App\Domain\Rank\Rank;
 use App\Domain\Shared\Clock;
-use App\Models\Year;
 use App\Services\ClubsService;
 use App\Services\PersonsIdentService;
 use App\Services\PersonsService;
@@ -98,10 +97,11 @@ class OrientBySyncService
                 if ($personDto->paid && $personDto->paymentDate()) {
                     $this->logger->info('update payment: ', ['person_id' => $personId]);
 
-                    $this->createOrUpdatePersonPaymentsService->execute(new CreateOrUpdatePersonPayments(
-                        new PersonPaymentDto((string) $personId, $personDto->paymentDate()->format('Y-m-d')),
-                        $userId,
-                    ));
+                    $dto = new PersonPaymentDto();
+                    $dto->personId = (string) $personId;
+                    $dto->date = $personDto->paymentDate()->format('Y-m-d');
+
+                    $this->createOrUpdatePersonPaymentsService->execute(new CreateOrUpdatePersonPayments($dto, $userId));
                 }
 
                 if ($this->setClub($person, $personDto)) {
@@ -134,10 +134,11 @@ class OrientBySyncService
                 }
 
                 if ($personDto->paid && $personDto->paymentDate()) {
-                    $this->createOrUpdatePersonPaymentsService->execute(new CreateOrUpdatePersonPayments(
-                        new PersonPaymentDto((string) $person->id, $personDto->paymentDate()->format('Y-m-d')),
-                        $userId,
-                    ));
+                    $dto = new PersonPaymentDto();
+                    $dto->personId = (string) $person->id;
+                    $dto->date = $personDto->paymentDate()->format('Y-m-d');
+
+                    $this->createOrUpdatePersonPaymentsService->execute(new CreateOrUpdatePersonPayments($dto, $userId));
                 }
 
                 $this->logger->info('Save person.');

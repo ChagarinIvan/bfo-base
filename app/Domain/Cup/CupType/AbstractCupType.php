@@ -10,6 +10,7 @@ use App\Domain\Cup\CupEvent\CupEventPoint;
 use App\Domain\Cup\Group\CupGroup;
 use App\Domain\Cup\Group\CupGroupFactory;
 use App\Domain\ProtocolLine\ProtocolLine;
+use App\Repositories\GroupsRepository;
 use App\Repositories\ProtocolLinesRepository;
 use App\Services\DistanceService;
 use App\Services\GroupsService;
@@ -25,7 +26,7 @@ abstract class AbstractCupType implements CupTypeInterface
     public function __construct(
         protected readonly DistanceService $distanceService,
         protected readonly ProtocolLinesRepository $protocolLinesRepository,
-        protected readonly GroupsService $groupsService,
+        protected readonly GroupsRepository $groupsRepository,
         protected readonly CupGroupFactory $groupFactory,
     ) {
     }

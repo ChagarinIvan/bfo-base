@@ -47,6 +47,7 @@ final class AddCompetitionServiceTest extends TestCase
                 description: 'test competition description',
                 from: Carbon::parse('2023-01-01'),
                 to: Carbon::parse('2023-01-02'),
+                mass: false,
             ),
             userId: 1,
         );

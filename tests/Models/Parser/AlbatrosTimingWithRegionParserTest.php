@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Models\Parser;
+namespace Tests\Models\Parser;
 
 use App\Models\Parser\AlbatrosTimingWithRegionParser;
 use Tests\Models\Parser\AbstractParser;

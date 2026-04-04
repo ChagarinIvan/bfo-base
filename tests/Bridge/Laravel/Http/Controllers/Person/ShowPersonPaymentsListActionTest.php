@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Bridge\Laravel\Http\Controllers\Person;
+namespace Tests\Bridge\Laravel\Http\Controllers\Person;
 
 use App\Bridge\Laravel\Http\Controllers\PersonPayment\ShowPersonPaymentsListAction;
 use App\Domain\User\User;

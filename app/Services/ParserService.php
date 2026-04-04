@@ -26,7 +26,7 @@ readonly class ParserService
             $this->groupsService->getAllGroupsWithout()->pluck('name'),
             $protocol->extension,
         );
-        Log::info('Parse class '.$parser::class);
+        Log::info('Parse class ' . $parser::class);
 
         return $parser->parse($protocol->content);
     }

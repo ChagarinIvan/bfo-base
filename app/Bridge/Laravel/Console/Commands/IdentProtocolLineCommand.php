@@ -19,6 +19,7 @@ use App\Services\ProtocolLineService;
 use App\Services\RankService;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
+use function preg_match;
 use function sprintf;
 
 /**

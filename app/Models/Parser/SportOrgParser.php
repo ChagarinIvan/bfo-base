@@ -7,16 +7,13 @@ namespace App\Models\Parser;
 use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
-use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 use function count;
-use function file_put_contents;
-use function mb_convert_case;
-use function mb_strtolower;
+use function json_decode;
+use function preg_match;
+use function preg_replace;
+use function rtrim;
 use function str_contains;
 use function str_replace;
-use function sys_get_temp_dir;
-use function tempnam;
-use function trim;
 
 class SportOrgParser extends AbstractParser
 {
@@ -32,7 +29,7 @@ class SportOrgParser extends AbstractParser
         $qualifications = str_replace("'", '"', $qualifications);
         // ключи-числа обернуть в кавычки
         $qualifications = preg_replace('/(\{|,)\s*(\d+)\s*:/', '$1 "$2":', $qualifications);
-        $qualifications = json_decode($qualifications, true);
+        $qualifications = json_decode($qualifications, true, 512, JSON_THROW_ON_ERROR);
         $qualifications = collect($qualifications);
 
         $json = $m1[1];
@@ -45,7 +42,7 @@ class SportOrgParser extends AbstractParser
         $groups = collect($race['groups'])->keyBy('id');
         $results = collect($race['results'])
             ->filter(static fn (array $item) => isset($item['person_id']))
-            ->groupBy(function (array $item) use ($persons) {
+            ->groupBy(static function (array $item) use ($persons) {
                 return $persons->get($item['person_id'])['group_id'];
             })
         ;
@@ -98,74 +95,5 @@ class SportOrgParser extends AbstractParser
     public function check(string $file, string $extension): bool
     {
         return str_contains($file, 'sportorg-table');
-    }
-
-    private function getContent(string $file): array
-    {
-        $fileName = tempnam(sys_get_temp_dir(), 'TMP_');
-        file_put_contents($fileName, $file);
-        $xlsx = new Xlsx();
-
-        try {
-            $spreadsheet = $xlsx->load($fileName);
-        } catch (\PhpOffice\PhpSpreadsheet\Reader\Exception) {
-            return [];
-        }
-
-        return $spreadsheet->getActiveSheet()->toArray();
-    }
-
-    private function getColumn(string $field): string
-    {
-        $field = mb_strtolower($field);
-        if ($field === 'classname') {
-            return 'group';
-        } elseif ($field === 'startnumber') {
-            return 'runner_number';
-        } elseif ($field === 'place') {
-            return 'place';
-        } elseif ($field === 'name') {
-            return 'firstname';
-        } elseif ($field === 'surname') {
-            return 'lastname';
-        } elseif ($field === 'result') {
-            return 'time';
-        } elseif ($field === 'club') {
-            return 'club';
-        } elseif ($field === 'birthyear') {
-            return 'year';
-        } elseif ($field === 'distance') {
-            return 'distance';
-        }
-
-        return '';
-    }
-
-    private function getValue(string $column, string $columnData): mixed
-    {
-        $columnData = trim($columnData);
-        switch ($column) {
-            case 'time':
-                try {
-                    $time = Carbon::createFromTimeString($columnData);
-                } catch (Exception) {
-                    $time = null;
-                }
-                return $time;
-            case 'place':
-            case 'runner_number':
-            case 'year':
-                return $columnData ? (int)$columnData : null;
-            case 'distance':
-                return $columnData ? ((int)$columnData * 1000) : null;
-            case 'firstname':
-            case 'lastname':
-                return mb_convert_case($columnData, MB_CASE_TITLE);
-            case 'club':
-                return $columnData;
-            case 'group':
-                return str_replace(['Жанчыны', 'Mужчыны', 'Дзяўчыны', 'Хлопцы'], ['Ж', 'М', 'Ж', 'М'], $columnData);
-        }
-        return null;
     }
 }

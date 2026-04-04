@@ -79,7 +79,7 @@ class MasterCupType extends AbstractCupType
         $validGroups = $eventGroupsId->flip();
         /** @var Collection<string, mixed> $validGroups */
         $cupEventProtocolLines = $cupEventProtocolLines->intersectByKeys($validGroups);
-        $groups = $this->groupsService->getCupEventGroups($cupEvent);
+        $groups = $this->groupsRepository->getEventGroups($cupEvent->event_id);
 
         $mainGroupExist = $groups
             ->pluck('name')
@@ -186,7 +186,7 @@ class MasterCupType extends AbstractCupType
         /** @var CupGroup $cupGroup */
         foreach ($this->getCalculatedGroups() as $cupGroup) {
             if ($cupGroup->male() === $male) {
-                $groups = $groups->merge($this->groupsService->getGroups(static::GROUPS_MAP[$cupGroup->id()]));
+                $groups = $groups->merge($this->groupsRepository->searchGroups(static::GROUPS_MAP[$cupGroup->id()]));
             }
         }
 

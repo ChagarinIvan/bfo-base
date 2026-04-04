@@ -5,16 +5,12 @@ declare(strict_types=1);
 namespace App\Application\Dto\PersonPayment;
 
 use App\Application\Dto\AbstractDto;
+use function substr;
 
 final class PersonPaymentDto extends AbstractDto
 {
-    public readonly string $personId;
-    public readonly string $date;
-
-    public function year(): int
-    {
-        return (int) substr($this->date, 0, 4);
-    }
+    public string $personId;
+    public string $date;
 
     public static function requestValidationRules(): array
     {
@@ -22,6 +18,11 @@ final class PersonPaymentDto extends AbstractDto
             'personId' => 'required|numeric',
             'date' => 'required|date_format:Y-m-d',
         ];
+    }
+
+    public function year(): int
+    {
+        return (int) substr($this->date, 0, 4);
     }
 
     public function fromArray(array $data): self

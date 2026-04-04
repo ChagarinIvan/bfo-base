@@ -180,7 +180,6 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
 
-
         // Domain
         ClubProvider::class,
         CompetitionProvider::class,

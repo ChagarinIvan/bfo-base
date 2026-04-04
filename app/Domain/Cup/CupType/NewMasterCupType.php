@@ -372,7 +372,7 @@ class NewMasterCupType extends AbstractCupType
         foreach ($this->getGroups() as $cupGroup) {
             if ($cupGroup->male() === $male) {
                 $cupGroupId = $cupGroup->id();
-                $group = $this->groupsService->getGroups(static::GROUPS_MAP[$cupGroupId]);
+                $group = $this->groupsRepository->searchGroups(static::GROUPS_MAP[$cupGroupId]);
                 $group = $group->map(static fn(Group $i) => [
                     'id' => $i->id,
                     'name' => $i->name,

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Providers;
 
 use Laravel\Horizon\Horizon;
@@ -11,7 +13,7 @@ class HorizonServiceProvider extends HorizonApplicationServiceProvider
     {
         parent::boot();
 
-        Horizon::auth(function ($request) {
+        Horizon::auth(static function ($request) {
             return $request->user() !== null;
         });
     }

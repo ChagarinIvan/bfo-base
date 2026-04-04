@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Application\Service\Event;
+namespace Tests\Application\Service\Event;
 
 use App\Application\Dto\Auth\AuthAssembler;
 use App\Application\Dto\Event\EventAssembler;
