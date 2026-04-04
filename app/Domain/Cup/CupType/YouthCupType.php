@@ -11,6 +11,7 @@ use App\Domain\Cup\Group\CupGroupFactory;
 use App\Domain\Cup\Group\GroupAge;
 use App\Domain\ProtocolLine\ProtocolLine;
 use Illuminate\Support\Collection;
+use function max;
 use function round;
 
 /**
@@ -173,8 +174,6 @@ class YouthCupType extends MasterCupType
     }
 
     /**
-     * @param CupEvent $cupEvent
-     * @param CupGroup $mainGroup
      * @return Collection //array<int, CupEventPoint>
      */
     public function calculateEvent(CupEvent $cupEvent, CupGroup $mainGroup): Collection
@@ -266,7 +265,7 @@ class YouthCupType extends MasterCupType
                     $lineTime = $protocolLine->time->secondsSinceMidnight();
                     //К сор. х 500 х К гр. (3 х Т поб. / Т уч. ‑ 1)
                     $points = (int)round($maxPoints * 500 * $koef * (3 * ($firstResultSeconds ?? 0) / $lineTime - 1));
-                    $points = $points < 0 ? 0 : $points;
+                    $points = max(0, $points);
                 } else {
                     $points = 0;
                 }

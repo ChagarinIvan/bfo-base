@@ -10,6 +10,7 @@ use App\Domain\Rank\JuniorRankAgeValidator;
 use App\Domain\Rank\Rank;
 use App\Models\Year;
 use Carbon\Carbon;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -24,7 +25,7 @@ final class JuniorRankAgeValidatorTest extends TestCase
         $this->juniorRankAgeValidator = new JuniorRankAgeValidator($this->personRepository);
     }
 
-    /** @test */
+    #[Test]
     public function it_allows_all_not_junior_ranks(): void
     {
         $result = $this->juniorRankAgeValidator->validate(1, Rank::FIRST_RANK, Year::y2024);
@@ -33,7 +34,7 @@ final class JuniorRankAgeValidatorTest extends TestCase
         $this->assertTrue($result);
     }
 
-    /** @test */
+    #[Test]
     public function it_blocks_when_person_not_found(): void
     {
         $this->personRepository
@@ -46,7 +47,7 @@ final class JuniorRankAgeValidatorTest extends TestCase
         $this->assertFalse($result);
     }
 
-    /** @test */
+    #[Test]
     public function it_allows_when_person_has_junior_age(): void
     {
         $person = new Person();
@@ -62,7 +63,7 @@ final class JuniorRankAgeValidatorTest extends TestCase
         $this->assertTrue($result);
     }
 
-    /** @test */
+    #[Test]
     public function it_blocks_when_person_has_no_junior_age(): void
     {
         $person = new Person();

@@ -15,6 +15,6 @@ class ShowCreateEventFormAction extends BaseController
     public function __invoke(string $competitionId): View
     {
         /** @see /resources/views/events/create.blade.php */
-        return $this->view('events.create', compact('competitionId'));
+        return $this->view('events.create', ['competitionId' => $competitionId]);
     }
 }

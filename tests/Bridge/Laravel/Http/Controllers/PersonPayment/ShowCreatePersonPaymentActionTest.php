@@ -10,6 +10,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use Illuminate\Http\Response;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\CreatesApplication;
 use Tests\TestCase;
 
@@ -26,9 +27,9 @@ final class ShowCreatePersonPaymentActionTest extends TestCase
     }
 
     /**
-     * @test
      * @see ShowCreatePersonPaymentAction::class
      */
+    #[Test]
     public function it_shows_create_person_prompt_page(): void
     {
         /** @var Authenticatable&User $user */

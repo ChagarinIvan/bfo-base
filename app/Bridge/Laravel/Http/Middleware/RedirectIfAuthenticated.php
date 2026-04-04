@@ -24,15 +24,12 @@ class RedirectIfAuthenticated
     /**
      * Handle an incoming request.
      *
-     * @param Request $request
-     * @param Closure $next
      * @param string|null ...$guards
      *
-     * @return mixed
      */
     public function handle(Request $request, Closure $next, ...$guards): mixed
     {
-        $otherGuards = empty($guards) ? [null] : $guards;
+        $otherGuards = $guards === [] ? [null] : $guards;
 
         foreach ($otherGuards as $guard) {
             if ($this->authService->guard($guard)->check()) {

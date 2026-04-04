@@ -35,10 +35,10 @@ trait Action
             $validated = [];
             if ($parameter instanceof AbstractDto) {
                 try {
-                    if (!empty($parameter->requestValidationRules())) {
+                    if ($parameter->requestValidationRules() !== []) {
                         $validated = array_merge($this->request->validate($parameter::requestValidationRules()), $validated);
                     }
-                    if (!empty($parameter->parametersValidationRules())) {
+                    if ($parameter->parametersValidationRules() !== []) {
                         $validated = array_merge($this->validator->validate($parameters, $parameter::parametersValidationRules()), $validated);
                     }
                 } catch (ValidationException $e) {

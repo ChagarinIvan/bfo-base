@@ -22,6 +22,6 @@ class ShowSetPersonToProtocolLineAction extends BaseController
         $persons = Person::where('active', true)->with('club')->get();
 
         /** @see /resources/views/protocol-line/edit-person.blade.php */
-        return $this->view('protocol-line.edit-person', compact('protocolLine', 'persons'));
+        return $this->view('protocol-line.edit-person', ['protocolLine' => $protocolLine, 'persons' => $persons]);
     }
 }

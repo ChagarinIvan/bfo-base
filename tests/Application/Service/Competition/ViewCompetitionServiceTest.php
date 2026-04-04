@@ -12,6 +12,7 @@ use App\Application\Service\Competition\ViewCompetition;
 use App\Application\Service\Competition\ViewCompetitionService;
 use App\Domain\Competition\Competition;
 use App\Domain\Competition\CompetitionRepository;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
@@ -31,7 +32,7 @@ final class ViewCompetitionServiceTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_fails_when_competition_not_found(): void
     {
         $this->expectException(CompetitionNotFound::class);
@@ -39,7 +40,7 @@ final class ViewCompetitionServiceTest extends TestCase
         $this->competitions
             ->expects($this->once())
             ->method('byId')
-            ->with($this->equalTo(1))
+            ->with(1)
             ->willReturn(null)
         ;
 
@@ -47,7 +48,7 @@ final class ViewCompetitionServiceTest extends TestCase
         $this->service->execute($command);
     }
 
-    /** @test */
+    #[Test]
     public function it_shows_competition(): void
     {
         /** @var Competition $competition */
@@ -56,7 +57,7 @@ final class ViewCompetitionServiceTest extends TestCase
         $this->competitions
             ->expects($this->once())
             ->method('byId')
-            ->with($this->equalTo(1))
+            ->with(1)
             ->willReturn($competition)
         ;
 

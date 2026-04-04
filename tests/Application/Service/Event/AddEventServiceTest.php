@@ -19,6 +19,7 @@ use App\Domain\Event\Factory\EventFactory;
 use App\Domain\Event\Factory\EventInput;
 use App\Domain\Event\Protocol;
 use Carbon\Carbon;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
@@ -41,7 +42,7 @@ final class AddEventServiceTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_creates_event(): void
     {
         $info = new EventInfo(
@@ -63,7 +64,7 @@ final class AddEventServiceTest extends TestCase
         $this->factory
             ->expects($this->once())
             ->method('create')
-            ->with($this->equalTo($input))
+            ->with($input)
             ->willReturn($event)
         ;
 

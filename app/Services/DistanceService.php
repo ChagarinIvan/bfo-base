@@ -23,8 +23,6 @@ class DistanceService
 
     /**
      * @param string[] $groupNames
-     * @param int $eventId
-     * @return Distance|null
      */
     public function findDistance(array $groupNames, int $eventId): ?Distance
     {
@@ -42,7 +40,6 @@ class DistanceService
     }
 
     /**
-     * @param Distance $mainDistance
      * @return Collection|Distance[]
      */
     public function getEqualDistances(Distance $mainDistance): array|Collection

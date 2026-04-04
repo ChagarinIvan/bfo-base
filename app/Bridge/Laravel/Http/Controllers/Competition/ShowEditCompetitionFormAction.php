@@ -25,6 +25,6 @@ final class ShowEditCompetitionFormAction extends BaseController
         }
 
         /** @see /resources/views/competitions/edit.blade.php */
-        return $this->view('competitions.edit', compact('competition'));
+        return $this->view('competitions.edit', ['competition' => $competition]);
     }
 }

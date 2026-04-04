@@ -19,7 +19,7 @@ final class ClubProvider extends ServiceProvider
 
         $this->app->bind(StandardClubFactory::class, StandardClubFactory::class);
 
-        $this->app->bind(ClubFactory::class, fn () => new PreventDuplicateClubFactory(
+        $this->app->bind(ClubFactory::class, fn (): PreventDuplicateClubFactory => new PreventDuplicateClubFactory(
             $this->app->get(StandardClubFactory::class),
             $this->app->get(ClubRepository::class),
         ));

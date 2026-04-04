@@ -17,6 +17,7 @@ use App\Domain\Cup\CupRepository;
 use App\Domain\Event\Event;
 use App\Domain\Event\EventRepository;
 use App\Domain\Shared\Criteria;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
@@ -43,7 +44,7 @@ final class ViewCupServiceTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_fails_when_cup_not_found(): void
     {
         $this->expectException(CupNotFound::class);
@@ -51,7 +52,7 @@ final class ViewCupServiceTest extends TestCase
         $this->cups
             ->expects($this->once())
             ->method('byId')
-            ->with($this->equalTo(1))
+            ->with(1)
             ->willReturn(null)
         ;
 
@@ -59,7 +60,7 @@ final class ViewCupServiceTest extends TestCase
         $this->service->execute($command);
     }
 
-    /** @test */
+    #[Test]
     public function it_shows_cup(): void
     {
         /** @var Cup $cup */
@@ -75,14 +76,14 @@ final class ViewCupServiceTest extends TestCase
         $this->cups
             ->expects($this->once())
             ->method('byId')
-            ->with($this->equalTo(1))
+            ->with(1)
             ->willReturn($cup)
         ;
 
         $this->events
             ->expects($this->once())
             ->method('oneByCriteria')
-            ->with($this->equalTo( new Criteria(['cupId' => $cup->id], ['date' => 'desc'])))
+            ->with(new Criteria(['cupId' => $cup->id], ['date' => 'desc']))
             ->willReturn($event)
         ;
 

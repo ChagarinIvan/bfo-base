@@ -12,6 +12,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\CreatesApplication;
 use Tests\TestCase;
@@ -36,9 +37,9 @@ final class StoreEventActionTest extends TestCase
     }
 
     /**
-     * @test
      * @see StoreEventAction::class
      */
+    #[Test]
     public function it_stores_event_with_file(): void
     {
         $this->seed(ProtocolLinesSeeder::class);

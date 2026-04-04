@@ -102,11 +102,6 @@ class Rank extends AggregatedModel
     protected $fillable = ['finish_date', 'activated_date'];
 
     protected $table = 'ranks';
-    protected $casts = [
-        'start_date' => 'datetime:Y-m-d',
-        'finish_date' => 'datetime:Y-m-d',
-        'activated_date' => 'datetime:Y-m-d',
-    ];
 
     private static array $preparedRanks = [];
 
@@ -167,9 +162,16 @@ class Rank extends AggregatedModel
 
     public function create(): void
     {
-//        dump('Create rank ' . $this->rank);
         $this->recordThat(new RankCreated($this));
 
         $this->save();
+    }
+    protected function casts(): array
+    {
+        return [
+            'start_date' => 'datetime:Y-m-d',
+            'finish_date' => 'datetime:Y-m-d',
+            'activated_date' => 'datetime:Y-m-d',
+        ];
     }
 }

@@ -18,7 +18,7 @@ class ShowClubsListAction extends BaseController
         $clubs = $service->execute();
 
         /** @see /resources/views/clubs/index.blade.php */
-        return $this->view('clubs.index', compact('clubs'));
+        return $this->view('clubs.index', ['clubs' => $clubs]);
     }
 
     protected function isNavbarRoute(): bool

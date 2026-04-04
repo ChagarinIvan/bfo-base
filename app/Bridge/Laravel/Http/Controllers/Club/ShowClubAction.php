@@ -33,6 +33,6 @@ class ShowClubAction extends BaseController
         $persons = $personsService->execute(new ListPersons(new PersonSearchDto(clubId: $club->id)));
 
         /** @see /resources/views/clubs/show.blade.php */
-        return $this->view('clubs.show', compact('club', 'persons'));
+        return $this->view('clubs.show', ['club' => $club, 'persons' => $persons]);
     }
 }

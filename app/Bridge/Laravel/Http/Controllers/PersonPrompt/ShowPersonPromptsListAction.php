@@ -24,6 +24,6 @@ class ShowPersonPromptsListAction extends BaseController
         $prompts = $service->execute(new ListPersonsPrompts($search));
 
         /** @see /resources/views/persons/prompts.blade.php */
-        return $this->view('persons.prompts', compact('personId', 'prompts'));
+        return $this->view('persons.prompts', ['personId' => $personId, 'prompts' => $prompts]);
     }
 }

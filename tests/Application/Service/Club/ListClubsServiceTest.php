@@ -11,6 +11,7 @@ use App\Application\Service\Club\ListClubsService;
 use App\Domain\Club\Club;
 use App\Domain\Club\ClubRepository;
 use App\Domain\Shared\Criteria;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
@@ -30,7 +31,7 @@ final class ListClubsServiceTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_gets_list_of_clubs(): void
     {
         $clubs = Club::factory(count: 2)->make();
@@ -38,7 +39,7 @@ final class ListClubsServiceTest extends TestCase
         $this->clubs
             ->expects($this->once())
             ->method('byCriteria')
-            ->with($this->equalTo(Criteria::empty()))
+            ->with(Criteria::empty())
             ->willReturn($clubs)
         ;
 

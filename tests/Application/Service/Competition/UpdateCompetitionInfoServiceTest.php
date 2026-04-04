@@ -16,10 +16,11 @@ use App\Domain\Competition\CompetitionRepository;
 use App\Domain\Shared\DummyTransactional;
 use App\Domain\Shared\FrozenClock;
 use Carbon\Carbon;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
-class UpdateCompetitionInfoServiceTest extends TestCase
+final class UpdateCompetitionInfoServiceTest extends TestCase
 {
     private UpdateCompetitionInfoService $service;
 
@@ -37,7 +38,7 @@ class UpdateCompetitionInfoServiceTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_fails_when_competition_not_found(): void
     {
         $this->expectException(CompetitionNotFound::class);
@@ -45,7 +46,7 @@ class UpdateCompetitionInfoServiceTest extends TestCase
         $this->competitions
             ->expects($this->once())
             ->method('lockById')
-            ->with($this->equalTo(1))
+            ->with(1)
             ->willReturn(null)
         ;
 
@@ -59,7 +60,7 @@ class UpdateCompetitionInfoServiceTest extends TestCase
         $this->service->execute($command);
     }
 
-    /** @test */
+    #[Test]
     public function it_updates_competition_info(): void
     {
         $competition = Competition::factory()->makeOne();
@@ -67,7 +68,7 @@ class UpdateCompetitionInfoServiceTest extends TestCase
         $this->competitions
             ->expects($this->once())
             ->method('lockById')
-            ->with($this->equalTo(1))
+            ->with(1)
             ->willReturn($competition)
         ;
 
@@ -82,10 +83,10 @@ class UpdateCompetitionInfoServiceTest extends TestCase
         $command = new UpdateCompetitionInfo('1', $info, new UserId(1));
         $competition = $this->service->execute($command);
 
-        $this->assertEquals('test competition new', $competition->name);
-        $this->assertEquals('test competition', $competition->description);
-        $this->assertEquals('2023-02-02', $competition->from);
-        $this->assertEquals('2023-02-03', $competition->to);
-        $this->assertEquals('2023-04-01T00:00:00+00:00', $competition->updated->at);
+        $this->assertSame('test competition new', $competition->name);
+        $this->assertSame('test competition', $competition->description);
+        $this->assertSame('2023-02-02', $competition->from);
+        $this->assertSame('2023-02-03', $competition->to);
+        $this->assertSame('2023-04-01T00:00:00+00:00', $competition->updated->at);
     }
 }

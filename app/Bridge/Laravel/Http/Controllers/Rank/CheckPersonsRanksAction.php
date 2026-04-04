@@ -32,7 +32,7 @@ class CheckPersonsRanksAction extends AbstractRankAction
         /** @see /resources/views/ranks/check-list.blade.php */
         return $this->view(
             'ranks.check-list',
-            compact('list', 'ranks', 'personsList', 'persons')
+            ['list' => $list, 'ranks' => $ranks, 'personsList' => $personsList, 'persons' => $persons]
         );
     }
 

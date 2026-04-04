@@ -53,11 +53,7 @@ class AlbatrosTimingParser extends AbstractParser
             $distancePoints = 0;
             if (preg_match('#(\d+)\s+[^\d]+,\s+((\d+,\d+)\s+[^\d]+|(\d+)\s+[^\d])#s', $distance, $match)) {
                 $distancePoints = (int)$match[1];
-                if (str_contains($match[2], ',')) {
-                    $distanceLength = (float)str_replace(',', '.', $match[3]) * 1000;
-                } else {
-                    $distanceLength = (float)$match[4];
-                }
+                $distanceLength = str_contains($match[2], ',') ? (float)str_replace(',', '.', $match[3]) * 1000 : (float)$match[4];
             } elseif (count($lines) < 4) {
                 continue;
             }
@@ -66,7 +62,7 @@ class AlbatrosTimingParser extends AbstractParser
             $withComment = str_contains($groupHeader, 'Прим');
             for ($index = 4; $index < $linesCount; $index++) {
                 $line = trim($lines[$index]);
-                if (empty(trim($line, '-'))) {
+                if (in_array(trim($line, '-'), ['', '0'], true)) {
                     break;
                 }
                 $preparedLine = preg_replace('#\s+#', ' ', $line);
@@ -127,9 +123,6 @@ class AlbatrosTimingParser extends AbstractParser
                 }
                 $protocolLine['time'] = $time;
                 $protocolLine['runner_number'] = (int)$lineData[$fieldsCount - $indent++];
-                if (!is_numeric($protocolLine['runner_number'])) {
-                    throw new RuntimeException('Что то не так с номером участника ' . $preparedLine);
-                }
                 $protocolLine['rank'] = $lineData[$fieldsCount - $indent++];
                 if (is_numeric($lineData[$fieldsCount - $indent])) {
                     $protocolLine['year'] = (int)$lineData[$fieldsCount - $indent];

@@ -55,11 +55,11 @@ final readonly class CupGroup
 
     public function older(self $other): bool
     {
-        return $this->age()->value > $other->age()->value;
+        return $this->age->value > $other->age()->value;
     }
 
     public function less(self $other): bool
     {
-        return $this->age()->value < $other->age()->value;
+        return $this->age->value < $other->age()->value;
     }
 }

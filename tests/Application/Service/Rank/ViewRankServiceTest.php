@@ -13,6 +13,7 @@ use App\Domain\Person\Person;
 use App\Domain\ProtocolLine\ProtocolLineRepository;
 use App\Domain\Rank\Rank;
 use App\Domain\Rank\RankRepository;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
@@ -29,12 +30,12 @@ final class ViewRankServiceTest extends TestCase
         $this->service = new ViewRankService(
             $this->ranks = $this->createMock(RankRepository::class),
             new RankAssembler(
-                $this->createMock(ProtocolLineRepository::class)
+                $this->createStub(ProtocolLineRepository::class)
             ),
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_fails_when_rank_not_found(): void
     {
         $this->expectException(RankNotFound::class);
@@ -42,7 +43,7 @@ final class ViewRankServiceTest extends TestCase
         $this->ranks
             ->expects($this->once())
             ->method('byId')
-            ->with($this->equalTo(1))
+            ->with(1)
             ->willReturn(null)
         ;
 
@@ -50,7 +51,7 @@ final class ViewRankServiceTest extends TestCase
         $this->service->execute($command);
     }
 
-    /** @test */
+    #[Test]
     public function it_shows_rank(): void
     {
         /** @var Rank $rank */
@@ -62,7 +63,7 @@ final class ViewRankServiceTest extends TestCase
         $this->ranks
             ->expects($this->once())
             ->method('byId')
-            ->with($this->equalTo(1))
+            ->with(1)
             ->willReturn($rank)
         ;
 

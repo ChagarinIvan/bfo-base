@@ -33,12 +33,6 @@ class CupEvent extends AggregatedModel
 
     protected $table = 'cup_events';
 
-    protected $casts = [
-        'active' => 'boolean',
-        'created' => ImpressionCast::class,
-        'updated' => ImpressionCast::class,
-    ];
-
     public function disable(Impression $impression): void
     {
         $this->updated = $impression;
@@ -70,5 +64,13 @@ class CupEvent extends AggregatedModel
     public function scopeActive($query)
     {
         return $query->where('active', true);
+    }
+    protected function casts(): array
+    {
+        return [
+            'active' => 'boolean',
+            'created' => ImpressionCast::class,
+            'updated' => ImpressionCast::class,
+        ];
     }
 }

@@ -13,6 +13,7 @@ use App\Application\Service\PersonPayment\ListPersonsPaymentsService;
 use App\Domain\PersonPayment\PersonPayment;
 use App\Domain\PersonPayment\PersonPaymentRepository;
 use App\Domain\Shared\Criteria;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
@@ -30,13 +31,13 @@ final class ListPersonPaymentsServiceTest extends TestCase
         $this->service = new ListPersonsPaymentsService($this->payments, new PersonPaymentAssembler(new AuthAssembler));
     }
 
-    /** @test */
+    #[Test]
     public function it_gets_list_of_person_payments(): void
     {
         $this->payments
             ->expects($this->once())
             ->method('byCriteria')
-            ->with($this->equalTo(new Criteria(['personId' => 1])))
+            ->with(new Criteria(['personId' => 1]))
             ->willReturn(PersonPayment::factory(2)->make())
         ;
 

@@ -9,6 +9,7 @@ use App\Domain\User\User;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
+use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\CreatesApplication;
 use Tests\TestCase;
@@ -26,9 +27,9 @@ final class ShowCreateCupFormActionTest extends TestCase
     }
 
     /**
-     * @test
      * @see ShowCreateCupFormAction::class
      */
+    #[Test]
     public function it_shows_create_cup_page(): void
     {
         /** @var Authenticatable $user */

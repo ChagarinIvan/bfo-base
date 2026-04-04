@@ -11,6 +11,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use Illuminate\Http\Response;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\CreatesApplication;
 use Tests\TestCase;
 
@@ -27,9 +28,9 @@ final class DeleteEventActionTest extends TestCase
     }
 
     /**
-     * @test
      * @see DeleteEventAction::class
      */
+    #[Test]
     public function it_deletes_event(): void
     {
         $this->seed(ProtocolLinesSeeder::class);

@@ -13,6 +13,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use Illuminate\Http\Response;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\CreatesApplication;
 use Tests\TestCase;
 
@@ -29,9 +30,9 @@ final class UpdateRankActivationDateActionTest extends TestCase
     }
 
     /**
-     * @test
      * @see UpdateRankActivationDateAction::class
      */
+    #[Test]
     public function it_update_ranks_activation_date(): void
     {
         /** @var Authenticatable&User $user */
@@ -62,9 +63,9 @@ final class UpdateRankActivationDateActionTest extends TestCase
     }
 
     /**
-     * @test
      * @see UpdateRankActivationDateAction::class
      */
+    #[Test]
     public function it_removes_ranks_activation_date(): void
     {
         /** @var Authenticatable&User $user */

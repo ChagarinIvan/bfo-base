@@ -12,6 +12,7 @@ use App\Domain\Cup\CupEvent\CupEvent;
 use App\Domain\Cup\CupEvent\CupEventRepository;
 use App\Domain\Shared\DummyTransactional;
 use App\Domain\Shared\FrozenClock;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
@@ -32,7 +33,7 @@ final class DisableCupEventServiceTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_fails_when_cup_event_not_found(): void
     {
         $this->expectException(CupEventNotFound::class);
@@ -40,7 +41,7 @@ final class DisableCupEventServiceTest extends TestCase
         $this->cupsEvents
             ->expects($this->once())
             ->method('lockById')
-            ->with($this->equalTo(1))
+            ->with(1)
             ->willReturn(null)
         ;
 
@@ -48,7 +49,7 @@ final class DisableCupEventServiceTest extends TestCase
         $this->service->execute($command);
     }
 
-    /** @test */
+    #[Test]
     public function it_disables_cup_event(): void
     {
         /** @var CupEvent $cupEvent */
@@ -57,7 +58,7 @@ final class DisableCupEventServiceTest extends TestCase
         $this->cupsEvents
             ->expects($this->once())
             ->method('lockById')
-            ->with($this->equalTo(1))
+            ->with(1)
             ->willReturn($cupEvent)
         ;
 

@@ -31,7 +31,7 @@ class ExportCupGroupTableAction extends BaseController
         // толькі тыя у каго бал большы за 0
         $cupPoints = array_filter(
             $cupPoints,
-            static fn (array $points) => count(array_filter($points, static fn (CupEventPoint $p) => $p->points > 0)) > 0,
+            static fn (array $points): bool => count(array_filter($points, static fn (CupEventPoint $p): bool => $p->points > 0)) > 0,
         );
 
         $view = $this->view('cup.export.table', [

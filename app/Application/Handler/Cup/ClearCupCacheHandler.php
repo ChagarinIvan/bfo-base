@@ -13,7 +13,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 final readonly class ClearCupCacheHandler implements ShouldQueue
 {
     public function __construct(
-        protected CupsService $service,
+        private CupsService $service,
     ) {
     }
 

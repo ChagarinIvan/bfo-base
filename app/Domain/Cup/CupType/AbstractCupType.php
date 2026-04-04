@@ -16,6 +16,7 @@ use App\Services\DistanceService;
 use App\Services\GroupsService;
 use Illuminate\Support\Collection;
 use function array_slice;
+use function max;
 use function round;
 use function uasort;
 
@@ -41,7 +42,7 @@ abstract class AbstractCupType implements CupTypeInterface
         $results = $results->groupBy('protocolLine.person_id');
         $results = $results->toArray();
         foreach ($results as &$cupEventPoints) {
-            uasort($cupEventPoints, static function (CupEventPoint $a, CupEventPoint $b) {
+            uasort($cupEventPoints, static function (CupEventPoint $a, CupEventPoint $b): int {
                 if ($a->points === $b->points) {
                     return 0;
                 }
@@ -49,7 +50,7 @@ abstract class AbstractCupType implements CupTypeInterface
             });
         }
 
-        uasort($results, static function (array $person1Results, array $person2Results) use ($cup) {
+        uasort($results, static function (array $person1Results, array $person2Results) use ($cup): int {
             $person1Points = 0;
             foreach (array_slice($person1Results, 0, $cup->events_count) as $cupEventPoints) {
                 /** @var CupEventPoint $cupEventPoints */
@@ -103,7 +104,7 @@ abstract class AbstractCupType implements CupTypeInterface
                 } elseif ($protocolLine->time !== null) {
                     $diff = $protocolLine->time->secondsSinceMidnight();
                     $points = (int)round($maxPoints * (2 * ($firstResultSeconds ?? 0) / $diff - 1));
-                    $points = $points < 0 ? 0 : $points;
+                    $points = max(0, $points);
                 } else {
                     $points = 0;
                 }

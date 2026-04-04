@@ -12,6 +12,7 @@ use App\Application\Service\Club\ViewClub;
 use App\Application\Service\Club\ViewClubService;
 use App\Domain\Club\Club;
 use App\Domain\Club\ClubRepository;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
@@ -31,7 +32,7 @@ final class ViewClubServiceTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_fails_when_club_not_found(): void
     {
         $this->expectException(ClubNotFound::class);
@@ -39,7 +40,7 @@ final class ViewClubServiceTest extends TestCase
         $this->clubs
             ->expects($this->once())
             ->method('byId')
-            ->with($this->equalTo(1))
+            ->with(1)
             ->willReturn(null)
         ;
 
@@ -47,7 +48,7 @@ final class ViewClubServiceTest extends TestCase
         $this->service->execute($command);
     }
 
-    /** @test */
+    #[Test]
     public function it_shows_club(): void
     {
         /** @var Club $club */
@@ -56,7 +57,7 @@ final class ViewClubServiceTest extends TestCase
         $this->clubs
             ->expects($this->once())
             ->method('byId')
-            ->with($this->equalTo(1))
+            ->with(1)
             ->willReturn($club)
         ;
 

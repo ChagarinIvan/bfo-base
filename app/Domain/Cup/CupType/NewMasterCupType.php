@@ -165,7 +165,7 @@ class NewMasterCupType extends AbstractCupType
         ;
 
         $cupEventProtocolLines = $cupEventProtocolLines->filter(
-            static fn (ProtocolLine $protocolLine) => in_array($protocolLine->distance_id, $eventDistances, true)
+            static fn (ProtocolLine $protocolLine): bool => in_array($protocolLine->distance_id, $eventDistances, true)
         );
 
         $cupEventProtocolLines = $cupEventProtocolLines->groupBy('distance.group_id');
@@ -175,7 +175,7 @@ class NewMasterCupType extends AbstractCupType
 
         /** @var Collection $groups */
         $groups = $cupEventProtocolLines->keys()
-            ->map(fn (string $id) => $this->groupFactory->fromId($eventGroups->firstWhere('id', $id)['cupGroupId']))
+            ->map(fn (string $id): CupGroup => $this->groupFactory->fromId($eventGroups->firstWhere('id', $id)['cupGroupId']))
             ->sortBy(static fn(CupGroup $group) => $group->age()->value)
         ;
 
@@ -184,24 +184,24 @@ class NewMasterCupType extends AbstractCupType
         }
 
         $cupEventProtocolLinesWithGroups = $this->getAllGroupProtocolLines($cupEvent, $mainGroup, $groups);
-        $groupedCupEventProtocolLinesWithGroups = $cupEventProtocolLinesWithGroups->groupBy(static fn(CupEventProtocolLine $item) => $item->calculatedGroup->id());
+        $groupedCupEventProtocolLinesWithGroups = $cupEventProtocolLinesWithGroups->groupBy(static fn(CupEventProtocolLine $item): string => $item->calculatedGroup->id());
 
         $result = collect();
 
         foreach ($groupedCupEventProtocolLinesWithGroups as $lines) {
-            $first = $lines->first(static fn(CupEventProtocolLine $item) => $item->actualGroup->equal($mainGroup));;
+            $first = $lines->first(static fn(CupEventProtocolLine $item): bool => $item->actualGroup->equal($mainGroup));;
 
             if (!$first) {
                 continue;
             }
 
-            $protocolLines = $lines->map(static fn(CupEventProtocolLine $item) => $item->line);
+            $protocolLines = $lines->map(static fn(CupEventProtocolLine $item): ProtocolLine => $item->line);
             $cupGroupResults = $this->calculateLines($cupEvent, $protocolLines);
 
             /** @var CupEventPoint $cupResult */
             foreach ($cupGroupResults as $cupResult) {
                 if ($lines
-                    ->first(static fn(CupEventProtocolLine $item) => $item->line->id === $cupResult->protocolLine->id)
+                    ->first(static fn(CupEventProtocolLine $item): bool => $item->line->id === $cupResult->protocolLine->id)
                     ->actualGroup
                     ->equal($mainGroup)
                 ) {
@@ -249,7 +249,7 @@ class NewMasterCupType extends AbstractCupType
     {
         $results = $this
             ->getGroupProtocolLines($cupEvent, $group)
-            ->map(static fn(ProtocolLineCupGroup $item) => new CupEventProtocolLine($item->line, $group, $item->group))
+            ->map(static fn(ProtocolLineCupGroup $item): CupEventProtocolLine => new CupEventProtocolLine($item->line, $group, $item->group))
         ;
 
         $prevGroup = $group;
@@ -270,7 +270,7 @@ class NewMasterCupType extends AbstractCupType
             $results = $results->merge(
                 $this
                 ->getGroupProtocolLines($cupEvent, $prevGroup)
-                ->map(static fn(ProtocolLineCupGroup $item) => new CupEventProtocolLine($item->line, $prevGroup, $item->group))
+                ->map(static fn(ProtocolLineCupGroup $item): CupEventProtocolLine => new CupEventProtocolLine($item->line, $prevGroup, $item->group))
             )
                 ->unique('line.id')
             ;
@@ -341,7 +341,7 @@ class NewMasterCupType extends AbstractCupType
             ->toArray()
         ;
 
-        $result = $lines->filter(static fn(ProtocolLine $protocolLine) => in_array($protocolLine->distance_id, $eventDistances, true));
+        $result = $lines->filter(static fn(ProtocolLine $protocolLine): bool => in_array($protocolLine->distance_id, $eventDistances, true));
         self::$protocolLines[$group->id()] = $result;
 
         return $result;
@@ -373,7 +373,7 @@ class NewMasterCupType extends AbstractCupType
             if ($cupGroup->male() === $male) {
                 $cupGroupId = $cupGroup->id();
                 $group = $this->groupsRepository->searchGroups(static::GROUPS_MAP[$cupGroupId]);
-                $group = $group->map(static fn(Group $i) => [
+                $group = $group->map(static fn(Group $i): array => [
                     'id' => $i->id,
                     'name' => $i->name,
                     'cupGroupId' => $cupGroup->id(),
@@ -455,18 +455,14 @@ class NewMasterCupType extends AbstractCupType
 
                     $aDistance = $this->findDistance($cupEvent, $aGroup);
 
-                    if (!$searchDistance) {
-                        if ($mainDistance && $mainDistance->equal($aDistance)) {
-                            $groupedByGroupNameLines = $groupedByGroupNameLines->forget($aGroup->id());
-                            continue;
-                        }
+                    if (!$searchDistance && ($mainDistance && $mainDistance->equal($aDistance))) {
+                        $groupedByGroupNameLines = $groupedByGroupNameLines->forget($aGroup->id());
+                        continue;
                     }
 
-                    if ($aDistance && $searchDistance && $searchDistance->equal($aDistance)) {
-                        if ($aGroup->older($mainGroup)) {
-                            $groupedByGroupNameLines = $groupedByGroupNameLines->forget($aGroup->id());
-                            continue;
-                        }
+                    if ($aDistance && $searchDistance && $searchDistance->equal($aDistance) && $aGroup->older($mainGroup)) {
+                        $groupedByGroupNameLines = $groupedByGroupNameLines->forget($aGroup->id());
+                        continue;
                     }
 
                     $key = $aGroup->prev()->id();

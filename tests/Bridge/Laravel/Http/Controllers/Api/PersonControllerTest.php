@@ -10,6 +10,7 @@ use Database\Seeders\ProtocolLinesSeeder;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\CreatesApplication;
 use Tests\TestCase;
 
@@ -26,9 +27,9 @@ final class PersonControllerTest extends TestCase
     }
 
     /**
-     * @test
      * @see PersonController::index
      */
+    #[Test]
     public function it_gets_persons_list(): void
     {
         $this->seed(ProtocolLinesSeeder::class);

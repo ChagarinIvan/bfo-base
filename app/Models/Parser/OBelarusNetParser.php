@@ -62,7 +62,7 @@ class OBelarusNetParser extends AbstractParser
                 continue;
             }
             $groupHeader = $lines[2];
-            if (empty(trim($groupHeader, '-'))) {
+            if (in_array(trim($groupHeader, '-'), ['', '0'], true)) {
                 $groupHeader = $lines[3];
             }
             $groupHeader = preg_replace('#\s+#u', ' ', $groupHeader);
@@ -72,17 +72,13 @@ class OBelarusNetParser extends AbstractParser
 
             if (preg_match('#(\d+)\s+[^\d]+,\s+((\d+,\d+)\s+[^\d]+|(\d+)\s+[^\d])#s', $lines[0], $match)) {
                 $distancePoints = (int)$match[1];
-                if (str_contains($match[2], ',')) {
-                    $distanceLength = (float)str_replace(',', '.', $match[3]) * 1000;
-                } else {
-                    $distanceLength = (float)$match[3];
-                }
+                $distanceLength = str_contains($match[2], ',') ? (float)str_replace(',', '.', $match[3]) * 1000 : (float)$match[3];
             }
 
             for ($index = 4; $index < $linesCount; $index++) {
                 $line = trim($lines[$index]);
 
-                if (empty(trim($line, '-'))) {
+                if (in_array(trim($line, '-'), ['', '0'], true)) {
                     if ($index > 4) {
                         break;
                     }

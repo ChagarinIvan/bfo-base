@@ -11,6 +11,7 @@ use function array_key_exists;
 use function array_slice;
 use function count;
 use function implode;
+use function in_array;
 use function is_numeric;
 use function mb_strtolower;
 use function preg_match;
@@ -63,7 +64,7 @@ class OBelarusSpanParser extends AbstractParser
             }
 
             $groupHeader = $lines[0];
-            if (empty(trim($groupHeader, '-'))) {
+            if (in_array(trim($groupHeader, '-'), ['', '0'], true)) {
                 $groupHeader = $lines[1];
                 $startIndex = 3;
             }
@@ -74,10 +75,7 @@ class OBelarusSpanParser extends AbstractParser
 
             for ($index = $startIndex; $index < $linesCount; $index++) {
                 $line = trim($lines[$index]);
-                if (empty(trim($line, '-'))) {
-                    continue;
-                }
-                if (empty($line)) {
+                if (in_array(trim($line, '-'), ['', '0'], true)) {
                     continue;
                 }
 
@@ -215,7 +213,8 @@ class OBelarusSpanParser extends AbstractParser
                 $indent++;
                 $protocolLine['points'] = (int)$column;
                 return $protocolLine;
-            } elseif ($column === '-') {
+            }
+            if ($column === '-') {
                 $indent++;
                 $protocolLine['points'] = null;
                 return $protocolLine;

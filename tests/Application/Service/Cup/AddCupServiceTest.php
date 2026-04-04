@@ -21,6 +21,7 @@ use App\Domain\Event\Event;
 use App\Domain\Event\EventRepository;
 use App\Domain\Shared\Criteria;
 use App\Models\Year;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
@@ -50,7 +51,7 @@ final class AddCupServiceTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_creates_cup(): void
     {
         $input = new CupInput(
@@ -72,7 +73,7 @@ final class AddCupServiceTest extends TestCase
         $this->factory
             ->expects($this->once())
             ->method('create')
-            ->with($this->equalTo($input))
+            ->with($input)
             ->willReturn($cup)
         ;
 
@@ -85,7 +86,7 @@ final class AddCupServiceTest extends TestCase
         $this->events
             ->expects($this->once())
             ->method('oneByCriteria')
-            ->with($this->equalTo( new Criteria(['cupId' => $cup->id], ['date' => 'desc'])))
+            ->with(new Criteria(['cupId' => $cup->id], ['date' => 'desc']))
             ->willReturn($event)
         ;
 

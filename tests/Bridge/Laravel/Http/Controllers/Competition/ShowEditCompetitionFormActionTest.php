@@ -10,6 +10,7 @@ use App\Domain\User\User;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
+use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\CreatesApplication;
 use Tests\TestCase;
@@ -27,9 +28,9 @@ final class ShowEditCompetitionFormActionTest extends TestCase
     }
 
     /**
-     * @test
      * @see ShowEditCompetitionFormAction::class
      */
+    #[Test]
     public function it_shows_edit_competition_page(): void
     {
         /** @var Authenticatable $user */

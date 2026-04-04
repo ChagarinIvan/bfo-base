@@ -47,11 +47,6 @@ class ProtocolLine extends AggregatedModel
     public $timestamps = false;
     protected $table = 'protocol_lines';
 
-    protected $casts = [
-        'time' => 'datetime',
-        'activate_rank' => 'datetime:Y-m-d',
-    ];
-
     protected $fillable = [
         'serial_number',
         'lastname',
@@ -106,5 +101,12 @@ class ProtocolLine extends AggregatedModel
         $this->activate_rank = $date;
 
         $this->recordThat(new ProtocolLineRankActivated($this));
+    }
+    protected function casts(): array
+    {
+        return [
+            'time' => 'datetime',
+            'activate_rank' => 'datetime:Y-m-d',
+        ];
     }
 }

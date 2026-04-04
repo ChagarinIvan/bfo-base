@@ -26,7 +26,7 @@ final class EventProvider extends ServiceProvider
         $this->app->bind(EventRepository::class, EloquentEventRepository::class);
         $this->app->bind(StandardEventFactory::class, StandardEventFactory::class);
 
-        $this->app->bind(EventFactory::class, fn () => new StoreProtocolEventFactory(
+        $this->app->bind(EventFactory::class, fn (): StoreProtocolEventFactory => new StoreProtocolEventFactory(
             $this->app->get(StandardEventFactory::class),
             $this->app->get(ProtocolStorage::class),
             $this->app->get(ProtocolPathResolver::class),

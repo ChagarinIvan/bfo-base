@@ -20,7 +20,7 @@ final class CompetitionSearchDto extends AbstractDto
     {
     }
 
-    public function fromArray(array $data): AbstractDto
+    public function fromArray(array $data): self
     {
         $this->setStringParam('year', $data);
         if (!$this->year) {

@@ -12,6 +12,7 @@ use App\Domain\Event\Event;
 use App\Domain\Event\EventRepository;
 use App\Domain\Shared\DummyTransactional;
 use App\Domain\Shared\FrozenClock;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
@@ -32,7 +33,7 @@ final class DisableEventServiceTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_fails_when_event_not_found(): void
     {
         $this->expectException(EventNotFound::class);
@@ -40,7 +41,7 @@ final class DisableEventServiceTest extends TestCase
         $this->events
             ->expects($this->once())
             ->method('lockById')
-            ->with($this->equalTo(1))
+            ->with(1)
             ->willReturn(null)
         ;
 
@@ -48,7 +49,7 @@ final class DisableEventServiceTest extends TestCase
         $this->service->execute($command);
     }
 
-    /** @test */
+    #[Test]
     public function it_disables_event(): void
     {
         /** @var Event $event */
@@ -57,7 +58,7 @@ final class DisableEventServiceTest extends TestCase
         $this->events
             ->expects($this->once())
             ->method('lockById')
-            ->with($this->equalTo(1))
+            ->with(1)
             ->willReturn($event)
         ;
 

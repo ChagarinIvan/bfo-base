@@ -44,7 +44,7 @@ class XlsxParser extends AbstractParser
 
             if (
                 $this->groups
-                ->filter(static fn (string $groupName) => str_contains($lines[$i][0], $groupName))
+                ->filter(static fn (string $groupName): bool => str_contains($lines[$i][0], $groupName))
                 ->count() >= 1
             ) {
                 $groupNameWithDistance = $lines[$i][0];
@@ -59,10 +59,10 @@ class XlsxParser extends AbstractParser
                 }
 
                 $groupHeader = [];
-                $lines[++$i] = array_filter($lines[$i], static fn ($item) => $item !== null);
+                $lines[++$i] = array_filter($lines[$i], static fn ($item): bool => $item !== null);
                 if (empty($lines[$i])) {
                     $i++;
-                    $lines[$i] = array_filter($lines[$i], static fn ($item) => $item !== null);
+                    $lines[$i] = array_filter($lines[$i], static fn ($item): bool => $item !== null);
                 }
                 $index = 0;
 
@@ -115,27 +115,38 @@ class XlsxParser extends AbstractParser
         $field = mb_strtolower($field);
         if (str_contains($field, '№')) {
             return 'serial_number';
-        } elseif (str_contains($field, 'омер')) {
+        }
+        if (str_contains($field, 'омер')) {
             return 'runner_number';
-        } elseif (strtolower($field) === 'фамилия') {
+        }
+        if (strtolower($field) === 'фамилия') {
             return 'lastname';
-        } elseif (strtolower($field) === 'имя') {
+        }
+        if (strtolower($field) === 'имя') {
             return 'firstname';
-        } elseif (str_contains($field, 'амилия')) {
+        }
+        if (str_contains($field, 'амилия')) {
             return 'name_surname';
-        } elseif (str_contains($field, '.р.') || str_contains($field, 'рожд') || $field === 'гр') {
+        }
+        if (str_contains($field, '.р.') || str_contains($field, 'рожд') || $field === 'гр') {
             return 'year';
-        } elseif (str_contains($field, 'ып.') || $field === 'вып') {
+        }
+        if (str_contains($field, 'ып.') || $field === 'вып') {
             return 'complete_rank';
-        } elseif (str_contains($field, 'азр') || str_contains($field, 'квал')) {
+        }
+        if (str_contains($field, 'азр') || str_contains($field, 'квал')) {
             return 'rank';
-        } elseif (str_contains($field, 'оманда') || str_contains($field, 'ллектив')) {
+        }
+        if (str_contains($field, 'оманда') || str_contains($field, 'ллектив')) {
             return 'club';
-        } elseif (str_contains($field, 'езультат')) {
+        }
+        if (str_contains($field, 'езультат')) {
             return 'time';
-        } elseif (str_contains($field, 'есто')) {
+        }
+        if (str_contains($field, 'есто')) {
             return 'place';
-        } elseif (str_contains($field, 'чки')) {
+        }
+        if (str_contains($field, 'чки')) {
             return 'points';
         }
 

@@ -19,7 +19,7 @@ final class SearchPersonPromptDto extends AbstractDto
     {
     }
 
-    public function fromArray(array $data): AbstractDto
+    public function fromArray(array $data): self
     {
         $this->setStringParam('personId', $data);
 

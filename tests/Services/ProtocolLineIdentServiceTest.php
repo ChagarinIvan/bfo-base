@@ -5,26 +5,25 @@ declare(strict_types=1);
 namespace Tests\Services;
 
 use App\Services\ProtocolLineIdentService;
+use Iterator;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
-class ProtocolLineIdentServiceTest extends TestCase
+final class ProtocolLineIdentServiceTest extends TestCase
 {
-    public static function prepareLineDataProvider(): array
+    public static function prepareLineDataProvider(): Iterator
     {
-        return [
-            ['алена', 'алена'],
-            ['елена', 'елена'],
-            ['лена', 'елена'],
-            ['алёна', 'алена'],
-        ];
+        yield ['алена', 'алена'];
+        yield ['елена', 'елена'];
+        yield ['лена', 'елена'];
+        yield ['алёна', 'алена'];
     }
 
-    /**
-     * @dataProvider prepareLineDataProvider
-     * @test
-     */
+    #[DataProvider('prepareLineDataProvider')]
+    #[Test]
     public function prepare_line(string $name, string $expectedName): void
     {
-        $this->assertEquals($expectedName, ProtocolLineIdentService::prepareLine($name));
+        $this->assertSame($expectedName, ProtocolLineIdentService::prepareLine($name));
     }
 }

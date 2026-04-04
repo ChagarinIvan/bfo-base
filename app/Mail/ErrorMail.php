@@ -9,9 +9,6 @@ use Throwable;
 
 class ErrorMail extends Mailable
 {
-    /**
-     * @var Throwable
-     */
     private Throwable $error;
     private string $url;
     private string $previousUrl;
@@ -27,7 +24,7 @@ class ErrorMail extends Mailable
     {
         $email = 'Chagarin.Ivan@gmail.com';
 
-        return $this->from(env('ERROR_EMAIL'))
+        return $this->from(config('mail.error_email'))
             ->to($email)
             ->setAddress($email, $email)
             ->subject($this->error->getMessage())

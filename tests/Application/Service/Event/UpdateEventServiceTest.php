@@ -21,6 +21,7 @@ use App\Domain\Event\ProtocolUpdater;
 use App\Domain\Shared\DummyTransactional;
 use App\Domain\Shared\FrozenClock;
 use Carbon\Carbon;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
@@ -45,7 +46,7 @@ final class UpdateEventServiceTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_fails_when_event_not_found(): void
     {
         $this->expectException(EventNotFound::class);
@@ -53,7 +54,7 @@ final class UpdateEventServiceTest extends TestCase
         $this->events
             ->expects($this->once())
             ->method('lockById')
-            ->with($this->equalTo(1))
+            ->with(1)
             ->willReturn(null)
         ;
 
@@ -71,7 +72,7 @@ final class UpdateEventServiceTest extends TestCase
         $this->service->execute($command);
     }
 
-    /** @test */
+    #[Test]
     public function it_updates_event_info(): void
     {
         /** @var Event $event */
@@ -80,7 +81,7 @@ final class UpdateEventServiceTest extends TestCase
         $this->events
             ->expects($this->once())
             ->method('lockById')
-            ->with($this->equalTo(1))
+            ->with(1)
             ->willReturn($event)
         ;
 
@@ -98,18 +99,18 @@ final class UpdateEventServiceTest extends TestCase
         $command = new UpdateEvent('1', $dto, new UserId(1));
         $eventDto = $this->service->execute($command);
 
-        $this->assertEquals('title', $eventDto->name);
-        $this->assertEquals('description', $eventDto->description);
-        $this->assertEquals('1989-07-01', $eventDto->date);
+        $this->assertSame('title', $eventDto->name);
+        $this->assertSame('description', $eventDto->description);
+        $this->assertSame('1989-07-01', $eventDto->date);
         $this->assertEquals('1', $eventDto->updated->by);
-        $this->assertEquals('2023-04-01T00:00:00+00:00', $eventDto->updated->at);
+        $this->assertSame('2023-04-01T00:00:00+00:00', $eventDto->updated->at);
 
         $events = $event->releasedEvents();
         $this->assertCount(1, $events);
         $this->assertContainsOnlyInstancesOf(EventUpdated::class, $events);
     }
 
-    /** @test */
+    #[Test]
     public function it_updates_event_protocol(): void
     {
         /** @var Event $event */
@@ -118,7 +119,7 @@ final class UpdateEventServiceTest extends TestCase
         $this->events
             ->expects($this->once())
             ->method('lockById')
-            ->with($this->equalTo(1))
+            ->with(1)
             ->willReturn($event)
         ;
 
@@ -126,7 +127,7 @@ final class UpdateEventServiceTest extends TestCase
         $this->updater
             ->expects($this->once())
             ->method('update')
-            ->with($this->identicalTo($event), $this->equalTo(new Protocol('content', 'html')))
+            ->with($this->identicalTo($event), new Protocol('content', 'html'))
             ->willReturn('2023/2023-01-01_test_event.text/html')
         ;
 

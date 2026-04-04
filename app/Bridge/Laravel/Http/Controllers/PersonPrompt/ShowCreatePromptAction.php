@@ -16,6 +16,6 @@ class ShowCreatePromptAction extends BaseController
     public function __invoke(string $personId): View
     {
         /** @see /resources/views/person-prompt/create.blade.php */
-        return $this->view('person-prompt.create', compact('personId'));
+        return $this->view('person-prompt.create', ['personId' => $personId]);
     }
 }

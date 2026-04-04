@@ -38,7 +38,6 @@ class ParserFactory
     public static function createProtocolParser(string $protocol, Collection $groups, string $extension = 'html'): ParserInterface
     {
         foreach (self::PROTOCOL_PARSERS as $parser) {
-            /** @var ParserInterface $parser */
             $parser = new $parser($groups);
             if ($parser->check($protocol, $extension)) {
                 return $parser;
@@ -51,7 +50,6 @@ class ParserFactory
     public static function createListParser(string $list, string $extension = 'csv'): ParserInterface
     {
         foreach (self::LIST_PARSERS as $parser) {
-            /** @var ParserInterface $parser */
             $parser = new $parser();
             if ($parser->check($list, $extension)) {
                 return $parser;

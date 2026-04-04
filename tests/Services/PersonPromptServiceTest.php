@@ -9,6 +9,7 @@ use App\Domain\PersonPrompt\PersonPrompt;
 use App\Services\PersonPromptService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\CreatesApplication;
 use Tests\TestCase;
 
@@ -26,9 +27,7 @@ final class PersonPromptServiceTest extends TestCase
         RefreshDatabaseState::$migrated = false;
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function ident_persons_by_prompts(): void
     {
         Person::factory(state: ['id' => 1, 'active' => false])->createOne();

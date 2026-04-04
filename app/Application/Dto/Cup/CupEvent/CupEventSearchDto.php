@@ -19,7 +19,7 @@ final class CupEventSearchDto extends AbstractDto
     {
     }
 
-    public function fromArray(array $data): AbstractDto
+    public function fromArray(array $data): self
     {
         $this->setStringParam('cupId', $data);
 

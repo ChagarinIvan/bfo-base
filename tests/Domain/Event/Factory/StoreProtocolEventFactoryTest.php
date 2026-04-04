@@ -13,6 +13,7 @@ use App\Domain\Event\Protocol;
 use App\Domain\Event\ProtocolPathResolver;
 use App\Domain\Event\ProtocolStorage;
 use Carbon\Carbon;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
@@ -35,7 +36,7 @@ final class StoreProtocolEventFactoryTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_stores_protocol(): void
     {
         $protocol = new Protocol('protocol', 'xml');
@@ -49,7 +50,7 @@ final class StoreProtocolEventFactoryTest extends TestCase
         $this->protocols
             ->expects($this->once())
             ->method('put')
-            ->with($this->equalTo('2023/2023-04-01_name@@xml'), $this->identicalTo($protocol))
+            ->with('2023/2023-04-01_name@@xml', $this->identicalTo($protocol))
         ;
 
         /** @var Event $event */
@@ -58,7 +59,7 @@ final class StoreProtocolEventFactoryTest extends TestCase
         $this->decorated
             ->expects($this->once())
             ->method('create')
-            ->with($this->equalTo($input->withFile('2023/2023-04-01_name@@xml')))
+            ->with($input->withFile('2023/2023-04-01_name@@xml'))
             ->willReturn($event)
         ;
 

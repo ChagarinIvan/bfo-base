@@ -35,14 +35,6 @@ class Competition extends AggregatedModel
 
     protected $table = 'competitions';
 
-    protected $casts = [
-        'from' => 'datetime:Y-m-d',
-        'to' => 'datetime:Y-m-d',
-        'mass' => 'boolean',
-        'created' => ImpressionCast::class,
-        'updated' => ImpressionCast::class,
-    ];
-
     public function updateInfo(CompetitionInfo $info, Impression $impression): void
     {
         $this->name = $info->name;
@@ -67,5 +59,15 @@ class Competition extends AggregatedModel
         $this->recordThat(new CompetitionCreated($this));
 
         $this->save();
+    }
+    protected function casts(): array
+    {
+        return [
+            'from' => 'datetime:Y-m-d',
+            'to' => 'datetime:Y-m-d',
+            'mass' => 'boolean',
+            'created' => ImpressionCast::class,
+            'updated' => ImpressionCast::class,
+        ];
     }
 }

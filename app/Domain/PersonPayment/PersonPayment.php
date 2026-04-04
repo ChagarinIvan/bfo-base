@@ -29,12 +29,6 @@ class PersonPayment extends Model
 
     protected $table = 'persons_payments';
 
-    protected $casts = [
-        'date' => 'datetime:Y-m-d',
-        'created' => ImpressionCast::class,
-        'updated' => ImpressionCast::class,
-    ];
-
     public function person(): HasOne
     {
         return $this->hasOne(Person::class, 'id', 'person_id');
@@ -44,5 +38,13 @@ class PersonPayment extends Model
     {
         $this->date = $date;
         $this->updated = $impression;
+    }
+    protected function casts(): array
+    {
+        return [
+            'date' => 'datetime:Y-m-d',
+            'created' => ImpressionCast::class,
+            'updated' => ImpressionCast::class,
+        ];
     }
 }

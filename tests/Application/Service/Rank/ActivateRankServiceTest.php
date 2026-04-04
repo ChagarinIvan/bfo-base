@@ -17,6 +17,7 @@ use App\Domain\Rank\Rank;
 use App\Domain\Rank\RankRepository;
 use App\Domain\Shared\Criteria;
 use App\Domain\Shared\DummyTransactional;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
@@ -40,7 +41,7 @@ final class ActivateRankServiceTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_fails_on_rank_not_found(): void
     {
         $this->expectException(RankNotFound::class);
@@ -48,7 +49,7 @@ final class ActivateRankServiceTest extends TestCase
         $this->ranks
             ->expects($this->once())
             ->method('byId')
-            ->with($this->equalTo(1))
+            ->with(1)
         ;
         $this->protocolLines->expects($this->never())->method('lockOneByCriteria');
 
@@ -59,7 +60,7 @@ final class ActivateRankServiceTest extends TestCase
         $this->service->execute($command);
     }
 
-    /** @test */
+    #[Test]
     public function it_fails_on_protocol_line_not_found(): void
     {
         $this->expectException(ProtocolLineNotFound::class);
@@ -70,14 +71,14 @@ final class ActivateRankServiceTest extends TestCase
         $this->ranks
             ->expects($this->once())
             ->method('byId')
-            ->with($this->equalTo(1))
+            ->with(1)
             ->willReturn($rank)
         ;
 
         $this->protocolLines
             ->expects($this->once())
             ->method('lockOneByCriteria')
-            ->with($this->equalTo(new Criteria(['personId' => 1, 'eventId' => 2])))
+            ->with(new Criteria(['personId' => 1, 'eventId' => 2]))
         ;
 
         $dto = new ActivationDto();
@@ -87,7 +88,7 @@ final class ActivateRankServiceTest extends TestCase
         $this->service->execute($command);
     }
 
-    /** @test */
+    #[Test]
     public function it_activates_rank(): void
     {
         /** @var Rank $rank */
@@ -102,14 +103,14 @@ final class ActivateRankServiceTest extends TestCase
         $this->ranks
             ->expects($this->once())
             ->method('byId')
-            ->with($this->equalTo(1))
+            ->with(1)
             ->willReturn($rank)
         ;
 
         $this->protocolLines
             ->expects($this->once())
             ->method('lockOneByCriteria')
-            ->with($this->equalTo(new Criteria(['personId' => 1, 'eventId' => 2])))
+            ->with(new Criteria(['personId' => 1, 'eventId' => 2]))
             ->willReturn($line)
         ;
 

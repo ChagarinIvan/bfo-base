@@ -11,6 +11,7 @@ use App\Domain\Club\Factory\ClubFactory;
 use App\Domain\Club\Factory\ClubInput;
 use App\Domain\Club\Factory\PreventDuplicateClubFactory;
 use App\Domain\Shared\Criteria;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
@@ -32,7 +33,7 @@ final class PreventDuplicateClubFactoryTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_fails_when_club_with_same_name_already_exists(): void
     {
         $this->expectException(ClubAlreadyExist::class);
@@ -42,14 +43,14 @@ final class PreventDuplicateClubFactoryTest extends TestCase
         $this->clubs
             ->expects($this->once())
             ->method('oneByCriteria')
-            ->with($this->equalTo(new Criteria(['name' => 'test club'])))
+            ->with(new Criteria(['name' => 'test club']))
             ->willReturn(Club::factory()->makeOne())
         ;
 
         $this->factory->create(new ClubInput('test club', 1));
     }
 
-    /** @test */
+    #[Test]
     public function it_propagates_club_creation_on_equal_club_not_exists(): void
     {
         $input = new ClubInput('test club', 1);
@@ -64,7 +65,7 @@ final class PreventDuplicateClubFactoryTest extends TestCase
         $this->clubs
             ->expects($this->once())
             ->method('oneByCriteria')
-            ->with($this->equalTo(new Criteria(['name' => 'test club'])))
+            ->with(new Criteria(['name' => 'test club']))
             ->willReturn(null)
         ;
 

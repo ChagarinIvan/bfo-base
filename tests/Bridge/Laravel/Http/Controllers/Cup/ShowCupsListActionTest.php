@@ -8,6 +8,7 @@ use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupsListAction;
 use Database\Seeders\ProtocolLinesSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
+use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\CreatesApplication;
 use Tests\TestCase;
@@ -25,9 +26,9 @@ final class ShowCupsListActionTest extends TestCase
     }
 
     /**
-     * @test
      * @see ShowCupsListAction::class
      */
+    #[Test]
     public function it_shows_cups(): void
     {
         $this->seed(ProtocolLinesSeeder::class);

@@ -20,6 +20,6 @@ class ShowUnitEventsFormAction extends BaseController
         $events = $service->execute(new ListEvents(new EventSearchDto($competitionId)));
 
         /** @see /resources/views/events/sum.blade.php */
-        return $this->view('events.sum', compact('competitionId', 'events'));
+        return $this->view('events.sum', ['competitionId' => $competitionId, 'events' => $events]);
     }
 }

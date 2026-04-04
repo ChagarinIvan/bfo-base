@@ -12,6 +12,7 @@ use App\Domain\Person\Person;
 use App\Domain\Person\PersonRepository;
 use App\Domain\Shared\DummyTransactional;
 use App\Domain\Shared\FrozenClock;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
@@ -32,7 +33,7 @@ final class DisablePersonServiceTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_fails_when_person_not_found(): void
     {
         $this->expectException(PersonNotFound::class);
@@ -40,7 +41,7 @@ final class DisablePersonServiceTest extends TestCase
         $this->persons
             ->expects($this->once())
             ->method('lockById')
-            ->with($this->equalTo(1))
+            ->with(1)
             ->willReturn(null)
         ;
 
@@ -48,7 +49,7 @@ final class DisablePersonServiceTest extends TestCase
         $this->service->execute($command);
     }
 
-    /** @test */
+    #[Test]
     public function it_disables_competition(): void
     {
         /** @var Person $person */
@@ -57,7 +58,7 @@ final class DisablePersonServiceTest extends TestCase
         $this->persons
             ->expects($this->once())
             ->method('lockById')
-            ->with($this->equalTo(1))
+            ->with(1)
             ->willReturn($person)
         ;
 

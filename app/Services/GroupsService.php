@@ -47,7 +47,7 @@ final readonly class GroupsService
         return $this
             ->groupsRepository
             ->getAll()
-            ->filter(static fn (Group $group) => !in_array($group->id, $groupIdList, true))
+            ->filter(static fn (Group $group): bool => !in_array($group->id, $groupIdList, true))
         ;
     }
 }

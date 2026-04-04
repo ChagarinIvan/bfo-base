@@ -22,6 +22,6 @@ class ShowCreatePersonPaymentAction extends BaseController
         $person = $service->execute(new ViewPerson($personId));
 
         /** @see /resources/views/person-payment/create.blade.php */
-        return $this->view('person-payment.create', compact('person'));
+        return $this->view('person-payment.create', ['person' => $person]);
     }
 }

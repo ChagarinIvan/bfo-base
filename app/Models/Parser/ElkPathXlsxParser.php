@@ -33,7 +33,10 @@ class ElkPathXlsxParser extends AbstractParser
             foreach ($groupHeader as $headerIndex => $headerName) {
                 if ($headerName) {
                     $columnName = $this->getColumn($headerName);
-                    if (empty($columnName)) {
+                    if ($columnName === '') {
+                        continue;
+                    }
+                    if ($columnName === '0') {
                         continue;
                     }
 
@@ -90,21 +93,29 @@ class ElkPathXlsxParser extends AbstractParser
         $field = mb_strtolower($field);
         if ($field === 'classname') {
             return 'group';
-        } elseif ($field === 'startnumber') {
+        }
+        if ($field === 'startnumber') {
             return 'runner_number';
-        } elseif ($field === 'place') {
+        }
+        if ($field === 'place') {
             return 'place';
-        } elseif ($field === 'name') {
+        }
+        if ($field === 'name') {
             return 'firstname';
-        } elseif ($field === 'surname') {
+        }
+        if ($field === 'surname') {
             return 'lastname';
-        } elseif ($field === 'result') {
+        }
+        if ($field === 'result') {
             return 'time';
-        } elseif ($field === 'club') {
+        }
+        if ($field === 'club') {
             return 'club';
-        } elseif ($field === 'birthyear') {
+        }
+        if ($field === 'birthyear') {
             return 'year';
-        } elseif ($field === 'distance') {
+        }
+        if ($field === 'distance') {
             return 'distance';
         }
 

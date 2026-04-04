@@ -47,10 +47,10 @@ class XlsParser extends AbstractParser
                 $distancePoints = $hasDistance ? (int)$linesMatch[1] : 0;
                 $distanceLength = $hasDistance ? (float) ($linesMatch[2]) * 1000 : 0;
                 $groupHeader = [];
-                $lines[$i] = array_filter($lines[$i], static fn ($item) => $item !== null);
+                $lines[$i] = array_filter($lines[$i], static fn ($item): bool => $item !== null);
                 if (empty($lines[$i])) {
                     $i++;
-                    $lines[$i] = array_filter($lines[$i], static fn ($item) => $item !== null);
+                    $lines[$i] = array_filter($lines[$i], static fn ($item): bool => $item !== null);
                 }
                 $index = 0;
                 foreach ($lines[$i++] as $header) {
@@ -116,23 +116,32 @@ class XlsParser extends AbstractParser
         $field = mb_strtolower($field);
         if (str_contains($field, '№')) {
             return 'serial_number';
-        } elseif (str_contains($field, 'омер')) {
+        }
+        if (str_contains($field, 'омер')) {
             return 'runner_number';
-        } elseif (str_contains($field, 'амилия')) {
+        }
+        if (str_contains($field, 'амилия')) {
             return 'lastname';
-        } elseif (str_contains($field, 'мя')) {
+        }
+        if (str_contains($field, 'мя')) {
             return 'firstname';
-        } elseif (str_contains($field, '.р.') || $field === 'гр') {
+        }
+        if (str_contains($field, '.р.') || $field === 'гр') {
             return 'year';
-        } elseif (str_contains($field, 'азр.') || str_contains($field, 'квал')) {
+        }
+        if (str_contains($field, 'азр.') || str_contains($field, 'квал')) {
             return 'rank';
-        } elseif (str_contains($field, 'оманда') || str_contains($field, 'ллектив')) {
+        }
+        if (str_contains($field, 'оманда') || str_contains($field, 'ллектив')) {
             return 'club';
-        } elseif (str_contains($field, 'езультат')) {
+        }
+        if (str_contains($field, 'езультат')) {
             return 'time';
-        } elseif (str_contains($field, 'есто')) {
+        }
+        if (str_contains($field, 'есто')) {
             return 'place';
-        } elseif (str_contains($field, 'ып.') || $field === 'вып') {
+        }
+        if (str_contains($field, 'ып.') || $field === 'вып') {
             return 'complete_rank';
         }
         return '';

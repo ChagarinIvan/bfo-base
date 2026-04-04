@@ -12,6 +12,7 @@ use App\Domain\Competition\Competition;
 use App\Domain\Competition\CompetitionRepository;
 use App\Domain\Shared\DummyTransactional;
 use App\Domain\Shared\FrozenClock;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
@@ -32,7 +33,7 @@ final class DisableCompetitionServiceTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_fails_when_competition_not_found(): void
     {
         $this->expectException(CompetitionNotFound::class);
@@ -40,7 +41,7 @@ final class DisableCompetitionServiceTest extends TestCase
         $this->competitions
             ->expects($this->once())
             ->method('lockById')
-            ->with($this->equalTo(1))
+            ->with(1)
             ->willReturn(null)
         ;
 
@@ -48,7 +49,7 @@ final class DisableCompetitionServiceTest extends TestCase
         $this->service->execute($command);
     }
 
-    /** @test */
+    #[Test]
     public function it_disables_competition(): void
     {
         /** @var Competition $competition */
@@ -57,7 +58,7 @@ final class DisableCompetitionServiceTest extends TestCase
         $this->competitions
             ->expects($this->once())
             ->method('lockById')
-            ->with($this->equalTo(1))
+            ->with(1)
             ->willReturn($competition)
         ;
 

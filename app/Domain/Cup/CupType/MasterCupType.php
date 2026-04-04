@@ -72,7 +72,7 @@ class MasterCupType extends AbstractCupType
         ;
 
         $cupEventProtocolLines = $cupEventProtocolLines->filter(
-            static fn (ProtocolLine $protocolLine) => in_array($protocolLine->distance_id, $eventDistances, true)
+            static fn (ProtocolLine $protocolLine): bool => in_array($protocolLine->distance_id, $eventDistances, true)
         );
 
         $cupEventProtocolLines = $cupEventProtocolLines->groupBy('distance.group_id');
@@ -110,14 +110,10 @@ class MasterCupType extends AbstractCupType
         $equalGroupResults = Collection::make();
         $eventGroupResults = Collection::make();
         foreach ($cupEventProtocolLines as $groupId => $groupProtocolLines) {
-            if (
-                // это объединение групп
-                // тут надо разделять
-                ($mainGroupExist && !$nextGroupExist)
-                || (!$mainGroupExist && $previousGroupExist)
-            ) {
+            if (($mainGroupExist && !$nextGroupExist)
+            || (!$mainGroupExist && $previousGroupExist)) {
                 $eventGroupResults = $this->calculateLines($cupEvent, $groupProtocolLines);
-            } else if ($equalGroupsIds->contains($groupId)) {
+            } elseif ($equalGroupsIds->contains($groupId)) {
                 $equalGroupResults->push(...$groupProtocolLines);
             } else {
                 $eventGroupResults = $this->calculateGroup($cupEvent, $groupId);
@@ -153,11 +149,6 @@ class MasterCupType extends AbstractCupType
         return $this->getGroups();
     }
 
-    /**
-     * @param CupEvent $cupEvent
-     * @param int $groupId
-     * @return Collection
-     */
     protected function calculateGroup(CupEvent $cupEvent, int $groupId): Collection
     {
         return $this->calculateLines(
