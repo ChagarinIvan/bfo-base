@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Http\Controllers\PersonPrompt;
 
+use App\Application\Dto\Auth\UserId;
 use App\Bridge\Laravel\Http\Controllers\Action;
 use App\Services\PersonPromptService;
 use Illuminate\Http\RedirectResponse;
@@ -14,8 +15,12 @@ class UpdatePromptAction extends BaseController
 {
     use Action;
 
-    public function __invoke(string $promptId, Request $request, PersonPromptService $service): RedirectResponse
-    {
+    public function __invoke(
+        string $promptId,
+        Request $request,
+        UserId $userId,
+        PersonPromptService $service,
+    ): RedirectResponse {
         $formParams = $request->validate([
             'prompt' => 'required',
         ]);

@@ -43,5 +43,4 @@ return RectorConfig::configure()
         FlipTypeControlToUseExclusiveTypeRector::class,
         StringToClassConstantRector::class,
         RenamePropertyRector::class,
-    ])
-    ;
+    ]);

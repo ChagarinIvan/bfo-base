@@ -4,23 +4,25 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Domain\Auth\Impression;
 use App\Domain\PersonPrompt\PersonPrompt;
 use Illuminate\Support\Collection;
 use Mav\Slovo\Phonetics;
 use RuntimeException;
 
-class PersonPromptService
+final readonly class PersonPromptService
 {
     public function __construct(
-        private readonly Phonetics $phonetics
+        private Phonetics $phonetics,
     ) {
     }
 
-    public function storePrompt(string $personLine, int $personId): PersonPrompt
+    public function storePrompt(string $personLine, int $personId, Impression $impression): PersonPrompt
     {
         $prompt = new PersonPrompt();
         $prompt->person_id = $personId;
         $prompt->prompt = $personLine;
+        $prompt->created = $prompt->updated = $impression;
         $this->storePersonPrompt($prompt);
 
         return $prompt;
