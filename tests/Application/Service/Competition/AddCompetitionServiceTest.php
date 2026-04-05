@@ -16,6 +16,7 @@ use App\Domain\Competition\CompetitionRepository;
 use App\Domain\Competition\Factory\CompetitionFactory;
 use App\Domain\Competition\Factory\CompetitionInput;
 use Carbon\Carbon;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
@@ -38,7 +39,7 @@ final class AddCompetitionServiceTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_creates_competition(): void
     {
         $input = new CompetitionInput(
@@ -58,7 +59,7 @@ final class AddCompetitionServiceTest extends TestCase
         $this->factory
             ->expects($this->once())
             ->method('create')
-            ->with($this->equalTo($input))
+            ->with($input)
             ->willReturn($competition)
         ;
 

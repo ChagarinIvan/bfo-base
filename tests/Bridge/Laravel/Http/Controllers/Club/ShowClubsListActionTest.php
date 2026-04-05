@@ -9,6 +9,7 @@ use App\Domain\Club\Club;
 use Database\Seeders\ProtocolLinesSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
+use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\CreatesApplication;
 use Tests\TestCase;
@@ -26,9 +27,9 @@ final class ShowClubsListActionTest extends TestCase
     }
 
     /**
-     * @test
      * @see ShowClubsListAction::class
      */
+    #[Test]
     public function it_shows_clubs(): void
     {
         Club::factory(state: ['name' => 'test1'])->createOne();

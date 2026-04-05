@@ -9,6 +9,7 @@ use App\Domain\Event\Protocol;
 use App\Domain\Event\ProtocolPathResolver;
 use App\Domain\Event\ProtocolStorage;
 use App\Domain\Event\StandardProtocolUpdater;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
@@ -28,7 +29,7 @@ final class StandardProtocolUpdaterTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_updates_protocol(): void
     {
         $protocol = new Protocol('protocol', 'xml');
@@ -36,19 +37,19 @@ final class StandardProtocolUpdaterTest extends TestCase
         $this->protocols
             ->expects($this->once())
             ->method('delete')
-            ->with($this->equalTo('initial_file.xml'))
+            ->with('initial_file.xml')
         ;
 
         $this->protocols
             ->expects($this->once())
             ->method('put')
-            ->with($this->equalTo('2023/2023-02-02_test_event@@xml'), $this->identicalTo($protocol))
+            ->with('2023/2023-02-02_test_event@@xml', $this->identicalTo($protocol))
         ;
 
         /** @var Event $event */
         $event = Event::factory(state: ['name' => 'test_event', 'date' => '2023-02-02', 'file' => 'initial_file.xml'])->makeOne();
         $path = $this->updater->update($event, $protocol);
 
-        $this->assertEquals('2023/2023-02-02_test_event@@xml', $path);
+        $this->assertSame('2023/2023-02-02_test_event@@xml', $path);
     }
 }

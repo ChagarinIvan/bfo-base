@@ -14,8 +14,6 @@ class DistanceRepository
 {
     /**
      * @param string[] $groupNames
-     * @param int $eventId
-     * @return Distance|null
      */
     public function findDistance(array $groupNames, int $eventId): ?Distance
     {

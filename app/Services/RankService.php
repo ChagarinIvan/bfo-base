@@ -24,6 +24,7 @@ use App\Models\Year;
 use App\Repositories\RanksRepository;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use function in_array;
 use function trim;
 
 class RankService
@@ -125,14 +126,11 @@ class RankService
 
     /**
      * Надо добавить логику когда идёт добавление в середину имеющихся разрядов, с исправлением уже имеющихся
-     *
-     * @param ProtocolLine $protocolLine
      */
     public function fillRank(ProtocolLine $protocolLine): void
     {
         if (
-            $protocolLine->complete_rank === null
-            || empty(trim($protocolLine->complete_rank))
+            in_array(trim($protocolLine->complete_rank), ['', '0'], true)
             || !isset(self::RANKS_POWER[$protocolLine->complete_rank])
             || !Rank::validateRank($protocolLine->complete_rank)
         ) {
@@ -183,7 +181,7 @@ class RankService
 //                dump('start date ' . $newRank->start_date->toDateString());
                 $this->storeRank($newRank);
 //                dump('New prolongate id ' . $newRank->id);
-            } elseif (!empty(trim($actualRankDto->rank)) && (self::RANKS_POWER[$protocolLine->complete_rank] > self::RANKS_POWER[$actualRankDto->rank])) {
+            } elseif (!in_array(trim($actualRankDto->rank), ['', '0'], true) && (self::RANKS_POWER[$protocolLine->complete_rank] > self::RANKS_POWER[$actualRankDto->rank])) {
 //                dump(sprintf('Enreach rank %s > %s', $actualRankDto->rank, $protocolLine->complete_rank));
 //                 трэба зачыніць усе папярэднія разряды
                 $ranksFilter = new RanksFilter();

@@ -13,7 +13,7 @@ use function explode;
 final readonly class FileProtocolStorage implements ProtocolStorage
 {
     public function __construct(
-        protected Filesystem $storage,
+        private Filesystem $storage,
     ) {
     }
 

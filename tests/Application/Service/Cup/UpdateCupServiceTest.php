@@ -20,6 +20,7 @@ use App\Domain\Shared\Criteria;
 use App\Domain\Shared\DummyTransactional;
 use App\Domain\Shared\FrozenClock;
 use Carbon\Carbon;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
@@ -49,7 +50,7 @@ final class UpdateCupServiceTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_fails_when_cup_not_found(): void
     {
         $this->expectException(CupNotFound::class);
@@ -57,7 +58,7 @@ final class UpdateCupServiceTest extends TestCase
         $this->cups
             ->expects($this->once())
             ->method('lockById')
-            ->with($this->equalTo(1))
+            ->with(1)
             ->willReturn(null)
         ;
 
@@ -72,7 +73,7 @@ final class UpdateCupServiceTest extends TestCase
         $this->service->execute($command);
     }
 
-    /** @test */
+    #[Test]
     public function it_updates_cup(): void
     {
         /** @var Cup $cup */
@@ -83,14 +84,14 @@ final class UpdateCupServiceTest extends TestCase
         $this->cups
             ->expects($this->once())
             ->method('lockById')
-            ->with($this->equalTo(1))
+            ->with(1)
             ->willReturn($cup)
         ;
 
         $this->events
             ->expects($this->once())
             ->method('oneByCriteria')
-            ->with($this->equalTo( new Criteria(['cupId' => $cup->id], ['date' => 'desc'])))
+            ->with(new Criteria(['cupId' => $cup->id], ['date' => 'desc']))
             ->willReturn($event)
         ;
 
@@ -106,10 +107,10 @@ final class UpdateCupServiceTest extends TestCase
         $command = new UpdateCup('1', $dto, new UserId(1));
         $cup = $this->service->execute($command);
 
-        $this->assertEquals('test cup', $cup->name);
-        $this->assertEquals('2023', $cup->year);
+        $this->assertSame('test cup', $cup->name);
+        $this->assertSame(2023, $cup->year);
         $this->assertEquals('4', $cup->eventsCount);
-        $this->assertEquals('master', $cup->type);
-        $this->assertEquals('2023-04-01T00:00:00+00:00', $cup->updated->at);
+        $this->assertSame('master', $cup->type);
+        $this->assertSame('2023-04-01T00:00:00+00:00', $cup->updated->at);
     }
 }

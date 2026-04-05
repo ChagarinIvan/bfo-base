@@ -13,6 +13,7 @@ use function array_slice;
 use function count;
 use function explode;
 use function implode;
+use function in_array;
 use function is_numeric;
 use function mb_strtolower;
 use function preg_match;
@@ -57,11 +58,7 @@ class AlbatrosRelayParser extends AbstractParser
             $distancePoints = 0;
             if (preg_match('#(\d+)\s+[^\d]+,\s+((\d+,\d+)\s+[^\d]+|(\d+)\s+[^\d])#s', $distance, $match)) {
                 $distancePoints = (int)$match[1];
-                if (str_contains($match[2], ',')) {
-                    $distanceLength = (float) (str_replace(',', '.', $match[3])) * 1000;
-                } else {
-                    $distanceLength = (float) ($match[4]);
-                }
+                $distanceLength = str_contains($match[2], ',') ? (float) (str_replace(',', '.', $match[3])) * 1000 : (float) ($match[4]);
             } elseif (count($lines) < 4) {
                 continue;
             }
@@ -80,7 +77,7 @@ class AlbatrosRelayParser extends AbstractParser
             for ($index = ($withLines ? 2 : 5) ; $index < $linesCount; $index++) {
                 $line = trim($lines[$index]);
 
-                if (empty(trim($line, '-'))) {
+                if (in_array(trim($line, '-'), ['', '0'], true)) {
                     break;
                 }
                 $preparedLine = preg_replace('#\s+#', ' ', $line);
@@ -97,7 +94,6 @@ class AlbatrosRelayParser extends AbstractParser
                     } else {
                         $commandPoints = 0;
                     }
-
                     $commandPlace = (int)$lineData[0];
                     if (isset($lineData[2])) {
                         $commandRank = $lineData[2] !== '-' ? $lineData[2] : null;
@@ -105,15 +101,14 @@ class AlbatrosRelayParser extends AbstractParser
                         $commandRank = null;
                     }
                     continue;
-                } else {
-                    if (!empty($lastProtocolLine)) {
-                        $unClubedLine = str_replace([$lastProtocolLine['club'], 'не старт'], '', $line);
-                        $unClubedLine = preg_replace('#\s+#', ' ', $unClubedLine);
-                        $unClubedLine = trim($unClubedLine);
-                        $unClubedLineData = explode(' ', $unClubedLine);
-                        if (count($unClubedLineData) === 1) {
-                            continue;
-                        }
+                }
+                if ($lastProtocolLine !== []) {
+                    $unClubedLine = str_replace([$lastProtocolLine['club'], 'не старт'], '', $line);
+                    $unClubedLine = preg_replace('#\s+#', ' ', $unClubedLine);
+                    $unClubedLine = trim($unClubedLine);
+                    $unClubedLineData = explode(' ', $unClubedLine);
+                    if (count($unClubedLineData) === 1) {
+                        continue;
                     }
                 }
 

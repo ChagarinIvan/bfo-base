@@ -11,6 +11,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use Illuminate\Http\Response;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\CreatesApplication;
 use Tests\TestCase;
 
@@ -27,9 +28,9 @@ final class ListPersonActionTest extends TestCase
     }
 
     /**
-     * @test
      * @see ListPersonAction::class
      */
+    #[Test]
     public function it_gets_persons_list(): void
     {
         $this->seed(ProtocolLinesSeeder::class);

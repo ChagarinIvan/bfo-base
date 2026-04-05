@@ -12,6 +12,7 @@ use App\Application\Service\Person\ViewPerson;
 use App\Application\Service\Person\ViewPersonService;
 use App\Domain\Person\Person;
 use App\Domain\Person\PersonRepository;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
@@ -29,7 +30,7 @@ final class ViewPersonServiceTest extends TestCase
         $this->service = new ViewPersonService($this->persons, new PersonAssembler(new AuthAssembler));
     }
 
-    /** @test */
+    #[Test]
     public function it_fails_when_person_does_not_exist(): void
     {
         $this->expectException(PersonNotFound::class);
@@ -37,14 +38,14 @@ final class ViewPersonServiceTest extends TestCase
         $this->persons
             ->expects($this->once())
             ->method('byId')
-            ->with($this->equalTo(1))
+            ->with(1)
             ->willReturn(null)
         ;
 
         $this->service->execute(new ViewPerson('1'));
     }
 
-    /** @test */
+    #[Test]
     public function it_views_person(): void
     {
         /** @var Person $person */
@@ -53,7 +54,7 @@ final class ViewPersonServiceTest extends TestCase
         $this->persons
             ->expects($this->once())
             ->method('byId')
-            ->with($this->equalTo($person->id))
+            ->with($person->id)
             ->willReturn($person)
         ;
 

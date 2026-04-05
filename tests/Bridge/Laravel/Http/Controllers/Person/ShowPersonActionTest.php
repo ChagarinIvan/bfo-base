@@ -9,6 +9,7 @@ use Database\Seeders\ProtocolLinesSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use Illuminate\Http\Response;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\CreatesApplication;
 use Tests\TestCase;
 
@@ -25,9 +26,9 @@ final class ShowPersonActionTest extends TestCase
     }
 
     /**
-     * @test
      * @see ShowPersonAction::class
      */
+    #[Test]
     public function it_shows_person(): void
     {
         $this->seed(ProtocolLinesSeeder::class);

@@ -14,6 +14,7 @@ use function array_slice;
 use function count;
 use function explode;
 use function implode;
+use function in_array;
 use function is_numeric;
 use function mb_strtolower;
 use function preg_match;
@@ -61,12 +62,11 @@ class WinOrientHtmlParser extends AbstractParser
             $isFirst = true;
             for ($index = 0; $index < $linesCount; $index++) {
                 $line = trim($lines[$index]);
-                if (empty(trim($line, '-'))) {
+                if (in_array(trim($line, '-'), ['', '0'], true)) {
                     if ($isFirst) {
                         continue;
-                    } else {
-                        break;
                     }
+                    break;
                 }
                 if (str_contains($line, 'амилия')) {
                     if (preg_match('#[^\s]{2}тставан#', $line)) {
@@ -184,11 +184,12 @@ class WinOrientHtmlParser extends AbstractParser
             if ($place === '20.10' || $place ===  '24.4') {
                 return null;
             }
-
             if (is_numeric($place) || $place === '-') {
                 $indent++;
                 return  (int)$place;
-            } elseif ($place === 'в/к') {
+            }
+
+            if ($place === 'в/к') {
                 $indent++;
                 $protocolLine['vk'] = true;
             }
@@ -219,9 +220,8 @@ class WinOrientHtmlParser extends AbstractParser
             if (Rank::validateRank($rank)) {
                 $indent++;
                 return $rank;
-            } else {
-                return '';
             }
+            return '';
         }
         if ($column === 'year') {
             $year = $lineData[$fieldsCount - $indent];
@@ -232,9 +232,8 @@ class WinOrientHtmlParser extends AbstractParser
             if (is_numeric($year) && preg_match('#\d{4}#', $year)) {
                 $indent++;
                 return (int)$year;
-            } else {
-                return null;
             }
+            return null;
         }
         return null;
     }

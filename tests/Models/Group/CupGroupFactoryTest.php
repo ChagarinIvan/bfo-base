@@ -8,6 +8,8 @@ use App\Domain\Cup\Group\CupGroup;
 use App\Domain\Cup\Group\CupGroupFactory;
 use App\Domain\Cup\Group\GroupAge;
 use App\Domain\Cup\Group\GroupMale;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 final class CupGroupFactoryTest extends TestCase
@@ -17,10 +19,8 @@ final class CupGroupFactoryTest extends TestCase
         yield ['M_12_', new CupGroup(GroupMale::Man, GroupAge::a12)];
         yield ['M_21_', new CupGroup(GroupMale::Man, GroupAge::a21)];
     }
-    /**
-     * @dataProvider provideGroupId
-     * @test
-     */
+    #[DataProvider('provideGroupId')]
+    #[Test]
     public function it_creates_group(string $id, CupGroup $group): void
     {
         $this->assertEquals($group, CupGroupFactory::fromId($id));

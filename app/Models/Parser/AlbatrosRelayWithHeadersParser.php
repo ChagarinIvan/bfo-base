@@ -14,6 +14,7 @@ use function array_slice;
 use function count;
 use function explode;
 use function implode;
+use function in_array;
 use function is_numeric;
 use function preg_match;
 use function preg_replace;
@@ -69,11 +70,11 @@ class AlbatrosRelayWithHeadersParser extends AbstractParser
                 $line = trim($lines[$index]);
                 if (preg_match('#^\d+$#', $line)) {
                     continue;
-                } elseif (empty(trim($line, '-'))) {
-                    break;
-                } elseif (empty($line)) {
+                }
+                if (in_array(trim($line, '-'), ['', '0'], true)) {
                     break;
                 }
+
                 $preparedLine = preg_replace('#=#', ' ', $line);
                 $preparedLine = preg_replace('#\s+#', ' ', $preparedLine);
                 $lineData = explode(' ', $preparedLine);

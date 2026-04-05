@@ -24,7 +24,7 @@ final class PersonSearchDto extends AbstractDto
     ) {
     }
 
-    public function fromArray(array $data): AbstractDto
+    public function fromArray(array $data): self
     {
         $this->setStringParam('clubId', $data);
         $this->setStringParam('year', $data);

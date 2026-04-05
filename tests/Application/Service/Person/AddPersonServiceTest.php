@@ -18,6 +18,7 @@ use App\Domain\Person\Person;
 use App\Domain\Person\PersonInfo;
 use App\Domain\Person\PersonRepository;
 use Carbon\Carbon;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
@@ -40,7 +41,7 @@ final class AddPersonServiceTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_creates_person(): void
     {
         $info = new PersonInfo(
@@ -63,7 +64,7 @@ final class AddPersonServiceTest extends TestCase
         $this->factory
             ->expects($this->once())
             ->method('create')
-            ->with($this->equalTo($input))
+            ->with($input)
             ->willReturn($person)
         ;
 

@@ -20,6 +20,6 @@ class ShowEditPromptAction extends BaseController
         $prompt = $service->execute(new ViewPersonPrompt($promptId));
 
         /** @see /resources/views/person-prompt/edit.blade.php */
-        return $this->view('person-prompt.edit', compact('prompt'));
+        return $this->view('person-prompt.edit', ['prompt' => $prompt]);
     }
 }

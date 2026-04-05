@@ -11,11 +11,6 @@ class PersonsIdentService
     /**
      * Создаём идентификационную строку из фамилии имени и года
      *
-     * @param string $lastname
-     * @param string $firstname
-     * @param int|null $year
-     *
-     * @return string
      */
     public static function makeIdentLine(string $lastname, string $firstname, ?int $year): string
     {

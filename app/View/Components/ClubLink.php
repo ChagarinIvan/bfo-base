@@ -32,6 +32,6 @@ final class ClubLink extends Component
         }
 
         /** @see /resources/views/components/club-link.blade.php */
-        return view('components.club-link', compact('club'));
+        return view('components.club-link', ['club' => $club]);
     }
 }

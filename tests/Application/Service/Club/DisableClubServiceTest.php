@@ -12,6 +12,7 @@ use App\Domain\Club\Club;
 use App\Domain\Club\ClubRepository;
 use App\Domain\Shared\DummyTransactional;
 use App\Domain\Shared\FrozenClock;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
@@ -32,7 +33,7 @@ final class DisableClubServiceTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_fails_when_club_not_found(): void
     {
         $this->expectException(ClubNotFound::class);
@@ -40,7 +41,7 @@ final class DisableClubServiceTest extends TestCase
         $this->clubs
             ->expects($this->once())
             ->method('lockById')
-            ->with($this->equalTo(1))
+            ->with(1)
             ->willReturn(null)
         ;
 
@@ -48,7 +49,7 @@ final class DisableClubServiceTest extends TestCase
         $this->service->execute($command);
     }
 
-    /** @test */
+    #[Test]
     public function it_disables_club(): void
     {
         /** @var Club $club */
@@ -57,7 +58,7 @@ final class DisableClubServiceTest extends TestCase
         $this->clubs
             ->expects($this->once())
             ->method('lockById')
-            ->with($this->equalTo(1))
+            ->with(1)
             ->willReturn($club)
         ;
 

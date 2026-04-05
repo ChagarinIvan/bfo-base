@@ -58,7 +58,7 @@ class OrientBySyncService
             $this->logger->info("Process", ['dto' => $personDto]);
 
             if (isset($indicatedPersons[$personsPrompt])) {
-                $personId = (int)$indicatedPersons[$personsPrompt];
+                $personId = $indicatedPersons[$personsPrompt];
                 $this->logger->info("Person found", ['id' => $personId]);
                 $person = $this->personsService->getPerson($personId);
                 $logPerson = $person->replicate();

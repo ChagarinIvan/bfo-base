@@ -55,12 +55,6 @@ class Event extends AggregatedModel
         'name', 'description', 'date'
     ];
 
-    protected $casts = [
-        'date' => 'datetime:Y-m-d',
-        'created' => ImpressionCast::class,
-        'updated' => ImpressionCast::class,
-    ];
-
     public function competition(): HasOne
     {
         return $this->hasOne(Competition::class, 'id', 'competition_id');
@@ -115,5 +109,13 @@ class Event extends AggregatedModel
         $this->recordThat(new EventCreated($this));
 
         $this->save();
+    }
+    protected function casts(): array
+    {
+        return [
+            'date' => 'datetime:Y-m-d',
+            'created' => ImpressionCast::class,
+            'updated' => ImpressionCast::class,
+        ];
     }
 }

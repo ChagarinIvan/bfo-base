@@ -13,6 +13,7 @@ use App\Application\Service\Person\ListPersonsService;
 use App\Domain\Person\Person;
 use App\Domain\Person\PersonRepository;
 use App\Domain\Shared\Criteria;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
@@ -32,7 +33,7 @@ final class ListPersonsServiceTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_gets_list_of_persons(): void
     {
         $persons = Person::factory(count: 2)->make();
@@ -40,7 +41,7 @@ final class ListPersonsServiceTest extends TestCase
         $this->clubs
             ->expects($this->once())
             ->method('byCriteria')
-            ->with($this->equalTo(Criteria::empty()))
+            ->with(Criteria::empty())
             ->willReturn($persons)
         ;
 

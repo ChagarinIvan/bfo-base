@@ -169,7 +169,8 @@ class OParser extends AbstractParser
             if (is_numeric($place) || $place === '-') {
                 $indent++;
                 return  (int)$place;
-            } elseif ($place === 'в/к') {
+            }
+            if ($place === 'в/к') {
                 $indent++;
                 $this->setVk = true;
             }
@@ -200,18 +201,16 @@ class OParser extends AbstractParser
             if (Rank::validateRank($rank)) {
                 $indent++;
                 return $rank;
-            } else {
-                return '';
             }
+            return '';
         }
         if ($column === 'year') {
             $year = $lineData[$fieldsCount - $indent];
             if (is_numeric($year) && preg_match('#\d{4}#', $year)) {
                 $indent++;
                 return (int)$year;
-            } else {
-                return null;
             }
+            return null;
         }
         return null;
     }

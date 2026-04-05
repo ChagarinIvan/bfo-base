@@ -16,6 +16,7 @@ use App\Domain\Shared\Criteria;
 use App\Domain\Shared\DummyTransactional;
 use App\Domain\Shared\FrozenClock;
 use Carbon\Carbon;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
@@ -42,13 +43,13 @@ final class CreateOrUpdatePersonPaymentsServiceTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_creates_new_payments(): void
     {
         $this->payments
             ->expects($this->once())
             ->method('lockOneByCriteria')
-            ->with($this->equalTo(new Criteria(['personId' => 1, 'year' => 2021])))
+            ->with(new Criteria(['personId' => 1, 'year' => 2021]))
         ;
 
         $date = Carbon::createFromFormat('Y-m-d', '2021-01-01');
@@ -75,7 +76,7 @@ final class CreateOrUpdatePersonPaymentsServiceTest extends TestCase
         $this->service->execute(new CreateOrUpdatePersonPayments($dto, new UserId(1)));
     }
 
-    /** @test */
+    #[Test]
     public function it_doesnt_update_if_no_changes(): void
     {
         $date = Carbon::createFromFormat('Y-m-d', '2021-01-01');
@@ -84,7 +85,7 @@ final class CreateOrUpdatePersonPaymentsServiceTest extends TestCase
         $this->payments
             ->expects($this->once())
             ->method('lockOneByCriteria')
-            ->with($this->equalTo(new Criteria(['personId' => 1, 'year' => 2021])))
+            ->with(new Criteria(['personId' => 1, 'year' => 2021]))
             ->willReturn($personPayment)
         ;
 
@@ -99,7 +100,7 @@ final class CreateOrUpdatePersonPaymentsServiceTest extends TestCase
         $this->service->execute(new CreateOrUpdatePersonPayments($dto, new UserId(1)));
     }
 
-    /** @test */
+    #[Test]
     public function it_updates_existed_payment(): void
     {
         /** @var PersonPayment $existPersonPayment */
@@ -112,12 +113,12 @@ final class CreateOrUpdatePersonPaymentsServiceTest extends TestCase
         $this->payments
             ->expects($this->once())
             ->method('lockOneByCriteria')
-            ->with($this->equalTo(new Criteria(['personId' => 1, 'year' => 2021])))
+            ->with(new Criteria(['personId' => 1, 'year' => 2021]))
             ->willReturn($existPersonPayment)
         ;
 
         $this->payments->expects($this->never())->method('add');
-        $personPayment = PersonPayment::factory(state: [
+        PersonPayment::factory(state: [
             'id' => 1,
             'person_id' => $existPersonPayment->person_id,
             'year' => 2021,

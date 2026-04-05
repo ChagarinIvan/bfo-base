@@ -14,6 +14,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use Illuminate\Http\Response;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\CreatesApplication;
 use Tests\TestCase;
 use function sprintf;
@@ -31,9 +32,9 @@ final class ShowEditActivationDateFormActionTest extends TestCase
     }
 
     /**
-     * @test
      * @see ShowEditActivationDateFormAction::class
      */
+    #[Test]
     public function it_shows_edit_activation_date_form(): void
     {
         /** @var Authenticatable&User $user */

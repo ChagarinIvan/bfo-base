@@ -21,7 +21,7 @@ class SimpleIndentCommand extends Command
     public function handle(ProtocolLineIdentService $identService): void
     {
         $this->info('Start');
-        $userId = (int) $this->argument('userId');
+        $this->argument('userId');
 
         $startTime = time();
         $protocolLines = ProtocolLine::whereNull('person_id')->get();

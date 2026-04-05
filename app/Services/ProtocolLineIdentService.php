@@ -62,9 +62,6 @@ class ProtocolLineIdentService
 
     /**
      * Процесс нормализации фамилии имени (везде идёт замена неверных символов, заменяются формы имени)
-     *
-     * @param string $line
-     * @return string
      */
     public static function prepareLine(string $line): string
     {
@@ -108,8 +105,6 @@ class ProtocolLineIdentService
      * состоит из 2 частей:
      * - по прямому совпадению идентификатора (на лету)
      * - по расстоянию левенштейна (в очередь)
-     *
-     * @param Collection $protocolLines
      */
     public function identPersons(Collection $protocolLines): void
     {

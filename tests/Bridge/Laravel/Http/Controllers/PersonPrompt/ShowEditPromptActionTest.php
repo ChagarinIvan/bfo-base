@@ -12,6 +12,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use Illuminate\Http\Response;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\CreatesApplication;
 use Tests\TestCase;
 
@@ -28,9 +29,9 @@ final class ShowEditPromptActionTest extends TestCase
     }
 
     /**
-     * @test
      * @see ShowEditPromptAction::class
      */
+    #[Test]
     public function it_shows_edit_person_prompt_page(): void
     {
         /** @var Authenticatable&User $user */

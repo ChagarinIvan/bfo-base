@@ -18,7 +18,7 @@ final class PersonProvider extends ServiceProvider
         $this->app->bind(PersonRepository::class, EloquentPersonRepository::class);
         $this->app->bind(StandardPersonFactory::class, StandardPersonFactory::class);
 
-        $this->app->bind(PersonFactory::class, fn () => new PreventDuplicatePersonFactory(
+        $this->app->bind(PersonFactory::class, fn (): PreventDuplicatePersonFactory => new PreventDuplicatePersonFactory(
             $this->app->get(StandardPersonFactory::class),
             $this->app->get(PersonRepository::class),
         ));

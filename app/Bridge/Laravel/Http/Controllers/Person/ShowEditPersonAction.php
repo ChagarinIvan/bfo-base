@@ -31,6 +31,6 @@ class ShowEditPersonAction extends BaseController
         $clubs = $listClubsService->execute();
 
         /** @see /resources/views/persons/edit.blade.php */
-        return $this->view('persons.edit', compact('person', 'clubs'));
+        return $this->view('persons.edit', ['person' => $person, 'clubs' => $clubs]);
     }
 }

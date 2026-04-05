@@ -35,7 +35,7 @@ class EliteCupType extends AbstractCupType
 
         return $this
             ->calculateLines($cupEvent, $cupEventProtocolLines)
-            ->sortByDesc(static fn (CupEventPoint $cupEventResult) => $cupEventResult->points)
+            ->sortByDesc(static fn (CupEventPoint $cupEventResult): int|string|float => $cupEventResult->points)
         ;
     }
 
@@ -61,7 +61,7 @@ class EliteCupType extends AbstractCupType
         $equalDistances = $this->distanceService->getEqualDistances($mainDistance);
         $distances = $equalDistances
             ->add($mainDistance)
-            ->filter(fn (Distance $distance) => in_array($distance->group->name, $this->getAllGroupsMap($group), true))
+            ->filter(fn (Distance $distance): bool => in_array($distance->group->name, $this->getAllGroupsMap($group), true))
         ;
 
         return $this->protocolLinesRepository->byCriteria(
@@ -81,7 +81,7 @@ class EliteCupType extends AbstractCupType
 
     protected function getAllGroupsMap(CupGroup $group): array
     {
-        if (empty(self::$map)) {
+        if (self::$map === []) {
             self::$map = [
                 (new CupGroup(GroupMale::Man))->id() => array_merge(
                     self::ELITE_MEN_GROUPS,

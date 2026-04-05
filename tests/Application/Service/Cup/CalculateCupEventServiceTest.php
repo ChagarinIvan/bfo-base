@@ -19,6 +19,7 @@ use App\Domain\Cup\CupRepository;
 use App\Domain\Cup\CupType;
 use App\Domain\Event\Event;
 use App\Domain\Event\EventRepository;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
@@ -48,7 +49,7 @@ final class CalculateCupEventServiceTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_fails_when_cup_not_found(): void
     {
         $this->expectException(CupNotFound::class);
@@ -56,7 +57,7 @@ final class CalculateCupEventServiceTest extends TestCase
         $this->cups
             ->expects($this->once())
             ->method('byId')
-            ->with($this->equalTo(1))
+            ->with(1)
             ->willReturn(null)
         ;
 
@@ -67,7 +68,7 @@ final class CalculateCupEventServiceTest extends TestCase
         $this->service->execute($command);
     }
 
-    /** @test */
+    #[Test]
     public function it_fails_when_cup_event_not_found(): void
     {
         $this->expectException(CupEventNotFound::class);
@@ -78,14 +79,14 @@ final class CalculateCupEventServiceTest extends TestCase
         $this->cups
             ->expects($this->once())
             ->method('byId')
-            ->with($this->equalTo(1))
+            ->with(1)
             ->willReturn($cup)
         ;
 
         $this->cupEvents
             ->expects($this->once())
             ->method('byId')
-            ->with($this->equalTo(1))
+            ->with(1)
             ->willReturn(null)
         ;
 
@@ -95,7 +96,7 @@ final class CalculateCupEventServiceTest extends TestCase
         $this->service->execute($command);
     }
 
-    /** @test */
+    #[Test]
     public function it_fails_when_group_not_found(): void
     {
         $this->expectException(GroupNotFound::class);
@@ -108,14 +109,14 @@ final class CalculateCupEventServiceTest extends TestCase
         $this->cups
             ->expects($this->once())
             ->method('byId')
-            ->with($this->equalTo(1))
+            ->with(1)
             ->willReturn($cup)
         ;
 
         $this->cupEvents
             ->expects($this->once())
             ->method('byId')
-            ->with($this->equalTo(1))
+            ->with(1)
             ->willReturn($cupEvent)
         ;
 
@@ -125,7 +126,7 @@ final class CalculateCupEventServiceTest extends TestCase
         $this->service->execute($command);
     }
 
-    /** @test */
+    #[Test]
     public function it_calculates_cup_event(): void
     {
         /** @var Cup $cup */
@@ -141,14 +142,14 @@ final class CalculateCupEventServiceTest extends TestCase
         $this->cups
             ->expects($this->once())
             ->method('byId')
-            ->with($this->equalTo(1))
+            ->with(1)
             ->willReturn($cup)
         ;
 
         $this->cupEvents
             ->expects($this->once())
             ->method('byId')
-            ->with($this->equalTo(1))
+            ->with(1)
             ->willReturn($cupEvent)
         ;
 
@@ -157,7 +158,7 @@ final class CalculateCupEventServiceTest extends TestCase
         $command = new CalculateCupEvent('1', '1', 'M_0_');
         $result = $this->service->execute($command);
 
-        $this->assertEquals('test', $result->cupName);
+        $this->assertSame('test', $result->cupName);
         $this->assertEquals(2024, $result->cupYear);
         $this->assertCount(2, $result->cupGroups);
         $this->assertEquals('0.9', $result->cupEvent->points);

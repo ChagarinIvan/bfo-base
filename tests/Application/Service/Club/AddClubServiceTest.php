@@ -16,6 +16,7 @@ use App\Domain\Club\ClubRepository;
 use App\Domain\Club\Exception\ClubAlreadyExist;
 use App\Domain\Club\Factory\ClubFactory;
 use App\Domain\Club\Factory\ClubInput;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
@@ -38,7 +39,7 @@ final class AddClubServiceTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_fails_on_exists_duplicate_club(): void
     {
         $this->expectException(FailedToAddClub::class);
@@ -51,7 +52,7 @@ final class AddClubServiceTest extends TestCase
         $this->factory
             ->expects($this->once())
             ->method('create')
-            ->with($this->equalTo($input))
+            ->with($input)
             ->willThrowException(new ClubAlreadyExist('Error.'))
         ;
 
@@ -66,7 +67,7 @@ final class AddClubServiceTest extends TestCase
         $this->assertEquals($club->id, $clubDto->id);
     }
 
-    /** @test */
+    #[Test]
     public function it_creates_club(): void
     {
         $input = new ClubInput('test club', 1);
@@ -76,7 +77,7 @@ final class AddClubServiceTest extends TestCase
         $this->factory
             ->expects($this->once())
             ->method('create')
-            ->with($this->equalTo($input))
+            ->with($input)
             ->willReturn($club)
         ;
 

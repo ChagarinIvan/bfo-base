@@ -38,7 +38,7 @@ class ShowEditCupEventFormAction extends BaseController
         $events = $listEvents->execute(new ListEvents(new EventSearchDto(year: (string) $cup->year)));
 
         /** @see /resources/views/cup/events/edit.blade.php */
-        return $this->view('cup.events.edit', compact('cup', 'cupEvent', 'events'));
+        return $this->view('cup.events.edit', ['cup' => $cup, 'cupEvent' => $cupEvent, 'events' => $events]);
     }
 
     protected function isNavbarRoute(): bool

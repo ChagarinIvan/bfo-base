@@ -13,10 +13,11 @@ use App\Application\Service\Event\ListEventsService;
 use App\Domain\Event\Event;
 use App\Domain\Event\EventRepository;
 use App\Domain\Shared\Criteria;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
-class ListEventsServiceTest extends TestCase
+final class ListEventsServiceTest extends TestCase
 {
     private ListEventsService $service;
 
@@ -32,7 +33,7 @@ class ListEventsServiceTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_gets_list_of_events(): void
     {
         /** @var Event[] $events */
@@ -41,7 +42,7 @@ class ListEventsServiceTest extends TestCase
         $this->events
             ->expects($this->once())
             ->method('byCriteria')
-            ->with($this->equalTo(new Criteria(['competitionId' => '1'])))
+            ->with(new Criteria(['competitionId' => '1']))
             ->willReturn($events)
         ;
 

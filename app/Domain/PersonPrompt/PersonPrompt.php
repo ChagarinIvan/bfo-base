@@ -29,13 +29,15 @@ class PersonPrompt extends Model
     protected $table = 'persons_prompt';
     protected $fillable = ['prompt'];
 
-    protected $casts = [
-        'created' => ImpressionCast::class,
-        'updated' => ImpressionCast::class,
-    ];
-
     public function person(): HasOne
     {
         return $this->hasOne(Person::class);
+    }
+    protected function casts(): array
+    {
+        return [
+            'created' => ImpressionCast::class,
+            'updated' => ImpressionCast::class,
+        ];
     }
 }

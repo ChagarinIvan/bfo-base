@@ -22,9 +22,9 @@ final class Impression extends Component
     public function render(): View
     {
         $date = Carbon::parse($this->impression->at)->format('Y-m-d');
-        $email = $this->users->byId((int) $this->impression->by)?->email ?? 'unknown';
+        $email = $this->users->byId((int) $this->impression->by)?->email ?: 'unknown';
 
         /** @see /resources/views/components/impression.blade.php */
-        return view('components.impression', compact('date', 'email'));
+        return view('components.impression', ['date' => $date, 'email' => $email]);
     }
 }

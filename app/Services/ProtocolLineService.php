@@ -30,14 +30,10 @@ class ProtocolLineService
      * определяем группу
      * формируем идентификационную строку
      * заполняем разряд
-     *
-     * @param int $eventId
-     * @param Collection $lineList
-     * @return Collection
      */
     public function fillProtocolLines(int $eventId, Collection $lineList): Collection
     {
-        return $lineList->transform(function (array $lineData) use ($eventId) {
+        return $lineList->transform(function (array $lineData) use ($eventId): ProtocolLine {
             $protocolLine = new ProtocolLine($lineData);
 
             $groupName = str_replace(' ', '', $lineData['group']);
@@ -76,7 +72,6 @@ class ProtocolLineService
     }
 
     /**
-     * @param Collection $linesIds
      * @return Collection|ProtocolLine[]
      */
     public function getProtocolLinesInListWithoutPerson(Collection $linesIds): Collection

@@ -25,6 +25,6 @@ class ShowEditEventFormAction extends BaseController
         }
 
         /** @see /resources/views/events/edit.blade.php */
-        return $this->view('events.edit', compact('event'));
+        return $this->view('events.edit', ['event' => $event]);
     }
 }

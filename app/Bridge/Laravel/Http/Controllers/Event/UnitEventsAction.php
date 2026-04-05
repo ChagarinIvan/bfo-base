@@ -128,7 +128,7 @@ class UnitEventsAction extends AbstractEventAction
         foreach ($firstEventProtocolLines as $groupProtocolLines) {
             /** @var Collection $groupProtocolLines */
             $groupProtocolLines->transform(
-                static function (ProtocolLine $line) use (&$number) {
+                static function (ProtocolLine $line) use (&$number): ProtocolLine {
                     $line->runner_number = $number++;
                     $line->time = $line->time === null ?
                         null :

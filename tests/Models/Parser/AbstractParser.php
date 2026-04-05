@@ -10,18 +10,18 @@ use App\Models\Parser\ParserFactory;
 use Carbon\Carbon;
 use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Support\Collection;
+use Iterator;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 abstract class AbstractParser extends TestCase
 {
-    abstract public static function dataProvider(): array;
+    abstract public static function dataProvider(): Iterator;
     abstract protected function getParser(): string;
 
-    /**
-     * @dataProvider dataProvider
-     *
-     * @test
-     */
+    #[DataProvider('dataProvider')]
+    #[Test]
     public function parse(string $filePath, int $linesCount, array $expectedResults, string $extension = 'html'): void
     {
         $storageManager = new FilesystemManager($this->app);
@@ -30,29 +30,29 @@ abstract class AbstractParser extends TestCase
         $parserClass = $this->getParser();
 
         $parser = ParserFactory::createProtocolParser($protocolContent, Collection::make($this->getAllGroups())->pluck('name'), $extension);
-        self::assertInstanceOf($parserClass, $parser);
+        $this->assertInstanceOf($parserClass, $parser);
 
         $lines = $parser->parse($protocolContent);
-        self::assertCount($linesCount, $lines);
+        $this->assertCount($linesCount, $lines);
 
         foreach ($expectedResults as $index => $expectedResult) {
             /** @var ProtocolLine $line */
             $line = $lines->get($index);
-            self::assertEquals($expectedResult[0], $line['lastname'], 'lastname');
-            self::assertEquals($expectedResult[1], $line['firstname'], 'firstname');
-            self::assertEquals($expectedResult[2], $line['club'], 'club');
-            self::assertEquals($expectedResult[3], $line['year'] ?? null, 'year');
-            self::assertEquals($expectedResult[4], $line['rank'] ?? null, 'rank');
-            self::assertEquals($expectedResult[5], $line['runner_number'], 'runner_number');
-            self::assertEquals($expectedResult[6] === null ? null : Carbon::createFromTimeString($expectedResult[6]), $line['time'] ?? null, 'time');
-            self::assertEquals($expectedResult[7], $line['place'], 'place');
-            self::assertEquals($expectedResult[8] ?? null, $line['complete_rank'] ?? null, 'complete_rank');
-            self::assertEquals($expectedResult[9] ?? null, $line['points'] ?? null, 'points');
+            $this->assertEquals($expectedResult[0], $line['lastname'], 'lastname');
+            $this->assertEquals($expectedResult[1], $line['firstname'], 'firstname');
+            $this->assertEquals($expectedResult[2], $line['club'], 'club');
+            $this->assertEquals($expectedResult[3], $line['year'] ?? null, 'year');
+            $this->assertEquals($expectedResult[4], $line['rank'] ?? null, 'rank');
+            $this->assertEquals($expectedResult[5], $line['runner_number'], 'runner_number');
+            $this->assertEquals($expectedResult[6] === null ? null : Carbon::createFromTimeString($expectedResult[6]), $line['time'] ?? null, 'time');
+            $this->assertEquals($expectedResult[7], $line['place'], 'place');
+            $this->assertEquals($expectedResult[8] ?? null, $line['complete_rank'] ?? null, 'complete_rank');
+            $this->assertEquals($expectedResult[9] ?? null, $line['points'] ?? null, 'points');
             if (isset($expectedResult[10])) {
-                self::assertEquals($expectedResult[10], $line['vk'] ?? false, 'vk');
+                $this->assertEquals($expectedResult[10], $line['vk'] ?? false, 'vk');
             }
             if (isset($expectedResult[11])) {
-                self::assertEquals($expectedResult[11], $line['group'], 'group');
+                $this->assertEquals($expectedResult[11], $line['group'], 'group');
             }
         }
     }

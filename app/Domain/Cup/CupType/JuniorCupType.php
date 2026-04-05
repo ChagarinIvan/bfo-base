@@ -68,19 +68,19 @@ class JuniorCupType extends EliteCupType
         $distances = $this->distanceService
             ->getEqualDistances($mainGroupsDistance)
             ->add($mainGroupsDistance)
-            ->filter(fn (Distance $distance) => in_array($distance->group->name, $this->getAllGroupsMap($group), true))
+            ->filter(fn (Distance $distance): bool => in_array($distance->group->name, $this->getAllGroupsMap($group), true))
             ->pluck('id')
             ->all()
         ;
 
         return $juniorProtocolLines->filter(
-            static fn (ProtocolLine $protocolLine) => in_array($protocolLine->distance_id, $distances, true)
+            static fn (ProtocolLine $protocolLine): bool => in_array($protocolLine->distance_id, $distances, true)
         );
     }
 
     protected function getAllGroupsMap(CupGroup $group): array
     {
-        if (empty(self::$map)) {
+        if (self::$map === []) {
             self::$map = [
                 GroupMale::Man->name => array_merge(
                     EliteCupType::ELITE_MEN_GROUPS,

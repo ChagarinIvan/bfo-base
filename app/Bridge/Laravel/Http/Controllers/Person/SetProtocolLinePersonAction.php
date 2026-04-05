@@ -38,7 +38,7 @@ class SetProtocolLinePersonAction extends BaseController
         $oldPersons = $protocolLinesToUpdate
             ->pluck('person_id')
             ->unique()
-            ->filter(static fn ($personId) => $personId !== null)
+            ->filter(static fn ($personId): bool => $personId !== null)
         ;
 
         $protocolLineService->reSetPerson($protocolLinesToUpdate, $person->id);

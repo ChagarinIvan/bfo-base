@@ -10,6 +10,9 @@ use Database\Seeders\ProtocolLinesSeeder;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
+use Iterator;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 final class ProtocolLinesRepositoryTest extends TestCase
@@ -18,18 +21,12 @@ final class ProtocolLinesRepositoryTest extends TestCase
 
     private ProtocolLinesRepository $repository;
 
-    public static function criteriaDataProvider(): array
+    public static function criteriaDataProvider(): Iterator
     {
-        return [
-            'by distance' =>
-                [2, new Criteria(['distances' => collect([101])])],
-            'by distances' =>
-                [4, new Criteria(['distances' => collect([101, 102, 103])])],
-            'with payment year' =>
-                [2, new Criteria(['distances' => collect([101, 102, 103]), 'paymentYear' => 2024, 'eventDate' => '2024-01-12'])],
-            'with previous payment year' =>
-                [3, new Criteria(['distances' => collect([101, 102, 103]), 'paymentYear' => 2023, 'eventDate' => '2024-01-12'])],
-        ];
+        yield 'by distance' => [2, new Criteria(['distances' => collect([101])])];
+        yield 'by distances' => [4, new Criteria(['distances' => collect([101, 102, 103])])];
+        yield 'with payment year' => [2, new Criteria(['distances' => collect([101, 102, 103]), 'paymentYear' => 2024, 'eventDate' => '2024-01-12'])];
+        yield 'with previous payment year' => [3, new Criteria(['distances' => collect([101, 102, 103]), 'paymentYear' => 2023, 'eventDate' => '2024-01-12'])];
     }
 
     protected function setUp(): void
@@ -40,19 +37,16 @@ final class ProtocolLinesRepositoryTest extends TestCase
         $this->repository = new ProtocolLinesRepository($app->get(ConnectionInterface::class));
     }
 
-    /** @test */
+    #[Test]
     public function it_gets_line_by_id(): void
     {
         $this->seed(ProtocolLinesSeeder::class);
         $protocolLine = $this->repository->byId(101);
-        $this->assertNotNull($protocolLine);
+        $this->assertInstanceOf(\App\Domain\ProtocolLine\ProtocolLine::class, $protocolLine);
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider criteriaDataProvider
-     */
+    #[DataProvider('criteriaDataProvider')]
+    #[Test]
     public function it_gets_lines_by_criteria(int $expectedCount, Criteria $criteria): void
     {
         $this->seed(ProtocolLinesSeeder::class);

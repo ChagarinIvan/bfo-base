@@ -11,6 +11,7 @@ use App\Domain\User\User;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
+use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\CreatesApplication;
 use Tests\TestCase;
@@ -28,9 +29,9 @@ final class StorePersonPaymentActionTest extends TestCase
     }
 
     /**
-     * @test
      * @see StorePersonPaymentAction::class
      */
+    #[Test]
     public function it_stores_person_payment(): void
     {
         /** @var Authenticatable&User $user */

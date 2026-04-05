@@ -12,6 +12,7 @@ use App\Application\Service\Event\ViewEvent;
 use App\Application\Service\Event\ViewEventService;
 use App\Domain\Event\Event;
 use App\Domain\Event\EventRepository;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
@@ -31,7 +32,7 @@ final class ViewEventServiceTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_fails_when_event_not_found(): void
     {
         $this->expectException(EventNotFound::class);
@@ -39,7 +40,7 @@ final class ViewEventServiceTest extends TestCase
         $this->events
             ->expects($this->once())
             ->method('byId')
-            ->with($this->equalTo(1))
+            ->with(1)
             ->willReturn(null)
         ;
 
@@ -47,7 +48,7 @@ final class ViewEventServiceTest extends TestCase
         $this->service->execute($command);
     }
 
-    /** @test */
+    #[Test]
     public function it_shows_event(): void
     {
         /** @var Event $event */
@@ -56,7 +57,7 @@ final class ViewEventServiceTest extends TestCase
         $this->events
             ->expects($this->once())
             ->method('byId')
-            ->with($this->equalTo(1))
+            ->with(1)
             ->willReturn($event)
         ;
 

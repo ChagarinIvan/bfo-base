@@ -18,6 +18,6 @@ class ShowCreatePersonAction extends BaseController
         $clubs = $service->execute();
 
         /** @see /resources/views/persons/create.blade.php */
-        return $this->view('persons.create', compact('clubs'));
+        return $this->view('persons.create', ['clubs' => $clubs]);
     }
 }

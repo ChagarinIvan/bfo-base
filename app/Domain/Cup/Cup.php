@@ -11,6 +11,7 @@ use App\Domain\Cup\Event\CupCreated;
 use App\Domain\Cup\Event\CupDisabled;
 use App\Domain\Cup\Event\CupUpdated;
 use App\Domain\Cup\Factory\CupInput;
+use App\Domain\Cup\Group\CupGroup;
 use App\Domain\Shared\AggregatedModel;
 use App\Infrastracture\Laravel\Eloquent\Auth\ImpressionCast;
 use App\Models\Year;
@@ -40,16 +41,6 @@ class Cup extends AggregatedModel
     use HasFactory;
 
     protected $table = 'cups';
-
-    protected $casts = [
-        'result' => 'array',
-        'type' => CupType::class,
-        'year' => Year::class,
-        'active' => 'boolean',
-        'visible' => 'boolean',
-        'created' => ImpressionCast::class,
-        'updated' => ImpressionCast::class,
-    ];
 
     public function disable(Impression $impression): void
     {
@@ -84,11 +75,22 @@ class Cup extends AggregatedModel
     }
 
     /**
-     * @param mixed $group
      * @return Collection|CupEventPoint[]
      */
-    public function calculateEvent(CupEvent $cupEvent, $group): Collection
+    public function calculateEvent(CupEvent $cupEvent, CupGroup $group): Collection
     {
         return $this->type->instance()->calculateEvent($cupEvent, $group);
+    }
+    protected function casts(): array
+    {
+        return [
+            'result' => 'array',
+            'type' => CupType::class,
+            'year' => Year::class,
+            'active' => 'boolean',
+            'visible' => 'boolean',
+            'created' => ImpressionCast::class,
+            'updated' => ImpressionCast::class,
+        ];
     }
 }

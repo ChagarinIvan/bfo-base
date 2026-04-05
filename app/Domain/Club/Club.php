@@ -29,11 +29,6 @@ class Club extends Model
 
     protected $table = 'club';
 
-    protected $casts = [
-        'created' => ImpressionCast::class,
-        'updated' => ImpressionCast::class,
-    ];
-
     public function persons(): HasMany
     {
         return $this->hasMany(Person::class);
@@ -43,5 +38,12 @@ class Club extends Model
     {
         $this->updated = $impression;
         $this->active = false;
+    }
+    protected function casts(): array
+    {
+        return [
+            'created' => ImpressionCast::class,
+            'updated' => ImpressionCast::class,
+        ];
     }
 }

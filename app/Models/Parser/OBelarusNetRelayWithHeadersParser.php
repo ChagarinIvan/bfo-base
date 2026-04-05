@@ -62,7 +62,8 @@ class OBelarusNetRelayWithHeadersParser extends AbstractParser
                 $line = trim($lines[$index]);
                 if (preg_match('#^\d+$#', $line)) {
                     continue;
-                } elseif (empty($line)) {
+                }
+                if ($line === '' || $line === '0') {
                     break;
                 }
                 $preparedLine = preg_replace('#=#', ' ', $line);

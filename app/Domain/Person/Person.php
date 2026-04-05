@@ -52,14 +52,6 @@ class Person extends AggregatedModel
 
     protected $table = 'person';
 
-    protected $casts = [
-        'prompt' => 'array',
-        'citizenship' => Citizenship::class,
-        'birthday' => 'datetime:Y-m-d',
-        'created' => ImpressionCast::class,
-        'updated' => ImpressionCast::class,
-    ];
-
     protected $fillable = ['lastname', 'firstname', 'birthday', 'club_id', 'from_base', 'created', 'updated'];
 
     public function protocolLines(): HasMany
@@ -113,5 +105,15 @@ class Person extends AggregatedModel
         $this->active = false;
 
         $this->recordThat(new PersonDisabled($this));
+    }
+    protected function casts(): array
+    {
+        return [
+            'prompt' => 'array',
+            'citizenship' => Citizenship::class,
+            'birthday' => 'datetime:Y-m-d',
+            'created' => ImpressionCast::class,
+            'updated' => ImpressionCast::class,
+        ];
     }
 }

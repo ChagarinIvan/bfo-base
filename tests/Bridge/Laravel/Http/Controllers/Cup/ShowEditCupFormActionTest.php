@@ -11,6 +11,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use Illuminate\Http\Response;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\CreatesApplication;
 use Tests\TestCase;
 
@@ -27,9 +28,9 @@ final class ShowEditCupFormActionTest extends TestCase
     }
 
     /**
-     * @test
      * @see ShowEditCupFormAction::class
      */
+    #[Test]
     public function it_shows_edit_cup_page(): void
     {
         $this->seed(ProtocolLinesSeeder::class);

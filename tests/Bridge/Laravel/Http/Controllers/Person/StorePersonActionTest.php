@@ -11,6 +11,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use Illuminate\Http\Response;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\CreatesApplication;
 use Tests\TestCase;
 
@@ -27,9 +28,9 @@ final class StorePersonActionTest extends TestCase
     }
 
     /**
-     * @test
      * @see StorePersonAction::class
      */
+    #[Test]
     public function it_stores_person(): void
     {
         /** @var Authenticatable&User $user */
@@ -56,9 +57,9 @@ final class StorePersonActionTest extends TestCase
     }
 
     /**
-     * @test
      * @see StorePersonAction::class
      */
+    #[Test]
     public function it_prevents_duplicated_users(): void
     {
         /** @var Authenticatable&User $user */

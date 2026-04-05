@@ -13,6 +13,7 @@ use App\Application\Service\PersonPrompt\ListPersonsPromptsService;
 use App\Domain\PersonPrompt\PersonPrompt;
 use App\Domain\PersonPrompt\PersonPromptRepository;
 use App\Domain\Shared\Criteria;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
@@ -30,13 +31,13 @@ final class ListPersonsPromptsServiceTest extends TestCase
         $this->service = new ListPersonsPromptsService($this->personsPrompts, new PersonPromptAssembler(new AuthAssembler));
     }
 
-    /** @test */
+    #[Test]
     public function it_gets_list_of_person_prompts(): void
     {
         $this->personsPrompts
             ->expects($this->once())
             ->method('byCriteria')
-            ->with($this->equalTo(new Criteria(['personId' => 1])))
+            ->with(new Criteria(['personId' => 1]))
             ->willReturn(PersonPrompt::factory(2)->make())
         ;
 

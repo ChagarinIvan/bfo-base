@@ -17,7 +17,7 @@ final class Badge extends Component
         public readonly string $name = '',
         public readonly string $url = '',
     ) {
-        $this->color = empty($color) ? Color::getColor($name) : $color;
+        $this->color = $color === '' || $color === '0' ? Color::getColor($name) : $color;
     }
 
     public function render(): View

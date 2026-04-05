@@ -98,7 +98,10 @@ class OBelarusNetRelayParser extends AbstractParser
 
             for ($index = 1; $index < $linesCount; $index++) {
                 $line = trim($lines[$index]);
-                if (empty($line)) {
+                if ($line === '') {
+                    continue;
+                }
+                if ($line === '0') {
                     continue;
                 }
                 if (str_contains($line, 'ласс дистан') || str_contains($line, 'лавный судь')) {
@@ -113,8 +116,10 @@ class OBelarusNetRelayParser extends AbstractParser
                     $this->commandPlace = null;
                     $this->commandRank = null;
                     $this->commandVk = false;
-
-                    if (!$isOpen || is_numeric($line)) {
+                    if (!$isOpen) {
+                        continue;
+                    }
+                    if (is_numeric($line)) {
                         continue;
                     }
                 } elseif (preg_match('#^(\d+)\s+(\d+|-|в/к)\s+([^\d\s]+|-)+\s+(\d+|-)#u', $line, $match)) {

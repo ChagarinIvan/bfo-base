@@ -27,6 +27,7 @@ use Database\Seeders\YouthCupLineSeeder5;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
+use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\CreatesApplication;
 use Tests\TestCase;
@@ -44,10 +45,10 @@ final class ShowCupEventGroupActionTest extends TestCase
     }
 
     /**
-     * @test
      * @see ShowCupEventGroupAction::class
      * @see SprintCupType::class
      */
+    #[Test]
     public function it_shows_sprint_cup_event_group_action(): void
     {
         $this->seed(SprintCupLineSeeder::class);
@@ -75,10 +76,10 @@ final class ShowCupEventGroupActionTest extends TestCase
     }
 
     /**
-     * @test
      * @see ShowCupEventGroupAction::class
      * @see YouthCupType::class
      */
+    #[Test]
     public function it_shows_youth_cup_event_group_action(): void
     {
         $this->seed(YouthCupLineSeeder::class);
@@ -102,10 +103,10 @@ final class ShowCupEventGroupActionTest extends TestCase
     }
 
     /**
-     * @test
      * @see ShowCupEventGroupAction::class
      * @see YouthCupType::class
      */
+    #[Test]
     public function it_shows_youth_cup_event_group_action_2(): void
     {
         $this->seed(YouthCupLine2Seeder::class);
@@ -129,10 +130,10 @@ final class ShowCupEventGroupActionTest extends TestCase
     }
 
     /**
-     * @test
      * @see ShowCupEventGroupAction::class
      * @see JuniorCupType::class
      */
+    #[Test]
     public function it_shows_junior_cup_event_group_action(): void
     {
         $this->seed(JuniorCupLineSeeder::class);
@@ -160,10 +161,10 @@ final class ShowCupEventGroupActionTest extends TestCase
     }
 
     /**
-     * @test
      * @see ShowCupEventGroupAction::class
      * @see JuniorCupType::class
      */
+    #[Test]
     public function it_shows_junior_cup_event_group_action2(): void
     {
         $this->seed(JuniorCupLineSeeder2::class);
@@ -192,10 +193,10 @@ final class ShowCupEventGroupActionTest extends TestCase
     }
 
     /**
-     * @test
      * @see ShowCupEventGroupAction::class
      * @see NewMasterCupType::class
      */
+    #[Test]
     public function it_shows_new_master_cup_event_group_action(): void
     {
         $this->seed(NewMasterCupLineSeeder::class);
@@ -217,10 +218,10 @@ final class ShowCupEventGroupActionTest extends TestCase
     }
 
     /**
-     * @test
      * @see ShowCupEventGroupAction::class
      * @see NewMasterCupType::class
      */
+    #[Test]
     public function it_shows_new_master_cup_event_group_action2(): void
     {
         $this->seed(NewMasterCupLineSeeder::class);
@@ -243,10 +244,10 @@ final class ShowCupEventGroupActionTest extends TestCase
     }
 
     /**
-     * @test
      * @see ShowCupEventGroupAction::class
      * @see NewMasterCupType::class
      */
+    #[Test]
     public function it_shows_new_master_cup_event_group_action3(): void
     {
         $this->seed(NewMasterCupLineSeeder::class);
@@ -270,10 +271,10 @@ final class ShowCupEventGroupActionTest extends TestCase
     }
 
     /**
-     * @test
      * @see ShowCupEventGroupAction::class
      * @see NewMasterCupType::class
      */
+    #[Test]
     public function it_shows_new_master_cup_event_group_action4(): void
     {
         $this->seed(NewMasterCupLineSeeder2::class);
@@ -296,10 +297,10 @@ final class ShowCupEventGroupActionTest extends TestCase
     }
 
     /**
-     * @test
      * @see ShowCupEventGroupAction::class
      * @see NewMasterCupType::class
      */
+    #[Test]
     public function it_shows_new_master_cup_event_group_action5(): void
     {
         // http://bfo-base.orient.by/cups/47/486/W_65_/show
@@ -324,10 +325,10 @@ final class ShowCupEventGroupActionTest extends TestCase
     }
 
     /**
-     * @test
      * @see ShowCupEventGroupAction::class
      * @see NewMasterCupType::class
      */
+    #[Test]
     public function it_shows_new_master_cup_event_group_action6(): void
     {
         $this->seed(NewMasterCupLineSeeder4::class);
@@ -351,10 +352,10 @@ final class ShowCupEventGroupActionTest extends TestCase
     }
 
     /**
-     * @test
      * @see ShowCupEventGroupAction::class
      * @see NewMasterCupType::class
      */
+    #[Test]
     public function it_shows_new_master_cup_event_group_action7(): void
     {
         // http://bfo-base.orient.by/cups/47/486/M_65_/show
@@ -378,10 +379,10 @@ final class ShowCupEventGroupActionTest extends TestCase
     }
 
     /**
-     * @test
      * @see ShowCupEventGroupAction::class
      * @see NewMasterCupType::class
      */
+    #[Test]
     public function it_shows_new_master_cup_event_group_action8(): void
     {
         // М85 должы попадать в М80 если дистанции эквивалентны
@@ -406,10 +407,10 @@ final class ShowCupEventGroupActionTest extends TestCase
     }
 
     /**
-     * @test
      * @see ShowCupEventGroupAction::class
      * @see NewYouthCupType::class
      */
+    #[Test]
     public function it_shows_new_youth_cup_event_group_action(): void
     {
         $this->seed(YouthCupLineSeeder3::class);
@@ -433,10 +434,10 @@ final class ShowCupEventGroupActionTest extends TestCase
     }
 
     /**
-     * @test
      * @see ShowCupEventGroupAction::class
      * @see NewYouthCupType::class
      */
+    #[Test]
     public function it_shows_new_youth_cup_event_group_action_3(): void
     {
         $this->seed(YouthCupLineSeeder4::class);
@@ -460,10 +461,10 @@ final class ShowCupEventGroupActionTest extends TestCase
     }
 
     /**
-     * @test
      * @see ShowCupEventGroupAction::class
      * @see NewYouthCupType::class
      */
+    #[Test]
     public function it_shows_new_youth_cup_event_group_action_5(): void
     {
         $this->seed(YouthCupLineSeeder5::class);

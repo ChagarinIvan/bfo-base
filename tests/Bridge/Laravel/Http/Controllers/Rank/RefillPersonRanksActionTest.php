@@ -16,10 +16,11 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use Illuminate\Http\Response;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\CreatesApplication;
 use Tests\TestCase;
 
-class RefillPersonRanksActionTest extends TestCase
+final class RefillPersonRanksActionTest extends TestCase
 {
     use CreatesApplication;
     use RefreshDatabase;
@@ -32,9 +33,9 @@ class RefillPersonRanksActionTest extends TestCase
     }
 
     /**
-     * @test
      * @see RefillPersonRanksAction::class
      */
+    #[Test]
     public function it_refills_ranks(): void
     {
         /** @var Authenticatable&User $user */

@@ -12,6 +12,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use Illuminate\Http\Response;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\CreatesApplication;
 use Tests\TestCase;
 
@@ -28,9 +29,9 @@ final class ShowPersonPromptsListActionTest extends TestCase
     }
 
     /**
-     * @test
      * @see ShowPersonPromptsListAction::class
      */
+    #[Test]
     public function it_shows_person_prompts_list(): void
     {
         /** @var Authenticatable&User $user */
@@ -52,9 +53,9 @@ final class ShowPersonPromptsListActionTest extends TestCase
     }
 
     /**
-     * @test
      * @see ShowPersonPromptsListAction::class
      */
+    #[Test]
     public function it_doesnt_show_person_prompts_for_deleted_person(): void
     {
         /** @var Authenticatable&User $user */

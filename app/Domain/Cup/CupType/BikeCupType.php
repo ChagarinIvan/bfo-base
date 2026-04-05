@@ -22,8 +22,6 @@ class BikeCupType extends EliteCupType
     }
 
     /**
-     * @param CupEvent $cupEvent
-     * @param CupGroup $mainGroup
      * @return Collection //array<int, CupEventPoint>
      */
     public function calculateEvent(CupEvent $cupEvent, CupGroup $mainGroup): Collection
@@ -32,7 +30,7 @@ class BikeCupType extends EliteCupType
 
         return $this
             ->calculateLines($cupEvent, $cupEventProtocolLines)
-            ->sortByDesc(static fn (CupEventPoint $cupEventResult) => $cupEventResult->points)
+            ->sortByDesc(static fn (CupEventPoint $cupEventResult): int|string|float => $cupEventResult->points)
         ;
     }
 
