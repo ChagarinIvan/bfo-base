@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastracture\Laravel\Eloquent\PersonPrompt;
 
+use App\Domain\Competition\Competition;
 use App\Domain\PersonPayment\PersonPayment;
 use App\Domain\PersonPayment\PersonPaymentRepository;
 use App\Domain\PersonPrompt\PersonPrompt;
@@ -14,6 +15,11 @@ use Illuminate\Support\Collection;
 
 final class EloquentPromptPaymentRepository implements PersonPromptRepository
 {
+    public function add(PersonPrompt $prompt): void
+    {
+        $prompt->create();
+    }
+
     public function byId(int $id): ?PersonPrompt
     {
         return PersonPrompt::find($id);
