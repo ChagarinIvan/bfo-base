@@ -13,7 +13,7 @@ final readonly class AddPersonPromptService
 {
     public function __construct(
         private PersonPromptFactory $factory,
-        private PersonPromptRepository $competitions,
+        private PersonPromptRepository $prompts,
         private PersonPromptAssembler $assembler,
     ) {
     }
@@ -21,7 +21,7 @@ final readonly class AddPersonPromptService
     public function execute(AddPersonPrompt $command): ViewPersonPromptDto
     {
         $prompt = $this->factory->create($command->input());
-        $this->competitions->add($prompt);
+        $this->prompts->add($prompt);
 
         return $this->assembler->toViewPersonPromptDto($prompt);
     }

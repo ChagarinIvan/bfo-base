@@ -17,7 +17,7 @@ final class EloquentPromptPaymentRepository implements PersonPromptRepository
 {
     public function add(PersonPrompt $prompt): void
     {
-        $prompt->create();
+        $prompt->save();
     }
 
     public function byId(int $id): ?PersonPrompt
