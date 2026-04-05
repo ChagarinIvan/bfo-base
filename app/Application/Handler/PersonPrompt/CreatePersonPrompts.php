@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Application\Handler\PersonPrompt;
 
+use App\Application\Dto\Auth\UserId;
+use App\Application\Dto\PersonPrompt\PersonPromptDto;
+use App\Application\Service\PersonPrompt\AddPersonPrompt;
+use App\Application\Service\PersonPrompt\AddPersonPromptService;
 use App\Domain\Person\Person;
 use App\Services\PersonPromptService;
 use App\Services\ProtocolLineIdentService;
@@ -13,8 +17,10 @@ use function mb_strtolower;
 
 readonly class CreatePersonPrompts
 {
-    public function __construct(private PersonPromptService $promptService)
-    {
+    public function __construct(
+        private PersonPromptService $promptService,
+        private AddPersonPromptService $addPersonPromptService,
+    ) {
     }
 
     public function process(Person $person): void
@@ -51,7 +57,9 @@ readonly class CreatePersonPrompts
 
         $prompts = array_diff($prompts, $existPrompts);
         foreach ($prompts as $prompt) {
-            $this->promptService->storePrompt($prompt, $person->id, $person->updated);
+            $dto = new PersonPromptDto();
+            $dto->prompt = $prompt;
+            $this->addPersonPromptService->execute(new AddPersonPrompt($dto, (string) $person->id, new UserId($person->updated->by)));
         }
     }
 }

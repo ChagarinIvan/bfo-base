@@ -12,4 +12,6 @@ interface PersonPromptRepository
     public function byId(int $id): ?PersonPrompt;
 
     public function byCriteria(Criteria $criteria): Collection;
+
+    public function add(PersonPrompt $prompt): void;
 }
