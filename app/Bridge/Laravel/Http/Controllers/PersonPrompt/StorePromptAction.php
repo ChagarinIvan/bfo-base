@@ -4,25 +4,25 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Http\Controllers\PersonPrompt;
 
+use App\Application\Dto\Auth\UserId;
+use App\Application\Dto\PersonPrompt\PersonPromptDto;
+use App\Application\Service\PersonPrompt\AddPersonPrompt;
+use App\Application\Service\PersonPrompt\AddPersonPromptService;
 use App\Bridge\Laravel\Http\Controllers\Action;
-use App\Domain\PersonPrompt\PersonPrompt;
-use App\Services\PersonPromptService;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 
 class StorePromptAction extends BaseController
 {
     use Action;
 
-    public function __invoke(Request $request, string $personId, PersonPromptService $service): RedirectResponse
-    {
-        $formParams = $request->validate([
-            'prompt' => 'required',
-        ]);
-
-        $prompt = $service->fillPrompt(new PersonPrompt(), $formParams, (int) $personId);
-        $service->storePersonPrompt($prompt);
+    public function __invoke(
+        string $personId,
+        PersonPromptDto $prompt,
+        AddPersonPromptService $service,
+        UserId $userId,
+    ): RedirectResponse {
+        $service->execute(new AddPersonPrompt($prompt, $personId, $userId));
 
         return $this->redirector->action(ShowPersonPromptsListAction::class, [$personId]);
     }
