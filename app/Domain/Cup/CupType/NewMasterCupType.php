@@ -362,29 +362,33 @@ class NewMasterCupType extends AbstractCupType
 
     protected function getEventGroups(GroupMale $male): Collection
     {
-        if (array_key_exists($male->value, self::$eventGroups)) {
+        if (isset(self::$eventGroups[$male->value])) {
             return self::$eventGroups[$male->value];
         }
 
-        $groups = Collection::make();
+        $groups = collect($this->getGroups())
+            ->filter(static fn (CupGroup $g) => $g->male() === $male)
+            ->flatMap(static function (CupGroup $g) {
+                return collect(static::GROUPS_MAP[$g->id()])
+                    ->map(static fn ($name) => [
+                        'name' => $name,
+                        'cupGroupId' => $g->id(),
+                    ]);
+            });
 
-        /** @var CupGroup $cupGroup */
-        foreach ($this->getGroups() as $cupGroup) {
-            if ($cupGroup->male() === $male) {
-                $cupGroupId = $cupGroup->id();
-                $group = $this->groupsRepository->searchGroups(static::GROUPS_MAP[$cupGroupId]);
-                $group = $group->map(static fn(Group $i): array => [
-                    'id' => $i->id,
-                    'name' => $i->name,
-                    'cupGroupId' => $cupGroup->id(),
-                ]);
-                $groups = $groups->merge($group);
-            }
-        }
+        $groupNames = $groups->pluck('name')->unique()->values();
 
-        self::$eventGroups[$male->value] = $groups;
+        $groupToCupMap = $groups->keyBy('name')->map(static fn ($g) => $g['cupGroupId']);
 
-        return $groups;
+        $result = $this->groupsRepository
+            ->searchGroups($groupNames->all())
+            ->map(static fn (Group $group) => [
+                'id' => $group->id,
+                'name' => $group->name,
+                'cupGroupId' => $groupToCupMap[$group->name] ?? null,
+            ]);
+
+        return self::$eventGroups[$male->value] = $result;
     }
 
     protected function paymentYear(Cup $cup): Year
