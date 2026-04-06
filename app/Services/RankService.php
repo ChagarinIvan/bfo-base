@@ -67,9 +67,9 @@ class RankService
 
     public function reFillRanksByPersonId(int $personId): void
     {
-        $criteria = new Criteria(['personId' => $personId], ['eventDate' => 'asc']);
-        $this->ranks->deleteByCriteria($criteria);
+        $this->ranks->deleteByCriteria(new Criteria(['personId' => $personId]));
 
+        $criteria = new Criteria(['personId' => $personId, 'massCompetition' => false], ['eventDate' => 'asc']);
         foreach ($this->protocolLines->byCriteria($criteria) as $protocolLine) {
             /** @var ProtocolLine $protocolLine */
             $this->fillRank($protocolLine);

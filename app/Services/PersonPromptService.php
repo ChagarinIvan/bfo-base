@@ -6,16 +6,9 @@ namespace App\Services;
 
 use App\Domain\PersonPrompt\PersonPrompt;
 use Illuminate\Support\Collection;
-use Mav\Slovo\Phonetics;
-use RuntimeException;
 
 final readonly class PersonPromptService
 {
-    public function __construct(
-        private Phonetics $phonetics,
-    ) {
-    }
-
     public function changePromptForLine(string $preparedLine, int $personId): void
     {
         //меняем person_id для имеющихся таких же идентификаторов
@@ -31,11 +24,6 @@ final readonly class PersonPromptService
             $prompt->person_id = $personId;
             $prompt->prompt = $preparedLine;
         }
-    }
-
-    public function deletePersonPrompt(int $promptId): void
-    {
-        PersonPrompt::destroy($promptId);
     }
 
     public function deletePrompt(string $prompt): void
@@ -71,32 +59,5 @@ final readonly class PersonPromptService
             ->where('person.active', true)
             ->get()
         ;
-    }
-
-    public function fillPrompt(PersonPrompt $prompt, array $formParams, ?int $personId = null): PersonPrompt
-    {
-        $prompt->fill($formParams);
-        if ($personId) {
-            $prompt->person_id = $personId;
-        }
-
-        return $prompt;
-    }
-
-    public function storePersonPrompt(PersonPrompt $prompt): PersonPrompt
-    {
-        $prompt->metaphone = $this->phonetics->metaphour($prompt->prompt);
-        $prompt->save();
-
-        return $prompt;
-    }
-
-    public function getPrompt(int $promptId): PersonPrompt
-    {
-        $prompt = PersonPrompt::find($promptId);
-        if ($prompt) {
-            return $prompt;
-        }
-        throw new RuntimeException('Wrong prompt id.');
     }
 }

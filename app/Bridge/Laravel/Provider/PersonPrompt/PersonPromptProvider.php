@@ -7,6 +7,8 @@ namespace App\Bridge\Laravel\Provider\PersonPrompt;
 use App\Domain\PersonPrompt\Factory\PersonPromptFactory;
 use App\Domain\PersonPrompt\Factory\StandardPersonPromptFactory;
 use App\Domain\PersonPrompt\PersonPromptRepository;
+use App\Domain\PersonPrompt\PersonPromptUpdater;
+use App\Domain\PersonPrompt\StandardPersonPromptUpdater;
 use App\Infrastracture\Laravel\Eloquent\PersonPrompt\EloquentPromptPaymentRepository;
 use Illuminate\Support\ServiceProvider;
 
@@ -14,6 +16,7 @@ final class PersonPromptProvider extends ServiceProvider
 {
     public function boot(): void
     {
+        $this->app->bind(PersonPromptUpdater::class, StandardPersonPromptUpdater::class);
         $this->app->bind(PersonPromptFactory::class, StandardPersonPromptFactory::class);
         $this->app->bind(PersonPromptRepository::class, EloquentPromptPaymentRepository::class);
     }
