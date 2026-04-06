@@ -18,7 +18,7 @@ final readonly class ClubAssembler
         return new ViewClubDto(
             id: (string) $club->id,
             name: $club->name,
-            personsCount: $club->persons->count(),
+            personsCount: $club->persons_count,
             created: $this->authAssembler->toImpressionDto($club->created),
             updated: $this->authAssembler->toImpressionDto($club->updated)
         );

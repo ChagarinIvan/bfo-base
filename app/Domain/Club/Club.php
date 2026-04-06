@@ -17,6 +17,7 @@ use Illuminate\Support\Collection;
  * @property string $name
  * @property string $normalize_name
  * @property bool $active
+ * @property int $persons_count
  *
  * @property Impression $created
  * @property Impression $updated
