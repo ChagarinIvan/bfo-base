@@ -11,8 +11,6 @@ final readonly class ViewClubDto
     public function __construct(
         public string $id,
         public string $name,
-
-        // TODO old trash
         public int $personsCount,
         public ImpressionDto $created,
         public ImpressionDto $updated,
