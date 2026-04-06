@@ -1,5 +1,5 @@
 @php
-    use App\Bridge\Laravel\Http\Controllers\PersonPrompt\UpdatePromptAction;
+    use App\Bridge\Laravel\Http\Controllers\PersonPrompt\UpdatePersonPromptAction;
     use App\Application\Dto\PersonPrompt\ViewPersonPromptDto;
     /**
      * @var ViewPersonPromptDto $prompt
@@ -13,11 +13,11 @@
 @section('content')
     <div class="row">
         <form method="POST"
-              action="{{ action(UpdatePromptAction::class, [$prompt->id]) }}"
+              action="{{ action(UpdatePersonPromptAction::class, [$prompt->id]) }}"
         >
             @csrf
             <div class="form-floating mb-3">
-                <input class="form-control @error('prompt') is-invalid @enderror" id="prompt" name="prompt" value="{{ $prompt->prompt }}" />
+                <input class="form-control @error('prompt') is-invalid @enderror" id="prompt" name="prompt" value="{{ $prompt->prompt }}"/>
                 <label for="prompt">{{ __('app.common.prompt') }}</label>
             </div>
 

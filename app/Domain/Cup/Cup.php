@@ -81,6 +81,7 @@ class Cup extends AggregatedModel
     {
         return $this->type->instance()->calculateEvent($cupEvent, $group);
     }
+
     protected function casts(): array
     {
         return [

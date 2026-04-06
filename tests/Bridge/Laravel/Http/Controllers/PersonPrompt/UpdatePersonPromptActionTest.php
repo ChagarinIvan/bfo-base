@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Bridge\Laravel\Http\Controllers\PersonPrompt;
 
-use App\Bridge\Laravel\Http\Controllers\PersonPrompt\ShowEditPromptAction;
+use App\Bridge\Laravel\Http\Controllers\PersonPrompt\UpdatePersonPromptAction;
 use App\Domain\Person\Person;
 use App\Domain\PersonPrompt\PersonPrompt;
 use App\Domain\User\User;
@@ -13,10 +13,10 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use Illuminate\Http\Response;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 use Tests\CreatesApplication;
-use Tests\TestCase;
 
-final class ShowEditPromptActionTest extends TestCase
+final class UpdatePersonPromptActionTest extends \Tests\TestCase
 {
     use CreatesApplication;
     use RefreshDatabase;
@@ -29,10 +29,10 @@ final class ShowEditPromptActionTest extends TestCase
     }
 
     /**
-     * @see ShowEditPromptAction::class
+     * @see UpdatePersonPromptAction::class
      */
     #[Test]
-    public function it_shows_edit_person_prompt_page(): void
+    public function it_updates_person_prompt(): void
     {
         /** @var Authenticatable&User $user */
         $user = User::factory()->createOne();
@@ -41,24 +41,13 @@ final class ShowEditPromptActionTest extends TestCase
         /** @var Person $person */
         $person = Person::factory()->createOne();
         /** @var PersonPrompt $prompt */
-        $prompt = PersonPrompt::factory(state: ['person_id' => $person->id])->createOne();
+        $prompt = PersonPrompt::factory(state: ['person_id' => $person->id, 'prompt' => 'foo bar'])->createOne();
 
-        $this->get("/persons/prompt/$prompt->id/edit")
-            ->assertStatus(Response::HTTP_OK)
-            ->assertSee("<input class=\"form-control \" id=\"prompt\" name=\"prompt\" value=\"$prompt->prompt\" />", false)
+        $this->post("/persons/prompt/$prompt->id/update", [
+            'prompt' => 'test',
+        ])
+            ->assertStatus(Response::HTTP_FOUND)
+            ->assertRedirect("/persons/$person->id/prompts")
         ;
-    }
-
-    /**
-     * @see ShowEditPromptAction::class
-     */
-    #[Test]
-    public function it_redirects_when_prompt_not_found(): void
-    {
-        /** @var Authenticatable&User $user */
-        $user = User::factory()->createOne();
-        $this->actingAs($user);
-
-        $this->get("/persons/prompt/1/edit")->assertStatus(Response::HTTP_FOUND);
     }
 }
