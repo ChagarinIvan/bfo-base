@@ -205,13 +205,18 @@ final readonly class ProtocolLinesRepository implements ProtocolLineRepository
         }
 
         if (
-            $criteria->hasOneParam(['dateFrom', 'dateTo', 'year', 'eventId'])
+            $criteria->hasOneParam(['dateFrom', 'dateTo', 'year', 'eventId', 'massCompetition'])
             || array_key_exists('eventDate', $criteria->sorting())
         ) {
             $query
                 ->join('distances', 'distances.id', '=', 'protocol_lines.distance_id')
                 ->join('events', 'events.id', '=', 'distances.event_id')
+                ->join('competitions', 'competitions.id', '=', 'events.competition_id')
             ;
+        }
+
+        if ($criteria->hasParam('massCompetition')) {
+            $query->where('competitions.mass', $criteria->param('massCompetition'));
         }
 
         if (array_key_exists('eventDate', $criteria->sorting())) {
