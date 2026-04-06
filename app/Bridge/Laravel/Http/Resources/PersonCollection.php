@@ -9,10 +9,17 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class PersonCollection extends ResourceCollection
 {
+    public function __construct($resource, private array $ranks = [])
+    {
+        parent::__construct($resource);
+    }
+
     public function toArray(Request $request): array
     {
         return [
-            'data' => parent::toArray($request),
+            'data' => $this->collection->map(fn ($person) =>
+                (new PersonResource($person, $this->ranks))->toArray($request)
+            ),
         ];
     }
 }

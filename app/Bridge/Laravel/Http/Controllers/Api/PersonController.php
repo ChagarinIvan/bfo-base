@@ -13,20 +13,23 @@ use Symfony\Component\HttpFoundation\Request;
 
 class PersonController extends Controller
 {
-    public function __construct(private readonly PersonsService $personsService)
-    {
+    public function __construct(
+        private readonly PersonsService $personsService,
+    ) {
     }
 
     public function index(Request $request): ResourceCollection
     {
         $personQuery = $this->personsService->getPersonsList(
-            (string) $request->get('sort_by'),
-            (int) $request->get('sort_mode'),
-            (string) $request->get('search'),
+            (string) $request->query->get('sort_by'),
+            (int) $request->query->get('sort_mode'),
+            (string) $request->query->get('search'),
         );
 
         /** @var LengthAwarePaginator $paginator */
-        $paginator = $personQuery->paginate((int)$request->get('per_page'));
+        $paginator = $personQuery->paginate((int)$request->query->get('per_page'));
+        $personIds = $paginator->pluck('id')->all();
+        $ranks = $this->activePersonRankService->executeForPersons($personIds);
 
         return new PersonCollection($paginator->withQueryString());
     }
