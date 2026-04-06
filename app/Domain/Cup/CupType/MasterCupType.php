@@ -12,6 +12,8 @@ use App\Domain\Cup\Group\GroupAge;
 use App\Domain\Cup\Group\GroupMale;
 use App\Domain\ProtocolLine\ProtocolLine;
 use Illuminate\Support\Collection;
+use function array_merge;
+use function array_unique;
 use function in_array;
 
 /**
@@ -172,15 +174,20 @@ class MasterCupType extends AbstractCupType
 
     protected function getEventGroups(GroupMale $male): Collection
     {
-        $groups = Collection::make();
+        $groupNames = [];
 
         /** @var CupGroup $cupGroup */
         foreach ($this->getCalculatedGroups() as $cupGroup) {
             if ($cupGroup->male() === $male) {
-                $groups = $groups->merge($this->groupsRepository->searchGroups(static::GROUPS_MAP[$cupGroup->id()]));
+                $groupNames = array_merge(
+                    $groupNames,
+                    static::GROUPS_MAP[$cupGroup->id()]
+                );
             }
         }
 
-        return $groups;
+        $groupNames = array_unique($groupNames);
+
+        return $this->groupsRepository->searchGroups($groupNames);
     }
 }
