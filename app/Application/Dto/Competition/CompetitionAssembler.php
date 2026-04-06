@@ -21,6 +21,7 @@ final readonly class CompetitionAssembler
             description: $competition->description ?? '',
             from: $competition->from->format('Y-m-d'),
             to: $competition->to->format('Y-m-d'),
+            year: $competition->year()->value,
             mass: $competition->mass,
             created: $this->authAssembler->toImpressionDto($competition->created),
             updated: $this->authAssembler->toImpressionDto($competition->updated)

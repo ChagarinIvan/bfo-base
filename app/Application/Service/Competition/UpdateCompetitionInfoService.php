@@ -25,8 +25,7 @@ final readonly class UpdateCompetitionInfoService
     /** @throws CompetitionNotFound */
     public function execute(UpdateCompetitionInfo $command): ViewCompetitionDto
     {
-        /** @var ViewCompetitionDto $dto */
-        $dto = $this->transactional->run(function () use ($command): ViewCompetitionDto {
+        return $this->transactional->run(function () use ($command): ViewCompetitionDto {
             $competition = $this->competitions->lockById($command->id()) ?? throw new CompetitionNotFound();
             $impression = new Impression($this->clock->now(), $command->userId());
             $competition->updateInfo($command->info(), $impression);
@@ -34,7 +33,5 @@ final readonly class UpdateCompetitionInfoService
 
             return $this->assembler->toViewCompetitionDto($competition);
         });
-
-        return $dto;
     }
 }

@@ -11,6 +11,9 @@ class ShowCreateClubFormAction extends BaseController
 {
     use ClubAction;
 
+    /**
+     * @url /clubs/create
+     */
     public function __invoke(): View
     {
         /** @see /resources/views/clubs/create.blade.php */

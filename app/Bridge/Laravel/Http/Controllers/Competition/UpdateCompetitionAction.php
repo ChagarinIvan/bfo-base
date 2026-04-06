@@ -15,13 +15,16 @@ final class UpdateCompetitionAction extends BaseController
 {
     use CompetitionAction;
 
+    /**
+     * @url /competitions/{competitionId}/update
+     */
     public function __invoke(
-        string $id,
+        string $competitionId,
         CompetitionDto $info,
         UpdateCompetitionInfoService $service,
         UserId $userId,
     ): RedirectResponse {
-        $competition = $service->execute(new UpdateCompetitionInfo($id, $info, $userId));
+        $competition = $service->execute(new UpdateCompetitionInfo($competitionId, $info, $userId));
 
         return $this->redirector->action(ShowCompetitionAction::class, [$competition->id]);
     }
