@@ -45,7 +45,7 @@ final class ShowEditPromptActionTest extends TestCase
 
         $this->get("/persons/prompt/$prompt->id/edit")
             ->assertStatus(Response::HTTP_OK)
-            ->assertSee("<input class=\"form-control \" id=\"prompt\" name=\"prompt\" value=\"$prompt->prompt\" />", false)
+            ->assertSee("<input class=\"form-control \" id=\"prompt\" name=\"prompt\" value=\"$prompt->prompt\"/>", false)
         ;
     }
 

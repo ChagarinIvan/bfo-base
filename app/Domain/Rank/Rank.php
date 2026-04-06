@@ -11,7 +11,6 @@ use App\Domain\Shared\AggregatedModel;
 use Carbon\Carbon;
 use Database\Factories\Domain\Rank\RankFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use function array_flip;
 use function array_key_exists;
@@ -25,6 +24,7 @@ use function str_replace;
  * @property int $id
  * @property int $person_id
  * @property int|null $event_id
+ * TODO use enum for this
  * @property string $rank
  * @property Carbon $start_date
  * @property Carbon $finish_date
