@@ -17,6 +17,9 @@ class DeleteCupAction extends BaseController
 {
     use CupAction;
 
+    /**
+     * @url /cups/{cupId}/delete
+     */
     public function __invoke(
         string $cupId,
         ViewCupService $viewService,
@@ -24,8 +27,7 @@ class DeleteCupAction extends BaseController
         UserId $userId,
     ): RedirectResponse {
         try {
-            $cup = $viewService->execute(new ViewCup($cupId));
-            $disableService->execute(new DisableCup($cupId, $userId));
+            $cup = $disableService->execute(new DisableCup($cupId, $userId));
         } catch (CupNotFound) {
             return $this->redirectTo404Error();
         }
