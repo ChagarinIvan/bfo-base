@@ -14,6 +14,7 @@ final readonly class ViewCompetitionDto
         public string $description,
         public string $from,
         public string $to,
+        public int $year,
         public bool $mass,
         public ImpressionDto $created,
         public ImpressionDto $updated,

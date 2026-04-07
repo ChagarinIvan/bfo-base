@@ -17,6 +17,9 @@ class StoreClubsAction extends BaseController
 {
     use ClubAction;
 
+    /**
+     * @url /clubs/store
+     */
     public function __invoke(
         ClubDto $clubDto,
         AddClubService $service,

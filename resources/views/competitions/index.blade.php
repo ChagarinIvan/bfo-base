@@ -107,7 +107,7 @@
     </div>
     @foreach ($competitions as $competition)
         <x-modal modal-id="deleteModal{{ $competition->id }}"
-                 url="{{ action(DeleteCompetitionAction::class, [$selectedYear, $competition->id]) }}"
+                 url="{{ action(DeleteCompetitionAction::class, [$competition->id]) }}"
         />
     @endforeach
 @endsection

@@ -13,6 +13,9 @@ class ShowClubsListAction extends BaseController
 {
     use ClubAction;
 
+    /**
+     * @url /clubs
+     */
     public function __invoke(ListClubsService $service): View
     {
         $clubs = $service->execute();

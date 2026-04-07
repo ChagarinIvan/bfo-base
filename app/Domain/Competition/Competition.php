@@ -10,6 +10,7 @@ use App\Domain\Competition\Event\CompetitionDisabled;
 use App\Domain\Event\Event;
 use App\Domain\Shared\AggregatedModel;
 use App\Infrastracture\Laravel\Eloquent\Auth\ImpressionCast;
+use App\Models\Year;
 use Carbon\Carbon;
 use Database\Factories\Domain\Competition\CompetitionFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -60,6 +61,12 @@ class Competition extends AggregatedModel
 
         $this->save();
     }
+
+    public function year(): Year
+    {
+        return Year::fromDate($this->from);
+    }
+
     protected function casts(): array
     {
         return [

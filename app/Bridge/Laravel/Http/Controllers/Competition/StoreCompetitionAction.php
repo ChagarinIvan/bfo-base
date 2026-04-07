@@ -15,6 +15,9 @@ final class StoreCompetitionAction extends BaseController
 {
     use CompetitionAction;
 
+    /**
+     * @url /competitions/{competitionId}/store
+     */
     public function __invoke(
         CompetitionDto $info,
         AddCompetitionService $service,

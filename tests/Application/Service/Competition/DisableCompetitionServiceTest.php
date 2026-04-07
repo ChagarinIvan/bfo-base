@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Application\Service\Competition;
 
+use App\Application\Dto\Auth\AuthAssembler;
 use App\Application\Dto\Auth\UserId;
+use App\Application\Dto\Competition\CompetitionAssembler;
 use App\Application\Service\Competition\DisableCompetition;
 use App\Application\Service\Competition\DisableCompetitionService;
 use App\Application\Service\Competition\Exception\CompetitionNotFound;
@@ -30,6 +32,7 @@ final class DisableCompetitionServiceTest extends TestCase
             $this->competitions = $this->createMock(CompetitionRepository::class),
             new FrozenClock(),
             new DummyTransactional(),
+            new CompetitionAssembler(new AuthAssembler()),
         );
     }
 

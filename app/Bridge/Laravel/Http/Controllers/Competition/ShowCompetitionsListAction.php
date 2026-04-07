@@ -14,6 +14,9 @@ final class ShowCompetitionsListAction extends BaseController
 {
     use CompetitionAction;
 
+    /**
+     * @url /competitions
+     */
     public function __invoke(
         CompetitionSearchDto $search,
         ListCompetitionsService $service,

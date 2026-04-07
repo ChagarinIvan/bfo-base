@@ -16,10 +16,15 @@ final class ShowEditCompetitionFormAction extends BaseController
 {
     use CompetitionAction;
 
-    public function __invoke(string $id, ViewCompetitionService $service): View|RedirectResponse
-    {
+    /**
+     * @url /competitions/{competitionId}/edit
+     */
+    public function __invoke(
+        string $competitionId,
+        ViewCompetitionService $service,
+    ): View|RedirectResponse {
         try {
-            $competition = $service->execute(new ViewCompetition($id));
+            $competition = $service->execute(new ViewCompetition($competitionId));
         } catch (CompetitionNotFound) {
             return $this->redirectTo404Error();
         }

@@ -15,18 +15,20 @@ final class DeleteCompetitionAction extends BaseController
 {
     use CompetitionAction;
 
+    /**
+     * @url /competitions/{competitionId}/delete
+     */
     public function __invoke(
-        string $year,
-        string $id,
+        string $competitionId,
         DisableCompetitionService $service,
         UserId $userId,
     ): RedirectResponse {
         try {
-            $service->execute(new DisableCompetition($id, $userId));
+            $competition = $service->execute(new DisableCompetition($competitionId, $userId));
         } catch (CompetitionNotFound) {
             return $this->redirectTo404Error();
         }
 
-        return $this->redirector->action(ShowCompetitionsListAction::class, ['year' => $year]);
+        return $this->redirector->action(ShowCompetitionsListAction::class, ['year' => $competition->year]);
     }
 }

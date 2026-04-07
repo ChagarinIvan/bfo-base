@@ -11,6 +11,9 @@ final class ShowCreateCompetitionFormAction extends BaseController
 {
     use CompetitionAction;
 
+    /**
+     * @url /competitions/create
+     */
     public function __invoke(): View
     {
         /** @see /resources/views/competitions/create.blade.php */

@@ -15,6 +15,9 @@ class DeleteCupAction extends BaseController
 {
     use CupAction;
 
+    /**
+     * @url /cups/{cupId}/delete
+     */
     public function __invoke(
         string $cupId,
         DisableCupService $disableService,

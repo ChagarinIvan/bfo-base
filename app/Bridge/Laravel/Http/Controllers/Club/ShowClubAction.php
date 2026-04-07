@@ -19,13 +19,16 @@ class ShowClubAction extends BaseController
 {
     use ClubAction;
 
+    /**
+     * @url /clubs/{clubId}/show
+     */
     public function __invoke(
-        string $id,
+        string $clubId,
         ViewClubService $service,
         ListPersonsService $personsService,
     ): View|RedirectResponse {
         try {
-            $club = $service->execute(new ViewClub($id));
+            $club = $service->execute(new ViewClub($clubId));
         } catch (ClubNotFound) {
             return $this->redirectTo404Error();
         }

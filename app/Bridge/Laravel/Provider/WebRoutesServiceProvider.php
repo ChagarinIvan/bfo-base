@@ -51,7 +51,7 @@ class WebRoutesServiceProvider extends ServiceProvider
                     $this->middleware(['auth'])->group(function (): void {
                         $this->route->get('create', Competition\ShowCreateCompetitionFormAction::class);
                         $this->route->get('{competitionId}/edit', Competition\ShowEditCompetitionFormAction::class);
-                        $this->route->get('{year}/{competitionId}/delete', Competition\DeleteCompetitionAction::class);
+                        $this->route->get('{competitionId}/delete', Competition\DeleteCompetitionAction::class);
                         $this->route->post('store', Competition\StoreCompetitionAction::class);
                         $this->route->post('{competitionId}/update', Competition\UpdateCompetitionAction::class);
                     });
@@ -129,7 +129,7 @@ class WebRoutesServiceProvider extends ServiceProvider
                 //clubs
                 $this->routeRegistrar->prefix('clubs')->group(function (): void {
                     $this->route->get('/', Club\ShowClubsListAction::class);
-                    $this->route->get('{club}/show', Club\ShowClubAction::class);
+                    $this->route->get('{clubId}/show', Club\ShowClubAction::class);
 
                     $this->middleware(['auth'])->group(function (): void {
                         $this->route->get('create', Club\ShowCreateClubFormAction::class);
