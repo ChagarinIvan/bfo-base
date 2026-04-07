@@ -1,5 +1,5 @@
 @php
-    use App\Bridge\Laravel\Http\Controllers\PersonPrompt\StorePromptAction;
+    use App\Bridge\Laravel\Http\Controllers\PersonPrompt\StorePersonPromptAction;
     /**
      * @var string $personId
      */
@@ -12,7 +12,7 @@
 @section('content')
     <div class="row">
         <form method="POST"
-              action="{{ action(StorePromptAction::class, [$personId]) }}"
+              action="{{ action(StorePersonPromptAction::class, [$personId]) }}"
         >
             @csrf
             <div class="form-floating mb-3">

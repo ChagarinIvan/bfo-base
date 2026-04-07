@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastracture\Laravel\Eloquent\PersonPrompt;
 
-use App\Domain\Competition\Competition;
-use App\Domain\PersonPayment\PersonPayment;
-use App\Domain\PersonPayment\PersonPaymentRepository;
+use App\Domain\Cup\Cup;
 use App\Domain\PersonPrompt\PersonPrompt;
 use App\Domain\PersonPrompt\PersonPromptRepository;
 use App\Domain\Shared\Criteria;
@@ -17,7 +15,7 @@ final class EloquentPromptPaymentRepository implements PersonPromptRepository
 {
     public function add(PersonPrompt $prompt): void
     {
-        $prompt->save();
+        $prompt->create();
     }
 
     public function byId(int $id): ?PersonPrompt
@@ -25,9 +23,24 @@ final class EloquentPromptPaymentRepository implements PersonPromptRepository
         return PersonPrompt::find($id);
     }
 
+    public function lockById(int $id): ?PersonPrompt
+    {
+        return PersonPrompt::lockForUpdate()->find($id);
+    }
+
     public function byCriteria(Criteria $criteria): Collection
     {
         return $this->buildQuery($criteria)->get();
+    }
+
+    public function update(PersonPrompt $prompt): void
+    {
+        $prompt->save();
+    }
+
+    public function delete(PersonPrompt $prompt): void
+    {
+        $prompt->delete();
     }
 
     private function buildQuery(Criteria $criteria): Builder

@@ -12,10 +12,13 @@ use App\Bridge\Laravel\Http\Controllers\Action;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller as BaseController;
 
-class StorePromptAction extends BaseController
+class StorePersonPromptAction extends BaseController
 {
     use Action;
 
+    /**
+     * @url /persons/prompt/{personId}/store
+     */
     public function __invoke(
         string $personId,
         PersonPromptDto $prompt,

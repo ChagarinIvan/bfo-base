@@ -129,14 +129,13 @@ class NewYouthCupType extends MasterCupType
 
     protected function getCupEventGroups(CupGroup $group): Collection
     {
-        $groups = Collection::make();
+        $groupNames = collect($this->getCupGroups($group))
+            ->flatMap(static fn (CupGroup $g) => static::GROUPS_MAP[$g->id()])
+            ->unique()
+            ->values()
+            ->all();
 
-        /** @var CupGroup $cupGroup */
-        foreach ($this->getCupGroups($group) as $cupGroup) {
-            $groups = $groups->merge($this->groupsRepository->searchGroups(static::GROUPS_MAP[$cupGroup->id()]));
-        }
-
-        return $groups;
+        return $this->groupsRepository->searchGroups($groupNames);
     }
 
     protected function getGroupProtocolLines(CupEvent $cupEvent, CupGroup $group): Collection

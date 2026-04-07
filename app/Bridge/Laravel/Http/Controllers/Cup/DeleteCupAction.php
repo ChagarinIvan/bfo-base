@@ -8,8 +8,6 @@ use App\Application\Dto\Auth\UserId;
 use App\Application\Service\Cup\DisableCup;
 use App\Application\Service\Cup\DisableCupService;
 use App\Application\Service\Cup\Exception\CupNotFound;
-use App\Application\Service\Cup\ViewCup;
-use App\Application\Service\Cup\ViewCupService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller as BaseController;
 
@@ -22,7 +20,6 @@ class DeleteCupAction extends BaseController
      */
     public function __invoke(
         string $cupId,
-        ViewCupService $viewService,
         DisableCupService $disableService,
         UserId $userId,
     ): RedirectResponse {

@@ -19,12 +19,12 @@ final class EloquentClubRepository implements ClubRepository
 
     public function byId(int $id): ?Club
     {
-        return Club::where('active', true)->find($id);
+        return Club::where('active', true)->withCount('persons')->find($id);
     }
 
     public function lockById(int $id): ?Club
     {
-        return Club::where('active', true)->lockForUpdate()->find($id);
+        return Club::where('active', true)->withCount('persons')->lockForUpdate()->find($id);
     }
 
     public function update(Club $club): void
@@ -47,7 +47,7 @@ final class EloquentClubRepository implements ClubRepository
 
     private function buildQuery(Criteria $criteria): Builder
     {
-        $query = Club::where('active', true)->orderBy('name');
+        $query = Club::where('active', true)->withCount('persons')->orderBy('name');
 
         if ($criteria->hasParam('name')) {
             $query->where('name', $criteria->param('name'));
