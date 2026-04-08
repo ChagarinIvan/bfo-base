@@ -1,5 +1,6 @@
 @php
     use App\Application\Dto\Cup\ViewCupDto;
+    use App\Application\Dto\CupEvent\ViewCupEventDto;
     use App\Bridge\Laravel\Http\Controllers\Cup\ClearCacheAction;
     use App\Bridge\Laravel\Http\Controllers\Cup\DeleteCupAction;
     use App\Bridge\Laravel\Http\Controllers\Cup\ExportCupTableAction;
@@ -11,7 +12,8 @@
     use App\Bridge\Laravel\Http\Controllers\CupEvents\ShowEditCupEventFormAction;
     use Illuminate\Support\Str;
     /**
-     * @var ViewCupDto $cup;
+     * @var ViewCupDto $cup
+     * @var ViewCupEventDto[] $events
      */
 @endphp
 
@@ -85,7 +87,7 @@
             </tr>
             </thead>
             <tbody>
-            @foreach($cup->cupEvents as $index => $cupEvent)
+            @foreach($events as $index => $cupEvent)
                 <tr>
                     <td>{{ $index + 1 }}</td>
                     <td>
@@ -107,7 +109,7 @@
             </tbody>
         </table>
     </div>
-    @foreach ($cup->cupEvents as $cupEvent)
+    @foreach ($events as $cupEvent)
         <x-modal modal-id="deleteModal{{ $cupEvent->id }}"
                  url="{{ action(DeleteCupEventAction::class, [$cup->id, $cupEvent->id]) }}"
         />

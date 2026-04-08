@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Dto\Cup;
 
-use App\Application\Dto\Cup\CupEvent\ViewCupEventDto;
+use App\Application\Dto\CupEvent\ViewCupEventDto;
 
 final readonly class ViewCalculatedCupEventDto
 {

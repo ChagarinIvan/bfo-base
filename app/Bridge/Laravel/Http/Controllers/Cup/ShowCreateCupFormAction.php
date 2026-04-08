@@ -12,6 +12,9 @@ class ShowCreateCupFormAction extends BaseController
 {
     use CupAction;
 
+    /**
+     * @url /cups/create
+     */
     public function __invoke(): View
     {
         /** @see /resources/views/cup/create.blade.php */
