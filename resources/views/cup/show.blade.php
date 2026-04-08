@@ -12,8 +12,8 @@
     use App\Bridge\Laravel\Http\Controllers\CupEvents\ShowEditCupEventFormAction;
     use Illuminate\Support\Str;
     /**
-     * @var ViewCupDto $cup;
-     * @var ViewCupEventDto[] $events;
+     * @var ViewCupDto $cup
+     * @var ViewCupEventDto[] $events
      */
 @endphp
 
@@ -109,7 +109,7 @@
             </tbody>
         </table>
     </div>
-    @foreach ($cup->cupEvents as $cupEvent)
+    @foreach ($events as $cupEvent)
         <x-modal modal-id="deleteModal{{ $cupEvent->id }}"
                  url="{{ action(DeleteCupEventAction::class, [$cup->id, $cupEvent->id]) }}"
         />
