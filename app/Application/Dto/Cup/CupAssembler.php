@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace App\Application\Dto\Cup;
 
 use App\Application\Dto\Auth\AuthAssembler;
-use App\Application\Dto\Cup\CupEvent\ViewCupEventDto;
-use App\Application\Dto\Cup\CupEvent\ViewCupEventPointDto;
+use App\Application\Dto\CupEvent\ViewCupEventDto;
+use App\Application\Dto\CupEvent\ViewCupEventPointDto;
 use App\Application\Dto\Event\EventAssembler;
 use App\Domain\Cup\Cup;
 use App\Domain\Cup\CupEvent\CupEvent;
 use App\Domain\Cup\CupEvent\CupEventPoint;
-use App\Domain\Cup\CupRepository;
 use App\Domain\Cup\Group\CupGroup;
 use App\Domain\Event\EventRepository;
 use App\Domain\Shared\Criteria;
@@ -42,7 +41,6 @@ final readonly class CupAssembler
             visible: $cup->visible,
             created: $this->authAssembler->toImpressionDto($cup->created),
             updated: $this->authAssembler->toImpressionDto($cup->updated),
-            cupEvents: $withEvents ? $cup->events->map($this->toViewCupEventDto(...))->all() : [],
         );
     }
 

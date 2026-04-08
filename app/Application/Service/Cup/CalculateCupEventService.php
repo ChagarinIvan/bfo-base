@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Application\Service\Cup;
 
 use App\Application\Dto\Cup\CupAssembler;
-use App\Application\Dto\Cup\CupEvent\ViewCupEventPointDto;
 use App\Application\Dto\Cup\ViewCalculatedCupEventDto;
 use App\Application\Service\Cup\Exception\CupNotFound;
 use App\Application\Service\CupEvent\Exception\CupEventNotFound;

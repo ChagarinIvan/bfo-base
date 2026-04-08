@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Dto\Cup\CupEvent;
+namespace App\Application\Dto\CupEvent;
 
 use App\Application\Dto\AbstractDto;
 
