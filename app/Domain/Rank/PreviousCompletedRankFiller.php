@@ -63,8 +63,6 @@ final readonly class PreviousCompletedRankFiller
                 return null;
             }
 
-            $startDate = $finishDate->addDay();
-
             $previous = $this->ranks->oneByCriteria(
                 new Criteria([
                     'person_id' => $rank->person_id,
