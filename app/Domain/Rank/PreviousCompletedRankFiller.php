@@ -25,7 +25,7 @@ final readonly class PreviousCompletedRankFiller
     ) {
     }
 
-    public function fill(?Rank $rank, ?Carbon $date = null): ?Rank
+    public function fill(int $personId, ?Rank $rank, ?Carbon $date = null): ?Rank
     {
         $now = $this->clock->now();
         if ($date === null) {
@@ -43,7 +43,7 @@ final readonly class PreviousCompletedRankFiller
             // тут трэба узять протокол лініі за 2 года, дзе было выкананне адсартырованные па моцы разраду
             $criteria = new Criteria(
                 [
-                    'personId' => $rank->person_id,
+                    'personId' => $personId,
                     'dateFrom' => $finishDate->clone()->addYears(-2),
                     'dateTo' => $finishDate,
                     'completedRank' => true,
@@ -59,7 +59,9 @@ final readonly class PreviousCompletedRankFiller
                 return null;
             }
 
-            $protocolLines = $protocolLines->filter(static fn (ProtocolLine $pl): bool => $pl->complete_rank !== $rank->rank);
+            if ($rank) {
+                $protocolLines = $protocolLines->filter(static fn (ProtocolLine $pl): bool => $pl->complete_rank !== $rank->rank);
+            }
 
             /** @var ProtocolLine $first */
             $first = $protocolLines->first();
@@ -74,7 +76,7 @@ final readonly class PreviousCompletedRankFiller
 
             $previous = $this->ranks->oneByCriteria(
                 new Criteria([
-                    'person_id' => $rank->person_id,
+                    'person_id' => $personId,
                     'activated' => true,
                     'rank' => $first->complete_rank,
                 ], ['events.date' => 'asc'])
