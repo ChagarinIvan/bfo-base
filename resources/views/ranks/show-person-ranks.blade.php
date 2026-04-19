@@ -90,7 +90,7 @@
                         }
 
                         if (!$formalStartDate) {
-                            $formalStartDate = $rank->eventDate ?: $rank->startDate
+                            $formalStartDate = $rank->eventDate ?: $rank->startDate;
                         }
                     }
 
