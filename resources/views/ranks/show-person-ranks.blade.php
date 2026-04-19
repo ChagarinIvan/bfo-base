@@ -83,7 +83,8 @@
                 @php
                     if ($previousRank !== $rank->rank) {
                         $formalStartDate = null;
-                        for ($ranks; $i > $index; $i++) {
+                        $iMax = count($ranks);
+                        for ($i = $index + 1; $i < $iMax; $i++) {
                             if ($ranks[$i]->rank !== $rank->rank) {
                                 $formalStartDate = Carbon::parse($ranks[$i]->finishDate)->addDay()->format('Y-m-d');
                             }
