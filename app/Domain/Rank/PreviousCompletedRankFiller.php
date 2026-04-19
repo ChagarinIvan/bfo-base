@@ -44,20 +44,20 @@ final readonly class PreviousCompletedRankFiller
                 ],
                 ['completedRank' => 'desc', 'eventDate' => 'asc'],
             );
-            dump($criteria);
+//            dump($criteria);
             $protocolLines = $this->protocolLines->byCriteria($criteria);
-            dump($protocolLines);
+//            dump($protocolLines);
 
-            dump('$protocolLines->count(): ' . $protocolLines->count());
+//            dump('$protocolLines->count(): ' . $protocolLines->count());
             if ($protocolLines->isEmpty()) {
                 return null;
             }
 
             /** @var ProtocolLine $first */
             $first = $protocolLines->first();
-            dump($first->complete_rank);
+//            dump($first->complete_rank);
             $protocolLines = $protocolLines->filter(static fn (ProtocolLine $pl): bool => $pl->complete_rank === $first->complete_rank);
-            dump('$protocolLines->count(): ' . $protocolLines->count());
+//            dump('$protocolLines->count(): ' . $protocolLines->count());
 
             if (!$protocolLines->count()) {
                 return null;
@@ -72,22 +72,23 @@ final readonly class PreviousCompletedRankFiller
                     'rank' => $first->complete_rank,
                 ], ['events.date' => 'asc'])
             );
+            $activationDate = null;
 
             foreach ($protocolLines as $protocolLine) {
-                dump('Line', $protocolLine);
-                if ($previous) {
-                    $activationDate = $previous->activated_date;
-                } else {
-                    $activationDate = Rank::autoActivation($protocolLine->complete_rank) ? $protocolLine->event->date->clone() : null;
+                if (!$activationDate) {
+                    if ($previous) {
+                        $activationDate = $previous->activated_date;
+                    } else {
+                        $activationDate = Rank::autoActivation($protocolLine->complete_rank) ? $protocolLine->event->date->clone() : null;
+                    }
                 }
-                dump('Activation date', $activationDate);
 
                 $newRank = $this->factory->create($this->createRankInput(
                     protocolLine: $protocolLine,
                     activatedDate: $activationDate,
                 ));
 
-                dump('Rank', $newRank);
+//                dump('Rank', $newRank);
 
                 if (!$this->juniorRankAgeValidator->validate($newRank->person_id, $newRank->rank, Year::actualYear())) {
                     continue;
@@ -95,10 +96,10 @@ final readonly class PreviousCompletedRankFiller
 
                 $this->ranks->add($newRank);
 
-                dump('event date ' . $protocolLine->distance->event->date->toDateString());
-                dump('activation date ' . $newRank->activated_date->toDateString());
-                dump('finish date ' . $newRank->finish_date->toDateString());
-                dump('start date ' . $newRank->start_date->toDateString());
+//                dump('event date ' . $protocolLine->distance->event->date->toDateString());
+//                dump('activation date ' . $newRank->activated_date->toDateString());
+//                dump('finish date ' . $newRank->finish_date->toDateString());
+//                dump('start date ' . $newRank->start_date->toDateString());
 
                 // трэба абнавіць усе папярэднія разряды
                 $this->updater->update(
