@@ -109,7 +109,7 @@ final readonly class PreviousCompletedRankFiller
 //                dump('event date ' . $protocolLine->distance->event->date->toDateString());
 //                dump('activation date ' . $newRank->activated_date->toDateString());
 //                dump('finish date ' . $newRank->finish_date->toDateString());
-//                dump('start date ' . $newRank->start_date->toDateString());
+                dump('start date ' . $newRank->start_date->toDateString());
 
                 // трэба абнавіць усе папярэднія разряды
                 $this->updater->update(

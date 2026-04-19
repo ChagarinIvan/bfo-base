@@ -19,7 +19,7 @@ final readonly class PreviousRanksFinishDateUpdater
 
     public function update(int $personId, string $rank, Carbon $startDate, Carbon $finishDate): void
     {
-        dump('UPDATER');
+        dump('UPDATER ' . $rank);
         $ranksFilter = new RanksFilter();
         $ranksFilter->personId = $personId;
         $ranksFilter->rank = $rank;
