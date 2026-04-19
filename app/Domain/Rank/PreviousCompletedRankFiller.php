@@ -73,11 +73,11 @@ final readonly class PreviousCompletedRankFiller
                 ], ['events.date' => 'asc'])
             );
 
-            dump('$protocolLines', $protocolLines);
             if (!$previous) {
                 return null;
             }
 
+            dump('insert');
             foreach ($protocolLines as $protocolLine) {
                 dump('Line', $protocolLine);
                 $newRank = $this->factory->create($this->createRankInput($protocolLine, $startDate, $previous->activated_date));
