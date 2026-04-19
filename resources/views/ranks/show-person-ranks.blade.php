@@ -77,19 +77,24 @@
             </thead>
             <tbody>
             @php
-                $previousRankValue = null;
-                $previousFinishDate = null;
+                $previousRank = null;
             @endphp
-            @foreach ($ranks as $rank)
+            @foreach ($ranks as $index => $rank)
                 @php
-                    // если первый разряд или смена разряда
-                    if ($previousRankValue === null || $previousRankValue !== $rank->rank) {
-                        if ($previousFinishDate) {
-                            $formalStartDate = Carbon::parse($previousFinishDate)->addDay()->format('Y-m-d');
-                        } else {
-                            $formalStartDate = $rank->eventDate ?: $rank->startDate;
+                    if ($previousRank !== $rank->rank) {
+                        $formalStartDate = null;
+                        for ($ranks; $i > $index; $i++) {
+                            if ($ranks[$i]->rank !== $rank->rank) {
+                                $formalStartDate = Carbon::parse($ranks[$i]->finishDate)->addDay()->format('Y-m-d');
+                            }
+                        }
+
+                        if (!$formalStartDate) {
+                            $formalStartDate = $rank->eventDate ?: $rank->startDate
                         }
                     }
+
+                    $previousRank = $rank->rank;
                 @endphp
                 <tr @if($rank->activatedDate) class="table-info" @else class="table-secondary" @endif>
                     <td>{{ $rank->rank }}</td>
