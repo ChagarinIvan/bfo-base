@@ -67,7 +67,7 @@
                 <th>{{ __('app.common.rank') }}</th>
                 <th data-sortable="true">{{ __('app.rank.completed_date') }}</th>
                 <th data-sortable="true">{{ __('app.rank.activated_date') }}</th>
-{{--                <th data-sortable="true">{{ __('app.rank.formal_start_date') }}</th>--}}
+                <th data-sortable="true">{{ __('app.rank.formal_start_date') }}</th>
                 <th data-sortable="true">{{ __('app.rank.finished_date') }}</th>
                 <th data-sortable="true">{{ __('app.event.title') }}</th>
                 @auth
@@ -87,11 +87,12 @@
                         for ($i = $index + 1; $i < $iMax; $i++) {
                             if ($ranks[$i]->rank !== $rank->rank) {
                                 $formalStartDate = Carbon::parse($ranks[$i]->finishDate)->addDay()->format('Y-m-d');
+                                break;
                             }
                         }
 
                         if (!$formalStartDate) {
-                            $formalStartDate = $rank->eventDate ?: $rank->startDate;
+                            $formalStartDate = $ranks[$i]->eventDate ?: $ranks[$i]->startDate;
                         }
                     }
 
@@ -101,7 +102,7 @@
                     <td>{{ $rank->rank }}</td>
                     <td>{{ $rank->eventDate ?: $rank->startDate }}</td>
                     <td>{{ $rank->activatedDate ?: '-' }}</td>
-{{--                    <td>{{ $formalStartDate }}</td>--}}
+                    <td>{{ $formalStartDate }}</td>
                     <td>{{ $rank->finishDate }}</td>
                     <td>
                         @if ($rank->distanceId !== null)
