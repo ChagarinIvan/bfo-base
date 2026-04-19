@@ -73,7 +73,7 @@ final readonly class PreviousCompletedRankFiller
                 ], ['events.date' => 'asc'])
             );
 
-            dump('$protocolLines', $protocolLines)
+            dump('$protocolLines', $protocolLines);
             if (!$previous) {
                 return null;
             }
