@@ -205,7 +205,7 @@ class RankService
                 $previousRanksFinishDate = $newRankStartDate->clone()->addDays(-1);
 
                 if ($protocolLine->activate_rank) {
-//                    dump('close previous ranks with finish date' . $previousRanksFinishDate->toDateString());
+                    dump('close previous ranks with finish date' . $previousRanksFinishDate->toDateString());
                     $ranks->each(function (Rank $rank) use ($previousRanksFinishDate): void {
                         $rank->finish_date = $previousRanksFinishDate;
                         $this->storeRank($rank);
