@@ -79,6 +79,7 @@ final readonly class PreviousCompletedRankFiller
             }
 
             foreach ($protocolLines as $protocolLine) {
+                dump('$protocolLine', $protocolLine);
                 $newRank = $this->factory->create($this->createRankInput($protocolLine, $startDate, $previous->activated_date));
 
                 if (!$this->juniorRankAgeValidator->validate($newRank->person_id, $newRank->rank, Year::actualYear())) {

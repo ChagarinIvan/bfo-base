@@ -23,6 +23,7 @@ final readonly class JuniorRankAgeValidator
      */
     public function validate(int $personId, string $rank, Year $year): bool
     {
+        dump('$rank :' . $rank);
         if (!in_array($rank, Rank::JUNIOR_RANKS, true)) {
             return true;
         }
