@@ -35,7 +35,7 @@ final readonly class PreviousCompletedRankFiller
         $finishDate = $rank?->finish_date;
 //        dump($finishDate < $date);
 
-        if (!$finishDate) {
+        if ($finishDate === null) {
             $finishDate = $date;
         }
 
@@ -66,7 +66,7 @@ final readonly class PreviousCompletedRankFiller
             /** @var ProtocolLine $first */
             $first = $protocolLines->first();
 //            dump($rank->rank);
-//            dump($first->complete_rank);
+            dump($first->complete_rank);
             $protocolLines = $protocolLines->filter(static fn (ProtocolLine $pl): bool => $pl->complete_rank === $first->complete_rank);
 //            dump('$protocolLines->count(): ' . $protocolLines->count());
 
@@ -85,7 +85,7 @@ final readonly class PreviousCompletedRankFiller
 
             foreach ($protocolLines as $protocolLine) {
                 /** @var ProtocolLine $protocolLine */
-                if (!$activationDate) {
+                if ($activationDate === null) {
                     if ($previous) {
                         $activationDate = $previous->activated_date;
                     } else {
