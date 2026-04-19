@@ -29,10 +29,10 @@ final readonly class ActivePersonRankService
 //        dump('$lastRank?->rank: '. $lastRank?->rank);
 
         if ($lastRank === null) {
-//            $lastCompletedRank = $this->ranks->oneByCriteria($this->criteriaWithoutDate($command));
+            $lastCompletedRank = $this->ranks->oneByCriteria($this->criteriaWithoutDate($command));
 //            dump('$lastCompletedRank: ' . $lastCompletedRank?->rank ?? '---');
 //            if ($lastCompletedRank) {
-                $lastRank = $this->previousCompletedRankFiller->fill($command->personId(), $lastRank, $command->date());
+                $lastRank = $this->previousCompletedRankFiller->fill($command->personId(), $lastCompletedRank, $command->date());
 //                dump('before while');
 
                 while ($lastRank !== null && $lastRank->finish_date->lessThan($command->date() ?? $this->clock->now())) {
