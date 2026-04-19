@@ -142,12 +142,12 @@ class RankService
             return;
         }
 
-        dump('Search actual rank for date ' . $protocolLine->event->date->toDateString());
+//        dump('Search actual rank for date ' . $protocolLine->event->date->toDateString());
         $event = $protocolLine->event;
 //        dump('Search for event ' . $event->id);
         $actualRankDto = $this->activePersonRankService->execute(new ActivePersonRank((string)$protocolLine->person_id, $protocolLine->event->date));
 
-        dump('Actual rank ' . ($actualRankDto?->rank ?? '---'));
+//        dump('Actual rank ' . ($actualRankDto?->rank ?? '---'));
         if ($actualRankDto) {
             if ($actualRankDto->rank === $protocolLine->complete_rank) {
                 $newRank = $this->factory->create(new RankInput(
@@ -170,7 +170,7 @@ class RankService
                     'activation_date_from' => $event->date,
                     'rank_in' => Rank::strongerRank($actualRankDto->rank),
                 ]));
-                dump($futureActivatedRank);
+//                dump($futureActivatedRank);
 
                 if ($futureActivatedRank) {
                     $finishDate = $futureActivatedRank->activated_date->clone()->addDay(-1);
@@ -219,7 +219,7 @@ class RankService
                 $previousRanksFinishDate = $newRankStartDate->clone()->addDays(-1);
 
                 if ($protocolLine->activate_rank) {
-                    dump('close previous ranks with finish date' . $previousRanksFinishDate->toDateString());
+//                    dump('close previous ranks with finish date' . $previousRanksFinishDate->toDateString());
                     $ranks->each(function (Rank $rank) use ($previousRanksFinishDate): void {
                         $rank->finish_date = $previousRanksFinishDate;
                         $this->storeRank($rank);

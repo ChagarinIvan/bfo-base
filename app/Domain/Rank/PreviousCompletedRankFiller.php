@@ -66,7 +66,7 @@ final readonly class PreviousCompletedRankFiller
             /** @var ProtocolLine $first */
             $first = $protocolLines->first();
 //            dump($rank->rank);
-            dump($first->complete_rank);
+//            dump($first->complete_rank);
             $protocolLines = $protocolLines->filter(static fn (ProtocolLine $pl): bool => $pl->complete_rank === $first->complete_rank);
 //            dump('$protocolLines->count(): ' . $protocolLines->count());
 
