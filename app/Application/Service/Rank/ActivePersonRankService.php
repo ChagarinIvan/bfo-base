@@ -33,7 +33,11 @@ final readonly class ActivePersonRankService
 //            dump('$lastCompletedRank: ' . $lastCompletedRank?->rank ?? '---');
             if ($lastCompletedRank) {
                 $lastRank = $this->previousCompletedRankFiller->fill($lastCompletedRank, $command->date());
+                dump('before while');
+
                 while ($lastRank !== null && $lastRank->finish_date->lessThan($this->clock->now())) {
+                    dump('$lastRank !== null' . $lastRank !== null);
+                    dump('$lastRank->finish_date->lessThan($this->clock->now())' . $lastRank->finish_date->lessThan($this->clock->now()));
                     dump('while $lastRank->id' . $lastRank->id);
                     dump('while $lastRank->rank' . $lastRank->rank);
                     dump('while $lastRank->start_date' . $lastRank->start_date->format('Y-m-d'));
