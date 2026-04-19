@@ -76,11 +76,12 @@ final readonly class PreviousCompletedRankFiller
             $activationDate = null;
 
             foreach ($protocolLines as $protocolLine) {
+                /** @var ProtocolLine $protocolLine */
                 if (!$activationDate) {
                     if ($previous) {
                         $activationDate = $previous->activated_date;
                     } else {
-                        $activationDate = Rank::autoActivation($protocolLine->complete_rank) ? $protocolLine->event->date->clone() : null;
+                        $activationDate = $protocolLine->activate_rank;
                     }
                 }
 
