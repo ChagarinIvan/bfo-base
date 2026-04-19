@@ -73,6 +73,7 @@ final readonly class PreviousCompletedRankFiller
                 ], ['events.date' => 'asc'])
             );
 
+            dump('previous', $previous);
             if (!$previous) {
                 return null;
             }
