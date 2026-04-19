@@ -25,15 +25,21 @@ final readonly class PreviousCompletedRankFiller
     ) {
     }
 
-    public function fill(Rank $rank, ?Carbon $date = null): ?Rank
+    public function fill(?Rank $rank, ?Carbon $date = null): ?Rank
     {
+        $now = $this->clock->now();
         if ($date === null) {
-            $date = $this->clock->now();
+            $date = $now;
         }
 
-        $finishDate = $rank->finish_date;
+        $finishDate = $rank?->finish_date;
 //        dump($finishDate < $date);
-        if ($finishDate < $date) {
+
+        if (!$finishDate) {
+            $finishDate = $date;
+        }
+
+        if ($finishDate <= $date) {
             // тут трэба узять протокол лініі за 2 года, дзе было выкананне адсартырованные па моцы разраду
             $criteria = new Criteria(
                 [

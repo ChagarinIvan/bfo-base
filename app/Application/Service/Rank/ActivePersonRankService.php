@@ -29,10 +29,10 @@ final readonly class ActivePersonRankService
 //        dump('$lastRank?->rank: '. $lastRank?->rank);
 
         if ($lastRank === null) {
-            $lastCompletedRank = $this->ranks->oneByCriteria($this->criteriaWithoutDate($command));
+//            $lastCompletedRank = $this->ranks->oneByCriteria($this->criteriaWithoutDate($command));
 //            dump('$lastCompletedRank: ' . $lastCompletedRank?->rank ?? '---');
-            if ($lastCompletedRank) {
-                $lastRank = $this->previousCompletedRankFiller->fill($lastCompletedRank, $command->date());
+//            if ($lastCompletedRank) {
+                $lastRank = $this->previousCompletedRankFiller->fill($lastRank, $command->date());
 //                dump('before while');
 
                 while ($lastRank !== null && $lastRank->finish_date->lessThan($command->date() ?? $this->clock->now())) {
@@ -45,7 +45,7 @@ final readonly class ActivePersonRankService
 //                    dump('while $lastRank->activated_date' . $lastRank->activated_date->format('Y-m-d'));
                     $lastRank = $this->previousCompletedRankFiller->fill($lastRank, $command->date());
                 }
-            }
+//            }
         }
 
         if ($lastRank === null) {
