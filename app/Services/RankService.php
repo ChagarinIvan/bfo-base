@@ -144,7 +144,7 @@ class RankService
 
 //        dump('Search actual rank for date ' . $protocolLine->event->date->toDateString());
         $event = $protocolLine->event;
-//        dump('Search for event ' . $event->id);
+        dump('Search for event ' . $event->id);
         $actualRankDto = $this->activePersonRankService->execute(new ActivePersonRank((string)$protocolLine->person_id, $protocolLine->event->date));
 
 //        dump('Actual rank ' . ($actualRankDto?->rank ?? '---'));
