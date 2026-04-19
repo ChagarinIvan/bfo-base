@@ -74,14 +74,22 @@ final readonly class PreviousCompletedRankFiller
             );
 
             dump('previous', $previous);
-            if (!$previous) {
-                return null;
-            }
-
             dump('insert');
             foreach ($protocolLines as $protocolLine) {
                 dump('Line', $protocolLine);
-                $newRank = $this->factory->create($this->createRankInput($protocolLine, $startDate, $previous->activated_date));
+                if ($previous) {
+                    $activationDate = $previous->activated_date;
+                } else {
+                    $activationDate = Rank::autoActivation($protocolLine->complete_rank) ? $startDate : null;
+                }
+                dump('Activation date', $activationDate);
+
+                $newRank = $this->factory->create($this->createRankInput(
+                    protocolLine: $protocolLine,
+                    startDate: $startDate,
+                    activatedDate: $activationDate,
+                ));
+
                 dump('Rank', $newRank);
 
                 if (!$this->juniorRankAgeValidator->validate($newRank->person_id, $newRank->rank, Year::actualYear())) {
@@ -110,7 +118,7 @@ final readonly class PreviousCompletedRankFiller
         return $rank;
     }
 
-    private function createRankInput(ProtocolLine $protocolLine, Carbon $startDate, Carbon $activatedDate): RankInput
+    private function createRankInput(ProtocolLine $protocolLine, Carbon $startDate, ?Carbon $activatedDate): RankInput
     {
         return new RankInput(
             personId: $protocolLine->person_id,
