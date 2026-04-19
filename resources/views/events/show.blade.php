@@ -11,6 +11,7 @@
     use App\Domain\Club\Club;
     use App\Domain\Distance\Distance;
     use App\Domain\Event\Event;
+    use App\Domain\Rank\Rank;
     use App\Domain\ProtocolLine\ProtocolLine;
     use App\Services\ClubsService;
     use Illuminate\Support\Collection;
@@ -118,6 +119,9 @@
                         <th data-sortable="true">{{ __('app.common.time') }}</th>
                         <th data-sortable="true">{{ __('app.common.place') }}</th>
                         <th data-sortable="true">{{ __('app.common.complete') }}</th>
+                        @auth
+                            <th>{{ __('app.common.activation_date') }}</th>
+                        @endauth
                         @if($withPoints)
                             <th data-sortable="true">{{ __('app.common.points') }}</th>
                         @endif
@@ -172,6 +176,9 @@
                             <td>{{ $line->time ? $line->time->format('H:i:s') : '-' }}</td>
                             <td>{{ $line->place ?: '-' }}</td>
                             <td>{{ $line->complete_rank }}</td>
+                            @auth
+                                <td>{{ $line->activate_rank?->format('Y-m-d') ?? '-' }}</td>
+                            @endauth
                             @if($withPoints)
                                 <td>{{ $line->points ?: '-'}}</td>
                             @endif
