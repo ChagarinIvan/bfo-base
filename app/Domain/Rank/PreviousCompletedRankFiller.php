@@ -78,13 +78,12 @@ final readonly class PreviousCompletedRankFiller
                 if ($previous) {
                     $activationDate = $previous->activated_date;
                 } else {
-                    $activationDate = Rank::autoActivation($protocolLine->complete_rank) ? $startDate : null;
+                    $activationDate = Rank::autoActivation($protocolLine->complete_rank) ? $protocolLine->event->date->clone() : null;
                 }
                 dump('Activation date', $activationDate);
 
                 $newRank = $this->factory->create($this->createRankInput(
                     protocolLine: $protocolLine,
-                    startDate: $startDate,
                     activatedDate: $activationDate,
                 ));
 
@@ -116,13 +115,13 @@ final readonly class PreviousCompletedRankFiller
         return $rank;
     }
 
-    private function createRankInput(ProtocolLine $protocolLine, Carbon $startDate, ?Carbon $activatedDate): RankInput
+    private function createRankInput(ProtocolLine $protocolLine, ?Carbon $activatedDate): RankInput
     {
         return new RankInput(
             personId: $protocolLine->person_id,
             eventId: $protocolLine->distance->event_id,
             rank: $protocolLine->complete_rank,
-            startDate: $startDate,
+            startDate: $protocolLine->event->date->clone(),
             activatedDate: $activatedDate,
             finishDate: $protocolLine->event->date->clone()->addYears(2),
         );
