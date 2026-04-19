@@ -92,7 +92,7 @@
                         }
 
                         if (!$formalStartDate) {
-                            $formalStartDate = $ranks[$i]->eventDate ?: $ranks[$i]->startDate;
+                            $formalStartDate = $ranks[$i-1]->eventDate ?: $ranks[$i-1]->startDate;
                         }
                     }
 
