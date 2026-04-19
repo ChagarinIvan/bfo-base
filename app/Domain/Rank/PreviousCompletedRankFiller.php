@@ -44,10 +44,10 @@ final readonly class PreviousCompletedRankFiller
                 ],
                 ['completedRank' => 'desc', 'eventDate' => 'asc'],
             );
-//            dump($criteria);
+            dump($criteria);
             $protocolLines = $this->protocolLines->byCriteria($criteria);
 
-//            dump('$protocolLines->count(): ' . $protocolLines->count());
+            dump('$protocolLines->count(): ' . $protocolLines->count());
             if ($protocolLines->isEmpty()) {
                 return null;
             }
@@ -55,7 +55,7 @@ final readonly class PreviousCompletedRankFiller
             /** @var ProtocolLine $first */
             $first = $protocolLines->first();
             $protocolLines = $protocolLines->filter(static fn (ProtocolLine $pl): bool => $pl->complete_rank === $first->complete_rank);
-//            dump('$protocolLines->count(): ' . $protocolLines->count());
+            dump('$protocolLines->count(): ' . $protocolLines->count());
 
             if (!$protocolLines->count()) {
                 return null;
@@ -84,10 +84,10 @@ final readonly class PreviousCompletedRankFiller
 
                 $this->ranks->add($newRank);
 
-//                dump('event date ' . $protocolLine->distance->event->date->toDateString());
-//                dump('activation date ' . $newRank->activated_date->toDateString());
-//                dump('finish date ' . $newRank->finish_date->toDateString());
-//                dump('start date ' . $newRank->start_date->toDateString());
+                dump('event date ' . $protocolLine->distance->event->date->toDateString());
+                dump('activation date ' . $newRank->activated_date->toDateString());
+                dump('finish date ' . $newRank->finish_date->toDateString());
+                dump('start date ' . $newRank->start_date->toDateString());
 
                 // трэба абнавіць усе папярэднія разряды
                 $this->updater->update(
