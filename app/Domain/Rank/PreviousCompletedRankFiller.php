@@ -25,9 +25,11 @@ final readonly class PreviousCompletedRankFiller
     ) {
     }
 
-    public function fill(Rank $rank): ?Rank
+    public function fill(Rank $rank, ?Carbon $date = null): ?Rank
     {
-        $date = $this->clock->now();
+        if ($date === null) {
+            $date = $this->clock->now();
+        }
 
         $finishDate = $rank->finish_date;
         dump($finishDate < $date);
