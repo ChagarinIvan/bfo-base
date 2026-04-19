@@ -71,7 +71,7 @@ class RankService
 
         $criteria = new Criteria(['personId' => $personId, 'massCompetition' => false], ['eventDate' => 'asc']);
         foreach ($this->protocolLines->byCriteria($criteria) as $protocolLine) {
-            dump('forech');
+//            dump('forech');
             /** @var ProtocolLine $protocolLine */
             $this->fillRank($protocolLine);
         }

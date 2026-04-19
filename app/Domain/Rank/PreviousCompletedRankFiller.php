@@ -32,7 +32,7 @@ final readonly class PreviousCompletedRankFiller
         }
 
         $finishDate = $rank->finish_date;
-        dump($finishDate < $date);
+//        dump($finishDate < $date);
         if ($finishDate < $date) {
             // тут трэба узять протокол лініі за 2 года, дзе было выкананне адсартырованные па моцы разраду
             $criteria = new Criteria(
@@ -48,7 +48,7 @@ final readonly class PreviousCompletedRankFiller
             $protocolLines = $this->protocolLines->byCriteria($criteria);
 //            dump($protocolLines->count());
 
-            dump('$protocolLines->count(): ' . $protocolLines->count());
+//            dump('$protocolLines->count(): ' . $protocolLines->count());
             if ($protocolLines->isEmpty()) {
                 return null;
             }
@@ -57,10 +57,10 @@ final readonly class PreviousCompletedRankFiller
 
             /** @var ProtocolLine $first */
             $first = $protocolLines->first();
-            dump($rank->rank);
-            dump($first->complete_rank);
+//            dump($rank->rank);
+//            dump($first->complete_rank);
             $protocolLines = $protocolLines->filter(static fn (ProtocolLine $pl): bool => $pl->complete_rank === $first->complete_rank);
-            dump('$protocolLines->count(): ' . $protocolLines->count());
+//            dump('$protocolLines->count(): ' . $protocolLines->count());
 
             if (!$protocolLines->count()) {
                 return null;
@@ -110,7 +110,7 @@ final readonly class PreviousCompletedRankFiller
                     finishDate: $newRank->finish_date,
                 );
 
-                dump('Updated');
+//                dump('Updated');
             }
 
             return $newRank ?? null;
