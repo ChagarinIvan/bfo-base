@@ -46,6 +46,7 @@ final readonly class PreviousCompletedRankFiller
             );
             dump($criteria);
             $protocolLines = $this->protocolLines->byCriteria($criteria);
+            dump($protocolLines);
 
             dump('$protocolLines->count(): ' . $protocolLines->count());
             if ($protocolLines->isEmpty()) {
@@ -54,6 +55,7 @@ final readonly class PreviousCompletedRankFiller
 
             /** @var ProtocolLine $first */
             $first = $protocolLines->first();
+            dump($first->complete_rank);
             $protocolLines = $protocolLines->filter(static fn (ProtocolLine $pl): bool => $pl->complete_rank === $first->complete_rank);
             dump('$protocolLines->count(): ' . $protocolLines->count());
 
