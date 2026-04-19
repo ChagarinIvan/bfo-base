@@ -162,10 +162,24 @@ class RankService
 //                dump('$actualRankDto->eventId '. $actualRankDto->eventId);
 //                dump('$actualRankDto->eventDate '. $actualRankDto->eventDate);
 //                dump(sprintf('Compare %s >= %s: ', $event->date->toDateString(), $actualRankStartDate->toDateString()) . ($event->date->toDateString() >= $actualRankStartDate->toDateString() ? 'true' : 'false'));
-                $finishDate = $event->date->toDateString() >= $actualRankStartDate->toDateString()
-                    ? ($protocolLine->activate_rank ?? $event->date)->clone()->addYears(2)
-                    : $newRank->finish_date->clone()
-                ;
+
+                // можа есць больш мацнейшы не актываваны разрад?
+                $futureActivatedRank = $this->ranks->oneByCriteria(new Criteria([
+                    'personId' => (int) $actualRankDto->personId,
+                    'activated' => true,
+                    'activation_date_from' => $event->date,
+                    'rank_in' => Rank::strongerRank($actualRankDto->rank),
+                ]));
+                dump($futureActivatedRank);
+
+                if ($futureActivatedRank) {
+                    $finishDate = $futureActivatedRank->activated_date->clone()->addDay(-1);
+                } else {
+                    $finishDate = $event->date->toDateString() >= $actualRankStartDate->toDateString()
+                        ? ($protocolLine->activate_rank ?? $event->date)->clone()->addYears(2)
+                        : $newRank->finish_date->clone()
+                    ;
+                }
 
                 $newRank->finish_date = $finishDate->clone();
 
