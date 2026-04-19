@@ -53,6 +53,8 @@ final readonly class PreviousCompletedRankFiller
                 return null;
             }
 
+            $protocolLines = $protocolLines->filter(static fn (ProtocolLine $pl): bool => $pl->complete_rank !== $rank->rank);
+
             /** @var ProtocolLine $first */
             $first = $protocolLines->first();
 //            dump($first->complete_rank);
