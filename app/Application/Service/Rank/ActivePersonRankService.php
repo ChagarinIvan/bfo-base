@@ -26,11 +26,11 @@ final readonly class ActivePersonRankService
     public function execute(ActivePersonRank $command): ?ViewRankDto
     {
         $lastRank = $this->ranks->oneByCriteria($this->criteriaWithDate($command));
-        dump('$lastRank?->rank: '. $lastRank?->rank);
+//        dump('$lastRank?->rank: '. $lastRank?->rank);
 
         if ($lastRank === null) {
             $lastCompletedRank = $this->ranks->oneByCriteria($this->criteriaWithoutDate($command));
-            dump('$lastCompletedRank: ' . $lastCompletedRank?->rank ?? '---');
+//            dump('$lastCompletedRank: ' . $lastCompletedRank?->rank ?? '---');
 //            if ($lastCompletedRank) {
                 $lastRank = $this->previousCompletedRankFiller->fill($command->personId(), $lastCompletedRank, $command->date());
                 dump('before while');

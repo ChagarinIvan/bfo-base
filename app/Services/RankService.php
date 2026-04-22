@@ -147,7 +147,7 @@ class RankService
 //        dump('Search for event ' . $event->id);
         $actualRankDto = $this->activePersonRankService->execute(new ActivePersonRank((string)$protocolLine->person_id, $protocolLine->event->date));
 
-//        dump('Actual rank ' . ($actualRankDto?->rank ?? '---'));
+        dump('Actual rank ' . ($actualRankDto?->rank ?? '---'));
         if ($actualRankDto) {
             if ($actualRankDto->rank === $protocolLine->complete_rank) {
                 $newRank = $this->factory->create(new RankInput(
@@ -195,7 +195,7 @@ class RankService
 //                dump('finish date ' . $newRank->finish_date->toDateString());
 //                dump('start date ' . $newRank->start_date->toDateString());
                 $this->storeRank($newRank);
-//                dump('New prolongate id ' . $newRank->id);
+                dump('New prolongate id ' . $newRank->id);
             } elseif (!in_array(trim($actualRankDto->rank), ['', '0'], true) && (self::RANKS_POWER[$protocolLine->complete_rank] > self::RANKS_POWER[$actualRankDto->rank])) {
 //                dump(sprintf('Enreach rank %s > %s', $actualRankDto->rank, $protocolLine->complete_rank));
 //                 трэба зачыніць усе папярэднія разряды
@@ -219,7 +219,7 @@ class RankService
                 $previousRanksFinishDate = $newRankStartDate->clone()->addDays(-1);
 
                 if ($protocolLine->activate_rank) {
-//                    dump('close previous ranks with finish date' . $previousRanksFinishDate->toDateString());
+                    dump('close previous ranks with finish date' . $previousRanksFinishDate->toDateString());
                     $ranks->each(function (Rank $rank) use ($previousRanksFinishDate): void {
                         $rank->finish_date = $previousRanksFinishDate;
                         $this->storeRank($rank);
@@ -267,7 +267,7 @@ class RankService
                 }
 
                 $this->storeRank($newRank);
-//                dump('1) Enriched rank id: ' . $newRank->rank);
+                dump('1) Enriched rank id: ' . $newRank->rank);
 
 //                $protocolLines$protocolLines = $protocolLines->sortBy('distance.event.date');
 //                foreach ($protocolLines as $line) {
@@ -291,7 +291,7 @@ class RankService
             }
 
             $this->storeRank($newRank);
-//            dump('2) Enriched rank id: ' . $newRank->rank);
+            dump('2) Enriched rank id: ' . $newRank->rank);
         }
     }
 
@@ -307,6 +307,7 @@ class RankService
 
     public function storeRank(Rank $rank): void
     {
+        dump('STORE RANK');
         $this->ranks->add($rank);
     }
 
