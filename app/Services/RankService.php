@@ -148,6 +148,11 @@ class RankService
         $actualRankDto = $this->activePersonRankService->execute(new ActivePersonRank((string)$protocolLine->person_id, $protocolLine->event->date));
 
         dump('Actual rank ' . ($actualRankDto?->rank ?? '---'));
+
+        if ($actualRankDto->eventId !== $protocolLine->event->id) {
+            return;
+        }
+
         if ($actualRankDto) {
             if ($actualRankDto->rank === $protocolLine->complete_rank) {
                 $newRank = $this->factory->create(new RankInput(
