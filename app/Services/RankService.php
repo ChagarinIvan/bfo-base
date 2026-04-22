@@ -149,7 +149,7 @@ class RankService
 
         dump('Actual rank ' . ($actualRankDto?->rank ?? '---'));
 
-        if ($actualRankDto?->eventId === $protocolLine->event->id) {
+        if ($actualRankDto?->eventId === (string) $protocolLine->event->id) {
             return;
         }
 
