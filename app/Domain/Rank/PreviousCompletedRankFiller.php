@@ -120,6 +120,8 @@ final readonly class PreviousCompletedRankFiller
                     continue;
                 }
 
+                dump('ADDDDDDDD');
+
                 $this->ranks->add($newRank);
 
 //                dump('event date ' . $protocolLine->distance->event->date->toDateString());
@@ -135,7 +137,6 @@ final readonly class PreviousCompletedRankFiller
                     finishDate: $newRank->finish_date,
                 );
 
-//                dump('Updated');
             }
 
             return $newRank ?? null;
