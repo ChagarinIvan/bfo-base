@@ -14,7 +14,7 @@ final class EloquentRankRepository implements RankRepository
 {
     public function add(Rank $rank): void
     {
-        dump('NEW RANK');
+//        dump('NEW RANK');
         $rank->create();
     }
 

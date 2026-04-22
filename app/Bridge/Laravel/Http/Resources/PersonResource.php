@@ -32,7 +32,7 @@ final class PersonResource extends JsonResource
             'events_count' => $this->protocol_lines_count,
             'club_id' => $this->club_id,
             'club_name' => $this->club?->name,
-//            'rank' => $this->activePersonRank->execute(new ActivePersonRank((string)$this->id))?->rank
+            'rank' => $this->activePersonRank->execute(new ActivePersonRank((string)$this->id))?->rank
         ];
     }
 }
