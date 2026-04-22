@@ -88,6 +88,11 @@ final class EloquentRankRepository implements RankRepository
         }
 
         $query->join('events', 'events.id', '=', 'ranks.event_id');
+
+        if ($criteria->hasParam('event_id')) {
+            $query->whereIn('event_id', $criteria->param('event_id'));
+        }
+
         if ($criteria->sorting()) {
             foreach ($criteria->sorting() as $key => $order) {
                 $query->orderBy($key, $order);

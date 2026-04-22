@@ -93,6 +93,22 @@ final readonly class PreviousCompletedRankFiller
                     }
                 }
 
+                if ($activationDate === null) {
+                    $equal = $this->ranks->oneByCriteria(
+                        new Criteria([
+                            'person_id' => $personId,
+                            'activated' => false,
+                            'rank' => $protocolLine->complete_rank,
+                            'event_id' => $protocolLine->event->id
+                        ])
+                    );
+
+                    dump('equal', $equal);
+                    if ($equal) {
+                        return null;
+                    }
+                }
+
                 $newRank = $this->factory->create($this->createRankInput(
                     protocolLine: $protocolLine,
                     activatedDate: $activationDate,
