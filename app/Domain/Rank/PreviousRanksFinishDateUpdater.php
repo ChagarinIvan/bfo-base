@@ -17,21 +17,25 @@ final readonly class PreviousRanksFinishDateUpdater
     ) {
     }
 
-    public function update(int $personId, string $rank, Carbon $startDate, Carbon $finishDate): void
+    public function update(Rank $rank, int $personId, Carbon $startDate, Carbon $finishDate): void
     {
 //        dump('UPDATER ' . $rank);
         $ranksFilter = new RanksFilter();
         $ranksFilter->personId = $personId;
-        $ranksFilter->rank = $rank;
+        $ranksFilter->rank = $rank->rank;
         $ranksFilter->startDateLess = $startDate;
         $ranksFilter->finishDateMore = $startDate;
 
         $ranks = $this->ranksRepository->getRanksList($ranksFilter);
 
-        $ranks->each(function (Rank $rank) use ($finishDate): void {
-            $rank->finish_date = $finishDate->clone();
-            $rank->setAttribute('finish_date', $finishDate->clone());
-            $this->ranks->add($rank);
+        $ranks->each(function (Rank $r) use ($finishDate, $rank): void {
+            if ($rank->event_id === $r->event_id) {
+                return;
+            }
+
+            $r->finish_date = $finishDate->clone();
+            $r->setAttribute('finish_date', $finishDate->clone());
+            $this->ranks->add($r);
         });
     }
 }

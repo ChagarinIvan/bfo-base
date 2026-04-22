@@ -131,8 +131,8 @@ final readonly class PreviousCompletedRankFiller
 
                 // трэба абнавіць усе папярэднія разряды
                 $this->updater->update(
+                    rank: $newRank,
                     personId: $newRank->person_id,
-                    rank: $newRank->rank,
                     startDate: $newRank->start_date,
                     finishDate: $newRank->finish_date,
                 );

@@ -185,8 +185,8 @@ class RankService
 
                 // трэба абнавіць усе папярэднія разряды
                 $this->updater->update(
+                    rank: $newRank,
                     personId: (int) $actualRankDto->personId,
-                    rank: $newRank->rank,
                     startDate: $newRank->start_date,
                     finishDate: $finishDate,
                 );
