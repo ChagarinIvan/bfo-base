@@ -47,6 +47,7 @@ final readonly class PreviousCompletedRankFiller
                     'dateFrom' => $finishDate->clone()->addYears(-2),
                     'dateTo' => $finishDate,
                     'completedRank' => true,
+                    'massCompetition' => false,
                 ],
                 ['completedRank' => 'desc', 'eventDate' => 'asc'],
             );
