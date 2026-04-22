@@ -103,7 +103,7 @@ final readonly class PreviousCompletedRankFiller
                         ])
                     );
 
-                    dump('equal', $equal);
+//                    dump('equal', $equal);
                     if ($equal) {
                         return null;
                     }
