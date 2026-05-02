@@ -14,7 +14,9 @@ use App\Services\PersonsService;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Log\LogManager;
+use Illuminate\Support\Facades\Storage;
 use Psr\Log\LoggerInterface;
+use RuntimeException;
 use Symfony\Component\Console\Input\InputArgument;
 use Throwable;
 use function unserialize;
@@ -38,32 +40,36 @@ class ExportPersonsCommand extends Command
     {
         $this->logger->info('Start.');
 
-        $filePath = 'exports/ranks.csv';
+        $filePath = '/exports/ranks.csv';
 
         try {
-            // открываем поток на запись
-            $stream = $this->storage->writeStream($filePath);
+            $stream = fopen('php://temp', 'wb+');
 
             if ($stream === false) {
-                throw new \RuntimeException('Cannot open file for writing');
+                throw new RuntimeException('Cannot open temp stream');
             }
 
-            // заголовки
-            fputcsv($stream, ['lastname', 'firstname', 'birthday', 'rank']);
+            // Excel
+            fwrite($stream, "\xEF\xBB\xBF");
 
-            $persons = $this->service->getPersonsList();
+            fputcsv($stream, ['lastname', 'firstname', 'birthday', 'rank'], ';');
 
             /** @var Person $person */
-            foreach ($persons->cursor() as $person) {
+            foreach ($this->service->getPersonsList()->cursor() as $person) {
                 fputcsv($stream, [
                     $person->lastname,
                     $person->firstname,
                     $person->birthday?->format('Y-m-d'),
                     $this->rankService
-                        ->execute(new ActivePersonRank((string) $person->id))
+                        ->execute(new ActivePersonRank((string)$person->id))
                         ?->rank,
-                ]);
+                ], ';');
             }
+
+            // ⚠️ обязательно
+            rewind($stream);
+
+            $this->storage->writeStream('exports/ranks.csv', $stream);
 
             fclose($stream);
         } catch (Throwable $e) {
