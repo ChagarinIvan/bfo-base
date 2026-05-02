@@ -1,6 +1,7 @@
 @php
     use App\Bridge\Laravel\Http\Controllers\Event\ShowEventDistanceAction;
     use App\Bridge\Laravel\Http\Controllers\Rank\ShowCheckPersonsRanksFormAction;
+    use App\Bridge\Laravel\Http\Controllers\Rank\ExportPersonsRanksAction;
     use App\Bridge\Laravel\Http\Controllers\Rank\ShowPersonRanksAction;
     use App\Bridge\Laravel\Http\Controllers\Rank\ShowRanksListAction;
     use App\Application\Dto\Rank\ViewRankDto;
@@ -18,13 +19,20 @@
 
 @section('content')
     <div class="row mb-3">
-        <div class="col-12">
-            <x-button text="app.rank.check"
-                      color="info"
-                      icon="bi-patch-question-fill"
-                      url="{{ action(ShowCheckPersonsRanksFormAction::class) }}"
-            />
-        </div>
+        @auth
+            <div class="col-12">
+                <x-button text="app.rank.check"
+                          color="info"
+                          icon="bi-patch-question-fill"
+                          url="{{ action(ShowCheckPersonsRanksFormAction::class) }}"
+                />
+                <x-button text="app.rank.export"
+                          color="success"
+                          icon="bi-download"
+                          url="{{ action(ExportPersonsRanksAction::class) }}"
+                />
+            </div>
+        @endauth
     </div>
     <div class="row">
         <ul class="nav nav-tabs pt-2">

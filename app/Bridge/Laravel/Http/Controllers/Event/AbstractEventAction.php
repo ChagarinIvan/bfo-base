@@ -20,12 +20,7 @@ class AbstractEventAction extends AbstractAction
     public function __construct(
         protected ViewActionsService $viewActionsService,
         protected Redirector $redirector,
-        protected ParserService $parserService,
-        protected CupsService $cupsService,
         protected ClubsService $clubsService,
-        protected ProtocolLineIdentService $identService,
-        protected ProtocolLineService $protocolLineService,
-        protected Filesystem $storage,
         protected EventAssembler $assembler,
     ) {
         parent::__construct($viewActionsService, $redirector);
