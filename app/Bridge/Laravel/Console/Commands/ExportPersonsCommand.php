@@ -31,7 +31,7 @@ class ExportPersonsCommand extends Command
         LogManager $loggerManager,
     ) {
         parent::__construct();
-        $this->logger = $loggerManager->channel('sync');
+        $this->logger = $loggerManager->channel('export');
     }
 
     public function handle(): void
@@ -40,31 +40,35 @@ class ExportPersonsCommand extends Command
 
         $filePath = 'exports/ranks.csv';
 
-        // открываем поток на запись
-        $stream = $this->storage->writeStream($filePath);
+        try {
+            // открываем поток на запись
+            $stream = $this->storage->writeStream($filePath);
 
-        if ($stream === false) {
-            throw new \RuntimeException('Cannot open file for writing');
+            if ($stream === false) {
+                throw new \RuntimeException('Cannot open file for writing');
+            }
+
+            // заголовки
+            fputcsv($stream, ['lastname', 'firstname', 'birthday', 'rank']);
+
+            $persons = $this->service->getPersonsList();
+
+            /** @var Person $person */
+            foreach ($persons->cursor() as $person) {
+                fputcsv($stream, [
+                    $person->lastname,
+                    $person->firstname,
+                    $person->birthday?->format('Y-m-d'),
+                    $this->rankService
+                        ->execute(new ActivePersonRank((string) $person->id))
+                        ?->rank,
+                ]);
+            }
+
+            fclose($stream);
+        } catch (Throwable $e) {
+            $this->logger->info('Error: ' . $e->getMessage());
         }
-
-        // заголовки
-        fputcsv($stream, ['lastname', 'firstname', 'birthday', 'rank']);
-
-        $persons = $this->service->getPersonsList();
-
-        /** @var Person $person */
-        foreach ($persons->cursor() as $person) {
-            fputcsv($stream, [
-                $person->lastname,
-                $person->firstname,
-                $person->birthday?->format('Y-m-d'),
-                $this->rankService
-                    ->execute(new ActivePersonRank((string) $person->id))
-                    ?->rank,
-            ]);
-        }
-
-        fclose($stream);
 
         $this->logger->info('Success.', ['file' => $filePath]);
     }
