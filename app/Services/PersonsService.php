@@ -41,7 +41,7 @@ class PersonsService
     /**
      * Выборка для страницы спортсменов для фронтенд апи с пагинацией и уже преобразованными полями.
      */
-    public function getPersonsList(string $sortBy, int $sortMode, string $search): Builder
+    public function getPersonsList(?string $sortBy = null, ?int $sortMode = null, ?string $search = null): Builder
     {
         $sortBy = in_array($sortBy, self::SORT_BY_COLUMNS, true) ? $sortBy : 'fio';
         $sort = $sortMode === 1 ? 'DESC' : 'ASC';
