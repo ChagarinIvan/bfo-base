@@ -44,6 +44,7 @@ class ExportPersonsCommand extends Command
 
         try {
             $stream = fopen('php://temp', 'wb+');
+            $this->logger->info('Stream opened.');
 
             if ($stream === false) {
                 throw new RuntimeException('Cannot open temp stream');
@@ -51,6 +52,7 @@ class ExportPersonsCommand extends Command
 
             // Excel
             fwrite($stream, "\xEF\xBB\xBF");
+            $this->logger->info('write started.');
 
             fputcsv($stream, ['lastname', 'firstname', 'birthday', 'rank'], ';');
 
