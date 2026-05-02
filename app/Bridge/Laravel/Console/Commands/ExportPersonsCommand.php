@@ -58,6 +58,7 @@ class ExportPersonsCommand extends Command
 
             /** @var Person $person */
             foreach ($this->service->getPersonsList()->cursor() as $person) {
+                $this->logger->info('Person ID: ' . $person->id);
                 fputcsv($stream, [
                     $person->lastname,
                     $person->firstname,
@@ -71,7 +72,11 @@ class ExportPersonsCommand extends Command
             // ⚠️ обязательно
             rewind($stream);
 
-            $this->storage->writeStream('exports/ranks.csv', $stream);
+            if (!$this->storage->exists('/exports')) {
+                $this->storage->makeDirectory('/exports');
+            }
+
+            $this->storage->writeStream($filePath, $stream);
 
             fclose($stream);
         } catch (Throwable $e) {
