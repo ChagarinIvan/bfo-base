@@ -12,6 +12,36 @@ final class AlbatrosTimingParserTest extends AbstractParser
     public static function dataProvider(): Iterator
     {
         yield [
+            '2026/20260412.htm',
+            102,
+            [
+                0 => [
+                    'Апетенок',
+                    'Дмитрий',
+                    'КО "Ультра"',
+                    1983,
+                    'б/р',
+                    126,
+                    '0:29:26',
+                    1,
+                    null,
+                    null,
+                ],
+                57 => [
+                    'Лазарьков',
+                    'Артур',
+                    'Родничок',
+                    2011,
+                    'б/р',
+                    122,
+                    null,
+                    null,
+                    null,
+                    null,
+                ],
+            ],
+        ];
+        yield [
             '2025/251018.htm',
             376,
             [
