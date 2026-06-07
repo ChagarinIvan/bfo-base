@@ -6,7 +6,9 @@ namespace Tests\Application\Service\Club;
 
 use App\Application\Dto\Auth\AuthAssembler;
 use App\Application\Dto\Club\ClubAssembler;
+use App\Application\Dto\Club\ClubSearchDto;
 use App\Application\Dto\Club\ViewClubDto;
+use App\Application\Service\Club\ListClubs;
 use App\Application\Service\Club\ListClubsService;
 use App\Domain\Club\Club;
 use App\Domain\Club\ClubRepository;
@@ -43,7 +45,24 @@ final class ListClubsServiceTest extends TestCase
             ->willReturn($clubs)
         ;
 
-        $result = $this->service->execute();
+        $result = $this->service->execute(new ListClubs(new ClubSearchDto()));
+
+        $this->assertContainsOnlyInstancesOf(ViewClubDto::class, $result);
+    }
+
+    #[Test]
+    public function it_filters_clubs_by_ids(): void
+    {
+        $clubs = Club::factory(count: 2)->make();
+
+        $this->clubs
+            ->expects($this->once())
+            ->method('byCriteria')
+            ->with(new Criteria(['ids' => [1, 2]]))
+            ->willReturn($clubs)
+        ;
+
+        $result = $this->service->execute(new ListClubs(new ClubSearchDto(ids: [1, 2])));
 
         $this->assertContainsOnlyInstancesOf(ViewClubDto::class, $result);
     }

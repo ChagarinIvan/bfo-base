@@ -11,6 +11,8 @@ final class PersonSearchDto extends AbstractDto
     public static function requestValidationRules(): array
     {
         return [
+            'ids' => 'array',
+            'ids.*' => 'numeric',
             'clubId' => 'numeric',
             'year' => 'numeric',
             'withoutLinesAndPayments' => '',
@@ -21,11 +23,14 @@ final class PersonSearchDto extends AbstractDto
         public ?string $clubId = null,
         public ?string $year = null,
         public bool $withoutLinesAndPayments = false,
+        /** @var int[] */
+        public array $ids = [],
     ) {
     }
 
     public function fromArray(array $data): self
     {
+        $this->ids = $data['ids'] ?? $this->ids;
         $this->setStringParam('clubId', $data);
         $this->setStringParam('year', $data);
         $this->withoutLinesAndPayments = (bool) ($data['withoutLinesAndPayments'] ?? false);

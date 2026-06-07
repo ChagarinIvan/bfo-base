@@ -49,6 +49,10 @@ final class EloquentClubRepository implements ClubRepository
     {
         $query = Club::where('active', true)->withCount('persons')->orderBy('name');
 
+        if ($criteria->hasParam('ids')) {
+            $query->whereIn('id', $criteria->param('ids'));
+        }
+
         if ($criteria->hasParam('name')) {
             $query->where('name', $criteria->param('name'));
         }

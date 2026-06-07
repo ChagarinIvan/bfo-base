@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Http\Controllers\Club;
 
+use App\Application\Dto\Club\ClubSearchDto;
+use App\Application\Service\Club\ListClubs;
 use App\Application\Service\Club\ListClubsService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Routing\Controller as BaseController;
@@ -18,7 +20,7 @@ class ShowClubsListAction extends BaseController
      */
     public function __invoke(ListClubsService $service): View
     {
-        $clubs = $service->execute();
+        $clubs = $service->execute(new ListClubs(new ClubSearchDto()));
 
         /** @see /resources/views/clubs/index.blade.php */
         return $this->view('clubs.index', ['clubs' => $clubs]);
