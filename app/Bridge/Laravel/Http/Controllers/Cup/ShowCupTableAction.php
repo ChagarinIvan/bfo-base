@@ -35,6 +35,7 @@ class ShowCupTableAction extends BaseController
         dump(count($cupPoints));
         dd(array_diff(array_keys($cupPoints), $persons->keys()->all()));
 
+        dd(Person::find(67708));
         /** @see /resources/views/cup/table.blade.php */
         return $this->view('cup.table', [
             'cup' => $cup,
