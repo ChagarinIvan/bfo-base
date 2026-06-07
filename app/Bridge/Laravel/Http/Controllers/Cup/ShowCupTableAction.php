@@ -29,6 +29,10 @@ class ShowCupTableAction extends BaseController
         $cupGroup = CupGroupFactory::fromId($cupGroupId);
         $cupPoints = $service->calculateCup($cup, $cupEvents, $cupGroup);
 
+        dump($cup);
+        dump($cupEvents);
+        dd($cupPoints);
+        /** @see /resources/views/cup/table.blade.php */
         return $this->view('cup.table', [
             'cup' => $cup,
             'cupEvents' => $cupEvents,
