@@ -28,16 +28,17 @@ class ShowCupTableAction extends BaseController
         $cupEvents = $service->getCupEvents((string) $cup->id)->sortBy('event.date');
         $cupGroup = CupGroupFactory::fromId($cupGroupId);
         $cupPoints = $service->calculateCup($cup, $cupEvents, $cupGroup);
+        $persons = Person::where('active', true)->whereIn('id', array_keys($cupPoints))->get()->keyBy('id');
 
-        dump($cup);
-        dump($cupEvents);
-        dd($cupPoints);
+        dump(count($cupPoints));
+        dd(count($persons));
+
         /** @see /resources/views/cup/table.blade.php */
         return $this->view('cup.table', [
             'cup' => $cup,
             'cupEvents' => $cupEvents,
             'cupPoints' => $cupPoints,
-            'persons' => Person::where('active', true)->whereIn('id', array_keys($cupPoints))->get()->keyBy('id'),
+            'persons' => $persons,
             'activeGroup' => $cupGroup,
         ]);
     }
