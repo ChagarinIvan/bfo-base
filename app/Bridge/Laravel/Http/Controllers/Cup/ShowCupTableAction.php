@@ -64,7 +64,6 @@ class ShowCupTableAction extends BaseController
             index_key: 'id',
         );
 
-        dd(Person::find(67708));
         /** @see /resources/views/cup/table.blade.php */
         return $this->view('cup.table', [
             'cup' => $cup,

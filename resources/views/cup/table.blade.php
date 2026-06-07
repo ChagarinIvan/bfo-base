@@ -100,6 +100,8 @@
                             $sum = 0;
                             $count = 0;
                         @endphp
+                        {{-- skip points of inactive/deleted persons not returned by the service --}}
+                        @continue(!$person)
                         <tr>
                             <td>{{ $place }}</td>
                             <td>
