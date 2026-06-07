@@ -42,6 +42,7 @@
     "app.common.description" : "Описание",
     "app.common.url" : "Ссылка",
     "app.common.edit" : "Редактировать",
+    "app.common.deleted" : "Удалён",
     "app.common.back" : "Назад",
     "app.common.date" : "Дата",
     "app.common.dates" : "Даты",

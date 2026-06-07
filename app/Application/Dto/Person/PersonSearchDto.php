@@ -23,7 +23,7 @@ final class PersonSearchDto extends AbstractDto
         public ?string $clubId = null,
         public ?string $year = null,
         public bool $withoutLinesAndPayments = false,
-        /** @var int[] */
+        /** @var array<int|string> */
         public array $ids = [],
     ) {
     }

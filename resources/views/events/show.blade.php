@@ -1,6 +1,8 @@
 @php
     use App\Bridge\Laravel\Http\Controllers\Club\ShowClubAction;
+    use App\Application\Dto\Club\ViewClubDto;
     use App\Application\Dto\Event\ViewEventDto;
+    use App\Application\Dto\Person\ViewPersonDto;
     use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionAction;
     use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupAction;
     use App\Bridge\Laravel\Http\Controllers\Event\ShowEditEventFormAction;
@@ -8,7 +10,6 @@
     use App\Bridge\Laravel\Http\Controllers\Flags\ShowFlagEventsAction;
     use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonAction;
     use App\Bridge\Laravel\Http\Controllers\Person\ShowSetPersonToProtocolLineAction;
-    use App\Domain\Club\Club;
     use App\Domain\Distance\Distance;
     use App\Domain\Event\Event;
     use App\Domain\Rank\Rank;
@@ -21,7 +22,8 @@
      * @var Collection $lines
      * @var bool $withPoints
      * @var bool $withVk
-     * @var Collection|Club[] $clubs
+     * @var array<string, ViewClubDto> $clubs
+     * @var array<int, ViewPersonDto> $persons
      */
 @endphp
 
@@ -143,12 +145,16 @@
                             @if($hasPerson)
                                 @php
                                     $link = action(ShowPersonAction::class, [$line->person_id]);
+                                    $isDeletedPerson = !isset($persons[$line->person_id]);
                                 @endphp
                                 <td><a href="{{ $link }}">{{ $line->lastname }}</a>&nbsp;
                                     @auth
                                         <a href="{{ action(ShowSetPersonToProtocolLineAction::class, [$line]) }}">
                                             <span class="badge rounded-pill bg-warning">{{ __('app.common.edit') }}</span>
                                         </a>
+                                        @if($isDeletedPerson)
+                                            <span class="badge rounded-pill bg-danger" title="{{ __('app.common.deleted') }}">{{ __('app.common.deleted') }}</span>
+                                        @endif
                                     @endauth
                                 </td>
                                 <td><a href="{{ $link }}">{{ $line->firstname }}</a></td>
@@ -162,9 +168,9 @@
                                 </td>
                                 <td>{{ $line->firstname }}</td>
                             @endif
-                            @if($club = $clubs->get(ClubsService::normalizeName($line->club)))
+                            @if($club = $clubs[ClubsService::normalizeName($line->club)] ?? null)
                                 <td>
-                                    <a href="{{ action(ShowClubAction::class, [$club]) }}">
+                                    <a href="{{ action(ShowClubAction::class, [$club->id]) }}">
                                         {{ ($line->club) }}
                                     </a>
                                 </td>

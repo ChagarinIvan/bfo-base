@@ -11,6 +11,7 @@ final readonly class ViewClubDto
     public function __construct(
         public string $id,
         public string $name,
+        public string $normalizeName,
         public int $personsCount,
         public ImpressionDto $created,
         public ImpressionDto $updated,

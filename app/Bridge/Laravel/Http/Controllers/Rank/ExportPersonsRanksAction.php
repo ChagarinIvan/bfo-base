@@ -26,7 +26,7 @@ class ExportPersonsRanksAction extends BaseController
             return response()->streamDownload(function () use ($storage, $path) {
                 $stream = $storage->readStream($path);
 
-                if ($stream === false) {
+                if ($stream === null) {
                     throw new \RuntimeException('Cannot read file');
                 }
 

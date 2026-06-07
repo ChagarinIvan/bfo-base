@@ -178,7 +178,7 @@ class RankService
 //                dump($futureActivatedRank);
 
                 if ($futureActivatedRank) {
-                    $finishDate = $futureActivatedRank->activated_date->clone()->addDay(-1);
+                    $finishDate = $futureActivatedRank->activated_date->clone()->subDay();
                 } else {
                     $finishDate = $event->date->toDateString() >= $actualRankStartDate->toDateString()
                         ? ($protocolLine->activate_rank ?? $event->date)->clone()->addYears(2)

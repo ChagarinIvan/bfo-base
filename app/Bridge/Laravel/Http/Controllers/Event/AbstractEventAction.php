@@ -7,12 +7,7 @@ namespace App\Bridge\Laravel\Http\Controllers\Event;
 use App\Application\Dto\Event\EventAssembler;
 use App\Bridge\Laravel\Http\Controllers\AbstractAction;
 use App\Services\ClubsService;
-use App\Services\CupsService;
-use App\Services\ParserService;
-use App\Services\ProtocolLineIdentService;
-use App\Services\ProtocolLineService;
 use App\Services\ViewActionsService;
-use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Routing\Redirector;
 
 class AbstractEventAction extends AbstractAction

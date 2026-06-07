@@ -18,7 +18,7 @@ final class ClubSearchDto extends AbstractDto
     }
 
     public function __construct(
-        /** @var int[] */
+        /** @var array<int|string> */
         public array $ids = [],
         public ?string $name = null,
     ) {

@@ -4,47 +4,41 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Http\Controllers\Event;
 
-use App\Application\Dto\Auth\AuthAssembler;
+use App\Application\Service\Club\ListClubsService;
+use App\Application\Service\Event\Exception\EventNotFound;
+use App\Application\Service\Event\ViewEvent;
+use App\Application\Service\Event\ViewEventService;
+use App\Application\Service\Person\ListPersonsService;
 use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionAction;
-use App\Domain\Distance\Distance;
-use App\Domain\Event\Event;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Routing\Controller as BaseController;
 
-class ShowEventAction extends AbstractEventAction
+class ShowEventAction extends BaseController
 {
-    public function __invoke(string $eventId): View|RedirectResponse
-    {
-        /** @var Event $event */
-        $event = Event::findOrFail($eventId);
-        $withPoints = false;
-        $withVk = false;
-        /** @var Distance|null $distance */
-        $distance = $event->distances->first();
+    use EventAction;
+    use RendersEventDistance;
 
+    /**
+     * @url /events/{eventId}
+     */
+    public function __invoke(
+        string $eventId,
+        ViewEventService $eventService,
+        ListPersonsService $personsService,
+        ListClubsService $clubsService,
+    ): View|RedirectResponse {
+        try {
+            $event = $eventService->execute(new ViewEvent($eventId));
+        } catch (EventNotFound) {
+            return $this->redirectTo404Error();
+        }
+
+        $distance = $event->firstDistance;
         if ($distance === null) {
-            return $this->redirector->action(ShowCompetitionAction::class, [$event->competition_id]);
+            return $this->redirector->action(ShowCompetitionAction::class, [$event->competitionId]);
         }
 
-        $protocolLines = $distance->protocolLines;
-        $clubs = $this->clubsService->getAllClubs()->keyBy('normalize_name');
-
-        foreach ($protocolLines as $protocolLine) {
-            $withPoints = $withPoints || $protocolLine->points !== null;
-            $withVk = $withVk || $protocolLine->vk;
-            if ($withPoints && $withVk) {
-                break;
-            }
-        }
-
-        /** @see /resources/views/events/show.blade.php */
-        return $this->view('events.show', [
-            'event' => $this->assembler->toViewEventDto($event),
-            'lines' => $protocolLines,
-            'withPoints' => $withPoints,
-            'withVk' => $withVk,
-            'selectedDistance' => $distance,
-            'clubs' => $clubs,
-        ]);
+        return $this->renderEventDistance($event, $distance, $clubsService, $personsService);
     }
 }
