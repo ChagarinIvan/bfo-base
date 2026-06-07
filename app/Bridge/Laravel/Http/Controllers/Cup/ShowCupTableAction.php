@@ -11,6 +11,7 @@ use App\Services\CupEventsService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Support\Collection;
 use function array_keys;
 use function preg_match;
 
@@ -28,10 +29,11 @@ class ShowCupTableAction extends BaseController
         $cupEvents = $service->getCupEvents((string) $cup->id)->sortBy('event.date');
         $cupGroup = CupGroupFactory::fromId($cupGroupId);
         $cupPoints = $service->calculateCup($cup, $cupEvents, $cupGroup);
+        /** @var Collection $persons */
         $persons = Person::where('active', true)->whereIn('id', array_keys($cupPoints))->get()->keyBy('id');
 
         dump(count($cupPoints));
-        dd(count($persons));
+        dd(array_diff(array_keys($cupPoints), $persons->keys()->all()));
 
         /** @see /resources/views/cup/table.blade.php */
         return $this->view('cup.table', [
