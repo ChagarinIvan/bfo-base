@@ -84,6 +84,6 @@ final class RefillPersonRanksActionTest extends TestCase
             ->assertHeader('Location', "http://localhost/ranks/person/$person->id")
         ;
 
-        $this->assertDatabaseCount('ranks', 2);
+        $this->assertDatabaseCount('ranks', 1);
     }
 }
