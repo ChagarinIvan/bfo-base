@@ -37,7 +37,7 @@ final class ListPersonsPromptsServiceTest extends TestCase
         $this->personsPrompts
             ->expects($this->once())
             ->method('byCriteria')
-            ->with(new Criteria(['personId' => 1]))
+            ->with(new Criteria(['personId' => 1,  'activePerson' => true]))
             ->willReturn(PersonPrompt::factory(2)->make())
         ;
 

@@ -135,7 +135,9 @@ final readonly class ProtocolLinesRepository implements ProtocolLineRepository
     {
         $this->db->table('protocol_lines', 'pl')
             ->join('persons_prompt AS pp', 'pl.prepared_line', '=', 'pp.prompt')
+            ->join('person AS p', 'p.id', '=', 'pp.person_id')
             ->whereNull('pl.person_id')
+            ->where('p.active', true)
             ->whereIn('pl.id', $linesIds)
             ->update(['pl.person_id' => new Expression('pp.person_id')])
         ;

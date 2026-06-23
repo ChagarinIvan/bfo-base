@@ -23,6 +23,7 @@ final readonly class PersonPromptService
             $prompt = new PersonPrompt();
             $prompt->person_id = $personId;
             $prompt->prompt = $preparedLine;
+            $prompt->save();
         }
     }
 
