@@ -23,7 +23,7 @@ class FixInactivePersonsProtocolLinesCommand extends Command
         $this->info('Starting to fix protocol lines for inactive persons...');
 
         // Находим все protocol_line которые ссылаются на неактивных персон
-        $affectedLines = DB::table('protocol_line')
+        $affectedLines = DB::table('protocol_lines')
             ->join('person', 'person.id', '=', 'protocol_line.person_id')
             ->where('person.active', false)
             ->whereNotNull('protocol_line.person_id')
@@ -69,7 +69,7 @@ class FixInactivePersonsProtocolLinesCommand extends Command
 
         $this->info("Update completed:");
         $this->info("  - Successfully updated: {$updatedCount}");
-        
+
         if ($failedCount > 0) {
             $this->warn("  - Failed: {$failedCount}");
         }
