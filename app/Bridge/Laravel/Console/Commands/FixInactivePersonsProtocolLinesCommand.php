@@ -24,10 +24,10 @@ class FixInactivePersonsProtocolLinesCommand extends Command
 
         // Находим все protocol_line которые ссылаются на неактивных персон
         $affectedLines = DB::table('protocol_lines')
-            ->join('person', 'person.id', '=', 'protocol_line.person_id')
+            ->join('person', 'person.id', '=', 'protocol_lines.person_id')
             ->where('person.active', false)
-            ->whereNotNull('protocol_line.person_id')
-            ->select('protocol_line.id')
+            ->whereNotNull('protocol_lines.person_id')
+            ->select('protocol_lines.id')
             ->get();
 
         $totalCount = $affectedLines->count();
@@ -52,7 +52,7 @@ class FixInactivePersonsProtocolLinesCommand extends Command
 
         foreach ($affectedLines as $line) {
             try {
-                DB::table('protocol_line')
+                DB::table('protocol_lines')
                     ->where('id', $line->id)
                     ->update(['person_id' => null]);
                 $updatedCount++;
