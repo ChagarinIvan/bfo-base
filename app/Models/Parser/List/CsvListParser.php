@@ -9,6 +9,8 @@ use Illuminate\Support\Collection;
 use function array_combine;
 use function array_filter;
 use function array_map;
+use function array_pad;
+use function array_slice;
 use function count;
 use function explode;
 use function mb_convert_encoding;
@@ -57,6 +59,19 @@ class CsvListParser implements ParserInterface
 
             if ($values[1] === 'Вакансия') {
                 continue;
+            }
+
+            $headersCount = count($headers);
+            $valuesCount = count($values);
+
+            // Если значений меньше, добавляем пустые строки
+            if ($valuesCount < $headersCount) {
+                $values = array_pad($values, $headersCount, '');
+            }
+
+            // Если значений больше, обрезаем лишние
+            if ($valuesCount > $headersCount) {
+                $values = array_slice($values, 0, $headersCount);
             }
 
             $list->push(array_combine($headers, $values));

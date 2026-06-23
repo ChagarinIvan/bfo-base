@@ -12,11 +12,14 @@ final class SearchPersonPromptDto extends AbstractDto
     {
         return [
             'personId' => 'numeric',
+            'activePerson' => 'bool',
         ];
     }
 
-    public function __construct(public ?string $personId = null)
-    {
+    public function __construct(
+        public ?string $personId = null,
+        public bool $activePerson = true,
+    ) {
     }
 
     public function fromArray(array $data): self

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Console;
 
+use App\Bridge\Laravel\Console\Commands\DeleteInactivePersonsPromptsCommand;
+use App\Bridge\Laravel\Console\Commands\FixInactivePersonsProtocolLinesCommand;
 use App\Bridge\Laravel\Console\Commands\FixRankCommand;
 use App\Bridge\Laravel\Console\Commands\FixYearCommand;
 use App\Bridge\Laravel\Console\Commands\IdentProtocolLineCommand;
@@ -37,6 +39,8 @@ class Kernel extends ConsoleKernel
         FixYearCommand::class,
         ReFillPersonRanksCommand::class,
         PruneInactivePersonsCommand::class,
+        DeleteInactivePersonsPromptsCommand::class,
+        FixInactivePersonsProtocolLinesCommand::class,
     ];
 
     /**

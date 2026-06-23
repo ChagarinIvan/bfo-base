@@ -45,11 +45,14 @@ final class EloquentPromptPaymentRepository implements PersonPromptRepository
 
     private function buildQuery(Criteria $criteria): Builder
     {
-        return PersonPrompt::select('persons_prompt.*')
+        $query = PersonPrompt::select('persons_prompt.*')
             ->join('person', 'person.id', '=', 'persons_prompt.person_id')
-            ->where('person.active', true)
-            ->where('persons_prompt.person_id', $criteria->param('personId'))
-            ->orderBy('persons_prompt.id', 'desc')
-        ;
+            ->where('person.active', $criteria->paramOrDefault('activePerson', true));
+
+        if ($criteria->hasParam('personId')) {
+            $query->where('persons_prompt.person_id', $criteria->param('personId'));
+        }
+
+        return $query->orderBy('persons_prompt.id', 'desc');
     }
 }
