@@ -60,6 +60,7 @@ class AlbatrosTimingParser extends AbstractParser
             $groupHeader = $lines[2];
             $withPoints = str_contains($groupHeader, 'Oчки') || str_contains($groupHeader, 'Очки');
             $withComment = str_contains($groupHeader, 'Прим');
+            $withCompletedRank = str_contains($groupHeader, 'Вып') || str_contains($groupHeader, 'вып');
             for ($index = 4; $index < $linesCount; $index++) {
                 $line = trim($lines[$index]);
                 if (in_array(trim($line, '-'), ['', '0'], true)) {
@@ -92,12 +93,14 @@ class AlbatrosTimingParser extends AbstractParser
                     }
                     $protocolLine['points'] = is_numeric($points) ? (int)$points : null;
                 }
-                $completeRank = $lineData[$fieldsCount - $indent];
-                if ((Rank::validateRank($completeRank) || $completeRank === '-') && !in_array($completeRank, ['1', '2', '3'], true)) {
-                    $protocolLine['complete_rank'] = $completeRank;
-                    $indent++;
-                } elseif ($completeRank === 'в/к') {
-                    $protocolLine['vk'] = true;
+                if ($withCompletedRank) {
+                    $completeRank = $lineData[$fieldsCount - $indent];
+                    if ((Rank::validateRank($completeRank) || $completeRank === '-') && !in_array($completeRank, ['1', '2', '3'], true)) {
+                        $protocolLine['complete_rank'] = $completeRank;
+                        $indent++;
+                    } elseif ($completeRank === 'в/к') {
+                        $protocolLine['vk'] = true;
+                    }
                 }
 
                 $protocolLine['place'] = null;
@@ -124,6 +127,7 @@ class AlbatrosTimingParser extends AbstractParser
                 $protocolLine['time'] = $time;
                 $protocolLine['runner_number'] = (int)$lineData[$fieldsCount - $indent++];
                 $protocolLine['rank'] = $lineData[$fieldsCount - $indent++];
+
                 if (is_numeric($lineData[$fieldsCount - $indent])) {
                     $protocolLine['year'] = (int)$lineData[$fieldsCount - $indent];
                 } else {

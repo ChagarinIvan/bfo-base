@@ -118,6 +118,7 @@ class WebRoutesServiceProvider extends ServiceProvider
                     $this->route->post('check', Rank\CheckPersonsRanksAction::class);
 
                     $this->middleware(['auth'])->group(function (): void {
+                        $this->route->get('export', Rank\ExportPersonsRanksAction::class);
                         $this->route->post('person/{personId}/refill', Rank\RefillPersonRanksAction::class);
                         $this->route->get('{rankId}/activate', Rank\ShowActivationFormAction::class);
                         $this->route->get('{rankId}/update-activation', Rank\ShowEditActivationDateFormAction::class);

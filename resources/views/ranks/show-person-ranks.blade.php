@@ -5,7 +5,8 @@
     use App\Bridge\Laravel\Http\Controllers\Rank\ShowEditActivationDateFormAction;
     use App\Application\Dto\Rank\ViewRankDto;
     use App\Domain\Rank\Rank;
-    use App\Bridge\Laravel\Http\Controllers\Rank\RefillPersonRanksAction
+    use App\Bridge\Laravel\Http\Controllers\Rank\RefillPersonRanksAction;
+    use Carbon\Carbon;
     /**
      * @var ViewRankDto[] $ranks;
      * @var ViewPersonDto $person;
@@ -37,11 +38,11 @@
             </div>
         </div>
     @elseauth
-    <div class="row mb-3">
-        <div class="col-12">
-            <x-back-button/>
+        <div class="row mb-3">
+            <div class="col-12">
+                <x-back-button/>
+            </div>
         </div>
-    </div>
     @endauth
     <div class="row">
         <table id="table"
@@ -66,6 +67,7 @@
                 <th>{{ __('app.common.rank') }}</th>
                 <th data-sortable="true">{{ __('app.rank.completed_date') }}</th>
                 <th data-sortable="true">{{ __('app.rank.activated_date') }}</th>
+{{--                <th data-sortable="true">{{ __('app.rank.formal_start_date') }}</th>--}}
                 <th data-sortable="true">{{ __('app.rank.finished_date') }}</th>
                 <th data-sortable="true">{{ __('app.event.title') }}</th>
                 @auth
@@ -74,11 +76,33 @@
             </tr>
             </thead>
             <tbody>
-            @foreach ($ranks as $rank)
+            @php
+                $previousRank = null;
+            @endphp
+            @foreach ($ranks as $index => $rank)
+                @php
+                    if ($previousRank !== $rank->rank) {
+                        $formalStartDate = null;
+                        $iMax = count($ranks);
+                        for ($i = $index + 1; $i < $iMax; $i++) {
+                            if ($ranks[$i]->rank !== $rank->rank) {
+                                $formalStartDate = Carbon::parse($ranks[$i]->finishDate)->addDay()->format('Y-m-d');
+                                break;
+                            }
+                        }
+
+                        if (!$formalStartDate) {
+                            $formalStartDate = $ranks[$i-1]->eventDate ?: $ranks[$i-1]->startDate;
+                        }
+                    }
+
+                    $previousRank = $rank->rank;
+                @endphp
                 <tr @if($rank->activatedDate) class="table-info" @else class="table-secondary" @endif>
                     <td>{{ $rank->rank }}</td>
                     <td>{{ $rank->eventDate ?: $rank->startDate }}</td>
                     <td>{{ $rank->activatedDate ?: '-' }}</td>
+{{--                    <td>{{ $formalStartDate }}</td>--}}
                     <td>{{ $rank->finishDate }}</td>
                     <td>
                         @if ($rank->distanceId !== null)

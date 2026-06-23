@@ -9,6 +9,7 @@ use App\Domain\Person\PersonRepository;
 use App\Domain\ProtocolLine\ProtocolLineRepository;
 use App\Domain\Rank\Factory\RankFactory;
 use App\Domain\Rank\JuniorRankAgeValidator;
+use App\Domain\Rank\Rank;
 use App\Domain\Rank\StandardJuniorJuniorThirdRankChecker;
 use App\Domain\Shared\Clock;
 use App\Domain\Shared\Criteria;
@@ -68,7 +69,7 @@ final class StandardThirdRankCheckerTest extends TestCase
 
         $result = $this->checker->check(1);
 
-        $this->assertNotInstanceOf(\App\Domain\Rank\Rank::class, $result);
+        $this->assertNotInstanceOf(Rank::class, $result);
     }
 
     #[Test]
@@ -99,12 +100,12 @@ final class StandardThirdRankCheckerTest extends TestCase
         $this->protocols
             ->expects($this->once())
             ->method('byCriteria')
-            ->with(new Criteria(['personId' => 1, 'year' => Year::y2025]))
+            ->with(new Criteria(['personId' => 1, 'year' => Year::y2025, 'massCompetition' => false]))
             ->willReturn(new Collection())
         ;
 
         $result = $this->checker->check(1);
 
-        $this->assertNotInstanceOf(\App\Domain\Rank\Rank::class, $result);
+        $this->assertNull($result);
     }
 }

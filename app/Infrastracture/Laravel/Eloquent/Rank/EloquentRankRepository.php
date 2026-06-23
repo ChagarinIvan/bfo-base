@@ -14,6 +14,7 @@ final class EloquentRankRepository implements RankRepository
 {
     public function add(Rank $rank): void
     {
+//        dump('NEW RANK');
         $rank->create();
     }
 
@@ -67,8 +68,16 @@ final class EloquentRankRepository implements RankRepository
             $query->where('start_date', '<=', $criteria->param('startDateLess'));
         }
 
+        if ($criteria->hasParam('activation_date_from')) {
+            $query->where('activated_date', '>', $criteria->param('activation_date_from'));
+        }
+
         if ($criteria->hasParam('rank')) {
             $query->where('rank', $criteria->param('rank'));
+        }
+
+        if ($criteria->hasParam('rank_in')) {
+            $query->whereIn('rank', $criteria->param('rank_in'));
         }
 
         if ($criteria->hasParam('activated')) {
@@ -80,6 +89,11 @@ final class EloquentRankRepository implements RankRepository
         }
 
         $query->join('events', 'events.id', '=', 'ranks.event_id');
+
+        if ($criteria->hasParam('event_id')) {
+            $query->where('event_id', $criteria->param('event_id'));
+        }
+
         if ($criteria->sorting()) {
             foreach ($criteria->sorting() as $key => $order) {
                 $query->orderBy($key, $order);

@@ -128,6 +128,17 @@ class Rank extends AggregatedModel
         return !in_array($rank, [self::SMC_RANK, self::SM_RANK, self::WSM_RANK], true);
     }
 
+    public static function strongerRank(string $rank): array
+    {
+        $ranks = [];
+        while(isset(self::NEXT_RANKS[$rank])) {
+            $rank = self::NEXT_RANKS[$rank];
+            $ranks[] = $rank;
+        }
+
+        return $ranks;
+    }
+
     private static function getPreparedRanks(): array
     {
         if (count(self::$preparedRanks) === 0) {

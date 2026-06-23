@@ -7,12 +7,7 @@ namespace App\Bridge\Laravel\Http\Controllers\Event;
 use App\Application\Dto\Event\EventAssembler;
 use App\Bridge\Laravel\Http\Controllers\AbstractAction;
 use App\Services\ClubsService;
-use App\Services\CupsService;
-use App\Services\ParserService;
-use App\Services\ProtocolLineIdentService;
-use App\Services\ProtocolLineService;
 use App\Services\ViewActionsService;
-use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Routing\Redirector;
 
 class AbstractEventAction extends AbstractAction
@@ -20,12 +15,7 @@ class AbstractEventAction extends AbstractAction
     public function __construct(
         protected ViewActionsService $viewActionsService,
         protected Redirector $redirector,
-        protected ParserService $parserService,
-        protected CupsService $cupsService,
         protected ClubsService $clubsService,
-        protected ProtocolLineIdentService $identService,
-        protected ProtocolLineService $protocolLineService,
-        protected Filesystem $storage,
         protected EventAssembler $assembler,
     ) {
         parent::__construct($viewActionsService, $redirector);

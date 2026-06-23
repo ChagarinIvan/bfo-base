@@ -25,35 +25,49 @@ final readonly class PreviousCompletedRankFiller
     ) {
     }
 
-    public function fill(Rank $rank, ?Carbon $date = null): ?Rank
+    public function fill(int $personId, ?Rank $rank, ?Carbon $date = null): ?Rank
     {
+        $now = $this->clock->now();
         if ($date === null) {
-            $date = $this->clock->now();
+            $date = $now;
         }
 
-        $finishDate = $rank->finish_date;
+        $finishDate = $rank?->finish_date;
+//        dump($finishDate < $date);
 
-        if ($finishDate < $date) {
+        if ($finishDate === null) {
+            $finishDate = $date;
+        }
+
+        if ($finishDate <= $date) {
             // тут трэба узять протокол лініі за 2 года, дзе было выкананне адсартырованные па моцы разраду
             $criteria = new Criteria(
                 [
-                    'personId' => $rank->person_id,
+                    'personId' => $personId,
                     'dateFrom' => $finishDate->clone()->addYears(-2),
                     'dateTo' => $finishDate,
                     'completedRank' => true,
+                    'massCompetition' => false,
                 ],
                 ['completedRank' => 'desc', 'eventDate' => 'asc'],
             );
 //            dump($criteria);
             $protocolLines = $this->protocolLines->byCriteria($criteria);
+//            dump($protocolLines->count());
 
 //            dump('$protocolLines->count(): ' . $protocolLines->count());
             if ($protocolLines->isEmpty()) {
                 return null;
             }
 
+            if ($rank) {
+                $protocolLines = $protocolLines->filter(static fn (ProtocolLine $pl): bool => $pl->complete_rank !== $rank->rank);
+            }
+
             /** @var ProtocolLine $first */
             $first = $protocolLines->first();
+//            dump($rank->rank);
+//            dump($first->complete_rank);
             $protocolLines = $protocolLines->filter(static fn (ProtocolLine $pl): bool => $pl->complete_rank === $first->complete_rank);
 //            dump('$protocolLines->count(): ' . $protocolLines->count());
 
@@ -61,26 +75,53 @@ final readonly class PreviousCompletedRankFiller
                 return null;
             }
 
-            $startDate = $finishDate->addDay();
-
             $previous = $this->ranks->oneByCriteria(
                 new Criteria([
-                    'person_id' => $rank->person_id,
+                    'person_id' => $personId,
                     'activated' => true,
                     'rank' => $first->complete_rank,
                 ], ['events.date' => 'asc'])
             );
-
-            if (!$previous) {
-                return null;
-            }
+            $activationDate = null;
 
             foreach ($protocolLines as $protocolLine) {
-                $newRank = $this->factory->create($this->createRankInput($protocolLine, $startDate, $previous->activated_date));
+                /** @var ProtocolLine $protocolLine */
+                if ($activationDate === null) {
+                    if ($previous) {
+                        $activationDate = $previous->activated_date;
+                    } else {
+                        $activationDate = $protocolLine->activate_rank;
+                    }
+                }
+
+                if ($activationDate === null) {
+                    $equal = $this->ranks->oneByCriteria(
+                        new Criteria([
+                            'person_id' => $personId,
+                            'activated' => false,
+                            'rank' => $protocolLine->complete_rank,
+                            'event_id' => $protocolLine->event->id
+                        ])
+                    );
+
+//                    dump('equal', $equal);
+                    if ($equal) {
+                        return null;
+                    }
+                }
+
+                $newRank = $this->factory->create($this->createRankInput(
+                    protocolLine: $protocolLine,
+                    activatedDate: $activationDate,
+                ));
+
+//                dump('Rank', $newRank);
 
                 if (!$this->juniorRankAgeValidator->validate($newRank->person_id, $newRank->rank, Year::actualYear())) {
                     continue;
                 }
+
+//                dump('ADDDDDDDD');
 
                 $this->ranks->add($newRank);
 
@@ -91,11 +132,12 @@ final readonly class PreviousCompletedRankFiller
 
                 // трэба абнавіць усе папярэднія разряды
                 $this->updater->update(
+                    rank: $newRank,
                     personId: $newRank->person_id,
-                    rank: $newRank->rank,
                     startDate: $newRank->start_date,
                     finishDate: $newRank->finish_date,
                 );
+
             }
 
             return $newRank ?? null;
@@ -104,13 +146,13 @@ final readonly class PreviousCompletedRankFiller
         return $rank;
     }
 
-    private function createRankInput(ProtocolLine $protocolLine, Carbon $startDate, Carbon $activatedDate): RankInput
+    private function createRankInput(ProtocolLine $protocolLine, ?Carbon $activatedDate): RankInput
     {
         return new RankInput(
             personId: $protocolLine->person_id,
             eventId: $protocolLine->distance->event_id,
             rank: $protocolLine->complete_rank,
-            startDate: $startDate,
+            startDate: $protocolLine->event->date->clone(),
             activatedDate: $activatedDate,
             finishDate: $protocolLine->event->date->clone()->addYears(2),
         );

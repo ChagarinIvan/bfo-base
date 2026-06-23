@@ -20,7 +20,9 @@ final class EloquentEventRepository implements EventRepository
 
     public function byId(int $id): ?Event
     {
-        return Event::where('active', true)->find($id);
+        return Event::where('active', true)
+            ->with(['competition', 'cups.cup', 'distances.group', 'flags'])
+            ->find($id);
     }
 
     public function lockById(int $id): ?Event

@@ -71,6 +71,7 @@ class RankService
 
         $criteria = new Criteria(['personId' => $personId, 'massCompetition' => false], ['eventDate' => 'asc']);
         foreach ($this->protocolLines->byCriteria($criteria) as $protocolLine) {
+//            dump('forech');
             /** @var ProtocolLine $protocolLine */
             $this->fillRank($protocolLine);
         }
@@ -147,6 +148,14 @@ class RankService
         $actualRankDto = $this->activePersonRankService->execute(new ActivePersonRank((string)$protocolLine->person_id, $protocolLine->event->date));
 
 //        dump('Actual rank ' . ($actualRankDto?->rank ?? '---'));
+
+        if (
+            $actualRankDto?->eventId === (string) $protocolLine->event->id
+            && $actualRankDto->rank === $protocolLine->complete_rank
+        ) {
+            return;
+        }
+
         if ($actualRankDto) {
             if ($actualRankDto->rank === $protocolLine->complete_rank) {
                 $newRank = $this->factory->create(new RankInput(
@@ -161,17 +170,31 @@ class RankService
 //                dump('$actualRankDto->eventId '. $actualRankDto->eventId);
 //                dump('$actualRankDto->eventDate '. $actualRankDto->eventDate);
 //                dump(sprintf('Compare %s >= %s: ', $event->date->toDateString(), $actualRankStartDate->toDateString()) . ($event->date->toDateString() >= $actualRankStartDate->toDateString() ? 'true' : 'false'));
-                $finishDate = $event->date->toDateString() >= $actualRankStartDate->toDateString()
-                    ? ($protocolLine->activate_rank ?? $event->date)->clone()->addYears(2)
-                    : $newRank->finish_date->clone()
-                ;
+
+                // можа есць больш мацнейшы не актываваны разрад?
+                $futureActivatedRank = $this->ranks->oneByCriteria(new Criteria([
+                    'personId' => (int) $actualRankDto->personId,
+                    'activated' => true,
+                    'activation_date_from' => $event->date,
+                    'rank_in' => Rank::strongerRank($actualRankDto->rank),
+                ]));
+//                dump($futureActivatedRank);
+
+                if ($futureActivatedRank) {
+                    $finishDate = $futureActivatedRank->activated_date->clone()->subDay();
+                } else {
+                    $finishDate = $event->date->toDateString() >= $actualRankStartDate->toDateString()
+                        ? ($protocolLine->activate_rank ?? $event->date)->clone()->addYears(2)
+                        : $newRank->finish_date->clone()
+                    ;
+                }
 
                 $newRank->finish_date = $finishDate->clone();
 
                 // трэба абнавіць усе папярэднія разряды
                 $this->updater->update(
+                    rank: $newRank,
                     personId: (int) $actualRankDto->personId,
-                    rank: $newRank->rank,
                     startDate: $newRank->start_date,
                     finishDate: $finishDate,
                 );
@@ -292,6 +315,7 @@ class RankService
 
     public function storeRank(Rank $rank): void
     {
+//        dump('STORE RANK');
         $this->ranks->add($rank);
     }
 

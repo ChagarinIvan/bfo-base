@@ -11,6 +11,7 @@
 /certs
 .env
 .phpstorm.meta.php
+.npmrc
 .env.backup
 .phpunit.result.cache
 Homestead.json

@@ -1,20 +1,22 @@
 @php
+    use App\Bridge\Laravel\Http\Controllers\Club\ShowClubAction;
     use App\Bridge\Laravel\Http\Controllers\Cup\ExportCupGroupTableAction;
     use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupEventGroupAction;
     use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupTableAction;
     use App\Bridge\Laravel\Http\Controllers\Event\ShowEventDistanceAction;
     use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonAction;
+    use App\Application\Dto\Club\ViewClubDto;
+    use App\Application\Dto\Person\ViewPersonDto;
     use App\Domain\Cup\Cup;
     use App\Domain\Cup\CupEvent\CupEvent;
     use App\Domain\Cup\CupEvent\CupEventPoint;
     use App\Domain\Cup\Group\CupGroup;
-    use App\Domain\Person\Person;
-    use Illuminate\Support\Collection;
     /**
      * @var Cup $cup;
      * @var CupEvent[] $cupEvents;
      * @var array<int, CupEventPoint[]> $cupPoints;
-     * @var Person[]|Collection $persons;
+     * @var array<int, ViewPersonDto> $persons;
+     * @var array<int, ViewClubDto> $clubs;
      * @var CupGroup $activeGroup;
      */
     $place = 1;
@@ -93,21 +95,28 @@
                     <tbody>
                     @foreach($cupPoints as $personId => $cupEventPoints)
                         @php
-                            /** @var Person $person */
-                            $person = $persons->get($personId);
+                            /** @var ViewPersonDto|null $person */
+                            $person = $persons[$personId] ?? null;
                             $sum = 0;
                             $count = 0;
                         @endphp
+                        {{-- skip points of inactive/deleted persons not returned by the service --}}
+                        @continue(!$person)
                         <tr>
                             <td>{{ $place }}</td>
                             <td>
                                 <b>
-                                    <a href="{{ action(ShowPersonAction::class, [$person]) }}">{{ $person->lastname.' '.$person->firstname }}</a>
+                                    <a href="{{ action(ShowPersonAction::class, [$person->id]) }}">{{ $person->lastname.' '.$person->firstname }}</a>
                                 </b>
                             </td>
-                            <td>{{ $person->birthday?->year }}</td>
+                            <td>{{ $person->birthday ? substr($person->birthday, 0, 4) : '' }}</td>
                             <td>
-                                <x-club-link :clubId="$person->club_id"></x-club-link>
+                                @php
+                                    $club = $clubs[$person->clubId] ?? null;
+                                @endphp
+                                @if($club)
+                                    <a href="{{ action(ShowClubAction::class, [$club->id]) }}">{{ $club->name }}</a>
+                                @endif
                             </td>
                             @foreach($cupEvents as $cupEvent)
                                 @php

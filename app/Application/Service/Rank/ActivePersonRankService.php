@@ -31,9 +31,22 @@ final readonly class ActivePersonRankService
         if ($lastRank === null) {
             $lastCompletedRank = $this->ranks->oneByCriteria($this->criteriaWithoutDate($command));
 //            dump('$lastCompletedRank: ' . $lastCompletedRank?->rank ?? '---');
-            if ($lastCompletedRank) {
-                $lastRank = $this->previousCompletedRankFiller->fill($lastCompletedRank, $command->date());
-            }
+//            if ($lastCompletedRank) {
+                $lastRank = $this->previousCompletedRankFiller->fill($command->personId(), $lastCompletedRank, $command->date());
+//                dump('before while');
+//                dump($lastRank);
+//                dump('$lastRank !== null' . $lastRank !== null);
+//                dump('$lastRank->finish_date:' . $lastRank?->finish_date?->format('Y-m-d'));
+
+                while ($lastRank !== null && $lastRank->finish_date->lessThan($command->date() ?? $this->clock->now())) {
+//                    dump('while $lastRank->id' . $lastRank->id);
+//                    dump('while $lastRank->rank' . $lastRank->rank);
+//                    dump('while $lastRank->start_date' . $lastRank->start_date->format('Y-m-d'));
+//                    dump('while $lastRank->finish_date' . $lastRank->finish_date->format('Y-m-d'));
+//                    dump('while $lastRank->activated_date' . $lastRank->activated_date->format('Y-m-d'));
+                    $lastRank = $this->previousCompletedRankFiller->fill($command->personId(), $lastRank, $command->date());
+                }
+//            }
         }
 
         if ($lastRank === null) {

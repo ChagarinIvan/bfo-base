@@ -39,6 +39,10 @@ final class EloquentPersonRepository implements PersonRepository
             ->orderBy('person.lastname')
         ;
 
+        if ($criteria->hasParam('ids')) {
+            $query->whereIn('person.id', $criteria->param('ids'));
+        }
+
         if ($criteria->hasParam('clubId')) {
             $query->where('person.club_id', $criteria->param('clubId'));
         }
