@@ -14,7 +14,6 @@
     use App\Domain\Event\Event;
     use App\Domain\Rank\Rank;
     use App\Domain\ProtocolLine\ProtocolLine;
-    use App\Services\ClubsService;
     use Illuminate\Support\Collection;
     /**
      * @var ViewEventDto $event
