@@ -18,12 +18,12 @@ final class ViewProvider extends ServiceProvider
 {
     public function boot(): void
     {
-        Blade::aliasComponent('button', Button::class);
-        Blade::aliasComponent('badge', Badge::class);
-        Blade::aliasComponent('club-link', ClubLink::class);
-        Blade::aliasComponent('edit-button', EditButton::class);
-        Blade::aliasComponent('impression', Impression::class);
-        Blade::aliasComponent('modal', Modal::class);
-        Blade::aliasComponent('modal-button', ModalButton::class);
+        Blade::component('button', Button::class);
+        Blade::component('badge', Badge::class);
+        Blade::component('club-link', ClubLink::class);
+        Blade::component('edit-button', EditButton::class);
+        Blade::component('impression', Impression::class);
+        Blade::component('modal', Modal::class);
+        Blade::component('modal-button', ModalButton::class);
     }
 }
