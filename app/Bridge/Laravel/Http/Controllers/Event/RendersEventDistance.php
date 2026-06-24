@@ -11,6 +11,7 @@ use App\Application\Service\Club\ListClubs;
 use App\Application\Service\Club\ListClubsService;
 use App\Application\Service\Person\ListPersons;
 use App\Application\Service\Person\ListPersonsService;
+use App\Domain\Club\NormalizedNameClubFinder;
 use App\Domain\Distance\Distance;
 use Illuminate\Contracts\View\View;
 use function array_column;
@@ -54,6 +55,14 @@ trait RendersEventDistance
             index_key: 'normalizeName',
         );
 
+        $clubsByLine = [];
+        foreach ($protocolLines as $protocolLine) {
+            $normalized = NormalizedNameClubFinder::normalizeName($protocolLine->club);
+            if (isset($clubs[$normalized])) {
+                $clubsByLine[$protocolLine->id] = $clubs[$normalized];
+            }
+        }
+
         /** @see /resources/views/events/show.blade.php */
         return $this->view('events.show', [
             'event' => $event,
@@ -61,7 +70,7 @@ trait RendersEventDistance
             'withPoints' => $withPoints,
             'withVk' => $withVk,
             'selectedDistance' => $distance,
-            'clubs' => $clubs,
+            'clubsByLine' => $clubsByLine,
             'persons' => $persons,
         ]);
     }

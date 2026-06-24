@@ -21,7 +21,7 @@
      * @var Collection $lines
      * @var bool $withPoints
      * @var bool $withVk
-     * @var array<string, ViewClubDto> $clubs
+     * @var array<int, ViewClubDto> $clubsByLine
      * @var array<int, ViewPersonDto> $persons
      */
 @endphp
@@ -166,7 +166,7 @@
                                 </td>
                                 <td>{{ $line->firstname }}</td>
                             @endif
-                            @if($club = $clubs[ClubsService::normalizeName($line->club)] ?? null)
+                            @if($club = $clubsByLine[$line->id] ?? null)
                                 <td>
                                     <a href="{{ action(ShowClubAction::class, [$club->id]) }}">
                                         {{ ($line->club) }}
