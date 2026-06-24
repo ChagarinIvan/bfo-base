@@ -20,11 +20,6 @@
     <div class="row"><h4>{{ $protocolLine->club }}</h4></div>
     <div class="row"><h4>{{ $protocolLine->year }}</h4></div>
     <div class="row"><h4>{{ $protocolLine->rank }}</h4></div>
-    <div class="row mb-3">
-        <div class="col-12">
-            <x-back-button/>
-        </div>
-    </div>
     <div class="row">
         <table id="table"
                data-cookie="true"

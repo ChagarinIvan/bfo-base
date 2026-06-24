@@ -10,6 +10,8 @@ use App\Application\Service\PersonPrompt\DeletePersonPromptService;
 use App\Application\Service\PersonPrompt\ListPersonsPrompts;
 use App\Application\Service\PersonPrompt\ListPersonsPromptsService;
 use Illuminate\Console\Command;
+use Throwable;
+use function count;
 
 /**
  * Команда для удаления промптов у неактивных персон.
@@ -55,7 +57,7 @@ class DeleteInactivePersonsPromptsCommand extends Command
             try {
                 $this->deletePromptService->execute(new DeletePersonPrompt($prompt->id));
                 $deletedCount++;
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 $failedCount++;
                 $this->error("\nFailed to delete prompt {$prompt->id}: {$e->getMessage()}");
             }

@@ -13,11 +13,6 @@
 @section('title', $club->name.' - '.__('app.navbar.persons'))
 
 @section('content')
-    <div class="row mb-2">
-        <div class="col-12">
-            <x-back-button/>
-        </div>
-    </div>
     <div class="row">
         <table id="table"
                data-cookie="true"

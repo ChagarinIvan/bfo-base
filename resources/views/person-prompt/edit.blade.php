@@ -23,7 +23,6 @@
 
             <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3 col-xxl-2">
                 <input type="submit" class="btn btn-outline-primary btn-sm" value="{{ __('app.common.save') }}">
-                <x-back-button/>
             </div>
         </form>
     </div>

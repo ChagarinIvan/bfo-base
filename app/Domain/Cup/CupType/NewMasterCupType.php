@@ -367,10 +367,10 @@ class NewMasterCupType extends AbstractCupType
         }
 
         $groups = collect($this->getGroups())
-            ->filter(static fn (CupGroup $g) => $g->male() === $male)
+            ->filter(static fn (CupGroup $g): bool => $g->male() === $male)
             ->flatMap(static function (CupGroup $g) {
                 return collect(static::GROUPS_MAP[$g->id()])
-                    ->map(static fn ($name) => [
+                    ->map(static fn ($name): array => [
                         'name' => $name,
                         'cupGroupId' => $g->id(),
                     ]);
@@ -378,11 +378,11 @@ class NewMasterCupType extends AbstractCupType
 
         $groupNames = $groups->pluck('name')->unique()->values();
 
-        $groupToCupMap = $groups->keyBy('name')->map(static fn ($g) => $g['cupGroupId']);
+        $groupToCupMap = $groups->keyBy('name')->map(static fn ($g): string => $g['cupGroupId']);
 
         $result = $this->groupsRepository
             ->searchGroups($groupNames->all())
-            ->map(static fn (Group $group) => [
+            ->map(static fn (Group $group): array => [
                 'id' => $group->id,
                 'name' => $group->name,
                 'cupGroupId' => $groupToCupMap[$group->name] ?? null,

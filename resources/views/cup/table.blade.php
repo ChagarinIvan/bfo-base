@@ -29,7 +29,6 @@
 @section('content')
     <div class="row mb-3">
         <div class="col-12">
-            <x-back-button/>
             @auth
                 <x-button text="app.cup.table.export"
                           color="info"

@@ -54,25 +54,7 @@ trait Action
 
     protected function view(string $template, array $data = []): View
     {
-        if ($this->isNavbarRoute()) {
-            $this->viewService->cleanBackUrls();
-        } else {
-            if ($this::class !== $this->viewService->getActualAction()) {
-                $previous = $this->viewService->generatePreviousUrl();
-                $backUrl = $this->viewService->makeBackAction();
-                if ($previous !== $backUrl) {
-                    $this->viewService->pushUrlInBackUrlsQueue($previous);
-                }
-            }
-            $this->viewService->setActualAction($this::class);
-        }
-
         return $this->viewService->makeView($template, $data, $this->navbarData());
-    }
-
-    protected function removeLastBackUrl(): string
-    {
-        return $this->viewService->getLastBackUrl();
     }
 
     protected function redirectTo404Error(): RedirectResponse

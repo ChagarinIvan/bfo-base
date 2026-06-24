@@ -19,11 +19,6 @@
 
 @section('content')
     <div class="row mb-3">
-        <div class="col-12 col-md-12 col-lg-6 col-xl-4 col-xxl-3">
-            <x-back-button/>
-        </div>
-    </div>
-    <div class="row mb-3">
         <div class="col-12">
             @foreach($eventFlags as $flag)
                 <x-badge color="{{ $flag->color }}"

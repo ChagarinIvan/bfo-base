@@ -18,7 +18,6 @@
             </div>
             <div class="col-12">
                 <input type="submit" class="btn btn-outline-primary btn-sm" value="{{ __('app.rank.check_button') }}">
-                <x-back-button/>
             </div>
         </form>
     </div>

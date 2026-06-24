@@ -7,8 +7,11 @@ namespace App\Bridge\Laravel\Http\Controllers\Rank;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller as BaseController;
+use RuntimeException;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
+use function fclose;
+use function fpassthru;
 
 class ExportPersonsRanksAction extends BaseController
 {
@@ -23,11 +26,11 @@ class ExportPersonsRanksAction extends BaseController
         }
 
         try {
-            return response()->streamDownload(function () use ($storage, $path) {
+            return response()->streamDownload(static function () use ($storage, $path): void {
                 $stream = $storage->readStream($path);
 
                 if ($stream === null) {
-                    throw new \RuntimeException('Cannot read file');
+                    throw new RuntimeException('Cannot read file');
                 }
 
                 fpassthru($stream);

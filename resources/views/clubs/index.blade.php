@@ -54,7 +54,7 @@
             @foreach ($clubs as $club)
                 <tr>
                     <td>
-                        <x-club-link :clubId="$club->id"></x-club-link>
+                        <x-club-link :club="$club"></x-club-link>
                     </td>
                     <td>{{ $club->personsCount }}</td>
                     @auth

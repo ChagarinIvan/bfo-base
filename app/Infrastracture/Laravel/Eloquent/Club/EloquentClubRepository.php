@@ -57,6 +57,10 @@ final class EloquentClubRepository implements ClubRepository
             $query->where('name', $criteria->param('name'));
         }
 
+        if ($criteria->hasParam('normalizedName')) {
+            $query->where('normalize_name', $criteria->param('normalizedName'));
+        }
+
         return $query;
     }
 }

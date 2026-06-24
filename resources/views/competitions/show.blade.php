@@ -47,7 +47,6 @@
                           url="{{ action(ShowUnitEventsFormAction::class, [$competition->id]) }}"
                 />
             @endauth
-            <x-back-button/>
         </div>
     </div>
     @if (count($events) > 0)

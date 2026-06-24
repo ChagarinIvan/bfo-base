@@ -18,7 +18,6 @@
                       icon="bi-stickies"
             />
             <x-edit-button/>
-            <x-back-button/>
         </div>
     </div>
     <div class="row">

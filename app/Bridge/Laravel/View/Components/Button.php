@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\View\Components;
+namespace App\Bridge\Laravel\View\Components;
 
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;

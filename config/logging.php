@@ -54,7 +54,6 @@ return [
             'level' => env('LOG_LEVEL', 'debug'),
         ],
 
-
         'export' => [
             'driver' => 'single',
             'path' => storage_path('logs/export.log'),

@@ -2,16 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Services;
+namespace App\Domain\Club;
 
-use App\Domain\Club\Club;
-use App\Repositories\ClubsRepository;
-use Illuminate\Support\Collection;
+use App\Domain\Shared\Criteria;
+use App\Domain\Shared\SymbolNormalizer;
 use function mb_strtolower;
 use function preg_replace;
 use function str_replace;
 
-class ClubsService
+final readonly class NormalizedNameClubFinder implements ClubFinder
 {
     private const EDIT_MAP = [
         'ко ' => ['ка ', 'oc '],
@@ -24,8 +23,8 @@ class ClubsService
         $clubName = mb_strtolower($clubName);
         $clubName = str_replace(['\'', '"', '«', '»'], '', $clubName);
         $clubName = preg_replace('#\s+#', ' ', $clubName);
-        //Исправляем символы
-        foreach (ProtocolLineIdentService::SYMBOL_MAP as $symbol => $analogs) {
+
+        foreach (SymbolNormalizer::SYMBOL_MAP as $symbol => $analogs) {
             $clubName = str_replace($analogs, $symbol, $clubName);
         }
 
@@ -35,20 +34,12 @@ class ClubsService
 
         return $clubName;
     }
-    public function __construct(private readonly ClubsRepository $repository)
+    public function __construct(private ClubRepository $repository)
     {
     }
 
-    /**
-     * @return Collection|Club[]
-     */
-    public function getAllClubs(): Collection
+    public function findByName(string $clubName): ?Club
     {
-        return Club::all();
-    }
-
-    public function findClub(string $clubName): ?Club
-    {
-        return $this->repository->findByNormalizeName(self::normalizeName($clubName));
+        return $this->repository->oneByCriteria(new Criteria(['normalizedName' => self::normalizeName($clubName)]));
     }
 }

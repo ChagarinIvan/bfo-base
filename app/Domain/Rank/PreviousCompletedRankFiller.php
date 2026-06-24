@@ -87,11 +87,7 @@ final readonly class PreviousCompletedRankFiller
             foreach ($protocolLines as $protocolLine) {
                 /** @var ProtocolLine $protocolLine */
                 if ($activationDate === null) {
-                    if ($previous) {
-                        $activationDate = $previous->activated_date;
-                    } else {
-                        $activationDate = $protocolLine->activate_rank;
-                    }
+                    $activationDate = $previous ? $previous->activated_date : $protocolLine->activate_rank;
                 }
 
                 if ($activationDate === null) {
@@ -137,7 +133,6 @@ final readonly class PreviousCompletedRankFiller
                     startDate: $newRank->start_date,
                     finishDate: $newRank->finish_date,
                 );
-
             }
 
             return $newRank ?? null;

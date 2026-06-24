@@ -106,6 +106,6 @@ final class StandardThirdRankCheckerTest extends TestCase
 
         $result = $this->checker->check(1);
 
-        $this->assertNull($result);
+        $this->assertNotInstanceOf(Rank::class, $result);
     }
 }
