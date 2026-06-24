@@ -23,7 +23,6 @@
                           url="{{ action(ShowCreatePersonPaymentAction::class, [$person->id]) }}"
                 />
             @endauth
-            <x-back-button/>
         </div>
     </div>
     @if($payments > 0)

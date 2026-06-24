@@ -18,11 +18,6 @@
 
 @section('content')
     <div class="row mb-3">
-        <div class="col-12">
-            <x-back-button/>
-        </div>
-    </div>
-    <div class="row mb-3">
         <table id="table"
                data-cookie="true"
                data-cookie-id-table="flag-events"

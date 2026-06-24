@@ -36,6 +36,7 @@ final class EloquentPersonRepository implements PersonRepository
     {
         $query = Person::where('person.active', true)
             ->select('person.*')
+            ->with('payments')
             ->orderBy('person.lastname')
         ;
 

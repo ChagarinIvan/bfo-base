@@ -10,6 +10,7 @@
 /mysql
 /certs
 .env
+.env.testing
 .phpstorm.meta.php
 .npmrc
 .env.backup

@@ -29,11 +29,6 @@
             </h5>
         </div>
     @endif
-    <div class="row mb-3">
-        <div class="col-12">
-            <x-back-button/>
-        </div>
-    </div>
     <div class="row">
         <ul class="nav nav-tabs">
             @foreach($calculatedCupEvent->cupGroups as $group)

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Console\Commands;
 
-use App\Domain\ProtocolLine\ProtocolLine;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Throwable;
 
 /**
  * Команда для очистки связи protocol_line с неактивными персонами.
@@ -56,7 +56,7 @@ class FixInactivePersonsProtocolLinesCommand extends Command
                     ->where('id', $line->id)
                     ->update(['person_id' => null]);
                 $updatedCount++;
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 $failedCount++;
                 $this->error("\nFailed to update protocol line {$line->id}: {$e->getMessage()}");
             }

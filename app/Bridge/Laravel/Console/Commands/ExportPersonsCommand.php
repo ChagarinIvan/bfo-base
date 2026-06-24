@@ -14,12 +14,14 @@ use App\Services\PersonsService;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Log\LogManager;
-use Illuminate\Support\Facades\Storage;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
-use Symfony\Component\Console\Input\InputArgument;
 use Throwable;
-use function unserialize;
+use function fclose;
+use function fopen;
+use function fputcsv;
+use function fwrite;
+use function rewind;
 
 class ExportPersonsCommand extends Command
 {

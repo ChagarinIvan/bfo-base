@@ -33,14 +33,7 @@
                 <form method="POST" action="{{ action(RefillPersonRanksAction::class, [$person->id]) }}">
                     @csrf
                     <input type="submit" class="btn btn-outline-primary btn-sm m-1" value="{{ __('app.rank.refill') }}">
-                    <x-back-button/>
                 </form>
-            </div>
-        </div>
-    @elseauth
-        <div class="row mb-3">
-            <div class="col-12">
-                <x-back-button/>
             </div>
         </div>
     @endauth

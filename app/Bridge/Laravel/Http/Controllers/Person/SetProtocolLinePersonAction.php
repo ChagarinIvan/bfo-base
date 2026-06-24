@@ -51,6 +51,6 @@ class SetProtocolLinePersonAction extends BaseController
             $disablePersonService->execute(new DisablePerson((string)$oldPersonId, $userId));
         }
 
-        return $this->redirector->to($this->removeLastBackUrl());
+        return $this->redirector->back();
     }
 }

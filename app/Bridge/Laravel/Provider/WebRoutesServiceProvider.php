@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Provider;
 
-use App\Bridge\Laravel\Http\Controllers\BackAction;
 use App\Bridge\Laravel\Http\Controllers\Club;
 use App\Bridge\Laravel\Http\Controllers\Competition;
 use App\Bridge\Laravel\Http\Controllers\Cup;
@@ -41,7 +40,6 @@ class WebRoutesServiceProvider extends ServiceProvider
         $this->routes(function (): void {
             $this->routeRegistrar->middleware('web')->group(function (): void {
                 $this->route->get('', fn () => $this->redirector->action(Competition\ShowCompetitionsListAction::class, ['year' => (string) Year::actualYear()->value]));
-                $this->route->get('back', BackAction::class);
 
                 //competitions
                 $this->routeRegistrar->prefix('competitions')->group(function (): void {

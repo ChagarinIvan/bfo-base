@@ -9,10 +9,10 @@ use App\Application\Dto\PersonPayment\PersonPaymentDto;
 use App\Application\Service\PersonPayment\CreateOrUpdatePersonPayments;
 use App\Application\Service\PersonPayment\CreateOrUpdatePersonPaymentsService;
 use App\Domain\Auth\Impression;
+use App\Domain\Club\ClubFinder;
 use App\Domain\Person\Person;
 use App\Domain\Rank\Rank;
 use App\Domain\Shared\Clock;
-use App\Services\ClubsService;
 use App\Services\PersonsIdentService;
 use App\Services\PersonsService;
 use App\Services\RankService;
@@ -31,7 +31,7 @@ class OrientBySyncService
         private readonly PersonsIdentService $identService,
         private readonly PersonsService $personsService,
         private readonly RankService $rankService,
-        private readonly ClubsService $clubsService,
+        private readonly ClubFinder $clubFinder,
         private readonly CreateOrUpdatePersonPaymentsService $createOrUpdatePersonPaymentsService,
         private readonly Clock $clock,
         LogManager $loggerManager,
@@ -156,7 +156,7 @@ class OrientBySyncService
     private function setClub(Person $person, OrientByPersonDto $personDto): bool
     {
         if ($personDto->club) {
-            $club = $this->clubsService->findClub($personDto->club);
+            $club = $this->clubFinder->findByName($personDto->club);
             if ($club && $person->club_id !== $club->id) {
                 $person->club_id = $club->id;
                 return true;

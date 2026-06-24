@@ -49,7 +49,7 @@ final class ProtocolLinesRepositoryTest extends TestCase
     {
         $this->seed(ProtocolLinesSeeder::class);
         $protocolLine = $this->repository->byId(101);
-        $this->assertInstanceOf(\App\Domain\ProtocolLine\ProtocolLine::class, $protocolLine);
+        $this->assertInstanceOf(ProtocolLine::class, $protocolLine);
     }
 
     #[DataProvider('criteriaDataProvider')]

@@ -26,7 +26,7 @@ final readonly class CupAssembler
     ) {
     }
 
-    public function toViewCupDto(Cup $cup, bool $withEvents = false): ViewCupDto
+    public function toViewCupDto(Cup $cup): ViewCupDto
     {
         $eventCriteria = new Criteria(['cupId' => $cup->id], ['date' => 'desc']);
 

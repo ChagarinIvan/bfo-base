@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Domain\Auth\Impression;
+use App\Domain\Club\ClubFinder;
 use App\Domain\Person\Person;
 use App\Domain\ProtocolLine\ProtocolLine;
 use Carbon\Carbon;
@@ -24,7 +25,7 @@ class PersonsService
     ];
 
     public function __construct(
-        private readonly ClubsService $clubService
+        private readonly ClubFinder $clubFinder
     ) {
     }
 
@@ -76,7 +77,7 @@ class PersonsService
         $person->lastname = $protocolLine->lastname;
         $person->firstname = $protocolLine->firstname;
         $person->birthday = $protocolLine->year ? Carbon::createFromFormat('Y', (string)$protocolLine->year) : null;
-        $club = $this->clubService->findClub($protocolLine->club);
+        $club = $this->clubFinder->findByName($protocolLine->club);
         $person->club_id = $club?->id;
         $person->from_base = false;
         $person->created = $person->updated = $impression;

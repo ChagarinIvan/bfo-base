@@ -70,7 +70,6 @@
                 <x-edit-button
                         url="{{ action(ShowEditEventFormAction::class, [$event->id]) }}"/>
             @endauth
-            <x-back-button/>
         </div>
     </div>
     <div class="row">

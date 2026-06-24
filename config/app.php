@@ -16,6 +16,7 @@ use App\Bridge\Laravel\Provider\ProtocolLine\ProtocolLineProvider;
 use App\Bridge\Laravel\Provider\Rank\RankProvider;
 use App\Bridge\Laravel\Provider\Shared\SharedProvider;
 use App\Bridge\Laravel\Provider\User\UserProvider;
+use App\Bridge\Laravel\Provider\ViewProvider;
 use App\Bridge\Laravel\Provider\WebRoutesServiceProvider;
 
 return [
@@ -200,6 +201,9 @@ return [
         // routes
         WebRoutesServiceProvider::class,
         ApiRoutesServiceProvider::class,
+
+        // view
+        ViewProvider::class,
     ],
 
     /*

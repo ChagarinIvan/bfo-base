@@ -23,7 +23,6 @@
                           url="{{ action(ShowCreatePromptAction::class, [$personId]) }}"
                 />
             @endauth
-            <x-back-button/>
         </div>
     </div>
     @if(count($prompts) > 0)

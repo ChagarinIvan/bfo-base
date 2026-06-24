@@ -10,15 +10,14 @@ use App\Application\Dto\Person\PersonInfoDto;
 use App\Application\Service\Person\AddPerson;
 use App\Application\Service\Person\AddPersonService;
 use App\Application\Service\Person\Exception\FailedToAddPerson;
+use App\Domain\Club\ClubFinder;
 use App\Domain\Person\Citizenship;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Models\IdentLine;
-use App\Services\ClubsService;
 use App\Services\ProtocolLineIdentService;
 use App\Services\ProtocolLineService;
 use App\Services\RankService;
 use Illuminate\Console\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use function preg_match;
 use function sprintf;
 
@@ -39,7 +38,7 @@ final class IdentProtocolLineCommand extends Command
 
     public function handle(
         RankService $rankService,
-        ClubsService $clubsService,
+        ClubFinder $clubFinder,
         ProtocolLineService $protocolLineService,
         ProtocolLineIdentService $protocolLineIdentService,
     ): void {
@@ -68,7 +67,7 @@ final class IdentProtocolLineCommand extends Command
 
             /** @var ProtocolLine $protocolLine */
             $protocolLine = $protocolLines->first();
-            $club = $clubsService->findClub($protocolLine->club);
+            $club = $clubFinder->findByName($protocolLine->club);
 
             $personInfo = new PersonInfoDto;
             $personInfo->lastname = $protocolLine->lastname;

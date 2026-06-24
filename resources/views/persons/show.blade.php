@@ -80,7 +80,6 @@
                       icon="bi-smartwatch"
                       url="{{ action(ShowPersonRanksAction::class, [$person->id]) }}"
             />
-            <x-back-button/>
         </div>
     </div>
     @if(count($person->groupedByYearProtocolLines) > 0)

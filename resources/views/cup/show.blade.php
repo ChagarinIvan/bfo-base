@@ -48,7 +48,6 @@
                       icon="bi-table"
                       url="{{ action(ShowCupTableAction::class, [$cup->id, $cup->groups[0]->id]) }}"
             />
-            <x-back-button/>
         </div>
     </div>
     <div class="row mb-3">

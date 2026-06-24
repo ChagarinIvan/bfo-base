@@ -18,6 +18,6 @@ final readonly class ListPersonsPrompts
 
     public function criteria(): Criteria
     {
-        return new Criteria(array_filter(get_object_vars($this->search), fn ($value) => $value !== null));
+        return new Criteria(array_filter(get_object_vars($this->search), static fn ($value): bool => $value !== null));
     }
 }

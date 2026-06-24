@@ -27,7 +27,6 @@
                     ></i>
                     <span class="d-none d-xl-inline">{{ __('app.rank.submit') }}</span>
                 </button>
-                <x-back-button/>
             </div>
         </form>
     </div>
