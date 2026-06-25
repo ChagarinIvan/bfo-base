@@ -24,9 +24,9 @@ class ProtocolLinesSeeder extends Seeder
 
     public function run(): void
     {
-        Competition::factory(state: ['id' => 1, 'name' => 'test', 'from' => '2021-01-01'])->createOne();
-        Competition::factory(state: ['id' => 2, 'name' => 'test2'])->createOne();
-        Competition::factory(state: ['id' => 3, 'name' => 'test3', 'from' => '2021-01-01', 'active' => false])->createOne();
+        Competition::factory(state: ['id' => 1, 'name' => 'test', 'from' => '2021-01-01', 'to' => '2021-01-03'])->createOne();
+        Competition::factory(state: ['id' => 2, 'name' => 'test2', 'from' => '2022-06-01', 'to' => '2022-06-03'])->createOne();
+        Competition::factory(state: ['id' => 3, 'name' => 'test3', 'from' => '2021-01-01', 'to' => '2021-01-03', 'active' => false])->createOne();
 
         Event::factory(state: ['id' => 101, 'competition_id' => 1, 'name' => 'name1', 'description' => 'test description', 'date' => '2022-01-01'])->createOne();
         Event::factory(state: ['id' => 102, 'competition_id' => 1, 'name' => 'name2', 'description' => 'long text description for test str limit', 'date' => '2022-03-02'])->createOne();

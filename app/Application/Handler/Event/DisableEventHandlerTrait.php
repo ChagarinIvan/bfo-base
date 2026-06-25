@@ -4,12 +4,8 @@ declare(strict_types=1);
 
 namespace App\Application\Handler\Event;
 
+use App\Application\Service\Cup\ClearCupCache;
 use App\Domain\Event\Event;
-use App\Domain\Event\Event\EventDisabled;
-use App\Services\CupsService;
-use App\Services\DistanceService;
-use App\Services\ProtocolLineService;
-use App\Services\RankService;
 use Illuminate\Support\Facades\Log;
 
 trait DisableEventHandlerTrait
@@ -23,7 +19,7 @@ trait DisableEventHandlerTrait
         $this->ranksService->deleteEventRanks($event);
 
         foreach ($event->cups as $cup) {
-            $this->cupsService->clearCupCache($cup->id);
+            $this->clearCupCacheService->execute(new ClearCupCache((string) $cup->id));
         }
     }
 }
