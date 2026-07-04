@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace App\Application\Dto\Rank;
 
+use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\ProtocolLine\ProtocolLineRepository;
 use App\Domain\Rank\Rank;
 use App\Domain\Shared\Criteria;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use function array_map;
+use function array_values;
 
 final readonly class RankAssembler
 {
@@ -21,6 +25,33 @@ final readonly class RankAssembler
             : null
         ;
 
+        return $this->assemble($rank, $protocolLine);
+    }
+
+    /**
+     * Batch variant that avoids the per-rank N+1: eager-loads the rank relations and
+     * resolves every protocol line in a single query per person.
+     *
+     * @param  Rank[] $ranks
+     * @return ViewRankDto[]
+     */
+    public function toViewRankDtos(array $ranks): array
+    {
+        EloquentCollection::make($ranks)->loadMissing(['person', 'event.competition']);
+
+        $protocolLines = $this->preloadProtocolLines($ranks);
+
+        return array_map(
+            fn (Rank $rank): ViewRankDto => $this->assemble(
+                $rank,
+                $protocolLines[$rank->person_id][$rank->event_id] ?? null,
+            ),
+            $ranks,
+        );
+    }
+
+    private function assemble(Rank $rank, ?ProtocolLine $protocolLine): ViewRankDto
+    {
         return new ViewRankDto(
             id: (string) $rank->id,
             rank: $rank->rank,
@@ -37,5 +68,35 @@ final readonly class RankAssembler
             eventName: $rank->event?->name,
             eventDate: $rank->event?->date->format('Y-m-d'),
         );
+    }
+
+    /**
+     * @param  Rank[] $ranks
+     * @return array<int, array<int, ProtocolLine>> map of [personId][eventId] => ProtocolLine
+     */
+    private function preloadProtocolLines(array $ranks): array
+    {
+        $eventIdsByPerson = [];
+        foreach ($ranks as $rank) {
+            if ($rank->event_id) {
+                $eventIdsByPerson[$rank->person_id][$rank->event_id] = $rank->event_id;
+            }
+        }
+
+        $map = [];
+        foreach ($eventIdsByPerson as $personId => $eventIds) {
+            $lines = $this->protocolLines->byCriteria(new Criteria([
+                'personId' => $personId,
+                'eventIds' => array_values($eventIds),
+            ]));
+
+            /** @var ProtocolLine $line */
+            foreach ($lines as $line) {
+                $eventId = (int) $line->getAttribute('event_id');
+                $map[$personId][$eventId] ??= $line;
+            }
+        }
+
+        return $map;
     }
 }
