@@ -7,7 +7,6 @@ namespace App\Application\Service\Rank;
 use App\Application\Dto\Rank\RankAssembler;
 use App\Application\Dto\Rank\ViewRankDto;
 use App\Domain\Rank\RankRepository;
-use function array_map;
 
 final readonly class PersonRanksService
 {
@@ -20,8 +19,7 @@ final readonly class PersonRanksService
     /** @return ViewRankDto[] */
     public function execute(PersonRanks $command): array
     {
-        return array_map(
-            $this->assembler->toViewRankDto(...),
+        return $this->assembler->toViewRankDtos(
             $this->ranks->byCriteria($command->criteria())->all()
         );
     }
