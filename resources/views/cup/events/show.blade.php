@@ -73,7 +73,7 @@
                             </td>
                             <td>{{ $point->personYear }}</td>
                             <td>
-                                <x-club-link :clubId="$point->personClubId"></x-club-link>
+                                @include('components.club-link', ['club' => $clubs[$point->personClubId] ?? null])
                             </td>
                             <td>{{ $point->time }}</td>
                             @if($point->points === $calculatedCupEvent->cupEvent->points)
