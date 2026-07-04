@@ -14,7 +14,6 @@ class RankFactory extends Factory
     public function definition(): array
     {
         return [
-            'id' => $this->faker->numberBetween(1, 100),
             'person_id' => $this->faker->numberBetween(1, 100),
             'event_id' => $this->faker->numberBetween(1, 100),
             'rank' => 'ii',

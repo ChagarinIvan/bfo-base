@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Http\Controllers\Cup;
 
-use App\Domain\Cup\Cup;
-use App\Services\CupsService;
+use App\Application\Service\Cup\ClearCupCache;
+use App\Application\Service\Cup\ClearCupCacheService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller as BaseController;
 
@@ -13,9 +13,9 @@ class ClearCacheAction extends BaseController
 {
     use CupAction;
 
-    public function __invoke(string $cupId, CupsService $cupsService): RedirectResponse
+    public function __invoke(string $cupId, ClearCupCacheService $service): RedirectResponse
     {
-        $cupsService->clearCupCache((int) $cupId);
+        $service->execute(new ClearCupCache($cupId));
 
         return $this->redirector->action(ShowCupAction::class, [$cupId]);
     }

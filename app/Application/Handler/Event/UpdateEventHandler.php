@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Application\Handler\Event;
 
+use App\Application\Service\Cup\ClearCupCacheService;
 use App\Domain\Event\Event\EventUpdated;
 use App\Domain\Event\ProtocolStorage;
-use App\Services\CupsService;
 use App\Services\DistanceService;
 use App\Services\ParserService;
 use App\Services\ProtocolLineIdentService;
@@ -25,7 +25,7 @@ final class UpdateEventHandler extends ParseProtocolHandler implements ShouldQue
         ProtocolLineIdentService $identService,
         protected readonly RankService $ranksService,
         protected readonly DistanceService $distanceService,
-        protected readonly CupsService $cupsService,
+        protected readonly ClearCupCacheService $clearCupCacheService,
     ) {
         parent::__construct(
             storage: $storage,
