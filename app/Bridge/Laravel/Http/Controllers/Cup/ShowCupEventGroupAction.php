@@ -48,8 +48,8 @@ class ShowCupEventGroupAction extends BaseController
     }
 
     /**
-     * Preload every club referenced by the points in a single query to avoid
-     * an N+1 in the <x-club-link> component rendered per row.
+     * Preload every club referenced by the points in a single query so the view
+     * can render club links without per-row lookups.
      *
      * @param ViewCupEventPointDto[] $points
      *
