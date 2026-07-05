@@ -32,7 +32,7 @@ final readonly class RankAssembler
      * Batch variant that avoids the per-rank N+1: eager-loads the rank relations and
      * resolves every protocol line in a single query per person.
      *
-     * @param  Rank[] $ranks
+     * @param Rank[] $ranks
      * @return ViewRankDto[]
      */
     public function toViewRankDtos(array $ranks): array
@@ -71,7 +71,7 @@ final readonly class RankAssembler
     }
 
     /**
-     * @param  Rank[] $ranks
+     * @param Rank[] $ranks
      * @return array<int, array<int, ProtocolLine>> map of [personId][eventId] => ProtocolLine
      */
     private function preloadProtocolLines(array $ranks): array

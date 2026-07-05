@@ -47,6 +47,11 @@ class ShowCupEventGroupAction extends BaseController
         ]);
     }
 
+    protected function isNavbarRoute(): bool
+    {
+        return true;
+    }
+
     /**
      * Preload every club referenced by the points in a single query so the view
      * can render club links without per-row lookups.
@@ -69,10 +74,5 @@ class ShowCupEventGroupAction extends BaseController
         }
 
         return $clubs;
-    }
-
-    protected function isNavbarRoute(): bool
-    {
-        return true;
     }
 }

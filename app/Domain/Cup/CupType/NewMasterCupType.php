@@ -70,6 +70,8 @@ class NewMasterCupType extends AbstractCupType
     private static array $eventGroups = [];
     /** @var Distance[] */
     private static array $groups = [];
+    /** @var array<string, int[]> */
+    private static array $eventDistanceIds = [];
 
     private static function calculateGroupAge(int $age): GroupAge
     {
@@ -153,16 +155,13 @@ class NewMasterCupType extends AbstractCupType
         self::$lines = [];
         self::$eventGroups = [];
         self::$groups = [];
+        self::$eventDistanceIds = [];
 
         $cupEventProtocolLines = $this->getAgeGroupProtocolLines($cupEvent, $mainGroup);
         $eventGroups = $this->getEventGroups($mainGroup->male());
         $eventGroupsId = $eventGroups->pluck('id');
 
-        $eventDistances = $this->distanceService
-            ->getCupEventDistancesByGroups($cupEvent, $eventGroupsId)
-            ->pluck('id')
-            ->toArray()
-        ;
+        $eventDistances = $this->getEventDistanceIds($cupEvent, $mainGroup->male());
 
         $cupEventProtocolLines = $cupEventProtocolLines->filter(
             static fn (ProtocolLine $protocolLine): bool => in_array($protocolLine->distance_id, $eventDistances, true)
@@ -333,13 +332,7 @@ class NewMasterCupType extends AbstractCupType
             self::$lines[$criteria->hash()] = $lines;
         }
 
-        $eventGroupsId = $this->getEventGroups($group->male())->pluck('id');
-
-        $eventDistances = $this->distanceService
-            ->getCupEventDistancesByGroups($cupEvent, $eventGroupsId)
-            ->pluck('id')
-            ->toArray()
-        ;
+        $eventDistances = $this->getEventDistanceIds($cupEvent, $group->male());
 
         $result = $lines->filter(static fn(ProtocolLine $protocolLine): bool => in_array($protocolLine->distance_id, $eventDistances, true));
         self::$protocolLines[$group->id()] = $result;
@@ -389,6 +382,27 @@ class NewMasterCupType extends AbstractCupType
             ]);
 
         return self::$eventGroups[$male->value] = $result;
+    }
+
+    /**
+     * Distance ids of the event groups only depend on the gender, so memoize them
+     * to avoid re-running the same query for every processed group.
+     *
+     * @return int[]
+     */
+    protected function getEventDistanceIds(CupEvent $cupEvent, GroupMale $male): array
+    {
+        if (array_key_exists($male->value, self::$eventDistanceIds)) {
+            return self::$eventDistanceIds[$male->value];
+        }
+
+        $eventGroupsId = $this->getEventGroups($male)->pluck('id');
+
+        return self::$eventDistanceIds[$male->value] = $this->distanceService
+            ->getCupEventDistancesByGroups($cupEvent, $eventGroupsId)
+            ->pluck('id')
+            ->toArray()
+        ;
     }
 
     protected function paymentYear(Cup $cup): Year
