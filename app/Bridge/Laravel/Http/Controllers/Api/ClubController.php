@@ -14,6 +14,6 @@ class ClubController extends Controller
 {
     public function index(ListClubsService $service): JsonResponse
     {
-        return new JsonResponse($service->execute(new ListClubs(new ClubSearchDto())));
+        return new JsonResponse($service->execute(new ListClubs(new ClubSearchDto(withPersonsCount: true))));
     }
 }

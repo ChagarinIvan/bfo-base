@@ -47,7 +47,11 @@ final class EloquentClubRepository implements ClubRepository
 
     private function buildQuery(Criteria $criteria): Builder
     {
-        $query = Club::where('active', true)->withCount('persons')->orderBy('name');
+        $query = Club::where('active', true)->orderBy('name');
+
+        if ($criteria->hasParam('withPersonsCount')) {
+            $query->withCount('persons');
+        }
 
         if ($criteria->hasParam('ids')) {
             $query->whereIn('id', $criteria->param('ids'));

@@ -20,7 +20,7 @@ class ShowClubsListAction extends BaseController
      */
     public function __invoke(ListClubsService $service): View
     {
-        $clubs = $service->execute(new ListClubs(new ClubSearchDto()));
+        $clubs = $service->execute(new ListClubs(new ClubSearchDto(withPersonsCount: true)));
 
         /** @see /resources/views/clubs/index.blade.php */
         return $this->view('clubs.index', ['clubs' => $clubs]);
