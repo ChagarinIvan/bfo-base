@@ -21,6 +21,7 @@ final class ClubSearchDto extends AbstractDto
         /** @var array<int|string> */
         public array $ids = [],
         public ?string $name = null,
+        public bool $withPersonsCount = false,
     ) {
     }
 
