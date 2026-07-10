@@ -102,8 +102,7 @@ class RankService
         }
         $ranks = Collection::empty();
 
-        foreach ($personsIds as $personId) {
-            $actualRank = $this->activePersonRankService->execute(new ActivePersonRank((string)$personId));
+        foreach ($this->activePersonRankService->executeForMany($personsIds->all()) as $personId => $actualRank) {
             if ($actualRank && $actualRank->rank === $rank) {
                 $ranks->put($personId, $actualRank);
             }
@@ -115,8 +114,7 @@ class RankService
     public function getActualRanks(Collection $personIds): Collection
     {
         $actualRanks = new Collection();
-        foreach ($personIds as $personId) {
-            $rank = $this->activePersonRankService->execute(new ActivePersonRank((string)$personId));
+        foreach ($this->activePersonRankService->executeForMany($personIds->all()) as $personId => $rank) {
             if ($rank) {
                 $actualRanks->put($personId, $rank);
             }

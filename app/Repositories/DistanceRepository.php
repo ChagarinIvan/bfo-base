@@ -52,6 +52,20 @@ class DistanceRepository
         return Distance::find($id);
     }
 
+    /**
+     * Все дистанции указанных событий с группами — одним запросом.
+     *
+     * @param int[] $eventIds
+     */
+    public function getEventsDistances(array $eventIds): Collection
+    {
+        return Distance::whereIn('event_id', $eventIds)
+            ->with('group')
+            ->orderBy('id')
+            ->get()
+        ;
+    }
+
     public function getEventGroupDistance(int $eventId, int $groupId): ?Distance
     {
         return Distance::whereEventId($eventId)

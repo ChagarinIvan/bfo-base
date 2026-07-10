@@ -22,6 +22,7 @@ final class EloquentEventRepository implements EventRepository
     {
         return Event::where('active', true)
             ->with(['competition', 'cups.cup', 'distances.group', 'flags'])
+            ->withCount('protocolLines')
             ->find($id);
     }
 
@@ -50,7 +51,12 @@ final class EloquentEventRepository implements EventRepository
 
     private function buildQuery(Criteria $criteria): Builder
     {
-        $query = Event::select('events.*')->distinct()->where('events.active', true);
+        $query = Event::select('events.*')
+            ->distinct()
+            ->with(['competition', 'cups.cup', 'distances.group', 'flags'])
+            ->withCount('protocolLines')
+            ->where('events.active', true)
+        ;
 
         if ($criteria->hasParam('year')) {
             $query->where('events.date', 'LIKE', "{$criteria->param('year')}-%");

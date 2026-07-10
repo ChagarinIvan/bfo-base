@@ -34,6 +34,12 @@ abstract class AbstractCupType implements CupTypeInterface
 
     public function calculateCup(Cup $cup, Collection $cupEvents, CupGroup $mainGroup): array
     {
+        // все дистанции этапов кубка загружаются одним запросом,
+        // иначе поиск дистанций внутри calculateEvent превращается в n+1 по событиям
+        $this->distanceService->preloadEventDistances(
+            $cupEvents->pluck('event_id')->unique()->values()->all()
+        );
+
         $results = Collection::make();
         foreach ($cupEvents as $cupEvent) {
             $results = $results->merge($this->calculateEvent($cupEvent, $mainGroup));

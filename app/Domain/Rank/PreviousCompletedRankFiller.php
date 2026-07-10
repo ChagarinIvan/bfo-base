@@ -12,6 +12,7 @@ use App\Domain\Shared\Clock;
 use App\Domain\Shared\Criteria;
 use App\Models\Year;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 
 final readonly class PreviousCompletedRankFiller
 {
@@ -25,7 +26,12 @@ final readonly class PreviousCompletedRankFiller
     ) {
     }
 
-    public function fill(int $personId, ?Rank $rank, ?Carbon $date = null): ?Rank
+    /**
+     * @param Collection|null $preloadedProtocolLines заранее загруженные протокольные линии персоны
+     *        за окно [date-2года, date] с теми же критериями/сортировкой, что и запрос ниже —
+     *        передаются при батчевой обработке, чтобы не делать запрос на каждую персону
+     */
+    public function fill(int $personId, ?Rank $rank, ?Carbon $date = null, ?Collection $preloadedProtocolLines = null): ?Rank
     {
         $now = $this->clock->now();
         if ($date === null) {
@@ -40,19 +46,24 @@ final readonly class PreviousCompletedRankFiller
         }
 
         if ($finishDate <= $date) {
-            // тут трэба узять протокол лініі за 2 года, дзе было выкананне адсартырованные па моцы разраду
-            $criteria = new Criteria(
-                [
-                    'personId' => $personId,
-                    'dateFrom' => $finishDate->clone()->addYears(-2),
-                    'dateTo' => $finishDate,
-                    'completedRank' => true,
-                    'massCompetition' => false,
-                ],
-                ['completedRank' => 'desc', 'eventDate' => 'asc'],
-            );
+            // прелоад валиден только для окна, совпадающего с датой запроса (rank === null)
+            if ($preloadedProtocolLines !== null && $rank === null) {
+                $protocolLines = $preloadedProtocolLines;
+            } else {
+                // тут трэба узять протокол лініі за 2 года, дзе было выкананне адсартырованные па моцы разраду
+                $criteria = new Criteria(
+                    [
+                        'personId' => $personId,
+                        'dateFrom' => $finishDate->clone()->addYears(-2),
+                        'dateTo' => $finishDate,
+                        'completedRank' => true,
+                        'massCompetition' => false,
+                    ],
+                    ['completedRank' => 'desc', 'eventDate' => 'asc'],
+                );
 //            dump($criteria);
-            $protocolLines = $this->protocolLines->byCriteria($criteria);
+                $protocolLines = $this->protocolLines->byCriteria($criteria);
+            }
 //            dump($protocolLines->count());
 
 //            dump('$protocolLines->count(): ' . $protocolLines->count());

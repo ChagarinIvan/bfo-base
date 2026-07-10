@@ -15,6 +15,7 @@ use Carbon\Carbon;
 use Database\Factories\Domain\ProtocolLine\ProtocolLineFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
 /**
  * @property int $id
@@ -76,9 +77,18 @@ class ProtocolLine extends AggregatedModel
         return $this->belongsTo(Distance::class, 'distance_id', 'id');
     }
 
-    public function event(): BelongsTo
+    public function event(): HasOneThrough
     {
-        return $this->distance->event();
+        // protocol_lines -> distances -> events, задом наперёд относительно hasOneThrough,
+        // но с такими ключами отношение можно эффективно eager-загружать через with('event')
+        return $this->hasOneThrough(
+            Event::class,
+            Distance::class,
+            'id',
+            'id',
+            'distance_id',
+            'event_id',
+        );
     }
 
     public function person(): BelongsTo

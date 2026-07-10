@@ -76,24 +76,32 @@ final readonly class RankAssembler
      */
     private function preloadProtocolLines(array $ranks): array
     {
-        $eventIdsByPerson = [];
+        $personIds = [];
+        $eventIds = [];
+        $pairs = [];
         foreach ($ranks as $rank) {
             if ($rank->event_id) {
-                $eventIdsByPerson[$rank->person_id][$rank->event_id] = $rank->event_id;
+                $personIds[$rank->person_id] = $rank->person_id;
+                $eventIds[$rank->event_id] = $rank->event_id;
+                $pairs["{$rank->person_id}:{$rank->event_id}"] = true;
             }
         }
 
-        $map = [];
-        foreach ($eventIdsByPerson as $personId => $eventIds) {
-            $lines = $this->protocolLines->byCriteria(new Criteria([
-                'personId' => $personId,
-                'eventIds' => array_values($eventIds),
-            ]));
+        if ($pairs === []) {
+            return [];
+        }
 
-            /** @var ProtocolLine $line */
-            foreach ($lines as $line) {
-                $eventId = (int) $line->getAttribute('event_id');
-                $map[$personId][$eventId] ??= $line;
+        $lines = $this->protocolLines->byCriteria(new Criteria([
+            'personIds' => array_values($personIds),
+            'eventIds' => array_values($eventIds),
+        ]));
+
+        $map = [];
+        /** @var ProtocolLine $line */
+        foreach ($lines as $line) {
+            $eventId = (int) $line->getAttribute('event_id');
+            if (isset($pairs["{$line->person_id}:{$eventId}"])) {
+                $map[$line->person_id][$eventId] ??= $line;
             }
         }
 

@@ -4,18 +4,40 @@ declare(strict_types=1);
 
 namespace App\Domain\Rank;
 
+use App\Domain\Person\Person;
 use App\Domain\Person\PersonRepository;
 use App\Domain\Shared\Clock;
 use App\Models\Year;
+use function array_key_exists;
 use function in_array;
 
 /**
  * Прысваенне 3ю разрада за 3 паспяховых старта у гадзе
  */
-final readonly class JuniorRankAgeValidator
+final class JuniorRankAgeValidator
 {
-    public function __construct(private PersonRepository $persons)
+    /** @var array<int, Person|null> */
+    private array $personsCache = [];
+
+    public function __construct(private readonly PersonRepository $persons)
     {
+    }
+
+    /**
+     * Прогревает кэш персон, чтобы validate() не ходил в базу по одной персоне.
+     *
+     * @param iterable<Person> $persons
+     * @param array<int|string> $missingIds ids, для которых персона не нашлась (кэшируем null)
+     */
+    public function warmUp(iterable $persons, array $missingIds = []): void
+    {
+        foreach ($persons as $person) {
+            $this->personsCache[$person->id] = $person;
+        }
+
+        foreach ($missingIds as $id) {
+            $this->personsCache[(int) $id] ??= null;
+        }
     }
 
     /**
@@ -28,7 +50,11 @@ final readonly class JuniorRankAgeValidator
             return true;
         }
 
-        $person = $this->persons->byId($personId);
+        if (!array_key_exists($personId, $this->personsCache)) {
+            $this->personsCache[$personId] = $this->persons->byId($personId);
+        }
+
+        $person = $this->personsCache[$personId];
 
         if ($person === null) {
             return false;

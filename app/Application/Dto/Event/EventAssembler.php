@@ -23,7 +23,7 @@ final readonly class EventAssembler
             description: $event->description,
             date: $event->date->format('Y-m-d'),
             competitionName: $event->competition?->name ?: '',
-            protocolLinesCount: $event->protocolLines->count(),
+            protocolLinesCount: $event->protocol_lines_count ?? $event->protocolLines()->count(),
             firstDistance: $event->distances->first(),
             cups: $event->cups->all(),
             flags: $event->flags->all(),

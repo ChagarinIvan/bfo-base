@@ -59,7 +59,7 @@ final readonly class ProtocolLinesRepository implements ProtocolLineRepository
         bool $citizhenship = false,
     ): Collection {
         $protocolLinesQuery = ProtocolLine::selectRaw('protocol_lines.*')
-            ->with(['person.club'])
+            ->with(['person.club', 'distance.group'])
             ->join('person', 'person.id', '=', 'protocol_lines.person_id')
             ->join('distances', 'distances.id', '=', 'protocol_lines.distance_id')
             ->where('protocol_lines.vk', false)
@@ -97,7 +97,7 @@ final readonly class ProtocolLinesRepository implements ProtocolLineRepository
     public function getCupEventGroupProtocolLinesForPersonsWithPayment(CupEvent $cupEvent, int $groupId): Collection
     {
         return ProtocolLine::selectRaw('protocol_lines.*, persons_payments.date')
-            ->with(['person.club'])
+            ->with(['person.club', 'distance.group'])
             ->join('person', 'person.id', '=', 'protocol_lines.person_id')
             ->join('persons_payments', 'person.id', '=', 'persons_payments.person_id')
             ->join('distances', 'distances.id', '=', 'protocol_lines.distance_id')
@@ -112,7 +112,7 @@ final readonly class ProtocolLinesRepository implements ProtocolLineRepository
     public function getCupEventDistanceProtocolLines(int $distanceId): Collection
     {
         return ProtocolLine::where('protocol_lines.distance_id', $distanceId)
-            ->with(['person.club'])
+            ->with(['person.club', 'distance.group'])
             ->join('person', 'person.id', '=', 'protocol_lines.person_id')
             ->where('protocol_lines.vk', false)
             ->where('person.citizenship', Citizenship::BELARUS->value)
@@ -186,7 +186,7 @@ final readonly class ProtocolLinesRepository implements ProtocolLineRepository
 
     private function buildQuery(Criteria $criteria): Builder
     {
-        $query = ProtocolLine::select('protocol_lines.*')->with(['person.club']);
+        $query = ProtocolLine::select('protocol_lines.*')->with(['person.club', 'distance.group', 'event']);
 
         if (array_key_exists('completedRank', $criteria->sorting())) {
             $query->orderByRaw("
@@ -207,6 +207,10 @@ final readonly class ProtocolLinesRepository implements ProtocolLineRepository
 
         if ($criteria->hasParam('personId')) {
             $query->where('person_id', $criteria->param('personId'));
+        }
+
+        if ($criteria->hasParam('personIds')) {
+            $query->whereIn('person_id', $criteria->param('personIds'));
         }
 
         if (
