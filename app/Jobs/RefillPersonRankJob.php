@@ -16,6 +16,22 @@ class RefillPersonRankJob implements ShouldQueue
     use Queueable, Dispatchable;
 
     /**
+     * Максимальное время выполнения джоба (сек).
+     * Пересчёт рангов тяжёлый — даём запас, чтобы воркер не убивал его по таймауту.
+     */
+    public int $timeout = 600;
+
+    /**
+     * Сколько раз пытаться выполнить джоб перед тем, как отправить его в failed_jobs.
+     */
+    public int $tries = 3;
+
+    /**
+     * Пауза между повторными попытками (сек).
+     */
+    public array $backoff = [60, 180];
+
+    /**
      * Create a new job instance.
      */
     public function __construct(private readonly int $personId)
