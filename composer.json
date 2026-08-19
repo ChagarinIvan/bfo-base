@@ -52,7 +52,7 @@
     "scripts": {
         "cs": "vendor/bin/php-cs-fixer check --allow-risky=yes",
         "cs-fix": "vendor/bin/php-cs-fixer fix --allow-risky=yes",
-        "stan": "vendor/bin/phpstan analyse -l 5 app tests config",
+        "stan": "vendor/bin/phpstan analyse -l 5 app tests config --memory-limit=1G",
         "rector": "rector process",
         "test": "phpunit",
         "post-update-cmd": [

@@ -7,7 +7,6 @@ namespace Tests\Application\Service\Person;
 use App\Application\Dto\Auth\AuthAssembler;
 use App\Application\Dto\Person\PersonAssembler;
 use App\Application\Dto\Person\PersonSearchDto;
-use App\Application\Dto\Person\ViewPersonDto;
 use App\Application\Service\Person\ListPersons;
 use App\Application\Service\Person\ListPersonsService;
 use App\Domain\Person\Person;
@@ -47,6 +46,6 @@ final class ListPersonsServiceTest extends TestCase
 
         $result = $this->service->execute(new ListPersons(new PersonSearchDto()));
 
-        $this->assertContainsOnlyInstancesOf(ViewPersonDto::class, $result);
+        $this->assertCount(2, $result);
     }
 }

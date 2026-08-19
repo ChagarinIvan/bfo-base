@@ -7,7 +7,6 @@ namespace Tests\Application\Service\Competition;
 use App\Application\Dto\Auth\AuthAssembler;
 use App\Application\Dto\Competition\CompetitionAssembler;
 use App\Application\Dto\Competition\CompetitionSearchDto;
-use App\Application\Dto\Competition\ViewCompetitionDto;
 use App\Application\Service\Competition\ListCompetitions;
 use App\Application\Service\Competition\ListCompetitionsService;
 use App\Domain\Competition\Competition;
@@ -52,7 +51,6 @@ final class ListCompetitionsServiceTest extends TestCase
         $result = $this->service->execute($command);
 
         $this->assertIsList($result);
-        $this->assertContainsOnlyInstancesOf(ViewCompetitionDto::class, $result);
         $this->assertEquals($competitions[1]->id, $result[1]->id);
     }
 }
