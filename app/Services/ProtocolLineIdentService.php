@@ -134,7 +134,6 @@ class ProtocolLineIdentService
      * Используется при создании или редактировании протокола соревнований для быстрой идентификации части людей.
      *
      * @param Collection|ProtocolLine[] $protocolLines
-     * @return Collection|ProtocolLine[]
      */
     public function simpleIdent(Collection $protocolLines): Collection
     {

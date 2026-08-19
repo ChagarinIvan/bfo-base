@@ -3,9 +3,9 @@
 declare(strict_types=1);
 
 use Rector\CodeQuality\Rector\Identical\FlipTypeControlToUseExclusiveTypeRector;
-use Rector\CodeQuality\Rector\If_\ExplicitBoolCompareRector;
 use Rector\Config\RectorConfig;
 use Rector\PHPUnit\Set\PHPUnitSetList;
+use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
 use Rector\Renaming\Rector\PropertyFetch\RenamePropertyRector;
 use Rector\Transform\Rector\String_\StringToClassConstantRector;
 use RectorLaravel\Rector\MethodCall\AssertSeeToAssertSeeHtmlRector;
@@ -22,7 +22,6 @@ return RectorConfig::configure()
     ])
     ->withSets([
         LaravelLevelSetList::UP_TO_LARAVEL_110,
-        PHPUnitSetList::PHPUNIT_110,
         PHPUnitSetList::ANNOTATIONS_TO_ATTRIBUTES,
         PHPUnitSetList::PHPUNIT_CODE_QUALITY,
     ])
@@ -38,8 +37,7 @@ return RectorConfig::configure()
         laravel: true,
     )
     ->withSkip([
-        ExplicitBoolCompareRector::class,
-        AssertSeeToAssertSeeHtmlRector::class,
+        AssertSeeToAssertSeeHtml4Rector::class,
         FlipTypeControlToUseExclusiveTypeRector::class,
         StringToClassConstantRector::class,
         RenamePropertyRector::class,

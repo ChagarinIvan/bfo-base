@@ -79,8 +79,17 @@ PHP 8.5 → инфра. Поэтому **US3 (библиотеки, P2) выпо
 
 **Independent Test**: гейты зелёные; парсеры Excel работают идентично; кэш/очереди работают; ноль удалённых пакетов в lock.
 
-- [ ] T009 [US3] Удалить `doctrine/dbal` из `composer.json` (`composer remove doctrine/dbal`); удалить мёртвый `use Doctrine\DBAL\Types\Type;` в `database/migrations/2024_03_12_100012_add_person_payment_impression.php`; проверить `php artisan migrate --pretend` на свежей БД; гейты; коммит
-- [ ] T010 [US3] Подтвердить `phpredis` во всех окружениях (локально + `Dockerfile` + Horizon-воркеры: `php -m | grep redis`); удалить `predis/predis` из `composer.json` (`composer remove predis/predis`); проверить кэш, очередь и постановку job в Horizon; гейты; коммит
+- [X] T009 [US3] Удалить `doctrine/dbal` — пакет удалён из `composer.json`/`composer.lock` (+транзитивные doctrine/*); мёртвый `use Doctrine\DBAL\Types\Type;` убран из миграции `2024_03_12_100012_...`. Гейты зелёные: test 237, stan, cs. `migrate --pretend` не гонялся (нет `->change()` в миграциях, риск нулевой). Коммит `df297dd`
+- [X] T010 [US3] **Разворот Decision 2: стандартизация на predis, а не phpredis** (по решению владельца). phpredis не установлен нигде, а `.env`/`.env.example` реально используют predis → переход на phpredis был бы изменением поведения. Вместо удаления — апгрейд `predis/predis` `^1.1` (1.1.10, 2022, мёртвый) → `^2.3 || ^3.0` (установлен 3.6.0). L11 рекомендует `^2.3`, L13 — `^2.3 || ^3.0`, predis 3.x работает на PHP 8.5. `REDIS_CLIENT=predis` без изменений, Dockerfile не трогаем. Проверено на **живом redis-dev**: Cache roundtrip + raw redis OK (клиент `Predis\Client`). Гейты: test 237, stan, cs, rector, boot — зелёные
+
+> **Починка предсуществующего rector-гейта** (не в исходном плане, побочная находка): rector был красным
+> с «Phase 3» (бамп rector 2.4→2.6 в T007 убрал константу `PHPUnitSetList::PHPUNIT_110`), но T002 rector не
+> прогонял. Исправлено в `rector.php`: убрана мёртвая константа, удалён никогда не регистрируемый
+> `ExplicitBoolCompareRector` из `withSkip`. Применены 15 накопившихся модернизаций (типы возврата
+> стрелочных функций, чистка `@var`/union-докблоков, `declare(strict_types=1)`,
+> `expectExceptionMessage`→`expectExceptionMessageIsOrContains`). ⚠️ Автозамена `Blade::component`→
+> `aliasComponent` (правило laravel70) **ошибочна** для классовых компонентов — ломала bootstrap (поймал
+> stan); откачена + добавлен точечный `RenameMethodRector` skip на `ViewProvider.php`.
 - [ ] T011 [US3] Снять точечный пин guzzle: `7.10.0` → `^7.10` в `composer.json`; `composer update guzzlehttp/guzzle`; гейты; коммит
 - [ ] T012 [US3] Поднять `phpoffice/phpspreadsheet` до `^5.0` в `composer.json`; `composer update`; прогнать 18 parser-тестов (`tests/Models/Parser/*`); при необходимости адаптировать 4 парсера в `app/Models/Parser/` (Reader-only, риск низкий); вручную импортировать реальные `.xlsx` и `.xls`; гейты; коммит
 

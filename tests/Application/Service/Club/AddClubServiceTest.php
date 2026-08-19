@@ -43,7 +43,7 @@ final class AddClubServiceTest extends TestCase
     public function it_fails_on_exists_duplicate_club(): void
     {
         $this->expectException(FailedToAddClub::class);
-        $this->expectExceptionMessage('Unable to add club. Reason: Error.');
+        $this->expectExceptionMessageIsOrContains('Unable to add club. Reason: Error.');
 
         $input = new ClubInput('test club', 1);
         /** @var Club $club */

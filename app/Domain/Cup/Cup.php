@@ -74,9 +74,6 @@ class Cup extends AggregatedModel
         return $this->hasMany(CupEvent::class)->active();
     }
 
-    /**
-     * @return Collection|CupEventPoint[]
-     */
     public function calculateEvent(CupEvent $cupEvent, CupGroup $group): Collection
     {
         return $this->type->instance()->calculateEvent($cupEvent, $group);

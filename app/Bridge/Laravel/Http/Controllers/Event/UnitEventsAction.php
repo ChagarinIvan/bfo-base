@@ -57,10 +57,8 @@ class UnitEventsAction extends AbstractEventAction
 
             /** @var int $groupId */
             foreach ($groupsIds as $groupId) {
-                /** @var null|Distance $firstEventDistance */
                 $firstEventDistance = $distanceService->getEventGroupDistance($firstEvent, $groupId);
 
-                /** @var null|Distance $eventDistance */
                 $eventDistance = $distanceService->getEventGroupDistance($event, $groupId);
                 $distance = $distanceService->getEventGroupDistance($newEvent, $groupId) ?? new Distance();
 

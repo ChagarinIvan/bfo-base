@@ -71,9 +71,6 @@ class ProtocolLineService
         return $this->protocolLinesRepository->getProtocolLines($personId);
     }
 
-    /**
-     * @return Collection|ProtocolLine[]
-     */
     public function getProtocolLinesInListWithoutPerson(Collection $linesIds): Collection
     {
         return ProtocolLine::whereIn('id', $linesIds)

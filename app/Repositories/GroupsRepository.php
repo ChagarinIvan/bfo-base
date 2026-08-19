@@ -35,7 +35,6 @@ class GroupsRepository
 
     /**
      * @param string[] $names
-     * @return Collection|Group[]
      */
     public function searchGroups(array $names): Collection
     {
