@@ -13,7 +13,7 @@
         "ext-dom": "*",
         "ext-mbstring": "*",
         "ext-pdo": "*",
-        "guzzlehttp/guzzle": "7.10.0",
+        "guzzlehttp/guzzle": "^7.10",
         "laravel/framework": "^11.51",
         "laravel/horizon": "^5.45",
         "mav/slovo": "^0.2.3",

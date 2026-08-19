@@ -37,8 +37,13 @@ return RectorConfig::configure()
         laravel: true,
     )
     ->withSkip([
-        AssertSeeToAssertSeeHtml4Rector::class,
+        AssertSeeToAssertSeeHtmlRector::class,
         FlipTypeControlToUseExclusiveTypeRector::class,
         StringToClassConstantRector::class,
         RenamePropertyRector::class,
+        // Blade::component() регистрирует классовые компоненты; авто-переименование в
+        // aliasComponent() (правило из laravel70) ломает bootstrap — регистрируем как есть.
+        RenameMethodRector::class => [
+            __DIR__ . '/app/Bridge/Laravel/Provider/ViewProvider.php',
+        ],
     ]);

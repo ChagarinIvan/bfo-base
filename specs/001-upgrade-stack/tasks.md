@@ -90,7 +90,7 @@ PHP 8.5 → инфра. Поэтому **US3 (библиотеки, P2) выпо
 > `expectExceptionMessage`→`expectExceptionMessageIsOrContains`). ⚠️ Автозамена `Blade::component`→
 > `aliasComponent` (правило laravel70) **ошибочна** для классовых компонентов — ломала bootstrap (поймал
 > stan); откачена + добавлен точечный `RenameMethodRector` skip на `ViewProvider.php`.
-- [ ] T011 [US3] Снять точечный пин guzzle: `7.10.0` → `^7.10` в `composer.json`; `composer update guzzlehttp/guzzle`; гейты; коммит
+- [X] T011 [US3] Снят точечный пин guzzle: `7.10.0` → `^7.10` в `composer.json`; установлен стабильный **7.15.3** (+ guzzlehttp/promises 2.5.2, uri-template 1.0.10). Из-за `minimum-stability: dev` частичный `composer update guzzlehttp/guzzle` зацепил `7.10.x-dev` — исправлено через `composer update "guzzlehttp/*" --with-all-dependencies` (взял стабильный тег). Прямого guzzle-кода нет. Гейты: test 237, stan, cs — зелёные. ⚠️ В рабочем дереве также починка `rector.php` (восстановлены `AssertSeeToAssertSeeHtmlRector` + skip `RenameMethodRector` на `ViewProvider`, без которых rector-гейт красный)
 - [ ] T012 [US3] Поднять `phpoffice/phpspreadsheet` до `^5.0` в `composer.json`; `composer update`; прогнать 18 parser-тестов (`tests/Models/Parser/*`); при необходимости адаптировать 4 парсера в `app/Models/Parser/` (Reader-only, риск низкий); вручную импортировать реальные `.xlsx` и `.xls`; гейты; коммит
 
 **Checkpoint**: поверхность сжата, phpspreadsheet готов — PHP 8.5 разблокирован по этой линии.
