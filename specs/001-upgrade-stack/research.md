@@ -118,3 +118,37 @@ Bridge/Laravel/Http/Controllers). `phpunit.xml`: `QUEUE_CONNECTION=sync`, `CACHE
 - Наличие сборок phpredis (и др. C-расширений) под PHP 8.5.
 - Совместимость `laravel/horizon` и `sentry/sentry-laravel` с Laravel 12 и 13.
 - Наличие `UP_TO_LARAVEL_130` в актуальной версии driftingly/rector-laravel.
+
+---
+
+## Результаты `[verify-live]` (2026-08-19, через packagist/composer + локальный скан)
+
+**Целевые latest-версии (packagist):**
+
+| Пакет | Latest stable | Примечание |
+|-------|---------------|------------|
+| laravel/framework | **v13.26.1** | php `^8.3`, guzzle `^7.8.2 \|\| ^8.0`, carbon `^3.8.4` |
+| laravel/framework 12.x | v12.67.0 | php `^8.2`, guzzle `^7.8.2` (промежуточный шаг) |
+| phpoffice/phpspreadsheet | **5.9.0** | 5.x — современный PHP; блокер PHP 8.5 снят |
+| laravel/horizon | **v5.48.3** | `illuminate/* ^9\|10\|11\|12\|13` → **L13 поддержан на 5.x** (мажор 6 только dev, не нужен) |
+| sentry/sentry-laravel | **4.27.0** | `illuminate/support … \|^13.0` → L13 поддержан; **текущий пин 4.24.0 надо снять** |
+| guzzlehttp/guzzle | 8.0.2 (stable) / 7.15.3 | L13 допускает и `^8`; план T011 — снять пин до `^7.10` (мажор 8 опционален) |
+| predis/predis | 3.6.0 | удаляем (см. ниже), апгрейд не нужен |
+| driftingly/rector-laravel | 2.5.0 (installed) | содержит `UP_TO_LARAVEL_120` **и `UP_TO_LARAVEL_130` (кумулятивный)** + `LARAVEL_130` |
+
+**T003 ✅** — latest подтверждены. **T004 ✅** — horizon 5.48.3 и sentry 4.27.0 совместимы с L12/L13;
+guzzle 8 стабилен и допускается L13, но пина снимаем только до `^7.10` (T011). rector-laravel 2.5.0 уже
+имеет `UP_TO_LARAVEL_130`.
+
+**T005 (C-расширения под PHP 8.5):** Dockerfile ставит `gd, pdo_mysql, mbstring, zip, exif, pcntl` —
+все это core/bundled-расширения, компилируются из исходников `php:8.5-fpm` через `docker-php-ext-install`
+(гарантированно доступны). **phpredis НЕ установлен ни в Dockerfile, ни локально** — ставится через
+`pecl install redis` (redis ext 6.x поддерживает 8.5). Финальная проверка — сборка образа в T017.
+
+**⚠️ Корректировка Decision 2 (predis → phpredis):** локальный `.env` и `.env.example` фактически
+используют `REDIS_CLIENT=predis` при `CACHE_DRIVER=redis` + `SESSION_DRIVER=redis` — то есть **predis
+реально в работе локально**, а не «спит». phpredis-расширения нет ни локально, ни в Dockerfile.
+`phpunit.xml` использует `array/sync`-драйверы → тесты redis не трогают, значит удаление predis **не
+ловится гейтами** и требует: (1) `pecl install redis` локально; (2) `pecl install redis && docker-php-ext-enable redis`
+в Dockerfile; (3) наличие phpredis на Horizon-воркерах; (4) смена `REDIS_CLIENT` на `phpredis` в
+`.env`/`.env.example`; (5) ручная проверка cache/session/queue. **T010 = инфра-шаг с ручной валидацией.**

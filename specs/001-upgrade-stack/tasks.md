@@ -51,9 +51,9 @@ PHP 8.5 → инфра. Поэтому **US3 (библиотеки, P2) выпо
 
 **⚠️ CRITICAL**: результаты этой фазы влияют на целевые версии во всех последующих шагах.
 
-- [ ] T003 [P] Подтвердить на packagist точные latest-версии целей: `laravel/framework` 13.x, `phpoffice/phpspreadsheet` 5.x, `phpunit/phpunit`, `laravel/horizon`, `sentry/sentry-laravel`, `driftingly/rector-laravel` (наличие `UP_TO_LARAVEL_130`); зафиксировать в research.md
-- [ ] T004 [P] Подтвердить совместимость: `laravel/horizon` и `sentry/sentry-laravel` с Laravel 12 и 13; существует ли стабильный `guzzle` 8 и допускает ли его Laravel 13 (constraint `^7` vs `^8`)
-- [ ] T005 [P] Подтвердить наличие сборок C-расширений под PHP 8.5 (`phpredis`, `gd`, `exif`, `mbstring`, `zip`, `pdo_mysql`) для образа `php:8.5-fpm`
+- [X] T003 [P] Подтвердить на packagist точные latest-версии целей — зафиксировано в research.md: L13.26.1, phpspreadsheet 5.9.0, horizon 5.48.3, sentry 4.27.0, guzzle 8.0.2/7.15.3, predis 3.6.0; rector-laravel 2.5.0 содержит `UP_TO_LARAVEL_130` (кумулятивный)
+- [X] T004 [P] Подтвердить совместимость — horizon 5.48.3 (`illuminate ^13.0`) и sentry 4.27.0 (`^13.0`) совместимы с L12/L13; guzzle 8.0.2 стабилен и L13 его допускает (`^7.8.2 || ^8.0`); пин снимаем только до `^7.10` (T011). ⚠️ sentry пин `4.24.0` надо снять
+- [X] T005 [P] C-расширения под PHP 8.5 — gd/pdo_mysql/mbstring/zip/exif/pcntl это core/bundled (компилируются из `php:8.5-fpm`); phpredis ставится `pecl install redis` (ext 6.x поддерживает 8.5). ⚠️ phpredis отсутствует в Dockerfile — добавить в T010/T017. Финальная проверка = сборка образа
 
 **Checkpoint**: целевые версии и блокеры известны — апгрейд идёт по фактам.
 
