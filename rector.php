@@ -37,6 +37,8 @@ return RectorConfig::configure()
         laravel: true,
     )
     ->withSkip([
+        // генерируемые Laravel файлы кэша — не линтим (как в .php-cs-fixer.php)
+        __DIR__ . '/bootstrap/cache',
         AssertSeeToAssertSeeHtmlRector::class,
         FlipTypeControlToUseExclusiveTypeRector::class,
         StringToClassConstantRector::class,

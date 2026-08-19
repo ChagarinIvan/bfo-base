@@ -17,7 +17,7 @@
         "laravel/framework": "^11.51",
         "laravel/horizon": "^5.45",
         "mav/slovo": "^0.2.3",
-        "phpoffice/phpspreadsheet": "^1.30",
+        "phpoffice/phpspreadsheet": "^5.0",
         "predis/predis": "^2.3 || ^3.0",
         "sentry/sentry-laravel": "4.24.0"
     },
