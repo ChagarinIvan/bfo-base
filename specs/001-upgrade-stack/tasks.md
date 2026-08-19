@@ -65,9 +65,9 @@ PHP 8.5 → инфра. Поэтому **US3 (библиотеки, P2) выпо
 
 **Independent Test**: все гейты зелёные; `composer` не сообщает abandoned по rector-части; приложение работает локально.
 
-- [ ] T006 [US1] Заменить `rector/rector-laravel` на `driftingly/rector-laravel` в `composer.json` (`composer remove --dev rector/rector-laravel` + `composer require --dev driftingly/rector-laravel`); поправить ссылки/импорты сетов в `rector.php`; гейты; коммит
-- [ ] T007 [US1] Обновить dev-инструменты в рамках semver (`friendsofphp/php-cs-fixer`, `larastan/larastan`, `phpstan/phpstan`, `phpunit/phpunit`, `mockery/mockery`, `rector/rector`) через `composer update`; гейты; коммит
-- [ ] T008 [US1] Обновить runtime-миноры `laravel/horizon` и `sentry/sentry-laravel` через `composer update`; гейты; коммит
+- [X] T006 [US1] Заменить `rector/rector-laravel` на `driftingly/rector-laravel` — установлен `^2.5`, старый удалён; `rector.php` не менялся (тот же namespace `RectorLaravel\`); rector грузится, stan/cs зелёные
+- [X] T007 [US1] Обновить dev-инструменты в рамках semver — php-cs-fixer 3.94→3.95, phpstan 2.1→2.2, larastan 3.9→3.10, phpunit 13.1→13.3, mockery 1.6.12→1.6.14, rector 2.4→2.6; stan/cs/test зелёные
+- [X] T008 [US1] Обновить runtime-миноры — horizon 5.45→5.48, sentry 4.24→4.30; чекпоинт US1: stan/cs/test (237) зелёные
 
 **Checkpoint**: US1 завершена — минимальный жизнеспособный результат достигнут.
 
