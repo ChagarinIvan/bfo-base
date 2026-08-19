@@ -13,7 +13,6 @@
         "ext-dom": "*",
         "ext-mbstring": "*",
         "ext-pdo": "*",
-        "doctrine/dbal": "^3.10",
         "guzzlehttp/guzzle": "7.10.0",
         "laravel/framework": "^11.51",
         "laravel/horizon": "^5.45",
