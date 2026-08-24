@@ -111,15 +111,15 @@ PHP 8.5 → инфра. Поэтому **US3 (библиотеки, P2) выпо
 **Checkpoint**: приложение на Laravel 13, гейты зелёные.
 
 ---
-
+1
 ## Phase 6: User Story 4 — Обновление рантайма PHP до 8.5 (P2)
 
 **Goal**: Перевести рантайм на PHP 8.5 (после phpspreadsheet и подтверждения расширений из T005).
 
 **Independent Test**: на PHP 8.5 все гейты зелёные и приложение поднимается локально.
 
-- [ ] T017 [US4] Обновить `Dockerfile`: `FROM php:8.4-fpm` → `php:8.5-fpm` (закрепить minor); пересобрать образ приложения
-- [ ] T018 [US4] Обновить ограничение PHP в `composer.json` (напр. `^8.4` → допускающее 8.5); `composer update`; прогнать гейты на 8.5; проверить предупреждения по PDO-константам (`PDO::MYSQL_ATTR_*`) и депрекейтам кастов; коммит
+- [X] T017 [US4] `Dockerfile`: `FROM php:8.4-fpm` → **`php:8.5-fpm`**. Образ **собран** (`docker build`): все C-расширения (gd/pdo_mysql/mbstring/zip/exif/pcntl) компилируются на 8.5; внутри контейнера **PHP 8.5.9**, расширения на месте. phpredis не добавляем — стандартизировано на predis (T010). composer install в образе проходит
+- [X] T018 [US4] PHP-ограничение в `composer.json` `^8.2` → **`^8.5`** (по решению владельца — строго 8.5 везде, SC-005). Локально переключено на PHP 8.5.8 (`brew link php`; в PATH процесса оставался прямой путь к php@8.4 — brew-симлинк `/opt/homebrew/bin/php` уже на 8.5, применится после перезапуска терминала). `composer update --lock`; `check-platform-reqs` — php 8.5.8 success. **Гейты на активном PHP 8.5.8:** test 237, stan, cs, rector --dry-run (чист), boot L13.26.1 — зелёные, ноль PHP-депрекейтов. **PDO-деприкейт починен:** `config/database.php` `PDO::MYSQL_ATTR_SSL_CA` → `Pdo\Mysql::ATTR_SSL_CA` (через `use Pdo\Mysql;`, правило кодстайла) — deprecation 8.5 устранён. Депрекейтов кастов в коде нет
 
 **Checkpoint**: стек приложения на PHP 8.5, гейты зелёные.
 
