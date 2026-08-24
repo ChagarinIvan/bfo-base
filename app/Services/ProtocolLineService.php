@@ -9,7 +9,6 @@ use App\Domain\Event\Event;
 use App\Domain\Group\Group;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\Rank\Rank;
-use App\Models\Year;
 use App\Repositories\GroupsRepository;
 use App\Repositories\ProtocolLinesRepository;
 use Illuminate\Support\Collection;

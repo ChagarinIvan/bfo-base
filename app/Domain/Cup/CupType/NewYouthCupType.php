@@ -9,7 +9,6 @@ use App\Domain\Cup\CupEvent\CupEventPoint;
 use App\Domain\Cup\Group\CupGroup;
 use App\Domain\Cup\Group\CupGroupFactory;
 use App\Domain\Cup\Group\GroupAge;
-use App\Domain\Cup\Group\GroupMale;
 use App\Domain\Group\Group;
 use App\Domain\ProtocolLine\ProtocolLine;
 use Illuminate\Support\Collection;

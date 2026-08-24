@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Domain\Rank;
 
 use App\Domain\Person\PersonRepository;
-use App\Domain\Shared\Clock;
 use App\Models\Year;
 use function in_array;
 

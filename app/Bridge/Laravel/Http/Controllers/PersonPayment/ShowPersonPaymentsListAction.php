@@ -15,7 +15,6 @@ use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonsListAction;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller as BaseController;
-use function compact;
 
 final class ShowPersonPaymentsListAction extends BaseController
 {

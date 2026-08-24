@@ -6,6 +6,7 @@ namespace App\Bridge\Laravel\Console\Commands;
 
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Services\ProtocolLineIdentService;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use function time;
 
@@ -13,10 +14,9 @@ use function time;
  * Команда для добавленія в очередь на определение всех не опознанных людей.
  * Запускаем раз в месяц
  */
+#[Signature('protocol-lines:big-ident {userId}')]
 class StartBigIdentCommand extends Command
 {
-    protected $signature = 'protocol-lines:big-ident {userId}';
-
     public function handle(ProtocolLineIdentService $service): void
     {
         $this->info('Start');

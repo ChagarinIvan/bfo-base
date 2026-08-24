@@ -5,13 +5,8 @@ declare(strict_types=1);
 namespace App\Application\Service\PersonPrompt;
 
 use App\Application\Dto\Auth\UserId;
-use App\Application\Dto\Competition\CompetitionDto;
 use App\Application\Dto\PersonPrompt\PersonPromptDto;
-use App\Domain\Competition\CompetitionInfo;
-use App\Domain\Competition\Factory\CompetitionInput;
-use App\Domain\PersonPrompt\Factory\PersonPromptInput;
 use App\Domain\PersonPrompt\UpdatePersonPromptInput;
-use Carbon\Carbon;
 
 final readonly class UpdatePersonPrompt
 {

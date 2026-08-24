@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Http\Controllers\Rank;
 
-use App\Application\Service\Competition\Exception\CompetitionNotFound;
 use App\Application\Service\Person\Exception\PersonNotFound;
 use App\Application\Service\Person\ViewPerson;
 use App\Application\Service\Person\ViewPersonService;

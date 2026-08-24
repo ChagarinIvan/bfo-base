@@ -21,7 +21,6 @@ use Illuminate\Http\Response;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\CreatesApplication;
 use Tests\TestCase;
-use function sprintf;
 
 final class ShowPersonRanksActionTest extends TestCase
 {

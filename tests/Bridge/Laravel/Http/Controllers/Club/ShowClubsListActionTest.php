@@ -6,7 +6,6 @@ namespace Tests\Bridge\Laravel\Http\Controllers\Club;
 
 use App\Bridge\Laravel\Http\Controllers\Club\ShowClubsListAction;
 use App\Domain\Club\Club;
-use Database\Seeders\ProtocolLinesSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use PHPUnit\Framework\Attributes\Test;

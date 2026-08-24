@@ -11,7 +11,6 @@ use App\Models\IdentLine;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Mav\Slovo\Phonetics;
-use function in_array;
 use function levenshtein;
 use function sprintf;
 use function str_replace;

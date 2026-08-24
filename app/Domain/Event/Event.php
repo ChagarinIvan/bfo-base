@@ -18,6 +18,8 @@ use App\Infrastracture\Laravel\Eloquent\Auth\ImpressionCast;
 use App\Models\Flag;
 use Carbon\Carbon;
 use Database\Factories\Domain\Event\EventFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -44,16 +46,14 @@ use Illuminate\Support\Collection;
  * @property-read Collection|CupEvent[] $cups
  * @property-read Collection|Flag[] $flags
  */
+#[Fillable([
+    'name', 'description', 'date'
+])]
+#[Table(name: 'events')]
 class Event extends AggregatedModel
 {
     /** @see EventFactory */
     use HasFactory;
-
-    protected $table = 'events';
-
-    protected $fillable = [
-        'name', 'description', 'date'
-    ];
 
     public function competition(): HasOne
     {

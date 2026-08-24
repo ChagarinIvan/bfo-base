@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Domain\User\User;
+
 return [
     /*
     |--------------------------------------------------------------------------
@@ -63,7 +65,7 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => App\Domain\User\User::class,
+            'model' => User::class,
         ],
 
         // 'users' => [

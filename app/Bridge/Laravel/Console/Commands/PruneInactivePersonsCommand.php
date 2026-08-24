@@ -10,19 +10,16 @@ use App\Application\Service\Person\DisablePerson;
 use App\Application\Service\Person\DisablePersonService;
 use App\Application\Service\Person\ListPersons;
 use App\Application\Service\Person\ListPersonsService;
-use App\Services\ProtocolLineIdentService;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
-use Symfony\Component\Console\Input\InputArgument;
-use function time;
 
 /**
  * Каманда для выдалення людзей без стартаў (выпадкова створанныя).
  * Запускаем раз в день
  */
+#[Signature('persons:prune {userId}')]
 class PruneInactivePersonsCommand extends Command
 {
-    protected $signature = 'persons:prune {userId}';
-
     public function __construct(
         private readonly ListPersonsService $listPersonsService,
         private readonly DisablePersonService $disablePersonService,

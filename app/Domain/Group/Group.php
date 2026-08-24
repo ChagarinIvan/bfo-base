@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Domain\Group;
 
 use App\Domain\Distance\Distance;
+use Illuminate\Database\Eloquent\Attributes\Table;
+use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -17,12 +19,11 @@ use Illuminate\Support\Collection;
  *
  * @property-read Distance[]|Collection $distances
  */
+#[Table(name: 'groups')]
+#[WithoutTimestamps]
 class Group extends Model
 {
     use HasFactory;
-
-    public $timestamps = false;
-    protected $table = 'groups';
 
     public function distances(): HasMany|Builder
     {

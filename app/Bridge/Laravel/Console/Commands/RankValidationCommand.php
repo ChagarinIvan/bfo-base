@@ -6,15 +6,15 @@ namespace App\Bridge\Laravel\Console\Commands;
 
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\Rank\Rank;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 
 /**
  * Команда для проверки разрядов и их выправления.
  */
+#[Signature('protocol-lines:rank-validation {userId}')]
 class RankValidationCommand extends Command
 {
-    protected $signature = 'protocol-lines:rank-validation {userId}';
-
     public function handle(): void
     {
         $userId = (int) $this->argument('userId');

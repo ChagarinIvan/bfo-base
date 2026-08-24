@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace App\Domain\ProtocolLine;
 
-use App\Domain\Competition\Competition;
-use App\Domain\Cup\Cup;
-use App\Domain\PersonPayment\PersonPayment;
-use App\Domain\Rank\Rank;
 use App\Domain\Shared\Criteria;
 use Illuminate\Support\Collection;
 

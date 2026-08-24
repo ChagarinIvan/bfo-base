@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Domain\PersonPrompt;
 
-use App\Domain\Rank\Rank;
 use App\Domain\Shared\Criteria;
 use Illuminate\Support\Collection;
 

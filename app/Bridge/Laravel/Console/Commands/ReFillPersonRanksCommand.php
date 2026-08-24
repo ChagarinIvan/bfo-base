@@ -6,13 +6,13 @@ namespace App\Bridge\Laravel\Console\Commands;
 
 use App\Domain\Person\Person;
 use App\Services\RankService;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 
+#[Signature('ranks:person:re-fill')]
 final class ReFillPersonRanksCommand extends Command
 {
-    protected $signature = 'ranks:person:re-fill';
-
     public function __construct(
         private readonly RankService $service,
     ) {

@@ -4,21 +4,98 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Provider;
 
-use App\Bridge\Laravel\Http\Controllers\Club;
-use App\Bridge\Laravel\Http\Controllers\Competition;
-use App\Bridge\Laravel\Http\Controllers\Cup;
-use App\Bridge\Laravel\Http\Controllers\CupEvents;
-use App\Bridge\Laravel\Http\Controllers\Error;
-use App\Bridge\Laravel\Http\Controllers\Event;
-use App\Bridge\Laravel\Http\Controllers\Faq;
-use App\Bridge\Laravel\Http\Controllers\Flags;
-use App\Bridge\Laravel\Http\Controllers\Groups;
-use App\Bridge\Laravel\Http\Controllers\Login;
-use App\Bridge\Laravel\Http\Controllers\Person;
-use App\Bridge\Laravel\Http\Controllers\PersonPayment;
-use App\Bridge\Laravel\Http\Controllers\PersonPrompt;
-use App\Bridge\Laravel\Http\Controllers\Rank;
-use App\Bridge\Laravel\Http\Controllers\Registration;
+use App\Bridge\Laravel\Http\Controllers\Club\ShowClubAction;
+use App\Bridge\Laravel\Http\Controllers\Club\ShowClubsListAction;
+use App\Bridge\Laravel\Http\Controllers\Club\ShowCreateClubFormAction;
+use App\Bridge\Laravel\Http\Controllers\Club\StoreClubsAction;
+use App\Bridge\Laravel\Http\Controllers\Competition\DeleteCompetitionAction;
+use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionAction;
+use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionsListAction;
+use App\Bridge\Laravel\Http\Controllers\Competition\ShowCreateCompetitionFormAction;
+use App\Bridge\Laravel\Http\Controllers\Competition\ShowEditCompetitionFormAction;
+use App\Bridge\Laravel\Http\Controllers\Competition\StoreCompetitionAction;
+use App\Bridge\Laravel\Http\Controllers\Competition\UpdateCompetitionAction;
+use App\Bridge\Laravel\Http\Controllers\Cup\ClearCacheAction;
+use App\Bridge\Laravel\Http\Controllers\Cup\DeleteCupAction;
+use App\Bridge\Laravel\Http\Controllers\Cup\ExportCupGroupTableAction;
+use App\Bridge\Laravel\Http\Controllers\Cup\ExportCupTableAction;
+use App\Bridge\Laravel\Http\Controllers\Cup\ShowCreateCupFormAction;
+use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupAction;
+use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupEventGroupAction;
+use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupsListAction;
+use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupTableAction;
+use App\Bridge\Laravel\Http\Controllers\Cup\ShowEditCupFormAction;
+use App\Bridge\Laravel\Http\Controllers\Cup\StoreCupAction;
+use App\Bridge\Laravel\Http\Controllers\Cup\UpdateCupAction;
+use App\Bridge\Laravel\Http\Controllers\CupEvents\DeleteCupEventAction;
+use App\Bridge\Laravel\Http\Controllers\CupEvents\ShowCreateCupEventFormAction;
+use App\Bridge\Laravel\Http\Controllers\CupEvents\ShowEditCupEventFormAction;
+use App\Bridge\Laravel\Http\Controllers\CupEvents\StoreCupEventAction;
+use App\Bridge\Laravel\Http\Controllers\CupEvents\UpdateCupEventAction;
+use App\Bridge\Laravel\Http\Controllers\Error\Show404ErrorAction;
+use App\Bridge\Laravel\Http\Controllers\Error\ShowUnexpectedErrorAction;
+use App\Bridge\Laravel\Http\Controllers\Event\AddFlagToEventAction;
+use App\Bridge\Laravel\Http\Controllers\Event\DeleteEventAction;
+use App\Bridge\Laravel\Http\Controllers\Event\DeleteEventFlagAction;
+use App\Bridge\Laravel\Http\Controllers\Event\DownloadEventProtocolAction;
+use App\Bridge\Laravel\Http\Controllers\Event\ShowAddFlagToEventFormAction;
+use App\Bridge\Laravel\Http\Controllers\Event\ShowCreateEventFormAction;
+use App\Bridge\Laravel\Http\Controllers\Event\ShowEditEventFormAction;
+use App\Bridge\Laravel\Http\Controllers\Event\ShowEventAction;
+use App\Bridge\Laravel\Http\Controllers\Event\ShowEventDistanceAction;
+use App\Bridge\Laravel\Http\Controllers\Event\ShowUnitEventsFormAction;
+use App\Bridge\Laravel\Http\Controllers\Event\StoreEventAction;
+use App\Bridge\Laravel\Http\Controllers\Event\UnitEventsAction;
+use App\Bridge\Laravel\Http\Controllers\Event\UpdateEventAction;
+use App\Bridge\Laravel\Http\Controllers\Faq\ShowApiFaqAction;
+use App\Bridge\Laravel\Http\Controllers\Faq\ShowFaqAction;
+use App\Bridge\Laravel\Http\Controllers\Flags\DeleteFlagAction;
+use App\Bridge\Laravel\Http\Controllers\Flags\ShowCreateFlagFormAction;
+use App\Bridge\Laravel\Http\Controllers\Flags\ShowEditFlagFormAction;
+use App\Bridge\Laravel\Http\Controllers\Flags\ShowFlagEventsAction;
+use App\Bridge\Laravel\Http\Controllers\Flags\ShowFlagsListAction;
+use App\Bridge\Laravel\Http\Controllers\Flags\StoreFlagAction;
+use App\Bridge\Laravel\Http\Controllers\Flags\UpdateFlagAction;
+use App\Bridge\Laravel\Http\Controllers\Groups\DeleteGroupAction;
+use App\Bridge\Laravel\Http\Controllers\Groups\ShowGroupAction;
+use App\Bridge\Laravel\Http\Controllers\Groups\ShowGroupsListAction;
+use App\Bridge\Laravel\Http\Controllers\Groups\ShowUnitGroupsAction;
+use App\Bridge\Laravel\Http\Controllers\Groups\UnitGroupsAction;
+use App\Bridge\Laravel\Http\Controllers\Login\MakeNewPasswordByTokenAction;
+use App\Bridge\Laravel\Http\Controllers\Login\ShowLoginFormAction;
+use App\Bridge\Laravel\Http\Controllers\Login\SignInAction;
+use App\Bridge\Laravel\Http\Controllers\Login\SignOutAction;
+use App\Bridge\Laravel\Http\Controllers\Person\DeletePersonAction;
+use App\Bridge\Laravel\Http\Controllers\Person\ExtractPersonAction;
+use App\Bridge\Laravel\Http\Controllers\Person\SetProtocolLinePersonAction;
+use App\Bridge\Laravel\Http\Controllers\Person\ShowCreatePersonAction;
+use App\Bridge\Laravel\Http\Controllers\Person\ShowEditPersonAction;
+use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonAction;
+use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonsListAction;
+use App\Bridge\Laravel\Http\Controllers\Person\ShowSetPersonToProtocolLineAction;
+use App\Bridge\Laravel\Http\Controllers\Person\StorePersonAction;
+use App\Bridge\Laravel\Http\Controllers\Person\UpdatePersonAction;
+use App\Bridge\Laravel\Http\Controllers\PersonPayment\ShowCreatePersonPaymentAction;
+use App\Bridge\Laravel\Http\Controllers\PersonPayment\ShowPersonPaymentsListAction;
+use App\Bridge\Laravel\Http\Controllers\PersonPayment\StorePersonPaymentAction;
+use App\Bridge\Laravel\Http\Controllers\PersonPrompt\DeletePromptAction;
+use App\Bridge\Laravel\Http\Controllers\PersonPrompt\ShowCreatePromptAction;
+use App\Bridge\Laravel\Http\Controllers\PersonPrompt\ShowEditPromptAction;
+use App\Bridge\Laravel\Http\Controllers\PersonPrompt\ShowPersonPromptsListAction;
+use App\Bridge\Laravel\Http\Controllers\PersonPrompt\StorePersonPromptAction;
+use App\Bridge\Laravel\Http\Controllers\PersonPrompt\UpdatePersonPromptAction;
+use App\Bridge\Laravel\Http\Controllers\Rank\ActivatePersonRankAction;
+use App\Bridge\Laravel\Http\Controllers\Rank\CheckPersonsRanksAction;
+use App\Bridge\Laravel\Http\Controllers\Rank\ExportPersonsRanksAction;
+use App\Bridge\Laravel\Http\Controllers\Rank\RefillPersonRanksAction;
+use App\Bridge\Laravel\Http\Controllers\Rank\ShowActivationFormAction;
+use App\Bridge\Laravel\Http\Controllers\Rank\ShowCheckPersonsRanksFormAction;
+use App\Bridge\Laravel\Http\Controllers\Rank\ShowEditActivationDateFormAction;
+use App\Bridge\Laravel\Http\Controllers\Rank\ShowPersonRanksAction;
+use App\Bridge\Laravel\Http\Controllers\Rank\ShowRanksListAction;
+use App\Bridge\Laravel\Http\Controllers\Rank\UpdateRankActivationDateAction;
+use App\Bridge\Laravel\Http\Controllers\Registration\SendRegistrationDataAction;
+use App\Bridge\Laravel\Http\Controllers\Registration\ShowRegistrationFormAction;
 use App\Models\Year;
 use Illuminate\Contracts\Routing\Registrar;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
@@ -39,100 +116,100 @@ class WebRoutesServiceProvider extends ServiceProvider
 
         $this->routes(function (): void {
             $this->routeRegistrar->middleware('web')->group(function (): void {
-                $this->route->get('', fn () => $this->redirector->action(Competition\ShowCompetitionsListAction::class, ['year' => (string) Year::actualYear()->value]));
+                $this->route->get('', fn () => $this->redirector->action(ShowCompetitionsListAction::class, ['year' => (string) Year::actualYear()->value]));
 
                 //competitions
                 $this->routeRegistrar->prefix('competitions')->group(function (): void {
-                    $this->route->get('', Competition\ShowCompetitionsListAction::class);
-                    $this->route->get('{competitionId}/show', Competition\ShowCompetitionAction::class);
+                    $this->route->get('', ShowCompetitionsListAction::class);
+                    $this->route->get('{competitionId}/show', ShowCompetitionAction::class);
 
                     $this->middleware(['auth'])->group(function (): void {
-                        $this->route->get('create', Competition\ShowCreateCompetitionFormAction::class);
-                        $this->route->get('{competitionId}/edit', Competition\ShowEditCompetitionFormAction::class);
-                        $this->route->get('{competitionId}/delete', Competition\DeleteCompetitionAction::class);
-                        $this->route->post('store', Competition\StoreCompetitionAction::class);
-                        $this->route->post('{competitionId}/update', Competition\UpdateCompetitionAction::class);
+                        $this->route->get('create', ShowCreateCompetitionFormAction::class);
+                        $this->route->get('{competitionId}/edit', ShowEditCompetitionFormAction::class);
+                        $this->route->get('{competitionId}/delete', DeleteCompetitionAction::class);
+                        $this->route->post('store', StoreCompetitionAction::class);
+                        $this->route->post('{competitionId}/update', UpdateCompetitionAction::class);
                     });
                 });
 
                 //event
                 $this->routeRegistrar->prefix('events')->group(function (): void {
-                    $this->route->get('{eventId}', Event\ShowEventAction::class);
-                    $this->route->get('d/{distance}', Event\ShowEventDistanceAction::class);
+                    $this->route->get('{eventId}', ShowEventAction::class);
+                    $this->route->get('d/{distance}', ShowEventDistanceAction::class);
 
                     $this->middleware(['auth'])->group(function (): void {
-                        $this->route->get('{competitionId}/create', Event\ShowCreateEventFormAction::class);
-                        $this->route->post('{competitionId}/store', Event\StoreEventAction::class);
-                        $this->route->get('{competition}/sum', Event\ShowUnitEventsFormAction::class);
-                        $this->route->post('{competition}/unit', Event\UnitEventsAction::class);
-                        $this->route->get('{event}/delete', Event\DeleteEventAction::class);
-                        $this->route->get('{event}/edit', Event\ShowEditEventFormAction::class);
-                        $this->route->get('{event}/download', Event\DownloadEventProtocolAction::class);
-                        $this->route->post('{eventId}/update', Event\UpdateEventAction::class);
-                        $this->route->get('{event}/add-flags', Event\ShowAddFlagToEventFormAction::class);
-                        $this->route->get('{event}/{flag}/set', Event\AddFlagToEventAction::class);
-                        $this->route->get('{event}/{flag}/delete', Event\DeleteEventFlagAction::class);
+                        $this->route->get('{competitionId}/create', ShowCreateEventFormAction::class);
+                        $this->route->post('{competitionId}/store', StoreEventAction::class);
+                        $this->route->get('{competition}/sum', ShowUnitEventsFormAction::class);
+                        $this->route->post('{competition}/unit', UnitEventsAction::class);
+                        $this->route->get('{event}/delete', DeleteEventAction::class);
+                        $this->route->get('{event}/edit', ShowEditEventFormAction::class);
+                        $this->route->get('{event}/download', DownloadEventProtocolAction::class);
+                        $this->route->post('{eventId}/update', UpdateEventAction::class);
+                        $this->route->get('{event}/add-flags', ShowAddFlagToEventFormAction::class);
+                        $this->route->get('{event}/{flag}/set', AddFlagToEventAction::class);
+                        $this->route->get('{event}/{flag}/delete', DeleteEventFlagAction::class);
                     });
                 });
 
                 //persons
                 $this->routeRegistrar->prefix('persons')->group(function (): void {
-                    $this->route->get('', Person\ShowPersonsListAction::class);
-                    $this->route->get('{person}/show', Person\ShowPersonAction::class);
+                    $this->route->get('', ShowPersonsListAction::class);
+                    $this->route->get('{person}/show', ShowPersonAction::class);
 
                     $this->middleware(['auth'])->group(function (): void {
-                        $this->route->get('create', Person\ShowCreatePersonAction::class);
-                        $this->route->post('store', Person\StorePersonAction::class);
-                        $this->route->get('/{person}/edit', Person\ShowEditPersonAction::class);
-                        $this->route->post('/{person}/update', Person\UpdatePersonAction::class);
-                        $this->route->get('/{person}/delete', Person\DeletePersonAction::class);
+                        $this->route->get('create', ShowCreatePersonAction::class);
+                        $this->route->post('store', StorePersonAction::class);
+                        $this->route->get('/{person}/edit', ShowEditPersonAction::class);
+                        $this->route->post('/{person}/update', UpdatePersonAction::class);
+                        $this->route->get('/{person}/delete', DeletePersonAction::class);
 
-                        $this->route->get('{personId}/prompts', PersonPrompt\ShowPersonPromptsListAction::class);
-                        $this->route->get('{personId}/payments', PersonPayment\ShowPersonPaymentsListAction::class);
-                        $this->route->get('{personId}/payments/create', PersonPayment\ShowCreatePersonPaymentAction::class);
-                        $this->route->post('{personId}/payments/store', PersonPayment\StorePersonPaymentAction::class);
-                        $this->route->get('person/{protocol}/show', Person\ShowSetPersonToProtocolLineAction::class);
-                        $this->route->get('{person}/{protocol}/set', Person\SetProtocolLinePersonAction::class);
-                        $this->route->get('extract/{protocol}/', Person\ExtractPersonAction::class);
+                        $this->route->get('{personId}/prompts', ShowPersonPromptsListAction::class);
+                        $this->route->get('{personId}/payments', ShowPersonPaymentsListAction::class);
+                        $this->route->get('{personId}/payments/create', ShowCreatePersonPaymentAction::class);
+                        $this->route->post('{personId}/payments/store', StorePersonPaymentAction::class);
+                        $this->route->get('person/{protocol}/show', ShowSetPersonToProtocolLineAction::class);
+                        $this->route->get('{person}/{protocol}/set', SetProtocolLinePersonAction::class);
+                        $this->route->get('extract/{protocol}/', ExtractPersonAction::class);
 
                         //person prompts
                         $this->routeRegistrar
                             ->prefix('prompt')
                             ->group(function (): void {
-                                $this->route->get('{personId}/create', PersonPrompt\ShowCreatePromptAction::class);
-                                $this->route->post('{personId}/store', PersonPrompt\StorePersonPromptAction::class);
-                                $this->route->get('{promptId}/edit', PersonPrompt\ShowEditPromptAction::class);
-                                $this->route->post('{promptId}/update', PersonPrompt\UpdatePersonPromptAction::class);
-                                $this->route->get('{promptId}/delete', PersonPrompt\DeletePromptAction::class);
+                                $this->route->get('{personId}/create', ShowCreatePromptAction::class);
+                                $this->route->post('{personId}/store', StorePersonPromptAction::class);
+                                $this->route->get('{promptId}/edit', ShowEditPromptAction::class);
+                                $this->route->post('{promptId}/update', UpdatePersonPromptAction::class);
+                                $this->route->get('{promptId}/delete', DeletePromptAction::class);
                             });
                     });
                 });
 
                 //ranks
                 $this->routeRegistrar->prefix('ranks')->group(function (): void {
-                    $this->route->get('list/{rank}', Rank\ShowRanksListAction::class);
-                    $this->route->get('person/{personId}', Rank\ShowPersonRanksAction::class);
-                    $this->route->get('check', Rank\ShowCheckPersonsRanksFormAction::class);
-                    $this->route->post('check', Rank\CheckPersonsRanksAction::class);
+                    $this->route->get('list/{rank}', ShowRanksListAction::class);
+                    $this->route->get('person/{personId}', ShowPersonRanksAction::class);
+                    $this->route->get('check', ShowCheckPersonsRanksFormAction::class);
+                    $this->route->post('check', CheckPersonsRanksAction::class);
 
                     $this->middleware(['auth'])->group(function (): void {
-                        $this->route->get('export', Rank\ExportPersonsRanksAction::class);
-                        $this->route->post('person/{personId}/refill', Rank\RefillPersonRanksAction::class);
-                        $this->route->get('{rankId}/activate', Rank\ShowActivationFormAction::class);
-                        $this->route->get('{rankId}/update-activation', Rank\ShowEditActivationDateFormAction::class);
-                        $this->route->post('{rankId}/activate', Rank\ActivatePersonRankAction::class);
-                        $this->route->post('{rankId}/update-activation', Rank\UpdateRankActivationDateAction::class);
+                        $this->route->get('export', ExportPersonsRanksAction::class);
+                        $this->route->post('person/{personId}/refill', RefillPersonRanksAction::class);
+                        $this->route->get('{rankId}/activate', ShowActivationFormAction::class);
+                        $this->route->get('{rankId}/update-activation', ShowEditActivationDateFormAction::class);
+                        $this->route->post('{rankId}/activate', ActivatePersonRankAction::class);
+                        $this->route->post('{rankId}/update-activation', UpdateRankActivationDateAction::class);
                     });
                 });
 
                 //clubs
                 $this->routeRegistrar->prefix('clubs')->group(function (): void {
-                    $this->route->get('/', Club\ShowClubsListAction::class);
-                    $this->route->get('{clubId}/show', Club\ShowClubAction::class);
+                    $this->route->get('/', ShowClubsListAction::class);
+                    $this->route->get('{clubId}/show', ShowClubAction::class);
 
                     $this->middleware(['auth'])->group(function (): void {
-                        $this->route->get('create', Club\ShowCreateClubFormAction::class);
-                        $this->route->post('store', Club\StoreClubsAction::class);
+                        $this->route->get('create', ShowCreateClubFormAction::class);
+                        $this->route->post('store', StoreClubsAction::class);
                     });
                 });
 
@@ -142,71 +219,71 @@ class WebRoutesServiceProvider extends ServiceProvider
 
                 //flags
                 $this->routeRegistrar->prefix('flags')->group(function (): void {
-                    $this->route->get('{flag}/show', Flags\ShowFlagEventsAction::class);
+                    $this->route->get('{flag}/show', ShowFlagEventsAction::class);
 
                     $this->middleware(['auth'])->group(function (): void {
-                        $this->route->get('', Flags\ShowFlagsListAction::class);
-                        $this->route->get('create', Flags\ShowCreateFlagFormAction::class);
-                        $this->route->post('store', Flags\StoreFlagAction::class);
-                        $this->route->get('{flag}/edit', Flags\ShowEditFlagFormAction::class);
-                        $this->route->post('{flag}/update', Flags\UpdateFlagAction::class);
-                        $this->route->get('{flag}/delete', Flags\DeleteFlagAction::class);
+                        $this->route->get('', ShowFlagsListAction::class);
+                        $this->route->get('create', ShowCreateFlagFormAction::class);
+                        $this->route->post('store', StoreFlagAction::class);
+                        $this->route->get('{flag}/edit', ShowEditFlagFormAction::class);
+                        $this->route->post('{flag}/update', UpdateFlagAction::class);
+                        $this->route->get('{flag}/delete', DeleteFlagAction::class);
                     });
                 });
 
                 //faq
                 $this->routeRegistrar->prefix('faq')->group(function (): void {
-                    $this->route->get('', Faq\ShowFaqAction::class);
-                    $this->route->get('api', Faq\ShowApiFaqAction::class);
+                    $this->route->get('', ShowFaqAction::class);
+                    $this->route->get('api', ShowApiFaqAction::class);
                 });
 
                 //errors
-                $this->route->get('/404', Error\Show404ErrorAction::class);
-                $this->route->get('/500', Error\ShowUnexpectedErrorAction::class);
+                $this->route->get('/404', Show404ErrorAction::class);
+                $this->route->get('/500', ShowUnexpectedErrorAction::class);
 
                 //cups
                 $this->routeRegistrar->prefix('cups')->group(function (): void {
-                    $this->route->get('', Cup\ShowCupsListAction::class);
-                    $this->route->get('{cupId}/show', Cup\ShowCupAction::class);
-                    $this->route->get('{cupId}/cache', Cup\ClearCacheAction::class);
-                    $this->route->get('{cup}/{group}/table', Cup\ShowCupTableAction::class);
-                    $this->route->get('{cup}/{event}/{group}/show', Cup\ShowCupEventGroupAction::class);
+                    $this->route->get('', ShowCupsListAction::class);
+                    $this->route->get('{cupId}/show', ShowCupAction::class);
+                    $this->route->get('{cupId}/cache', ClearCacheAction::class);
+                    $this->route->get('{cup}/{group}/table', ShowCupTableAction::class);
+                    $this->route->get('{cup}/{event}/{group}/show', ShowCupEventGroupAction::class);
 
                     //old auth
                     $this->middleware(['auth'])->group(function (): void {
-                        $this->route->get('{cup}/{group}/table-export', Cup\ExportCupGroupTableAction::class);
-                        $this->route->get('{cup}/export', Cup\ExportCupTableAction::class);
-                        $this->route->get('create', Cup\ShowCreateCupFormAction::class);
-                        $this->route->post('store', Cup\StoreCupAction::class);
-                        $this->route->get('{cupId}/edit', Cup\ShowEditCupFormAction::class);
-                        $this->route->post('{cupId}/update', Cup\UpdateCupAction::class);
-                        $this->route->get('{cupId}/delete', Cup\DeleteCupAction::class);
-                        $this->route->get('{cupId}/event/create', CupEvents\ShowCreateCupEventFormAction::class);
-                        $this->route->post('{cup}/event/store', CupEvents\StoreCupEventAction::class);
-                        $this->route->get('{cupId}/{event}/delete', CupEvents\DeleteCupEventAction::class);
-                        $this->route->get('{cupId}/{cupEventId}/edit', CupEvents\ShowEditCupEventFormAction::class);
-                        $this->route->post('{cup}/{event}/update', CupEvents\UpdateCupEventAction::class);
+                        $this->route->get('{cup}/{group}/table-export', ExportCupGroupTableAction::class);
+                        $this->route->get('{cup}/export', ExportCupTableAction::class);
+                        $this->route->get('create', ShowCreateCupFormAction::class);
+                        $this->route->post('store', StoreCupAction::class);
+                        $this->route->get('{cupId}/edit', ShowEditCupFormAction::class);
+                        $this->route->post('{cupId}/update', UpdateCupAction::class);
+                        $this->route->get('{cupId}/delete', DeleteCupAction::class);
+                        $this->route->get('{cupId}/event/create', ShowCreateCupEventFormAction::class);
+                        $this->route->post('{cup}/event/store', StoreCupEventAction::class);
+                        $this->route->get('{cupId}/{event}/delete', DeleteCupEventAction::class);
+                        $this->route->get('{cupId}/{cupEventId}/edit', ShowEditCupEventFormAction::class);
+                        $this->route->post('{cup}/{event}/update', UpdateCupEventAction::class);
                     });
                 });
 
                 //groups
                 $this->routeRegistrar->prefix('groups')->middleware(['auth'])->group(function (): void {
-                    $this->route->get('', Groups\ShowGroupsListAction::class);
-                    $this->route->get('{group}/delete', Groups\DeleteGroupAction::class);
-                    $this->route->get('{group}', Groups\ShowGroupAction::class);
-                    $this->route->get('{group}/unit', Groups\ShowUnitGroupsAction::class);
-                    $this->route->post('{group}/unit', Groups\UnitGroupsAction::class);
+                    $this->route->get('', ShowGroupsListAction::class);
+                    $this->route->get('{group}/delete', DeleteGroupAction::class);
+                    $this->route->get('{group}', ShowGroupAction::class);
+                    $this->route->get('{group}/unit', ShowUnitGroupsAction::class);
+                    $this->route->post('{group}/unit', UnitGroupsAction::class);
                 });
 
                 //auth group
-                $this->route->get('/login', Login\ShowLoginFormAction::class);
-                $this->route->get('/login/auth/{token}', Login\MakeNewPasswordByTokenAction::class);
-                $this->route->post('/sign-in', Login\SignInAction::class);
-                $this->route->get('/sign-out', Login\SignOutAction::class);
+                $this->route->get('/login', ShowLoginFormAction::class);
+                $this->route->get('/login/auth/{token}', MakeNewPasswordByTokenAction::class);
+                $this->route->post('/sign-in', SignInAction::class);
+                $this->route->get('/sign-out', SignOutAction::class);
 
                 $this->routeRegistrar->middleware(['auth'])->prefix('registration')->group(function (): void {
-                    $this->route->get('', Registration\ShowRegistrationFormAction::class);
-                    $this->route->post('/data', Registration\SendRegistrationDataAction::class);
+                    $this->route->get('', ShowRegistrationFormAction::class);
+                    $this->route->post('/data', SendRegistrationDataAction::class);
                 });
             });
         });

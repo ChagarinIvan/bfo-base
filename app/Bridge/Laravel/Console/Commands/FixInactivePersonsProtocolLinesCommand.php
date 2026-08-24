@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Console\Commands;
 
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Throwable;
@@ -12,12 +14,10 @@ use Throwable;
  * Команда для очистки связи protocol_line с неактивными персонами.
  * Устанавливает person_id = null для всех protocol_line, которые ссылаются на неактивных персон.
  */
+#[Description('Set person_id to null for protocol lines linked to inactive persons')]
+#[Signature('protocol-lines:fix-inactive-persons')]
 class FixInactivePersonsProtocolLinesCommand extends Command
 {
-    protected $signature = 'protocol-lines:fix-inactive-persons';
-
-    protected $description = 'Set person_id to null for protocol lines linked to inactive persons';
-
     public function handle(): int
     {
         $this->info('Starting to fix protocol lines for inactive persons...');

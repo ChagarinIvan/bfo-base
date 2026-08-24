@@ -9,7 +9,6 @@ use App\Application\Service\Person\ViewPersonService;
 use App\Bridge\Laravel\Http\Controllers\Person\PersonAction;
 use Illuminate\Contracts\View\View;
 use Illuminate\Routing\Controller as BaseController;
-use function compact;
 
 class ShowCreatePersonPaymentAction extends BaseController
 {

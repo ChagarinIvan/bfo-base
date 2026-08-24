@@ -6,7 +6,6 @@ namespace App\Bridge\Laravel\Http\Controllers\Error;
 
 use App\Bridge\Laravel\Http\Controllers\AbstractAction;
 use Illuminate\Contracts\View\View;
-use Illuminate\Http\RedirectResponse;
 
 class Show404ErrorAction extends AbstractAction
 {

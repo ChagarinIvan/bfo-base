@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Bridge\Laravel\Console\Commands;
 
 use App\Infrastracture\Integration\OrientBy\OrientByApiClient;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use function serialize;
@@ -14,10 +15,9 @@ use function serialize;
  * оплаты, разраяды, дни рожденья.
  * Запуск раз в день
  */
+#[Signature('persons:sync')]
 class SyncPersonsCommand extends Command
 {
-    protected $signature = 'persons:sync';
-
     public function __construct(private readonly Filesystem $storage)
     {
         parent::__construct();

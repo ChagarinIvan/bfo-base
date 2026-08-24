@@ -9,7 +9,6 @@ use App\Application\Service\Event\ListEvents;
 use App\Application\Service\Event\ListEventsService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Routing\Controller as BaseController;
-use function compact;
 
 class ShowUnitEventsFormAction extends BaseController
 {

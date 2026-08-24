@@ -10,6 +10,8 @@ use App\Domain\Rank\Event\RankCreated;
 use App\Domain\Shared\AggregatedModel;
 use Carbon\Carbon;
 use Database\Factories\Domain\Rank\RankFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use function array_flip;
@@ -33,6 +35,8 @@ use function str_replace;
  * @property-read Event|null $event
  * @property Person $person
  */
+#[Fillable(['finish_date', 'activated_date'])]
+#[Table(name: 'ranks')]
 class Rank extends AggregatedModel
 {
     /** @see RankFactory */
@@ -98,10 +102,6 @@ class Rank extends AggregatedModel
         '2' => 'ii',
         '3' => 'iii',
     ];
-
-    protected $fillable = ['finish_date', 'activated_date'];
-
-    protected $table = 'ranks';
 
     private static array $preparedRanks = [];
 

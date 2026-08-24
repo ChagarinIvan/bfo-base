@@ -13,10 +13,10 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use Illuminate\Http\Response;
 use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\TestCase;
 use Tests\CreatesApplication;
+use Tests\TestCase;
 
-final class UpdatePersonPromptActionTest extends \Tests\TestCase
+final class UpdatePersonPromptActionTest extends TestCase
 {
     use CreatesApplication;
     use RefreshDatabase;

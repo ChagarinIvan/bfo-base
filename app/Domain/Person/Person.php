@@ -17,6 +17,8 @@ use App\Domain\Shared\AggregatedModel;
 use App\Infrastracture\Laravel\Eloquent\Auth\ImpressionCast;
 use Carbon\Carbon;
 use Database\Factories\Domain\Person\PersonFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -45,14 +47,12 @@ use Illuminate\Support\Collection;
  *
  * @see PersonFactory
  */
+#[Fillable(['lastname', 'firstname', 'birthday', 'club_id', 'from_base', 'created', 'updated'])]
+#[Table(name: 'person')]
 class Person extends AggregatedModel
 {
     /** @see PersonFactory */
     use HasFactory;
-
-    protected $table = 'person';
-
-    protected $fillable = ['lastname', 'firstname', 'birthday', 'club_id', 'from_base', 'created', 'updated'];
 
     public function protocolLines(): HasMany
     {

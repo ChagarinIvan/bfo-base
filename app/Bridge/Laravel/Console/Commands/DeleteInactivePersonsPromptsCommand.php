@@ -9,6 +9,8 @@ use App\Application\Service\PersonPrompt\DeletePersonPrompt;
 use App\Application\Service\PersonPrompt\DeletePersonPromptService;
 use App\Application\Service\PersonPrompt\ListPersonsPrompts;
 use App\Application\Service\PersonPrompt\ListPersonsPromptsService;
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Throwable;
 use function count;
@@ -16,12 +18,10 @@ use function count;
 /**
  * Команда для удаления промптов у неактивных персон.
  */
+#[Description('Delete all prompts for inactive persons')]
+#[Signature('prompts:delete-inactive')]
 class DeleteInactivePersonsPromptsCommand extends Command
 {
-    protected $signature = 'prompts:delete-inactive';
-
-    protected $description = 'Delete all prompts for inactive persons';
-
     public function __construct(
         private readonly ListPersonsPromptsService $listPromptsService,
         private readonly DeletePersonPromptService $deletePromptService,

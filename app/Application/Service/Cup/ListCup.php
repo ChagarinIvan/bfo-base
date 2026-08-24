@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Application\Service\Cup;
 
-use App\Application\Dto\Competition\CompetitionSearchDto;
 use App\Application\Dto\Cup\CupSearchDto;
 use App\Domain\Shared\Criteria;
 use function array_filter;

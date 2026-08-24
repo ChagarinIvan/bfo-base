@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Console\Commands;
 
-use App\Application\Dto\Auth\UserId;
 use App\Application\Service\Rank\ActivePersonRank;
 use App\Application\Service\Rank\ActivePersonRankService;
 use App\Domain\Person\Person;
-use App\Infrastracture\Integration\OrientBy\OrientByPersonDto;
-use App\Infrastracture\Integration\OrientBy\OrientBySyncService;
 use App\Services\PersonsService;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Log\LogManager;
@@ -23,9 +21,9 @@ use function fputcsv;
 use function fwrite;
 use function rewind;
 
+#[Signature('persons:export')]
 class ExportPersonsCommand extends Command
 {
-    protected $signature = 'persons:export';
     private LoggerInterface $logger;
 
     public function __construct(

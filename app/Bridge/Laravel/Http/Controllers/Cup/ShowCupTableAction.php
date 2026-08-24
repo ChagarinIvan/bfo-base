@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Bridge\Laravel\Http\Controllers\Cup;
 
 use App\Application\Dto\Club\ClubSearchDto;
+use App\Application\Dto\Club\ViewClubDto;
 use App\Application\Dto\Person\PersonSearchDto;
 use App\Application\Dto\Person\ViewPersonDto;
 use App\Application\Service\Club\ListClubs;
@@ -13,7 +14,6 @@ use App\Application\Service\Person\ListPersons;
 use App\Application\Service\Person\ListPersonsService;
 use App\Domain\Cup\Cup;
 use App\Domain\Cup\Group\CupGroupFactory;
-use App\Domain\Person\Person;
 use App\Services\CupEventsService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -57,7 +57,7 @@ class ShowCupTableAction extends BaseController
             $persons,
         )));
 
-        /** @var array<int, \App\Application\Dto\Club\ViewClubDto> $clubs */
+        /** @var array<int, ViewClubDto> $clubs */
         $clubs = array_column(
             array: $listClubsService->execute(new ListClubs(new ClubSearchDto(ids: $clubIds))),
             column_key: null,

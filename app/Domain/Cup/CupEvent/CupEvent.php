@@ -12,6 +12,7 @@ use App\Domain\Event\Event;
 use App\Domain\Shared\AggregatedModel;
 use App\Infrastracture\Laravel\Eloquent\Auth\ImpressionCast;
 use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -28,11 +29,10 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property Cup $cup
  * @property Event $event
  */
+#[Table(name: 'cup_events')]
 class CupEvent extends AggregatedModel
 {
     use HasFactory;
-
-    protected $table = 'cup_events';
 
     public function disable(Impression $impression): void
     {

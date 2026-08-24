@@ -21,7 +21,7 @@ return RectorConfig::configure()
         __DIR__ . '/tests',
     ])
     ->withSets([
-        LaravelLevelSetList::UP_TO_LARAVEL_120,
+        LaravelLevelSetList::UP_TO_LARAVEL_130,
         PHPUnitSetList::ANNOTATIONS_TO_ATTRIBUTES,
         PHPUnitSetList::PHPUNIT_CODE_QUALITY,
     ])
@@ -35,6 +35,12 @@ return RectorConfig::configure()
     ->withComposerBased(
         phpunit: true,
         laravel: true,
+    )
+    // Импорт вместо FQCN (см. CLAUDE.md / конституция): атрибуты и классы,
+    // которые rector генерирует как \Fully\Qualified, подключаем через use.
+    ->withImportNames(
+        importShortClasses: false,
+        removeUnusedImports: true,
     )
     ->withSkip([
         // генерируемые Laravel файлы кэша — не линтим (как в .php-cs-fixer.php)

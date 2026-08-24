@@ -6,7 +6,6 @@ namespace App\Bridge\Laravel\Http\Controllers\Event;
 
 use Illuminate\Contracts\View\View;
 use Illuminate\Routing\Controller as BaseController;
-use function compact;
 
 class ShowCreateEventFormAction extends BaseController
 {

@@ -5,16 +5,14 @@ declare(strict_types=1);
 namespace App\Domain\PersonPrompt;
 
 use App\Domain\Auth\Impression;
-use App\Domain\Cup\Event\CupCreated;
-use App\Domain\Cup\Event\CupUpdated;
-use App\Domain\Cup\Factory\CupInput;
 use App\Domain\Person\Person;
 use App\Domain\PersonPrompt\Event\PersonPromptCreated;
 use App\Domain\PersonPrompt\Event\PersonPromptUpdated;
 use App\Domain\Shared\AggregatedModel;
 use App\Infrastracture\Laravel\Eloquent\Auth\ImpressionCast;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
@@ -28,12 +26,11 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  *
  * @property-read Person $person
  */
+#[Fillable(['prompt'])]
+#[Table(name: 'persons_prompt')]
 class PersonPrompt extends AggregatedModel
 {
     use HasFactory;
-
-    protected $table = 'persons_prompt';
-    protected $fillable = ['prompt'];
 
     public function person(): HasOne
     {

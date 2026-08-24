@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Domain\Cup\Factory;
 
 use App\Domain\Auth\Impression;
-use App\Domain\Competition\Competition;
 use App\Domain\Cup\Cup;
 use App\Domain\Shared\Clock;
 

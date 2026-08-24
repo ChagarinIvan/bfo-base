@@ -13,16 +13,16 @@ use App\Application\Service\Person\UpdatePersonInfo;
 use App\Application\Service\Person\UpdatePersonInfoService;
 use App\Application\Service\Person\ViewPerson;
 use App\Application\Service\Person\ViewPersonService;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use function array_shift;
 use function count;
 use function sprintf;
 
+#[Signature('persons:fix-age')]
 final class FixYearCommand extends Command
 {
-    protected $signature = 'persons:fix-age';
-
     public function __construct(
         private readonly UpdatePersonInfoService $service,
         private readonly ListPersonsService $persons,

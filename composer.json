@@ -14,12 +14,12 @@
         "ext-mbstring": "*",
         "ext-pdo": "*",
         "guzzlehttp/guzzle": "^7.10",
-        "laravel/framework": "^12.0",
+        "laravel/framework": "^13.0",
         "laravel/horizon": "^5.45",
         "mav/slovo": "^0.2.3",
         "phpoffice/phpspreadsheet": "^5.0",
         "predis/predis": "^2.3 || ^3.0",
-        "sentry/sentry-laravel": "4.24.0"
+        "sentry/sentry-laravel": "^4.27"
     },
     "config": {
         "optimize-autoloader": true,

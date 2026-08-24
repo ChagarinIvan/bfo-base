@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+use App\Bridge\Laravel\Http\Middleware\EncryptCookies;
+use App\Bridge\Laravel\Http\Middleware\VerifyCsrfToken;
+
 return [
     /*
     |--------------------------------------------------------------------------
@@ -59,7 +62,7 @@ return [
     */
 
     'middleware' => [
-        'verify_csrf_token' => App\Bridge\Laravel\Http\Middleware\VerifyCsrfToken::class,
-        'encrypt_cookies' => App\Bridge\Laravel\Http\Middleware\EncryptCookies::class,
+        'verify_csrf_token' => VerifyCsrfToken::class,
+        'encrypt_cookies' => EncryptCookies::class,
     ],
 ];

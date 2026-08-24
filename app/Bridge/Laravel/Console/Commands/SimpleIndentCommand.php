@@ -6,18 +6,17 @@ namespace App\Bridge\Laravel\Console\Commands;
 
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Services\ProtocolLineIdentService;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use function time;
 
 /**
  * Команда для определения людей с помощью прямого совпадения идентификатора.
  * Запускаем раз в день
  */
+#[Signature('protocol-lines:simple-ident {userId}')]
 class SimpleIndentCommand extends Command
 {
-    protected $signature = 'protocol-lines:simple-ident {userId}';
-
     public function handle(ProtocolLineIdentService $identService): void
     {
         $this->info('Start');
