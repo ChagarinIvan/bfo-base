@@ -11,6 +11,7 @@ use App\Domain\Cup\CupEvent\Event\CupEventUpdated;
 use App\Domain\Event\Event;
 use App\Domain\Shared\AggregatedModel;
 use App\Infrastracture\Laravel\Eloquent\Auth\ImpressionCast;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -61,7 +62,8 @@ class CupEvent extends AggregatedModel
         return $this->hasOne(Event::class, 'id', 'event_id');
     }
 
-    public function scopeActive($query)
+    #[Scope]
+    protected function active($query)
     {
         return $query->where('active', true);
     }

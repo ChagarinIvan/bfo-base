@@ -103,8 +103,8 @@ PHP 8.5 → инфра. Поэтому **US3 (библиотеки, P2) выпо
 
 **Independent Test**: после 11→12 гейты зелёные и приложение работает; отдельно после 12→13 — то же.
 
-- [ ] T013 [US2] Поднять уровень Laravel в `rector.php`: `LaravelLevelSetList::UP_TO_LARAVEL_110` → `UP_TO_LARAVEL_120`
-- [ ] T014 [US2] Поднять `laravel/framework` до `^12` в `composer.json`; `composer update`; прогнать `composer rector` (сет `UP_TO_LARAVEL_120`); обработать: `HasUuids`→UUIDv7 (при нужде `HasVersion4Uuids`), Carbon 2→3, `image`-валидация без SVG, `local` disk root `storage/app/private`; сверить horizon/sentry; гейты; коммит
+- [X] T013 [US2] Поднять уровень Laravel в `rector.php`: `LaravelLevelSetList::UP_TO_LARAVEL_110` → `UP_TO_LARAVEL_120` — выполнено
+- [X] T014 [US2] Поднять `laravel/framework` до `^12` в `composer.json` — установлен **v12.67.0**; rector-сет `UP_TO_LARAVEL_120` прогнан: единственная модернизация — `scopeActive()` → атрибут `#[Scope]` в `CupEvent.php` (импорт `Illuminate\Database\Eloquent\Attributes\Scope`). Гейты зелёные: stan ✅, cs ✅, rector --dry-run (нет изменений) ✅, test 237 OK ✅ (падения `ShowEditPromptActionTest`/`PersonPromptServiceTest` — известные MySQL/order-флейки, изолированно зелёные), boot Laravel 12.67.0 ✅. HasUuids/Carbon3/image-SVG/local-disk — правок не потребовали (rector чист)
 - [ ] T015 [US2] Добавить сет `LaravelSetList::LARAVEL_130` в `rector.php`
 - [ ] T016 [US2] Поднять `laravel/framework` до `^13` в `composer.json`; `composer update`; прогнать `composer rector` (сет `LARAVEL_130`); обработать: CSRF `VerifyCsrfToken`→`PreventRequestForgery`, `serializable_classes`=false (кэш объектов), сериализацию сессий `json`, `upsert` с пустым `uniqueBy`; проверить клеш глобальных `array_first()/array_last()` (полифилл 8.5) с легаси-хелперами; гейты; коммит
 
