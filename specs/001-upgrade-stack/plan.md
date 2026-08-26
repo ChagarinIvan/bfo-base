@@ -10,9 +10,10 @@
 ровно одна вещь, отдельный коммит, зелёные гейты (test/stan/cs/rector + локальный запуск) перед
 переходом дальше. По результатам ресёрча (см. [research.md](./research.md)) порядок уточнён относительно
 спеки: phpspreadsheet поднимается рано (он блокирует PHP 8.5, при этом код-импакт минимален —
-используется только Reader-API), doctrine/dbal и predis не апгрейдятся, а **удаляются** (не используются;
-Redis уже на phpredis). Основной риск сосредоточен в переходах Laravel 11→12→13, автоматизируемых
-Rector-сетами driftingly/rector-laravel.
+используется только Reader-API), doctrine/dbal **удаляется** (не используется), а predis не удаляется, а
+**апгрейдится** — Redis-клиент стандартизирован на predis (разворот исходного решения; predis реально
+используется в `.env`, phpredis не установлен — см. research Decision 2 / T010). Основной риск
+сосредоточен в переходах Laravel 11→12→13, автоматизируемых Rector-сетами driftingly/rector-laravel.
 
 ## Technical Context
 
@@ -21,11 +22,11 @@ Rector-сетами driftingly/rector-laravel.
 
 **Primary Dependencies**: laravel/framework 11.51 → 13.x (по одному мажору); phpoffice/phpspreadsheet
 1.30 → 5.x; guzzlehttp/guzzle `7.10.0` → `^7.10` (мажор 8 условен, ограничен constraint фреймворка);
-doctrine/dbal 3.10 → **удалить**; predis/predis 1.1 → **удалить** (стандартизация на phpredis);
+doctrine/dbal 3.10 → **удалить**; predis/predis 1.1 → **апгрейд** `^2.3 || ^3.0` (стандартизация Redis-клиента на predis);
 dev-инструменты (php-cs-fixer, larastan, phpstan, rector, mockery) + horizon + sentry-laravel — минор;
 rector/rector-laravel (abandoned) → driftingly/rector-laravel.
 
-**Storage**: MySQL 8.0.27 → 8.4 LTS (или новее); Redis 6.2 → 7/8 (через расширение phpredis).
+**Storage**: MySQL 8.0.27 → 8.4 LTS (или новее); Redis 6.2 → 8 (клиент — predis 2.x/3.x).
 
 **Testing**: PHPUnit 13.x; ~115 тест-файлов (unit по Domain/Application/Services + feature/request по
 Bridge/Laravel/Http). `phpunit.xml`: QUEUE=sync, CACHE=array, SESSION=array. Гейты: `composer test`,
@@ -55,7 +56,7 @@ Bridge/Laravel/Http). `phpunit.xml`: QUEUE=sync, CACHE=array, SESSION=array. Г�
 | I. Слоистая архитектура           | Апгрейд не вводит новых репозиториев/сервисов и не меняет слои                                   | ✅ Соответствует |
 | II. Без фасадов, интерфейсы       | Новых фасадов не добавляется; существующий код не рефакторится                                   | ✅ Соответствует |
 | III. Тесты                        | Зелёные тесты — обязательный гейт каждого шага; при нехватке покрытия добавляем базовую проверку | ✅ Соответствует (центральный элемент) |
-| IV. Целевая архитектура > латание | Кода не пишем; только версии. Удаление dbal/predis сокращает долг                                | ✅ Соответствует |
+| IV. Целевая архитектура > латание | Кода не пишем; только версии. Удаление dbal + апгрейд predis сокращают долг                       | ✅ Соответствует |
 | V. Только вперёд                  | Фича — прямое воплощение принципа                                                                | ✅ Соответствует |
 | Развёртывание                     | Версии образов фиксируются в репозитории; бэкап БД перед MySQL                                   | ✅ Соответствует (FR-008, FR-009) |
 | Гейты качества                    | CS/STAN/Rector/тесты — определение готовности каждого шага                                       | ✅ Соответствует (FR-002) |
@@ -85,7 +86,7 @@ specs/001-upgrade-stack/
 Реальные пути, которые будут меняться:
 
 ```text
-composer.json            # версии/удаление пакетов (dbal, predis, guzzle-constraint, laravel, phpspreadsheet, dev-tools)
+composer.json            # версии/удаление dbal, апгрейд predis, guzzle-constraint, laravel, phpspreadsheet, dev-tools
 composer.lock            # результат composer update
 rector.php               # UP_TO_LARAVEL_110 → 120, затем LaravelSetList::LARAVEL_130; смена пакета на driftingly
 Dockerfile               # php:8.4-fpm → php:8.5-fpm (шаг PHP)

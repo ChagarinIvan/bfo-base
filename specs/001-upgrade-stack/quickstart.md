@@ -8,8 +8,8 @@
 ## Предпосылки
 
 - Docker-окружение поднято локально, БД MySQL доступна.
-- Установлено расширение **phpredis** в PHP-контейнере (и на воркерах) — проверка:
-  `php -m | grep redis`.
+- Redis-клиент — **predis** (`REDIS_CLIENT=predis`), C-расширение phpredis не требуется. Redis-сервер
+  доступен для проверки кэша/очередей.
 - Рабочее дерево чистое; текущий шаг делается в отдельной ветке/коммите.
 
 ## Базовая линия (до первого шага)
@@ -46,8 +46,9 @@ git commit -m "upgrade: <что именно>"    # отдельный изол�
   `composer update` не сообщает abandoned по rector-части; `composer rector --dry-run` работает.
 - **Удаление doctrine/dbal**: пакета нет в `composer.lock`; мёртвый `use Doctrine\DBAL\Types\Type;` удалён;
   `php artisan migrate --pretend` на свежей БД проходит (миграции с `->change()` не требуют dbal в Laravel 11+).
-- **Удаление predis / phpredis**: `php -m | grep redis` (расширение есть); кэш и очереди работают —
-  прогнать тесты + вручную проверить сценарий с кэшем и постановкой job в Horizon.
+- **Апгрейд predis** (`^2.3 || ^3.0`, клиент `REDIS_CLIENT=predis`): кэш и очереди работают на живом
+  Redis — прогнать тесты + вручную проверить сценарий с кэшем и постановкой job в Horizon (клиент
+  `Predis\Client`). phpredis не требуется.
 - **phpspreadsheet 5.x**: зелёные **18 parser-тестов** (`tests/Models/Parser/*`); вручную импортировать
   реальный `.xlsx` и `.xls` протокол — данные распарсились идентично прежнему.
 - **Laravel 11→12**: проверить использование `HasUuids` (UUIDv7 vs `HasVersion4Uuids`), Carbon-3 поведение

@@ -111,7 +111,8 @@ Bridge/Laravel/Http/Controllers). `phpunit.xml`: `QUEUE_CONNECTION=sync`, `CACHE
 
 1. **Безопасные semver-обновления** dev-инструментов + horizon/sentry-минор; замена rector-laravel на driftingly.
 2. **Сжать поверхность**: удалить doctrine/dbal (+мёртвый импорт); снять пин guzzle → `^7.10`;
-   стандартизировать Redis на phpredis и удалить predis (после проверки расширения).
+   апгрейд predis `^2.3 || ^3.0` — Redis-клиент стандартизирован на predis (разворот исходного плана
+   «удалить predis в пользу phpredis»; см. Decision 1-reversal / Decision 2 выше и T010).
 3. **phpspreadsheet 1.x → 5.x** (гейт для PHP 8.5; код-импакт минимален).
 4. **Laravel 11 → 12** (rector `UP_TO_LARAVEL_120`; UUIDv7 / Carbon 3 / SVG).
 5. **Laravel 12 → 13** (rector `LARAVEL_130`; CSRF-rename, дефолты cache/session).
@@ -140,7 +141,7 @@ Bridge/Laravel/Http/Controllers). `phpunit.xml`: `QUEUE_CONNECTION=sync`, `CACHE
 | laravel/horizon | **v5.48.3** | `illuminate/* ^9\|10\|11\|12\|13` → **L13 поддержан на 5.x** (мажор 6 только dev, не нужен) |
 | sentry/sentry-laravel | **4.27.0** | `illuminate/support … \|^13.0` → L13 поддержан; **текущий пин 4.24.0 надо снять** |
 | guzzlehttp/guzzle | 8.0.2 (stable) / 7.15.3 | L13 допускает и `^8`; план T011 — снять пин до `^7.10` (мажор 8 опционален) |
-| predis/predis | 3.6.0 | удаляем (см. ниже), апгрейд не нужен |
+| predis/predis | 3.6.0 | **апгрейд** `^2.3 \|\| ^3.0` (стандартизация Redis-клиента на predis; разворот Decision 2) |
 | driftingly/rector-laravel | 2.5.0 (installed) | содержит `UP_TO_LARAVEL_120` **и `UP_TO_LARAVEL_130` (кумулятивный)** + `LARAVEL_130` |
 
 **T003 ✅** — latest подтверждены. **T004 ✅** — horizon 5.48.3 и sentry 4.27.0 совместимы с L12/L13;
