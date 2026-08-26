@@ -9,7 +9,7 @@ use function json_decode;
 
 class OrientByApiClient
 {
-    private const ORIENT_BY_PERSONS_API_URL = 'http://orient.by/api/?type=getSportmens';
+    private const string ORIENT_BY_PERSONS_API_URL = 'http://orient.by/api/?type=getSportmens';
 
     /**
      * @return OrientByPersonDto[]

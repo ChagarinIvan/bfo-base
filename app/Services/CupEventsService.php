@@ -38,9 +38,7 @@ final readonly class CupEventsService
         return $this->cache->tags(['cups', $cup->id])->remember(
             "{$cup->id}_{$group->id()}",
             1000000,
-            static function () use ($cup, $cupEvents, $group) {
-                return $cup->type->instance()->calculateCup($cup, $cupEvents, $group);
-            }
+            static fn() => $cup->type->instance()->calculateCup($cup, $cupEvents, $group)
         );
     }
 }

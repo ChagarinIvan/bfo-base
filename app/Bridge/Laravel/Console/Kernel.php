@@ -20,6 +20,7 @@ use App\Bridge\Laravel\Console\Commands\SyncStoredPersonsCommand;
 use App\Domain\User\User;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Override;
 use function sleep;
 
 class Kernel extends ConsoleKernel
@@ -27,6 +28,7 @@ class Kernel extends ConsoleKernel
     /**
      * The Artisan commands provided by your application.
      */
+    #[Override]
     protected $commands = [
         IdentProtocolLineCommand::class,
         SimpleIndentCommand::class,

@@ -16,7 +16,7 @@ use Symfony\Component\Console\Input\InputArgument;
 #[Signature('person:sync')]
 class SyncPersonCommand extends Command
 {
-    private LoggerInterface $logger;
+    private readonly LoggerInterface $logger;
 
     public function __construct(
         private readonly OrientBySyncService $service,

@@ -42,9 +42,7 @@ class SportOrgParser extends AbstractParser
         $groups = collect($race['groups'])->keyBy('id');
         $results = collect($race['results'])
             ->filter(static fn (array $item): bool => isset($item['person_id']))
-            ->groupBy(static function (array $item) use ($persons) {
-                return $persons->get($item['person_id'])['group_id'];
-            })
+            ->groupBy(static fn(array $item): mixed => $persons->get($item['person_id'])['group_id'])
         ;
 
         $linesList = new Collection();

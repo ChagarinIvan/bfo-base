@@ -25,6 +25,9 @@ return RectorConfig::configure()
         PHPUnitSetList::ANNOTATIONS_TO_ATTRIBUTES,
         PHPUnitSetList::PHPUNIT_CODE_QUALITY,
     ])
+    // Современные конструкции PHP: версия берётся из composer floor (^8.5) —
+    // набор «едет» вместе со стеком, версию не хардкодим.
+    ->withPhpSets()
     ->withPreparedSets(
         deadCode: true,
         codeQuality: true,

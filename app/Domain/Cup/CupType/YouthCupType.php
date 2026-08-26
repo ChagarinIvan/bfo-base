@@ -84,7 +84,7 @@ class YouthCupType extends MasterCupType
             'W20',
         ],
     ];
-    private const EVENTS_GROUPS_KOEF = [
+    private const array EVENTS_GROUPS_KOEF = [
         //М21Е
         'М21Е' => 1,
         'М21E' => 1,

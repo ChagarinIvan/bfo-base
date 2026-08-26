@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Bridge\Laravel\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Override;
 use Sentry\Laravel\Integration;
 use Throwable;
 
@@ -13,6 +14,7 @@ class Handler extends ExceptionHandler
     /**
      * A list of the inputs that are never flashed for validation exceptions.
      */
+    #[Override]
     protected $dontFlash = [
         'password',
         'password_confirmation',

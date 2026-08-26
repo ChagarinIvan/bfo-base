@@ -36,7 +36,7 @@ class CsvListParser implements ParserInterface
         foreach ($result as $index => $line) {
             if ($index === 0) {
                 $values = explode(';', $line);
-                $values = array_map('trim', $values);
+                $values = array_map(trim(...), $values);
                 $values = array_filter($values);
 
                 if (count($values) === 5) {

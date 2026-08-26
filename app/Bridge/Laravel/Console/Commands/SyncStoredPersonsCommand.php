@@ -19,7 +19,7 @@ use function unserialize;
 #[Signature('persons:sync:stored')]
 class SyncStoredPersonsCommand extends Command
 {
-    private LoggerInterface $logger;
+    private readonly LoggerInterface $logger;
 
     public function __construct(
         private readonly OrientBySyncService $service,

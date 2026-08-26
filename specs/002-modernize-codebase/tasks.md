@@ -91,7 +91,7 @@ US1 (переименование) выполняется **до** US2 (моде
 **Independent Test**: `composer rector -- --dry-run` чисто (идемпотентность), `cs` 0, `stan` без ошибок,
 все 237 тестов зелёные; внесённая заведомо устаревшая конструкция отмечается инструментом.
 
-- [ ] T009 [US2] Добавить `->withPhpSets()` в `rector.php` (полный PHP-сет из composer floor `^8.5`);
+- [X] T009 [US2] Добавить `->withPhpSets()` в `rector.php` (полный PHP-сет из composer floor `^8.5`);
   `composer rector`; просмотреть дифф (только форма, не поведение); гейты; коммит
 - [ ] T010 [US2] Включить строгую группу `strictBooleans` в `->withPreparedSets(...)` в `rector.php`;
   `composer rector`; ревью диффа; небезопасное/шумное — в `->withSkip([...])` + откат правки; гейты; коммит

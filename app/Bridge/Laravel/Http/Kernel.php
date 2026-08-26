@@ -27,6 +27,7 @@ use Illuminate\Routing\Middleware\ValidateSignature;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Override;
 
 class Kernel extends HttpKernel
 {
@@ -35,6 +36,7 @@ class Kernel extends HttpKernel
      *
      * These middleware are run during every request to your application.
      */
+    #[Override]
     protected $middleware = [
         PreventRequestsDuringMaintenance::class,
         ValidatePostSize::class,
@@ -45,6 +47,7 @@ class Kernel extends HttpKernel
     /**
      * The application's route middleware groups.
      */
+    #[Override]
     protected $middlewareGroups = [
         'web' => [
             EncryptCookies::class,
@@ -64,6 +67,7 @@ class Kernel extends HttpKernel
      *
      * These middleware may be assigned to groups or used individually.
      */
+    #[Override]
     protected $middlewareAliases = [
         'auth' => Authenticate::class,
         'auth.basic' => AuthenticateWithBasicAuth::class,

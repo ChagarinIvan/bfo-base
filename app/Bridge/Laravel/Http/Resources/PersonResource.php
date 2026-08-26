@@ -14,7 +14,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  */
 final class PersonResource extends JsonResource
 {
-    private ActivePersonRankService $activePersonRank;
+    private readonly ActivePersonRankService $activePersonRank;
 
     public function __construct($resource)
     {

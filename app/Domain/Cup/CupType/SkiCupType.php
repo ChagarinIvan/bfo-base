@@ -43,8 +43,8 @@ class SkiCupType extends EliteCupType
     protected function getGroupsMap(CupGroup $group): array
     {
         $map = [
-            (new CupGroup(GroupMale::Man))->id() => static::ELITE_MEN_GROUPS,
-            (new CupGroup(GroupMale::Woman))->id() => static::ELITE_WOMEN_GROUPS,
+            new CupGroup(GroupMale::Man)->id() => static::ELITE_MEN_GROUPS,
+            new CupGroup(GroupMale::Woman)->id() => static::ELITE_WOMEN_GROUPS,
         ];
 
         return $map[$group->id()] ?? [];

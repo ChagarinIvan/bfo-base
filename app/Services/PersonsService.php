@@ -17,7 +17,7 @@ use function in_array;
 
 class PersonsService
 {
-    private const SORT_BY_COLUMNS = [
+    private const array SORT_BY_COLUMNS = [
         'fio',
         'events_count',
         'club_name',

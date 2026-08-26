@@ -13,7 +13,7 @@ class ParserFactory
     public const LIST_PARSERS = [
         CsvListParser::class,
     ];
-    private const PROTOCOL_PARSERS = [
+    private const array PROTOCOL_PARSERS = [
         SportOrgParser::class,
         ElkPathXlsxParser::class,
         XlsParser::class,

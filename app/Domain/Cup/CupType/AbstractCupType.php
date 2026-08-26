@@ -60,10 +60,7 @@ abstract class AbstractCupType implements CupTypeInterface
                 /** @var CupEventPoint $cupEventPoints */
                 $person2Points += $cupEventPoints->points;
             }
-            if ($person1Points === $person2Points) {
-                return 0;
-            }
-            return $person1Points > $person2Points ? -1 : 1;
+            return $person2Points <=> $person1Points;
         });
 
         return $results;

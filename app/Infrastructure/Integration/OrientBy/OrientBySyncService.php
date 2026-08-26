@@ -25,7 +25,7 @@ use function sprintf;
 
 class OrientBySyncService
 {
-    private LoggerInterface $logger;
+    private readonly LoggerInterface $logger;
 
     public function __construct(
         private readonly PersonsIdentService $identService,

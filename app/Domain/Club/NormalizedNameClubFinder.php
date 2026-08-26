@@ -12,7 +12,7 @@ use function str_replace;
 
 final readonly class NormalizedNameClubFinder implements ClubFinder
 {
-    private const EDIT_MAP = [
+    private const array EDIT_MAP = [
         'ко ' => ['ка ', 'oc '],
         'ксо ' => ['кса '],
         'бгу' => ['бду', 'bsu'],

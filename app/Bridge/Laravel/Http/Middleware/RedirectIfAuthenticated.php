@@ -12,13 +12,8 @@ use Illuminate\Routing\Redirector;
 
 class RedirectIfAuthenticated
 {
-    protected Redirector $redirector;
-    private AuthService $authService;
-
-    public function __construct(Redirector $redirector, AuthService $authService)
+    public function __construct(protected Redirector $redirector, private readonly AuthService $authService)
     {
-        $this->redirector = $redirector;
-        $this->authService = $authService;
     }
 
     /**
