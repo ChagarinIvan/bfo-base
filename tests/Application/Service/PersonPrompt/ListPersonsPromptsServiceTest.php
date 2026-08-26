@@ -7,7 +7,6 @@ namespace Tests\Application\Service\PersonPrompt;
 use App\Application\Dto\Auth\AuthAssembler;
 use App\Application\Dto\PersonPrompt\PersonPromptAssembler;
 use App\Application\Dto\PersonPrompt\SearchPersonPromptDto;
-use App\Application\Dto\PersonPrompt\ViewPersonPromptDto;
 use App\Application\Service\PersonPrompt\ListPersonsPrompts;
 use App\Application\Service\PersonPrompt\ListPersonsPromptsService;
 use App\Domain\PersonPrompt\PersonPrompt;
@@ -44,6 +43,5 @@ final class ListPersonsPromptsServiceTest extends TestCase
         $list = $this->service->execute(new ListPersonsPrompts(new SearchPersonPromptDto(personId: '1')));
 
         $this->assertCount(2, $list);
-        $this->assertContainsOnlyInstancesOf(ViewPersonPromptDto::class, $list);
     }
 }

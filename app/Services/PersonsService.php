@@ -45,7 +45,7 @@ class PersonsService
     public function getPersonsList(?string $sortBy = null, ?int $sortMode = null, ?string $search = null): Builder
     {
         $sortBy = in_array($sortBy, self::SORT_BY_COLUMNS, true) ? $sortBy : 'fio';
-        $sort = $sortMode === 1 ? 'DESC' : 'ASC';
+        $sort = $sortMode === 1 ? 'desc' : 'asc';
 
         $persons = Person::where('person.active', true)->withCount('protocolLines')->with('club');
 

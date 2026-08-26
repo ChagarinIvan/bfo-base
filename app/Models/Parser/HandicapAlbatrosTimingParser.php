@@ -10,7 +10,6 @@ use DOMXPath;
 use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
-use RuntimeException;
 use function array_slice;
 use function count;
 use function explode;

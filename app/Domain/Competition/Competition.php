@@ -7,15 +7,13 @@ namespace App\Domain\Competition;
 use App\Domain\Auth\Impression;
 use App\Domain\Competition\Event\CompetitionCreated;
 use App\Domain\Competition\Event\CompetitionDisabled;
-use App\Domain\Event\Event;
 use App\Domain\Shared\AggregatedModel;
 use App\Infrastracture\Laravel\Eloquent\Auth\ImpressionCast;
 use App\Models\Year;
 use Carbon\Carbon;
 use Database\Factories\Domain\Competition\CompetitionFactory;
+use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Collection;
 
 /**
  * @property int $id
@@ -29,12 +27,11 @@ use Illuminate\Support\Collection;
  * @property Impression $created
  * @property Impression $updated
  */
+#[Table(name: 'competitions')]
 class Competition extends AggregatedModel
 {
     /** @see CompetitionFactory */
     use HasFactory;
-
-    protected $table = 'competitions';
 
     public function updateInfo(CompetitionInfo $info, Impression $impression): void
     {

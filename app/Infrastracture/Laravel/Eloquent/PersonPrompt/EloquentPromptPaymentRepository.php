@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Infrastracture\Laravel\Eloquent\PersonPrompt;
 
-use App\Domain\Cup\Cup;
 use App\Domain\PersonPrompt\PersonPrompt;
 use App\Domain\PersonPrompt\PersonPromptRepository;
 use App\Domain\Shared\Criteria;

@@ -10,7 +10,6 @@ use App\Application\Service\PersonPrompt\ListPersonsPromptsService;
 use App\Bridge\Laravel\Http\Controllers\Person\PersonAction;
 use Illuminate\Contracts\View\View;
 use Illuminate\Routing\Controller as BaseController;
-use function compact;
 
 class ShowPersonPromptsListAction extends BaseController
 {

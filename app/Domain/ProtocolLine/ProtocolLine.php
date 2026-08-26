@@ -13,6 +13,9 @@ use App\Domain\Shared\AggregatedModel;
 use App\Services\PersonsIdentService;
 use Carbon\Carbon;
 use Database\Factories\Domain\ProtocolLine\ProtocolLineFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Table;
+use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -39,32 +42,30 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property-read Distance $distance
  * @property-read Person|null $person
  */
+#[Fillable([
+    'serial_number',
+    'lastname',
+    'firstname',
+    'club',
+    'year',
+    'rank',
+    'runner_number',
+    'time',
+    'place',
+    'complete_rank',
+    'points',
+    'vk',
+    'distance_id',
+    'prepared_line',
+    'person_id',
+    'activate_rank',
+])]
+#[Table(name: 'protocol_lines')]
+#[WithoutTimestamps]
 class ProtocolLine extends AggregatedModel
 {
     /** @see ProtocolLineFactory */
     use HasFactory;
-
-    public $timestamps = false;
-    protected $table = 'protocol_lines';
-
-    protected $fillable = [
-        'serial_number',
-        'lastname',
-        'firstname',
-        'club',
-        'year',
-        'rank',
-        'runner_number',
-        'time',
-        'place',
-        'complete_rank',
-        'points',
-        'vk',
-        'distance_id',
-        'prepared_line',
-        'person_id',
-        'activate_rank',
-    ];
 
 //    public function getDateFormat(): string
 //    {

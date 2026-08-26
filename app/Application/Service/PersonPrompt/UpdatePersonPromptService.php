@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Application\Service\PersonPrompt;
 
-use App\Application\Dto\Cup\ViewCupDto;
 use App\Application\Dto\PersonPrompt\PersonPromptAssembler;
 use App\Application\Dto\PersonPrompt\ViewPersonPromptDto;
 use App\Application\Service\PersonPrompt\Exception\PersonPromptNotFound;

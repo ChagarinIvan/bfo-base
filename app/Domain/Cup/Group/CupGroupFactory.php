@@ -13,7 +13,6 @@ class CupGroupFactory
 {
     /**
      * @param GroupAge[] $ages
-     * @return Collection|CupGroup[]
      */
     public static function getAgeTypeGroups(array $ages = []): Collection
     {

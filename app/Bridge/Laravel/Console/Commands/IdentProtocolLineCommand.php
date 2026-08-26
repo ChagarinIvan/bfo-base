@@ -17,6 +17,7 @@ use App\Models\IdentLine;
 use App\Services\ProtocolLineIdentService;
 use App\Services\ProtocolLineService;
 use App\Services\RankService;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use function preg_match;
 use function sprintf;
@@ -26,10 +27,9 @@ use function sprintf;
  * Запуск 4 раза в минуту
  * независимо от результата запись удаляется из очереди
  */
+#[Signature('protocol-lines:queue-ident {userId}')]
 final class IdentProtocolLineCommand extends Command
 {
-    protected $signature = 'protocol-lines:queue-ident {userId}';
-
     public function __construct(
         private readonly AddPersonService $addPersonService,
     ) {

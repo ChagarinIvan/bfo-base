@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Domain\Cup;
 
-use App\Domain\Competition\Competition;
 use App\Domain\Shared\Criteria;
 use Illuminate\Support\Collection;
 

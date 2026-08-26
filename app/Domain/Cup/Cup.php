@@ -6,7 +6,6 @@ namespace App\Domain\Cup;
 
 use App\Domain\Auth\Impression;
 use App\Domain\Cup\CupEvent\CupEvent;
-use App\Domain\Cup\CupEvent\CupEventPoint;
 use App\Domain\Cup\Event\CupCreated;
 use App\Domain\Cup\Event\CupDisabled;
 use App\Domain\Cup\Event\CupUpdated;
@@ -15,6 +14,7 @@ use App\Domain\Cup\Group\CupGroup;
 use App\Domain\Shared\AggregatedModel;
 use App\Infrastracture\Laravel\Eloquent\Auth\ImpressionCast;
 use App\Models\Year;
+use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -36,11 +36,10 @@ use Illuminate\Support\Collection;
  * @property Impression $created
  * @property Impression $updated
  */
+#[Table(name: 'cups')]
 class Cup extends AggregatedModel
 {
     use HasFactory;
-
-    protected $table = 'cups';
 
     public function disable(Impression $impression): void
     {
@@ -74,9 +73,6 @@ class Cup extends AggregatedModel
         return $this->hasMany(CupEvent::class)->active();
     }
 
-    /**
-     * @return Collection|CupEventPoint[]
-     */
     public function calculateEvent(CupEvent $cupEvent, CupGroup $group): Collection
     {
         return $this->type->instance()->calculateEvent($cupEvent, $group);

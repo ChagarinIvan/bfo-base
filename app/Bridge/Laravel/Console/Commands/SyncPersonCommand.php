@@ -7,17 +7,15 @@ namespace App\Bridge\Laravel\Console\Commands;
 use App\Application\Dto\Auth\UserId;
 use App\Infrastracture\Integration\OrientBy\OrientByPersonDto;
 use App\Infrastracture\Integration\OrientBy\OrientBySyncService;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
-use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Log\LogManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Input\InputArgument;
-use Throwable;
-use function unserialize;
 
+#[Signature('person:sync')]
 class SyncPersonCommand extends Command
 {
-    protected $signature = 'person:sync';
     private LoggerInterface $logger;
 
     public function __construct(

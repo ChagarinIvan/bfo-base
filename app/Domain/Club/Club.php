@@ -7,6 +7,7 @@ namespace App\Domain\Club;
 use App\Domain\Auth\Impression;
 use App\Domain\Person\Person;
 use App\Infrastracture\Laravel\Eloquent\Auth\ImpressionCast;
+use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -24,11 +25,10 @@ use Illuminate\Support\Collection;
  *
  * @property-read  Person[]|Collection $persons
  */
+#[Table(name: 'club')]
 class Club extends Model
 {
     use HasFactory;
-
-    protected $table = 'club';
 
     public function persons(): HasMany
     {

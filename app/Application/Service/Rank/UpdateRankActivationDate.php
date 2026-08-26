@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Application\Service\Rank;
 
-use App\Application\Dto\Rank\ActivationDto;
 use App\Application\Dto\Rank\UpdateActivationDto;
 use Carbon\Carbon;
 

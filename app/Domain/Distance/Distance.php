@@ -7,6 +7,8 @@ namespace App\Domain\Distance;
 use App\Domain\Event\Event;
 use App\Domain\Group\Group;
 use App\Domain\ProtocolLine\ProtocolLine;
+use Illuminate\Database\Eloquent\Attributes\Table;
+use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -26,12 +28,11 @@ use Illuminate\Support\Collection;
  * @property-read Event $event
  * @property-read ProtocolLine[]|Collection $protocolLines
  */
+#[Table(name: 'distances')]
+#[WithoutTimestamps]
 class Distance extends Model
 {
     use HasFactory;
-
-    public $timestamps = false;
-    protected $table = 'distances';
 
     public function group(): BelongsTo
     {

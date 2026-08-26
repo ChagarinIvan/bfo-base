@@ -9,7 +9,6 @@ use App\Domain\Person\Citizenship;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\ProtocolLine\ProtocolLineRepository;
 use App\Domain\Shared\Criteria;
-use App\Models\Year;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;

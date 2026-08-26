@@ -44,7 +44,9 @@ final class EloquentRankRepository implements RankRepository
 
     public function deleteByCriteria(Criteria $criteria): void
     {
-        $this->buildQuery($criteria)->delete();
+        // reorder() сбрасывает orderBy из buildQuery: с Laravel 13 delete() сохраняет
+        // сортировку, а MySQL запрещает ORDER BY в multi-table DELETE (join на events).
+        $this->buildQuery($criteria)->reorder()->delete();
     }
 
     private function buildQuery(Criteria $criteria): Builder

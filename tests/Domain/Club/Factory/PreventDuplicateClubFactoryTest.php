@@ -37,7 +37,7 @@ final class PreventDuplicateClubFactoryTest extends TestCase
     public function it_fails_when_club_with_same_name_already_exists(): void
     {
         $this->expectException(ClubAlreadyExist::class);
-        $this->expectExceptionMessage('Club with name "test club" already exist.');
+        $this->expectExceptionMessageIsOrContains('Club with name "test club" already exist.');
 
         $this->decorated->expects($this->never())->method('create');
         $this->clubs

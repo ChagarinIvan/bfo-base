@@ -196,7 +196,7 @@ class YouthCupType extends MasterCupType
             $results = $results->merge($eventGroupResults->intersectByKeys($groupProtocolLines->keyBy('person_id')));
         }
 
-        return $results->sortByDesc(static fn (CupEventPoint $cupEventResult) => $cupEventResult->points);
+        return $results->sortByDesc(static fn (CupEventPoint $cupEventResult): int|string|float => $cupEventResult->points);
     }
 
     public function getGroups(): Collection|array

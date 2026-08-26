@@ -4,10 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Rank\Factory;
 
-use App\Domain\Auth\Impression;
-use App\Domain\Competition\Competition;
 use App\Domain\Rank\Rank;
-use App\Domain\Shared\Clock;
 
 final readonly class StandardRankFactory implements RankFactory
 {

@@ -9,18 +9,17 @@
     ],
     "license": "MIT",
     "require": {
-        "php": "^8.2",
+        "php": "^8.5",
         "ext-dom": "*",
         "ext-mbstring": "*",
         "ext-pdo": "*",
-        "doctrine/dbal": "^3.10",
-        "guzzlehttp/guzzle": "7.10.0",
-        "laravel/framework": "^11.51",
+        "guzzlehttp/guzzle": "^7.10",
+        "laravel/framework": "^13.0",
         "laravel/horizon": "^5.45",
         "mav/slovo": "^0.2.3",
-        "phpoffice/phpspreadsheet": "^1.30",
-        "predis/predis": "^1.1",
-        "sentry/sentry-laravel": "4.24.0"
+        "phpoffice/phpspreadsheet": "^5.0",
+        "predis/predis": "^2.3 || ^3.0",
+        "sentry/sentry-laravel": "^4.27"
     },
     "config": {
         "optimize-autoloader": true,
@@ -52,9 +51,9 @@
     "scripts": {
         "cs": "vendor/bin/php-cs-fixer check --allow-risky=yes",
         "cs-fix": "vendor/bin/php-cs-fixer fix --allow-risky=yes",
-        "stan": "vendor/bin/phpstan analyse -l 5 app tests config",
+        "stan": "vendor/bin/phpstan analyse -l 5 app tests config --memory-limit=1G",
         "rector": "rector process",
-        "test": "phpunit",
+        "test": "@php -d xdebug.mode=off vendor/bin/phpunit",
         "post-update-cmd": [
             "Illuminate\\Foundation\\ComposerScripts::postUpdate"
         ],
@@ -70,13 +69,13 @@
         ]
     },
     "require-dev": {
+        "driftingly/rector-laravel": "^2.5",
         "fakerphp/faker": "^1.24",
         "friendsofphp/php-cs-fixer": "^3.94",
         "larastan/larastan": "^3.9",
         "mockery/mockery": "^1.6",
         "phpstan/phpstan": "^2.1",
         "phpunit/phpunit": "^13.1",
-        "rector/rector": "^2.4",
-        "rector/rector-laravel": "^2.2"
+        "rector/rector": "^2.4"
     }
 }

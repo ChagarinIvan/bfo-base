@@ -12,7 +12,7 @@ jobs:
 
     services:
       mysql:
-        image: mysql:5.7.22
+        image: mysql:8.4
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
           MYSQL_DATABASE: laravel_test
@@ -24,10 +24,12 @@ jobs:
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
-    - uses: shivammathur/setup-php@15c43e89cdef867065b0213be354c2841860869e
+    - uses: actions/checkout@v4
+    - uses: shivammathur/setup-php@v2
       with:
-        php-version: '8.4'
-    - uses: actions/checkout@v3
+        php-version: '8.5'
+        extensions: dom, mbstring, pdo_mysql, zip, gd, exif, pcntl, bcmath
+        coverage: none
     - name: Copy .env
       run: |
         php -r "file_exists('.env') || copy('.env.example', '.env');"
@@ -45,7 +47,7 @@ jobs:
     - name: Verify MySQL connection
       run: |
         mysql --version
-        mysql --host 127.0.0.1 --port ${{ job.services.mysql.ports['3306'] }} -utest -psecret --ssl-mode=DISABLED -e "SHOW DATABASES"
+        mysql --host 127.0.0.1 --port ${{ job.services.mysql.ports['3306'] }} -utest -psecret --ssl-mode=DISABLED --get-server-public-key -e "SHOW DATABASES"
     - name: Migrate Database
       run: php artisan migrate --force
     - name: Execute tests (Unit and Feature tests) via PHPUnit
@@ -57,4 +59,8 @@ jobs:
         DB_PORT: ${{ job.services.mysql.ports[3306] }}
       run: vendor/bin/phpunit tests/
     - name: Execute stan
-      run: vendor/bin/phpstan analyse -l 5 app tests config
+      run: vendor/bin/phpstan analyse -l 5 app tests config --memory-limit=1G
+    - name: Execute cs (php-cs-fixer)
+      run: vendor/bin/php-cs-fixer check --allow-risky=yes
+    - name: Execute rector (dry-run)
+      run: vendor/bin/rector process --dry-run

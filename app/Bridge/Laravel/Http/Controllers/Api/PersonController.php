@@ -6,10 +6,10 @@ namespace App\Bridge\Laravel\Http\Controllers\Api;
 
 use App\Bridge\Laravel\Http\Resources\PersonCollection;
 use App\Services\PersonsService;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Routing\Controller;
-use Symfony\Component\HttpFoundation\Request;
 
 class PersonController extends Controller
 {

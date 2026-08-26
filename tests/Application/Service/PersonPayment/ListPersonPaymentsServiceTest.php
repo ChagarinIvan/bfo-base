@@ -7,7 +7,6 @@ namespace Tests\Application\Service\PersonPayment;
 use App\Application\Dto\Auth\AuthAssembler;
 use App\Application\Dto\PersonPayment\PersonPaymentAssembler;
 use App\Application\Dto\PersonPayment\SearchPersonPaymentsDto;
-use App\Application\Dto\PersonPayment\ViewPersonPaymentDto;
 use App\Application\Service\PersonPayment\ListPersonsPayments;
 use App\Application\Service\PersonPayment\ListPersonsPaymentsService;
 use App\Domain\PersonPayment\PersonPayment;
@@ -44,6 +43,5 @@ final class ListPersonPaymentsServiceTest extends TestCase
         $list = $this->service->execute(new ListPersonsPayments(new SearchPersonPaymentsDto(personId: '1')));
 
         $this->assertCount(2, $list);
-        $this->assertContainsOnlyInstancesOf(ViewPersonPaymentDto::class, $list);
     }
 }

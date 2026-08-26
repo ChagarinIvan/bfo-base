@@ -209,7 +209,7 @@ class NewMasterCupType extends AbstractCupType
             }
         }
 
-        return $result->sortByDesc(static fn (CupEventPoint $cupEventResult) => $cupEventResult->points);
+        return $result->sortByDesc(static fn (CupEventPoint $cupEventResult): int|string|float => $cupEventResult->points);
     }
 
     public function getGroups(): Collection|array

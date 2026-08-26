@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Application\Service\Rank;
 
-use App\Domain\Shared\Criteria;
 use Carbon\Carbon;
 
 final readonly class ActivePersonRank

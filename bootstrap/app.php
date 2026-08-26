@@ -2,6 +2,14 @@
 
 declare(strict_types=1);
 
+use App\Bridge\Laravel\Console\Kernel as ConsoleKernel;
+use App\Bridge\Laravel\Exceptions\Handler;
+use App\Bridge\Laravel\Http\Kernel as HttpKernel;
+use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
+use Illuminate\Contracts\Debug\ExceptionHandler;
+use Illuminate\Contracts\Http\Kernel as HttpKernelContract;
+use Illuminate\Foundation\Application;
+
 /*
 |--------------------------------------------------------------------------
 | Create The Application
@@ -13,7 +21,7 @@ declare(strict_types=1);
 |
 */
 
-$app = new Illuminate\Foundation\Application(
+$app = new Application(
     $_ENV['APP_BASE_PATH'] ?? dirname(__DIR__)
 );
 
@@ -29,18 +37,18 @@ $app = new Illuminate\Foundation\Application(
 */
 
 $app->singleton(
-    Illuminate\Contracts\Http\Kernel::class,
-    App\Bridge\Laravel\Http\Kernel::class
+    HttpKernelContract::class,
+    HttpKernel::class
 );
 
 $app->singleton(
-    Illuminate\Contracts\Console\Kernel::class,
-    App\Bridge\Laravel\Console\Kernel::class
+    ConsoleKernelContract::class,
+    ConsoleKernel::class
 );
 
 $app->singleton(
-    Illuminate\Contracts\Debug\ExceptionHandler::class,
-    App\Bridge\Laravel\Exceptions\Handler::class
+    ExceptionHandler::class,
+    Handler::class
 );
 
 /*

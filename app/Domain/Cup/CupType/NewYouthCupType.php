@@ -9,7 +9,6 @@ use App\Domain\Cup\CupEvent\CupEventPoint;
 use App\Domain\Cup\Group\CupGroup;
 use App\Domain\Cup\Group\CupGroupFactory;
 use App\Domain\Cup\Group\GroupAge;
-use App\Domain\Cup\Group\GroupMale;
 use App\Domain\Group\Group;
 use App\Domain\ProtocolLine\ProtocolLine;
 use Illuminate\Support\Collection;
@@ -102,7 +101,7 @@ class NewYouthCupType extends MasterCupType
             $results = $results->merge($eventGroupResults->intersectByKeys($groupProtocolLines->keyBy('person_id')));
         }
 
-        return $results->sortByDesc(static fn (CupEventPoint $cupEventResult) => $cupEventResult->points);
+        return $results->sortByDesc(static fn (CupEventPoint $cupEventResult): int|string|float => $cupEventResult->points);
     }
 
     public function getGroups(): Collection|array

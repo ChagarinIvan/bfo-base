@@ -9,7 +9,6 @@ use App\Domain\ProtocolLine\ProtocolLine;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
-use function compact;
 
 class ShowSetPersonToProtocolLineAction extends BaseController
 {

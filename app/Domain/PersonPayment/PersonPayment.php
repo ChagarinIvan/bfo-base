@@ -8,6 +8,8 @@ use App\Domain\Auth\Impression;
 use App\Domain\Person\Person;
 use App\Infrastracture\Laravel\Eloquent\Auth\ImpressionCast;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Attributes\Table;
+use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -21,13 +23,11 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property Impression $created
  * @property Impression $updated
  */
+#[Table(name: 'persons_payments')]
+#[WithoutTimestamps]
 class PersonPayment extends Model
 {
     use HasFactory;
-
-    public $timestamps = false;
-
-    protected $table = 'persons_payments';
 
     public function person(): HasOne
     {

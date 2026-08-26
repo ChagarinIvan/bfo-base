@@ -10,7 +10,6 @@ use App\Application\Service\Event\ViewEventService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller as BaseController;
-use function compact;
 
 class ShowEditEventFormAction extends BaseController
 {

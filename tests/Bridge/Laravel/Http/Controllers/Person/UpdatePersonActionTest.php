@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Bridge\Laravel\Http\Controllers\Person;
 
-use App\Application\Service\Person\UpdatePersonInfo;
 use App\Domain\Person\Person;
 use App\Domain\User\User;
 use Illuminate\Contracts\Auth\Authenticatable;

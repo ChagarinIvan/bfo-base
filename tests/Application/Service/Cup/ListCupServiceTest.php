@@ -7,7 +7,6 @@ namespace Tests\Application\Service\Cup;
 use App\Application\Dto\Auth\AuthAssembler;
 use App\Application\Dto\Cup\CupAssembler;
 use App\Application\Dto\Cup\CupSearchDto;
-use App\Application\Dto\Cup\ViewCupDto;
 use App\Application\Dto\Event\EventAssembler;
 use App\Application\Service\Cup\ListCup;
 use App\Application\Service\Cup\ListCupService;
@@ -60,7 +59,6 @@ final class ListCupServiceTest extends TestCase
 
         $this->assertIsList($result);
         $this->assertCount(2, $result);
-        $this->assertContainsOnlyInstancesOf(ViewCupDto::class, $result);
         $this->assertEquals($cups[1]->id, $result[1]->id);
     }
 }

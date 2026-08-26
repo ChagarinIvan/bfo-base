@@ -13,7 +13,6 @@ use App\Domain\ProtocolLine\ProtocolLine;
 use App\Repositories\GroupsRepository;
 use App\Repositories\ProtocolLinesRepository;
 use App\Services\DistanceService;
-use App\Services\GroupsService;
 use Illuminate\Support\Collection;
 use function array_slice;
 use function max;

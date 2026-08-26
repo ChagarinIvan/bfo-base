@@ -13,7 +13,6 @@ use App\Application\Service\Person\ListPersonsService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller as BaseController;
-use function compact;
 
 class ShowClubAction extends BaseController
 {

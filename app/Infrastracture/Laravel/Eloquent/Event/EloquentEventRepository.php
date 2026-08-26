@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Infrastracture\Laravel\Eloquent\Event;
 
-use App\Domain\Club\Club;
 use App\Domain\Event\Event;
 use App\Domain\Event\EventRepository;
 use App\Domain\Shared\Criteria;

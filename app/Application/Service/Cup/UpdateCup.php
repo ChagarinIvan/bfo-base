@@ -6,15 +6,10 @@ namespace App\Application\Service\Cup;
 
 use App\Application\Dto\Auth\UserId;
 use App\Application\Dto\Cup\CupDto;
-use App\Application\Dto\Event\UpdateEventDto;
 use App\Domain\Cup\CupInfo;
 use App\Domain\Cup\CupType;
 use App\Domain\Cup\Factory\CupInput;
-use App\Domain\Event\EventInfo;
-use App\Domain\Event\Protocol;
-use App\Domain\Event\UpdateInput;
 use App\Models\Year;
-use Carbon\Carbon;
 
 final readonly class UpdateCup
 {

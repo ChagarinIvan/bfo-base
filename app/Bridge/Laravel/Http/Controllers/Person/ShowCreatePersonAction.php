@@ -9,7 +9,6 @@ use App\Application\Service\Club\ListClubs;
 use App\Application\Service\Club\ListClubsService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Routing\Controller as BaseController;
-use function compact;
 
 class ShowCreatePersonAction extends BaseController
 {

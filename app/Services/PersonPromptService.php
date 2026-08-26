@@ -49,9 +49,6 @@ final readonly class PersonPromptService
         return $prompts->pluck('person_id', 'prompt')->toArray();
     }
 
-    /**
-     * @return Collection|PersonPrompt[]
-     */
     public function all(): Collection
     {
         return PersonPrompt::select('persons_prompt.person_id', 'persons_prompt.prompt', 'persons_prompt.metaphone')

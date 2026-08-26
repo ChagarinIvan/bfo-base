@@ -3,9 +3,9 @@
 declare(strict_types=1);
 
 use Rector\CodeQuality\Rector\Identical\FlipTypeControlToUseExclusiveTypeRector;
-use Rector\CodeQuality\Rector\If_\ExplicitBoolCompareRector;
 use Rector\Config\RectorConfig;
 use Rector\PHPUnit\Set\PHPUnitSetList;
+use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
 use Rector\Renaming\Rector\PropertyFetch\RenamePropertyRector;
 use Rector\Transform\Rector\String_\StringToClassConstantRector;
 use RectorLaravel\Rector\MethodCall\AssertSeeToAssertSeeHtmlRector;
@@ -21,8 +21,7 @@ return RectorConfig::configure()
         __DIR__ . '/tests',
     ])
     ->withSets([
-        LaravelLevelSetList::UP_TO_LARAVEL_110,
-        PHPUnitSetList::PHPUNIT_110,
+        LaravelLevelSetList::UP_TO_LARAVEL_130,
         PHPUnitSetList::ANNOTATIONS_TO_ATTRIBUTES,
         PHPUnitSetList::PHPUNIT_CODE_QUALITY,
     ])
@@ -37,10 +36,22 @@ return RectorConfig::configure()
         phpunit: true,
         laravel: true,
     )
+    // Импорт вместо FQCN (см. CLAUDE.md / конституция): атрибуты и классы,
+    // которые rector генерирует как \Fully\Qualified, подключаем через use.
+    ->withImportNames(
+        importShortClasses: false,
+        removeUnusedImports: true,
+    )
     ->withSkip([
-        ExplicitBoolCompareRector::class,
+        // генерируемые Laravel файлы кэша — не линтим (как в .php-cs-fixer.php)
+        __DIR__ . '/bootstrap/cache',
         AssertSeeToAssertSeeHtmlRector::class,
         FlipTypeControlToUseExclusiveTypeRector::class,
         StringToClassConstantRector::class,
         RenamePropertyRector::class,
+        // Blade::component() регистрирует классовые компоненты; авто-переименование в
+        // aliasComponent() (правило из laravel70) ломает bootstrap — регистрируем как есть.
+        RenameMethodRector::class => [
+            __DIR__ . '/app/Bridge/Laravel/Provider/ViewProvider.php',
+        ],
     ]);

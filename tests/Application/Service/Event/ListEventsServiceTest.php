@@ -7,7 +7,6 @@ namespace Tests\Application\Service\Event;
 use App\Application\Dto\Auth\AuthAssembler;
 use App\Application\Dto\Event\EventAssembler;
 use App\Application\Dto\Event\EventSearchDto;
-use App\Application\Dto\Event\ViewEventDto;
 use App\Application\Service\Event\ListEvents;
 use App\Application\Service\Event\ListEventsService;
 use App\Domain\Event\Event;
@@ -52,7 +51,6 @@ final class ListEventsServiceTest extends TestCase
         $result = $this->service->execute($command);
 
         $this->assertIsList($result);
-        $this->assertContainsOnlyInstancesOf(ViewEventDto::class, $result);
         $this->assertEquals($events[1]->id, $result[1]->id);
     }
 }

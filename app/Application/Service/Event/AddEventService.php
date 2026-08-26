@@ -8,7 +8,6 @@ use App\Application\Dto\Event\EventAssembler;
 use App\Application\Dto\Event\ViewEventDto;
 use App\Domain\Event\EventRepository;
 use App\Domain\Event\Factory\EventFactory;
-use App\Domain\Event\ProtocolStorage;
 
 final readonly class AddEventService
 {

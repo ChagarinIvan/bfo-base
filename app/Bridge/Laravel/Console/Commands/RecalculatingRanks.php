@@ -7,16 +7,17 @@ namespace App\Bridge\Laravel\Console\Commands;
 use App\Domain\Person\Person;
 use App\Domain\Rank\Rank;
 use App\Services\RankService;
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 
 /**
  * Пересоздаем разряды.
  */
+#[Description('Recalculates ranks for protocol lines with optional limit and offset')]
+#[Signature('protocol-lines:rank-recalculating {--limit=10} {--offset=0}')]
 final class RecalculatingRanks extends Command
 {
-    protected $signature = 'protocol-lines:rank-recalculating {--limit=10} {--offset=0}';
-    protected $description = 'Recalculates ranks for protocol lines with optional limit and offset';
-
     public function handle(RankService $service): void
     {
         $this->info('Start.');

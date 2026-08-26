@@ -13,7 +13,6 @@ use App\Application\Service\Person\ViewPersonService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller as BaseController;
-use function compact;
 
 class ShowEditPersonAction extends BaseController
 {

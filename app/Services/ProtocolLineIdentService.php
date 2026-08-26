@@ -11,7 +11,6 @@ use App\Models\IdentLine;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Mav\Slovo\Phonetics;
-use function in_array;
 use function levenshtein;
 use function sprintf;
 use function str_replace;
@@ -134,7 +133,6 @@ class ProtocolLineIdentService
      * Используется при создании или редактировании протокола соревнований для быстрой идентификации части людей.
      *
      * @param Collection|ProtocolLine[] $protocolLines
-     * @return Collection|ProtocolLine[]
      */
     public function simpleIdent(Collection $protocolLines): Collection
     {

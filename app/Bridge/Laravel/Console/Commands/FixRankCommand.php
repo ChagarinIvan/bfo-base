@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace App\Bridge\Laravel\Console\Commands;
 
 use App\Domain\ProtocolLine\ProtocolLine;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 
+#[Signature('rank:activate')]
 class FixRankCommand extends Command
 {
-    protected $signature = 'rank:activate';
-
     public function handle(): void
     {
         foreach (ProtocolLine::cursor() as $line) {

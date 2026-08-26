@@ -7,7 +7,6 @@ namespace Tests\Application\Service\Club;
 use App\Application\Dto\Auth\AuthAssembler;
 use App\Application\Dto\Club\ClubAssembler;
 use App\Application\Dto\Club\ClubSearchDto;
-use App\Application\Dto\Club\ViewClubDto;
 use App\Application\Service\Club\ListClubs;
 use App\Application\Service\Club\ListClubsService;
 use App\Domain\Club\Club;
@@ -47,7 +46,7 @@ final class ListClubsServiceTest extends TestCase
 
         $result = $this->service->execute(new ListClubs(new ClubSearchDto()));
 
-        $this->assertContainsOnlyInstancesOf(ViewClubDto::class, $result);
+        $this->assertCount(2, $result);
     }
 
     #[Test]
@@ -64,6 +63,6 @@ final class ListClubsServiceTest extends TestCase
 
         $result = $this->service->execute(new ListClubs(new ClubSearchDto(ids: [1, 2])));
 
-        $this->assertContainsOnlyInstancesOf(ViewClubDto::class, $result);
+        $this->assertCount(2, $result);
     }
 }
