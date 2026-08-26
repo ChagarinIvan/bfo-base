@@ -75,7 +75,8 @@ PHP 8.5 → инфра. Поэтому **US3 (библиотеки, P2) выпо
 
 ## Phase 4: User Story 3 — Сжатие поверхности библиотек + phpspreadsheet (P2, выполняется рано)
 
-**Goal**: Удалить неиспользуемые dbal и predis, снять пин guzzle, поднять phpspreadsheet (гейт для PHP 8.5).
+**Goal**: Удалить неиспользуемый dbal; **апгрейд** predis (стандартизация Redis-клиента, разворот
+Decision 2 — см. T010); снять пин guzzle; поднять phpspreadsheet (гейт для PHP 8.5).
 
 **Independent Test**: гейты зелёные; парсеры Excel работают идентично; кэш/очереди работают; ноль удалённых пакетов в lock.
 
@@ -111,7 +112,7 @@ PHP 8.5 → инфра. Поэтому **US3 (библиотеки, P2) выпо
 **Checkpoint**: приложение на Laravel 13, гейты зелёные.
 
 ---
-1
+
 ## Phase 6: User Story 4 — Обновление рантайма PHP до 8.5 (P2)
 
 **Goal**: Перевести рантайм на PHP 8.5 (после phpspreadsheet и подтверждения расширений из T005).
@@ -131,7 +132,9 @@ PHP 8.5 → инфра. Поэтому **US3 (библиотеки, P2) выпо
 
 **Independent Test**: приложение поднимается на новых образах, данные MySQL сохранены, теги не `latest`.
 
-- [~] T019 [US5] Бэкап БД — **пропущено по решению владельца: готовый дамп уже есть.** Реальное восстановление — на проде при деплое
+- [~] T019 [US5] Бэкап БД — **пропущено по решению владельца: готовый дамп уже есть.** ⚠️ Для закрытия
+  FR-008/SC-006 перед сменой образа MySQL на проде дамп ОБЯЗАН быть проверен на свежесть и восстановимость
+  (пробный `mysql < dump.sql` в 8.4 + сверка данных). Реальное восстановление и эта проверка — deploy-time
 - [X] T020 [US5] MySQL `8.0.27` → **`mysql:8.4`** (LTS) в `docker-compose.yml.example`. Проверено запуском `mysql:8.4.11`: стартует, `my.cnf` (bind-address) принят, дефолтные юзеры на `caching_sha2_password`. ⚠️ **BC-риск (deploy): `mysql_native_password` в 8.4 по умолчанию не загружен** — если готовый дамп содержит юзеров `IDENTIFIED WITH 'mysql_native_password'`, при импорте они не аутентифицируются. Починка: `[mysqld] mysql_native_password=ON` в my.cnf ИЛИ пересоздать юзеров с `caching_sha2_password`. Также `default_authentication_plugin` **удалён** в 8.4 — проверить, что его нет в дампе/боевом my.cnf. Пересоздание контейнера + проверка данных — deploy-time (logical dump → свежая init 8.4 + import, in-place upgrade не нужен)
 - [X] T021 [US5] Redis `6.2.6` → **`redis:8-alpine`** (по решению владельца). Проверено: `redis 8.10.1` стартует. RESP обратно совместим, predis 3.x ок. В compose redis **без volume/persistence** → данных для потери нет; при пересоздании кэш/сессии/очереди сбрасываются (разлогин + потеря job'ов) — слить Horizon перед деплоем. BC-риск низкий
 - [X] T022 [US5] Nginx `1.21.4-alpine` → **`nginx:1.28-alpine`** (текущий stable). Проверено `nginx -t` на 1.28: конфиг `app.conf` валиден (`listen 80`, fastcgi, `gzip_static on`, `try_files` — все директивы актуальны; ошибка upstream `app` в тесте — только из-за изоляции без compose-сети). Нет `listen ssl http2` (депрекейт 1.25+) → риска нет. BC-риск минимальный
@@ -155,7 +158,7 @@ PHP 8.5 → инфра. Поэтому **US3 (библиотеки, P2) выпо
 ```text
 Phase 1 (Setup) → Phase 2 (Foundational, verify-live)
    → Phase 3 US1 (safe semver + rector-laravel)   [MVP]
-   → Phase 4 US3 (remove dbal → remove predis → unpin guzzle → phpspreadsheet 5)
+   → Phase 4 US3 (remove dbal → upgrade predis → unpin guzzle → phpspreadsheet 5)
    → Phase 5 US2 (Laravel 11→12 → 12→13)
    → Phase 6 US4 (PHP 8.5)          [требует T005 + Phase 4 phpspreadsheet]
    → Phase 7 US5 (MySQL → Redis → Nginx)

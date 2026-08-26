@@ -2,9 +2,12 @@
 
 declare(strict_types=1);
 
+use App\Bridge\Laravel\Console\Kernel as ConsoleKernel;
 use App\Bridge\Laravel\Exceptions\Handler;
+use App\Bridge\Laravel\Http\Kernel as HttpKernel;
+use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
 use Illuminate\Contracts\Debug\ExceptionHandler;
-use Illuminate\Contracts\Http\Kernel;
+use Illuminate\Contracts\Http\Kernel as HttpKernelContract;
 use Illuminate\Foundation\Application;
 
 /*
@@ -34,13 +37,13 @@ $app = new Application(
 */
 
 $app->singleton(
-    Kernel::class,
-    App\Bridge\Laravel\Http\Kernel::class
+    HttpKernelContract::class,
+    HttpKernel::class
 );
 
 $app->singleton(
-    Illuminate\Contracts\Console\Kernel::class,
-    App\Bridge\Laravel\Console\Kernel::class
+    ConsoleKernelContract::class,
+    ConsoleKernel::class
 );
 
 $app->singleton(

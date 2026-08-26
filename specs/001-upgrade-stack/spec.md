@@ -58,17 +58,18 @@ guide и применением rector-сетов Laravel. Каждый мажо
 
 ### User Story 3 - Обновление и очистка библиотек (Priority: P2)
 
-Привести библиотеки к целевому состоянию, по одному изменению за шаг: **удалить неиспользуемые**
-doctrine/dbal и predis (dbal не нужен в Laravel 11+; Redis работает через phpredis), снять точечный
-пин guzzle, поднять phpoffice/phpspreadsheet (1→5 — единственная с заметным код-импактом, и то
-Reader-only). Каждое изменение — отдельный шаг.
+Привести библиотеки к целевому состоянию, по одному изменению за шаг: **удалить неиспользуемый**
+doctrine/dbal (не нужен в Laravel 11+); **апгрейд predis** до 2.x/3.x — Redis-клиент стандартизирован
+на predis (разворот исходного решения: predis реально используется в `.env`, phpredis не установлен —
+см. research Decision 2 / T010); снять точечный пин guzzle; поднять phpoffice/phpspreadsheet (1→5 —
+единственная с заметным код-импактом, и то Reader-only). Каждое изменение — отдельный шаг.
 
 **Why this priority**: Требуется, чтобы «весь стек на latest», но зависит от обновлённого фреймворка;
 несёт наибольший риск изменений API, поэтому идёт после ядра и делается по одной библиотеке.
 
 **Independent Test**: После обновления каждой отдельной библиотеки все гейты зелёные и связанная с ней
-функциональность (кэш/очереди для predis, HTTP-клиент для guzzle, выгрузки Excel для phpspreadsheet,
-доступ к БД для dbal) работает как раньше.
+функциональность (кэш/очереди для predis, HTTP-клиент для guzzle, выгрузки Excel для phpspreadsheet)
+работает как раньше.
 
 **Acceptance Scenarios**:
 
@@ -171,14 +172,18 @@ Reader-only). Каждое изменение — отдельный шаг.
 - **SC-004**: После завершения ноль зависимостей помечены как abandoned; ноль образов используют тег
   `latest` — все версии зафиксированы в репозитории.
 - **SC-005**: Весь целевой стек на актуальных поддерживаемых версиях (PHP 8.5, Laravel 13.x и остальное
-  из Assumptions); неиспользуемые зависимости (dbal, predis) удалены, а не «на latest».
+  из Assumptions); неиспользуемый doctrine/dbal удалён; используемый predis не «на latest», а поднят до
+  актуального мажора (2.x/3.x) — Redis-клиент стандартизирован на predis (см. Assumptions / research
+  Decision 2).
 - **SC-006**: Данные БД полностью сохранены после обновления инфраструктурных образов.
 
 ## Assumptions
 
 - Целевые версии на момент планирования (2026-08): PHP 8.5; laravel/framework 13.x;
-  phpoffice/phpspreadsheet 5.x; **doctrine/dbal и predis/predis — удаляются** (не используются;
-  Redis через расширение phpredis); guzzlehttp/guzzle — максимум в рамках constraint фреймворка
+  phpoffice/phpspreadsheet 5.x; **doctrine/dbal — удаляется** (не используется); **predis/predis —
+  апгрейд** до 2.x/3.x, Redis-клиент стандартизирован на predis (исходное решение «удалить predis в
+  пользу phpredis» развёрнуто: predis реально в `.env`, phpredis не установлен — см. research Decision 2 /
+  T010); guzzlehttp/guzzle — максимум в рамках constraint фреймворка
   (снятие пина до `^7.10`, мажор 8 условен); phpunit 13.x; dev-инструменты (php-cs-fixer, larastan, phpstan, rector,
   mockery), horizon, sentry-laravel — последние совместимые; MySQL 8.4 LTS (или новее), Redis 7/8,
   Nginx — текущий стабильный. Конкретные патч-версии фиксируются на этапе plan/tasks по факту.
