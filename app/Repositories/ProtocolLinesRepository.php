@@ -86,7 +86,7 @@ final readonly class ProtocolLinesRepository implements ProtocolLineRepository
             ;
         }
 
-        if ($groups) {
+        if ($groups instanceof Collection) {
             $protocolLinesQuery->whereIn('distances.group_id', $groups->pluck('id'));
         }
 

@@ -30,7 +30,7 @@ final readonly class StandardJuniorJuniorThirdRankChecker implements JuniorThird
 
     public function check(int $personId, ?Carbon $date = null): ?Rank
     {
-        $actualYear = $date ? Year::fromDate($date) : $this->clock->actualYear();
+        $actualYear = $date instanceof Carbon ? Year::fromDate($date) : $this->clock->actualYear();
 //        dump('$actualYear: '. $actualYear->toString());
 
         $offset = array_search($actualYear, $this->clock->years());

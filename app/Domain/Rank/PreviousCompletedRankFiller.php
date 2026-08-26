@@ -60,7 +60,7 @@ final readonly class PreviousCompletedRankFiller
                 return null;
             }
 
-            if ($rank) {
+            if ($rank instanceof Rank) {
                 $protocolLines = $protocolLines->filter(static fn (ProtocolLine $pl): bool => $pl->complete_rank !== $rank->rank);
             }
 
@@ -87,7 +87,7 @@ final readonly class PreviousCompletedRankFiller
             foreach ($protocolLines as $protocolLine) {
                 /** @var ProtocolLine $protocolLine */
                 if ($activationDate === null) {
-                    $activationDate = $previous ? $previous->activated_date : $protocolLine->activate_rank;
+                    $activationDate = $previous instanceof Rank ? $previous->activated_date : $protocolLine->activate_rank;
                 }
 
                 if ($activationDate === null) {
@@ -101,7 +101,7 @@ final readonly class PreviousCompletedRankFiller
                     );
 
 //                    dump('equal', $equal);
-                    if ($equal) {
+                    if ($equal instanceof Rank) {
                         return null;
                     }
                 }

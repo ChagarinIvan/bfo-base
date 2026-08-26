@@ -98,7 +98,7 @@ class Event extends AggregatedModel
         $this->name = $input->info->name;
         $this->description = $input->info->description;
         $this->date = $input->info->date;
-        $this->file = $input->protocol ? $updater->update($this, $input->protocol) : $this->file;
+        $this->file = $input->protocol instanceof Protocol ? $updater->update($this, $input->protocol) : $this->file;
         $this->updated = $impression;
 
         $this->recordThat(new EventUpdated($this, (bool) $input->protocol));

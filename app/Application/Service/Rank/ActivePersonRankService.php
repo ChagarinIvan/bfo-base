@@ -8,6 +8,7 @@ use App\Application\Dto\Rank\RankAssembler;
 use App\Application\Dto\Rank\ViewRankDto;
 use App\Domain\Rank\JuniorThirdRankChecker;
 use App\Domain\Rank\PreviousCompletedRankFiller;
+use App\Domain\Rank\Rank;
 use App\Domain\Rank\RankRepository;
 use App\Domain\Shared\Clock;
 use App\Domain\Shared\Criteria;
@@ -51,14 +52,14 @@ final readonly class ActivePersonRankService
 
         if ($lastRank === null) {
             $thirdJuniorRank = $this->thirdRankChecker->check($command->personId(), $command->date());
-            if ($thirdJuniorRank && (($command->date() === null) || ($thirdJuniorRank->start_date < $command->date()))) {
+            if ($thirdJuniorRank instanceof Rank && (($command->date() === null) || ($thirdJuniorRank->start_date < $command->date()))) {
 //                dump('add third junior rank');
                 $this->ranks->add($thirdJuniorRank);
                 $lastRank = $thirdJuniorRank;
             }
         }
 
-        return $lastRank ? $this->assembler->toViewRankDto($lastRank) : null;
+        return $lastRank instanceof Rank ? $this->assembler->toViewRankDto($lastRank) : null;
     }
 
     public function criteriaWithDate(ActivePersonRank $command): Criteria

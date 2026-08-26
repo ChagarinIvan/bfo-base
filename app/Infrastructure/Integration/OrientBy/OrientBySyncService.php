@@ -9,6 +9,7 @@ use App\Application\Dto\PersonPayment\PersonPaymentDto;
 use App\Application\Service\PersonPayment\CreateOrUpdatePersonPayments;
 use App\Application\Service\PersonPayment\CreateOrUpdatePersonPaymentsService;
 use App\Domain\Auth\Impression;
+use App\Domain\Club\Club;
 use App\Domain\Club\ClubFinder;
 use App\Domain\Person\Person;
 use App\Domain\Rank\Rank;
@@ -157,7 +158,7 @@ class OrientBySyncService
     {
         if ($personDto->club) {
             $club = $this->clubFinder->findByName($personDto->club);
-            if ($club && $person->club_id !== $club->id) {
+            if ($club instanceof Club && $person->club_id !== $club->id) {
                 $person->club_id = $club->id;
                 return true;
             }

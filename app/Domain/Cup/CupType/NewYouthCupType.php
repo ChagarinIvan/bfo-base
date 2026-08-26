@@ -157,7 +157,7 @@ class NewYouthCupType extends MasterCupType
     private function calculateDistance(CupEvent $cupEvent, int $distanceId, ?Collection $ids): Collection
     {
         $distanceParticipants = $this->protocolLinesRepository->getCupEventDistanceProtocolLines($distanceId);
-        if ($ids) {
+        if ($ids instanceof Collection) {
             $distanceParticipants = $distanceParticipants->filter(static fn (ProtocolLine $line) => $ids->contains($line->person_id));
         }
 

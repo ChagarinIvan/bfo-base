@@ -24,7 +24,7 @@ final readonly class GroupsService
     public function getGroup(int $groupId): Group
     {
         $group = $this->groupsRepository->getGroup($groupId);
-        if ($group) {
+        if ($group instanceof Group) {
             return $group;
         }
         throw new RuntimeException('Wrong group id.');

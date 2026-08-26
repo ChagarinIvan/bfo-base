@@ -179,7 +179,7 @@ class XlsxParser extends AbstractParser
             case 'serial_number':
             case 'points':
             case 'year':
-                return $columnData ? (int)$columnData : null;
+                return $columnData !== '' && $columnData !== '0' ? (int)$columnData : null;
             case 'firstname':
             case 'lastname':
                 return mb_convert_case($columnData, MB_CASE_TITLE);

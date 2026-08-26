@@ -19,7 +19,7 @@ final readonly class PreventDuplicateClubFactory implements ClubFactory
 
     public function create(ClubInput $input): Club
     {
-        if ($this->clubs->oneByCriteria(new Criteria(['name' => $input->name]))) {
+        if ($this->clubs->oneByCriteria(new Criteria(['name' => $input->name])) instanceof Club) {
             throw ClubAlreadyExist::byName($input->name);
         }
 

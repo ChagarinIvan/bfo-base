@@ -10,6 +10,7 @@ use App\Domain\Cup\Group\CupGroup;
 use App\Domain\Cup\Group\CupGroupFactory;
 use App\Domain\Cup\Group\GroupAge;
 use App\Domain\Cup\Group\GroupMale;
+use App\Domain\Distance\Distance;
 use App\Domain\ProtocolLine\ProtocolLine;
 use Illuminate\Support\Collection;
 use function array_merge;
@@ -104,7 +105,7 @@ class MasterCupType extends AbstractCupType
         $mainDistance = $this->distanceService->findDistance(self::GROUPS_MAP[$mainGroup->id()], $cupEvent->event_id);
         $equalDistances = Collection::make([$mainDistance]);
 
-        if ($mainDistance) {
+        if ($mainDistance instanceof Distance) {
             $equalDistances->push(...$this->distanceService->getEqualDistances($mainDistance));
         }
 

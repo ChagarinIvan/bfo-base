@@ -35,7 +35,7 @@ final readonly class CupGroup
 
     public function name(): string
     {
-        return $this->name ?: ($this->male === GroupMale::Man ? 'М' : 'Ж') . ($this->age ? $this->age->toString() : '');
+        return $this->name ?: ($this->male === GroupMale::Man ? 'М' : 'Ж') . ($this->age instanceof GroupAge ? $this->age->toString() : '');
     }
 
     public function next(): self

@@ -19,7 +19,7 @@ final readonly class PreventDuplicatePersonFactory implements PersonFactory
 
     public function create(PersonInput $input): Person
     {
-        if ($person = $this->persons->oneByCriteria(new Criteria(['info' => $input->info]))) {
+        if (($person = $this->persons->oneByCriteria(new Criteria(['info' => $input->info]))) instanceof Person) {
             throw PersonInfoAlreadyExist::byInfo($input->info, $person->id);
         }
 

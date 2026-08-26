@@ -10,6 +10,7 @@ use App\Application\Dto\Person\PersonInfoDto;
 use App\Application\Service\Person\AddPerson;
 use App\Application\Service\Person\AddPersonService;
 use App\Application\Service\Person\Exception\FailedToAddPerson;
+use App\Domain\Club\Club;
 use App\Domain\Club\ClubFinder;
 use App\Domain\Person\Citizenship;
 use App\Domain\ProtocolLine\ProtocolLine;
@@ -78,7 +79,7 @@ final class IdentProtocolLineCommand extends Command
             )
                 ? sprintf('%d-01-01', $protocolLine->year)
                 : null;
-            $personInfo->clubId = $club ? (string) $club->id : null;
+            $personInfo->clubId = $club instanceof Club ? (string) $club->id : null;
             $personInfo->citizenship = Citizenship::BELARUS->value;
             $personDto = new PersonDto;
             $personDto->info = $personInfo;

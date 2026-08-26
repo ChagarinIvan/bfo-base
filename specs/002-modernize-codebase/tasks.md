@@ -93,12 +93,23 @@ US1 (переименование) выполняется **до** US2 (моде
 
 - [X] T009 [US2] Добавить `->withPhpSets()` в `rector.php` (полный PHP-сет из composer floor `^8.5`);
   `composer rector`; просмотреть дифф (только форма, не поведение); гейты; коммит
-- [ ] T010 [US2] Включить строгую группу `strictBooleans` в `->withPreparedSets(...)` в `rector.php`;
-  `composer rector`; ревью диффа; небезопасное/шумное — в `->withSkip([...])` + откат правки; гейты; коммит
-- [ ] T011 [US2] Включить группу `naming` в `->withPreparedSets(...)` в `rector.php`; `composer rector`;
-  ревью (переименования бывают шумными — оценить пользу, при вреде откатить группу); гейты; коммит
-- [ ] T012 [US2] Включить группу `instanceOf` (и прочие строгие prepared-группы) в `rector.php`;
-  `composer rector`; ревью; гейты; коммит
+- [X] T010 [US2] Строгие семантические группы `instanceOf` + `if` в `->withPreparedSets(...)`
+  (⚠️ `strictBooleans` в rector 2.6.3 отсутствует — использованы реальные группы API). 22 файла:
+  `ObjectExplicitBoolCompareRector` (truthy → явные сравнения), `BinaryOpNullableToInstanceofRector`,
+  `ExplicitBoolCompareRector`. Поведение эквивалентно (все 237 тестов, включая 57 fixture-парсеров,
+  зелёные). `codingStyle` намеренно НЕ включён (стиль — за php-cs-fixer, Decision 4). Гейты: stan, cs 0,
+  rector идемпотентен, boot — зелёные
+- [~] T011 [US2] Группа `naming` — **ОТКЛОНЕНА гейтом** (по задаче «при вреде откатить группу»). Дала
+  269–321 файл ренеймов (params/vars/properties под тип) И **сломала код**: рассинхрон `@var`-докблоков +
+  5× «Access to undefined property» в `ExportPersonsCommand`, битый `@var` в `MasterCupType` — 8 ошибок
+  stan. Даже с исключённым `RenamePropertyToMatchTypeRector` (риск Blade/сериализации) остаток ломал типы.
+  Откачено полностью
+- [~] T012 [US2] Группа `namedArgs` — **ОТКЛОНЕНА гейтом**. 90 файлов (`AddNameToBooleanArgumentRector`/
+  `AddNameToNullArgumentRector`: `foo(true)` → `foo(active: true)` + `ExplicitAttributeNamedArgsRector`).
+  Проставила именованные аргументы там, где они **запрещены** (вариадики/сигнатуры без поддержки) → 29
+  ошибок stan «named argument … not allowed». Откачено полностью. (Безопасную часть —
+  `ExplicitAttributeNamedArgsRector` для атрибутов — можно при желании включить отдельно с skip двух
+  ломающих правил; вынесено из объёма)
 - [ ] T013 [US2] Рассмотреть уровневые наборы (`->withTypeCoverageLevel(...)`,
   `->withDeadCodeLevel(...)`, `->withCodeQualityLevel(...)`) в `rector.php` — включать по одному, если
   дают полезный дифф без ломки поведения; `composer rector`; гейты; коммит на каждую полезную группу

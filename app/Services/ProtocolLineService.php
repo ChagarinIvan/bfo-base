@@ -59,7 +59,7 @@ class ProtocolLineService
     public function getProtocolLine(int $id): ProtocolLine
     {
         $protocolLine = $this->protocolLinesRepository->byId($id);
-        if ($protocolLine) {
+        if ($protocolLine instanceof ProtocolLine) {
             return $protocolLine;
         }
         throw new RuntimeException('Wrong protocolLine id.');
