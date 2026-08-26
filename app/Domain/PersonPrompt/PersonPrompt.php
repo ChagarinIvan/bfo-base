@@ -9,7 +9,7 @@ use App\Domain\Person\Person;
 use App\Domain\PersonPrompt\Event\PersonPromptCreated;
 use App\Domain\PersonPrompt\Event\PersonPromptUpdated;
 use App\Domain\Shared\AggregatedModel;
-use App\Infrastracture\Laravel\Eloquent\Auth\ImpressionCast;
+use App\Infrastructure\Laravel\Eloquent\Auth\ImpressionCast;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

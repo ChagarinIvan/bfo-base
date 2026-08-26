@@ -9,7 +9,7 @@ use App\Domain\Rank\Factory\StandardRankFactory;
 use App\Domain\Rank\JuniorThirdRankChecker;
 use App\Domain\Rank\RankRepository;
 use App\Domain\Rank\StandardJuniorJuniorThirdRankChecker;
-use App\Infrastracture\Laravel\Eloquent\Rank\EloquentRankRepository;
+use App\Infrastructure\Laravel\Eloquent\Rank\EloquentRankRepository;
 use Illuminate\Support\ServiceProvider;
 
 final class RankProvider extends ServiceProvider

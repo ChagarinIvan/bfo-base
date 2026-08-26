@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Bridge\Laravel\Console\Commands;
 
 use App\Application\Dto\Auth\UserId;
-use App\Infrastracture\Integration\OrientBy\OrientByPersonDto;
-use App\Infrastracture\Integration\OrientBy\OrientBySyncService;
+use App\Infrastructure\Integration\OrientBy\OrientByPersonDto;
+use App\Infrastructure\Integration\OrientBy\OrientBySyncService;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Filesystem\Filesystem;

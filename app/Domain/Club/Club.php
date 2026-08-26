@@ -6,7 +6,7 @@ namespace App\Domain\Club;
 
 use App\Domain\Auth\Impression;
 use App\Domain\Person\Person;
-use App\Infrastracture\Laravel\Eloquent\Auth\ImpressionCast;
+use App\Infrastructure\Laravel\Eloquent\Auth\ImpressionCast;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;

@@ -9,7 +9,7 @@ use App\Domain\PersonPrompt\Factory\StandardPersonPromptFactory;
 use App\Domain\PersonPrompt\PersonPromptRepository;
 use App\Domain\PersonPrompt\PersonPromptUpdater;
 use App\Domain\PersonPrompt\StandardPersonPromptUpdater;
-use App\Infrastracture\Laravel\Eloquent\PersonPrompt\EloquentPromptPaymentRepository;
+use App\Infrastructure\Laravel\Eloquent\PersonPrompt\EloquentPromptPaymentRepository;
 use Illuminate\Support\ServiceProvider;
 
 final class PersonPromptProvider extends ServiceProvider

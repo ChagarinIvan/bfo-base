@@ -6,7 +6,7 @@ namespace App\Domain\PersonPayment;
 
 use App\Domain\Auth\Impression;
 use App\Domain\Person\Person;
-use App\Infrastracture\Laravel\Eloquent\Auth\ImpressionCast;
+use App\Infrastructure\Laravel\Eloquent\Auth\ImpressionCast;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;

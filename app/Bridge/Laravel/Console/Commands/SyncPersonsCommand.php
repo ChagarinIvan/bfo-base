@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Console\Commands;
 
-use App\Infrastracture\Integration\OrientBy\OrientByApiClient;
+use App\Infrastructure\Integration\OrientBy\OrientByApiClient;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Filesystem\Filesystem;

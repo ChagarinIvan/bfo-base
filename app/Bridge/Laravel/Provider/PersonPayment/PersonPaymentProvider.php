@@ -7,7 +7,7 @@ namespace App\Bridge\Laravel\Provider\PersonPayment;
 use App\Domain\PersonPayment\Factory\PersonPaymentFactory;
 use App\Domain\PersonPayment\PersonPaymentRepository;
 use App\Domain\PersonPayment\StandardPersonPaymentFactory;
-use App\Infrastracture\Laravel\Eloquent\PersonPayment\EloquentPersonPaymentRepository;
+use App\Infrastructure\Laravel\Eloquent\PersonPayment\EloquentPersonPaymentRepository;
 use Illuminate\Support\ServiceProvider;
 
 final class PersonPaymentProvider extends ServiceProvider

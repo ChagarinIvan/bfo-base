@@ -7,7 +7,7 @@ namespace App\Bridge\Laravel\Provider\Shared;
 use App\Domain\Shared\ActualClock;
 use App\Domain\Shared\Clock;
 use App\Domain\Shared\TransactionManager;
-use App\Infrastracture\Laravel\Eloquent\Shared\EloquentTransactionalManager;
+use App\Infrastructure\Laravel\Eloquent\Shared\EloquentTransactionalManager;
 use Illuminate\Support\ServiceProvider;
 
 final class SharedProvider extends ServiceProvider

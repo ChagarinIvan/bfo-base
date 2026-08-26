@@ -14,7 +14,7 @@ use App\Domain\PersonPrompt\PersonPrompt;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\Rank\Rank;
 use App\Domain\Shared\AggregatedModel;
-use App\Infrastracture\Laravel\Eloquent\Auth\ImpressionCast;
+use App\Infrastructure\Laravel\Eloquent\Auth\ImpressionCast;
 use Carbon\Carbon;
 use Database\Factories\Domain\Person\PersonFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;

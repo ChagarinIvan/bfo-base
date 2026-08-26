@@ -14,7 +14,7 @@ use App\Domain\Event\Event\EventUpdated;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\Rank\Rank;
 use App\Domain\Shared\AggregatedModel;
-use App\Infrastracture\Laravel\Eloquent\Auth\ImpressionCast;
+use App\Infrastructure\Laravel\Eloquent\Auth\ImpressionCast;
 use App\Models\Flag;
 use Carbon\Carbon;
 use Database\Factories\Domain\Event\EventFactory;

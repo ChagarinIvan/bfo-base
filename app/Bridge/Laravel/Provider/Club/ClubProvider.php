@@ -10,7 +10,7 @@ use App\Domain\Club\Factory\ClubFactory;
 use App\Domain\Club\Factory\PreventDuplicateClubFactory;
 use App\Domain\Club\Factory\StandardClubFactory;
 use App\Domain\Club\NormalizedNameClubFinder;
-use App\Infrastracture\Laravel\Eloquent\Club\EloquentClubRepository;
+use App\Infrastructure\Laravel\Eloquent\Club\EloquentClubRepository;
 use Illuminate\Support\ServiceProvider;
 
 final class ClubProvider extends ServiceProvider

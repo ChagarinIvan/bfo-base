@@ -36,7 +36,7 @@ US1 (переименование) выполняется **до** US2 (моде
 
 **Purpose**: Подготовить окружение и зафиксировать «зелёное до».
 
-- [ ] T001 Убедиться, что работа идёт в ветке `002-modernize-codebase` (ветвь от `001-upgrade-stack`),
+- [X] T001 Убедиться, что работа идёт в ветке `002-modernize-codebase` (ветвь от `001-upgrade-stack`),
   рабочее дерево чистое; активен **PHP 8.5** (`php -v` → 8.5.x; при необходимости
   `export PATH="/opt/homebrew/bin:$PATH"`)
 
@@ -50,7 +50,7 @@ US1 (переименование) выполняется **до** US2 (моде
 
 **⚠️ CRITICAL**: без зелёной базовой линии нельзя достоверно проверить «поведение не изменилось».
 
-- [ ] T002 Зафиксировать зелёную базовую линию: `composer test` (237), `composer stan`, `composer cs`,
+- [X] T002 Зафиксировать зелёную базовую линию: `composer test` (237), `composer stan`, `composer cs`,
   `composer rector -- --dry-run` (чисто). Любой красный/шумный гейт починить ДО начала рефакторинга
 
 **Checkpoint**: базовая линия зелёная — рефакторинг можно начинать.
@@ -65,17 +65,17 @@ US1 (переименование) выполняется **до** US2 (моде
 **Independent Test**: после переименования `grep -rn "Infrastracture" app tests config database bootstrap`
 = пусто; все гейты зелёные; приложение бутается; DI-биндинги резолвятся.
 
-- [ ] T003 [US1] Замерить область для проверки полноты (SC-001): зафиксировать
+- [X] T003 [US1] Замерить область для проверки полноты (SC-001): зафиксировать
   `grep -rc "namespace App\\Infrastracture" app` (ожидаемо 16) и список файлов
   `grep -rl "Infrastracture" app tests config database bootstrap` (~38) — эталон «ожидаемый ноль после»
-- [ ] T004 [US1] Переименовать каталог с сохранением истории: `git mv app/Infrastracture app/Infrastructure`
-- [ ] T005 [US1] Заменить `App\Infrastracture` → `App\Infrastructure` во всех `.php`: namespace-объявления
+- [X] T004 [US1] Переименовать каталог с сохранением истории: `git mv app/Infrastracture app/Infrastructure`
+- [X] T005 [US1] Заменить `App\Infrastracture` → `App\Infrastructure` во всех `.php`: namespace-объявления
   в `app/Infrastructure/**`, `use`-импорты и `::class` по всему `app/` (особенно DI-биндинги в
   `app/Bridge/Laravel/Provider/*`), ссылки из интерфейсов `app/Domain/*`, тесты `tests/**`, конфиги `config/**`
-- [ ] T006 [US1] Перегенерировать автозагрузчик: `composer dump-autoload`
-- [ ] T007 [US1] Проверить SC-001: `grep -rn "Infrastracture" app tests config database bootstrap` → ноль
+- [X] T006 [US1] Перегенерировать автозагрузчик: `composer dump-autoload`
+- [X] T007 [US1] Проверить SC-001: `grep -rn "Infrastracture" app tests config database bootstrap` → ноль
   совпадений (исторические артефакты в `specs/001-*` не входят в критерий)
-- [ ] T008 [US1] Гейты (`test`/`stan`/`cs`/`rector -- --dry-run`) + `php artisan --version` (boot);
+- [X] T008 [US1] Гейты (`test`/`stan`/`cs`/`rector -- --dry-run`) + `php artisan --version` (boot);
   отдельный коммит `refactor(US1): infrastracture → infrastructure`
 
 **Checkpoint**: US1 завершена — опечатка исправлена, стек зелёный, можно мержить независимо.

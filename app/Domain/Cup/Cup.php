@@ -12,7 +12,7 @@ use App\Domain\Cup\Event\CupUpdated;
 use App\Domain\Cup\Factory\CupInput;
 use App\Domain\Cup\Group\CupGroup;
 use App\Domain\Shared\AggregatedModel;
-use App\Infrastracture\Laravel\Eloquent\Auth\ImpressionCast;
+use App\Infrastructure\Laravel\Eloquent\Auth\ImpressionCast;
 use App\Models\Year;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Builder;
