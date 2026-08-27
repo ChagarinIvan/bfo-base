@@ -143,9 +143,12 @@ US1 (скорость) → US2 (чистота) → US3 (покрытие): бы
 - [X] T013 [US3] Тесты Application-сервисов **Cup** — **уже покрыты** до этой фичи: `CalculateCupEventService`,
   `UpdateCupService`, `AddCupService`, `ClearCupCacheService`, `DisableCupService`, `ViewCupService`,
   `ListCupService`, `DisableCupEventService` — все имеют тесты в `tests/Application/Service/Cup/**`
-- [ ] T014 [P] [US3] Тесты прочих непокрытых Application-сервисов целевого слоя: PersonPrompt (`Add`/`Update`/
-  `Delete`), PersonPayment (`ListPersonsPayments`, `CreateOrUpdate`), CupEvent (`ListCupEvent`), Event
-  (`DownloadEventProtocol`) в `tests/Application/Service/**`
+- [~] T014 [P] [US3] Прочие Application-сервисы — частично. **Добавлены** `AddPersonPromptServiceTest`
+  (factory.create + prompts.add → DTO), `UpdatePersonPromptServiceTest` (not-found → `PersonPromptNotFound`
+  без update; успех → updater.update + prompts.update → DTO), `DeletePersonPromptServiceTest` (not-found
+  без delete; успех → delete → DTO) — моки интерфейсов + `DummyTransactional`. `CreateOrUpdatePersonPayments`
+  уже покрыт. **Осталось:** `ListPersonsPaymentsService`, `ListCupEventService`, `DownloadEventProtocolService`
+  — следующий заход
 - [ ] T015 [US3] Тесты сложных выборок целевых Eloquent-репозиториев на репрезентативных данных:
   `EloquentRankRepository` (`buildQuery` с join/sorting/критериями), `EloquentPersonRepository::byCriteria()`
   / `oneByCriteria()` (реальные ветви фильтрации), `EloquentCupRepository` в `tests/Infrastructure/**`.
