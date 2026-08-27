@@ -121,15 +121,16 @@ US1 (скорость) → US2 (чистота) → US3 (покрытие): бы
 **Independent Test**: для выбранного модуля ключевые сценарии до были непокрыты; добавленные тесты зелёные
 и падают при намеренной поломке проверяемой логики; ноль новых тестов на легаси.
 
-- [ ] T010 [P] [US3] Юнит-тесты доменных сервисов **Rank** (только классы с логикой; интерфейс
-  `JuniorThirdRankChecker` НЕ тестируем — тестируем его реализацию): `JuniorRankAgeValidator`,
-  `StandardJuniorJuniorThirdRankChecker`, `PreviousCompletedRankFiller`, `PreviousRanksFinishDateUpdater`,
-  `Factory/StandardRankFactory` в `tests/Domain/Rank/**` (чистая логика, без БД)
-- [ ] T011 [P] [US3] Юнит-тесты доменных сервисов **Cup** (классы с логикой; интерфейс
-  `CupCacheInvalidator` НЕ тестируем — его Laravel-реализация проверяется в Bridge/Infrastructure):
-  иерархия `Cup/CupType/*` (Ski/Bike/Sprint/Master/NewMaster/Youth/NewYouth/Elite/Junior/ElkPath),
-  `Cup/Group/*` (`CupGroupFactory`, `GroupAge`, `GroupMale`) в `tests/Domain/Cup/**` (критичный раздел —
-  покрыть тщательно)
+- [~] T010 [P] [US3] Юнит-тесты доменных сервисов **Rank** — частично. **Добавлен** `StandardRankFactoryTest`
+  (маппинг полей + дефолт finish_date = start+2 года; чистый юнит без БД). Уже были покрыты:
+  `JuniorRankAgeValidator`, `StandardJuniorJuniorThirdRankChecker` (`StandardThirdRankCheckerTest`).
+  **Пропущены осознанно:** `PreviousCompletedRankFiller` (очень сложный, много зависимостей — отдельный
+  заход), `PreviousRanksFinishDateUpdater` (зависит от **легаси** `App\Repositories\RanksRepository` —
+  тестировать домен через легаси противоречит FR-009)
+- [~] T011 [P] [US3] Юнит-тесты доменных сервисов **Cup** — начато. **Добавлен** `GroupAgeTest` (лестница
+  возрастов `next()`/`prev()` + границы насыщения + `toString()` — критичная логика группировки кубков).
+  Уже покрыты `CupGroupFactory` (`Models/Group/CupGroupFactoryTest`), `CupCacheInvalidator`-реализация
+  (`Bridge/Laravel/Cache/...`). **Осталось:** иерархия `Cup/CupType/*`, `Cup/Group/GroupMale` — следующий заход
 - [ ] T012 [US3] Тесты Application-сервисов **Rank** (моки интерфейсов): `ActivePersonRankService`,
   `RefillPersonRanksService`, `UpdateRankActivationDateService`, `PersonRanksService`, `ActivateRankService`
   в `tests/Application/Service/Rank/**`
