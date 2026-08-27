@@ -46,7 +46,8 @@ US1 (скорость) → US2 (чистота) → US3 (покрытие): бы
 
 **⚠️ CRITICAL**: без базовой линии нельзя доказать ускорение (US1) и собрать список предупреждений (US2).
 
-- [ ] T002 Зафиксировать базовую линию: время `time composer test` (записать), полный снимок предупреждений
+- [ ] T002 Зафиксировать базовую линию по протоколу SC-001: **медиана из 3 прогонов** `time composer test`
+  в одинаковом окружении (записать), полный снимок предупреждений
   `composer test -- --display-deprecations --display-notices --display-warnings` (сохранить список), и
   зелёные `stan`/`cs`/`rector -- --dry-run`
 
@@ -64,9 +65,11 @@ US1 (скорость) → US2 (чистота) → US3 (покрытие): бы
 - [ ] T003 [US1] Диагностика инфраструктуры БД: подтвердить, что `RefreshDatabase` даёт транзакционный
   откат и `migrate:fresh` идёт один раз за прогон; выявить точки лишней персистенции/обращений к БД
   (профиль самых медленных тестов) — зафиксировать находки
-- [ ] T004 [US1] Включить параллельный прогон: настроить `php artisan test --parallel` с отдельной тест-БД
-  на процесс (`.env.testing`/`phpunit.xml`/`composer.json` скрипт `test`); убедиться в отсутствии гонок и
-  падений от общей БД
+- [ ] T004 [US1] Включить параллельный прогон: **установить `brianium/paratest` (версия под PHPUnit 13)
+  через `composer require --dev` + обновить `composer.lock`** (без него `--parallel` не запустится на
+  чистом checkout); настроить `php artisan test --parallel` с отдельной тест-БД на процесс
+  (`.env.testing`/`phpunit.xml`/`composer.json` скрипт `test`); убедиться в отсутствии гонок и падений от
+  общей БД
 - [ ] T005 [US1] Гигиена фикстур: там, где БД не нужна — `make()`/стабы вместо `create()`; сократить объём
   персистируемых строк/связей в `database/factories/*` и в тестах-«тяжеловесах», выявленных в T003
 - [ ] T006 [US1] Повторный замер `time composer test`: заметно меньше базовой линии; прогон зелёный и
@@ -102,12 +105,15 @@ US1 (скорость) → US2 (чистота) → US3 (покрытие): бы
 **Independent Test**: для выбранного модуля ключевые сценарии до были непокрыты; добавленные тесты зелёные
 и падают при намеренной поломке проверяемой логики; ноль новых тестов на легаси.
 
-- [ ] T010 [P] [US3] Юнит-тесты доменных сервисов **Rank**: `JuniorRankAgeValidator`, `JuniorThirdRankChecker`,
+- [ ] T010 [P] [US3] Юнит-тесты доменных сервисов **Rank** (только классы с логикой; интерфейс
+  `JuniorThirdRankChecker` НЕ тестируем — тестируем его реализацию): `JuniorRankAgeValidator`,
   `StandardJuniorJuniorThirdRankChecker`, `PreviousCompletedRankFiller`, `PreviousRanksFinishDateUpdater`,
   `Factory/StandardRankFactory` в `tests/Domain/Rank/**` (чистая логика, без БД)
-- [ ] T011 [P] [US3] Юнит-тесты доменных сервисов **Cup**: иерархия `Cup/CupType/*` (Ski/Bike/Sprint/
-  Master/NewMaster/Youth/NewYouth/Elite/Junior/ElkPath), `Cup/Group/*` (`CupGroupFactory`, `GroupAge`,
-  `GroupMale`), `CupCacheInvalidator` в `tests/Domain/Cup/**` (критичный раздел — покрыть тщательно)
+- [ ] T011 [P] [US3] Юнит-тесты доменных сервисов **Cup** (классы с логикой; интерфейс
+  `CupCacheInvalidator` НЕ тестируем — его Laravel-реализация проверяется в Bridge/Infrastructure):
+  иерархия `Cup/CupType/*` (Ski/Bike/Sprint/Master/NewMaster/Youth/NewYouth/Elite/Junior/ElkPath),
+  `Cup/Group/*` (`CupGroupFactory`, `GroupAge`, `GroupMale`) в `tests/Domain/Cup/**` (критичный раздел —
+  покрыть тщательно)
 - [ ] T012 [US3] Тесты Application-сервисов **Rank** (моки интерфейсов): `ActivePersonRankService`,
   `RefillPersonRanksService`, `UpdateRankActivationDateService`, `PersonRanksService`, `ActivateRankService`
   в `tests/Application/Service/Rank/**`
@@ -116,9 +122,11 @@ US1 (скорость) → US2 (чистота) → US3 (покрытие): бы
 - [ ] T014 [P] [US3] Тесты прочих непокрытых Application-сервисов целевого слоя: PersonPrompt (`Add`/`Update`/
   `Delete`), PersonPayment (`ListPersonsPayments`, `CreateOrUpdate`), CupEvent (`ListCupEvent`), Event
   (`DownloadEventProtocol`) в `tests/Application/Service/**`
-- [ ] T015 [US3] Тесты сложных выборок целевых Eloquent-репозиториев: `EloquentRankRepository` (buildQuery
-  с join/sorting/критериями), `EloquentPersonRepository` (поиск с `CONCAT`), `EloquentCupRepository` в
-  `tests/Infrastructure/**` — на репрезентативных данных
+- [ ] T015 [US3] Тесты сложных выборок целевых Eloquent-репозиториев на репрезентативных данных:
+  `EloquentRankRepository` (`buildQuery` с join/sorting/критериями), `EloquentPersonRepository::byCriteria()`
+  / `oneByCriteria()` (реальные ветви фильтрации), `EloquentCupRepository` в `tests/Infrastructure/**`.
+  ⚠️ Поиск с `CONCAT` — это легаси `app/Services/PersonsService.php`, тесты на него ЗАПРЕЩЕНЫ (FR-009),
+  в объём НЕ входит
 - [ ] T016 [US3] Интеграционные request/API-тесты контроллеров разрядов и кубков (и ключевых эндпоинтов),
   частично покрывающие легаси через публичное поведение, в `tests/Bridge/Laravel/Http/**`
 - [ ] T017 [US3] Характеризация ranks/cups (SC-004): тесты фиксируют текущее поведение как baseline;
@@ -136,7 +144,8 @@ US1 (скорость) → US2 (чистота) → US3 (покрытие): бы
 
 - [ ] T019 Финальный прогон на PHP 8.5: `time composer test` (сравнение с базовой линией), `--display-*`
   (ноль предупреждений), `stan`/`cs`/`rector` — зелёные
-- [ ] T020 [P] Сверка SC-001…SC-006; отметить критерии; прогнать сценарии из [quickstart.md](./quickstart.md)
+- [ ] T020 Сверка SC-001…SC-006; отметить критерии; прогнать сценарии из [quickstart.md](./quickstart.md)
+  (зависит от T019 и всех предыдущих фаз — НЕ параллельна)
 
 ---
 
@@ -158,7 +167,7 @@ T018 — контроль в конце.
 
 - US3 доменные юнит-тесты Rank (T010) и Cup (T011) — разные каталоги, параллельны.
 - T014 (прочие Application-сервисы) — независимые файлы.
-- T020 — финальная сверка, независима от правок кода.
+- T020 — финальная сверка SC: **зависит** от T019 и всех фаз, выполняется последовательно (не [P]).
 - US1/US2/US3 как истории независимы, но рекомендован порядок P1→P2→P3 ради фидбэк-цикла.
 
 ## Implementation Strategy

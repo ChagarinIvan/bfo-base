@@ -93,15 +93,18 @@ tests/CreatesApplication.php
 database/factories/       # US1: гигиена фикстур (make vs create, меньше строк)
 tests/Domain/**           # US3: юнит-тесты доменных сервисов (Rank/Cup и др.)
 tests/Application/**       # US3: тесты Application-сервисов (моки интерфейсов)
+tests/Infrastructure/**   # US3: тесты сложных выборок целевых Eloquent-репозиториев (НОВЫЙ каталог)
 tests/Bridge/Laravel/Http/** # US3: интеграционные request/API-тесты контроллеров
 tests/**                  # US2: точечные правки под ноль предупреждений
 
 app/**                    # US2: правки вызовов ТОЛЬКО для устранения deprecation (без смены поведения)
 ```
 
-**Structure Decision**: новых каталогов не создаём. US1 — инфраструктура прогона. US2 — точечные правки
-тестов (и минимально app при deprecation-вызовах). US3 — новые тест-файлы в существующей раскладке
-`tests/{Domain,Application,Bridge}`. Легаси (`app/Repositories`, `app/Services`) новыми тестами не трогаем.
+**Structure Decision**: новых каталогов в `app/` не создаём. Единственный новый тест-каталог —
+`tests/Infrastructure/**` (под тесты выборок целевых репозиториев, T015); остальные тесты идут в
+существующую раскладку `tests/{Domain,Application,Bridge}`. US1 — инфраструктура прогона. US2 — точечные
+правки тестов (и минимально app при deprecation-вызовах). Легаси (`app/Repositories`, `app/Services`)
+новыми тестами не трогаем.
 
 ## Complexity Tracking
 
