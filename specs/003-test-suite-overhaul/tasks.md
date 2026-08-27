@@ -134,11 +134,15 @@ US1 (скорость) → US2 (чистота) → US3 (покрытие): бы
 - [~] T012 [US3] Тесты Application-сервисов **Rank** — частично. **Добавлен** `UpdateRankActivationDateServiceTest`
   (3 сценария: rank-not-found → `RankNotFound`; protocol-line-not-found → `ProtocolLineNotFound` без update;
   успех → `activateRank` применён + `update` вызван + `ViewRankDto`; моки интерфейсов + `DummyTransactional`,
-  без БД). Уже покрыты `ActivateRankService`, `ViewRankService`. **Осталось:** `ActivePersonRankService`,
-  `RefillPersonRanksService`, `PersonRanksService` (у последнего batch-ассемблер с `loadMissing` — нужен
-  аккуратный препрелоад связей). Следующий заход
-- [ ] T013 [US3] Тесты Application-сервисов **Cup**: `CalculateCupEventService`, `UpdateCupService`,
-  `AddCupService`, `ClearCupCacheService`, `DisableCupService` в `tests/Application/Service/Cup/**`
+  без БД). **Добавлен** `PersonRanksServiceTest` (пустой список; сборка 2 DTO с препрелоадом связей, чтобы
+  batch-ассемблер `loadMissing`/`preloadProtocolLines` не бил в БД; поля DTO проверены). Уже покрыты
+  `ActivateRankService`, `ViewRankService`. **Пропущены обоснованно:** `ActivePersonRankService` (зависит
+  от `final readonly PreviousCompletedRankFiller` — PHPUnit не мокает final; чистый юнит без правки
+  прод-кода невозможен → покрыт интеграционными Rank-контроллер-тестами), `RefillPersonRanksService`
+  (тонкая обёртка над легаси `App\Services\RankService` — FR-009/FR-011)
+- [X] T013 [US3] Тесты Application-сервисов **Cup** — **уже покрыты** до этой фичи: `CalculateCupEventService`,
+  `UpdateCupService`, `AddCupService`, `ClearCupCacheService`, `DisableCupService`, `ViewCupService`,
+  `ListCupService`, `DisableCupEventService` — все имеют тесты в `tests/Application/Service/Cup/**`
 - [ ] T014 [P] [US3] Тесты прочих непокрытых Application-сервисов целевого слоя: PersonPrompt (`Add`/`Update`/
   `Delete`), PersonPayment (`ListPersonsPayments`, `CreateOrUpdate`), CupEvent (`ListCupEvent`), Event
   (`DownloadEventProtocol`) в `tests/Application/Service/**`
