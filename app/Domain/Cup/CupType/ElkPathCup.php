@@ -33,7 +33,7 @@ class ElkPathCup extends EliteCupType
         return 'app.cup.type.elk_path';
     }
 
-    public function getGroups(): Collection|array
+    public function getGroups(): array|Collection
     {
         $groups = Collection::make();
 

@@ -9,15 +9,8 @@ use Throwable;
 
 class ErrorMail extends Mailable
 {
-    private Throwable $error;
-    private string $url;
-    private string $previousUrl;
-
-    public function __construct(Throwable $exception, string $url, string $previousUrl)
+    public function __construct(private readonly Throwable $error, private readonly string $url, private readonly string $previousUrl)
     {
-        $this->error = $exception;
-        $this->url = $url;
-        $this->previousUrl = $previousUrl;
     }
 
     public function build(): self

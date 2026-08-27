@@ -22,7 +22,7 @@ class ShowEditPersonAction extends BaseController
         string $id,
         ViewPersonService $viewPersonService,
         ListClubsService $listClubsService,
-    ): View|RedirectResponse {
+    ): RedirectResponse|View {
         try {
             $person = $viewPersonService->execute(new ViewPerson($id));
         } catch (PersonNotFound) {

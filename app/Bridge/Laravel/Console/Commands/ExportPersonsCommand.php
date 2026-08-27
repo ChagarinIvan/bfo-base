@@ -24,7 +24,7 @@ use function rewind;
 #[Signature('persons:export')]
 class ExportPersonsCommand extends Command
 {
-    private LoggerInterface $logger;
+    private readonly LoggerInterface $logger;
 
     public function __construct(
         private readonly PersonsService $service,
@@ -54,7 +54,7 @@ class ExportPersonsCommand extends Command
             fwrite($stream, "\xEF\xBB\xBF");
             $this->logger->info('write started.');
 
-            fputcsv($stream, ['lastname', 'firstname', 'birthday', 'rank'], ';');
+            fputcsv($stream, ['lastname', 'firstname', 'birthday', 'rank'], ';', escape: '\\');
 
             /** @var Person $person */
             foreach ($this->service->getPersonsList()->cursor() as $person) {
@@ -66,7 +66,7 @@ class ExportPersonsCommand extends Command
                     $this->rankService
                         ->execute(new ActivePersonRank((string)$person->id))
                         ?->rank,
-                ], ';');
+                ], ';', escape: '\\');
             }
 
             // ⚠️ обязательно

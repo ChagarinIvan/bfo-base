@@ -22,5 +22,5 @@ interface CupTypeInterface
     /**
      * @return Collection|CupGroup[]
      */
-    public function getGroups(): Collection|array;
+    public function getGroups(): array|Collection;
 }

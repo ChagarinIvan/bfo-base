@@ -25,9 +25,9 @@ final class ActivateRankServiceTest extends TestCase
 {
     private ActivateRankService $service;
 
-    private RankRepository&MockObject $ranks;
+    private MockObject&RankRepository $ranks;
 
-    private ProtocolLineRepository&MockObject $protocolLines;
+    private MockObject&ProtocolLineRepository $protocolLines;
 
     protected function setUp(): void
     {

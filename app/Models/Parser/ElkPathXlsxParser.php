@@ -136,9 +136,9 @@ class ElkPathXlsxParser extends AbstractParser
             case 'place':
             case 'runner_number':
             case 'year':
-                return $columnData ? (int)$columnData : null;
+                return $columnData !== '' && $columnData !== '0' ? (int)$columnData : null;
             case 'distance':
-                return $columnData ? ((int)$columnData * 1000) : null;
+                return $columnData !== '' && $columnData !== '0' ? ((int)$columnData * 1000) : null;
             case 'firstname':
             case 'lastname':
                 return mb_convert_case($columnData, MB_CASE_TITLE);

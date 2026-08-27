@@ -13,8 +13,6 @@ class HorizonServiceProvider extends HorizonApplicationServiceProvider
     {
         parent::boot();
 
-        Horizon::auth(static function ($request): bool {
-            return $request->user() !== null;
-        });
+        Horizon::auth(static fn($request): bool => $request->user() !== null);
     }
 }

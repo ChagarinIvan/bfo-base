@@ -25,7 +25,7 @@ class ShowClubAction extends BaseController
         string $clubId,
         ViewClubService $service,
         ListPersonsService $personsService,
-    ): View|RedirectResponse {
+    ): RedirectResponse|View {
         try {
             $club = $service->execute(new ViewClub($clubId));
         } catch (ClubNotFound) {

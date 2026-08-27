@@ -9,7 +9,7 @@ use App\Domain\Cup\CupCacheInvalidator;
 use App\Domain\Cup\CupRepository;
 use App\Domain\Cup\Factory\CupFactory;
 use App\Domain\Cup\Factory\StandardCupFactory;
-use App\Infrastracture\Laravel\Eloquent\Cup\EloquentCupRepository;
+use App\Infrastructure\Laravel\Eloquent\Cup\EloquentCupRepository;
 use Illuminate\Support\ServiceProvider;
 
 final class CupProvider extends ServiceProvider

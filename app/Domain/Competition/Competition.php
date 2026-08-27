@@ -8,7 +8,7 @@ use App\Domain\Auth\Impression;
 use App\Domain\Competition\Event\CompetitionCreated;
 use App\Domain\Competition\Event\CompetitionDisabled;
 use App\Domain\Shared\AggregatedModel;
-use App\Infrastracture\Laravel\Eloquent\Auth\ImpressionCast;
+use App\Infrastructure\Laravel\Eloquent\Auth\ImpressionCast;
 use App\Models\Year;
 use Carbon\Carbon;
 use Database\Factories\Domain\Competition\CompetitionFactory;

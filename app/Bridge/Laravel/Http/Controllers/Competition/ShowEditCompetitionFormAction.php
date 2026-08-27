@@ -21,7 +21,7 @@ final class ShowEditCompetitionFormAction extends BaseController
     public function __invoke(
         string $competitionId,
         ViewCompetitionService $service,
-    ): View|RedirectResponse {
+    ): RedirectResponse|View {
         try {
             $competition = $service->execute(new ViewCompetition($competitionId));
         } catch (CompetitionNotFound) {

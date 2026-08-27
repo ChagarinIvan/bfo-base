@@ -25,7 +25,7 @@ final class ShowCompetitionAction extends BaseController
         string $competitionId,
         ViewCompetitionService $competitionService,
         ListEventsService $eventsService,
-    ): View|RedirectResponse {
+    ): RedirectResponse|View {
         try {
             $competition = $competitionService->execute(new ViewCompetition($competitionId));
         } catch (CompetitionNotFound) {

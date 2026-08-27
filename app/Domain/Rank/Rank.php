@@ -82,7 +82,7 @@ class Rank extends AggregatedModel
 
     public const MAX_JUNIOR_AGE = 18;
 
-    private const PART_REPLACES = [
+    private const array PART_REPLACES = [
         'к' => 'к',
         '1ю' => 'iю',
         '2ю' => 'iiю',
@@ -97,7 +97,7 @@ class Rank extends AggregatedModel
         '\\' => '',
     ];
 
-    private const FULL_REPLACES = [
+    private const array FULL_REPLACES = [
         '1' => 'i',
         '2' => 'ii',
         '3' => 'iii',
@@ -142,7 +142,7 @@ class Rank extends AggregatedModel
     private static function getPreparedRanks(): array
     {
         if (count(self::$preparedRanks) === 0) {
-            self::$preparedRanks = array_map(static fn (string $rank): string => self::prepareRank($rank), self::RANKS);
+            self::$preparedRanks = array_map(self::prepareRank(...), self::RANKS);
         }
         return self::$preparedRanks;
     }

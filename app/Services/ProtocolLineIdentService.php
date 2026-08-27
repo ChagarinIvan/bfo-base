@@ -33,7 +33,7 @@ class ProtocolLineIdentService
     /**
      * карта исправления имён, разные сокращения и формы аналоги
      */
-    private const EDIT_MAP = [
+    private const array EDIT_MAP = [
         'дмитрий' => ['дима'],
         'павел' => ['паша'],
         'мария' => ['маша'],
@@ -150,7 +150,7 @@ class ProtocolLineIdentService
     {
         Log::info(sprintf('Ident person %s.', $searchLine));
 
-        self::$prompts = self::$prompts ?? $this->personPromptService->all();
+        self::$prompts ??= $this->personPromptService->all();
 
         $metaphone = $this->phonetics->metaphour($searchLine);
         $ranks = new Collection();

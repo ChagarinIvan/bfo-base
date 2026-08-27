@@ -209,10 +209,10 @@ class NewMasterCupType extends AbstractCupType
             }
         }
 
-        return $result->sortByDesc(static fn (CupEventPoint $cupEventResult): int|string|float => $cupEventResult->points);
+        return $result->sortByDesc(static fn (CupEventPoint $cupEventResult): float|int|string => $cupEventResult->points);
     }
 
-    public function getGroups(): Collection|array
+    public function getGroups(): array|Collection
     {
         return CupGroupFactory::getAgeTypeGroups([
             GroupAge::a35,
@@ -316,7 +316,7 @@ class NewMasterCupType extends AbstractCupType
             $mainDistance = $this->findDistance($cupEvent, $group);
             $equalDistances = Collection::make([$mainDistance]);
 
-            if ($mainDistance) {
+            if ($mainDistance instanceof Distance) {
                 $equalDistances->push(...$this->distanceService->getEqualDistances($mainDistance));
             }
 
@@ -361,13 +361,11 @@ class NewMasterCupType extends AbstractCupType
 
         $groups = collect($this->getGroups())
             ->filter(static fn (CupGroup $g): bool => $g->male() === $male)
-            ->flatMap(static function (CupGroup $g) {
-                return collect(static::GROUPS_MAP[$g->id()])
-                    ->map(static fn ($name): array => [
-                        'name' => $name,
-                        'cupGroupId' => $g->id(),
-                    ]);
-            });
+            ->flatMap(static fn(CupGroup $g) => collect(static::GROUPS_MAP[$g->id()])
+                ->map(static fn ($name): array => [
+                    'name' => $name,
+                    'cupGroupId' => $g->id(),
+                ]));
 
         $groupNames = $groups->pluck('name')->unique()->values();
 
@@ -423,15 +421,13 @@ class NewMasterCupType extends AbstractCupType
                 ->filter(static fn(ProtocolLine $line): bool =>
                     35 <= ($cupEvent->cup->year->value - $line->person?->birthday?->year)
                     && ($cupEvent->cup->year->value - $line->person?->birthday?->year) <= 100)
-                ->map(static function (ProtocolLine $line) use ($mainGroup, $cupEvent): ProtocolLineCupGroup {
-                    return new ProtocolLineCupGroup(
-                        $line,
-                        new CupGroup(
-                            $mainGroup->male(),
-                            self::calculateGroupAge($cupEvent->cup->year->value - $line->person?->birthday?->year),
-                        )
-                    );
-                })
+                ->map(static fn(ProtocolLine $line): ProtocolLineCupGroup => new ProtocolLineCupGroup(
+                    $line,
+                    new CupGroup(
+                        $mainGroup->male(),
+                        self::calculateGroupAge($cupEvent->cup->year->value - $line->person?->birthday?->year),
+                    )
+                ))
                 ->groupBy(static fn(ProtocolLineCupGroup $lcg): string => $lcg->group->id())
                 ->sortKeys(descending: true)
             ;
@@ -473,12 +469,12 @@ class NewMasterCupType extends AbstractCupType
 
                     $aDistance = $this->findDistance($cupEvent, $aGroup);
 
-                    if (!$searchDistance && ($mainDistance && $mainDistance->equal($aDistance))) {
+                    if (!$searchDistance && ($mainDistance instanceof Distance && $mainDistance->equal($aDistance))) {
                         $groupedByGroupNameLines = $groupedByGroupNameLines->forget($aGroup->id());
                         continue;
                     }
 
-                    if ($aDistance && $searchDistance && $searchDistance->equal($aDistance) && $aGroup->older($mainGroup)) {
+                    if ($aDistance instanceof Distance && $searchDistance instanceof Distance && $searchDistance->equal($aDistance) && $aGroup->older($mainGroup)) {
                         $groupedByGroupNameLines = $groupedByGroupNameLines->forget($aGroup->id());
                         continue;
                     }

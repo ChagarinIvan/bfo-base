@@ -10,7 +10,7 @@ use RuntimeException;
 
 class ShowUnitGroupsAction extends AbstractGroupAction
 {
-    public function __invoke(string $groupId): View|RedirectResponse
+    public function __invoke(string $groupId): RedirectResponse|View
     {
         try {
             $group = $this->groupsService->getGroup((int) $groupId);

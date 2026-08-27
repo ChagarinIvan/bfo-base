@@ -44,7 +44,7 @@ class Distance extends Model
         return $this->belongsTo(Event::class, 'event_id', 'id');
     }
 
-    public function protocolLines(): HasMany|Builder
+    public function protocolLines(): Builder|HasMany
     {
         return $this->hasMany(ProtocolLine::class, 'distance_id', 'id');
     }

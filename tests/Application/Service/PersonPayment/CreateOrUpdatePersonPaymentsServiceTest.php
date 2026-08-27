@@ -22,11 +22,11 @@ use Tests\TestCase;
 
 final class CreateOrUpdatePersonPaymentsServiceTest extends TestCase
 {
-    private PersonPaymentRepository&MockObject $payments;
+    private MockObject&PersonPaymentRepository $payments;
 
     private CreateOrUpdatePersonPaymentsService $service;
 
-    private PersonPaymentFactory&MockObject $factory;
+    private MockObject&PersonPaymentFactory $factory;
 
     protected function setUp(): void
     {

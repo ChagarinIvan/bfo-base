@@ -35,7 +35,7 @@ class JuniorCupType extends EliteCupType
         return 'app.cup.type.junior';
     }
 
-    public function getGroups(): Collection|array
+    public function getGroups(): array|Collection
     {
         return CupGroupFactory::getAgeTypeGroups([GroupAge::a20]);
     }
@@ -55,12 +55,12 @@ class JuniorCupType extends EliteCupType
         $mainGroupsNames = $group->male() === GroupMale::Man ? self::MEN_MAIN_GROUPS_NAMES : self::WOMEN_MAIN_GROUPS_NAMES;
         $mainGroupsDistance = $this->distanceService->findDistance($mainGroupsNames, $cupEvent->event_id);
 
-        if (!$mainGroupsDistance) {
+        if (!$mainGroupsDistance instanceof Distance) {
             $eliteGroupsNames = $group->male() === GroupMale::Man ? EliteCupType::ELITE_MEN_GROUPS : EliteCupType::ELITE_WOMEN_GROUPS;
             $mainGroupsDistance = $this->distanceService->findDistance($eliteGroupsNames, $cupEvent->event_id);
         }
 
-        if (!$mainGroupsDistance) {
+        if (!$mainGroupsDistance instanceof Distance) {
             return new Collection();
         }
 

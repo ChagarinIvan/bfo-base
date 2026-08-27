@@ -24,7 +24,7 @@ class StoreClubsAction extends BaseController
         ClubDto $clubDto,
         AddClubService $service,
         UserId $userId,
-    ): View|RedirectResponse {
+    ): RedirectResponse|View {
         try {
             $club = $service->execute(new AddClub($clubDto, $userId));
         } catch (FailedToAddClub) {

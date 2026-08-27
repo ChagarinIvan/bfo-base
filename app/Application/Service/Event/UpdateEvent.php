@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Service\Event;
 
 use App\Application\Dto\Auth\UserId;
+use App\Application\Dto\Event\EventProtocolDto;
 use App\Application\Dto\Event\UpdateEventDto;
 use App\Domain\Event\EventInfo;
 use App\Domain\Event\Protocol;
@@ -40,7 +41,7 @@ final readonly class UpdateEvent
 
     private function protocolInput(): ?Protocol
     {
-        return $this->dto->protocol
+        return $this->dto->protocol instanceof EventProtocolDto
             ? new Protocol(
                 $this->dto->protocol->content,
                 $this->dto->protocol->extension,

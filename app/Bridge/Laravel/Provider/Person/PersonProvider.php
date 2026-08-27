@@ -8,7 +8,7 @@ use App\Domain\Person\Factory\PersonFactory;
 use App\Domain\Person\Factory\PreventDuplicatePersonFactory;
 use App\Domain\Person\Factory\StandardPersonFactory;
 use App\Domain\Person\PersonRepository;
-use App\Infrastracture\Laravel\Eloquent\Person\EloquentPersonRepository;
+use App\Infrastructure\Laravel\Eloquent\Person\EloquentPersonRepository;
 use Illuminate\Support\ServiceProvider;
 
 final class PersonProvider extends ServiceProvider

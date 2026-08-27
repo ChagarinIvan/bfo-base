@@ -21,7 +21,7 @@ class StorePersonAction extends BaseController
         PersonDto $dto,
         AddPersonService $service,
         UserId $userId,
-    ): View|RedirectResponse {
+    ): RedirectResponse|View {
         try {
             $person = $service->execute(new AddPerson($dto, $userId));
         } catch (FailedToAddPerson) {

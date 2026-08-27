@@ -10,7 +10,7 @@ use Illuminate\Http\RedirectResponse;
 
 class ShowEditFlagFormAction extends AbstractFlagsAction
 {
-    public function __invoke(Flag $flag): View|RedirectResponse
+    public function __invoke(Flag $flag): RedirectResponse|View
     {
         return $this->view('flags.edit', ['flag' => $flag,]);
     }

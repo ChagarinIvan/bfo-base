@@ -22,8 +22,8 @@ use PHPUnit\Framework\TestCase;
 
 final class StandardThirdRankCheckerTest extends TestCase
 {
-    private PersonRepository&MockObject $persons;
-    private ProtocolLineRepository&MockObject $protocols;
+    private MockObject&PersonRepository $persons;
+    private MockObject&ProtocolLineRepository $protocols;
     private Clock&MockObject $clock;
     private StandardJuniorJuniorThirdRankChecker $checker;
 

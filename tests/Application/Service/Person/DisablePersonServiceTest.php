@@ -20,7 +20,7 @@ final class DisablePersonServiceTest extends TestCase
 {
     private DisablePersonService $service;
 
-    private PersonRepository&MockObject $persons;
+    private MockObject&PersonRepository $persons;
 
     protected function setUp(): void
     {

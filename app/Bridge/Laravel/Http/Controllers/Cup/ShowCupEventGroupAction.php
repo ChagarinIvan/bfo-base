@@ -32,10 +32,10 @@ class ShowCupEventGroupAction extends BaseController
         string $groupId,
         CalculateCupEventService $service,
         ListClubsService $clubsService,
-    ): View|RedirectResponse {
+    ): RedirectResponse|View {
         try {
             $calculatedCupEvent = $service->execute(new CalculateCupEvent($cupId, $cupEventId, $groupId));
-        } catch (CupNotFound|GroupNotFound|CupEventNotFound) {
+        } catch (CupEventNotFound|CupNotFound|GroupNotFound) {
             return $this->redirectTo404Error();
         }
 

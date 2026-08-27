@@ -174,7 +174,7 @@ class SFRParser extends AbstractParser
         return '';
     }
 
-    private function getValue(string $column, string $columnData): string|int|null|Carbon
+    private function getValue(string $column, string $columnData): null|Carbon|int|string
     {
         $columnData = trim($columnData);
         switch ($column) {

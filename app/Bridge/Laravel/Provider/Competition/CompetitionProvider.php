@@ -7,7 +7,7 @@ namespace App\Bridge\Laravel\Provider\Competition;
 use App\Domain\Competition\CompetitionRepository;
 use App\Domain\Competition\Factory\CompetitionFactory;
 use App\Domain\Competition\Factory\StandardCompetitionFactory;
-use App\Infrastracture\Laravel\Eloquent\Competition\EloquentCompetitionRepository;
+use App\Infrastructure\Laravel\Eloquent\Competition\EloquentCompetitionRepository;
 use Illuminate\Support\ServiceProvider;
 
 final class CompetitionProvider extends ServiceProvider

@@ -16,7 +16,7 @@ final class DownloadEventProtocolAction extends BaseController
 {
     use EventAction;
 
-    public function __invoke(string $id, DownloadEventProtocolService $service, ResponseFactory $response): Response|RedirectResponse
+    public function __invoke(string $id, DownloadEventProtocolService $service, ResponseFactory $response): RedirectResponse|Response
     {
         try {
             $protocol = $service->execute(new DownloadEventProtocol($id));

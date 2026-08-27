@@ -18,7 +18,7 @@ class ShowEditCupFormAction extends BaseController
     public function __invoke(
         string $cupId,
         ViewCupService $service,
-    ): View|RedirectResponse {
+    ): RedirectResponse|View {
         try {
             $cup = $service->execute(new ViewCup($cupId));
         } catch (CupNotFound) {

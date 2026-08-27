@@ -29,7 +29,7 @@ final class UpdateEventServiceTest extends TestCase
 {
     private UpdateEventService $service;
 
-    private ProtocolUpdater&MockObject $updater;
+    private MockObject&ProtocolUpdater $updater;
 
     private EventRepository&MockObject $events;
 

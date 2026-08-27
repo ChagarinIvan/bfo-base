@@ -21,10 +21,10 @@ class MakeNewPasswordByTokenAction extends AbstractAction
     public function __construct(
         protected ViewActionsService $viewService,
         protected Redirector $redirector,
-        private Encrypter $encrypter,
-        private Validator $validator,
-        private HashManager $hashManager,
-        private Mailer $mailer
+        private readonly Encrypter $encrypter,
+        private readonly Validator $validator,
+        private readonly HashManager $hashManager,
+        private readonly Mailer $mailer
     ) {
         parent::__construct($viewService, $redirector);
     }

@@ -12,7 +12,7 @@ use App\Domain\Cup\Event\CupUpdated;
 use App\Domain\Cup\Factory\CupInput;
 use App\Domain\Cup\Group\CupGroup;
 use App\Domain\Shared\AggregatedModel;
-use App\Infrastracture\Laravel\Eloquent\Auth\ImpressionCast;
+use App\Infrastructure\Laravel\Eloquent\Auth\ImpressionCast;
 use App\Models\Year;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -68,7 +68,7 @@ class Cup extends AggregatedModel
         $this->save();
     }
 
-    public function events(): HasMany|Builder
+    public function events(): Builder|HasMany
     {
         return $this->hasMany(CupEvent::class)->active();
     }

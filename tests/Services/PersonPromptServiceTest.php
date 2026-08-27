@@ -9,6 +9,7 @@ use App\Domain\PersonPrompt\PersonPrompt;
 use App\Services\PersonPromptService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
+use Override;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\CreatesApplication;
 use Tests\TestCase;
@@ -18,6 +19,7 @@ final class PersonPromptServiceTest extends TestCase
     use CreatesApplication;
     use RefreshDatabase;
 
+    #[Override]
     protected $app;
 
     protected function setUp(): void

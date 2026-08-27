@@ -12,8 +12,8 @@ use App\Domain\Event\ProtocolPathResolver;
 use App\Domain\Event\ProtocolStorage;
 use App\Domain\Event\ProtocolUpdater;
 use App\Domain\Event\StandardProtocolUpdater;
-use App\Infrastracture\Laravel\Eloquent\Event\EloquentEventRepository;
-use App\Infrastracture\Laravel\Storage\Event\FileProtocolStorage;
+use App\Infrastructure\Laravel\Eloquent\Event\EloquentEventRepository;
+use App\Infrastructure\Laravel\Storage\Event\FileProtocolStorage;
 use Illuminate\Support\ServiceProvider;
 
 final class EventProvider extends ServiceProvider

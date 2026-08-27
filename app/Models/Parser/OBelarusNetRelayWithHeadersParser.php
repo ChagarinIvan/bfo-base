@@ -92,10 +92,10 @@ class OBelarusNetRelayWithHeadersParser extends AbstractParser
                     try {
                         $protocolLine['time'] = Carbon::createFromTimeString($value);
                         $indent++;
-                    } catch (Exception $e) {
+                    } catch (Exception) {
                         $protocolLine['time'] = $time;
                     }
-                } catch (Exception $e) {
+                } catch (Exception) {
                     $protocolLine['time'] = null;
                 }
                 $protocolLine['runner_number'] = (int)$lineData[0];

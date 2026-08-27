@@ -7,7 +7,7 @@ use function str_replace;
 
 final class SymbolNormalizer
 {
-    public const SYMBOL_MAP = [
+    public const array SYMBOL_MAP = [
         'с' => ['c'],
         'а' => ['a'],
         'о' => ['o'],

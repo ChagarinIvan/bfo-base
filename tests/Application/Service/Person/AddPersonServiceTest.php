@@ -26,9 +26,9 @@ final class AddPersonServiceTest extends TestCase
 {
     private AddPersonService $service;
 
-    private PersonFactory&MockObject $factory;
+    private MockObject&PersonFactory $factory;
 
-    private PersonRepository&MockObject $persons;
+    private MockObject&PersonRepository $persons;
 
     protected function setUp(): void
     {

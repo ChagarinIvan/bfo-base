@@ -30,15 +30,15 @@ class BikeCupType extends EliteCupType
 
         return $this
             ->calculateLines($cupEvent, $cupEventProtocolLines)
-            ->sortByDesc(static fn (CupEventPoint $cupEventResult): int|string|float => $cupEventResult->points)
+            ->sortByDesc(static fn (CupEventPoint $cupEventResult): float|int|string => $cupEventResult->points)
         ;
     }
 
     protected function getGroupsMap(CupGroup $group): array
     {
         $map = [
-            (new CupGroup(GroupMale::Man))->id() => static::ELITE_MEN_GROUPS,
-            (new CupGroup(GroupMale::Woman))->id() => static::ELITE_WOMEN_GROUPS,
+            new CupGroup(GroupMale::Man)->id() => static::ELITE_MEN_GROUPS,
+            new CupGroup(GroupMale::Woman)->id() => static::ELITE_WOMEN_GROUPS,
         ];
 
         return $map[$group->id()] ?? [];
@@ -47,11 +47,11 @@ class BikeCupType extends EliteCupType
     protected function getAllGroupsMap(CupGroup $group): array
     {
         $map = [
-            (new CupGroup(GroupMale::Man))->id() => array_merge(
+            new CupGroup(GroupMale::Man)->id() => array_merge(
                 self::ELITE_MEN_GROUPS,
                 ['M20', 'М20', 'M21A', 'M21А', 'М21А', 'М21A']
             ),
-            (new CupGroup(GroupMale::Woman))->id() => array_merge(
+            new CupGroup(GroupMale::Woman)->id() => array_merge(
                 self::ELITE_WOMEN_GROUPS,
                 ['Ж20', 'W20', 'Ж21A', 'W20А', 'Ж21А', 'W20A']
             )

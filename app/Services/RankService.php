@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Application\Dto\Rank\ViewRankDto;
 use App\Application\Service\Person\Exception\PersonNotFound;
 use App\Application\Service\Person\ViewPerson;
 use App\Application\Service\Person\ViewPersonService;
@@ -104,7 +105,7 @@ class RankService
 
         foreach ($personsIds as $personId) {
             $actualRank = $this->activePersonRankService->execute(new ActivePersonRank((string)$personId));
-            if ($actualRank && $actualRank->rank === $rank) {
+            if ($actualRank instanceof ViewRankDto && $actualRank->rank === $rank) {
                 $ranks->put($personId, $actualRank);
             }
         }
@@ -117,7 +118,7 @@ class RankService
         $actualRanks = new Collection();
         foreach ($personIds as $personId) {
             $rank = $this->activePersonRankService->execute(new ActivePersonRank((string)$personId));
-            if ($rank) {
+            if ($rank instanceof ViewRankDto) {
                 $actualRanks->put($personId, $rank);
             }
         }
@@ -156,7 +157,7 @@ class RankService
             return;
         }
 
-        if ($actualRankDto) {
+        if ($actualRankDto instanceof ViewRankDto) {
             if ($actualRankDto->rank === $protocolLine->complete_rank) {
                 $newRank = $this->factory->create(new RankInput(
                     personId: (int) $actualRankDto->personId,
@@ -180,7 +181,7 @@ class RankService
                 ]));
 //                dump($futureActivatedRank);
 
-                if ($futureActivatedRank) {
+                if ($futureActivatedRank instanceof Rank) {
                     $finishDate = $futureActivatedRank->activated_date->clone()->subDay();
                 } else {
                     $finishDate = $event->date->toDateString() >= $actualRankStartDate->toDateString()
@@ -270,7 +271,7 @@ class RankService
                     ], ['events.date' => 'asc'])
                 );
 
-                if ($previous) {
+                if ($previous instanceof Rank) {
                     $newRank->activated_date = $previous->activated_date;
                 }
 
@@ -294,7 +295,7 @@ class RankService
 
 //            dump($previous);
             $newRank = $this->createNewRank($protocolLine);
-            if ($previous) {
+            if ($previous instanceof Rank) {
                 $newRank->activated_date = $previous->activated_date;
             }
 

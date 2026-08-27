@@ -18,7 +18,7 @@ class ShowEditActivationDateFormAction extends BaseController
     public function __invoke(
         string $rankId,
         ViewRankService $service,
-    ): View|RedirectResponse {
+    ): RedirectResponse|View {
         try {
             $rank = $service->execute(new ViewRank($rankId));
         } catch (RankNotFound) {

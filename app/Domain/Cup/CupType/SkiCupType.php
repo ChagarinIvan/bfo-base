@@ -31,7 +31,7 @@ class SkiCupType extends EliteCupType
 
         return $this
             ->calculateLines($cupEvent, $cupEventProtocolLines)
-            ->sortByDesc(static fn (CupEventPoint $cupEventResult): int|string|float => $cupEventResult->points)
+            ->sortByDesc(static fn (CupEventPoint $cupEventResult): float|int|string => $cupEventResult->points)
         ;
     }
 
@@ -43,8 +43,8 @@ class SkiCupType extends EliteCupType
     protected function getGroupsMap(CupGroup $group): array
     {
         $map = [
-            (new CupGroup(GroupMale::Man))->id() => static::ELITE_MEN_GROUPS,
-            (new CupGroup(GroupMale::Woman))->id() => static::ELITE_WOMEN_GROUPS,
+            new CupGroup(GroupMale::Man)->id() => static::ELITE_MEN_GROUPS,
+            new CupGroup(GroupMale::Woman)->id() => static::ELITE_WOMEN_GROUPS,
         ];
 
         return $map[$group->id()] ?? [];

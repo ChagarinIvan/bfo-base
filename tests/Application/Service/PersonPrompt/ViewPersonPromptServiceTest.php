@@ -18,7 +18,7 @@ use Tests\TestCase;
 
 final class ViewPersonPromptServiceTest extends TestCase
 {
-    private PersonPromptRepository&MockObject $personsPrompts;
+    private MockObject&PersonPromptRepository $personsPrompts;
 
     private ViewPersonPromptService $service;
 

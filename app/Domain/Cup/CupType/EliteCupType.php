@@ -35,11 +35,11 @@ class EliteCupType extends AbstractCupType
 
         return $this
             ->calculateLines($cupEvent, $cupEventProtocolLines)
-            ->sortByDesc(static fn (CupEventPoint $cupEventResult): int|string|float => $cupEventResult->points)
+            ->sortByDesc(static fn (CupEventPoint $cupEventResult): float|int|string => $cupEventResult->points)
         ;
     }
 
-    public function getGroups(): Collection|array
+    public function getGroups(): array|Collection
     {
         return CupGroupFactory::getAgeTypeGroups();
     }
@@ -72,8 +72,8 @@ class EliteCupType extends AbstractCupType
     protected function getGroupsMap(CupGroup $group): array
     {
         $map = [
-            (new CupGroup(GroupMale::Man))->id() => self::ELITE_MEN_GROUPS,
-            (new CupGroup(GroupMale::Woman))->id() => self::ELITE_WOMEN_GROUPS,
+            new CupGroup(GroupMale::Man)->id() => self::ELITE_MEN_GROUPS,
+            new CupGroup(GroupMale::Woman)->id() => self::ELITE_WOMEN_GROUPS,
         ];
 
         return $map[$group->id()] ?? [];
@@ -83,12 +83,12 @@ class EliteCupType extends AbstractCupType
     {
         if (self::$map === []) {
             self::$map = [
-                (new CupGroup(GroupMale::Man))->id() => array_merge(
+                new CupGroup(GroupMale::Man)->id() => array_merge(
                     self::ELITE_MEN_GROUPS,
                     JuniorCupType::MEN_MAIN_GROUPS_NAMES,
                     ['M18', 'М18', 'M21A', 'M21А', 'М21A', 'М21А',]
                 ),
-                (new CupGroup(GroupMale::Woman))->id() => array_merge(
+                new CupGroup(GroupMale::Woman)->id() => array_merge(
                     self::ELITE_WOMEN_GROUPS,
                     JuniorCupType::WOMEN_MAIN_GROUPS_NAMES,
                     ['Ж18', 'W18', 'W21A', 'W21А', 'Ж21A', 'Ж21А',]

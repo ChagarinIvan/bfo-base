@@ -168,7 +168,7 @@ class OBelarusNetRelayParser extends AbstractParser
                 $protocolLine['points'] = $this->commandPoints;
                 $protocolLine['place'] = $this->commandPlace;
                 $protocolLine['complete_rank'] = $this->commandRank;
-                $protocolLine['vk'] = $protocolLine['vk'] ?? $this->commandVk;
+                $protocolLine['vk'] ??= $this->commandVk;
 
                 for ($nameIndex = 0; $nameIndex <= $fieldsCount - $indent; $nameIndex++) {
                     $value = $lineData[$nameIndex];
