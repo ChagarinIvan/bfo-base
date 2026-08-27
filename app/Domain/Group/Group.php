@@ -25,7 +25,7 @@ class Group extends Model
 {
     use HasFactory;
 
-    public function distances(): HasMany|Builder
+    public function distances(): Builder|HasMany
     {
         return $this->hasMany(Distance::class, 'group_id', 'id');
     }

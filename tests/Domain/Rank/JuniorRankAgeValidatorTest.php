@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 
 final class JuniorRankAgeValidatorTest extends TestCase
 {
-    private PersonRepository&MockObject $personRepository;
+    private MockObject&PersonRepository $personRepository;
     private JuniorRankAgeValidator $juniorRankAgeValidator;
 
     protected function setUp(): void

@@ -21,7 +21,7 @@ final class StoreProtocolEventFactoryTest extends TestCase
 {
     private EventFactory&MockObject $decorated;
 
-    private ProtocolStorage&MockObject $protocols;
+    private MockObject&ProtocolStorage $protocols;
 
     private StoreProtocolEventFactory $factory;
 

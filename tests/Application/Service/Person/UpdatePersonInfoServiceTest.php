@@ -24,7 +24,7 @@ final class UpdatePersonInfoServiceTest extends TestCase
 {
     private UpdatePersonInfoService $service;
 
-    private PersonRepository&MockObject $persons;
+    private MockObject&PersonRepository $persons;
 
     protected function setUp(): void
     {

@@ -35,7 +35,7 @@ class ShowCupTableAction extends BaseController
         CupEventsService $service,
         ListPersonsService $listPersonsService,
         ListClubsService $listClubsService,
-    ): View|RedirectResponse {
+    ): RedirectResponse|View {
         // fix wrong group
         if (preg_match('#^(\D)_(\d+)$#', $cupGroupId)) {
             $cupGroupId .= '_';

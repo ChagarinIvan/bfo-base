@@ -65,7 +65,7 @@ class Event extends AggregatedModel
         return $this->hasManyThrough(ProtocolLine::class, Distance::class, 'event_id', 'distance_id', 'id', 'id');
     }
 
-    public function distances(): HasMany|Builder
+    public function distances(): Builder|HasMany
     {
         return $this->hasMany(Distance::class, 'event_id', 'id');
     }
@@ -80,7 +80,7 @@ class Event extends AggregatedModel
         return $this->belongsToMany(Flag::class, 'event_flags');
     }
 
-    public function ranks(): HasMany|Builder
+    public function ranks(): Builder|HasMany
     {
         return $this->hasMany(Rank::class);
     }

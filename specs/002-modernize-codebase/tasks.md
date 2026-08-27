@@ -110,19 +110,21 @@ US1 (переименование) выполняется **до** US2 (моде
   ошибок stan «named argument … not allowed». Откачено полностью. (Безопасную часть —
   `ExplicitAttributeNamedArgsRector` для атрибутов — можно при желании включить отдельно с skip двух
   ломающих правил; вынесено из объёма)
-- [ ] T013 [US2] Рассмотреть уровневые наборы (`->withTypeCoverageLevel(...)`,
-  `->withDeadCodeLevel(...)`, `->withCodeQualityLevel(...)`) в `rector.php` — включать по одному, если
-  дают полезный дифф без ломки поведения; `composer rector`; гейты; коммит на каждую полезную группу
-- [ ] T014 [US2] Усилить стилевые/migration-правила в `.php-cs-fixer.php` (согласовать с принципом VI
-  «импорт вместо FQCN», без конфликта с rector — повторный прогон идемпотентен); `composer cs-fix`;
-  гейты; коммит
-- [ ] T015 [US2] Убедиться, что модернизация покрыла и `app/`, и `tests/` (пути rector уже включают оба);
-  при пропусках — догнать прогоном; гейты
-- [ ] T016 [US2] Проверить идемпотентность (SC-004): повторный `composer rector -- --dry-run` →
-  «Rector is done!» без изменений; `composer cs` → 0 файлов к правке
-- [ ] T017 [US2] Проверить закрепление стандарта (SC-005): внести в тестовый файл заведомо устаревшую
-  конструкцию, убедиться, что `composer rector -- --dry-run` / `composer cs` её отмечают (или
-  автоприводят), затем откатить пробную правку
+- [~] T013 [US2] Уровневые наборы — **НЕПРИМЕНИМО**. Rector сам отвергает их поверх полных prepared-наборов:
+  «Your config already enables code quality set. Remove `withCodeQualityLevel()` as it only duplicates it».
+  То же для typeCoverage/deadCode. Уровни — механизм постепенного внедрения; у нас уже включён максимум
+  (`codeQuality`/`deadCode`/`typeDeclarations` = true), дублировать нечем
+- [X] T014 [US2] Усилены стиль-правила PHP 8.x в `.php-cs-fixer.php` (67 файлов): `get_class_to_class_keyword`,
+  `nullable_type_declaration_for_default_null_value` (8.4-деприкейт неявного nullable) + `nullable_type_declaration`,
+  `assign_null_coalescing_to_coalesce_equal` (`??=`), `ordered_types`, `no_null_property_initialization`.
+  Согласовано с принципом VI, конфликта с rector нет (обе стороны идемпотентны). Гейты: cs идемпотентен,
+  rector чист, stan, test 237 — зелёные
+- [X] T015 [US2] Покрытие подтверждено: rector `withPaths` включает `app` и `tests`; cs-fixer finder
+  `->in(__DIR__)` (искл. vendor/storage/cache/node_modules) — оба каталога охвачены
+- [X] T016 [US2] Идемпотентность (SC-004) ✅: `composer rector -- --dry-run` → «Rector is done!» без изменений;
+  `composer cs` → 0 файлов к правке
+- [X] T017 [US2] Закрепление стандарта (SC-005) ✅: временный `LegacyProbe.php` с устаревшими конструкциями
+  (`get_class($this)`, `?string $x = null`, `$x ?? ...`) — **и cs-fixer, и rector отметили файл**; проба удалена
 
 **Checkpoint**: база приведена к современному виду, стандарт закреплён в инструментах и идемпотентен.
 
@@ -132,13 +134,15 @@ US1 (переименование) выполняется **до** US2 (моде
 
 **Purpose**: Финальная сверка и фиксация стандарта в документации.
 
-- [ ] T018 [P] Отразить закреплённый стандарт модернизации комментариями в `rector.php` и
-  `.php-cs-fixer.php` (какие наборы включены и почему); при необходимости — короткая заметка в
-  `CLAUDE.md`/конституции
-- [ ] T019 Финальный полный прогон гейтов на PHP 8.5: `test` (237), `stan`, `cs`, `rector -- --dry-run`
-  (чисто), boot
-- [ ] T020 [P] Свериться со всеми SC-001…SC-006 из spec.md; отметить выполненные критерии; прогнать
-  сценарии из [quickstart.md](./quickstart.md)
+- [X] T018 [P] Стандарт модернизации зафиксирован: inline-комментарии в `rector.php`/`.php-cs-fixer.php`
+  (какие наборы и почему) + раздел «Стандарт модернизации (PHP 8.5 / Laravel 13)» в `CLAUDE.md` (в т.ч.
+  что осознанно НЕ включено: `naming`/`namedArgs`/`codingStyle`)
+- [X] T019 Финальные гейты на PHP 8.5: boot L13.26.1, stan (No errors), cs 0, rector --dry-run («Rector is
+  done!»), test 237 — зелёные
+- [X] T020 [P] Сверка SC-001…SC-006: **SC-001** ✅ ноль `Infrastracture` (US1); **SC-002** ✅ 237 тестов
+  зелёные, поведение неизменно; **SC-003** ✅ отдельные коммиты (US1 `705a5db`, T009 `293c24d`, T010
+  `d03de0e`, US2-модернизация — этот шаг); **SC-004** ✅ правила в конфиге, идемпотентны; **SC-005** ✅
+  устаревшая проба отмечается rector+cs (T017); **SC-006** ✅ US1 выполнена и смержена независимо от US2
 
 ---
 

@@ -25,7 +25,7 @@ class ShowCupAction extends BaseController
         string $cupId,
         ViewCupService $viewCupService,
         ListCupEventService $listCupEventService,
-    ): View|RedirectResponse {
+    ): RedirectResponse|View {
         try {
             $cup = $viewCupService->execute(new ViewCup($cupId));
         } catch (CupNotFound) {

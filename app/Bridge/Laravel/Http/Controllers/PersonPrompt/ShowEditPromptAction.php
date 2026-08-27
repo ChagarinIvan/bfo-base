@@ -19,7 +19,7 @@ class ShowEditPromptAction extends BaseController
     /**
      * @url /persons/prompt/{promptId}/edit
      */
-    public function __invoke(string $promptId, ViewPersonPromptService $service): View|RedirectResponse
+    public function __invoke(string $promptId, ViewPersonPromptService $service): RedirectResponse|View
     {
         try {
             $prompt = $service->execute(new ViewPersonPrompt($promptId));

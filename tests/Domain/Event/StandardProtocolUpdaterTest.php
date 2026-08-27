@@ -15,7 +15,7 @@ use Tests\TestCase;
 
 final class StandardProtocolUpdaterTest extends TestCase
 {
-    private ProtocolStorage&MockObject $protocols;
+    private MockObject&ProtocolStorage $protocols;
 
     private StandardProtocolUpdater $updater;
 

@@ -10,7 +10,7 @@ use Illuminate\Http\RedirectResponse;
 
 class ShowFlagsListAction extends AbstractFlagsAction
 {
-    public function __invoke(): View|RedirectResponse
+    public function __invoke(): RedirectResponse|View
     {
         return $this->view('flags.index', ['flags' => Flag::all()]);
     }

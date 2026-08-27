@@ -68,7 +68,7 @@ class Cup extends AggregatedModel
         $this->save();
     }
 
-    public function events(): HasMany|Builder
+    public function events(): Builder|HasMany
     {
         return $this->hasMany(CupEvent::class)->active();
     }

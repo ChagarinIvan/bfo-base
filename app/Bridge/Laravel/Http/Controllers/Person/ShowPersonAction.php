@@ -25,7 +25,7 @@ class ShowPersonAction extends BaseController
         ViewPersonService $service,
         RankService $rankService,
         ActivePersonRankService $personRankService,
-    ): View|RedirectResponse {
+    ): RedirectResponse|View {
         try {
             $person = $service->execute(new ViewPerson($id, true));
         } catch (PersonNotFound) {

@@ -10,7 +10,7 @@ use Illuminate\Http\RedirectResponse;
 
 class ShowRanksListAction extends AbstractRankAction
 {
-    public function __invoke(string $selectedRank): View|RedirectResponse
+    public function __invoke(string $selectedRank): RedirectResponse|View
     {
         $ranks = $this->rankService->getFinishedRanks($selectedRank);
 

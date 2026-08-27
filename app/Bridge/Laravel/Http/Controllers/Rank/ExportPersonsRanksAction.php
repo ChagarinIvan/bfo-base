@@ -17,7 +17,7 @@ class ExportPersonsRanksAction extends BaseController
 {
     use RankAction;
 
-    public function __invoke(Filesystem $storage): StreamedResponse|RedirectResponse
+    public function __invoke(Filesystem $storage): RedirectResponse|StreamedResponse
     {
         $path = '/exports/ranks.csv';
 

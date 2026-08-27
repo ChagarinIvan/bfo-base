@@ -27,7 +27,7 @@ class ShowEventDistanceAction extends BaseController
         ViewEventService $eventService,
         ListPersonsService $personsService,
         ListClubsService $clubsService,
-    ): View|RedirectResponse {
+    ): RedirectResponse|View {
         try {
             $event = $eventService->execute(new ViewEvent((string) $distance->event_id));
         } catch (EventNotFound) {

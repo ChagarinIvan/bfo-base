@@ -15,7 +15,7 @@ class ShowEditEventFormAction extends BaseController
 {
     use EventAction;
 
-    public function __invoke(string $id, ViewEventService $service): View|RedirectResponse
+    public function __invoke(string $id, ViewEventService $service): RedirectResponse|View
     {
         try {
             $event = $service->execute(new ViewEvent($id));

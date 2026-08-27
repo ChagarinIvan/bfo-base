@@ -24,7 +24,7 @@ final class ShowPersonPaymentsListAction extends BaseController
         string $personId,
         ListPersonsPaymentsService $personPaymentsService,
         ViewPersonService $personService,
-    ): View|RedirectResponse {
+    ): RedirectResponse|View {
         try {
             $person = $personService->execute(new ViewPerson($personId));
         } catch (PersonNotFound) {

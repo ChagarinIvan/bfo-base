@@ -31,7 +31,7 @@ class SkiCupType extends EliteCupType
 
         return $this
             ->calculateLines($cupEvent, $cupEventProtocolLines)
-            ->sortByDesc(static fn (CupEventPoint $cupEventResult): int|string|float => $cupEventResult->points)
+            ->sortByDesc(static fn (CupEventPoint $cupEventResult): float|int|string => $cupEventResult->points)
         ;
     }
 

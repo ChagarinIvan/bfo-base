@@ -101,10 +101,10 @@ class NewYouthCupType extends MasterCupType
             $results = $results->merge($eventGroupResults->intersectByKeys($groupProtocolLines->keyBy('person_id')));
         }
 
-        return $results->sortByDesc(static fn (CupEventPoint $cupEventResult): int|string|float => $cupEventResult->points);
+        return $results->sortByDesc(static fn (CupEventPoint $cupEventResult): float|int|string => $cupEventResult->points);
     }
 
-    public function getGroups(): Collection|array
+    public function getGroups(): array|Collection
     {
         return CupGroupFactory::getAgeTypeGroups([GroupAge::a12, GroupAge::a14, GroupAge::a16, GroupAge::a18]);
     }

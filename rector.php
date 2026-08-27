@@ -33,9 +33,9 @@ return RectorConfig::configure()
         codeQuality: true,
         typeDeclarations: true,
         privatization: true,
-        earlyReturn: true,
         instanceOf: true,
         if: true,
+        earlyReturn: true,
     )
     ->withComposerBased(
         phpunit: true,

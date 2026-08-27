@@ -11,7 +11,7 @@ use Illuminate\Http\RedirectResponse;
 
 class ShowAddFlagToEventFormAction extends AbstractEventAction
 {
-    public function __invoke(Event $event): View|RedirectResponse
+    public function __invoke(Event $event): RedirectResponse|View
     {
         return $this->view('events.add-flags', [
             'event' => $event,

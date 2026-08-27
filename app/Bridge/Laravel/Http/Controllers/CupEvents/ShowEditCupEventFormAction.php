@@ -26,7 +26,7 @@ class ShowEditCupEventFormAction extends BaseController
         ViewCupService $viewCupService,
         CupEventsService $cupEventsService,
         ListEventsService $listEvents,
-    ): View|RedirectResponse {
+    ): RedirectResponse|View {
         try {
             $cup = $viewCupService->execute(new ViewCup($cupId));
         } catch (CupNotFound) {

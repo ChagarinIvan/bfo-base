@@ -85,6 +85,15 @@ return $config->setRules([
     'pow_to_exponentiation' => true,
     'declare_strict_types' => true,
 
+    // @PHP80Migration:risky / современные конструкции PHP 8.x (стиль, не поведение)
+    'get_class_to_class_keyword' => true,
+    // 8.4: неявный nullable-параметр (`int $x = null`) задепрекейчен → делаем `?int $x = null`
+    'nullable_type_declaration_for_default_null_value' => true,
+    'nullable_type_declaration' => true,
+    'assign_null_coalescing_to_coalesce_equal' => true,
+    'ordered_types' => true,
+    'no_null_property_initialization' => true,
+
     // @Symfony overrides
     'single_line_throw' => false,
     'ordered_imports' => [

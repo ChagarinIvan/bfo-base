@@ -23,7 +23,7 @@ class ShowCreateCupEventFormAction extends BaseController
         string $cupId,
         ViewCupService $viewCupService,
         ListEventsService $listEvents,
-    ): View|RedirectResponse {
+    ): RedirectResponse|View {
         try {
             $cup = $viewCupService->execute(new ViewCup($cupId));
         } catch (CupNotFound) {

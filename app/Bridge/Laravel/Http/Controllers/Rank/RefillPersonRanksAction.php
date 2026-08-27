@@ -21,7 +21,7 @@ class RefillPersonRanksAction extends BaseController
         string $personId,
         ViewPersonService $personService,
         RefillPersonRanksService $ranksService,
-    ): View|RedirectResponse {
+    ): RedirectResponse|View {
         try {
             $personService->execute(new ViewPerson($personId));
         } catch (PersonNotFound) {

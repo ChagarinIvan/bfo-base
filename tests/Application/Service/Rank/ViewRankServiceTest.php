@@ -21,7 +21,7 @@ final class ViewRankServiceTest extends TestCase
 {
     private ViewRankService $service;
 
-    private RankRepository&MockObject $ranks;
+    private MockObject&RankRepository $ranks;
 
     protected function setUp(): void
     {

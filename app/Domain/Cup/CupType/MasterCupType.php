@@ -128,10 +128,10 @@ class MasterCupType extends AbstractCupType
         $eventGroupResults = $this->calculateLines($cupEvent, $equalGroupResults);
         $results = $results->merge($eventGroupResults->intersectByKeys($equalGroupResults->keyBy('person_id')));
 
-        return $results->sortByDesc(static fn (CupEventPoint $cupEventResult): int|string|float => $cupEventResult->points);
+        return $results->sortByDesc(static fn (CupEventPoint $cupEventResult): float|int|string => $cupEventResult->points);
     }
 
-    public function getGroups(): Collection|array
+    public function getGroups(): array|Collection
     {
         return CupGroupFactory::getAgeTypeGroups([
             GroupAge::a35,

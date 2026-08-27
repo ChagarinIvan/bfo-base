@@ -18,7 +18,7 @@ use Tests\TestCase;
 
 final class ListPersonPaymentsServiceTest extends TestCase
 {
-    private PersonPaymentRepository&MockObject $payments;
+    private MockObject&PersonPaymentRepository $payments;
 
     private ListPersonsPaymentsService $service;
 
