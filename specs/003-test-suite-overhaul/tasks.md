@@ -96,12 +96,18 @@ US1 (скорость) → US2 (чистота) → US3 (покрытие): бы
 **Independent Test**: `composer test -- --display-deprecations --display-notices --display-warnings` →
 ноль предупреждений; ни одно не скрыто подавлением; тесты зелёные.
 
-- [ ] T007 [US2] Собрать полный перечень предупреждений из снимка T002 (deprecations/notices/warnings),
-  сгруппировать по первопричине (устаревший тестовый вызов / прикладной вызов / сторонний пакет)
-- [ ] T008 [US2] Устранить каждое предупреждение правкой первопричины (адаптация под PHP 8.5 / PHPUnit 13 /
-  Laravel 13) в `tests/**` и, при необходимости, заменой устаревшего вызова в `app/**` без смены поведения;
-  БЕЗ подавления/baseline/игнора
-- [ ] T009 [US2] Проверка: прогон с `--display-*` → ноль предупреждений; полные гейты; коммит
+- [X] T007 [US2] Перечень снят (`--display-all-issues`): **ноль PHP deprecations/warnings**, ровно **3
+  PHPUnit Notices** — все одного вида «No expectations were configured for the mock object … use a test
+  stub instead» (PHPUnit 13): `UpdateCupServiceTest::it_fails_when_cup_not_found` (EventRepository),
+  `ViewCupServiceTest::it_fails_when_cup_not_found` (EventRepository),
+  `CreateOrUpdatePersonPaymentsServiceTest::it_updates_existed_payment` (PersonPaymentFactory)
+- [X] T008 [US2] Починка по первопричине (НЕ подавление): в каждом из 3 тестов у неиспользуемой на этом
+  пути зависимости добавлено явное `->expects($this->never())->method($this->anything())`. Это одновременно
+  убирает notice И усиливает тест (фиксирует, что на пути «не найдено»/«обновление» зависимость не
+  вызывается). `#[AllowMockObjectsWithoutExpectations]` НЕ использовали. Смена на `createStub` невозможна —
+  в других тестах тех же файлов мок получает `->expects()`
+- [X] T009 [US2] Проверка: `phpunit --display-all-issues` → **`OK (237 tests, 2257 assertions)`**, ноль
+  предупреждений (assertions 2254→2257 — три новых `never()`). Гейты: stan, cs 0, rector — зелёные
 
 **Checkpoint**: US2 — вывод чистый.
 
