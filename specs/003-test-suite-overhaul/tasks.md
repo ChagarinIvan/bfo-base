@@ -131,9 +131,12 @@ US1 (скорость) → US2 (чистота) → US3 (покрытие): бы
   возрастов `next()`/`prev()` + границы насыщения + `toString()` — критичная логика группировки кубков).
   Уже покрыты `CupGroupFactory` (`Models/Group/CupGroupFactoryTest`), `CupCacheInvalidator`-реализация
   (`Bridge/Laravel/Cache/...`). **Осталось:** иерархия `Cup/CupType/*`, `Cup/Group/GroupMale` — следующий заход
-- [ ] T012 [US3] Тесты Application-сервисов **Rank** (моки интерфейсов): `ActivePersonRankService`,
-  `RefillPersonRanksService`, `UpdateRankActivationDateService`, `PersonRanksService`, `ActivateRankService`
-  в `tests/Application/Service/Rank/**`
+- [~] T012 [US3] Тесты Application-сервисов **Rank** — частично. **Добавлен** `UpdateRankActivationDateServiceTest`
+  (3 сценария: rank-not-found → `RankNotFound`; protocol-line-not-found → `ProtocolLineNotFound` без update;
+  успех → `activateRank` применён + `update` вызван + `ViewRankDto`; моки интерфейсов + `DummyTransactional`,
+  без БД). Уже покрыты `ActivateRankService`, `ViewRankService`. **Осталось:** `ActivePersonRankService`,
+  `RefillPersonRanksService`, `PersonRanksService` (у последнего batch-ассемблер с `loadMissing` — нужен
+  аккуратный препрелоад связей). Следующий заход
 - [ ] T013 [US3] Тесты Application-сервисов **Cup**: `CalculateCupEventService`, `UpdateCupService`,
   `AddCupService`, `ClearCupCacheService`, `DisableCupService` в `tests/Application/Service/Cup/**`
 - [ ] T014 [P] [US3] Тесты прочих непокрытых Application-сервисов целевого слоя: PersonPrompt (`Add`/`Update`/
