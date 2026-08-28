@@ -118,6 +118,8 @@ final class CreateOrUpdatePersonPaymentsServiceTest extends TestCase
         ;
 
         $this->payments->expects($this->never())->method('add');
+        // при обновлении существующего платежа фабрика создания не задействуется
+        $this->factory->expects($this->never())->method($this->anything());
         PersonPayment::factory(state: [
             'id' => 1,
             'person_id' => $existPersonPayment->person_id,

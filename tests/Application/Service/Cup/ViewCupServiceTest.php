@@ -56,6 +56,9 @@ final class ViewCupServiceTest extends TestCase
             ->willReturn(null)
         ;
 
+        // на пути «кубок не найден» репозиторий событий не задействуется
+        $this->events->expects($this->never())->method($this->anything());
+
         $command = new ViewCup('1');
         $this->service->execute($command);
     }

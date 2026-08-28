@@ -62,6 +62,9 @@ final class UpdateCupServiceTest extends TestCase
             ->willReturn(null)
         ;
 
+        // на пути «кубок не найден» репозиторий событий не задействуется
+        $this->events->expects($this->never())->method($this->anything());
+
         $dto = new CupDto();
         $dto->name = 'test cup';
         $dto->eventsCount = 4;
