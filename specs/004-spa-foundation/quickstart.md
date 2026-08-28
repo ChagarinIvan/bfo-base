@@ -225,4 +225,4 @@ curl -s -o /dev/null -w "%{http_code}" http://localhost:80/app/competitions/crea
 - Детали реализации контроллеров и ресурсов — в `tasks.md`
 - Полные тест-кейсы PHPUnit — в `tasks.md`
 - Конфигурацию Vite и npm-скрипты — в `FRONTEND.md`
-- Инструкции по деплою на production — в `FRONTEND.md` (раздел деплоя)
+- Инструкции по деплою на production — в `DEPLOYMENT.md`

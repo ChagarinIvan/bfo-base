@@ -62,8 +62,8 @@ Dedicated security-test tasks (CORS, password leakage, SQL injection, mass assig
 - [ ] T018 Создать корневой компонент SPA с `RouterView`, layout и PrimeVue Toast в `resources/spa/App.vue`
 - [ ] T019 Создать базовый layout SPA с навигацией и контейнером уведомлений в `resources/spa/components/AppLayout.vue`
 - [ ] T020 Создать Vue Router с `/app/*`, публичным fallback и navigation guard для `meta.requiresAuth` в `resources/spa/router/index.ts`
-- [ ] T021 Настроить Nginx fallback для `/app` и `/app/*` на `public/spa/index.html` в `enviroment/nginx/conf.d/default.conf`
-- [ ] T022 [P] Создать PHPUnit-базовый класс API V1 с `RefreshDatabase`, helper для Sanctum Bearer и проверками envelope в `tests/Feature/Api/V1/ApiV1TestCase.php`
+- [ ] T021 Настроить Nginx fallback для `/app` и `/app/*` на `public/spa/index.html` в `enviroment/nginx/conf.d/app.conf.example`
+- [ ] T022 [P] Создать PHPUnit-базовый класс API V1 с `RefreshDatabase`, helper для создания и установки Sanctum Bearer-токена в `Authorization` header и проверками envelope в `tests/Feature/Api/V1/ApiV1TestCase.php`
 - [ ] T023 [P] Добавить frontend ESLint 9 flat config с Vue/TypeScript правилами, запретом `any`, `console.log` и `v-html` в `eslint.config.js`
 - [ ] T024 [P] Добавить Prettier-конфигурацию frontend-кода в `.prettierrc.js`
 
@@ -136,7 +136,7 @@ envelope, валидацию 422 и отказ без токена. Полный
 ### Tests for User Story 3
 
 - [ ] T043 [P] [US3] Добавить интеграционные тесты login, invalid credentials, DELETE logout, me, expired token, 401 envelope и rate limit в `tests/Feature/Api/V1/Auth/AuthTest.php`
-- [ ] T044 [P] [US3] Добавить frontend-тесты auth store для login/logout, localStorage, Bearer header, 401 cleanup и восстановления между вкладками в `resources/spa/stores/auth.test.ts`
+- [ ] T044 [P] [US3] Добавить frontend-тесты auth store для login/logout, localStorage, Bearer header attachment, 401 cleanup и восстановления между вкладками в `resources/spa/stores/auth.test.ts`
 - [ ] T045 [P] [US3] Добавить тест navigation guard для redirect unauthenticated user на `/app/login` в `resources/spa/router/index.test.ts`
 
 ### Implementation for User Story 3
@@ -165,7 +165,7 @@ envelope, валидацию 422 и отказ без токена. Полный
 - [ ] T055 [P] [US4] Создать frontend developer guide со структурой каталогов, Composition API, Pinia, Router, API client и командами в `FRONTEND.md`
 - [ ] T056 [P] [US4] Создать deployment guide со сборкой SPA, Nginx `/app/*`, Sanctum TTL и coexistence с Blade в `DEPLOYMENT.md`
 - [ ] T057 [US4] Добавить в `FRONTEND.md` пошаговый пример новой страницы и маршрута `/app/hello` с точными путями `resources/spa/pages/` и `resources/spa/router/index.ts`
-- [ ] T058 [US4] Проверить и при необходимости скорректировать Nginx-конфигурацию так, чтобы `/app/*` и legacy `/groups` обслуживались раздельно в `enviroment/nginx/conf.d/default.conf`
+- [ ] T058 [US4] Проверить и при необходимости скорректировать Nginx-конфигурацию так, чтобы `/app/*` и legacy `/groups` обслуживались раздельно в `enviroment/nginx/conf.d/app.conf.example`
 - [ ] T059 [US4] Добавить smoke-тест маршрутов SPA shell и legacy Blade в `tests/Feature/Api/V1/SpaRoutingTest.php`
 
 **Checkpoint**: новый разработчик может добавить страницу только по руководству; SPA и Blade работают одновременно.
