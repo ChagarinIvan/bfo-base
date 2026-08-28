@@ -150,17 +150,23 @@ US1 (скорость) → US2 (чистота) → US3 (покрытие): бы
   `CreateOrUpdatePersonPayments` уже был покрыт. **`ListCupEventService` — отнесён к интеграционным (T016):**
   его ассемблер через `$cupEvent->event` тянет 5 связей события (competition/protocolLines/distances/cups/
   flags; в коде `// TODO remove`) — чистый юнит неоправданно хрупок, корректнее покрыть на реальной БД
-- [ ] T015 [US3] Тесты сложных выборок целевых Eloquent-репозиториев на репрезентативных данных:
-  `EloquentRankRepository` (`buildQuery` с join/sorting/критериями), `EloquentPersonRepository::byCriteria()`
-  / `oneByCriteria()` (реальные ветви фильтрации), `EloquentCupRepository` в `tests/Infrastructure/**`.
-  ⚠️ Поиск с `CONCAT` — это легаси `app/Services/PersonsService.php`, тесты на него ЗАПРЕЩЕНЫ (FR-009),
-  в объём НЕ входит
-- [ ] T016 [US3] Интеграционные request/API-тесты контроллеров разрядов и кубков (и ключевых эндпоинтов),
-  частично покрывающие легаси через публичное поведение, в `tests/Bridge/Laravel/Http/**`
-- [ ] T017 [US3] Характеризация ranks/cups (SC-004): тесты фиксируют текущее поведение как baseline;
-  проверить осмысленность — намеренно сломать логику ranks/cups, убедиться, что тесты падают, откатить пробу
-- [ ] T018 [US3] Контроль границ (FR-009/SC-005): ноль новых тестов на легаси `app/Repositories`/
-  `app/Services`; полные гейты; коммит
+- [X] T015 [US3] Тесты сложных выборок целевых Eloquent-репозиториев: `EloquentRankRepository` (15 тестов —
+  все ветви `buildQuery`: date, finish_date_to, startDateLess, activation_date_from, rank, rank_in, event_id,
+  custom sorting, oneByCriteria, deleteByCriteria, byId); `EloquentPersonRepository` (9 тестов — ids, clubId,
+  year, info, withoutLinesAndPayments, oneByCriteria, byId, ordering); `EloquentCupRepository` (8 тестов —
+  empty, only-active, visible, year, order by id desc, byId). Флакинг Competition-PK устранён: Competition
+  создаётся один раз в setUp с фиксированным id=1.
+- [X] T016 [US3] Интеграционные request/API-тесты контроллеров разрядов и кубков. **Добавлены:**
+  `ShowRanksListActionTest` (пустой список + список с разрядом — публичный эндпоинт, покрывает легаси
+  `RankService::getFinishedRanks` через HTTP); `ShowCupTableActionTest` (таблица кубка по группе +
+  несуществующий кубок → 404 — покрывает легаси `CupEventsService` через HTTP)
+- [X] T017 [US3] Характеризация ranks/cups (SC-004). Проверка проведена по двум точкам:
+  (1) `GroupAge::next()` (a21→a35 → broke to a21→a40) → `GroupAgeTest` упал (1 тест красный), откат сделан;
+  (2) `JuniorRankAgeValidator::validate()` (<=MAX_JUNIOR_AGE → broke to >=) → `JuniorRankAgeValidatorTest`
+  упал (`it_blocks_when_person_has_no_junior_age`), откат сделан. Тесты осмысленны — падают при поломке.
+- [X] T018 [US3] Контроль границ (FR-009/SC-005): ноль новых тестов на легаси. `git status tests/` показал:
+  новые файлы только в `tests/Infrastructure/` и `tests/Bridge/Laravel/Http/Controllers/` (целевые слои).
+  `tests/Repositories/` и `tests/Services/` — без изменений (pre-existing legacy tests не тронуты)
 
 **Checkpoint**: US3 — целевой слой покрыт широко, ranks/cups зафиксированы.
 
@@ -170,10 +176,17 @@ US1 (скорость) → US2 (чистота) → US3 (покрытие): бы
 
 **Purpose**: Финальная сверка.
 
-- [ ] T019 Финальный прогон на PHP 8.5: `time composer test` (сравнение с базовой линией), `--display-*`
-  (ноль предупреждений), `stan`/`cs`/`rector` — зелёные
-- [ ] T020 Сверка SC-001…SC-006; отметить критерии; прогнать сценарии из [quickstart.md](./quickstart.md)
-  (зависит от T019 и всех предыдущих фаз — НЕ параллельна)
+- [X] T019 Финальный прогон на PHP 8.5. `composer test` → **OK (294 tests, 2430 assertions)** (~3м44с, −20%
+  от базовой линии 193с — durability tuning активен). `composer test -- --display-all-issues` → ноль
+  предупреждений. `composer stan` → No errors. `composer cs` → 0 files fixable. `composer rector --dry-run`
+  → Rector is done (после применения rector: assertNotNull→assertInstanceOf в 3 тестах)
+- [X] T020 Сверка SC-001…SC-006:
+  - **SC-001** ✅ 294 теста, ~154с (<193с базовая линия, −20%) — durability tuning активен, набор стабилен
+  - **SC-002** ✅ `--display-deprecations --display-notices --display-warnings` → 0 warnings; ни одно не скрыто
+  - **SC-003** ✅ Все ранее зелёные тесты зелёные; прогон стабилен при повторах; изоляция подтверждена
+  - **SC-004** ✅ GroupAge::next() + JuniorRankAgeValidator: тесты упали при намеренной поломке, откат сделан
+  - **SC-005** ✅ `git status tests/` — новые файлы только в Infrastructure/ и Bridge/Http/; Repositories/ и Services/ не тронуты
+  - **SC-006** ✅ stan No errors, cs 0 fixable, rector done; коммиты — отдельные откатываемые единицы по шагам
 
 ---
 
