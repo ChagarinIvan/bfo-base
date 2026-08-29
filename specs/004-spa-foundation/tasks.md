@@ -178,7 +178,7 @@ envelope, валидацию 422 и отказ без токена. Полный
 **Purpose**: Проверить качество, безопасность, производительность и полный quickstart перед передачей фичи.
 
 - [ ] T060 [P] Проверить отсутствие новых N+1 и неограниченных выборок в V1 list implementation в `tests/Feature/Api/V1/Competition/ListCompetitionsTest.php`
-- [ ] T061 [P] Обновить существующие Docker/frontend build steps для сборки `public/spa/` без поломки laravel-mix в `Dockerfile`
+- [X] T061 [P] Обновить существующие Docker/frontend build steps для сборки `public/spa/` без поломки laravel-mix в `Dockerfile`
 - [ ] T062 Запустить `npm run lint`, `npm run typecheck`, `npm run test` и `npm run build:spa`, исправить ошибки в соответствующих файлах `resources/spa/`, `package.json` и конфигурации frontend
 - [ ] T063 Запустить `composer cs`, `composer stan`, `composer rector` и `composer test`, исправить только относящиеся к фиче проблемы в изменённых PHP-файлах
 - [ ] T064 Выполнить все сценарии из `specs/004-spa-foundation/quickstart.md` и зафиксировать результат проверки в `specs/004-spa-foundation/quickstart.md`

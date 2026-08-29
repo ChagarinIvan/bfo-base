@@ -6,10 +6,14 @@ Laravel API и Vue SPA для платформы спортивного орие
 
 - PHP 8.5+
 - Composer
-- Node.js 20+ и npm
+- Node.js 22+ и npm 10+
 - MySQL 8.4 и Redis 8
 
 ## Установка
+
+Для текущего `package-lock.json` нужен Node.js 22 и npm 10 или новее. Если Node
+уже установлен через nvm, выполните `nvm install` и `nvm use` — версия берётся из
+`.nvmrc`.
 
 ```bash
 cp .env.example .env
@@ -18,6 +22,10 @@ php artisan key:generate
 npm install
 php artisan migrate
 ```
+
+На production frontend собирается командой `npm run build:spa` до запуска
+контейнеров. Если Node/npm на production не устанавливаются, выполните сборку в
+CI и доставьте каталог `public/spa/` вместе с release-файлами.
 
 Для локальной базы данных можно запустить инфраструктуру Docker:
 
