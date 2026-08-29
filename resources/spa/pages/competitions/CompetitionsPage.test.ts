@@ -2,15 +2,17 @@ import { describe, expect, it } from 'vitest'
 import {
     competitionQuery,
     formatDateRange,
+    massIconClass,
+    paginationFromHeaders,
     shouldLoadUsers,
 } from './competitionModels'
 
 describe('competitions page model', () => {
     it('requests the selected year with the API pagination defaults', () => {
-        expect(competitionQuery(2026)).toEqual({
+        expect(competitionQuery(2026, 2, 10)).toEqual({
             year: 2026,
-            page: 1,
-            per_page: 20,
+            page: 2,
+            per_page: 10,
         })
     })
 
@@ -24,5 +26,26 @@ describe('competitions page model', () => {
         expect(formatDateRange('2026-08-22', '2026-08-23')).toBe(
             '2026-08-22 / 2026-08-23',
         )
+    })
+
+    it('reads pagination metadata from API response headers', () => {
+        expect(
+            paginationFromHeaders({
+                'x-pagination-current-page': '2',
+                'x-pagination-per-page': '10',
+                'x-pagination-total': '31',
+                'x-pagination-last-page': '4',
+            }),
+        ).toEqual({
+            currentPage: 2,
+            perPage: 10,
+            total: 31,
+            lastPage: 4,
+        })
+    })
+
+    it('uses a check-circle for mass starts and a muted circle otherwise', () => {
+        expect(massIconClass(true)).toBe('pi pi-check-circle')
+        expect(massIconClass(false)).toBe('pi pi-times-circle')
     })
 })

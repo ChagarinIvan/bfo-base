@@ -6,8 +6,10 @@ namespace Tests\Feature\Api\V1\Auth;
 
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Auth\LoginAction;
 use App\Infrastructure\Sanctum\SanctumUser;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 use function is_string;
@@ -60,6 +62,29 @@ final class LoginActionTest extends TestCase
             ->getJson('/api/v1/users')
             ->assertUnauthorized()
             ->assertJsonPath('errors.0.code', 'unauthenticated')
+        ;
+    }
+
+    #[Test]
+    public function login_works_after_repairing_a_legacy_sanctum_table(): void
+    {
+        Schema::table('personal_access_tokens', static function (Blueprint $table): void {
+            $table->dropColumn('expires_at');
+        });
+
+        $migration = require base_path(
+            'database/migrations/2026_08_29_000001_add_expires_at_to_personal_access_tokens_table.php',
+        );
+        $migration->up();
+
+        $this->assertTrue(Schema::hasColumn('personal_access_tokens', 'expires_at'));
+        $this->createUser();
+
+        $this->postJson('/api/v1/auth/login', [
+            'email' => 'user@example.com',
+            'password' => 'secret',
+        ])->assertOk()
+            ->assertJsonPath('token_type', 'Bearer')
         ;
     }
 

@@ -44,7 +44,7 @@ location-блок для SPA-роутинга. Пилот — две стран�
 **Ограничения**: Zero регрессий; Blade-сайт продолжает работать без изменений;
 Vite и laravel-mix не пересекаются по путям вывода
 
-**Масштаб**: Пилот — 5 API-эндпоинтов (auth: 3, competitions: 2), 3 SPA-страницы;
+**Масштаб**: Пилот — 6 API-эндпоинтов (auth: 3, competitions: 2, years: 1), 3 SPA-страницы;
 фундамент рассчитан на N последующих миграций страниц
 
 ---
@@ -86,6 +86,7 @@ specs/004-spa-foundation/
 │   ├── api-envelope.md
 │   ├── api-auth.md
 │   ├── api-competitions.md
+│   ├── api-years.md
 │   └── api-v1-manifest.md   ← нормативный манифест нового JSON API
 └── tasks.md             ← Phase 2 (speckit-tasks)
 ```
@@ -153,7 +154,7 @@ resources/
     │   ├── auth/
     │   │   └── LoginPage.vue
     │   └── competitions/
-    │       ├── CompetitionsPage.vue           ← публичная, список + year filter
+    │       ├── CompetitionsPage.vue           ← публичная, список + year select + paginator
     │       └── CreateCompetitionPage.vue      ← приватная, форма создания
     └── components/
         └── AppLayout.vue                      ← обёртка с header/nav

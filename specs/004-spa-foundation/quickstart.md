@@ -48,13 +48,13 @@ curl -s "http://localhost:8000/api/v1/competitions?year=2025" | jq 'length'
 TOKEN=$(curl -s -X POST http://localhost:8000/api/v1/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"admin@example.com","password":"secret"}' \
-  | jq -r '.data.token')
+  | jq -r '.token')
 
 echo "Token: $TOKEN"
 
 # Публичный endpoint с валидным токеном возвращает дополнительные Impression-поля
 curl -s http://localhost:8000/api/v1/competitions \
-  -H "Authorization: Bearer $TOKEN" | jq '.data[0]'
+  -H "Authorization: Bearer $TOKEN" | jq '.[0]'
 # Ожидается: в элементе есть created и updated; без токена эти поля отсутствуют.
 
 # Шаг 2: список пользователей (с токеном)
@@ -71,8 +71,8 @@ curl -s http://localhost:8000/api/v1/users \
 ```
 
 **Ожидаемые результаты**:
-- Шаг 1: `{ "data": { "token": "...", "token_type": "Bearer" } }`
-- Шаг 2: `{ "data": [{ "id": N, "name": null, "email": "..." }] }`
+- Шаг 1: { "token": "...", "token_type": "Bearer" }
+- Шаг 2: [{ "id": N, "name": null, "email": "..." }]
 - Шаг 3: HTTP 204, пустое тело
 - Шаг 4: HTTP 401, `{ "errors": [{ "code": "unauthenticated", ... }] }`
 
@@ -90,7 +90,7 @@ curl -s http://localhost:8000/api/v1/users \
 TOKEN=$(curl -s -X POST http://localhost:8000/api/v1/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"admin@example.com","password":"secret"}' \
-  | jq -r '.data.token')
+  | jq -r '.token')
 
 # Успешное создание
 curl -s -X POST http://localhost:8000/api/v1/competitions \
@@ -105,7 +105,7 @@ curl -s -X POST http://localhost:8000/api/v1/competitions \
   }' | jq .
 ```
 
-**Ожидается**: HTTP 201, `{ "data": { "id": "...", "name": "Тестовое соревнование", ... } }`
+**Ожидается**: HTTP 201, { "id": "...", "name": "Тестовое соревнование", ... }
 
 ```bash
 # Попытка без токена (должно быть 401)
@@ -217,6 +217,25 @@ curl -s -o /dev/null -w "%{http_code}" http://localhost:80/app/competitions
 curl -s -o /dev/null -w "%{http_code}" http://localhost:80/app/competitions/create
 # Ожидается: 200
 ```
+
+## Результат проверки
+
+**Дата**: 2026-08-30
+
+- Сценарии 1–3: API-контракты проверены feature-тестами V1; login также проверен
+  после восстановления legacy-таблицы Sanctum без `expires_at`.
+- Сценарий 4: API и frontend-компоненты проверены; часовой кэш годов, select,
+  pagination и mass-иконки покрыты Vitest-тестами.
+- Сценарии 5–6: ручной browser smoke не выполнен в текущей среде — browser
+  connector не предоставил доступного браузера. Автоматический frontend gate
+  проходит.
+- Сценарий 7: `composer test` — `324 tests, 2542 assertions`.
+- Сценарий 8: `npm run ci` — успешно (lint, typecheck, Vitest, production build).
+- Сценарий 9: временный Nginx-контейнер вернул HTTP 200 для `/app/competitions`
+  и `/app/competitions/create`.
+
+Ручные сценарии 5–6 требуют повторного запуска в окружении с доступным браузером;
+задача T064 поэтому остаётся незакрытой до этой проверки.
 
 ---
 

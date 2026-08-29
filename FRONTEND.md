@@ -37,6 +37,11 @@ npm run build:spa
 Do not put user-facing text directly in templates. Add a Belarusian key to
 `resources/lang/by.json` and use `t('spa.some.key')`.
 
+The competitions page loads its year options from GET /api/v1/years. The
+frontend keeps this small, stable response in memory and localStorage for one
+hour. Competition pagination is read from the X-Pagination-* response headers
+and rendered with PrimeVue Paginator.
+
 ## Adding a page
 
 Create `resources/spa/pages/HelloPage.vue`, using `t()` for all visible text,

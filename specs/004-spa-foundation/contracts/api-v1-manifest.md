@@ -46,6 +46,11 @@ Blade-маршруты, старые `Api\`-контроллеры и `ApiRoutes
 - TTL токена — 1440 минут.
 - Refresh token отсутствует; после истечения токена выполняется повторный login.
 
+## Дополнение к архитектуре
+
+Исключение для read-only списка годов: Application use case ListYears не
+принимает command, потому что у endpoint нет входных параметров.
+
 ## Область v1
 
 - `POST /api/v1/auth/login`
@@ -55,6 +60,7 @@ Blade-маршруты, старые `Api\`-контроллеры и `ApiRoutes
   используется для отображения авторов impression-полей
 - `GET /api/v1/competitions`
 - `POST /api/v1/competitions`
+- `GET /api/v1/years`
 
 Текущий authenticated user не подставляется Laravel в action только по type-hint.
 `ApiAction` получает его через `$request->user()` и регистрирует в контейнере как

@@ -42,9 +42,9 @@ export interface CreateCompetitionRequest {
 }
 
 export interface CompetitionQuery {
-    year?: number
-    page?: number
-    per_page?: number
+    year: number
+    page: number
+    per_page: number
 }
 
 export interface ApiErrorItem {

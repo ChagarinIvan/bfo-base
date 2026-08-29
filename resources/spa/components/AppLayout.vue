@@ -26,9 +26,13 @@ async function logout(): Promise<void> {
 <template>
     <header class="app-header">
         <nav class="app-navbar">
-            <RouterLink class="app-brand" to="/app/competitions">{{
-                t('spa.nav.brand')
-            }}</RouterLink>
+            <RouterLink class="app-brand" to="/app/competitions">
+                <span class="app-brand-mark" aria-hidden="true">
+                    <i class="pi pi-database" />
+                    <i class="pi pi-map-marker app-brand-checkpoint" />
+                </span>
+                <span>{{ t('spa.nav.brand') }}</span>
+            </RouterLink>
             <div class="app-nav-links">
                 <RouterLink class="app-nav-link" to="/app/competitions">
                     <i class="pi pi-trophy" /> {{ t('spa.nav.competitions') }}

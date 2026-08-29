@@ -4,23 +4,39 @@ import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
-import InputNumber from 'primevue/inputnumber'
 import Message from 'primevue/message'
+import Paginator, { type PageState } from 'primevue/paginator'
+import Select from 'primevue/select'
 import Toolbar from 'primevue/toolbar'
 import { useRouter } from 'vue-router'
 import { api } from '../../api/client'
+import { getYears } from '../../api/years'
 import { useAuthStore } from '../../stores/auth'
 import { t } from '../../i18n'
 import {
     competitionQuery,
     formatDateRange,
+    massIconClass,
+    paginationFromHeaders,
     shouldLoadUsers,
 } from './competitionModels'
-import type { Competition, Impression, User } from '../../api/types'
+import type {
+    Competition,
+    Impression,
+    PaginationHeaders,
+    User,
+} from '../../api/types'
 
 const competitions = ref<Competition[]>([])
 const users = ref<User[]>([])
-const year = ref(new Date().getFullYear())
+const years = ref<number[]>([])
+const year = ref<number | null>(null)
+const pagination = ref<PaginationHeaders>({
+    currentPage: 1,
+    perPage: 20,
+    total: 0,
+    lastPage: 1,
+})
 const loading = ref(false)
 const error = ref('')
 const auth = useAuthStore()
@@ -29,8 +45,12 @@ const router = useRouter()
 async function onYearChange(value: number | null): Promise<void> {
     if (value !== null) {
         year.value = value
-        await load()
+        await load(1, pagination.value.perPage)
     }
+}
+
+async function onPage(event: PageState): Promise<void> {
+    await load(event.page + 1, event.rows)
 }
 
 function userLabel(impression: Impression | undefined): string {
@@ -44,15 +64,22 @@ function userLabel(impression: Impression | undefined): string {
     )
 }
 
-async function load(): Promise<void> {
+async function load(
+    page = 1,
+    perPage = pagination.value.perPage,
+): Promise<void> {
+    if (year.value === null) return
+
     loading.value = true
     error.value = ''
     try {
-        competitions.value = (
-            await api.get<Competition[]>('/competitions', {
-                params: competitionQuery(year.value),
-            })
-        ).data
+        const response = await api.get<Competition[]>('/competitions', {
+            params: competitionQuery(year.value, page, perPage),
+        })
+        competitions.value = response.data
+        pagination.value = paginationFromHeaders(
+            response.headers as Record<string, unknown>,
+        )
 
         if (shouldLoadUsers(auth.isAuthenticated, users.value.length)) {
             users.value = (await api.get<User[]>('/users')).data
@@ -64,7 +91,20 @@ async function load(): Promise<void> {
     }
 }
 
-onMounted(load)
+async function initialize(): Promise<void> {
+    try {
+        years.value = await getYears()
+        year.value =
+            years.value.find((item) => item === new Date().getFullYear()) ??
+            years.value[0] ??
+            null
+        await load()
+    } catch {
+        error.value = t('spa.competitions.error')
+    }
+}
+
+onMounted(initialize)
 </script>
 
 <template>
@@ -94,12 +134,12 @@ onMounted(load)
                 <label for="competition-year">{{
                     t('spa.competitions.year')
                 }}</label>
-                <InputNumber
+                <Select
                     id="competition-year"
                     v-model="year"
-                    :min="2000"
-                    :max="2100"
-                    :use-grouping="false"
+                    :options="years"
+                    :placeholder="t('spa.competitions.year_placeholder')"
+                    :disabled="loading"
                     @update:model-value="onYearChange"
                 />
             </div>
@@ -134,7 +174,24 @@ onMounted(load)
             field="description"
             :header="t('spa.competitions.description')"
         />
-        <Column field="mass" :header="t('spa.competitions.mass')" />
+        <Column :header="t('spa.competitions.mass')">
+            <template #body="{ data }">
+                <i
+                    :class="[
+                        massIconClass(data.mass),
+                        'mass-icon',
+                        data.mass ? 'mass-icon--active' : 'mass-icon--inactive',
+                    ]"
+                    :aria-label="
+                        t(
+                            data.mass
+                                ? 'spa.competitions.mass_yes'
+                                : 'spa.competitions.mass_no',
+                        )
+                    "
+                />
+            </template>
+        </Column>
         <Column
             v-if="auth.isAuthenticated"
             :header="t('spa.competitions.created')"
@@ -148,4 +205,13 @@ onMounted(load)
             <template #body="{ data }">{{ userLabel(data.updated) }}</template>
         </Column>
     </DataTable>
+    <Paginator
+        v-if="pagination.total > 0"
+        :first="(pagination.currentPage - 1) * pagination.perPage"
+        :rows="pagination.perPage"
+        :total-records="pagination.total"
+        :rows-per-page-options="[10, 20, 50]"
+        class="competitions-paginator"
+        @page="onPage"
+    />
 </template>

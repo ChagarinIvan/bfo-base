@@ -180,11 +180,20 @@ envelope, валидацию 422 и отказ без токена. Полный
 - [X] T060 [P] Проверить отсутствие новых N+1 и неограниченных выборок в V1 list implementation в `tests/Feature/Api/V1/Competition/ListCompetitionsActionTest.php`
 - [X] T061 [P] Обновить существующие Docker/frontend build steps для сборки `public/spa/` без поломки laravel-mix в `Dockerfile`
 - [X] T062 Запустить `npm run lint`, `npm run typecheck`, `npm run test` и `npm run build:spa`, исправить ошибки в соответствующих файлах `resources/spa/`, `package.json` и конфигурации frontend
-- [ ] T063 Запустить `composer cs`, `composer stan`, `composer rector` и `composer test`, исправить только относящиеся к фиче проблемы в изменённых PHP-файлах
+- [X] T063 Запустить `composer cs`, `composer stan`, `composer rector` и `composer test`, исправить только относящиеся к фиче проблемы в изменённых PHP-файлах
 - [ ] T064 Выполнить все сценарии из `specs/004-spa-foundation/quickstart.md` и зафиксировать результат проверки в `specs/004-spa-foundation/quickstart.md`
 - [X] T065 Проверить `git diff` на отсутствие изменений legacy API provider, Blade routes/templates и секретов перед PR в `specs/004-spa-foundation/plan.md`
 
 ---
+
+## Amendment: competition filters and SPA branding
+
+- [X] T066 [P] [US1] Зафиксировать контракт и добавить API-тест публичного GET /api/v1/years, возвращающего прямой массив Year::cases() без command
+- [X] T067 [P] [US1] Добавить frontend-тесты часового кэша годов, pagination query/headers и отображения mass-иконки
+- [X] T068 [US1] Реализовать Application use case списка годов без command и V1 action/route GET /api/v1/years
+- [X] T069 [US1] Заменить year input на PrimeVue Select с кэшем годов, подключить pagination headers к PrimeVue Paginator и заменить mass text на условные иконки
+- [X] T070 [US4] Обновить SPA brand до OrinetBase, добавить database/checkpoint icon mark, переводы и responsive styles
+- [X] T071 [P] [US3] Исправить совместимость production Sanctum schema: добавить отдельную additive migration для отсутствующего expires_at в существующей personal_access_tokens, проверить login/token creation на legacy table и добавить регрессионный тест
 
 ## Dependencies & Execution Order
 
