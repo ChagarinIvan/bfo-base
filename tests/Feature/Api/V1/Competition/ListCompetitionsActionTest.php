@@ -45,7 +45,10 @@ final class ListCompetitionsActionTest extends TestCase
 
     private function createCompetition(): Competition
     {
-        return Competition::factory()->createOne(['from' => '2026-01-01', 'to' => '2026-01-02']);
+        /** @var Competition $competition */
+        $competition = Competition::factory()->createOne(['from' => '2026-01-01', 'to' => '2026-01-02']);
+
+        return $competition;
     }
 
     private function createUser(): SanctumUser
