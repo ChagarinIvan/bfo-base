@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\User;
+namespace App\Domain\Auth;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -13,6 +13,7 @@ use Illuminate\Notifications\Notifiable;
 
 /**
  * @property int $id
+ * @property string|null $name
  * @property string $email
  * @property string $password
  *

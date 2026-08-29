@@ -17,7 +17,7 @@ class UnitGroupsAction extends AbstractGroupAction
     public function __invoke(Request $request, string $firstGroupId): RedirectResponse
     {
         $firstGroup = $this->groupsService->getGroup((int) $firstGroupId);
-        $secondGroup = $this->groupsService->getGroup((int)$request->get('group_id'));
+        $secondGroup = $this->groupsService->getGroup((int)$request->input('group_id'));
 
         foreach ($firstGroup->distances as $distance) {
             $this->distanceService->updateDistanceGroup($distance, $secondGroup->id);

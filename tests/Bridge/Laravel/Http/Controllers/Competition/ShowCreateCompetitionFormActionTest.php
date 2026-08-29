@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Bridge\Laravel\Http\Controllers\Competition;
 
 use App\Bridge\Laravel\Http\Controllers\Competition\ShowCreateCompetitionFormAction;
-use App\Domain\User\User;
+use App\Domain\Auth\User;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;

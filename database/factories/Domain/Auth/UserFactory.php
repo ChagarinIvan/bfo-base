@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Database\Factories\Domain\User;
+namespace Database\Factories\Domain\Auth;
 
-use App\Domain\User\User;
+use App\Domain\Auth\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class UserFactory extends Factory

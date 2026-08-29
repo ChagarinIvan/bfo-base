@@ -109,6 +109,6 @@ HTTP статус: **404 Not Found**
 
 | Класс | Назначение |
 |---|---|
-| `App\Bridge\Laravel\Http\Resources\Api\V1\AbstractV1Resource` | Базовый для единичных ресурсов: оборачивает в `{ "data": {...} }` |
-| `App\Bridge\Laravel\Http\Resources\Api\V1\AbstractV1Collection` | Базовый для коллекций: строит `data` + `meta.pagination` + `links` |
-| `App\Bridge\Laravel\Exceptions\Handler` | Перехватывает `ValidationException` → 422 envelope; `AuthenticationException` → 401 envelope |
+| `App\Bridge\Laravel\Http\Serialization\ApiDtoSerializer` | Сериализует `View*Dto` с учётом групп `public`/`authenticated` |
+| V1 API actions | Явно возвращают DTO или `JsonResponse` для ожидаемых Application-ошибок |
+| `App\Bridge\Laravel\Exceptions\Handler` | Не используется для преобразования ошибок V1 API |

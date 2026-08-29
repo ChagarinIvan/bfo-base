@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Bridge\Laravel\Http\Controllers\Person;
 
+use App\Domain\Auth\User;
 use App\Domain\Person\Person;
-use App\Domain\User\User;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;

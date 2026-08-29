@@ -108,26 +108,17 @@ Application-слой не трогается. `CompetitionCollection` знает
 
 ---
 
-## 5. Envelope-стандарт: Laravel API Resources
+## 5. Envelope-стандарт: DTO serializer
 
-**Решение**: Два абстрактных базовых класса, от которых наследуются все V1 Resources.
+**Решение**: DTO-ответы сериализуются общим Bridge-сериализатором с группами доступа.
 
-**`AbstractV1Resource extends JsonResource`**:
-```php
-public function toArray($request): array
-{
-    return ['data' => $this->resourceData($request)];
-}
-abstract protected function resourceData($request): array;
-```
+`created` и `updated` помечаются группой `authenticated`; остальные поля входят в публичную группу.
+`ApiDtoSerializer` выбирает группу по наличию валидного Bearer-токена и удаляет поля,
+которые не входят в выбранную группу. DTO не зависят от Request или Laravel Resources.
 
-**`AbstractV1Collection extends ResourceCollection`**:
-- Переопределяет `toArray()` — строит `data`, `meta.pagination`, `links`
-- Берёт данные пагинации из `$this->resource` (LengthAwarePaginator)
-
-**Error envelope** реализуется в `Handler.php` — перехватывает
-`ValidationException` → `422` с `{ errors: [{field, code, message}] }` и
-`AuthenticationException` → `401` с `{ errors: [{code, message}] }`.
+**Error envelope** формируется явно на API boundary: Application service преобразует ожидаемые
+доменные ошибки в Application-ошибки, а V1 action возвращает `JsonResponse` с нужным статусом.
+Глобальный `Handler.php` не является частью контракта ошибок V1 API.
 
 ---
 

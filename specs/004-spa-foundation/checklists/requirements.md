@@ -19,7 +19,7 @@
 - [x] Success criteria are measurable
 - [x] All acceptance scenarios are defined
 - [x] Edge cases are identified (including token storage, route collision, 401 handling)
-- [x] Scope is clearly bounded (competitions pilot only; no full migration; no i18n; no mobile)
+- [x] Scope is clearly bounded (competitions pilot only; no full migration; Belarusian UI; no mobile)
 - [x] Dependencies and assumptions identified
 
 ## Feature Readiness
@@ -42,6 +42,6 @@ All items pass. Ready for `/speckit-plan`.
 - New `ApiV1RoutesServiceProvider` + `Api\V1\` namespace for all V1 controllers
 - Sanctum API tokens (Bearer), stored in Pinia + localStorage with XSS considerations
 - Pilot: Competitions — public list `/app/competitions` + private create `/app/competitions/create`
-- Auth: `/api/v1/auth/login`, `/api/v1/auth/logout`, `/api/v1/auth/me`
+- Auth: `/api/v1/auth/login`, `/api/v1/auth/logout`; users: `/api/v1/users`
 - V1 controllers call `ListCompetitionsService` / `AddCompetitionService` directly (Application layer, no legacy)
 - Test base class: `Tests\Feature\Api\V1\ApiV1TestCase`

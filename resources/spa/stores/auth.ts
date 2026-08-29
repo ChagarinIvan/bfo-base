@@ -1,0 +1,38 @@
+import { defineStore } from 'pinia'
+import { api, setBearerToken, setUnauthorizedHandler } from '../api/client'
+import type { ApiResponse, AuthToken } from '../api/types'
+
+const tokenKey = 'auth_token'
+
+export const useAuthStore = defineStore('auth', {
+  state: () => ({
+    token: localStorage.getItem(tokenKey) as string | null,
+  }),
+
+  getters: { isAuthenticated: (state) => Boolean(state.token) },
+
+  actions: {
+    async login(email: string, password: string): Promise<void> {
+      const response = await api.post<ApiResponse<AuthToken>>('/auth/login', { email, password })
+      this.token = response.data.data.token
+      localStorage.setItem(tokenKey, this.token)
+      setBearerToken(this.token)
+    },
+
+    async logout(): Promise<void> {
+      if (this.token) await api.delete('/auth/logout').catch(() => undefined)
+      this.token = null
+      localStorage.removeItem(tokenKey)
+      setBearerToken(null)
+    },
+
+    async hydrate(): Promise<void> {
+      setUnauthorizedHandler(() => {
+        this.token = null
+        localStorage.removeItem(tokenKey)
+      })
+      setBearerToken(this.token)
+      if (!this.token) return
+    },
+  },
+})

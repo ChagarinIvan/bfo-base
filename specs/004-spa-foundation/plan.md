@@ -85,7 +85,8 @@ specs/004-spa-foundation/
 ├── contracts/           ← Phase 1
 │   ├── api-envelope.md
 │   ├── api-auth.md
-│   └── api-competitions.md
+│   ├── api-competitions.md
+│   └── api-v1-manifest.md   ← нормативный манифест нового JSON API
 └── tasks.md             ← Phase 2 (speckit-tasks)
 ```
 
@@ -108,21 +109,14 @@ app/
         │   │       └── V1/                   ← новый namespace (старый Api\ не трогаем)
         │   │           ├── Auth/
         │   │           │   ├── LoginAction.php
-        │   │           │   ├── LogoutAction.php
-        │   │           │   └── MeAction.php
+        │   │           │   └── LogoutAction.php
+        │   │           ├── User/
+        │   │           │   └── ListUsersAction.php
         │   │           └── Competition/
         │   │               ├── ListCompetitionsAction.php
         │   │               └── CreateCompetitionAction.php
-        │   └── Resources/
-        │       └── Api/
-        │           └── V1/                   ← новые Resources с envelope
-        │               ├── AbstractV1Resource.php
-        │               ├── AbstractV1Collection.php
-        │               ├── Competition/
-        │               │   ├── CompetitionResource.php
-        │               │   └── CompetitionCollection.php
-        │               └── Auth/
-        │                   └── TokenResource.php
+        │   └── Serialization/
+        │       └── ApiDtoSerializer.php     ← группы public/authenticated
         └── Provider/
             └── ApiV1RoutesServiceProvider.php ← новый (ApiRoutesServiceProvider не трогаем)
 
@@ -200,5 +194,5 @@ enviroment/nginx/conf.d/                      ← добавить location /app
 |---|---|---|
 | Sanctum auth adapter в Infrastructure | Laravel Sanctum требует `HasApiTokens` на authenticatable-модели | Адаптер сохраняет Sanctum за границей Domain; auth provider направляется на `Infrastructure\\Sanctum\\SanctumUser` |
 | Vite + laravel-mix сосуществование | Старый фронт работает на laravel-mix; нельзя мигрировать всё сразу | Полный переход на Vite сейчас сломал бы Blade-фронт; разные пути вывода (`public/js` vs `public/spa`) решают конфликт |
-| Пагинация на уровне Bridge (не в Application) | `ListCompetitionsService` возвращает `ViewCompetitionDto[]` без пагинации; изменение Application-слоя вне scope | `LengthAwarePaginator` над коллекцией делается в V1-контроллере; Application-слой не трогается |
-| Условные поля ресурса на уровне Bridge | Публичный endpoint меняет представление в зависимости от валидного Bearer без изменения Application DTO | Контекст запроса доступен в API Resource; перенос логики в Domain/Application расширил бы scope и связал слои с HTTP |
+| Пагинация на уровне Bridge | `ListCompetitionsService` возвращает `ViewCompetitionDto[]` без пагинации | Pagination envelope формируется отдельным API adapter-слоем, не Application service и не контроллером |
+| Условные поля DTO на уровне Bridge | Публичный endpoint меняет представление в зависимости от валидного Bearer | `ApiDtoSerializer` применяет группы `public`/`authenticated`; DTO и Domain не зависят от HTTP |

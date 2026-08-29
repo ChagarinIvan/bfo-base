@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Tests\Bridge\Laravel\Http\Controllers\CupEvents;
 
 use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupEventGroupAction;
+use App\Domain\Auth\User;
 use App\Domain\Cup\CupType\JuniorCupType;
 use App\Domain\Cup\CupType\NewMasterCupType;
 use App\Domain\Cup\CupType\SprintCupType;
 use App\Domain\Cup\CupType\YouthCupType;
-use App\Domain\User\User;
 use Database\Seeders\JuniorCupLineSeeder;
 use Database\Seeders\JuniorCupLineSeeder2;
 use Database\Seeders\NewMasterCupLineSeeder;

@@ -97,7 +97,7 @@ Sanctum отклоняет Bearer-токен, клиент получает `401
 
 ## API Response Types (контракты сериализации)
 
-### CompetitionResource (V1)
+### ViewCompetitionDto (V1)
 
 Сериализует `ViewCompetitionDto` в API-ответ.
 
@@ -117,7 +117,7 @@ Sanctum отклоняет Bearer-токен, клиент получает `401
 содержит валидный Bearer-токен. Для анонимного запроса ресурс содержит только
 публичные поля.
 
-### TokenResource (V1)
+### ViewTokenDto (V1)
 
 ```
 {
@@ -126,7 +126,7 @@ Sanctum отклоняет Bearer-токен, клиент получает `401
 }
 ```
 
-### AuthUserResource (V1)
+### AuthUserDto (V1)
 
 ```
 {
@@ -140,7 +140,7 @@ Sanctum отклоняет Bearer-токен, клиент получает `401
 
 ## Валидация на границе API
 
-Все V1-эндпоинты валидируют вход через FormRequest или инлайн-валидацию `$request->validate()`.
+Все V1-эндпоинты получают входные DTO через общий API action adapter.
 Ошибки валидации (422) оборачиваются в error envelope:
 
 ```json
@@ -152,8 +152,8 @@ Sanctum отклоняет Bearer-токен, клиент получает `401
 }
 ```
 
-Трансформация `ValidationException` → error envelope реализована в
-`App\Bridge\Laravel\Exceptions\Handler`.
+Трансформация `ValidationException` → error envelope выполняется явно на API boundary
+в `ApiAction`; глобальный exception handler для этого не используется.
 
 ---
 

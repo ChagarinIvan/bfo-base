@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Bridge\Laravel\Http\Controllers\CupEvents;
 
 use App\Bridge\Laravel\Http\Controllers\CupEvents\DeleteCupEventAction;
-use App\Domain\User\User;
+use App\Domain\Auth\User;
 use Database\Seeders\ProtocolLinesSeeder;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;

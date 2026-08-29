@@ -57,16 +57,16 @@ curl -s http://localhost:8000/api/v1/competitions \
   -H "Authorization: Bearer $TOKEN" | jq '.data[0]'
 # Ожидается: в элементе есть created и updated; без токена эти поля отсутствуют.
 
-# Шаг 2: me (с токеном)
-curl -s http://localhost:8000/api/v1/auth/me \
+# Шаг 2: список пользователей (с токеном)
+curl -s http://localhost:8000/api/v1/users \
   -H "Authorization: Bearer $TOKEN" | jq .
 
 # Шаг 3: logout
 curl -s -X DELETE http://localhost:8000/api/v1/auth/logout \
   -H "Authorization: Bearer $TOKEN" -w "\nHTTP: %{http_code}\n"
 
-# Шаг 4: me после logout (должно быть 401)
-curl -s http://localhost:8000/api/v1/auth/me \
+# Шаг 4: список пользователей после logout (должно быть 401)
+curl -s http://localhost:8000/api/v1/users \
   -H "Authorization: Bearer $TOKEN" -w "\nHTTP: %{http_code}\n" | jq .
 ```
 

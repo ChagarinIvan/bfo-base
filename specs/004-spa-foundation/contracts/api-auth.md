@@ -62,7 +62,9 @@ Content-Type: application/json
 ```
 
 **Контроллер**: `App\Bridge\Laravel\Http\Controllers\Api\V1\Auth\LoginAction`
-**Application**: использует Laravel Auth напрямую (`Hash::check` заменяем на `$request->user()` через attempt); токен создаётся через `$user->createToken('spa-token')->plainTextToken`
+**Application**: `LoginAction` передаёт command в `LoginService`; application service зависит
+только от доменного `LoginAuthenticator`, а преобразование `AccessToken` в `ViewTokenDto`
+выполняет `LoginAssembler`. Sanctum-реализация находится в Infrastructure.
 
 ---
 
@@ -97,7 +99,7 @@ Authorization: Bearer 1|abc123xyz...
 
 ---
 
-## GET /api/v1/auth/me
+## GET /api/v1/users
 
 **Назначение**: профиль текущего аутентифицированного пользователя
 **Auth**: требуется (`Authorization: Bearer {token}`)
@@ -105,7 +107,7 @@ Authorization: Bearer 1|abc123xyz...
 ### Request
 
 ```http
-GET /api/v1/auth/me
+GET /api/v1/users
 Authorization: Bearer 1|abc123xyz...
 ```
 
@@ -131,7 +133,10 @@ Authorization: Bearer 1|abc123xyz...
 }
 ```
 
-**Контроллер**: `App\Bridge\Laravel\Http\Controllers\Api\V1\Auth\MeAction`
+**Контроллер**: `App\Bridge\Laravel\Http\Controllers\Api\V1\User\ListUsersAction`
+
+Возвращается полный список пользователей без фильтров и пагинации. В DTO отсутствуют
+пароли и внутренние поля.
 
 ---
 
@@ -143,7 +148,7 @@ $this->route->prefix('api/v1/auth')->group(function (): void {
     $this->route->post('login',  LoginAction::class);
     $this->route->middleware('auth:sanctum')->group(function (): void {
     $this->route->delete('logout', LogoutAction::class);
-        $this->route->get('me',     MeAction::class);
+        $this->route->get('users', ListUsersAction::class);
     });
 });
 ```

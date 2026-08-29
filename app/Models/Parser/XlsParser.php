@@ -95,9 +95,7 @@ class XlsParser extends AbstractParser
                         }
                         $protocolLine[$columnName] = $this->getValue($columnName, $line[$headerIndex] ?? '');
                     }
-                    if (!isset($protocolLine['runner_number'])) {
-                        $protocolLine['runner_number'] = $protocolLine['serial_number'];
-                    }
+                    $protocolLine['runner_number'] ??= $protocolLine['serial_number'];
                     $linesList->push($protocolLine);
                 }
             }
