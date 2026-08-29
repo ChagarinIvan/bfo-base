@@ -25,7 +25,7 @@ final class OptionalAuthenticateApiV1Test extends TestCase
         $auth = $this->authFactory($guard);
         $request = Request::create('/api/v1/competitions');
 
-        $response = (new OptionalAuthenticateApiV1($auth, app()))->handle(
+        $response = new OptionalAuthenticateApiV1($auth, app())->handle(
             $request,
             static fn (): Response => new Response('ok'),
         );
@@ -46,7 +46,7 @@ final class OptionalAuthenticateApiV1Test extends TestCase
         $auth = $this->authFactory($guard);
         $request = Request::create('/api/v1/competitions');
 
-        $response = (new OptionalAuthenticateApiV1($auth, app()))->handle(
+        $response = new OptionalAuthenticateApiV1($auth, app())->handle(
             $request,
             function (Request $nextRequest) use ($user): Response {
                 $this->assertSame($user, $nextRequest->user());

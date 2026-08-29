@@ -31,7 +31,7 @@ final class AuthenticateApiV1Test extends TestCase
             return new Response();
         };
 
-        $response = (new AuthenticateApiV1($auth, app()))->handle(Request::create('/api/v1/users'), $next);
+        $response = new AuthenticateApiV1($auth, app())->handle(Request::create('/api/v1/users'), $next);
 
         $this->assertInstanceOf(JsonResponse::class, $response);
         $this->assertSame(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
@@ -60,7 +60,7 @@ final class AuthenticateApiV1Test extends TestCase
             return new Response('ok');
         };
 
-        $response = (new AuthenticateApiV1($auth, app()))->handle($request, $next);
+        $response = new AuthenticateApiV1($auth, app())->handle($request, $next);
 
         $this->assertSame(Response::HTTP_OK, $response->getStatusCode());
         $this->assertSame(42, app()->make(UserId::class)->id);

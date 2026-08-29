@@ -18,7 +18,6 @@ use ReflectionClass;
 use Symfony\Component\HttpFoundation\Response;
 use function array_map;
 use function array_merge;
-use function is_a;
 
 trait ApiAction
 {
@@ -74,7 +73,7 @@ trait ApiAction
             return $this->errorResponse->fromException($exception);
         }
 
-        if (is_a($result, Response::class)) {
+        if ($result instanceof Response) {
             return $result;
         }
 
