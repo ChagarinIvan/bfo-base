@@ -12,10 +12,10 @@ $allowedOrigins = $configuredOrigins === ''
     : explode(',', $configuredOrigins);
 
 $allowedOrigins = array_map(
-        trim(...),
-        $allowedOrigins,
-    )
-        |> (fn($x) => array_filter($x, static fn(string $origin): bool => $origin !== '',))
+    trim(...),
+    $allowedOrigins,
+)
+        |> (static fn($x): array => array_filter($x, static fn(string $origin): bool => $origin !== '', ))
         |> array_unique(...)
         |> array_values(...);
 
