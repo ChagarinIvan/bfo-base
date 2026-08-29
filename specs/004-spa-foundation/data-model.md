@@ -180,8 +180,13 @@ interface Competition {
   to: string          // "YYYY-MM-DD"
   year: number
   mass: boolean
-  created?: string       // доступно только при валидной авторизации
-  updated?: string       // доступно только при валидной авторизации
+  created?: Impression   // доступно только при валидной авторизации
+  updated?: Impression   // доступно только при валидной авторизации
+}
+
+interface Impression {
+  at: string
+  by: string
 }
 ```
 

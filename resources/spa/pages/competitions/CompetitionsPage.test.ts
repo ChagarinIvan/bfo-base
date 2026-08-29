@@ -44,8 +44,8 @@ describe('competitions page model', () => {
         })
     })
 
-    it('uses a check-circle for mass starts and a muted circle otherwise', () => {
-        expect(massIconClass(true)).toBe('pi pi-check-circle')
+    it('uses a square check for mass starts and a red-accented false icon', () => {
+        expect(massIconClass(true)).toBe('pi pi-check-square')
         expect(massIconClass(false)).toBe('pi pi-times-circle')
     })
 })

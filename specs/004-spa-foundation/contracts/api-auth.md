@@ -34,10 +34,8 @@ Content-Type: application/json
 
 ```json
 {
-  "data": {
-    "token": "1|abc123xyz...",
-    "token_type": "Bearer"
-  }
+  "token": "1|abc123xyz...",
+  "token_type": "Bearer"
 }
 ```
 
@@ -62,9 +60,9 @@ Content-Type: application/json
 ```
 
 **Контроллер**: `App\Bridge\Laravel\Http\Controllers\Api\V1\Auth\LoginAction`
-**Application**: `LoginAction` передаёт command в `LoginService`; application service зависит
-только от доменного `LoginAuthenticator`, а преобразование `AccessToken` в `ViewTokenDto`
-выполняет `LoginAssembler`. Sanctum-реализация находится в Infrastructure.
+**Application**: `LoginAction` передаёт входные данные в Application-слой, а преобразование
+`AccessToken` в `ViewTokenDto` выполняет `LoginAssembler`. Sanctum-реализация находится в
+Infrastructure.
 
 ---
 

@@ -31,7 +31,7 @@ final readonly class PreviousCompletedRankFiller
         $date ??= $now;
 
         $finishDate = $rank?->finish_date;
-$finishDate ??= $date;
+        $finishDate ??= $date;
 
         if ($finishDate <= $date) {
             // тут трэба узять протокол лініі за 2 года, дзе было выкананне адсартырованные па моцы разраду

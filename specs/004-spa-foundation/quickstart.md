@@ -67,7 +67,7 @@ curl -s -X DELETE http://localhost:8000/api/v1/auth/logout \
 
 # Шаг 4: список пользователей после logout (должно быть 401)
 curl -s http://localhost:8000/api/v1/users \
-  -H "Authorization: Bearer $TOKEN" -w "\nHTTP: %{http_code}\n" | jq .
+  -H "Authorization: Bearer $TOKEN" -w "\nHTTP: %{http_code}\n"
 ```
 
 **Ожидаемые результаты**:
@@ -229,8 +229,8 @@ curl -s -o /dev/null -w "%{http_code}" http://localhost:80/app/competitions/crea
 - Сценарии 5–6: ручной browser smoke не выполнен в текущей среде — browser
   connector не предоставил доступного браузера. Автоматический frontend gate
   проходит.
-- Сценарий 7: `composer test` — `324 tests, 2542 assertions`.
-- Сценарий 8: `npm run ci` — успешно (lint, typecheck, Vitest, production build).
+- Сценарий 7: `composer test` — `326 tests, 2544 assertions`.
+- Сценарий 8: `npm run ci` — успешно (lint, typecheck, 19 Vitest-тестов, production build).
 - Сценарий 9: временный Nginx-контейнер вернул HTTP 200 для `/app/competitions`
   и `/app/competitions/create`.
 

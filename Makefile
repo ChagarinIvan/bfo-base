@@ -1,9 +1,9 @@
 .PHONY: install backend frontend dev test build-spa
 
 install:
-	composer update laravel/sanctum --with-all-dependencies
+	composer install
 	php artisan key:generate
-	npm install
+	npm ci
 	php artisan migrate
 
 backend:

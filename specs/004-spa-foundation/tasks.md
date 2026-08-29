@@ -192,8 +192,14 @@ envelope, валидацию 422 и отказ без токена. Полный
 - [X] T067 [P] [US1] Добавить frontend-тесты часового кэша годов, pagination query/headers и отображения mass-иконки
 - [X] T068 [US1] Реализовать Application use case списка годов без command и V1 action/route GET /api/v1/years
 - [X] T069 [US1] Заменить year input на PrimeVue Select с кэшем годов, подключить pagination headers к PrimeVue Paginator и заменить mass text на условные иконки
-- [X] T070 [US4] Обновить SPA brand до OrinetBase, добавить database/checkpoint icon mark, переводы и responsive styles
+- [X] T070 [US4] Обновить SPA brand до OrientBase, добавить database/checkpoint icon mark, переводы и responsive styles
 - [X] T071 [P] [US3] Исправить совместимость production Sanctum schema: добавить отдельную additive migration для отсутствующего expires_at в существующей personal_access_tokens, проверить login/token creation на legacy table и добавить регрессионный тест
+
+## Amendment: competition list audit UX
+
+- [X] T072 [P] [US1] Вынести отображение created/updated в переиспользуемый `ImpressionDetails` с локализованными датой/временем и popup полной информации в `resources/spa/components/`
+- [X] T073 [P] [US1] Добавить часовой кэш списка пользователей и frontend-тесты в `resources/spa/api/users.ts` и `resources/spa/api/users.test.ts`
+- [X] T074 [US1] Обновить competition list: legacy links, контрастную mass-иконку, убрать subtitle и navbar create action в `resources/spa/pages/competitions/` и `resources/spa/components/AppLayout.vue`
 
 ## Dependencies & Execution Order
 

@@ -10,22 +10,18 @@ import Select from 'primevue/select'
 import Toolbar from 'primevue/toolbar'
 import { useRouter } from 'vue-router'
 import { api } from '../../api/client'
+import { getUsers } from '../../api/users'
 import { getYears } from '../../api/years'
 import { useAuthStore } from '../../stores/auth'
 import { t } from '../../i18n'
+import ImpressionDetails from '../../components/ImpressionDetails.vue'
 import {
     competitionQuery,
     formatDateRange,
     massIconClass,
     paginationFromHeaders,
-    shouldLoadUsers,
 } from './competitionModels'
-import type {
-    Competition,
-    Impression,
-    PaginationHeaders,
-    User,
-} from '../../api/types'
+import type { Competition, PaginationHeaders, User } from '../../api/types'
 
 const competitions = ref<Competition[]>([])
 const users = ref<User[]>([])
@@ -53,17 +49,6 @@ async function onPage(event: PageState): Promise<void> {
     await load(event.page + 1, event.rows)
 }
 
-function userLabel(impression: Impression | undefined): string {
-    if (!impression) return ''
-
-    const user = users.value.find((item) => String(item.id) === impression.by)
-    return (
-        user?.name ||
-        user?.email ||
-        t('spa.competitions.unknown_user', { id: impression.by })
-    )
-}
-
 async function load(
     page = 1,
     perPage = pagination.value.perPage,
@@ -81,8 +66,8 @@ async function load(
             response.headers as Record<string, unknown>,
         )
 
-        if (shouldLoadUsers(auth.isAuthenticated, users.value.length)) {
-            users.value = (await api.get<User[]>('/users')).data
+        if (auth.isAuthenticated) {
+            users.value = await getUsers()
         }
     } catch {
         error.value = t('spa.competitions.error')
@@ -112,9 +97,6 @@ onMounted(initialize)
         <template #start>
             <div>
                 <h1 class="page-title">{{ t('spa.competitions.title') }}</h1>
-                <p class="page-subtitle">
-                    {{ t('spa.competitions.subtitle') }}
-                </p>
             </div>
         </template>
         <template #end>
@@ -164,7 +146,13 @@ onMounted(initialize)
         striped-rows
         class="competitions-table"
     >
-        <Column field="name" :header="t('spa.competition.create.name')" />
+        <Column field="name" :header="t('spa.competition.create.name')">
+            <template #body="{ data }">
+                <a :href="`/competitions/${data.id}/show`">
+                    {{ data.name }}
+                </a>
+            </template>
+        </Column>
         <Column :header="t('spa.competitions.dates')">
             <template #body="{ data }">{{
                 formatDateRange(data.from, data.to)
@@ -189,6 +177,7 @@ onMounted(initialize)
                                 : 'spa.competitions.mass_no',
                         )
                     "
+                    role="img"
                 />
             </template>
         </Column>
@@ -196,13 +185,25 @@ onMounted(initialize)
             v-if="auth.isAuthenticated"
             :header="t('spa.competitions.created')"
         >
-            <template #body="{ data }">{{ userLabel(data.created) }}</template>
+            <template #body="{ data }">
+                <ImpressionDetails
+                    :impression="data.created"
+                    :users="users"
+                    :label="t('spa.competitions.created')"
+                />
+            </template>
         </Column>
         <Column
             v-if="auth.isAuthenticated"
             :header="t('spa.competitions.updated')"
         >
-            <template #body="{ data }">{{ userLabel(data.updated) }}</template>
+            <template #body="{ data }">
+                <ImpressionDetails
+                    :impression="data.updated"
+                    :users="users"
+                    :label="t('spa.competitions.updated')"
+                />
+            </template>
         </Column>
     </DataTable>
     <Paginator

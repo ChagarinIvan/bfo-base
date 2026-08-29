@@ -17,9 +17,9 @@ Laravel API и Vue SPA для платформы спортивного орие
 
 ```bash
 cp .env.example .env
-composer update laravel/sanctum --with-all-dependencies
+composer install
 php artisan key:generate
-npm install
+npm ci
 php artisan migrate
 ```
 

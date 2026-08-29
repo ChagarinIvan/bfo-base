@@ -41,7 +41,7 @@ export function paginationFromHeaders(
 }
 
 export function massIconClass(mass: boolean): string {
-    return mass ? 'pi pi-check-circle' : 'pi pi-times-circle'
+    return mass ? 'pi pi-check-square' : 'pi pi-times-circle'
 }
 
 export function isDateRangeValid(from: string, to: string): boolean {

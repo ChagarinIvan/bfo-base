@@ -7,6 +7,7 @@ namespace Tests\Feature\Api\V1\Competition;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Competition\ListCompetitionsAction;
 use App\Domain\Competition\Competition;
 use App\Infrastructure\Sanctum\SanctumUser;
+use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
@@ -51,10 +52,15 @@ final class ListCompetitionsActionTest extends TestCase
     #[Test]
     public function it_returns_paginated_collection_metadata(): void
     {
-        Competition::factory()->count(3)->create([
-            'from' => '2026-01-01',
-            'to' => '2026-01-02',
-        ]);
+        Competition::factory()
+            ->count(3)
+            ->sequence(static fn (Sequence $sequence): array => [
+                'id' => $sequence->index + 1,
+            ])
+            ->create([
+                'from' => '2026-01-01',
+                'to' => '2026-01-02',
+            ]);
 
         $this->getJson('/api/v1/competitions?per_page=2&page=2')
             ->assertOk()
@@ -68,10 +74,15 @@ final class ListCompetitionsActionTest extends TestCase
     #[Test]
     public function it_loads_competitions_without_an_n_plus_one_query(): void
     {
-        Competition::factory()->count(3)->create([
-            'from' => '2026-01-01',
-            'to' => '2026-01-02',
-        ]);
+        Competition::factory()
+            ->count(3)
+            ->sequence(static fn (Sequence $sequence): array => [
+                'id' => $sequence->index + 1,
+            ])
+            ->create([
+                'from' => '2026-01-01',
+                'to' => '2026-01-02',
+            ]);
         $queries = [];
 
         DB::listen(static function (QueryExecuted $query) use (&$queries): void {

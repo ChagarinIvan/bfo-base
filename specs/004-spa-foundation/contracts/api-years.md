@@ -2,7 +2,7 @@
 
 ## GET /api/v1/years
 
-Публичный endpoint со всеми доступными годами из App.Models.Year::cases().
+Публичный endpoint со всеми доступными годами из `App\Models\Year::cases()`.
 Авторизация, query-параметры, пагинация и входной DTO отсутствуют.
 
 ### Response 200 OK
