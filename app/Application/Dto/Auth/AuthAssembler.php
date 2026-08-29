@@ -12,7 +12,7 @@ final class AuthAssembler
 {
     public function toUserDto(User $user): UserDto
     {
-        return new UserDto($user->id, null, $user->email);
+        return new UserDto($user->id, $user->name, $user->email);
     }
 
     public function toImpressionDto(Impression $impression): ImpressionDto

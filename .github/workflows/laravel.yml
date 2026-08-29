@@ -76,9 +76,5 @@ jobs:
         cache: npm
     - name: Install frontend dependencies
       run: npm ci --ignore-scripts --no-audit --no-fund
-    - name: Execute frontend typecheck
-      run: npm run typecheck
-    - name: Execute frontend lint
-      run: npm run lint
-    - name: Execute frontend tests
-      run: npm run test
+    - name: Execute frontend quality gate
+      run: npm run ci

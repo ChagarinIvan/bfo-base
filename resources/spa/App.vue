@@ -4,8 +4,8 @@ import AppLayout from './components/AppLayout.vue'
 </script>
 
 <template>
-  <AppLayout>
-    <RouterView />
-  </AppLayout>
-  <Toast />
+    <AppLayout>
+        <RouterView />
+    </AppLayout>
+    <Toast />
 </template>

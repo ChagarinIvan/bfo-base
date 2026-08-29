@@ -203,6 +203,7 @@
     "spa.nav.create" : "Стварыць",
     "spa.nav.login" : "Увайсці",
     "spa.nav.logout" : "Выйсці",
+    "spa.nav.logout_error" : "Не атрымалася завяршыць сеанс на серверы.",
     "spa.competitions.title" : "Спаборніцтвы",
     "spa.competitions.year" : "Год",
     "spa.competitions.description" : "Апісанне",
@@ -227,5 +228,6 @@
     "spa.competition.create.to" : "Дата заканчэння",
     "spa.competition.create.mass" : "Масавы старт",
     "spa.competition.create.submit" : "Стварыць",
-    "spa.competition.create.error" : "Праверце запоўненыя палі."
+    "spa.competition.create.error" : "Праверце запоўненыя палі.",
+    "spa.competition.create.success" : "Спаборніцтва паспяхова створана."
 }

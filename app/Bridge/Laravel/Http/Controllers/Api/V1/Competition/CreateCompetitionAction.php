@@ -10,8 +10,10 @@ use App\Application\Dto\Competition\ViewCompetitionDto;
 use App\Application\Service\Competition\AddCompetition;
 use App\Application\Service\Competition\AddCompetitionService;
 use App\Bridge\Laravel\Http\Controllers\ApiAction;
+use App\Bridge\Laravel\Http\Controllers\ResponseStatus;
 use Illuminate\Routing\Controller as BaseController;
 
+#[ResponseStatus(201)]
 final class CreateCompetitionAction extends BaseController
 {
     use ApiAction;

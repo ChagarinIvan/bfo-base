@@ -5,19 +5,24 @@ import CreateCompetitionPage from '../pages/competitions/CreateCompetitionPage.v
 import LoginPage from '../pages/auth/LoginPage.vue'
 
 const router = createRouter({
-  history: createWebHistory('/'),
-  routes: [
-    { path: '/app/competitions', component: CompetitionsPage },
-    { path: '/app/competitions/create', component: CreateCompetitionPage, meta: { requiresAuth: true } },
-    { path: '/app/login', component: LoginPage },
-    { path: '/app/:pathMatch(.*)*', redirect: '/app/competitions' },
-  ],
+    history: createWebHistory('/'),
+    routes: [
+        { path: '/app/competitions', component: CompetitionsPage },
+        {
+            path: '/app/competitions/create',
+            component: CreateCompetitionPage,
+            meta: { requiresAuth: true },
+        },
+        { path: '/app/login', component: LoginPage },
+        { path: '/app/:pathMatch(.*)*', redirect: '/app/competitions' },
+    ],
 })
 
 router.beforeEach(async (to) => {
-  const auth = useAuthStore()
-  await auth.hydrate()
-  if (to.meta.requiresAuth && !auth.isAuthenticated) return { path: '/app/login', query: { return: to.fullPath } }
+    const auth = useAuthStore()
+    await auth.hydrate()
+    if (to.meta.requiresAuth && !auth.isAuthenticated)
+        return { path: '/app/login', query: { return: to.fullPath } }
 })
 
 export default router

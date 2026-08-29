@@ -2,9 +2,9 @@ import { fileURLToPath, URL } from 'node:url'
 import vue from '@vitejs/plugin-vue'
 import { defineConfig } from 'vite'
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   root: fileURLToPath(new URL('./resources/spa', import.meta.url)),
-  base: '/spa/',
+  base: command === 'serve' ? '/' : '/spa/',
   plugins: [vue()],
   server: {
     port: 5173,
@@ -16,4 +16,4 @@ export default defineConfig({
     outDir: fileURLToPath(new URL('./public/spa', import.meta.url)),
     emptyOutDir: true,
   },
-})
+}))

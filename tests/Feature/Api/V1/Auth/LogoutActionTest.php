@@ -8,7 +8,6 @@ use App\Bridge\Laravel\Http\Controllers\Api\V1\Auth\LogoutAction;
 use App\Infrastructure\Sanctum\SanctumUser;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
-use Laravel\Sanctum\Sanctum;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -20,9 +19,18 @@ final class LogoutActionTest extends TestCase
     #[Test]
     public function it_revokes_current_token(): void
     {
-        Sanctum::actingAs($this->createUser());
+        $user = $this->createUser();
+        $accessToken = $user->createToken('test-token');
+        $plainTextToken = $accessToken->plainTextToken;
 
-        $this->deleteJson('/api/v1/auth/logout')->assertNoContent();
+        $this->withToken($plainTextToken)
+            ->deleteJson('/api/v1/auth/logout')
+            ->assertNoContent()
+        ;
+
+        $this->assertDatabaseMissing('personal_access_tokens', ['id' => $accessToken->accessToken->id]);
+        app('auth')->forgetGuards();
+        $this->withToken($plainTextToken)->deleteJson('/api/v1/auth/logout')->assertUnauthorized();
     }
 
     #[Test]

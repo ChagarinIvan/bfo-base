@@ -7,12 +7,14 @@ namespace App\Bridge\Laravel\Http\Controllers;
 use App\Application\Dto\AbstractDto;
 use App\Application\Dto\Auth\UserId;
 use App\Application\Exception\ApplicationException;
+use App\Bridge\Laravel\Http\Controllers\ResponseStatus;
 use App\Bridge\Laravel\Http\Serialization\ApiDtoSerializer;
 use App\Bridge\Laravel\Http\Serialization\ApiErrorResponse;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Factory as Validator;
 use Illuminate\Validation\ValidationException;
+use ReflectionClass;
 use Symfony\Component\HttpFoundation\Response;
 use function array_map;
 use function array_merge;
@@ -30,7 +32,6 @@ trait ApiAction
     {
         if ($request->user()) {
             $container->instance(UserId::class, new UserId($request->user()->id));
-//            $container->instance(User::class, $request->user());
         }
     }
 
@@ -77,9 +78,11 @@ trait ApiAction
             return $result;
         }
 
+        $status = new ReflectionClass($this)->getAttributes(ResponseStatus::class);
+
         return response()->json(['data' => $this->serializer->serialize(
             $result,
             $this->request->user() ? 'authenticated' : 'public',
-        )]);
+        )], $status === [] ? Response::HTTP_OK : $status[0]->newInstance()->status);
     }
 }

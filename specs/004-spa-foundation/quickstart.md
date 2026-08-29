@@ -72,7 +72,7 @@ curl -s http://localhost:8000/api/v1/users \
 
 **Ожидаемые результаты**:
 - Шаг 1: `{ "data": { "token": "...", "token_type": "Bearer" } }`
-- Шаг 2: `{ "data": { "id": N, "name": "...", "email": "..." } }`
+- Шаг 2: `{ "data": [{ "id": N, "name": null, "email": "..." }] }`
 - Шаг 3: HTTP 204, пустое тело
 - Шаг 4: HTTP 401, `{ "errors": [{ "code": "unauthenticated", ... }] }`
 

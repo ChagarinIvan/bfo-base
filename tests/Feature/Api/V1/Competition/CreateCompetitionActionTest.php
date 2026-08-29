@@ -29,8 +29,23 @@ final class CreateCompetitionActionTest extends TestCase
         Sanctum::actingAs($this->createUser());
 
         $this->postJson('/api/v1/competitions', $this->payload())
-            ->assertOk()
+            ->assertCreated()
             ->assertJsonPath('data.name', 'New competition')
+        ;
+    }
+
+    #[Test]
+    public function it_rejects_an_end_date_before_the_start_date(): void
+    {
+        Sanctum::actingAs($this->createUser());
+
+        $this->postJson('/api/v1/competitions', [
+            ...$this->payload(),
+            'to' => '2025-12-31',
+        ])
+            ->assertUnprocessable()
+            ->assertJsonPath('errors.0.code', 'validation_error')
+            ->assertJsonPath('errors.0.field', 'to')
         ;
     }
 

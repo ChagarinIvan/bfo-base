@@ -10,7 +10,7 @@
         "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --config=node_modules/laravel-mix/setup/webpack.config.js",
         "dev:spa": "vite --config vite.config.ts",
         "build:spa": "vite build --config vite.config.ts",
-        "lint": "eslint resources/spa --max-warnings=0",
+        "lint": "eslint resources/spa --max-warnings=0 && prettier --check \"resources/spa/**/*.{ts,vue,html}\"",
         "typecheck": "vue-tsc --noEmit",
         "test": "vitest run",
         "ci": "npm run lint && npm run typecheck && npm run test && npm run build:spa"

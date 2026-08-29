@@ -101,7 +101,7 @@ Authorization: Bearer 1|abc123xyz...
 
 ## GET /api/v1/users
 
-**Назначение**: профиль текущего аутентифицированного пользователя
+**Назначение**: полный список аутентифицированных пользователей для разрешения author ids
 **Auth**: требуется (`Authorization: Bearer {token}`)
 
 ### Request
@@ -115,11 +115,13 @@ Authorization: Bearer 1|abc123xyz...
 
 ```json
 {
-  "data": {
-    "id": 1,
-    "name": "Ivan Ivanov",
-    "email": "ivan@example.com"
-  }
+  "data": [
+    {
+      "id": 1,
+      "name": null,
+      "email": "ivan@example.com"
+    }
+  ]
 }
 ```
 
@@ -133,7 +135,7 @@ Authorization: Bearer 1|abc123xyz...
 }
 ```
 
-**Контроллер**: `App\Bridge\Laravel\Http\Controllers\Api\V1\User\ListUsersAction`
+**Контроллер**: `App\Bridge\Laravel\Http\Controllers\Api\V1\Auth\ListUsersAction`
 
 Возвращается полный список пользователей без фильтров и пагинации. В DTO отсутствуют
 пароли и внутренние поля.
@@ -144,11 +146,9 @@ Authorization: Bearer 1|abc123xyz...
 
 ```php
 // ApiV1RoutesServiceProvider
-$this->route->prefix('api/v1/auth')->group(function (): void {
-    $this->route->post('login',  LoginAction::class);
-    $this->route->middleware('auth:sanctum')->group(function (): void {
-    $this->route->delete('logout', LogoutAction::class);
-        $this->route->get('users', ListUsersAction::class);
-    });
+$router->prefix('api/v1')->post('auth/login', LoginAction::class);
+$router->prefix('api/v1')->middleware(AuthenticateApiV1::class)->group(function (): void {
+    $router->delete('auth/logout', LogoutAction::class);
+    $router->get('users', ListUsersAction::class);
 });
 ```

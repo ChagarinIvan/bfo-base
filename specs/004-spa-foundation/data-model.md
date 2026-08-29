@@ -53,7 +53,7 @@ V1-контроллер использует их напрямую.
 ### User (Domain)
 
 ```
-App\Domain\User\User                   (существующая доменная модель; без Sanctum-трейта)
+App\Infrastructure\Sanctum\SanctumUser                   (существующая доменная модель; без Sanctum-трейта)
   id            int         PK
   name          string
   email         string      уникальный
@@ -79,7 +79,7 @@ Domain User не импортирует Sanctum и не зависит от Infr
 ```
 personal_access_tokens                  (таблица Sanctum, публикуется через artisan)
   id                bigint    PK
-  tokenable_type    string    "App\Domain\User\User"
+  tokenable_type    string    "App\Infrastructure\Sanctum\SanctumUser"
   tokenable_id      bigint    user.id
   name              string    название токена (напр. "spa-token")
   token             string    SHA-256 хеш токена

@@ -49,7 +49,7 @@ Dedicated security-test tasks (CORS, password leakage, SQL injection, mass assig
 по решению пользователя; функциональные требования и runtime quality gates остаются в scope.
 
 - [X] T007 [P] Настроить серверный срок действия Sanctum-токенов `expiration = 1440` в `config/sanctum.php`
-- [X] T008 [P] Создать Infrastructure auth adapter `SanctumUser` с `HasApiTokens` в `app/Infrastructure/Sanctum/SanctumUser.php`, не добавляя Sanctum-зависимость в `app/Domain/User/User.php`
+- [X] T008 [P] Создать Infrastructure auth adapter `SanctumUser` с `HasApiTokens` в `app/Infrastructure/Sanctum/SanctumUser.php`, не добавляя Sanctum-зависимость в `app/Domain/Auth/User.php`
 - [X] T009 Создать миграцию таблицы `personal_access_tokens` Sanctum в `database/migrations/2026_08_29_000000_create_personal_access_tokens_table.php`
 - [ ] T010 [P] Создать базовый V1 API Resource с single-resource envelope `{data: ...}` в `app/Bridge/Laravel/Http/Resources/Api/V1/AbstractV1Resource.php`
 - [ ] T011 [P] Создать базовый V1 Resource Collection с `data`, `meta.pagination` и `links` в `app/Bridge/Laravel/Http/Resources/Api/V1/AbstractV1Collection.php`
@@ -66,6 +66,7 @@ Dedicated security-test tasks (CORS, password leakage, SQL injection, mass assig
 - [ ] T022 [P] Создать PHPUnit-базовый класс API V1 с `RefreshDatabase`, helper для создания и установки Sanctum Bearer-токена в `Authorization` header и проверками envelope в `tests/Feature/Api/V1/ApiV1TestCase.php`
 - [X] T023 [P] Добавить frontend ESLint 9 flat config с Vue/TypeScript правилами, запретом `any`, `console.log` и `v-html` в `eslint.config.mjs`
 - [X] T024 [P] Добавить Prettier-конфигурацию frontend-кода в `.prettierrc.js`
+- [X] T024a [P] Ограничить CORS разрешёнными origin через `CORS_ALLOWED_ORIGINS`, не используя wildcard в production, в `config/cors.php`
 
 **Checkpoint**: миграции и конфигурация применяются, Vite собирает пустой SPA в `public/spa/`,
 а `/app/*` получает shell без изменения legacy Blade-маршрутов.
