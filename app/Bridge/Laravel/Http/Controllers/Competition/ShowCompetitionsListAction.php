@@ -21,7 +21,7 @@ final class ShowCompetitionsListAction extends BaseController
         CompetitionSearchDto $search,
         ListCompetitionsService $service,
     ): View {
-        $competitions = $service->execute(new ListCompetitions($search));
+        $competitions = $service->execute(new ListCompetitions($search))->setPerPage(100)->items();
 
         /** @see /resources/views/competitions/index.blade.php */
         return $this->view('competitions.index', [

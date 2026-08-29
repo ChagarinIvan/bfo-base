@@ -30,7 +30,7 @@ final class CreateCompetitionActionTest extends TestCase
 
         $this->postJson('/api/v1/competitions', $this->payload())
             ->assertCreated()
-            ->assertJsonPath('data.name', 'New competition')
+            ->assertJsonPath('name', 'New competition')
         ;
     }
 
@@ -46,6 +46,21 @@ final class CreateCompetitionActionTest extends TestCase
             ->assertUnprocessable()
             ->assertJsonPath('errors.0.code', 'validation_error')
             ->assertJsonPath('errors.0.field', 'to')
+        ;
+    }
+
+    #[Test]
+    public function it_rejects_missing_required_fields(): void
+    {
+        Sanctum::actingAs($this->createUser());
+
+        $this->postJson('/api/v1/competitions', [])
+            ->assertUnprocessable()
+            ->assertJsonPath('errors.0.code', 'validation_error')
+            ->assertJsonFragment(['field' => 'name'])
+            ->assertJsonFragment(['field' => 'description'])
+            ->assertJsonFragment(['field' => 'from'])
+            ->assertJsonFragment(['field' => 'to'])
         ;
     }
 

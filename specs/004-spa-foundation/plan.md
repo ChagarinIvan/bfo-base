@@ -63,7 +63,7 @@ Vite и laravel-mix не пересекаются по путям вывода
 | IV. Целевая архитектура важнее скорости | ✅ | Новый код идёт в Bridge, не в легаси |
 | V. Только вперёд | ✅ | Vue 3, Vite 6, PrimeVue 4, TypeScript strict, PHP 8.5 |
 | VI. Импорт вместо FQCN | ✅ | Соблюдать: `use` + короткое имя во всех новых PHP-файлах |
-| N+1 | ✅ | `byCriteria()` — один запрос с year-фильтром; нет eager-loading рисков в Competition |
+| N+1 | ✅ | `paginate()` строит один count-запрос и один ограниченный `LIMIT`-запрос текущей страницы; все записи в память не загружаются |
 | Auth policy | ✅ | Любой валидный Sanctum-токен даёт доступ к созданию; роли и permissions в этой фиче не вводятся |
 | Token lifecycle | ✅ | Sanctum tokens имеют TTL 1440 минут; refresh-token flow отсутствует, после истечения выполняется login заново |
 | Conditional representation | ✅ | Публичный GET остаётся доступным без токена; `created`/`updated` добавляются только при валидном Bearer |
@@ -194,5 +194,5 @@ enviroment/nginx/conf.d/                      ← добавить location /app
 |---|---|---|
 | Sanctum auth adapter в Infrastructure | Laravel Sanctum требует `HasApiTokens` на authenticatable-модели | Адаптер сохраняет Sanctum за границей Domain; auth provider направляется на `Infrastructure\\Sanctum\\SanctumUser` |
 | Vite + laravel-mix сосуществование | Старый фронт работает на laravel-mix; нельзя мигрировать всё сразу | Полный переход на Vite сейчас сломал бы Blade-фронт; разные пути вывода (`public/js` vs `public/spa`) решают конфликт |
-| Пагинация на уровне Bridge | `ListCompetitionsService` возвращает `ViewCompetitionDto[]` без пагинации | Pagination envelope формируется отдельным API adapter-слоем, не Application service и не контроллером |
+| Пагинация отдельным DTO | `CompetitionRepository::paginate()` возвращает Pagerfanta-backed `Slice<Competition>`, service лениво маппит его в DTO | `Pagination` приходит отдельным DTO; `Slice` выставляет page/perPage, а `ApiAction` пишет только `X-Pagination-*` headers |
 | Условные поля DTO на уровне Bridge | Публичный endpoint меняет представление в зависимости от валидного Bearer | `ApiDtoSerializer` применяет группы `public`/`authenticated`; DTO и Domain не зависят от HTTP |

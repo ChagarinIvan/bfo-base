@@ -7,6 +7,7 @@ import App from './App.vue'
 import router from './router'
 import 'primeicons/primeicons.css'
 import { t } from './i18n'
+import './styles.css'
 
 document.title = t('spa.competitions.title')
 

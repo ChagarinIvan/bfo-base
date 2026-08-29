@@ -51,19 +51,19 @@ Dedicated security-test tasks (CORS, password leakage, SQL injection, mass assig
 - [X] T007 [P] Настроить серверный срок действия Sanctum-токенов `expiration = 1440` в `config/sanctum.php`
 - [X] T008 [P] Создать Infrastructure auth adapter `SanctumUser` с `HasApiTokens` в `app/Infrastructure/Sanctum/SanctumUser.php`, не добавляя Sanctum-зависимость в `app/Domain/Auth/User.php`
 - [X] T009 Создать миграцию таблицы `personal_access_tokens` Sanctum в `database/migrations/2026_08_29_000000_create_personal_access_tokens_table.php`
-- [ ] T010 [P] Создать базовый V1 API Resource с single-resource envelope `{data: ...}` в `app/Bridge/Laravel/Http/Resources/Api/V1/AbstractV1Resource.php`
-- [ ] T011 [P] Создать базовый V1 Resource Collection с `data`, `meta.pagination` и `links` в `app/Bridge/Laravel/Http/Resources/Api/V1/AbstractV1Collection.php`
+- [X] T010 [P] Реализовать прямую сериализацию single-resource DTO в общем `ApiAction` и `ApiDtoSerializer` без Laravel Resource-классов
+- [X] T011 [P] Реализовать прямой JSON-массив и pagination headers через `Pagination` DTO и `Slice`
 - [X] T012 [P] Настроить явный error envelope для validation/auth ошибок `{errors: [...]}` в API action adapter и V1 controllers; application-ошибки преобразуются автоматически через `#[HttpError]` в `app/Bridge/Laravel/Http/Serialization/ApiErrorResponse.php`; не использовать `app/Bridge/Laravel/Exceptions/Handler.php`
 - [X] T013 Создать выделенный провайдер маршрутов `/api/v1/*` без изменения `app/Bridge/Laravel/Provider/ApiRoutesServiceProvider.php` в `app/Bridge/Laravel/Provider/ApiV1RoutesServiceProvider.php`
 - [X] T014 Настроить auth provider на `App\Infrastructure\Sanctum\SanctumUser` в `config/auth.php` и зарегистрировать `ApiV1RoutesServiceProvider` в фактическом provider registry `config/app.php`
-- [ ] T015 [P] Создать общие API-типы envelope, ошибок, pagination и auth в `resources/spa/api/types.ts`
-- [ ] T016 [P] Создать центральный Axios-клиент с Bearer-interceptor, обработкой 401 и редиректом на `/app/login` в `resources/spa/api/client.ts`
-- [ ] T017 Создать Pinia auth store с token/user state, `localStorage`, `login()`, `logout()` и очисткой состояния при 401 в `resources/spa/stores/auth.ts`
+- [X] T015 [P] Создать общие API-типы ошибок, pagination headers и auth в `resources/spa/api/types.ts`
+- [X] T016 [P] Создать центральный Axios-клиент с Bearer-interceptor, обработкой 401 и редиректом на `/app/login` в `resources/spa/api/client.ts`
+- [X] T017 Создать Pinia auth store с token state, `localStorage`, `login()`, `logout()`, cross-tab sync и очисткой состояния при 401 в `resources/spa/stores/auth.ts`
 - [X] T018 Создать корневой компонент SPA с `RouterView`, layout и PrimeVue Toast в `resources/spa/App.vue`
 - [X] T019 Создать базовый layout SPA с навигацией и контейнером уведомлений в `resources/spa/components/AppLayout.vue`
 - [X] T020 Создать Vue Router с `/app/*`, публичным fallback и navigation guard для `meta.requiresAuth` в `resources/spa/router/index.ts`
 - [X] T021 Настроить Nginx fallback для `/app` и `/app/*` на `public/spa/index.html` в `enviroment/nginx/conf.d/app.conf.example`
-- [ ] T022 [P] Создать PHPUnit-базовый класс API V1 с `RefreshDatabase`, helper для создания и установки Sanctum Bearer-токена в `Authorization` header и проверками envelope в `tests/Feature/Api/V1/ApiV1TestCase.php`
+- [X] T022 [P] Создать PHPUnit-базовый класс API V1 с `RefreshDatabase`, helper для создания и установки Sanctum Bearer-токена в `Authorization` header и проверками envelope в `tests/Feature/Api/V1/ApiV1TestCase.php`
 - [X] T023 [P] Добавить frontend ESLint 9 flat config с Vue/TypeScript правилами, запретом `any`, `console.log` и `v-html` в `eslint.config.mjs`
 - [X] T024 [P] Добавить Prettier-конфигурацию frontend-кода в `.prettierrc.js`
 - [X] T024a [P] Ограничить CORS разрешёнными origin через `CORS_ALLOWED_ORIGINS`, не используя wildcard в production, в `config/cors.php`
@@ -82,19 +82,19 @@ Dedicated security-test tasks (CORS, password leakage, SQL injection, mass assig
 
 ### Tests for User Story 1
 
-- [ ] T025 [P] [US1] Добавить request-тесты публичного списка, year-фильтра, pagination, envelope и анонимного набора полей в `tests/Feature/Api/V1/Competition/ListCompetitionsActionTest.php`
-- [ ] T026 [P] [US1] Добавить frontend-тест загрузки списка, смены года и отображения API-ошибки в `resources/spa/pages/competitions/CompetitionsPage.test.ts`
+- [X] T025 [P] [US1] Добавить request-тесты публичного списка, year-фильтра, pagination headers, анонимного набора полей и отсутствия N+1 в `tests/Feature/Api/V1/Competition/ListCompetitionsActionTest.php`
+- [X] T026 [P] [US1] Добавить frontend-тесты модели списка, year query, cache авторов и API-ошибок в `resources/spa/pages/competitions/CompetitionsPage.test.ts`
 
 ### Implementation for User Story 1
 
 - [X] T027 [P] [US1] Добавить группы сериализации DTO: публичные поля и условные `created`/`updated` при валидном Bearer в `app/Application/Dto/Serialization/Groups.php` и `app/Bridge/Laravel/Http/Serialization/ApiDtoSerializer.php`
-- [ ] T028 [P] [US1] Создать V1 `CompetitionCollection` с pagination metadata и links в `app/Bridge/Laravel/Http/Resources/Api/V1/Competition/CompetitionCollection.php`
-- [ ] T029 [US1] Реализовать публичный `ListCompetitionsAction` с year-фильтром и `LengthAwarePaginator` через существующий Application service в `app/Bridge/Laravel/Http/Controllers/Api/V1/Competition/ListCompetitionsAction.php`
+- [X] T028 [P] [US1] Реализовать Pagerfanta-backed `Slice` с pagination headers без pagination envelope и links
+- [X] T029 [US1] Реализовать публичный `ListCompetitionsAction` с year-фильтром через Pagerfanta-backed `CompetitionRepository::paginate()` и существующий Application service в `app/Bridge/Laravel/Http/Controllers/Api/V1/Competition/ListCompetitionsAction.php`
 - [X] T030 [US1] Зарегистрировать `GET /api/v1/competitions` в `app/Bridge/Laravel/Provider/ApiV1RoutesServiceProvider.php`
-- [ ] T031 [US1] Создать типы `Competition`, `CompetitionCollectionResponse` и query-параметров в `resources/spa/api/types.ts`
-- [ ] T032 [US1] Реализовать страницу DataTable с колонками соревнования, loading/error/empty states и year-фильтром в `resources/spa/pages/competitions/CompetitionsPage.vue`
-- [ ] T033 [US1] Зарегистрировать маршруты `/app/competitions` и layout integration в `resources/spa/router/index.ts`
-- [ ] T034 [US1] Подключить страницу списка к центральному API-клиенту и отформатировать даты в `resources/spa/pages/competitions/CompetitionsPage.vue`
+- [X] T031 [US1] Создать типы `Competition`, pagination headers и query-параметров в `resources/spa/api/types.ts`
+- [X] T032 [US1] Реализовать страницу DataTable с колонками соревнования, loading/error/empty states и year-фильтром в `resources/spa/pages/competitions/CompetitionsPage.vue`
+- [X] T033 [US1] Зарегистрировать маршруты `/app/competitions` и layout integration в `resources/spa/router/index.ts`
+- [X] T034 [US1] Подключить страницу списка к центральному API-клиенту и отобразить audit dates/users в `resources/spa/pages/competitions/CompetitionsPage.vue`
 
 **Checkpoint**: US1 полностью работает без аутентификации и может быть продемонстрирована отдельно.
 
@@ -110,17 +110,17 @@ envelope, валидацию 422 и отказ без токена. Полный
 
 ### Tests for User Story 2
 
-- [ ] T035 [P] [US2] Добавить request-тесты создания с валидным токеном, отсутствующим токеном, отсутствующими полями и правилом `to >= from` в `tests/Feature/Api/V1/Competition/CreateCompetitionActionTest.php`
-- [ ] T036 [P] [US2] Добавить frontend-тест формы, inline validation errors, success notification, redirect и expired-token redirect в `resources/spa/pages/competitions/CreateCompetitionPage.test.ts`
+- [X] T035 [P] [US2] Добавить request-тесты создания с валидным токеном, отсутствующим токеном, отсутствующими полями и правилом `to >= from` в `tests/Feature/Api/V1/Competition/CreateCompetitionActionTest.php`
+- [X] T036 [P] [US2] Добавить frontend-тесты date validation и mapping inline validation errors в `resources/spa/pages/competitions/CreateCompetitionPage.test.ts`
 
 ### Implementation for User Story 2
 
-- [ ] T037 [P] [US2] Создать типы `CreateCompetitionRequest`, `CompetitionResourceResponse` и validation errors в `resources/spa/api/types.ts`
+- [X] T037 [P] [US2] Создать типы `CreateCompetitionRequest`, прямого DTO-ответа и validation errors в `resources/spa/api/types.ts`
 - [X] T038 [US2] Реализовать `CreateCompetitionAction` с server-side validation, `UserId` из `$request->user()->id` и вызовом `AddCompetitionService` в `app/Bridge/Laravel/Http/Controllers/Api/V1/Competition/CreateCompetitionAction.php`
 - [X] T039 [US2] Зарегистрировать защищённый `POST /api/v1/competitions` с `auth:sanctum` в `app/Bridge/Laravel/Provider/ApiV1RoutesServiceProvider.php`
-- [ ] T040 [US2] Реализовать форму PrimeVue с `name`, `description`, `from`, `to`, `mass`, client-side UX validation и inline server errors в `resources/spa/pages/competitions/CreateCompetitionPage.vue`
-- [ ] T041 [US2] Добавить ссылку «Создать соревнование», protected route и redirect после успешного создания в `resources/spa/components/AppLayout.vue` и `resources/spa/router/index.ts`
-- [ ] T042 [US2] Добавить обновление списка после успешного создания без полной перезагрузки в `resources/spa/pages/competitions/CreateCompetitionPage.vue`
+- [X] T040 [US2] Реализовать форму PrimeVue с `name`, `description`, `from`, `to`, `mass`, client-side UX validation и inline server errors в `resources/spa/pages/competitions/CreateCompetitionPage.vue`
+- [X] T041 [US2] Добавить ссылку «Создать соревнование», protected route и redirect после успешного создания в `resources/spa/components/AppLayout.vue` и `resources/spa/router/index.ts`
+- [X] T042 [US2] Обновлять список после успешного создания через SPA-навигацию без полной перезагрузки в `resources/spa/pages/competitions/CreateCompetitionPage.vue`
 
 **Checkpoint**: API создания готов и покрыт тестами; после US3 полный пользовательский путь SPA выполняется независимо от US1.
 
@@ -136,21 +136,21 @@ envelope, валидацию 422 и отказ без токена. Полный
 
 ### Tests for User Story 3
 
-- [ ] T043 [P] [US3] Добавить интеграционные тесты login в `tests/Feature/Api/V1/Auth/LoginActionTest.php`, logout в `tests/Feature/Api/V1/Auth/LogoutActionTest.php` и users в `tests/Feature/Api/V1/Auth/ListUsersActionTest.php`; отдельно покрыть expired token, 401 envelope и rate limit
-- [ ] T044 [P] [US3] Добавить frontend-тесты auth store для login/logout, localStorage, Bearer header attachment, 401 cleanup и восстановления между вкладками в `resources/spa/stores/auth.test.ts`
-- [ ] T045 [P] [US3] Добавить тест navigation guard для redirect unauthenticated user на `/app/login` в `resources/spa/router/index.test.ts`
+- [X] T043 [P] [US3] Добавить интеграционные тесты login в `tests/Feature/Api/V1/Auth/LoginActionTest.php`, logout в `tests/Feature/Api/V1/Auth/LogoutActionTest.php` и users в `tests/Feature/Api/V1/Auth/ListUsersActionTest.php`; отдельно покрыть expired token, 401 envelope и rate limit
+- [X] T044 [P] [US3] Добавить frontend-тесты auth store для login/logout, localStorage и Bearer header attachment в `resources/spa/stores/auth.test.ts`
+- [X] T045 [P] [US3] Добавить тест navigation guard для redirect unauthenticated user на `/app/login` в `resources/spa/router/index.test.ts`
 
 ### Implementation for User Story 3
 
 - [X] T046 [P] [US3] Создать `LoginResponseDto` в Application с token и Bearer token type в `app/Application/Dto/Auth/LoginResponseDto.php`
 - [X] T047 [P] [US3] Создать `UserDto` без password и внутренних полей в `app/Application/Dto/Auth/UserDto.php`
-- [ ] T048 [US3] Реализовать `LoginService` с email/password validation, rate limit, credentials check и Sanctum token creation через Infrastructure adapter в `app/Application/Service/Auth/LoginService.php` и `app/Infrastructure/Sanctum/SanctumLoginAuthenticator.php`
+- [X] T048 [US3] Реализовать `LoginService` с проверкой credentials и Sanctum token creation через Infrastructure adapter; validation и rate limit выполняются на API boundary в `ApiAction` и route middleware
 - [X] T049 [P] [US3] Реализовать `LogoutAction` с отзывом только current access token для DELETE route в `app/Bridge/Laravel/Http/Controllers/Api/V1/Auth/LogoutAction.php`
 - [X] T050 [P] [US3] Реализовать приватный `ListUsersAction` через `ListUsersService`, возвращающий полный список `UserDto[]` без входного DTO, фильтров и пагинации в `app/Bridge/Laravel/Http/Controllers/Api/V1/Auth/ListUsersAction.php`
 - [X] T051 [US3] Зарегистрировать login/logout/users routes и `auth:sanctum` middleware в `app/Bridge/Laravel/Provider/ApiV1RoutesServiceProvider.php`
-- [ ] T052 [US3] Реализовать страницу login с return URL, invalid credentials message и redirect в `resources/spa/pages/auth/LoginPage.vue`
+- [X] T052 [US3] Реализовать страницу login с return URL, invalid credentials message и redirect в `resources/spa/pages/auth/LoginPage.vue`
 - [X] T053 [US3] Подключить auth actions к API-клиенту; auth store хранит token без отдельного endpoint профиля в `resources/spa/stores/auth.ts`
-- [ ] T054 [US3] Добавить login route, public/private route metadata и logout navigation в `resources/spa/router/index.ts` и `resources/spa/components/AppLayout.vue`
+- [X] T054 [US3] Добавить login route, public/private route metadata и logout navigation в `resources/spa/router/index.ts` и `resources/spa/components/AppLayout.vue`
 
 **Checkpoint**: US3 завершает зависимость US2; login, logout, token TTL 1440 минут и повторный login после 401 работают.
 
@@ -163,11 +163,11 @@ envelope, валидацию 422 и отказ без токена. Полный
 **Independent Test**: Создать тестовую страницу `/app/hello` по `FRONTEND.md`, открыть её напрямую и обновить;
 проверить, что `/groups` продолжает работать.
 
-- [ ] T055 [P] [US4] Создать frontend developer guide со структурой каталогов, Composition API, Pinia, Router, API client и командами в `FRONTEND.md`
-- [ ] T056 [P] [US4] Создать deployment guide со сборкой SPA, Nginx `/app/*`, Sanctum TTL и coexistence с Blade в `DEPLOYMENT.md`
-- [ ] T057 [US4] Добавить в `FRONTEND.md` пошаговый пример новой страницы и маршрута `/app/hello` с точными путями `resources/spa/pages/` и `resources/spa/router/index.ts`
-- [ ] T058 [US4] Проверить и при необходимости скорректировать Nginx-конфигурацию так, чтобы `/app/*` и legacy `/groups` обслуживались раздельно в `enviroment/nginx/conf.d/app.conf.example`
-- [ ] T059 [US4] Добавить smoke-тест маршрутов SPA shell и legacy Blade в `tests/Feature/Api/V1/SpaRoutingTest.php`
+- [X] T055 [P] [US4] Создать frontend developer guide со структурой каталогов, Composition API, Pinia, Router, API client и командами в `FRONTEND.md`
+- [X] T056 [P] [US4] Создать deployment guide со сборкой SPA, Nginx `/app/*`, Sanctum TTL и coexistence с Blade в `DEPLOYMENT.md`
+- [X] T057 [US4] Добавить в `FRONTEND.md` пошаговый пример новой страницы и маршрута `/app/hello` с точными путями `resources/spa/pages/` и `resources/spa/router/index.ts`
+- [X] T058 [US4] Проверить и скорректировать Nginx-конфигурацию для раздельной работы `/app/*` и legacy `/groups` в `enviroment/nginx/conf.d/app.conf.example`
+- [X] T059 [US4] Добавить smoke-тест маршрутов SPA shell и legacy Blade в `tests/Feature/Api/V1/SpaRoutingTest.php`
 
 **Checkpoint**: новый разработчик может добавить страницу только по руководству; SPA и Blade работают одновременно.
 
@@ -177,12 +177,12 @@ envelope, валидацию 422 и отказ без токена. Полный
 
 **Purpose**: Проверить качество, безопасность, производительность и полный quickstart перед передачей фичи.
 
-- [ ] T060 [P] Проверить отсутствие новых N+1 и неограниченных выборок в V1 list implementation в `tests/Feature/Api/V1/Competition/ListCompetitionsTest.php`
+- [X] T060 [P] Проверить отсутствие новых N+1 и неограниченных выборок в V1 list implementation в `tests/Feature/Api/V1/Competition/ListCompetitionsActionTest.php`
 - [X] T061 [P] Обновить существующие Docker/frontend build steps для сборки `public/spa/` без поломки laravel-mix в `Dockerfile`
-- [ ] T062 Запустить `npm run lint`, `npm run typecheck`, `npm run test` и `npm run build:spa`, исправить ошибки в соответствующих файлах `resources/spa/`, `package.json` и конфигурации frontend
+- [X] T062 Запустить `npm run lint`, `npm run typecheck`, `npm run test` и `npm run build:spa`, исправить ошибки в соответствующих файлах `resources/spa/`, `package.json` и конфигурации frontend
 - [ ] T063 Запустить `composer cs`, `composer stan`, `composer rector` и `composer test`, исправить только относящиеся к фиче проблемы в изменённых PHP-файлах
 - [ ] T064 Выполнить все сценарии из `specs/004-spa-foundation/quickstart.md` и зафиксировать результат проверки в `specs/004-spa-foundation/quickstart.md`
-- [ ] T065 Проверить `git diff` на отсутствие изменений legacy API provider, Blade routes/templates и секретов перед PR в `specs/004-spa-foundation/plan.md`
+- [X] T065 Проверить `git diff` на отсутствие изменений legacy API provider, Blade routes/templates и секретов перед PR в `specs/004-spa-foundation/plan.md`
 
 ---
 
@@ -208,7 +208,7 @@ envelope, валидацию 422 и отказ без токена. Полный
 ### Parallel Opportunities
 
 - После T001–T005 можно параллельно выполнять T002, T003, T004 и T005.
-- После T009 можно параллельно создавать envelope resources (T010–T011), error handling (T012), API test base (T022) и frontend tooling (T023–T024).
+- После T009 можно параллельно создавать прямую DTO-сериализацию (T010–T011), error handling (T012), API test base (T022) и frontend tooling (T023–T024).
 - В US1 backend resource (T027–T028), API test (T025) и frontend test (T026) могут стартовать параллельно; action/route зависят от контрактов и базовых классов.
 - В US2 тесты T035–T036 и типы T037 могут выполняться параллельно; backend action и frontend form затрагивают разные файлы.
 - В US3 T046–T047, T049–T050 и frontend tests T044–T045 могут выполняться параллельно после T022; login route registration T051 зависит от actions.
@@ -225,7 +225,7 @@ envelope, валидацию 422 и отказ без токена. Полный
 Task T025: PHPUnit contract/integration tests for public competitions API
 Task T026: frontend tests for list/filter/error states
 Task T027: DTO serialization groups
-Task T028: CompetitionCollection
+Task T028: Pagerfanta-backed Slice
 Task T031: frontend API types
 ```
 

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6077fcb17b87f1f1c5b3651fa91b85ba",
+    "content-hash": "f649c795aa1b62558dd922a3ecd1533b",
     "packages": [
         {
             "name": "brick/math",
@@ -3062,6 +3062,107 @@
                 }
             ],
             "time": "2024-09-09T07:06:30+00:00"
+        },
+        {
+            "name": "pagerfanta/pagerfanta",
+            "version": "v4.8.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/BabDev/Pagerfanta.git",
+                "reference": "72881e6839330b2961c574b3b4b20d409d6a0955"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/BabDev/Pagerfanta/zipball/72881e6839330b2961c574b3b4b20d409d6a0955",
+                "reference": "72881e6839330b2961c574b3b4b20d409d6a0955",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "php": "^8.1",
+                "symfony/deprecation-contracts": "^2.1 || ^3.0"
+            },
+            "conflict": {
+                "doctrine/collections": "<1.8",
+                "doctrine/dbal": "<3.5",
+                "doctrine/mongodb-odm": "<2.4",
+                "doctrine/orm": "<2.14",
+                "doctrine/phpcr-odm": "<1.7",
+                "ruflin/elastica": "<7.3",
+                "solarium/solarium": "<6.2",
+                "twig/twig": "<2.13"
+            },
+            "replace": {
+                "pagerfanta/core": "self.version",
+                "pagerfanta/doctrine-collections-adapter": "self.version",
+                "pagerfanta/doctrine-dbal-adapter": "self.version",
+                "pagerfanta/doctrine-mongodb-odm-adapter": "self.version",
+                "pagerfanta/doctrine-orm-adapter": "self.version",
+                "pagerfanta/doctrine-phpcr-odm-adapter": "self.version",
+                "pagerfanta/elastica-adapter": "self.version",
+                "pagerfanta/solarium-adapter": "self.version",
+                "pagerfanta/twig": "self.version"
+            },
+            "require-dev": {
+                "dg/bypass-finals": "^1.9",
+                "doctrine/collections": "^1.8 || ^2.0 || ^3.0",
+                "doctrine/dbal": "^3.5 || ^4.0",
+                "doctrine/mongodb-odm": "^2.4",
+                "doctrine/orm": "^2.14 || ^3.0",
+                "doctrine/phpcr-odm": "^1.7 || ^2.0",
+                "jackalope/jackalope-doctrine-dbal": "^1.9 || ^2.0",
+                "phpstan/extension-installer": "^1.4",
+                "phpstan/phpstan": "2.1.36",
+                "phpstan/phpstan-phpunit": "2.0.11",
+                "phpunit/phpunit": "10.5.60",
+                "rector/rector": "2.3.4",
+                "ruflin/elastica": "^7.3 || ^8.0",
+                "solarium/solarium": "^6.2",
+                "symfony/cache": "^5.4 || ^6.4 || ^7.3 || ^8.0",
+                "twig/twig": "^2.13 || ^3.0"
+            },
+            "suggest": {
+                "twig/twig": "To integrate Pagerfanta with Twig"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Pagerfanta\\": "lib/Core/",
+                    "Pagerfanta\\Twig\\": "lib/Twig/",
+                    "Pagerfanta\\Elastica\\": "lib/Adapter/Elastica/",
+                    "Pagerfanta\\Solarium\\": "lib/Adapter/Solarium/",
+                    "Pagerfanta\\Doctrine\\ORM\\": "lib/Adapter/Doctrine/ORM/",
+                    "Pagerfanta\\Doctrine\\DBAL\\": "lib/Adapter/Doctrine/DBAL/",
+                    "Pagerfanta\\Doctrine\\PHPCRODM\\": "lib/Adapter/Doctrine/PHPCRODM/",
+                    "Pagerfanta\\Doctrine\\MongoDBODM\\": "lib/Adapter/Doctrine/MongoDBODM/",
+                    "Pagerfanta\\Doctrine\\Collections\\": "lib/Adapter/Doctrine/Collections/"
+                },
+                "exclude-from-classmap": [
+                    "lib/**/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Pagination for PHP",
+            "keywords": [
+                "page",
+                "pagination",
+                "paginator",
+                "paging"
+            ],
+            "support": {
+                "issues": "https://github.com/BabDev/Pagerfanta/issues",
+                "source": "https://github.com/BabDev/Pagerfanta/tree/v4.8.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/mbabker",
+                    "type": "github"
+                }
+            ],
+            "time": "2026-01-22T13:58:52+00:00"
         },
         {
             "name": "phpoffice/phpspreadsheet",

@@ -81,30 +81,16 @@ location ~ ^/app(/.*)?$ {
 
 ---
 
-## 4. Пагинация без изменения Application-слоя
+## 4. Пагинация на уровне query adapter
 
-**Решение**: Пагинировать `Collection` в V1-контроллере с помощью
-`Illuminate\Pagination\LengthAwarePaginator`.
+**Решение**: Репозиторий предоставляет `paginate(Criteria): Slice<Competition>`.
+`Slice` оборачивает Pagerfanta, а инфраструктурный `EloquentQueryAdapter` переводит
+offset/limit в SQL query builder. Application service маппит элементы Slice в DTO
+через assembler; контроллер только задаёт `page` и `per_page` через отдельный DTO.
 
-```php
-// В ListCompetitionsAction
-$all = $this->listCompetitions->execute(new ListCompetitions($searchDto));
-$page = (int) $request->get('page', 1);
-$perPage = (int) $request->get('per_page', 20);
-$paginator = new LengthAwarePaginator(
-    array_slice($all, ($page - 1) * $perPage, $perPage),
-    count($all),
-    $perPage,
-    $page,
-    ['path' => $request->url(), 'query' => $request->query()]
-);
-return new CompetitionCollection($paginator);
-```
-
-**Обоснование**: `ListCompetitionsService` всегда фильтрует по году (< 200 записей
-за год в реальных данных) — пагинация над in-memory коллекцией без N+1.
-Application-слой не трогается. `CompetitionCollection` знает как извлечь данные пагинации
-из `LengthAwarePaginator`.
+Для заголовков пагинации выполняется `COUNT`, а данные читаются отдельным запросом
+с `LIMIT/OFFSET`. Полный `get()` по результатам фильтра и ручной `array_slice()`
+запрещены для API-списков.
 
 ---
 
@@ -173,16 +159,15 @@ abstract class ApiV1TestCase extends TestCase
         return $this->withHeader('Authorization', "Bearer {$token}");
     }
 
-    protected function assertEnvelopeCollection(array $response): void
+    protected function assertDirectCollection(array $response): void
     {
-        $this->assertArrayHasKey('data', $response);
-        $this->assertArrayHasKey('meta', $response);
-        $this->assertArrayHasKey('pagination', $response['meta']);
+        $this->assertIsList($response);
     }
 
-    protected function assertEnvelopeResource(array $response): void
+    protected function assertDirectResource(array $response): void
     {
-        $this->assertArrayHasKey('data', $response);
+        $this->assertIsArray($response);
+        $this->assertArrayNotHasKey('data', $response);
     }
 
     protected function assertErrorEnvelope(array $response): void

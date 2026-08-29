@@ -25,21 +25,39 @@ async function logout(): Promise<void> {
 
 <template>
     <header class="app-header">
-        <nav>
-            <RouterLink to="/app/competitions">{{
-                t('spa.nav.competitions')
+        <nav class="app-navbar">
+            <RouterLink class="app-brand" to="/app/competitions">{{
+                t('spa.nav.brand')
             }}</RouterLink>
-            <RouterLink
-                v-if="auth.isAuthenticated"
-                to="/app/competitions/create"
-                >{{ t('spa.nav.create') }}</RouterLink
-            >
-            <RouterLink v-if="!auth.isAuthenticated" to="/app/login">{{
-                t('spa.nav.login')
-            }}</RouterLink>
-            <button v-else type="button" @click="logout">
-                {{ t('spa.nav.logout') }}
-            </button>
+            <div class="app-nav-links">
+                <RouterLink class="app-nav-link" to="/app/competitions">
+                    <i class="pi pi-trophy" /> {{ t('spa.nav.competitions') }}
+                </RouterLink>
+                <RouterLink
+                    v-if="auth.isAuthenticated"
+                    class="app-nav-link"
+                    to="/app/competitions/create"
+                >
+                    <i class="pi pi-plus" /> {{ t('spa.nav.create') }}
+                </RouterLink>
+            </div>
+            <div class="app-nav-auth">
+                <RouterLink
+                    v-if="!auth.isAuthenticated"
+                    class="app-nav-link app-login-link"
+                    to="/app/login"
+                >
+                    <i class="pi pi-sign-in" /> {{ t('spa.nav.login') }}
+                </RouterLink>
+                <button
+                    v-else
+                    class="app-logout-button"
+                    type="button"
+                    @click="logout"
+                >
+                    <i class="pi pi-sign-out" /> {{ t('spa.nav.logout') }}
+                </button>
+            </div>
         </nav>
     </header>
     <main class="app-container">

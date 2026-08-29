@@ -199,25 +199,12 @@ interface CreateCompetitionForm {
 }
 ```
 
-### ApiPagination
+### Pagination headers
 
-```typescript
-interface ApiPagination {
-  total: number
-  per_page: number
-  current_page: number
-  last_page: number
-}
-
-interface ApiCollectionResponse<T> {
-  data: T[]
-  meta: { pagination: ApiPagination }
-  links: { first: string; last: string; prev: string | null; next: string | null }
-}
-
-interface ApiResourceResponse<T> {
-  data: T
-}
+Коллекции сериализуются как прямой JSON-массив. Информация о странице передаётся
+только headers `X-Pagination-Total`, `X-Pagination-Per-Page`,
+`X-Pagination-Current-Page`, `X-Pagination-Last-Page`; `data`, `meta` и links
+в body отсутствуют.
 
 interface ApiError {
   code: string

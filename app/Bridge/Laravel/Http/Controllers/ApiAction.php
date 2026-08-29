@@ -7,9 +7,9 @@ namespace App\Bridge\Laravel\Http\Controllers;
 use App\Application\Dto\AbstractDto;
 use App\Application\Dto\Auth\UserId;
 use App\Application\Exception\ApplicationException;
-use App\Bridge\Laravel\Http\Controllers\ResponseStatus;
 use App\Bridge\Laravel\Http\Serialization\ApiDtoSerializer;
 use App\Bridge\Laravel\Http\Serialization\ApiErrorResponse;
+use App\Domain\Shared\Pagination\Slice;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Factory as Validator;
@@ -78,10 +78,22 @@ trait ApiAction
         }
 
         $status = new ReflectionClass($this)->getAttributes(ResponseStatus::class);
-
-        return response()->json(['data' => $this->serializer->serialize(
+        $serialized = $this->serializer->serialize(
             $result,
             $this->request->user() ? 'authenticated' : 'public',
-        )], $status === [] ? Response::HTTP_OK : $status[0]->newInstance()->status);
+        );
+
+        $response = response()->json(
+            $serialized,
+            $status === [] ? Response::HTTP_OK : $status[0]->newInstance()->status,
+        );
+
+        if ($result instanceof Slice) {
+            foreach ($result->paginationHeaders() as $header => $value) {
+                $response->header($header, (string) $value);
+            }
+        }
+
+        return $response;
     }
 }

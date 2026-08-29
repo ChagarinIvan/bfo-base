@@ -7,7 +7,7 @@ namespace App\Application\Service\Competition;
 use App\Application\Dto\Competition\CompetitionAssembler;
 use App\Application\Dto\Competition\ViewCompetitionDto;
 use App\Domain\Competition\CompetitionRepository;
-use function array_map;
+use App\Domain\Shared\Pagination\Slice;
 
 final readonly class ListCompetitionsService
 {
@@ -17,12 +17,12 @@ final readonly class ListCompetitionsService
     ) {
     }
 
-    /** @return ViewCompetitionDto[] */
-    public function execute(ListCompetitions $command): array
+    /** @return Slice<ViewCompetitionDto> */
+    public function execute(ListCompetitions $command): Slice
     {
-        return array_map(
-            $this->assembler->toViewCompetitionDto(...),
-            $this->competitions->byCriteria($command->criteria())->all()
-        );
+        return $this->competitions
+            ->paginate($command->criteria())
+            ->map($this->assembler->toViewCompetitionDto(...))
+        ;
     }
 }

@@ -3,6 +3,10 @@ import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '../../stores/auth'
 import { t } from '../../i18n'
+import Button from 'primevue/button'
+import Card from 'primevue/card'
+import InputText from 'primevue/inputtext'
+import Message from 'primevue/message'
 
 const email = ref('')
 const password = ref('')
@@ -23,21 +27,35 @@ async function submit(): Promise<void> {
 </script>
 
 <template>
-    <h1>{{ t('spa.login.title') }}</h1>
-    <form @submit.prevent="submit">
-        <input
-            v-model="email"
-            type="email"
-            required
-            :placeholder="t('spa.login.email')"
-        />
-        <input
-            v-model="password"
-            type="password"
-            required
-            :placeholder="t('spa.login.password')"
-        />
-        <button type="submit">{{ t('spa.login.submit') }}</button>
-        <p v-if="error">{{ error }}</p>
-    </form>
+    <Card class="form-card auth-card">
+        <template #title>{{ t('spa.login.title') }}</template>
+        <template #content>
+            <form class="spa-form" @submit.prevent="submit">
+                <div class="form-field">
+                    <label for="login-email">{{ t('spa.login.email') }}</label>
+                    <InputText
+                        id="login-email"
+                        v-model="email"
+                        type="email"
+                        required
+                    />
+                </div>
+                <div class="form-field">
+                    <label for="login-password">{{
+                        t('spa.login.password')
+                    }}</label>
+                    <InputText
+                        id="login-password"
+                        v-model="password"
+                        type="password"
+                        required
+                    />
+                </div>
+                <Button type="submit" :label="t('spa.login.submit')" />
+                <Message v-if="error" severity="error" :closable="false">{{
+                    error
+                }}</Message>
+            </form>
+        </template>
+    </Card>
 </template>

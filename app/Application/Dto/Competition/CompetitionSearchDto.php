@@ -16,8 +16,9 @@ final class CompetitionSearchDto extends AbstractDto
             'year' => [new Enum(Year::class)],
         ];
     }
-    public function __construct(public ?string $year = null)
-    {
+    public function __construct(
+        public ?string $year = null,
+    ) {
     }
 
     public function fromArray(array $data): self

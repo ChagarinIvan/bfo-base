@@ -21,13 +21,16 @@ export interface Competition {
     updated?: Impression
 }
 
-export interface ApiResponse<T> {
-    data: T
-}
-
 export interface AuthToken {
     token: string
     token_type: string
+}
+
+export interface PaginationHeaders {
+    currentPage: number
+    perPage: number
+    total: number
+    lastPage: number
 }
 
 export interface CreateCompetitionRequest {
@@ -36,6 +39,12 @@ export interface CreateCompetitionRequest {
     from: string
     to: string
     mass: boolean
+}
+
+export interface CompetitionQuery {
+    year?: number
+    page?: number
+    per_page?: number
 }
 
 export interface ApiErrorItem {

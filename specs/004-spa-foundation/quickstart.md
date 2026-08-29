@@ -26,20 +26,20 @@ curl -s http://localhost:8000/api/v1/competitions | jq .
 
 **Ожидаемый результат**:
 - HTTP 200
-- Тело: `{ "data": [...], "meta": { "pagination": {...} }, "links": {...} }`
+- Тело: прямой JSON-массив DTO без `data`, `meta` и `links`
 - Поля каждого соревнования: `id`, `name`, `description`, `from`, `to`, `year`, `mass`
-- `meta.pagination` содержит: `total`, `per_page`, `current_page`, `last_page`
+- Headers содержат `X-Pagination-Total`, `X-Pagination-Per-Page`, `X-Pagination-Current-Page`, `X-Pagination-Last-Page`
 
 ```bash
 # Фильтр по году
-curl -s "http://localhost:8000/api/v1/competitions?year=2025" | jq '.data | length'
+curl -s "http://localhost:8000/api/v1/competitions?year=2025" | jq 'length'
 ```
 
 **Ожидается**: число > 0 (если есть данные за 2025) или пустой массив
 
 ---
 
-## Сценарий 2: Аутентификация (login → me → logout)
+## Сценарий 2: Аутентификация (login → users → logout)
 
 **Проверяет**: FR-008, FR-009, FR-010, FR-011, SC-006
 
@@ -182,9 +182,9 @@ composer test
 ```
 
 **Ожидается**: все тесты зелёные; в V1-тестах покрыты:
-- `AuthTest`: login (200), login с неверными данными (401), me (200), me без токена (401), logout (204), повторный запрос после logout (401)
-- `ListCompetitionsTest`: список (200 + envelope), фильтр по году, пагинация
-- `CreateCompetitionTest`: создание (201 + envelope), без токена (401), валидационные ошибки (422)
+- `LoginActionTest`, `LogoutActionTest`, `ListUsersActionTest`: login (200), login с неверными данными (401), users (200), users без токена (401), logout (204), повторный запрос после logout (401)
+- `ListCompetitionsTest`: список (200 + прямой массив DTO), фильтр по году, пагинация в headers
+- `CreateCompetitionTest`: создание (201 + прямой DTO), без токена (401), валидационные ошибки (422)
 
 ---
 

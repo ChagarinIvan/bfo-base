@@ -24,8 +24,8 @@ final class LoginActionTest extends TestCase
 
         $this->postJson('/api/v1/auth/login', ['email' => 'user@example.com', 'password' => 'secret'])
             ->assertOk()
-            ->assertJsonPath('data.token_type', 'Bearer')
-            ->assertJsonPath('data.token', static fn (mixed $token): bool => is_string($token) && $token !== '')
+            ->assertJsonPath('token_type', 'Bearer')
+            ->assertJsonPath('token', static fn (mixed $token): bool => is_string($token) && $token !== '')
         ;
     }
 
@@ -47,6 +47,38 @@ final class LoginActionTest extends TestCase
             ->assertUnauthorized()
             ->assertJsonPath('errors.0.code', 'invalid_credentials')
         ;
+    }
+
+    #[Test]
+    public function an_expired_token_is_rejected(): void
+    {
+        $user = $this->createUser();
+        $token = $user->createToken('expired-token');
+        $token->accessToken->forceFill(['expires_at' => now()->subMinute()])->save();
+
+        $this->withToken($token->plainTextToken)
+            ->getJson('/api/v1/users')
+            ->assertUnauthorized()
+            ->assertJsonPath('errors.0.code', 'unauthenticated')
+        ;
+    }
+
+    #[Test]
+    public function login_is_rate_limited(): void
+    {
+        $this->createUser();
+
+        for ($attempt = 0; $attempt < 10; $attempt++) {
+            $this->postJson('/api/v1/auth/login', [
+                'email' => 'user@example.com',
+                'password' => 'secret',
+            ])->assertOk();
+        }
+
+        $this->postJson('/api/v1/auth/login', [
+            'email' => 'user@example.com',
+            'password' => 'secret',
+        ])->assertTooManyRequests();
     }
 
     private function createUser(): SanctumUser

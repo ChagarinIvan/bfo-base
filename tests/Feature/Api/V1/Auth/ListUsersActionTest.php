@@ -26,10 +26,10 @@ final class ListUsersActionTest extends TestCase
 
         $this->getJson('/api/v1/users')
             ->assertOk()
-            ->assertJsonCount(2, 'data')
+            ->assertJsonCount(2)
             ->assertJsonFragment(['id' => $user->id, 'email' => $user->email])
             ->assertJsonFragment(['id' => $otherUser->id, 'email' => $otherUser->email])
-            ->assertJsonMissingPath('data.0.password')
+            ->assertJsonMissingPath('0.password')
         ;
     }
 

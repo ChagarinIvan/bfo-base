@@ -1,8 +1,9 @@
 import { defineStore } from 'pinia'
 import { api, setBearerToken, setUnauthorizedHandler } from '../api/client'
-import type { ApiResponse, AuthToken } from '../api/types'
+import type { AuthToken } from '../api/types'
 
 const tokenKey = 'auth_token'
+let storageListenerRegistered = false
 
 export const useAuthStore = defineStore('auth', {
     state: () => ({
@@ -13,11 +14,11 @@ export const useAuthStore = defineStore('auth', {
 
     actions: {
         async login(email: string, password: string): Promise<void> {
-            const response = await api.post<ApiResponse<AuthToken>>(
-                '/auth/login',
-                { email, password },
-            )
-            this.token = response.data.data.token
+            const response = await api.post<AuthToken>('/auth/login', {
+                email,
+                password,
+            })
+            this.token = response.data.token
             localStorage.setItem(tokenKey, this.token)
             setBearerToken(this.token)
         },
@@ -38,6 +39,17 @@ export const useAuthStore = defineStore('auth', {
                 localStorage.removeItem(tokenKey)
             })
             setBearerToken(this.token)
+
+            if (!storageListenerRegistered && typeof window !== 'undefined') {
+                window.addEventListener('storage', (event) => {
+                    if (event.key !== tokenKey) return
+
+                    this.token = event.newValue
+                    setBearerToken(this.token)
+                })
+                storageListenerRegistered = true
+            }
+
             if (!this.token) return
         },
     },
