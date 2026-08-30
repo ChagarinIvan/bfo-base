@@ -88,5 +88,6 @@ final class UpdateCompetitionInfoServiceTest extends TestCase
         $this->assertSame('2023-02-02', $competition->from);
         $this->assertSame('2023-02-03', $competition->to);
         $this->assertSame('2023-04-01T00:00:00+00:00', $competition->updated->at);
+        $this->assertSame('1', $competition->updated->by);
     }
 }

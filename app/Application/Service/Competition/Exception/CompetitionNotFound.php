@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Application\Service\Competition\Exception;
 
-use RuntimeException;
+use App\Application\Exception\ApplicationException;
+use App\Application\Exception\HttpError;
 
-final class CompetitionNotFound extends RuntimeException
+#[HttpError(status: 404, code: 'not_found')]
+final class CompetitionNotFound extends ApplicationException
 {
 }

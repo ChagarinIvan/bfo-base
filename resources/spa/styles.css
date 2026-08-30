@@ -23,7 +23,11 @@ body {
     align-items: center;
     min-height: 4.25rem;
     padding: 0 1.5rem;
-    background: linear-gradient(135deg, var(--spa-primary), var(--spa-primary-light));
+    background: linear-gradient(
+        135deg,
+        var(--spa-primary),
+        var(--spa-primary-light)
+    );
 }
 
 .app-brand {
@@ -56,6 +60,57 @@ body {
     margin-left: auto;
 }
 
+.app-nav-menu {
+    position: relative;
+}
+
+.app-nav-menu > summary {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    list-style: none;
+    cursor: pointer;
+}
+
+.app-nav-menu > summary::-webkit-details-marker {
+    display: none;
+}
+
+.app-nav-menu[open] > .app-nav-link {
+    background: rgb(255 255 255 / 14%);
+    color: #fff;
+}
+
+.app-nav-menu-chevron {
+    font-size: 0.75rem;
+}
+
+.app-nav-dropdown {
+    position: absolute;
+    top: calc(100% + 0.35rem);
+    left: 0;
+    z-index: 1;
+    display: grid;
+    min-width: 12rem;
+    overflow: hidden;
+    border: 1px solid rgb(33 37 41 / 12%);
+    border-radius: 0.35rem;
+    background: #fff;
+    box-shadow: 0 0.35rem 0.9rem rgb(0 0 0 / 20%);
+}
+
+.app-nav-dropdown-link {
+    padding: 0.65rem 0.85rem;
+    color: #212529;
+    text-decoration: none;
+}
+
+.app-nav-dropdown-link:hover,
+.app-nav-dropdown-link.router-link-active {
+    background: #e9ecef;
+    color: #212529;
+}
+
 .app-nav-link,
 .app-logout-button {
     border: 0;
@@ -65,7 +120,9 @@ body {
     color: rgb(255 255 255 / 82%);
     font: inherit;
     text-decoration: none;
-    transition: background-color 0.15s ease, color 0.15s ease;
+    transition:
+        background-color 0.15s ease,
+        color 0.15s ease;
 }
 
 .app-nav-link:hover,
@@ -102,20 +159,35 @@ body {
     color: #6c757d;
 }
 
+.filter-card,
+.competition-details-card,
+.form-card {
+    box-shadow: 0 0.25rem 0.75rem rgb(33 37 41 / 7%);
+}
+
 .filter-card {
     margin-bottom: 1.25rem;
     border: 1px solid rgb(33 37 41 / 10%);
-    box-shadow: 0 0.25rem 0.75rem rgb(33 37 41 / 7%);
 }
 
 .filter-panel {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 0.75rem;
 }
 
-.filter-panel label {
+.filter-field {
+    display: grid;
+    min-width: 12rem;
+    gap: 0.35rem;
+}
+
+.filter-field label {
     font-weight: 600;
+}
+
+.filter-hint {
+    color: #b45309;
 }
 
 .competitions-table {
@@ -127,6 +199,37 @@ body {
 .competitions-paginator {
     margin-top: 1rem;
     border-radius: 0.5rem;
+}
+
+.back-button {
+    margin-bottom: 1rem;
+}
+
+.competition-details-card {
+    margin-bottom: 1.5rem;
+}
+
+.competition-details-dates {
+    margin-top: 0;
+    color: #6c757d;
+    font-weight: 600;
+}
+
+.section-title {
+    margin: 0 0 0.75rem;
+    font-size: 1.35rem;
+}
+
+.events-table {
+    overflow: hidden;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.25rem 0.75rem rgb(33 37 41 / 7%);
+}
+
+.competition-action-menu {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
 }
 
 .mass-icon {
@@ -199,7 +302,6 @@ body {
 .form-card {
     max-width: 760px;
     margin: 0 auto;
-    box-shadow: 0 0.25rem 0.75rem rgb(33 37 41 / 7%);
 }
 
 .auth-card {
@@ -257,13 +359,37 @@ body {
     .app-nav-auth {
         order: 3;
         width: 100%;
+        flex-wrap: wrap;
     }
 
     .app-nav-auth {
         justify-content: flex-end;
     }
 
+    .app-nav-menu {
+        flex: 1 1 auto;
+    }
+
+    .app-nav-menu > summary {
+        justify-content: center;
+    }
+
+    .app-nav-dropdown {
+        position: static;
+        margin-top: 0.2rem;
+        box-shadow: none;
+    }
+
     .form-grid {
         grid-template-columns: 1fr;
+    }
+
+    .filter-panel {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filter-field {
+        min-width: 0;
     }
 }

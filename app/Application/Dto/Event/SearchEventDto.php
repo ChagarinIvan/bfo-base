@@ -6,17 +6,18 @@ namespace App\Application\Dto\Event;
 
 use App\Application\Dto\AbstractDto;
 
-final class EventSearchDto extends AbstractDto
+final class SearchEventDto extends AbstractDto
 {
     public static function requestValidationRules(): array
     {
         return [
-            'competitionId' => 'numeric',
-            'year' => 'numeric|digits:4',
-            'flagId' => 'numeric',
-            'notRelatedToCup' => 'numeric',
+            'competitionId' => 'required|integer|min:1',
+            'year' => 'nullable|numeric|digits:4',
+            'flagId' => 'nullable|numeric',
+            'notRelatedToCup' => 'nullable|numeric',
         ];
     }
+
     public function __construct(
         public ?string $competitionId = null,
         public ?string $flagId = null,
@@ -30,7 +31,7 @@ final class EventSearchDto extends AbstractDto
         $this->setStringParam('competitionId', $data);
         $this->setStringParam('flagId', $data);
         $this->setStringParam('year', $data);
-        $this->notRelatedToCup = $data['notRelatedToCup'] ?? null;
+        $this->setStringParam('notRelatedToCup', $data);
 
         return $this;
     }

@@ -28,6 +28,12 @@ describe('impression model', () => {
         ).toBe('ivan@example.com')
     })
 
+    it('falls back to the supplied unknown-user label', () => {
+        expect(impressionUserLabel(impression, [], 'Карыстальнік №7')).toBe(
+            'Карыстальнік №7',
+        )
+    })
+
     it('formats short and full audit dates', () => {
         expect(formatImpressionDate(impression.at)).toContain('2026')
         expect(formatImpressionFullDate(impression.at)).toContain('2026')

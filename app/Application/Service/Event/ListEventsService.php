@@ -7,7 +7,7 @@ namespace App\Application\Service\Event;
 use App\Application\Dto\Event\EventAssembler;
 use App\Application\Dto\Event\ViewEventDto;
 use App\Domain\Event\EventRepository;
-use function array_map;
+use App\Domain\Shared\Pagination\Slice;
 
 final readonly class ListEventsService
 {
@@ -17,12 +17,12 @@ final readonly class ListEventsService
     ) {
     }
 
-    /** @return ViewEventDto[] */
-    public function execute(ListEvents $command): array
+    /** @return Slice<ViewEventDto> */
+    public function execute(ListEvents $command): Slice
     {
-        return array_map(
-            $this->assembler->toViewEventDto(...),
-            $this->events->byCriteria($command->criteria())->all(),
-        );
+        return $this->events
+            ->paginate($command->criteria())
+            ->map($this->assembler->toViewEventDto(...))
+        ;
     }
 }

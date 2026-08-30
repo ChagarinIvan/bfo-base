@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Service\Event;
 
 use App\Application\Dto\Event\EventAssembler;
-use App\Application\Dto\Event\ViewEventDto;
+use App\Application\Dto\Event\LegacyViewEventDto;
 use App\Application\Service\Event\Exception\EventNotFound;
 use App\Domain\Auth\Impression;
 use App\Domain\Event\EventRepository;
@@ -25,15 +25,15 @@ final readonly class UpdateEventService
     }
 
     /** @throws EventNotFound */
-    public function execute(UpdateEvent $command): ViewEventDto
+    public function execute(UpdateEvent $command): LegacyViewEventDto
     {
-        return $this->transactional->run(function () use ($command): ViewEventDto {
+        return $this->transactional->run(function () use ($command): LegacyViewEventDto {
             $event = $this->events->lockById($command->id()) ?? throw new EventNotFound;
             $impression = new Impression($this->clock->now(), $command->userId());
             $event->updateData($this->protocolUpdater, $command->input(), $impression);
             $this->events->update($event);
 
-            return $this->assembler->toViewEventDto($event);
+            return $this->assembler->toLegacyViewEventDto($event);
         });
     }
 }

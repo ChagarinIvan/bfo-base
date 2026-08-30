@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Bridge\Laravel\Http\Controllers\Event;
 
 use App\Application\Dto\Club\ClubSearchDto;
-use App\Application\Dto\Event\ViewEventDto;
+use App\Application\Dto\Event\LegacyViewEventDto;
 use App\Application\Dto\Person\PersonSearchDto;
 use App\Application\Service\Club\ListClubs;
 use App\Application\Service\Club\ListClubsService;
@@ -25,9 +25,9 @@ use function array_column;
 trait RendersEventDistance
 {
     protected function renderEventDistance(
-        ViewEventDto $event,
-        Distance $distance,
-        ListClubsService $clubsService,
+        LegacyViewEventDto $event,
+        Distance           $distance,
+        ListClubsService   $clubsService,
         ListPersonsService $personsService,
     ): View {
         $protocolLines = $distance->protocolLines;

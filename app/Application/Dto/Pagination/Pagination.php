@@ -12,7 +12,7 @@ final class Pagination extends AbstractDto
     {
         return [
             'page' => ['integer', 'min:1'],
-            'per_page' => ['integer', 'min:1', 'max:100'],
+            'perPage' => ['integer', 'min:1', 'max:100'],
         ];
     }
     public function __construct(
@@ -27,7 +27,7 @@ final class Pagination extends AbstractDto
     {
         return new self(
             page: (int) ($data['page'] ?? $this->page),
-            perPage: (int) ($data['per_page'] ?? $this->perPage),
+            perPage: (int) ($data['perPage'] ?? $this->perPage),
         );
     }
 }

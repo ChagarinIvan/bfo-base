@@ -20,6 +20,14 @@ abstract class AbstractDto
         return [];
     }
 
+    /** @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
+    public static function normaliseRequestData(array $data): array
+    {
+        return $data;
+    }
+
     /** @param array<string, mixed> $data */
     abstract public function fromArray(array $data): self;
 

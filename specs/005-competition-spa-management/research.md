@@ -28,9 +28,9 @@ Eloquent могут сохранить свои существующие име�
 
 ## Этапы без N+1
 
-**Решение**: переименовать существующий `EventSearchDto` в `SearchEventDto`, передать его через существующий `ListEvents` command в `ListEventsService` и добавить в этот service отдельный `executeForApi()` read-path. Он формирует компактный `ViewEventListDto` через существующий `EventAssembler`. В текущую V1-проекцию не входят flags и cups; число участников добавляется одним relation count в основном запросе.
+**Решение**: переименовать существующий `EventSearchDto` в `SearchEventDto` и прежний Blade service в `ListLegacyEventsService`. Новый `ListEventsService` получает тот же `ListEvents` command, возвращает `Slice<ViewEventDto>` и использует `EventRepository::paginate()`. В текущую V1-проекцию не входят flags и cups; число участников добавляется одним relation count в основном запросе.
 
-**Обоснование**: существующий полный `ViewEventDto` содержит доменные объекты и избыточные данные, но нужен Blade. Отдельный view DTO не раскрывает модель в V1 API, а расширение существующих command/service сохраняет поток 004 и позволяет тестировать фиксированное число запросов.
+**Обоснование**: существующий полный `LegacyViewEventDto` содержит доменные объекты и избыточные данные, но нужен Blade. Отдельный view DTO не раскрывает модель в V1 API, а расширение существующих command/service сохраняет поток 004 и позволяет тестировать фиксированное число запросов.
 
 **Альтернативы**: прямая сериализация Event нарушает границы и вызывает lazy loading; вызов Blade action не даёт SPA JSON/loading/error states.
 

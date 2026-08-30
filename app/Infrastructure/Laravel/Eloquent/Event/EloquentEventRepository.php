@@ -7,6 +7,8 @@ namespace App\Infrastructure\Laravel\Eloquent\Event;
 use App\Domain\Event\Event;
 use App\Domain\Event\EventRepository;
 use App\Domain\Shared\Criteria;
+use App\Domain\Shared\Pagination\Slice;
+use App\Infrastructure\Laravel\Eloquent\Pagination\EloquentQueryAdapter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
@@ -39,6 +41,14 @@ final class EloquentEventRepository implements EventRepository
         return $this->buildQuery($criteria)->get();
     }
 
+    /** @return Slice<Event> */
+    public function paginate(Criteria $criteria): Slice
+    {
+        return new Slice(new EloquentQueryAdapter(
+            $this->buildQuery($criteria)->withCount('protocolLines'),
+        ));
+    }
+
     public function oneByCriteria(Criteria $criteria): ?Event
     {
         /** @var Event|null $event */
@@ -47,9 +57,13 @@ final class EloquentEventRepository implements EventRepository
         return $event;
     }
 
+    /** @return Builder<Event> */
     private function buildQuery(Criteria $criteria): Builder
     {
-        $query = Event::select('events.*')->distinct()->where('events.active', true);
+        $query = Event::select('events.*')
+            ->distinct()
+            ->where('events.active', true)
+        ;
 
         if ($criteria->hasParam('year')) {
             $query->where('events.date', 'LIKE', "{$criteria->param('year')}-%");

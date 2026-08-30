@@ -14,9 +14,9 @@ final readonly class EventAssembler
     {
     }
 
-    public function toViewEventDto(Event $event): ViewEventDto
+    public function toLegacyViewEventDto(Event $event): LegacyViewEventDto
     {
-        return new ViewEventDto(
+        return new LegacyViewEventDto(
             id: (string) $event->id,
             competitionId: (string) $event->competition_id,
             name: $event->name,
@@ -30,6 +30,20 @@ final readonly class EventAssembler
             distances: $event->distances->all(),
             created: $this->authAssembler->toImpressionDto($event->created),
             updated: $this->authAssembler->toImpressionDto($event->updated)
+        );
+    }
+
+    public function toViewEventDto(Event $event): ViewEventDto
+    {
+        return new ViewEventDto(
+            id: (string) $event->id,
+            competitionId: (string) $event->competition_id,
+            name: $event->name,
+            description: $event->description,
+            date: $event->date->format('Y-m-d'),
+            participantsCount: (int) $event->getAttribute('protocol_lines_count'),
+            created: $this->authAssembler->toImpressionDto($event->created),
+            updated: $this->authAssembler->toImpressionDto($event->updated),
         );
     }
 

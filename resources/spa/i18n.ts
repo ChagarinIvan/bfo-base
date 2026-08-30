@@ -1,6 +1,6 @@
 import translations from '../../resources/lang/by.json'
 
-type TranslationKey = keyof typeof translations
+export type TranslationKey = keyof typeof translations
 
 export function t(
     key: TranslationKey,

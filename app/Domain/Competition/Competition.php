@@ -30,7 +30,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 #[Table(name: 'competitions')]
 class Competition extends AggregatedModel
 {
-    /** @see CompetitionFactory */
+    /** @use HasFactory<CompetitionFactory> */
     use HasFactory;
 
     public function updateInfo(CompetitionInfo $info, Impression $impression): void

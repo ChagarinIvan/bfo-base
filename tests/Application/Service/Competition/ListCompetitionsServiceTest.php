@@ -6,7 +6,7 @@ namespace Tests\Application\Service\Competition;
 
 use App\Application\Dto\Auth\AuthAssembler;
 use App\Application\Dto\Competition\CompetitionAssembler;
-use App\Application\Dto\Competition\CompetitionSearchDto;
+use App\Application\Dto\Competition\SearchCompetitionDto;
 use App\Application\Service\Competition\ListCompetitions;
 use App\Application\Service\Competition\ListCompetitionsService;
 use App\Domain\Competition\Competition;
@@ -47,7 +47,7 @@ final class ListCompetitionsServiceTest extends TestCase
             ->willReturn(new Slice(new ArrayAdapter($competitions)))
         ;
 
-        $dto = new CompetitionSearchDto('2021');
+        $dto = new SearchCompetitionDto('2021');
 
         $command = new ListCompetitions($dto);
         $result = $this->service->execute($command);

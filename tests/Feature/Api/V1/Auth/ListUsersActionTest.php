@@ -20,14 +20,18 @@ final class ListUsersActionTest extends TestCase
     #[Test]
     public function it_returns_all_users_without_passwords(): void
     {
-        $user = $this->createUser('user@example.com');
+        $user = $this->createUser('user@example.com', 'First user');
         $otherUser = $this->createUser('other@example.com');
         Sanctum::actingAs($user);
 
         $this->getJson('/api/v1/users')
             ->assertOk()
             ->assertJsonCount(2)
-            ->assertJsonFragment(['id' => $user->id, 'email' => $user->email])
+            ->assertJsonFragment([
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+            ])
             ->assertJsonFragment(['id' => $otherUser->id, 'email' => $otherUser->email])
             ->assertJsonMissingPath('0.password')
         ;
@@ -39,9 +43,10 @@ final class ListUsersActionTest extends TestCase
         $this->getJson('/api/v1/users')->assertUnauthorized();
     }
 
-    private function createUser(string $email): SanctumUser
+    private function createUser(string $email, ?string $name = null): SanctumUser
     {
         return SanctumUser::query()->create([
+            'name' => $name,
             'email' => $email,
             'password' => Hash::make('secret'),
         ]);

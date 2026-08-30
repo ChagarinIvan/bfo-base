@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Dto\Event;
 
 use App\Application\Dto\Auth\ImpressionDto;
-use App\Domain\Cup\CupEvent\CupEvent;
-use App\Domain\Distance\Distance;
-use App\Models\Flag;
+use App\Application\Dto\Serialization\Groups;
 
 final readonly class ViewEventDto
 {
@@ -17,18 +15,10 @@ final readonly class ViewEventDto
         public string $name,
         public string $description,
         public string $date,
-
-        // TODO remove laravel trush
-        public string $competitionName,
-        public int $protocolLinesCount,
-        public ?Distance $firstDistance,
-        /** @var CupEvent[] $cups */
-        public array $cups,
-        /** @var Flag[] $flags */
-        public array $flags,
-        /** @var Distance[] $flags */
-        public array $distances,
+        public int $participantsCount,
+        #[Groups(['authenticated'])]
         public ImpressionDto $created,
+        #[Groups(['authenticated'])]
         public ImpressionDto $updated,
     ) {
     }

@@ -48,9 +48,9 @@
 
 ### SearchEventDto
 
-`EventSearchDto` переименовывается в `SearchEventDto` во всех существующих consumers. V1 action принимает обязательный положительный `competitionId`; остальные прежние поля (`year`, `flagId`, `notRelatedToCup`) остаются опциональными для legacy callers. Перед списком этапов action проверяет существование активного Competition, поэтому отсутствующий или мягко удалённый родитель даёт `404`, а не пустой список.
+`EventSearchDto` переименовывается в `SearchEventDto` во всех существующих consumers. V1 action принимает обязательный положительный `competitionId`; остальные прежние поля (`year`, `flagId`, `notRelatedToCup`) остаются опциональными для legacy callers. Отсутствующий или мягко удалённый родитель не проверяется отдельно и даёт пустой список, как соревнование без активных этапов.
 
-`ListEventsAction` принимает `SearchEventDto`, создаёт существующий `ListEvents` command и вызывает `ListEventsService::executeForApi()`. Метод возвращает компактный `ViewEventListDto`; существующий `execute()` и `ViewEventDto` продолжают обслуживать Blade.
+`ListEventsAction` принимает `SearchEventDto` и `Pagination`, создаёт существующий `ListEvents` command и вызывает новый `ListEventsService::execute()`. Метод возвращает `Slice<ViewEventDto>` с компактным V1 DTO. `ListLegacyEventsService::execute()` и `LegacyViewEventDto` продолжают обслуживать Blade.
 
 ## View DTOs
 
@@ -58,7 +58,7 @@
 
 Существующий object: `id`, `name`, `description`, `from`, `to`, `year`, `mass`; authenticated representation также содержит `created`, `updated`.
 
-### ViewEventListDto
+### ViewEventDto
 
 ```text
 id: string
@@ -92,4 +92,4 @@ Competition 1 ── * Event
 Event 1 ── * Distance ── * ProtocolLine
 ```
 
-`EventRepository::byCriteria()` для list path добавляет количество участников через один `withCount` для всего списка. `ListEventsService::executeForApi()` передаёт полученные Event в `EventAssembler::toViewEventListDto()`; flags и cups пока не входят в V1 DTO.
+`EventRepository::paginate()` для V1 list path добавляет количество участников через один `withCount` для страницы. `ListEventsService::execute()` передаёт полученные Event в `EventAssembler::toViewEventDto()`; flags и cups пока не входят в V1 DTO. `byCriteria()` остаётся путём legacy service.
