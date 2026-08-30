@@ -30,8 +30,8 @@ description: "Задачи реализации: управление сорев
 
 **Purpose**: Подготовить общие SPA-модели, не меняя Blade routes.
 
-- [ ] T003 Extend `resources/spa/pages/competitions/competitionModels.ts` with shared query, debounce, pagination-reset, date-range, and API-error helpers used by competition list, details, and form pages.
-- [ ] T004 Add shared helper coverage in `resources/spa/pages/competitions/competitionModels.test.ts` for query construction, debounce/minimum-name behaviour, pagination reset, and field-error mapping.
+- [ ] T003 Extend `resources/spa/pages/competitions/competitionModels.ts` with camelCase V1 query construction, debounce, pagination-reset, date-range, and API-error helpers used by competition list, details, and form pages.
+- [ ] T004 Add shared helper coverage in `resources/spa/pages/competitions/competitionModels.test.ts` for camelCase query construction, debounce/minimum-name behaviour, pagination reset, and field-error mapping.
 
 **Checkpoint**: Existing V1/SPA foundation remains compatible; feature slices can now use common API routes, types, translations, and page helpers.
 
@@ -47,14 +47,14 @@ description: "Задачи реализации: управление сорев
 
 ### Tests for User Story 1
 
-- [ ] T005 [P] [US1] Extend API request coverage for name/date filters, combined filters, short-name `422`, pagination headers, and active-only results in `tests/Feature/Api/V1/Competition/ListCompetitionsActionTest.php`.
+- [ ] T005 [P] [US1] Extend API request coverage for camelCase `perPage`, trim-before-validation, case-insensitive matching, name/date filters, combined filters, short-name `422`, pagination headers, and active-only results in `tests/Feature/Api/V1/Competition/ListCompetitionsActionTest.php`.
 - [ ] T006 [P] [US1] Extend filter and debounce coverage in `resources/spa/pages/competitions/CompetitionsPage.test.ts`.
 
 ### Implementation for User Story 1
 
-- [ ] T007 [US1] Extend `CompetitionSearchDto` validation and request mapping for `year`, `name`, and `date` in `app/Application/Dto/Competition/CompetitionSearchDto.php` without adding an `active` API field.
+- [ ] T007 [US1] Add DTO-specific request normalization before validation in `app/Application/Dto/AbstractDto.php` and `app/Bridge/Laravel/Http/Controllers/ApiAction.php`, then extend `CompetitionSearchDto` and `Pagination` request mapping for trimmed `name`, `year`, `date`, and camelCase `perPage` in `app/Application/Dto/Competition/CompetitionSearchDto.php` and `app/Application/Dto/Pagination/Pagination.php` without adding an `active` API field.
 - [ ] T008 [US1] Preserve false-safe criteria construction while passing the expanded search DTO through `app/Application/Service/Competition/ListCompetitions.php`.
-- [ ] T009 [US1] Implement active-only year/name/date filtering with inclusive `from <= date <= to` matching in `app/Infrastructure/Laravel/Eloquent/Competition/EloquentCompetitionRepository.php`.
+- [ ] T009 [US1] Implement active-only case-insensitive year/name/date filtering with inclusive `from <= date <= to` matching in `app/Infrastructure/Laravel/Eloquent/Competition/EloquentCompetitionRepository.php`.
 - [ ] T010 [US1] Keep the V1 list action thin and pass the expanded DTO/pagination flow through `app/Bridge/Laravel/Http/Controllers/Api/V1/Competition/ListCompetitionsAction.php`.
 - [ ] T011 [US1] Add name input with 300ms debounce, date filter, local minimum-length feedback, filter-aware pagination reset, and typed API loading in `resources/spa/pages/competitions/CompetitionsPage.vue`.
 
@@ -73,17 +73,17 @@ N+1; переход к отдельному этапу остаётся legacy l
 ### Tests for User Story 2
 
 - [ ] T012 [P] [US2] Add request coverage for public active-only single-competition responses and missing/inactive `404` in `tests/Feature/Api/V1/Competition/ViewCompetitionActionTest.php`.
-- [ ] T013 [P] [US2] Add request coverage proving event-list SQL query count stays constant between one and several events, plus validation, active-only events, protocol-line counts, and empty state in `tests/Feature/Api/V1/Event/ListEventsActionTest.php`.
+- [ ] T013 [P] [US2] Add request coverage for camelCase `competitionId`, validation, active-only events, protocol-line counts, empty state, and authenticated `created`/`updated` impressions in `tests/Feature/Api/V1/Event/ListEventsActionTest.php`.
 - [ ] T014 [P] [US2] Extend list-event application coverage for compact API DTO assembly while preserving the legacy Blade DTO path in `tests/Application/Service/Event/ListEventsServiceTest.php`.
 - [ ] T015 [P] [US2] Add SPA detail page and route coverage in `resources/spa/pages/competitions/CompetitionDetailsPage.test.ts` and `resources/spa/router/index.test.ts`.
 
 ### Implementation for User Story 2
 
-- [ ] T016 [US2] Rename `EventSearchDto` to `SearchEventDto` and update all its PHP consumers in `app/Application/Dto/Event/SearchEventDto.php`, `app/Application/Service/Event/ListEvents.php`, `app/Application/Handler/Event/DisableCompetitionHandler.php`, and affected Bridge actions/tests.
+- [ ] T016 [US2] Rename `EventSearchDto` to `SearchEventDto`, accept V1 camelCase `competitionId`, and update all PHP consumers in `app/Application/Dto/Event/SearchEventDto.php`, `app/Application/Service/Event/ListEvents.php`, `app/Application/Handler/Event/DisableCompetitionHandler.php`, and affected Bridge actions/tests.
 - [ ] T017 [US2] Add compact scalar `ViewEventListDto` and `EventAssembler::toViewEventListDto()` in `app/Application/Dto/Event/ViewEventListDto.php` and `app/Application/Dto/Event/EventAssembler.php`, keeping `ViewEventDto` unchanged for Blade.
 - [ ] T018 [US2] Add `ListEventsService::executeForApi(ListEvents $command)` in `app/Application/Service/Event/ListEventsService.php` to return `ViewEventListDto[]` through the existing command/service path.
 - [ ] T019 [US2] Make `EventRepository::byCriteria()` fetch only active events and add one protocol-line relation count for the API list path in `app/Infrastructure/Laravel/Eloquent/Event/EloquentEventRepository.php`, without loading flags or cups into the V1 projection.
-- [ ] T020 [US2] Add public V1 `ViewCompetitionAction` and `ListEventsAction` in `app/Bridge/Laravel/Http/Controllers/Api/V1/Competition/ViewCompetitionAction.php` and `app/Bridge/Laravel/Http/Controllers/Api/V1/Event/ListEventsAction.php` using DTO → command → existing service → assembler flow.
+- [ ] T020 [US2] Add public V1 `ViewCompetitionAction` and `ListEventsAction` in `app/Bridge/Laravel/Http/Controllers/Api/V1/Competition/ViewCompetitionAction.php` and `app/Bridge/Laravel/Http/Controllers/Api/V1/Event/ListEventsAction.php`; `ListEventsAction` first views the active parent Competition so missing/inactive `competitionId` returns `404`, then follows DTO → command → existing service → assembler flow.
 - [ ] T021 [US2] Register the new public competition and event read actions in `app/Bridge/Laravel/Provider/ApiV1RoutesServiceProvider.php` and preserve optional Bearer impressions.
 - [ ] T022 [P] [US2] Implement typed get-one and event-list calls in `resources/spa/api/competitions.ts` and `resources/spa/api/events.ts`.
 - [ ] T023 [US2] Add `CompetitionDetailsPage.vue` with loading/error/empty states, event table, and legacy event links in `resources/spa/pages/competitions/CompetitionDetailsPage.vue`.
@@ -103,7 +103,7 @@ N+1; переход к отдельному этапу остаётся legacy l
 
 ### Tests for User Story 3
 
-- [ ] T025 [P] [US3] Add V1 request coverage for authenticated PUT/DELETE, shared form validation, `401`, missing/inactive `404`, and soft-delete persistence in `tests/Feature/Api/V1/Competition/UpdateCompetitionActionTest.php` and `tests/Feature/Api/V1/Competition/DeleteCompetitionActionTest.php`.
+- [ ] T025 [P] [US3] Add V1 request coverage for authenticated PUT/DELETE, PUT JSON body with V1 camelCase fields only, shared form validation, `401`, missing/inactive `404`, and soft-delete persistence in `tests/Feature/Api/V1/Competition/UpdateCompetitionActionTest.php` and `tests/Feature/Api/V1/Competition/DeleteCompetitionActionTest.php`.
 - [ ] T026 [P] [US3] Extend command/service unit coverage for update and disable behaviour in `tests/Application/Service/Competition/UpdateCompetitionInfoServiceTest.php` and `tests/Application/Service/Competition/DisableCompetitionServiceTest.php`.
 - [ ] T027 [P] [US3] Add form, action-menu, confirmation, and edit-page SPA coverage in `resources/spa/pages/competitions/CompetitionForm.test.ts`, `resources/spa/components/actions/CompetitionActionMenu.test.ts`, `resources/spa/components/actions/ConfirmDeleteDialog.test.ts`, and `resources/spa/pages/competitions/EditCompetitionPage.test.ts`.
 
@@ -170,7 +170,7 @@ details render consistently and their unit tests cover shared state.
 - [ ] T041 [P] Update implementation notes and manual scenarios in `specs/005-competition-spa-management/quickstart.md` if actual endpoint/component names differ from the approved contracts.
 - [ ] T042 Run targeted suites for `tests/Feature/Api/V1/Competition/`, `tests/Feature/Api/V1/Event/`, `tests/Application/Service/{Competition,Event}/`, and `resources/spa/**/*.test.ts`, then run `npm run ci` and record failures before continuing.
 - [ ] T043 Run final `composer cs`, `composer stan`, `composer rector`, and `composer test` from `composer.json` using `.php-cs-fixer.php` and `phpstan.neon`; review only resulting feature diffs.
-- [ ] T044 Verify V1 API responses, SPA deep links, legacy navbar destinations, and bounded Event query count against `specs/005-competition-spa-management/contracts/` and `specs/005-competition-spa-management/quickstart.md`.
+- [ ] T044 Verify V1 API responses, SPA deep links, and legacy navbar destinations against `specs/005-competition-spa-management/contracts/` and `specs/005-competition-spa-management/quickstart.md`; once during development inspect the Event list query listener or query log for one and several events to confirm there is no N+1.
 
 ---
 

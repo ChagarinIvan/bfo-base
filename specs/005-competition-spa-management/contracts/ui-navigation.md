@@ -9,7 +9,7 @@
 | `/app/competitions/{id}` | Public | Competition details and events table. |
 | `/app/competitions/{id}/edit` | Authenticated | Prefilled edit form. |
 
-The list name link uses the SPA detail route. Event, flag, cup and other unmigrated functions use existing legacy URLs.
+The list name link uses the SPA detail route. The event link and other unmigrated functions use existing legacy URLs.
 
 ## Navbar
 

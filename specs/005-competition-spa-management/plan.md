@@ -60,7 +60,7 @@ app/
 │   └── Service/Event/               # существующие ListEvents command и ListEventsService
 ├── Bridge/Laravel/Http/Controllers/Api/V1/
 │   ├── Competition/                 # GET one, PUT, DELETE, list filters
-│   └── Event/                       # GET events?competition_id=
+│   └── Event/                       # GET events?competitionId=
 ├── Domain/{Competition,Event}/
 └── Infrastructure/Laravel/Eloquent/{Competition,Event}/
 
@@ -78,8 +78,8 @@ resources/spa/
 
 ### API and UI decisions
 
-- Extend `GET /api/v1/competitions` with `name` and `date`, preserving `year`, pagination and response headers.
-- Add public `GET /competitions/{id}` and `GET /events?competition_id=`; add protected `PUT` and `DELETE /competitions/{id}`.
+- Extend `GET /api/v1/competitions` with `name` and `date`, preserving `year`, `page`, `perPage`, pagination headers and camelCase V1 request naming.
+- Add public `GET /competitions/{id}` and `GET /events?competitionId=`; add protected `PUT` and `DELETE /competitions/{id}`.
 - Expand existing `CompetitionSearchDto`, list command and repository query for filters. Existing `ViewCompetition`, `UpdateCompetitionInfo` and `DisableCompetition` commands/use cases remain the mutation path.
 - Rename the existing `EventSearchDto` to `SearchEventDto` and use it in the existing `ListEvents` command. `ListEventsAction` invokes `ListEventsService::executeForApi(new ListEvents($search))`; that service uses `EventRepository` and `EventAssembler::toViewEventListDto()` to return compact `ViewEventListDto` items.
 - The Event repository query used by this read path obtains the participant total with one `withCount`, not per-row queries. Flags and cups are outside this V1 projection; the existing full `ViewEventDto` path remains for Blade consumers.

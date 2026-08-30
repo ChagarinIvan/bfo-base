@@ -38,7 +38,7 @@
 | year | Допустимый год системы | Текущий год. |
 | name | Trimmed, 3–255 символов, optional | Нет фильтра. |
 | date | `YYYY-MM-DD`, optional | Нет фильтра. |
-| page / per_page | Стандартная pagination validation | 1 / 20. |
+| page / perPage | Стандартная pagination validation | 1 / 20. |
 
 `ListCompetitions` command переносит DTO в существующий list use case.
 
@@ -48,7 +48,7 @@
 
 ### SearchEventDto
 
-`EventSearchDto` переименовывается в `SearchEventDto` во всех существующих consumers. Для V1 action поле `competitionId` обязательно и положительно; остальные прежние поля (`year`, `flagId`, `notRelatedToCup`) остаются опциональными для legacy callers.
+`EventSearchDto` переименовывается в `SearchEventDto` во всех существующих consumers. V1 action принимает обязательный положительный `competitionId`; остальные прежние поля (`year`, `flagId`, `notRelatedToCup`) остаются опциональными для legacy callers. Перед списком этапов action проверяет существование активного Competition, поэтому отсутствующий или мягко удалённый родитель даёт `404`, а не пустой список.
 
 `ListEventsAction` принимает `SearchEventDto`, создаёт существующий `ListEvents` command и вызывает `ListEventsService::executeForApi()`. Метод возвращает компактный `ViewEventListDto`; существующий `execute()` и `ViewEventDto` продолжают обслуживать Blade.
 

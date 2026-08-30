@@ -1,6 +1,6 @@
 # API contract: Events V1
 
-**Endpoint**: `GET /api/v1/events?competition_id={competitionId}`  
+**Endpoint**: `GET /api/v1/events?competitionId={competitionId}`
 **Access**: public  
 **Convention**: direct JSON array; errors use `{ "errors": [...] }`.
 
@@ -8,7 +8,7 @@
 
 | Parameter | Required | Validation | Meaning |
 |---|---:|---|---|
-| competition_id | yes | Positive integer | Competition whose active events are requested. |
+| competitionId | yes | Positive integer | Competition whose active events are requested. |
 
 Missing or invalid parameter returns `422` validation error. Missing/soft-deleted competition returns `404`.
 

@@ -13,7 +13,7 @@ Public paginated list of active competitions.
 | name | no | Trimmed 3–255 characters | Case-insensitive name fragment. |
 | date | no | `YYYY-MM-DD` | Inclusive date inside `from`–`to`. |
 | page | no | Positive integer | Page number. |
-| per_page | no | Existing pagination limit | Page size. |
+| perPage | no | Existing pagination limit | Page size. |
 
 All supplied filters combine. A short non-empty `name` returns `422` validation error. Response is `ViewCompetitionDto[]` and preserves:
 

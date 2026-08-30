@@ -15,6 +15,9 @@ Exact contracts:
 - [events](contracts/api-events.md)
 - [SPA routes and navbar](contracts/ui-navigation.md)
 
+All V1 query parameters and JSON request fields use `camelCase`; for example, use `perPage` and
+`competitionId`, never `per_page` or `competition_id`.
+
 ## Scenario 1: Public filtering
 
 1. Open `/app/competitions` without login.
@@ -28,7 +31,7 @@ Expected: only matching records appear; all inclusive boundaries match; paginati
 
 1. Open a competition name from SPA list.
 2. Confirm its SPA detail page has competition data and an events table.
-3. Open event, flag and cup links from the table.
+3. Open the event link from the table.
 4. Open a competition with no events and a nonexistent id.
 
 Expected: links go to working legacy pages; empty and missing states are understandable; no hidden browser console/network error.
