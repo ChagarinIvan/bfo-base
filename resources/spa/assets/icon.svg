@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none" role="img" aria-labelledby="title desc">
+  <title id="title">База данных с ориентировочным контрольным пунктом</title>
+  <desc id="desc">Схематичная синяя база данных и оранжево-белый флажок контрольного пункта сверху.</desc>
+
+  <g stroke="#124B9A" stroke-width="22" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Database -->
+    <ellipse cx="256" cy="254" rx="170" ry="58"/>
+    <path d="M86 254v163c0 32 76 58 170 58s170-26 170-58V254"/>
+    <path d="M86 326c0 32 76 58 170 58s170-26 170-58"/>
+    <path d="M86 389c0 32 76 58 170 58s170-26 170-58"/>
+
+    <!-- Orienteering control point -->
+    <path d="M256 196v-38"/>
+    <ellipse cx="256" cy="196" rx="30" ry="11" fill="#124B9A" stroke="none"/>
+    <rect x="190" y="52" width="132" height="108" rx="14" fill="#fff"/>
+  </g>
+
+  <!-- Orange half of the standard control-point flag -->
+  <path d="M300 74v64h-88z" fill="#F58220"/>
+</svg>

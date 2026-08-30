@@ -16,7 +16,9 @@
         "guzzlehttp/guzzle": "^7.10",
         "laravel/framework": "^13.0",
         "laravel/horizon": "^5.45",
+        "laravel/sanctum": "^4.0",
         "mav/slovo": "^0.2.3",
+        "pagerfanta/pagerfanta": "^4.7",
         "phpoffice/phpspreadsheet": "^5.0",
         "predis/predis": "^2.3 || ^3.0",
         "sentry/sentry-laravel": "^4.27"
@@ -53,7 +55,7 @@
         "cs-fix": "vendor/bin/php-cs-fixer fix --allow-risky=yes",
         "stan": "vendor/bin/phpstan analyse -l 5 app tests config --memory-limit=1G",
         "rector": "rector process",
-        "test": "@php -d xdebug.mode=off vendor/bin/phpunit",
+        "test": "@php -d xdebug.mode=off -d memory_limit=512M vendor/bin/phpunit",
         "post-update-cmd": [
             "Illuminate\\Foundation\\ComposerScripts::postUpdate"
         ],

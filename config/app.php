@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Bridge\Laravel\Provider\ApiRoutesServiceProvider;
+use App\Bridge\Laravel\Provider\ApiV1RoutesServiceProvider;
 use App\Bridge\Laravel\Provider\Club\ClubProvider;
 use App\Bridge\Laravel\Provider\Competition\CompetitionProvider;
 use App\Bridge\Laravel\Provider\Cup\CupProvider;
@@ -15,7 +16,7 @@ use App\Bridge\Laravel\Provider\PersonPrompt\PersonPromptProvider;
 use App\Bridge\Laravel\Provider\ProtocolLine\ProtocolLineProvider;
 use App\Bridge\Laravel\Provider\Rank\RankProvider;
 use App\Bridge\Laravel\Provider\Shared\SharedProvider;
-use App\Bridge\Laravel\Provider\User\UserProvider;
+use App\Bridge\Laravel\Provider\User\AuthProvider;
 use App\Bridge\Laravel\Provider\ViewProvider;
 use App\Bridge\Laravel\Provider\WebRoutesServiceProvider;
 use App\Providers\HorizonServiceProvider;
@@ -218,7 +219,7 @@ return [
         SharedProvider::class,
         ProtocolLineProvider::class,
         RankProvider::class,
-        UserProvider::class,
+        AuthProvider::class,
 
         // event handlers
         EventHandlerServiceProvider::class,
@@ -226,6 +227,7 @@ return [
         // routes
         WebRoutesServiceProvider::class,
         ApiRoutesServiceProvider::class,
+        ApiV1RoutesServiceProvider::class,
 
         // view
         ViewProvider::class,

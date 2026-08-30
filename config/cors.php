@@ -2,6 +2,23 @@
 
 declare(strict_types=1);
 
+$configuredOrigins = trim((string) env('CORS_ALLOWED_ORIGINS', ''));
+$allowedOrigins = $configuredOrigins === ''
+    ? [
+        (string) env('APP_URL', 'http://localhost'),
+        'http://localhost',
+        'http://127.0.0.1',
+    ]
+    : explode(',', $configuredOrigins);
+
+$allowedOrigins = array_map(
+    trim(...),
+    $allowedOrigins,
+)
+        |> (static fn($x): array => array_filter($x, static fn(string $origin): bool => $origin !== '', ))
+        |> array_unique(...)
+        |> array_values(...);
+
 return [
     /*
     |--------------------------------------------------------------------------
@@ -20,7 +37,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['*'],
+    'allowed_origins' => $allowedOrigins,
 
     'allowed_origins_patterns' => [],
 

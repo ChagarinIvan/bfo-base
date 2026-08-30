@@ -12,6 +12,8 @@ use App\Application\Service\Competition\ListCompetitionsService;
 use App\Domain\Competition\Competition;
 use App\Domain\Competition\CompetitionRepository;
 use App\Domain\Shared\Criteria;
+use App\Domain\Shared\Pagination\Slice;
+use Pagerfanta\Adapter\ArrayAdapter;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
@@ -35,14 +37,14 @@ final class ListCompetitionsServiceTest extends TestCase
     #[Test]
     public function it_gets_list_of_competitions(): void
     {
-        /** @var Competition[] $competitions */
-        $competitions = Competition::factory(count: 2)->make();
+        /** @var list<Competition> $competitions */
+        $competitions = Competition::factory(count: 2)->make()->all();
 
         $this->competitions
             ->expects($this->once())
-            ->method('byCriteria')
+            ->method('paginate')
             ->with(new Criteria(['year' => '2021']))
-            ->willReturn($competitions)
+            ->willReturn(new Slice(new ArrayAdapter($competitions)))
         ;
 
         $dto = new CompetitionSearchDto('2021');
@@ -50,7 +52,7 @@ final class ListCompetitionsServiceTest extends TestCase
         $command = new ListCompetitions($dto);
         $result = $this->service->execute($command);
 
-        $this->assertIsList($result);
-        $this->assertEquals($competitions[1]->id, $result[1]->id);
+        $this->assertInstanceOf(Slice::class, $result);
+        $this->assertEquals($competitions[1]->id, $result->items()[1]->id);
     }
 }

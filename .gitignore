@@ -1,4 +1,6 @@
 /node_modules
+**/node_modules/
+/public/spa
 /public/storage
 /storage/*.key
 /vendor

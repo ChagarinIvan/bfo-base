@@ -17,7 +17,7 @@ use App\Bridge\Laravel\Console\Commands\SimpleIndentCommand;
 use App\Bridge\Laravel\Console\Commands\StartBigIdentCommand;
 use App\Bridge\Laravel\Console\Commands\SyncPersonsCommand;
 use App\Bridge\Laravel\Console\Commands\SyncStoredPersonsCommand;
-use App\Domain\User\User;
+use App\Domain\Auth\User;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Override;

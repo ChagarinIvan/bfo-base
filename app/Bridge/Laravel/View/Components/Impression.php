@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Bridge\Laravel\View\Components;
 
 use App\Application\Dto\Auth\ImpressionDto;
-use App\Domain\User\UserRepository;
+use App\Domain\Auth\UserRepository;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;

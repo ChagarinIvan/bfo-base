@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
-use App\Domain\User\User;
+use App\Domain\Auth\User;
 use Illuminate\Database\Seeder;
 use function bin2hex;
 use function random_bytes;

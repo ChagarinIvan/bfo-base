@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Rector\CodeQuality\Rector\Identical\FlipTypeControlToUseExclusiveTypeRector;
 use Rector\Config\RectorConfig;
+use Rector\Php81\Rector\Property\ReadOnlyPropertyRector;
 use Rector\PHPUnit\Set\PHPUnitSetList;
 use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
 use Rector\Renaming\Rector\PropertyFetch\RenamePropertyRector;
@@ -53,6 +54,10 @@ return RectorConfig::configure()
         AssertSeeToAssertSeeHtmlRector::class,
         FlipTypeControlToUseExclusiveTypeRector::class,
         StringToClassConstantRector::class,
+        // PHP 8.5 hooked properties cannot be declared readonly on the containing class.
+        ReadOnlyPropertyRector::class => [
+            __DIR__ . '/app/Application/Service/Competition/ListCompetitions.php',
+        ],
         RenamePropertyRector::class,
         // Blade::component() регистрирует классовые компоненты; авто-переименование в
         // aliasComponent() (правило из laravel70) ломает bootstrap — регистрируем как есть.

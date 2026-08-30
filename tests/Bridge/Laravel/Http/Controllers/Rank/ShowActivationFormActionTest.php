@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Tests\Bridge\Laravel\Http\Controllers\Rank;
 
 use App\Bridge\Laravel\Http\Controllers\Rank\ShowActivationFormAction;
+use App\Domain\Auth\User;
 use App\Domain\Competition\Competition;
 use App\Domain\Event\Event;
 use App\Domain\Person\Person;
 use App\Domain\Rank\Rank;
-use App\Domain\User\User;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;

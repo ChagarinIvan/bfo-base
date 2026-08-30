@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Domain\User\User;
+use App\Infrastructure\Sanctum\SanctumUser;
 
 return [
     /*
@@ -65,7 +65,7 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => User::class,
+            'model' => SanctumUser::class,
         ],
 
         // 'users' => [

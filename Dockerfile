@@ -1,3 +1,16 @@
+# Build the SPA with the same Node/npm generation as package-lock.json.
+FROM node:22-alpine AS frontend
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm ci --ignore-scripts --no-audit --no-fund
+
+COPY resources/spa ./resources/spa
+COPY resources/lang/by.json ./resources/lang/by.json
+COPY vite.config.ts tsconfig.json ./
+RUN npm run build:spa
+
 FROM php:8.5-fpm
 
 # Copy composer.lock and composer.json
@@ -45,6 +58,9 @@ COPY . /var/www
 
 # Copy existing application directory permissions
 COPY --chown=www:www . /var/www
+
+# Keep the generated SPA artifact from the frontend build stage.
+COPY --from=frontend --chown=www:www /app/public/spa /var/www/public/spa
 
 # Change current user to www
 USER www

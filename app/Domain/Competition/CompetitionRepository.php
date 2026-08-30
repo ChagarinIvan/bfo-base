@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Competition;
 
 use App\Domain\Shared\Criteria;
-use Illuminate\Support\Collection;
+use App\Domain\Shared\Pagination\Slice;
 
 interface CompetitionRepository
 {
@@ -13,7 +13,8 @@ interface CompetitionRepository
 
     public function byId(int $id): ?Competition;
 
-    public function byCriteria(Criteria $criteria): Collection;
+    /** @return Slice<Competition> */
+    public function paginate(Criteria $criteria): Slice;
 
     public function lockById(int $id): ?Competition;
 

@@ -15,6 +15,9 @@ return $config->setRules([
         'keep_multiple_spaces_after_comma' => false,
     ],
     'blank_line_after_opening_tag' => true,
+    // Empty function/constructor bodies use a multiline brace style; the fixer
+    // has no rule that enforces this for a one-line signature.
+    'single_line_empty_body' => false,
     'static_lambda' => true,
     'global_namespace_import' => [
         'import_classes' => true,

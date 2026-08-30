@@ -28,16 +28,10 @@ final readonly class PreviousCompletedRankFiller
     public function fill(int $personId, ?Rank $rank, ?Carbon $date = null): ?Rank
     {
         $now = $this->clock->now();
-        if ($date === null) {
-            $date = $now;
-        }
+        $date ??= $now;
 
         $finishDate = $rank?->finish_date;
-//        dump($finishDate < $date);
-
-        if ($finishDate === null) {
-            $finishDate = $date;
-        }
+        $finishDate ??= $date;
 
         if ($finishDate <= $date) {
             // тут трэба узять протокол лініі за 2 года, дзе было выкананне адсартырованные па моцы разраду
@@ -85,10 +79,7 @@ final readonly class PreviousCompletedRankFiller
             $activationDate = null;
 
             foreach ($protocolLines as $protocolLine) {
-                /** @var ProtocolLine $protocolLine */
-                if ($activationDate === null) {
-                    $activationDate = $previous instanceof Rank ? $previous->activated_date : $protocolLine->activate_rank;
-                }
+                $activationDate ??= $previous instanceof Rank ? $previous->activated_date : $protocolLine->activate_rank;
 
                 if ($activationDate === null) {
                     $equal = $this->ranks->oneByCriteria(

@@ -20,13 +20,13 @@ class PersonController extends Controller
     public function index(Request $request): ResourceCollection
     {
         $personQuery = $this->personsService->getPersonsList(
-            (string) $request->get('sort_by'),
-            (int) $request->get('sort_mode'),
-            (string) $request->get('search'),
+            (string) $request->input('sort_by'),
+            (int) $request->input('sort_mode'),
+            (string) $request->input('search'),
         );
 
         /** @var LengthAwarePaginator $paginator */
-        $paginator = $personQuery->paginate((int)$request->get('per_page'));
+        $paginator = $personQuery->paginate((int)$request->input('per_page'));
 
         return new PersonCollection($paginator->withQueryString());
     }

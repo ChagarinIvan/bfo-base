@@ -20,7 +20,7 @@ final class CompetitionDto extends AbstractDto
             'name' => 'required|max:255',
             'description' => 'required|max:255',
             'from' => 'required|date',
-            'to' => 'required|date',
+            'to' => 'required|date|after_or_equal:from',
             'mass' => 'bool',
         ];
     }
