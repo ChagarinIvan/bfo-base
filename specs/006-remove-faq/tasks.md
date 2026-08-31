@@ -28,7 +28,7 @@ description: "Исполняемый список задач для удален
 
 **Цель**: подтвердить исходную область изменения и подготовить контрольные точки.
 
-- [ ] T001 Проверить текущий статус рабочей копии и зафиксировать исходные проверки для `specs/006-remove-faq/quickstart.md`, не изменяя несвязанные пользовательские файлы.
+- [ ] T001 Проверить текущий статус рабочей копии и зафиксировать результат исходных проверок из `specs/006-remove-faq/quickstart.md` в рабочем отчёте/PR, не изменяя несвязанные пользовательские файлы.
 - [ ] T002 [P] Сверить перечень FAQ-артефактов в `specs/006-remove-faq/data-model.md` с текущими файлами `app/Bridge/Laravel/Http/Controllers/Faq/`, `resources/views/faq/`, `resources/spa/components/` и `resources/views/layouts/navbar.blade.php`.
 
 ---
@@ -60,8 +60,8 @@ API endpoints защищены от удаления.
 
 ### Тесты пользовательской истории 1
 
-- [ ] T006 [P] [US1] Обновить проверки навигации SPA в `resources/spa/components/AppLayout.test.ts` и `resources/spa/router/index.test.ts`, подтвердив отсутствие `/faq`, `/faq/api`, `spa.nav.faq`, `spa.nav.api` и пустого меню справки при сохранении остальных пунктов.
-- [ ] T007 [P] [US1] Добавить или обновить проверку legacy-навигации в `tests/Feature/Faq/RemoveFaqNavigationTest.php`, подтверждающую отсутствие FAQ/API FAQ и сохранение соседних пунктов меню.
+- [ ] T006 [P] [US1] Обновить проверки навигации SPA в `resources/spa/components/AppLayout.test.ts` и `resources/spa/router/index.test.ts` для авторизованного и неавторизованного состояний, подтвердив отсутствие `/faq`, `/faq/api`, `spa.nav.faq`, `spa.nav.api` и пустого меню справки при сохранении остальных пунктов.
+- [ ] T007 [P] [US1] Добавить или обновить проверки legacy-навигации в `tests/Feature/Faq/RemoveFaqNavigationTest.php` для авторизованного и неавторизованного состояний, подтверждая отсутствие FAQ/API FAQ и сохранение соседних пунктов меню.
 
 ### Реализация пользовательской истории 1
 
@@ -110,14 +110,12 @@ API endpoints защищены от удаления.
 
 ### Тесты пользовательской истории 3
 
-- [ ] T017 [P] [US3] Обновить или добавить проверки поиска/структуры в `tests/Feature/Faq/RemoveFaqNavigationTest.php` и `tests/Feature/Faq/RemovedFaqRoutesTest.php`, чтобы тесты не ссылались на удалённые actions, шаблоны, route-state или FAQ-only ключи.
-
 ### Реализация пользовательской истории 3
 
-- [ ] T018 [P] [US3] Удалить из `resources/lang/by.json` и `resources/lang/ru.json` только ключи `app.faq.*`, FAQ-only `app.api.*`, `app.navbar.faq`, `app.navbar.api`, `app.navbar.help`, `spa.nav.faq`, `spa.nav.api` и `spa.nav.help`, которые не используются после удаления.
-- [ ] T019 [US3] Удалить из `app/Bridge/Laravel/Provider/ApiRoutesServiceProvider.php` и `app/Bridge/Laravel/Http/Controllers/Api/` только те старые API routes/controllers, которые T003–T005 классифицировали как неиспользуемые внутри репозитория.
-- [ ] T020 [US3] Удалить связанные только с удалёнными API routes тесты и fixtures в `tests/`, если аудит подтвердил, что они не проверяют сохраняемый API-контракт.
-- [ ] T021 [US3] Выполнить финальный поиск удалённых имён и ключей по `app/`, `resources/` и `tests/`, исправив оставшиеся активные ссылки без удаления сохранённых API implementations.
+- [ ] T017 [P] [US3] Удалить из `resources/lang/by.json` и `resources/lang/ru.json` только ключи `app.faq.*`, FAQ-only `app.api.*`, `app.navbar.faq`, `app.navbar.api`, `app.navbar.help`, `spa.nav.faq`, `spa.nav.api` и `spa.nav.help`, которые не используются после удаления.
+- [ ] T018 [US3] Удалить из `app/Bridge/Laravel/Provider/ApiRoutesServiceProvider.php` и `app/Bridge/Laravel/Http/Controllers/Api/` только те старые API routes/controllers, которые T003–T005 классифицировали как неиспользуемые внутри репозитория.
+- [ ] T019 [US3] Удалить связанные только с удалёнными API routes тесты и fixtures в `tests/`, если аудит подтвердил, что они не проверяют сохраняемый API-контракт.
+- [ ] T020 [US3] Выполнить финальный поиск удалённых имён и ключей по `app/`, `resources/` и `tests/`, исправив оставшиеся активные ссылки без удаления сохранённых API implementations.
 
 **Контрольная точка**: пользовательская история 3 завершена, а сохранённые
 общие переводы и API-контракты не затронуты.
@@ -126,11 +124,11 @@ API endpoints защищены от удаления.
 
 ## Фаза 6: Полировка и сквозная проверка
 
-- [ ] T022 [P] Обновить `specs/006-remove-faq/research.md`, `specs/006-remove-faq/data-model.md`, `specs/006-remove-faq/contracts/removal-contract.md` и `specs/006-remove-faq/quickstart.md` фактическими результатами аудита и удалений.
-- [ ] T023 [P] Проверить форматирование и типы SPA командами `npm run ci` и `npm run typecheck`, если такая команда доступна в `package.json`.
-- [ ] T024 Запустить PHP-гейты `composer cs`, `composer stan`, `composer rector -- --dry-run` и `composer test`.
-- [ ] T025 Выполнить сценарии из `specs/006-remove-faq/quickstart.md`, включая smoke-проверку GET `/faq` и `/faq/api`, и сохранить результат в PR-описании.
-- [ ] T026 Проверить `git diff --check`, отсутствие новых N+1 и соответствие всех acceptance scenarios из `specs/006-remove-faq/spec.md`.
+- [ ] T021 [P] Обновить `specs/006-remove-faq/research.md`, `specs/006-remove-faq/data-model.md`, `specs/006-remove-faq/contracts/removal-contract.md` и `specs/006-remove-faq/quickstart.md` фактическими результатами аудита и удалений.
+- [ ] T022 [P] Проверить форматирование и типы SPA командами `npm run ci` и `npm run typecheck`, если такая команда доступна в `package.json`.
+- [ ] T023 Запустить PHP-гейты `composer cs`, `composer stan`, `composer rector -- --dry-run` и `composer test`.
+- [ ] T024 Выполнить сценарии из `specs/006-remove-faq/quickstart.md`, включая smoke-проверку GET `/faq` и `/faq/api`, и сохранить результат в PR-описании.
+- [ ] T025 Проверить `git diff --check`, отсутствие новых N+1 и соответствие всех acceptance scenarios из `specs/006-remove-faq/spec.md`.
 
 ---
 
@@ -157,8 +155,8 @@ API endpoints защищены от удаления.
 - T008 и T010 можно выполнять параллельно после подготовки тестов US1.
 - T011, T012 и T015 можно выполнять параллельно до изменения маршрутов.
 - T014 и T015 можно выполнять параллельно после T013 и проверки аудита.
-- T018 и T019 можно выполнять параллельно после завершения US1/US2 и аудита API.
-- T022 и T023 можно выполнять параллельно перед общей проверкой T024–T026.
+- T017 и T018 можно выполнять параллельно после завершения US1/US2 и аудита API.
+- T021 и T022 можно выполнять параллельно перед общей проверкой T023–T025.
 
 ---
 
