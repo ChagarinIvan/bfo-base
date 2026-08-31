@@ -7,7 +7,6 @@ import brandIconUrl from '../assets/icon.svg'
 import {
     authenticatedAccountNavigation,
     authenticatedCompetitionNavigation,
-    authenticatedHelpNavigation,
     competitionNavigation,
     personsNavigation,
 } from './navigationModels'
@@ -91,23 +90,6 @@ async function logout(): Promise<void> {
                     <div class="app-nav-dropdown">
                         <a
                             v-for="item in personsNavigation"
-                            :key="item.href"
-                            class="app-nav-dropdown-link"
-                            :href="item.href"
-                        >
-                            {{ t(item.label) }}
-                        </a>
-                    </div>
-                </details>
-                <details v-if="auth.isAuthenticated" class="app-nav-menu">
-                    <summary class="app-nav-link">
-                        <i class="pi pi-question-circle" />
-                        {{ t('spa.nav.help') }}
-                        <i class="pi pi-angle-down app-nav-menu-chevron" />
-                    </summary>
-                    <div class="app-nav-dropdown">
-                        <a
-                            v-for="item in authenticatedHelpNavigation"
                             :key="item.href"
                             class="app-nav-dropdown-link"
                             :href="item.href"

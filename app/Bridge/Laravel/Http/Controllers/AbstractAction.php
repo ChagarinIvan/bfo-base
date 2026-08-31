@@ -80,16 +80,6 @@ abstract class AbstractAction extends Controller
         return false;
     }
 
-    protected function isFaqRoute(): bool
-    {
-        return false;
-    }
-
-    protected function isFaqApiRoute(): bool
-    {
-        return false;
-    }
-
     protected function isGroupsRoute(): bool
     {
         return false;
@@ -112,8 +102,6 @@ abstract class AbstractAction extends Controller
             'isClubsRoute' => $this->isClubsRoute(),
             'isRanksRoute' => $this->isRanksRoute(),
             'isFlagsRoute' => $this->isFlagsRoute(),
-            'isFaqRoute' => $this->isFaqRoute(),
-            'isFaqApiRoute' => $this->isFaqApiRoute(),
             'isGroupsRoute' => $this->isGroupsRoute(),
         ];
     }

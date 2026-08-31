@@ -4,7 +4,6 @@ import { createPinia, setActivePinia } from 'pinia'
 import {
     authenticatedAccountNavigation,
     authenticatedCompetitionNavigation,
-    authenticatedHelpNavigation,
     competitionNavigation,
     personsNavigation,
 } from '../components/navigationModels'
@@ -90,7 +89,6 @@ describe('SPA navigation guard', () => {
             ...competitionNavigation.slice(1),
             ...personsNavigation,
             ...authenticatedCompetitionNavigation,
-            ...authenticatedHelpNavigation,
             ...authenticatedAccountNavigation,
         ]) {
             expect(registeredPaths).not.toContain(item.href)
