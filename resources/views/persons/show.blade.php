@@ -6,13 +6,13 @@
     use App\Bridge\Laravel\Http\Controllers\PersonPayment\ShowPersonPaymentsListAction;
     use App\Bridge\Laravel\Http\Controllers\PersonPrompt\ShowPersonPromptsListAction;
     use App\Bridge\Laravel\Http\Controllers\Rank\ShowPersonRanksAction;
-    use App\Application\Dto\Person\ViewPersonDto;
+    use App\Application\Dto\Person\LegacyViewPersonDto;
     use App\Domain\Person\Citizenship;
     use App\Application\Dto\Rank\ViewRankDto;
     use Illuminate\Support\Str;
 
     /**
-     * @var ViewPersonDto $person
+     * @var LegacyViewPersonDto $person
      * @var ViewRankDto $rank
      */
 

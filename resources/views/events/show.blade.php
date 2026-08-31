@@ -2,7 +2,7 @@
     use App\Bridge\Laravel\Http\Controllers\Club\ShowClubAction;
     use App\Application\Dto\Club\ViewClubDto;
     use App\Application\Dto\Event\ViewEventDto;
-    use App\Application\Dto\Person\ViewPersonDto;
+    use App\Application\Dto\Person\LegacyViewPersonDto;
     use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionAction;
     use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupAction;
     use App\Bridge\Laravel\Http\Controllers\Event\ShowEditEventFormAction;
@@ -22,7 +22,7 @@
      * @var bool $withPoints
      * @var bool $withVk
      * @var array<int, ViewClubDto> $clubsByLine
-     * @var array<int, ViewPersonDto> $persons
+     * @var array<int, LegacyViewPersonDto> $persons
      */
 @endphp
 

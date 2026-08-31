@@ -1,10 +1,10 @@
 @php
     use App\Application\Dto\PersonPayment\ViewPersonPaymentDto;
     use App\Bridge\Laravel\Http\Controllers\PersonPayment\ShowCreatePersonPaymentAction;
-    use App\Application\Dto\Person\ViewPersonDto;
+    use App\Application\Dto\Person\LegacyViewPersonDto;
 
     /**
-     * @var ViewPersonDto $person
+     * @var LegacyViewPersonDto $person
      * @var ViewPersonPaymentDto[] $payments
      */
 @endphp

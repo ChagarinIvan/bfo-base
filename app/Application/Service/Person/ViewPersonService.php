@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Application\Service\Person;
 
+use App\Application\Dto\Person\LegacyViewPersonDto;
 use App\Application\Dto\Person\PersonAssembler;
-use App\Application\Dto\Person\ViewPersonDto;
 use App\Application\Service\Person\Exception\PersonNotFound;
 use App\Domain\Person\PersonRepository;
 
@@ -18,10 +18,10 @@ final readonly class ViewPersonService
     }
 
     /** @throws PersonNotFound */
-    public function execute(ViewPerson $command): ViewPersonDto
+    public function execute(ViewPerson $command): LegacyViewPersonDto
     {
         $person = $this->persons->byId($command->id()) ?? throw new PersonNotFound();
 
-        return $this->assembler->toViewPersonDto($person, $command->includeProtocolLines());
+        return $this->assembler->toLegacyViewPersonDto($person, $command->includeProtocolLines());
     }
 }

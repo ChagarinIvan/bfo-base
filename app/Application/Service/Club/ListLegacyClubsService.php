@@ -9,7 +9,7 @@ use App\Application\Dto\Club\ViewClubDto;
 use App\Domain\Club\ClubRepository;
 use function array_map;
 
-final readonly class ListClubsService
+final readonly class ListLegacyClubsService
 {
     public function __construct(
         private ClubRepository $clubs,
@@ -18,7 +18,7 @@ final readonly class ListClubsService
     }
 
     /** @return ViewClubDto[] */
-    public function execute(ListClubs $command): array
+    public function execute(ListLegacyClubs $command): array
     {
         return array_map(
             $this->assembler->toViewClubDto(...),

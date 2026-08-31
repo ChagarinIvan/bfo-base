@@ -6,9 +6,9 @@ namespace Tests\Application\Service\Club;
 
 use App\Application\Dto\Auth\AuthAssembler;
 use App\Application\Dto\Club\ClubAssembler;
-use App\Application\Dto\Club\ClubSearchDto;
-use App\Application\Service\Club\ListClubs;
-use App\Application\Service\Club\ListClubsService;
+use App\Application\Dto\Club\LegacySearchClubDto;
+use App\Application\Service\Club\ListLegacyClubs;
+use App\Application\Service\Club\ListLegacyClubsService;
 use App\Domain\Club\Club;
 use App\Domain\Club\ClubRepository;
 use App\Domain\Shared\Criteria;
@@ -16,9 +16,10 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
-final class ListClubsServiceTest extends TestCase
+/** @see ListLegacyClubsService */
+final class ListLegacyClubsServiceTest extends TestCase
 {
-    private ListClubsService $service;
+    private ListLegacyClubsService $service;
 
     private ClubRepository&MockObject $clubs;
 
@@ -26,7 +27,7 @@ final class ListClubsServiceTest extends TestCase
     {
         parent::setUp();
 
-        $this->service = new ListClubsService(
+        $this->service = new ListLegacyClubsService(
             $this->clubs = $this->createMock(ClubRepository::class),
             new ClubAssembler(new AuthAssembler),
         );
@@ -44,7 +45,7 @@ final class ListClubsServiceTest extends TestCase
             ->willReturn($clubs)
         ;
 
-        $result = $this->service->execute(new ListClubs(new ClubSearchDto()));
+        $result = $this->service->execute(new ListLegacyClubs(new LegacySearchClubDto()));
 
         $this->assertCount(2, $result);
     }
@@ -61,7 +62,7 @@ final class ListClubsServiceTest extends TestCase
             ->willReturn($clubs)
         ;
 
-        $result = $this->service->execute(new ListClubs(new ClubSearchDto(ids: [1, 2])));
+        $result = $this->service->execute(new ListLegacyClubs(new LegacySearchClubDto(ids: [1, 2])));
 
         $this->assertCount(2, $result);
     }

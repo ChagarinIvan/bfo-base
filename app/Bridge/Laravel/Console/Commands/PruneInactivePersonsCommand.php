@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Bridge\Laravel\Console\Commands;
 
 use App\Application\Dto\Auth\UserId;
-use App\Application\Dto\Person\PersonSearchDto;
+use App\Application\Dto\Person\LegacySearchPersonDto;
 use App\Application\Service\Person\DisablePerson;
 use App\Application\Service\Person\DisablePersonService;
-use App\Application\Service\Person\ListPersons;
-use App\Application\Service\Person\ListPersonsService;
+use App\Application\Service\Person\ListLegacyPersons;
+use App\Application\Service\Person\ListLegacyPersonsService;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 
@@ -21,7 +21,7 @@ use Illuminate\Console\Command;
 class PruneInactivePersonsCommand extends Command
 {
     public function __construct(
-        private readonly ListPersonsService $listPersonsService,
+        private readonly ListLegacyPersonsService $listPersonsService,
         private readonly DisablePersonService $disablePersonService,
     ) {
         parent::__construct();
@@ -35,7 +35,7 @@ class PruneInactivePersonsCommand extends Command
         $count = 0;
 
         $persons = $this->listPersonsService->execute(
-            new ListPersons(new PersonSearchDto(withoutLinesAndPayments: true))
+            new ListLegacyPersons(new LegacySearchPersonDto(withoutLinesAndPayments: true))
         );
 
         foreach ($persons as $person) {

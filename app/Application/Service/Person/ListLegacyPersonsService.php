@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Application\Service\Person;
 
+use App\Application\Dto\Person\LegacyViewPersonDto;
 use App\Application\Dto\Person\PersonAssembler;
-use App\Application\Dto\Person\ViewPersonDto;
 use App\Domain\Person\PersonRepository;
 use function array_map;
 
-final readonly class ListPersonsService
+final readonly class ListLegacyPersonsService
 {
     public function __construct(
         private PersonRepository $persons,
@@ -17,11 +17,11 @@ final readonly class ListPersonsService
     ) {
     }
 
-    /** @return ViewPersonDto[] */
-    public function execute(ListPersons $command): array
+    /** @return LegacyViewPersonDto[] */
+    public function execute(ListLegacyPersons $command): array
     {
         return array_map(
-            $this->assembler->toViewPersonDto(...),
+            $this->assembler->toLegacyViewPersonDto(...),
             $this->persons->byCriteria($command->criteria())->all()
         );
     }

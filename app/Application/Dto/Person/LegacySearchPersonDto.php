@@ -6,7 +6,7 @@ namespace App\Application\Dto\Person;
 
 use App\Application\Dto\AbstractDto;
 
-final class PersonSearchDto extends AbstractDto
+final class LegacySearchPersonDto extends AbstractDto
 {
     public static function requestValidationRules(): array
     {

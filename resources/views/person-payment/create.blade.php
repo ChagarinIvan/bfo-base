@@ -1,8 +1,8 @@
 @php
     use App\Bridge\Laravel\Http\Controllers\PersonPayment\StorePersonPaymentAction;
-    use App\Application\Dto\Person\ViewPersonDto;
+    use App\Application\Dto\Person\LegacyViewPersonDto;
     /**
-     * @var ViewPersonDto $person
+     * @var LegacyViewPersonDto $person
      */
 @endphp
 

@@ -1,10 +1,10 @@
 @php
     use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonAction;
     use App\Application\Dto\Club\ViewClubDto;
-    use App\Application\Dto\Person\ViewPersonDto;
+    use App\Application\Dto\Person\LegacyViewPersonDto;
     /**
      * @var ViewClubDto $club;
-     * @var ViewPersonDto[] $persons;
+     * @var LegacyViewPersonDto[] $persons;
      */
 @endphp
 

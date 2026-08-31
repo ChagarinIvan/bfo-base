@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Tests\Application\Service\Person;
 
 use App\Application\Dto\Auth\AuthAssembler;
+use App\Application\Dto\Person\LegacySearchPersonDto;
 use App\Application\Dto\Person\PersonAssembler;
-use App\Application\Dto\Person\PersonSearchDto;
-use App\Application\Service\Person\ListPersons;
-use App\Application\Service\Person\ListPersonsService;
+use App\Application\Service\Person\ListLegacyPersons;
+use App\Application\Service\Person\ListLegacyPersonsService;
 use App\Domain\Person\Person;
 use App\Domain\Person\PersonRepository;
 use App\Domain\Shared\Criteria;
@@ -16,9 +16,9 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
-final class ListPersonsServiceTest extends TestCase
+final class ListLegacyPersonsServiceTest extends TestCase
 {
-    private ListPersonsService $service;
+    private ListLegacyPersonsService $service;
 
     private MockObject&PersonRepository $clubs;
 
@@ -26,7 +26,7 @@ final class ListPersonsServiceTest extends TestCase
     {
         parent::setUp();
 
-        $this->service = new ListPersonsService(
+        $this->service = new ListLegacyPersonsService(
             $this->clubs = $this->createMock(PersonRepository::class),
             new PersonAssembler(new AuthAssembler),
         );
@@ -44,7 +44,7 @@ final class ListPersonsServiceTest extends TestCase
             ->willReturn($persons)
         ;
 
-        $result = $this->service->execute(new ListPersons(new PersonSearchDto()));
+        $result = $this->service->execute(new ListLegacyPersons(new LegacySearchPersonDto()));
 
         $this->assertCount(2, $result);
     }

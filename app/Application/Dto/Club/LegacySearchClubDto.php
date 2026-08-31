@@ -6,7 +6,7 @@ namespace App\Application\Dto\Club;
 
 use App\Application\Dto\AbstractDto;
 
-final class ClubSearchDto extends AbstractDto
+final class LegacySearchClubDto extends AbstractDto
 {
     public static function requestValidationRules(): array
     {

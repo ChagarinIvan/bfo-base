@@ -12,16 +12,9 @@ final readonly class ViewPersonDto
         public string $id,
         public string $lastname,
         public string $firstname,
-        public ?string $birthday,
-        public string $citizenship,
-        public ?string $clubId,
-        public int $eventsCount,
+        public ?int $birthYear,
         public ImpressionDto $created,
         public ImpressionDto $updated,
-        // TODO remove
-        public ?string $lastPaymentDate,
-        /** @var array<string, ViewPersonProtocolLineDto[]> */
-        public array $groupedByYearProtocolLines = [],
     ) {
     }
 }

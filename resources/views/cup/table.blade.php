@@ -6,7 +6,7 @@
     use App\Bridge\Laravel\Http\Controllers\Event\ShowEventDistanceAction;
     use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonAction;
     use App\Application\Dto\Club\ViewClubDto;
-    use App\Application\Dto\Person\ViewPersonDto;
+    use App\Application\Dto\Person\LegacyViewPersonDto;
     use App\Domain\Cup\Cup;
     use App\Domain\Cup\CupEvent\CupEvent;
     use App\Domain\Cup\CupEvent\CupEventPoint;
@@ -15,7 +15,7 @@
      * @var Cup $cup;
      * @var CupEvent[] $cupEvents;
      * @var array<int, CupEventPoint[]> $cupPoints;
-     * @var array<int, ViewPersonDto> $persons;
+     * @var array<int, LegacyViewPersonDto> $persons;
      * @var array<int, ViewClubDto> $clubs;
      * @var CupGroup $activeGroup;
      */
@@ -94,7 +94,7 @@
                     <tbody>
                     @foreach($cupPoints as $personId => $cupEventPoints)
                         @php
-                            /** @var ViewPersonDto|null $person */
+                            /** @var LegacyViewPersonDto|null $person */
                             $person = $persons[$personId] ?? null;
                             $sum = 0;
                             $count = 0;

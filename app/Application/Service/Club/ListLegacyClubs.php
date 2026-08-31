@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Application\Service\Club;
 
-use App\Application\Dto\Club\ClubSearchDto;
+use App\Application\Dto\Club\LegacySearchClubDto;
 use App\Domain\Shared\Criteria;
 use function array_filter;
 use function get_object_vars;
 
-final readonly class ListClubs
+final readonly class ListLegacyClubs
 {
-    public function __construct(private ClubSearchDto $search)
+    public function __construct(private LegacySearchClubDto $search)
     {
     }
 
