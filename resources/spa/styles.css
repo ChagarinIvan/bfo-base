@@ -201,18 +201,48 @@ body {
     border-radius: 0.5rem;
 }
 
-.back-button {
-    margin-bottom: 1rem;
-}
-
 .competition-details-card {
     margin-bottom: 1.5rem;
 }
 
-.competition-details-dates {
-    margin-top: 0;
+.competition-impressions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.competition-details-label {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-weight: 600;
+}
+
+.competition-details-info {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+}
+
+.competition-details-info th,
+.competition-details-info td {
+    padding: 0.65rem 0.75rem;
+    border-bottom: 1px solid rgb(33 37 41 / 10%);
+    text-align: left;
+    vertical-align: top;
+}
+
+.competition-details-info th {
+    width: 12rem;
     color: #6c757d;
     font-weight: 600;
+}
+
+.competition-legacy-actions {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem;
 }
 
 .section-title {

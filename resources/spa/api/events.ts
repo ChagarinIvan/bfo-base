@@ -1,12 +1,17 @@
 import { api } from './client'
-import type { Event } from './types'
+import type { Event, PaginatedApiResponse } from './types'
 
 export async function getCompetitionEvents(
     competitionId: string,
-): Promise<Event[]> {
-    return (
-        await api.get<Event[]>('/events', {
-            params: { competitionId },
-        })
-    ).data
+    page = 1,
+    perPage = 20,
+): Promise<PaginatedApiResponse<Event>> {
+    const response = await api.get<Event[]>('/events', {
+        params: { competitionId, page, perPage },
+    })
+
+    return {
+        data: response.data,
+        headers: response.headers as Record<string, unknown>,
+    }
 }

@@ -10,11 +10,14 @@ vi.mock('./client', () => ({
 
 describe('events API', () => {
     it('uses the camelCase competitionId query parameter', async () => {
-        vi.mocked(api.get).mockResolvedValue({ data: [] })
+        vi.mocked(api.get).mockResolvedValue({ data: [], headers: {} })
 
-        await expect(getCompetitionEvents('42')).resolves.toEqual([])
+        await expect(getCompetitionEvents('42')).resolves.toEqual({
+            data: [],
+            headers: {},
+        })
         expect(api.get).toHaveBeenCalledWith('/events', {
-            params: { competitionId: '42' },
+            params: { competitionId: '42', page: 1, perPage: 20 },
         })
     })
 })

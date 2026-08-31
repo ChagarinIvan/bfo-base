@@ -191,6 +191,8 @@ onBeforeUnmount(() => {
                         v-model="year"
                         :options="years"
                         :placeholder="t('spa.competitions.year_placeholder')"
+                        filter
+                        :filter-placeholder="t('spa.competitions.year_filter')"
                         :disabled="loading"
                         @update:model-value="onYearChange"
                     />
@@ -202,7 +204,6 @@ onBeforeUnmount(() => {
                     <InputText
                         id="competition-name-filter"
                         v-model="name"
-                        :disabled="loading"
                         @update:model-value="onNameChange"
                     />
                     <small

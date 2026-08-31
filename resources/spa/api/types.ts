@@ -44,6 +44,11 @@ export interface PaginationHeaders {
     lastPage: number
 }
 
+export interface PaginatedApiResponse<T> {
+    data: T[]
+    headers: Record<string, unknown>
+}
+
 export interface CreateCompetitionRequest {
     name: string
     description: string
