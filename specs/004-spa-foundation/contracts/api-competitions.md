@@ -2,7 +2,7 @@
 
 ## GET /api/v1/competitions
 
-Публичный список соревнований. Query: `year`, `page`, `per_page`.
+Публичный список соревнований. Query: `year`, `page`, `perPage`.
 
 Тело ответа — прямой JSON-массив `ViewCompetitionDto`, без `data`, `meta` и
 `links`. Пагинация передаётся только заголовками:

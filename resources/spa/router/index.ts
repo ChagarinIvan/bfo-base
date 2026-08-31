@@ -7,6 +7,8 @@ import {
 import { useAuthStore } from '../stores/auth'
 import CompetitionsPage from '../pages/competitions/CompetitionsPage.vue'
 import CreateCompetitionPage from '../pages/competitions/CreateCompetitionPage.vue'
+import CompetitionDetailsPage from '../pages/competitions/CompetitionDetailsPage.vue'
+import EditCompetitionPage from '../pages/competitions/EditCompetitionPage.vue'
 import LoginPage from '../pages/auth/LoginPage.vue'
 
 export function createAppRouter(
@@ -21,6 +23,15 @@ export function createAppRouter(
             {
                 path: '/app/competitions/create',
                 component: CreateCompetitionPage,
+                meta: { requiresAuth: true },
+            },
+            {
+                path: '/app/competitions/:id',
+                component: CompetitionDetailsPage,
+            },
+            {
+                path: '/app/competitions/:id/edit',
+                component: EditCompetitionPage,
                 meta: { requiresAuth: true },
             },
             { path: '/app/login', component: LoginPage },

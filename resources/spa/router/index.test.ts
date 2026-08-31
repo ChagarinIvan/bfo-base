@@ -1,6 +1,13 @@
 import { createMemoryHistory } from 'vue-router'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { createPinia, setActivePinia } from 'pinia'
+import {
+    authenticatedAccountNavigation,
+    authenticatedCompetitionNavigation,
+    authenticatedHelpNavigation,
+    competitionNavigation,
+    personsNavigation,
+} from '../components/navigationModels'
 
 class MemoryStorage implements Storage {
     private values = new Map<string, string>()
@@ -52,5 +59,41 @@ describe('SPA navigation guard', () => {
         expect(router.currentRoute.value.query.return).toBe(
             '/app/competitions/create',
         )
+    })
+
+    it('resolves the public competition details route', async () => {
+        const router = createAppRouter(createMemoryHistory())
+
+        await router.push('/app/competitions/42')
+
+        expect(router.currentRoute.value.path).toBe('/app/competitions/42')
+    })
+
+    it('protects the competition edit route', async () => {
+        const router = createAppRouter(createMemoryHistory())
+
+        await router.push('/app/competitions/42/edit')
+
+        expect(router.currentRoute.value.path).toBe('/app/login')
+        expect(router.currentRoute.value.query.return).toBe(
+            '/app/competitions/42/edit',
+        )
+    })
+
+    it('keeps legacy navigation destinations outside the SPA router', () => {
+        const router = createAppRouter(createMemoryHistory())
+        const registeredPaths = router.getRoutes().map((route) => route.path)
+
+        expect(registeredPaths).toContain(competitionNavigation[0].href)
+
+        for (const item of [
+            ...competitionNavigation.slice(1),
+            ...personsNavigation,
+            ...authenticatedCompetitionNavigation,
+            ...authenticatedHelpNavigation,
+            ...authenticatedAccountNavigation,
+        ]) {
+            expect(registeredPaths).not.toContain(item.href)
+        }
     })
 })

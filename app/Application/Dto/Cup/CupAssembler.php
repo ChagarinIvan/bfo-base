@@ -75,7 +75,7 @@ final readonly class CupAssembler
             updated: $this->authAssembler->toImpressionDto($cupEvent->updated),
 
             // TODO remove
-            event: $this->eventAssembler->toViewEventDto($cupEvent->event),
+            event: $this->eventAssembler->toLegacyViewEventDto($cupEvent->event),
         );
     }
 

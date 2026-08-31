@@ -1,15 +1,65 @@
 import type {
     ApiErrorItem,
-    CompetitionQuery,
+    CompetitionSearchQuery,
     PaginationHeaders,
 } from '../../api/types'
 
+export const NAME_SEARCH_MINIMUM_LENGTH = 3
+export const NAME_SEARCH_DEBOUNCE_MS = 300
+
+export type Debounced<TArguments extends unknown[]> = ((
+    ...arguments_: TArguments
+) => void) & {
+    cancel: () => void
+}
+
+export function normaliseNameSearch(value: string): string {
+    return value.trim()
+}
+
+export function hasTooShortNameSearch(value: string): boolean {
+    const name = normaliseNameSearch(value)
+
+    return name.length > 0 && name.length < NAME_SEARCH_MINIMUM_LENGTH
+}
+
 export function competitionQuery(
-    year: number,
-    page = 1,
-    perPage = 20,
-): CompetitionQuery {
-    return { year, page, per_page: perPage }
+    filters: CompetitionSearchQuery,
+): CompetitionSearchQuery {
+    const query: CompetitionSearchQuery = {}
+    const name = normaliseNameSearch(filters.name ?? '')
+    const date = filters.date?.trim()
+
+    if (filters.year !== undefined) query.year = filters.year
+    if (name.length >= NAME_SEARCH_MINIMUM_LENGTH) query.name = name
+    if (date) query.date = date
+    if (filters.page !== undefined) query.page = filters.page
+    if (filters.perPage !== undefined) query.perPage = filters.perPage
+
+    return query
+}
+
+export function debounce<TArguments extends unknown[]>(
+    callback: (...arguments_: TArguments) => void,
+    delay = NAME_SEARCH_DEBOUNCE_MS,
+): Debounced<TArguments> {
+    let timeout: ReturnType<typeof setTimeout> | undefined
+
+    const debounced = (...arguments_: TArguments): void => {
+        if (timeout) clearTimeout(timeout)
+        timeout = setTimeout(() => callback(...arguments_), delay)
+    }
+
+    debounced.cancel = (): void => {
+        if (timeout) clearTimeout(timeout)
+        timeout = undefined
+    }
+
+    return debounced
+}
+
+export function resetPageOnFilterChange(currentPage: number): number {
+    return currentPage === 1 ? currentPage : 1
 }
 
 export function formatDateRange(from: string, to: string): string {

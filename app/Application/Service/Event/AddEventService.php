@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Service\Event;
 
 use App\Application\Dto\Event\EventAssembler;
-use App\Application\Dto\Event\ViewEventDto;
+use App\Application\Dto\Event\LegacyViewEventDto;
 use App\Domain\Event\EventRepository;
 use App\Domain\Event\Factory\EventFactory;
 
@@ -18,11 +18,11 @@ final readonly class AddEventService
     ) {
     }
 
-    public function execute(AddEvent $command): ViewEventDto
+    public function execute(AddEvent $command): LegacyViewEventDto
     {
         $event = $this->factory->create($command->eventInput());
         $this->events->add($event);
 
-        return $this->assembler->toViewEventDto($event);
+        return $this->assembler->toLegacyViewEventDto($event);
     }
 }

@@ -14,6 +14,7 @@ use App\Domain\Competition\Competition;
 use App\Domain\Competition\CompetitionRepository;
 use App\Domain\Shared\DummyTransactional;
 use App\Domain\Shared\FrozenClock;
+use Carbon\Carbon;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
@@ -30,7 +31,7 @@ final class DisableCompetitionServiceTest extends TestCase
 
         $this->service = new DisableCompetitionService(
             $this->competitions = $this->createMock(CompetitionRepository::class),
-            new FrozenClock(),
+            new FrozenClock(Carbon::parse('2023-04-01')),
             new DummyTransactional(),
             new CompetitionAssembler(new AuthAssembler()),
         );
@@ -76,5 +77,7 @@ final class DisableCompetitionServiceTest extends TestCase
         $this->service->execute($command);
 
         $this->assertFalse($competition->active);
+        $this->assertSame('2023-04-01T00:00:00+00:00', $competition->updated->at->toAtomString());
+        $this->assertSame(1, $competition->updated->by);
     }
 }

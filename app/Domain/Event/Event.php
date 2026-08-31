@@ -36,6 +36,7 @@ use Illuminate\Support\Collection;
  * @property int $competition_id
  * @property string $file
  * @property bool $active
+ * @property-read int $protocol_lines_count
  *
  * @property Impression $created
  * @property Impression $updated

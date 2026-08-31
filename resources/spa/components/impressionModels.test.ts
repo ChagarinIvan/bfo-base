@@ -28,9 +28,17 @@ describe('impression model', () => {
         ).toBe('ivan@example.com')
     })
 
-    it('formats short and full audit dates', () => {
-        expect(formatImpressionDate(impression.at)).toContain('2026')
-        expect(formatImpressionFullDate(impression.at)).toContain('2026')
+    it('falls back to the supplied unknown-user label', () => {
+        expect(impressionUserLabel(impression, [], 'Карыстальнік №7')).toBe(
+            'Карыстальнік №7',
+        )
+    })
+
+    it('formats audit dates as ISO dates without translated month names', () => {
+        expect(formatImpressionDate(impression.at)).toBe('2026-08-29 20:41')
+        expect(formatImpressionFullDate(impression.at)).toBe(
+            '2026-08-29 20:41:01',
+        )
     })
 
     it('keeps an invalid date readable', () => {

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Http\Controllers\CupEvents;
 
-use App\Application\Dto\Event\EventSearchDto;
+use App\Application\Dto\Event\SearchEventDto;
 use App\Application\Service\Cup\Exception\CupNotFound;
 use App\Application\Service\Cup\ViewCup;
 use App\Application\Service\Cup\ViewCupService;
 use App\Application\Service\Event\ListEvents;
-use App\Application\Service\Event\ListEventsService;
+use App\Application\Service\Event\ListLegacyEventsService;
 use App\Bridge\Laravel\Http\Controllers\Cup\CupAction;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -22,7 +22,7 @@ class ShowCreateCupEventFormAction extends BaseController
     public function __invoke(
         string $cupId,
         ViewCupService $viewCupService,
-        ListEventsService $listEvents,
+        ListLegacyEventsService $listEvents,
     ): RedirectResponse|View {
         try {
             $cup = $viewCupService->execute(new ViewCup($cupId));
@@ -30,7 +30,7 @@ class ShowCreateCupEventFormAction extends BaseController
             return $this->redirectTo404Error();
         }
 
-        $events = $listEvents->execute(new ListEvents(new EventSearchDto(
+        $events = $listEvents->execute(new ListEvents(new SearchEventDto(
             year: (string) $cup->year,
             notRelatedToCup: $cupId,
         )));

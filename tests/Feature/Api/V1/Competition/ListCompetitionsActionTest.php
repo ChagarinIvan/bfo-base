@@ -62,12 +62,94 @@ final class ListCompetitionsActionTest extends TestCase
                 'to' => '2026-01-02',
             ]);
 
-        $this->getJson('/api/v1/competitions?per_page=2&page=2')
+        $this->getJson('/api/v1/competitions?perPage=2&page=2')
             ->assertOk()
             ->assertHeader('X-Pagination-Total', '3')
             ->assertHeader('X-Pagination-Per-Page', '2')
             ->assertHeader('X-Pagination-Current-Page', '2')
             ->assertHeader('X-Pagination-Last-Page', '2')
+        ;
+    }
+
+    #[Test]
+    public function it_matches_a_trimmed_name_without_regard_to_case(): void
+    {
+        $matchingCompetition = $this->createCompetition(['name' => 'Minsk Cup']);
+        $this->createCompetition(['name' => 'Brest Cup']);
+
+        $this->getJson('/api/v1/competitions?name=%20%20mInSk%20%20')
+            ->assertOk()
+            ->assertJsonCount(1)
+            ->assertJsonPath('0.id', (string) $matchingCompetition->getKey())
+        ;
+    }
+
+    #[Test]
+    public function it_rejects_a_short_non_empty_name_filter(): void
+    {
+        $this->getJson('/api/v1/competitions?name=ab')
+            ->assertUnprocessable()
+            ->assertJsonFragment([
+                'code' => 'validation_error',
+                'field' => 'name',
+            ])
+        ;
+    }
+
+    #[Test]
+    public function it_includes_competitions_on_both_date_range_boundaries(): void
+    {
+        $competition = $this->createCompetition([
+            'from' => '2026-05-10',
+            'to' => '2026-05-12',
+        ]);
+
+        $this->getJson('/api/v1/competitions?date=2026-05-10')
+            ->assertOk()
+            ->assertJsonFragment(['id' => (string) $competition->getKey()])
+        ;
+        $this->getJson('/api/v1/competitions?date=2026-05-12')
+            ->assertOk()
+            ->assertJsonFragment(['id' => (string) $competition->getKey()])
+        ;
+    }
+
+    #[Test]
+    public function it_combines_year_name_and_date_filters(): void
+    {
+        $matchingCompetition = $this->createCompetition([
+            'name' => 'Forest Cup',
+            'from' => '2026-06-10',
+            'to' => '2026-06-12',
+        ]);
+        $this->createCompetition([
+            'name' => 'Forest Cup',
+            'from' => '2026-07-10',
+            'to' => '2026-07-12',
+        ]);
+        $this->createCompetition([
+            'name' => 'Forest Cup',
+            'from' => '2025-06-10',
+            'to' => '2025-06-12',
+        ]);
+
+        $this->getJson('/api/v1/competitions?year=2026&name=Cup&date=2026-06-11')
+            ->assertOk()
+            ->assertJsonCount(1)
+            ->assertJsonPath('0.id', (string) $matchingCompetition->getKey())
+        ;
+    }
+
+    #[Test]
+    public function it_does_not_return_inactive_competitions(): void
+    {
+        $activeCompetition = $this->createCompetition(['active' => true]);
+        $this->createCompetition(['active' => false]);
+
+        $this->getJson('/api/v1/competitions')
+            ->assertOk()
+            ->assertJsonCount(1)
+            ->assertJsonPath('0.id', (string) $activeCompetition->getKey())
         ;
     }
 
@@ -100,10 +182,15 @@ final class ListCompetitionsActionTest extends TestCase
         ));
     }
 
-    private function createCompetition(): Competition
+    /** @param array<string, mixed> $attributes */
+    private function createCompetition(array $attributes = []): Competition
     {
         /** @var Competition $competition */
-        $competition = Competition::factory()->createOne(['from' => '2026-01-01', 'to' => '2026-01-02']);
+        $competition = Competition::factory()->createOne([
+            'from' => '2026-01-01',
+            'to' => '2026-01-02',
+            ...$attributes,
+        ]);
 
         return $competition;
     }

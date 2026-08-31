@@ -9,6 +9,7 @@ use App\Models\Year;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+/** @extends Factory<Competition> */
 class CompetitionFactory extends Factory
 {
     protected $model = Competition::class;

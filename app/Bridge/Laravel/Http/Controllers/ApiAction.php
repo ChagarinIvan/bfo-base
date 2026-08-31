@@ -43,9 +43,13 @@ trait ApiAction
                 continue;
             }
             try {
+                $requestData = $parameter::normaliseRequestData($this->request->all());
                 $validated = $parameter::requestValidationRules() === []
                     ? []
-                    : $this->request->validate($parameter::requestValidationRules());
+                    : $this->validator->validate(
+                        $requestData,
+                        $parameter::requestValidationRules(),
+                    );
             } catch (ValidationException $exception) {
                 return response()->json(['errors' => collect($exception->errors())
                     ->flatMap(static fn (array $messages, string $field): array => array_map(

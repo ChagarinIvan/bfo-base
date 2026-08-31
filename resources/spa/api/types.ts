@@ -21,6 +21,17 @@ export interface Competition {
     updated?: Impression
 }
 
+export interface Event {
+    id: string
+    competitionId: string
+    name: string
+    description: string
+    date: string
+    participantsCount: number
+    created?: Impression
+    updated?: Impression
+}
+
 export interface AuthToken {
     token: string
     token_type: string
@@ -33,6 +44,11 @@ export interface PaginationHeaders {
     lastPage: number
 }
 
+export interface PaginatedApiResponse<T> {
+    data: T[]
+    headers: Record<string, unknown>
+}
+
 export interface CreateCompetitionRequest {
     name: string
     description: string
@@ -41,10 +57,14 @@ export interface CreateCompetitionRequest {
     mass: boolean
 }
 
-export interface CompetitionQuery {
-    year: number
-    page: number
-    per_page: number
+export type UpdateCompetitionRequest = CreateCompetitionRequest
+
+export interface CompetitionSearchQuery {
+    year?: number
+    name?: string
+    date?: string
+    page?: number
+    perPage?: number
 }
 
 export interface ApiErrorItem {

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Http\Controllers\Competition;
 
-use App\Application\Dto\Competition\CompetitionSearchDto;
+use App\Application\Dto\Competition\SearchCompetitionDto;
 use App\Application\Service\Competition\ListCompetitions;
 use App\Application\Service\Competition\ListCompetitionsService;
 use Illuminate\Contracts\View\View;
@@ -18,7 +18,7 @@ final class ShowCompetitionsListAction extends BaseController
      * @url /competitions
      */
     public function __invoke(
-        CompetitionSearchDto $search,
+        SearchCompetitionDto    $search,
         ListCompetitionsService $service,
     ): View {
         $competitions = $service->execute(new ListCompetitions($search))->setPerPage(100)->items();

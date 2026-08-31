@@ -1,18 +1,25 @@
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import {
     competitionQuery,
+    debounce,
     formatDateRange,
+    hasTooShortNameSearch,
     massIconClass,
     paginationFromHeaders,
+    resetPageOnFilterChange,
     shouldLoadUsers,
 } from './competitionModels'
 
 describe('competitions page model', () => {
+    afterEach(() => {
+        vi.useRealTimers()
+    })
+
     it('requests the selected year with the API pagination defaults', () => {
-        expect(competitionQuery(2026, 2, 10)).toEqual({
+        expect(competitionQuery({ year: 2026, page: 2, perPage: 10 })).toEqual({
             year: 2026,
             page: 2,
-            per_page: 10,
+            perPage: 10,
         })
     })
 
@@ -26,6 +33,12 @@ describe('competitions page model', () => {
         expect(formatDateRange('2026-08-22', '2026-08-23')).toBe(
             '2026-08-22 / 2026-08-23',
         )
+    })
+
+    it('keeps a date filter in YYYY-MM-DD format', () => {
+        expect(
+            competitionQuery({ year: 2026, date: '2026-07-04' }),
+        ).toMatchObject({ date: '2026-07-04' })
     })
 
     it('reads pagination metadata from API response headers', () => {
@@ -47,5 +60,37 @@ describe('competitions page model', () => {
     it('uses a square check for mass starts and a red-accented false icon', () => {
         expect(massIconClass(true)).toBe('pi pi-check-square')
         expect(massIconClass(false)).toBe('pi pi-times-circle')
+    })
+
+    it('applies a valid name and date filter from the first page', () => {
+        expect(hasTooShortNameSearch('fo')).toBe(true)
+        expect(
+            competitionQuery({
+                year: 2026,
+                name: 'Forest',
+                date: '2026-06-11',
+                page: resetPageOnFilterChange(3),
+                perPage: 20,
+            }),
+        ).toEqual({
+            year: 2026,
+            name: 'Forest',
+            date: '2026-06-11',
+            page: 1,
+            perPage: 20,
+        })
+    })
+
+    it('waits for the 300ms name-search debounce before loading', () => {
+        vi.useFakeTimers()
+        const load = vi.fn()
+        const debouncedLoad = debounce(load)
+
+        debouncedLoad()
+        vi.advanceTimersByTime(299)
+        expect(load).not.toHaveBeenCalled()
+
+        vi.advanceTimersByTime(1)
+        expect(load).toHaveBeenCalledOnce()
     })
 })

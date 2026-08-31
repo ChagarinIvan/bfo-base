@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Http\Controllers\Api\V1\Competition;
 
-use App\Application\Dto\Competition\CompetitionSearchDto;
+use App\Application\Dto\Competition\SearchCompetitionDto;
 use App\Application\Dto\Pagination\Pagination;
 use App\Application\Service\Competition\ListCompetitions;
 use App\Application\Service\Competition\ListCompetitionsService;
@@ -17,7 +17,7 @@ final class ListCompetitionsAction extends BaseController
     use ApiAction;
 
     public function __invoke(
-        CompetitionSearchDto $search,
+        SearchCompetitionDto $search,
         Pagination $pagination,
         ListCompetitionsService $service,
     ): Slice
