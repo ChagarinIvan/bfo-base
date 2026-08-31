@@ -28,7 +28,34 @@ SPA/API-сценария.
 
 **Purpose**: зафиксировать реальные legacy consumers до массовых переименований и удаления.
 
-- [ ] T001 [P] Выполнить usage-аудит текущих club/person list DTO, services, Blade routes и club links в `app/Application/Dto/Club/`, `app/Application/Dto/Person/`, `app/Application/Service/Club/`, `app/Application/Service/Person/`, `app/Bridge/Laravel/`, `resources/views/` и `tests/`; использовать результат как allowlist для задач T002, T003 и T045–T049.
+- [X] T001 [P] Выполнить usage-аудит текущих club/person list DTO, services, Blade routes и club links в `app/Application/Dto/Club/`, `app/Application/Dto/Person/`, `app/Application/Service/Club/`, `app/Application/Service/Person/`, `app/Bridge/Laravel/`, `resources/views/` и `tests/`; использовать результат как allowlist для задач T002, T003 и T045–T049.
+
+### Audit result for T001
+
+- Текущие непагинированные club list symbols (`ClubSearchDto`, `ListClubs`, `ListClubsService`)
+  используются в `RendersEventDistance`, `ShowEventAction`, `ShowEventDistanceAction`,
+  `ShowCupEventGroupAction`, `ShowCupTableAction`, `ShowCreatePersonAction`, `ShowEditPersonAction`
+  и старом `ShowClubsListAction`; последние club action/view consumers удаляются в US5, остальные
+  сохраняются и переходят на `Legacy*` names.
+- Текущие person list symbols (`PersonSearchDto`, `ListPersons`, `ListPersonsService`) используются
+  в `FixYearCommand`, `PruneInactivePersonsCommand`, `ListPersonAction`, event/cup actions,
+  `ShowClubAction` и person list service test. `ShowClubAction` удаляется вместе со старой club
+  страницей; console, `/api/person(s)`, events и cups остаются legacy consumers.
+- `ViewClubDto` остаётся общим DTO после удаления `normalizeName`: его сохраняемые consumers —
+  person create/edit forms, event/cup views, `components/club-link.blade.php`, club application
+  services и их tests. `RendersEventDistance` должен вычислять нормализованный ключ из `name`.
+- Полное текущее `ViewPersonDto` используется в `PersonAssembler`, add/list/update/view person
+  services, event/cup views, person/payment/rank views и legacy person tests; оно переименовывается
+  в `LegacyViewPersonDto`. Компактный `ViewPersonDto` предназначен только для нового V1 persons
+  path.
+- Club route/link cleanup затрагивает `WebRoutesServiceProvider`, `ViewProvider`, club controllers,
+  `resources/views/clubs/`, `resources/views/layouts/navbar.blade.php`, event/cup Blade links,
+  `resources/vue/components/person/Persons.vue`, `resources/spa/components/navigationModels.ts`
+  и соответствующие tests. `resources/views/components/club-link.blade.php` сохраняется, пока есть
+  `@include` из `resources/views/cup/events/show.blade.php`, но его href переводится в SPA.
+- В переводах удаляются только obsolete keys старого club UI (`app.club.name`,
+  `app.club.persons_count`, `app.clubs.create.title`, `app.clubs.name`) после повторной проверки;
+  `app.navbar.clubs` и `spa.nav.clubs` сохраняются для работающих navbar/SPA.
 
 ---
 
@@ -72,7 +99,7 @@ active-only count и порядок `name/id`; ввести 1–2, затем 3+
 - [ ] T013 [US1] Создать `app/Bridge/Laravel/Http/Controllers/Api/V1/Club/ListClubsAction.php` и зарегистрировать public optional-auth GET `/api/v1/clubs` в `app/Bridge/Laravel/Provider/ApiV1RoutesServiceProvider.php`.
 - [ ] T014 [US1] Создать `resources/spa/api/clubs.ts` с list-запросом `/clubs` и pagination headers, используя типы из `resources/spa/api/types.ts`.
 - [ ] T015 [US1] Создать `resources/spa/pages/clubs/ClubsPage.vue` и `resources/spa/pages/clubs/clubModels.ts` с единым name filter, PrimeVue пагинацией, состояниями loading/empty/general error и authenticated impressions.
-- [ ] T016 [US1] Зарегистрировать `/app/clubs` и fallback-навигацию в `resources/spa/router/index.ts`, добавить пункт Clubs в `resources/spa/components/AppLayout.vue` и обновить router/layout тесты в `resources/spa/router/index.test.ts` и `resources/spa/components/AppLayout.test.ts`.
+- [ ] T016 [US1] Зарегистрировать `/app/clubs` и fallback-навигацию в `resources/spa/router/index.ts`, обновить пункт Clubs в `resources/spa/components/AppLayout.vue` и `resources/spa/components/navigationModels.ts`, затем обновить router/layout тесты в `resources/spa/router/index.test.ts` и `resources/spa/components/AppLayout.test.ts`.
 
 **Checkpoint**: US1 полностью работает через новый API и SPA без авторизации; список может быть
 демонстрирован как MVP.
@@ -179,9 +206,9 @@ console и используемые legacy forms не регрессировал
 
 - [ ] T045 [US5] Заменить club GET routes в `app/Bridge/Laravel/Provider/WebRoutesServiceProvider.php` на permanent redirects `/clubs` → `/app/clubs`, `/clubs/create` → `/app/clubs/create`, `/clubs/{clubId}/show` → `/app/clubs/{clubId}` и удалить POST `/clubs/store`.
 - [ ] T046 [US5] Удалить заменённые Blade actions и tests: `app/Bridge/Laravel/Http/Controllers/Club/ClubAction.php`, `ShowClubsListAction.php`, `ShowCreateClubFormAction.php`, `ShowClubAction.php`, `StoreClubsAction.php`, `tests/Bridge/Laravel/Http/Controllers/Club/ShowClubsListActionTest.php`, `ShowClubActionTest.php`, `StoreClubsActionTest.php`.
-- [ ] T047 [US5] Удалить заменённые Blade views и только их специфичные переводы: `resources/views/clubs/index.blade.php`, `resources/views/clubs/create.blade.php`, `resources/views/clubs/show.blade.php`, `resources/lang/by.json` и `resources/lang/ru.json` после поиска ключей без оставшихся consumers.
-- [ ] T048 [US5] Перевести legacy navbar и все найденные club links на SPA в `resources/views/layouts/navbar.blade.php`, `resources/views/components/club-link.blade.php`, `resources/views/events/`, `resources/views/cup/` и `resources/views/persons/`; сохранить person deep links и partial `club-link.blade.php`, если он остаётся подключён через `@include`.
-- [ ] T049 [US5] После повторного usage-аудита удалить только подтверждённо мёртвые `app/Bridge/Laravel/View/Components/ClubLink.php`, его registration в `app/Bridge/Laravel/Provider/`, и `app/Application/Service/Club/DisableClub.php` с `DisableClubService.php` и `tests/Application/Service/Club/DisableClubServiceTest.php`; сохранить любой артефакт с оставшимся consumer.
+- [ ] T047 [US5] Удалить заменённые Blade views `resources/views/clubs/index.blade.php`, `resources/views/clubs/create.blade.php`, `resources/views/clubs/show.blade.php` и только obsolete club-translation keys из `resources/lang/by.json` и `resources/lang/ru.json`; сохранить `app.navbar.clubs` и `spa.nav.clubs` после поиска оставшихся consumers.
+- [ ] T048 [US5] Перевести legacy navbar и все найденные club links на SPA в `resources/views/layouts/navbar.blade.php`, `resources/views/components/club-link.blade.php`, `resources/views/events/`, `resources/views/cup/`, `resources/vue/components/person/Persons.vue` и других найденных consumers; сохранить person deep links и partial `club-link.blade.php`, если он остаётся подключён через `@include`.
+- [ ] T049 [US5] После повторного usage-аудита удалить только подтверждённо мёртвые `app/Bridge/Laravel/View/Components/ClubLink.php`, его registration в `app/Bridge/Laravel/Provider/ViewProvider.php`, и `app/Application/Service/Club/DisableClub.php` с `DisableClubService.php` и `tests/Application/Service/Club/DisableClubServiceTest.php`; сохранить любой артефакт с оставшимся consumer.
 
 **Checkpoint**: второй club UI удалён, старые GET-ссылки сохраняют bookmarks через 301, а
 используемые legacy person/event/cup/console paths работают через явно именованные adapters.
