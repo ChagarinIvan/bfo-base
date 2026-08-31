@@ -2,8 +2,6 @@
     use App\Bridge\Laravel\Http\Controllers\Club\ShowClubsListAction;
     use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionsListAction;
     use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupsListAction;
-    use App\Bridge\Laravel\Http\Controllers\Faq\ShowApiFaqAction;
-    use App\Bridge\Laravel\Http\Controllers\Faq\ShowFaqAction;
     use App\Bridge\Laravel\Http\Controllers\Flags\ShowFlagsListAction;
     use App\Bridge\Laravel\Http\Controllers\Groups\ShowGroupsListAction;
     use App\Bridge\Laravel\Http\Controllers\Login\ShowLoginFormAction;
@@ -23,9 +21,7 @@
      * @var bool $isClubsRoute;
      * @var bool $isRanksRoute;
      * @var bool $isFlagsRoute;
-     * @var bool $isFaqRoute;
      * @var bool $isGroupsRoute;
-     * @var bool $isFaqApiRoute;
      */
 @endphp
 
@@ -97,29 +93,6 @@
                         </li>
                     </ul>
                 </li>
-                @auth
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle {{ ($isFaqRoute || $isFaqApiRoute) ? 'active' : '' }}"
-                           href="#"
-                           id="apiDropdown"
-                           role="button"
-                           data-bs-toggle="dropdown"
-                           aria-expanded="false"
-                        >{{ __('app.navbar.help') }}</a>
-                        <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="apiDropdown">
-                            <li>
-                                <a class="dropdown-item {{ $isFaqRoute ? 'active' : '' }}"
-                                   href="{{ action(ShowFaqAction::class) }}"
-                                >{{ __('app.navbar.faq') }}</a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item {{ $isFaqApiRoute ? 'active' : '' }}"
-                                   href="{{ action(ShowApiFaqAction::class) }}"
-                                >{{ __('app.navbar.api') }}</a>
-                            </li>
-                        </ul>
-                    </li>
-                @endauth
             </ul>
             {{--            <div class="d-flex mx-auto my-1">--}}
             {{--                <div class="btn-group btn-group-sm" role="group" aria-label="Select locale">--}}

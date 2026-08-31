@@ -6,8 +6,6 @@ export interface NavigationItem {
         | 'spa.nav.clubs'
         | 'spa.nav.ranks'
         | 'spa.nav.groups'
-        | 'spa.nav.faq'
-        | 'spa.nav.api'
         | 'spa.nav.registration'
     href: string
     spa?: boolean
@@ -26,11 +24,6 @@ export const personsNavigation: NavigationItem[] = [
 
 export const authenticatedCompetitionNavigation: NavigationItem[] = [
     { label: 'spa.nav.groups', href: '/groups' },
-]
-
-export const authenticatedHelpNavigation: NavigationItem[] = [
-    { label: 'spa.nav.faq', href: '/faq' },
-    { label: 'spa.nav.api', href: '/faq/api' },
 ]
 
 export const authenticatedAccountNavigation: NavigationItem[] = [

@@ -47,8 +47,6 @@ use App\Bridge\Laravel\Http\Controllers\Event\ShowUnitEventsFormAction;
 use App\Bridge\Laravel\Http\Controllers\Event\StoreEventAction;
 use App\Bridge\Laravel\Http\Controllers\Event\UnitEventsAction;
 use App\Bridge\Laravel\Http\Controllers\Event\UpdateEventAction;
-use App\Bridge\Laravel\Http\Controllers\Faq\ShowApiFaqAction;
-use App\Bridge\Laravel\Http\Controllers\Faq\ShowFaqAction;
 use App\Bridge\Laravel\Http\Controllers\Flags\DeleteFlagAction;
 use App\Bridge\Laravel\Http\Controllers\Flags\ShowCreateFlagFormAction;
 use App\Bridge\Laravel\Http\Controllers\Flags\ShowEditFlagFormAction;
@@ -229,12 +227,6 @@ class WebRoutesServiceProvider extends ServiceProvider
                         $this->route->post('{flag}/update', UpdateFlagAction::class);
                         $this->route->get('{flag}/delete', DeleteFlagAction::class);
                     });
-                });
-
-                //faq
-                $this->routeRegistrar->prefix('faq')->group(function (): void {
-                    $this->route->get('', ShowFaqAction::class);
-                    $this->route->get('api', ShowApiFaqAction::class);
                 });
 
                 //errors

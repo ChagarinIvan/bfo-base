@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest'
 import {
     authenticatedAccountNavigation,
     authenticatedCompetitionNavigation,
-    authenticatedHelpNavigation,
     competitionNavigation,
     personsNavigation,
 } from './navigationModels'
@@ -24,16 +23,20 @@ describe('hybrid SPA navbar', () => {
         ])
     })
 
-    it('contains private legacy links only in the authenticated groups', () => {
+    it('keeps authenticated links outside the removed help menu', () => {
         expect(
             authenticatedCompetitionNavigation.map((item) => item.href),
         ).toEqual(['/groups'])
-        expect(authenticatedHelpNavigation.map((item) => item.href)).toEqual([
-            '/faq',
-            '/faq/api',
-        ])
         expect(authenticatedAccountNavigation.map((item) => item.href)).toEqual(
             ['/registration'],
         )
+        expect(
+            [
+                ...competitionNavigation,
+                ...personsNavigation,
+                ...authenticatedCompetitionNavigation,
+                ...authenticatedAccountNavigation,
+            ].map((item) => item.href),
+        ).not.toEqual(expect.arrayContaining(['/faq', '/faq/api']))
     })
 })

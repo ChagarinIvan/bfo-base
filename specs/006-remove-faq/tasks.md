@@ -28,8 +28,8 @@ description: "Исполняемый список задач для удален
 
 **Цель**: подтвердить исходную область изменения и подготовить контрольные точки.
 
-- [ ] T001 Проверить текущий статус рабочей копии и зафиксировать результат исходных проверок из `specs/006-remove-faq/quickstart.md` в рабочем отчёте/PR, не изменяя несвязанные пользовательские файлы.
-- [ ] T002 [P] Сверить перечень FAQ-артефактов в `specs/006-remove-faq/data-model.md` с текущими файлами `app/Bridge/Laravel/Http/Controllers/Faq/`, `resources/views/faq/`, `resources/spa/components/` и `resources/views/layouts/navbar.blade.php`.
+- [X] T001 Проверить текущий статус рабочей копии и зафиксировать результат исходных проверок из `specs/006-remove-faq/quickstart.md` в рабочем отчёте/PR, не изменяя несвязанные пользовательские файлы.
+- [X] T002 [P] Сверить перечень FAQ-артефактов в `specs/006-remove-faq/data-model.md` с текущими файлами `app/Bridge/Laravel/Http/Controllers/Faq/`, `resources/views/faq/`, `resources/spa/components/` и `resources/views/layouts/navbar.blade.php`.
 
 ---
 
@@ -41,9 +41,9 @@ description: "Исполняемый список задач для удален
 **Критично**: задачи пользовательских историй, затрагивающие API, не начинать
 до завершения аудита.
 
-- [ ] T003 Выполнить поиск использований старых API endpoints из `resources/views/faq/api.blade.php` по каталогам `app/`, `resources/`, `tests/` и проектной документации; классифицировать каждый endpoint как сохраняемый или удаляемый в `specs/006-remove-faq/data-model.md`.
-- [ ] T004 [P] Проверить связанные маршруты и контроллеры в `app/Bridge/Laravel/Provider/ApiRoutesServiceProvider.php` и `app/Bridge/Laravel/Http/Controllers/Api/`, сопоставив найденные использования с тестами в `tests/Feature/` и фронтенд-кодом в `resources/`.
-- [ ] T005 [P] Зафиксировать в `specs/006-remove-faq/data-model.md` список сохранённых и удаляемых API endpoints, контроллеров и тестов; для каждого удаления указать отсутствие потребителей внутри репозитория.
+- [X] T003 Выполнить поиск использований старых API endpoints из `resources/views/faq/api.blade.php` по каталогам `app/`, `resources/`, `tests/` и проектной документации; классифицировать каждый endpoint как сохраняемый или удаляемый в `specs/006-remove-faq/data-model.md`.
+- [X] T004 [P] Проверить связанные маршруты и контроллеры в `app/Bridge/Laravel/Provider/ApiRoutesServiceProvider.php` и `app/Bridge/Laravel/Http/Controllers/Api/`, сопоставив найденные использования с тестами в `tests/Feature/` и фронтенд-кодом в `resources/`.
+- [X] T005 [P] Зафиксировать в `specs/006-remove-faq/data-model.md` список сохранённых и удаляемых API endpoints, контроллеров и тестов; для каждого удаления указать отсутствие потребителей внутри репозитория.
 
 **Контрольная точка**: область удаления подтверждена, фактически используемые
 API endpoints защищены от удаления.
@@ -60,14 +60,14 @@ API endpoints защищены от удаления.
 
 ### Тесты пользовательской истории 1
 
-- [ ] T006 [P] [US1] Обновить проверки навигации SPA в `resources/spa/components/AppLayout.test.ts` и `resources/spa/router/index.test.ts` для авторизованного и неавторизованного состояний, подтвердив отсутствие `/faq`, `/faq/api`, `spa.nav.faq`, `spa.nav.api` и пустого меню справки при сохранении остальных пунктов.
-- [ ] T007 [P] [US1] Добавить или обновить проверки legacy-навигации в `tests/Feature/Faq/RemoveFaqNavigationTest.php` для авторизованного и неавторизованного состояний, подтверждая отсутствие FAQ/API FAQ и сохранение соседних пунктов меню.
+- [X] T006 [P] [US1] Обновить проверки навигации SPA в `resources/spa/components/AppLayout.test.ts` и `resources/spa/router/index.test.ts` для авторизованного и неавторизованного состояний, подтвердив отсутствие `/faq`, `/faq/api`, `spa.nav.faq`, `spa.nav.api` и пустого меню справки при сохранении остальных пунктов.
+- [X] T007 [P] [US1] Добавить или обновить проверки legacy-навигации в `tests/Feature/Faq/RemoveFaqNavigationTest.php` для авторизованного и неавторизованного состояний, подтверждая отсутствие FAQ/API FAQ и сохранение соседних пунктов меню.
 
 ### Реализация пользовательской истории 1
 
-- [ ] T008 [P] [US1] Удалить `spa.nav.faq` и `spa.nav.api` из типа `NavigationItem` и удалить `authenticatedHelpNavigation` из `resources/spa/components/navigationModels.ts`.
-- [ ] T009 [US1] Удалить отображение пустого меню справки и связанные импорты из `resources/spa/components/AppLayout.vue`, сохранив остальные группы навигации и их условия видимости.
-- [ ] T010 [US1] Удалить выпадающее меню справки, импорты `ShowFaqAction`/`ShowApiFaqAction` и FAQ-флаги активного состояния из `resources/views/layouts/navbar.blade.php`, не меняя соседние разделы.
+- [X] T008 [P] [US1] Удалить `spa.nav.faq` и `spa.nav.api` из типа `NavigationItem` и удалить `authenticatedHelpNavigation` из `resources/spa/components/navigationModels.ts`.
+- [X] T009 [US1] Удалить отображение пустого меню справки и связанные импорты из `resources/spa/components/AppLayout.vue`, сохранив остальные группы навигации и их условия видимости.
+- [X] T010 [US1] Удалить выпадающее меню справки, импорты `ShowFaqAction`/`ShowApiFaqAction` и FAQ-флаги активного состояния из `resources/views/layouts/navbar.blade.php`, не меняя соседние разделы.
 
 **Контрольная точка**: пользовательская история 1 полностью проверяема
 независимо от удаления самих FAQ-маршрутов.
@@ -85,15 +85,15 @@ API endpoints защищены от удаления.
 
 ### Тесты пользовательской истории 2
 
-- [ ] T011 [P] [US2] Создать request-тест `tests/Feature/Faq/RemovedFaqRoutesTest.php` для GET `/faq` и GET `/faq/api` с проверкой стандартного ответа отсутствующего маршрута и отсутствия FAQ-содержимого.
-- [ ] T012 [P] [US2] Добавить в `tests/Feature/Faq/RemovedFaqRoutesTest.php` проверку доступности показательного несвязанного web-маршрута после удаления FAQ.
+- [X] T011 [P] [US2] Создать request-тест `tests/Feature/Faq/RemovedFaqRoutesTest.php` для GET `/faq` и GET `/faq/api` с проверкой стандартного ответа отсутствующего маршрута и отсутствия FAQ-содержимого.
+- [X] T012 [P] [US2] Добавить в `tests/Feature/Faq/RemovedFaqRoutesTest.php` проверку доступности показательного несвязанного web-маршрута после удаления FAQ.
 
 ### Реализация пользовательской истории 2
 
-- [ ] T013 [US2] Удалить группу маршрутов FAQ и импорты FAQ actions из `app/Bridge/Laravel/Provider/WebRoutesServiceProvider.php`.
-- [ ] T014 [P] [US2] Удалить `app/Bridge/Laravel/Http/Controllers/Faq/ShowFaqAction.php` и `app/Bridge/Laravel/Http/Controllers/Faq/ShowApiFaqAction.php`, если аудит не обнаружил других внутренних потребителей.
-- [ ] T015 [P] [US2] Удалить `resources/views/faq/index.blade.php` и `resources/views/faq/api.blade.php`.
-- [ ] T016 [US2] Удалить ставшие неиспользуемыми `isFaqRoute`, `isFaqApiRoute` и их данные navbar из `app/Bridge/Laravel/Http/Controllers/Action.php` и `app/Bridge/Laravel/Http/Controllers/AbstractAction.php`.
+- [X] T013 [US2] Удалить группу маршрутов FAQ и импорты FAQ actions из `app/Bridge/Laravel/Provider/WebRoutesServiceProvider.php`.
+- [X] T014 [P] [US2] Удалить `app/Bridge/Laravel/Http/Controllers/Faq/ShowFaqAction.php` и `app/Bridge/Laravel/Http/Controllers/Faq/ShowApiFaqAction.php`, если аудит не обнаружил других внутренних потребителей.
+- [X] T015 [P] [US2] Удалить `resources/views/faq/index.blade.php` и `resources/views/faq/api.blade.php`.
+- [X] T016 [US2] Удалить ставшие неиспользуемыми `isFaqRoute`, `isFaqApiRoute` и их данные navbar из `app/Bridge/Laravel/Http/Controllers/Action.php` и `app/Bridge/Laravel/Http/Controllers/AbstractAction.php`.
 
 **Контрольная точка**: старые FAQ-адреса недоступны, а удалённые actions,
 представления и route-state не имеют ссылок.
@@ -112,10 +112,10 @@ API endpoints защищены от удаления.
 
 ### Реализация пользовательской истории 3
 
-- [ ] T017 [P] [US3] Удалить из `resources/lang/by.json` и `resources/lang/ru.json` только ключи `app.faq.*`, FAQ-only `app.api.*`, `app.navbar.faq`, `app.navbar.api`, `app.navbar.help`, `spa.nav.faq`, `spa.nav.api` и `spa.nav.help`, которые не используются после удаления.
-- [ ] T018 [US3] Удалить из `app/Bridge/Laravel/Provider/ApiRoutesServiceProvider.php` и `app/Bridge/Laravel/Http/Controllers/Api/` только те старые API routes/controllers, которые T003–T005 классифицировали как неиспользуемые внутри репозитория.
-- [ ] T019 [US3] Удалить связанные только с удалёнными API routes тесты и fixtures в `tests/`, если аудит подтвердил, что они не проверяют сохраняемый API-контракт.
-- [ ] T020 [US3] Выполнить финальный поиск удалённых имён и ключей по `app/`, `resources/` и `tests/`, исправив оставшиеся активные ссылки без удаления сохранённых API implementations.
+- [X] T017 [P] [US3] Удалить из `resources/lang/by.json` и `resources/lang/ru.json` только ключи `app.faq.*`, FAQ-only `app.api.*`, `app.navbar.faq`, `app.navbar.api`, `app.navbar.help`, `spa.nav.faq`, `spa.nav.api` и `spa.nav.help`, которые не используются после удаления.
+- [X] T018 [US3] Удалить из `app/Bridge/Laravel/Provider/ApiRoutesServiceProvider.php` и `app/Bridge/Laravel/Http/Controllers/Api/` только те старые API routes/controllers, которые T003–T005 классифицировали как неиспользуемые внутри репозитория.
+- [X] T019 [US3] Удалить связанные только с удалёнными API routes тесты и fixtures в `tests/`, если аудит подтвердил, что они не проверяют сохраняемый API-контракт; таких тестов не обнаружено.
+- [X] T020 [US3] Выполнить финальный поиск удалённых имён и ключей по `app/`, `resources/` и `tests/`, исправив оставшиеся активные ссылки без удаления сохранённых API implementations.
 
 **Контрольная точка**: пользовательская история 3 завершена, а сохранённые
 общие переводы и API-контракты не затронуты.
@@ -124,11 +124,11 @@ API endpoints защищены от удаления.
 
 ## Фаза 6: Полировка и сквозная проверка
 
-- [ ] T021 [P] Обновить `specs/006-remove-faq/research.md`, `specs/006-remove-faq/data-model.md`, `specs/006-remove-faq/contracts/removal-contract.md` и `specs/006-remove-faq/quickstart.md` фактическими результатами аудита и удалений.
-- [ ] T022 [P] Проверить форматирование и типы SPA командами `npm run ci` и `npm run typecheck`, если такая команда доступна в `package.json`.
-- [ ] T023 Запустить PHP-гейты `composer cs`, `composer stan`, `composer rector -- --dry-run` и `composer test`.
-- [ ] T024 Выполнить сценарии из `specs/006-remove-faq/quickstart.md`, включая smoke-проверку GET `/faq` и `/faq/api`, и сохранить результат в PR-описании.
-- [ ] T025 Проверить `git diff --check`, отсутствие новых N+1 и соответствие всех acceptance scenarios из `specs/006-remove-faq/spec.md`.
+- [X] T021 [P] Обновить `specs/006-remove-faq/research.md`, `specs/006-remove-faq/data-model.md`, `specs/006-remove-faq/contracts/removal-contract.md` и `specs/006-remove-faq/quickstart.md` фактическими результатами аудита и удалений.
+- [X] T022 [P] Проверить форматирование и типы SPA командами `npm run ci` и `npm run typecheck`, если такая команда доступна в `package.json`.
+- [X] T023 Запустить PHP-гейты `composer cs`, `composer stan`, `composer rector -- --dry-run` и `composer test`.
+- [X] T024 Выполнить сценарии из `specs/006-remove-faq/quickstart.md`, включая smoke-проверку GET `/faq` и `/faq/api`, и сохранить результат в PR-описании.
+- [X] T025 Проверить `git diff --check`, отсутствие новых N+1 и соответствие всех acceptance scenarios из `specs/006-remove-faq/spec.md`.
 
 ---
 

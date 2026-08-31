@@ -30,4 +30,22 @@
 3. Зафиксировать сохранённые и удалённые кандидаты в описании реализации/PR.
    Внешние клиенты без следов в репозитории в этот аудит не входят.
 
+### Результат аудита 2026-08-31
+
+Сохранены API endpoints и реализации:
+
+- `/api/person` — используется legacy SPA в `resources/vue/components/person/Persons.vue`
+  и проверяется в `tests/Bridge/Laravel/Http/Controllers/Api/PersonControllerTest.php`;
+- `/api/persons` — проверяется в `tests/Bridge/Laravel/Http/Controllers/Api/ListPersonActionTest.php`.
+
+Удалены как неиспользуемые внутри репозитория:
+
+- `/api/competitions` и `CompetitionController`;
+- `/api/competition/{competition_id}/events` и `EventsController`;
+- `/api/event/{event_id}/results` и `ResultsController`;
+- `/api/club` и `ClubController`.
+
+Для удаляемых endpoints поиск не нашёл внутренних вызовов вне удаляемой API FAQ;
+внешние клиенты без следов в репозитории не учитывались.
+
 Записи базы данных, миграции и доменные сущности не изменяются.
