@@ -216,10 +216,21 @@ body {
     margin-bottom: 1.5rem;
 }
 
+.club-details-card {
+    margin-bottom: 1.5rem;
+    box-shadow: 0 0.25rem 0.75rem rgb(33 37 41 / 7%);
+}
+
 .competition-details-info {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 1rem;
+}
+
+.club-details-info {
+    width: 100%;
+    margin-bottom: 1rem;
+    border-collapse: collapse;
 }
 
 .competition-details-info th,
@@ -230,7 +241,21 @@ body {
     vertical-align: top;
 }
 
+.club-details-info th,
+.club-details-info td {
+    padding: 0.65rem 0.75rem;
+    border-bottom: 1px solid rgb(33 37 41 / 10%);
+    text-align: left;
+    vertical-align: top;
+}
+
 .competition-details-info th {
+    width: 12rem;
+    color: #6c757d;
+    font-weight: 600;
+}
+
+.club-details-info th {
     width: 12rem;
     color: #6c757d;
     font-weight: 600;
@@ -253,6 +278,12 @@ body {
 }
 
 .events-table {
+    overflow: hidden;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.25rem 0.75rem rgb(33 37 41 / 7%);
+}
+
+.persons-table {
     overflow: hidden;
     border-radius: 0.5rem;
     box-shadow: 0 0.25rem 0.75rem rgb(33 37 41 / 7%);

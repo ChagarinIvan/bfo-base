@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { api } from './client'
-import { getClubs } from './clubs'
+import { getClub, getClubs } from './clubs'
 
 vi.mock('./client', () => ({
     api: { get: vi.fn() },
@@ -25,5 +25,18 @@ describe('clubs api', () => {
         expect(api.get).toHaveBeenCalledWith('/clubs', {
             params: { name: 'Minsk', page: 2, perPage: 10 },
         })
+    })
+
+    it('requests one club by its identifier', async () => {
+        vi.mocked(api.get).mockResolvedValue({
+            data: { id: '42', name: 'Club', personsCount: 3 },
+        })
+
+        await expect(getClub('42')).resolves.toEqual({
+            id: '42',
+            name: 'Club',
+            personsCount: 3,
+        })
+        expect(api.get).toHaveBeenCalledWith('/clubs/42')
     })
 })

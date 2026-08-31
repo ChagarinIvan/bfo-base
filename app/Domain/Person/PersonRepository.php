@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Person;
 
 use App\Domain\Shared\Criteria;
+use App\Domain\Shared\Pagination\Slice;
 use Illuminate\Support\Collection;
 
 interface PersonRepository
@@ -20,4 +21,7 @@ interface PersonRepository
     public function update(Person $person): void;
 
     public function oneByCriteria(Criteria $criteria): ?Person;
+
+    /** @return Slice<Person> */
+    public function paginate(Criteria $criteria): Slice;
 }

@@ -9,10 +9,12 @@ use App\Application\Dto\Club\ClubAssembler;
 use App\Application\Dto\Club\SearchClubDto;
 use App\Application\Service\Club\ListClubs;
 use App\Application\Service\Club\ListClubsService;
+use App\Domain\Auth\Impression;
 use App\Domain\Club\Club;
 use App\Domain\Club\ClubRepository;
 use App\Domain\Shared\Criteria;
 use App\Domain\Shared\Pagination\Slice;
+use Carbon\Carbon;
 use Pagerfanta\Adapter\ArrayAdapter;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -37,11 +39,15 @@ final class ListClubsServiceTest extends TestCase
     #[Test]
     public function it_returns_a_paginated_club_slice(): void
     {
-        $club = Club::factory()->makeOne([
-            'id' => 42,
-            'name' => 'Minsk Orienteering',
-            'persons_count' => 7,
+        $club = $this->createStub(Club::class);
+        $club->method('__get')->willReturnMap([
+            ['id', 42],
+            ['name', 'Minsk Orienteering'],
+            ['persons_count', 7],
+            ['created', $this->impressionValue()],
+            ['updated', $this->impressionValue()],
         ]);
+        $club->method('__isset')->willReturnMap([['persons_count', true]]);
 
         $this->clubs
             ->expects($this->once())
@@ -73,5 +79,10 @@ final class ListClubsServiceTest extends TestCase
         $result = $this->service->execute(new ListClubs(new SearchClubDto(name: '  ')));
 
         $this->assertCount(0, $result);
+    }
+
+    private function impressionValue(): Impression
+    {
+        return new Impression(new Carbon('2026-01-01'), 1);
     }
 }

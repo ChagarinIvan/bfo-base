@@ -8,12 +8,14 @@ use App\Bridge\Laravel\Http\Controllers\Api\V1\Auth\ListUsersAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Auth\LoginAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Auth\LogoutAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Club\ListClubsAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Club\ViewClubAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Competition\CreateCompetitionAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Competition\DeleteCompetitionAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Competition\ListCompetitionsAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Competition\UpdateCompetitionAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Competition\ViewCompetitionAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Event\ListEventsAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\ListPersonsAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Year\ListYearsAction;
 use App\Bridge\Laravel\Http\Middleware\AuthenticateApiV1;
 use App\Bridge\Laravel\Http\Middleware\OptionalAuthenticateApiV1;
@@ -31,7 +33,9 @@ final class ApiV1RoutesServiceProvider extends ServiceProvider
             $router->prefix('api/v1')->middleware(OptionalAuthenticateApiV1::class)->get('competitions', ListCompetitionsAction::class);
             $router->prefix('api/v1')->middleware(OptionalAuthenticateApiV1::class)->get('competitions/{competitionId}', ViewCompetitionAction::class);
             $router->prefix('api/v1')->middleware(OptionalAuthenticateApiV1::class)->get('clubs', ListClubsAction::class);
+            $router->prefix('api/v1')->middleware(OptionalAuthenticateApiV1::class)->get('clubs/{clubId}', ViewClubAction::class);
             $router->prefix('api/v1')->middleware(OptionalAuthenticateApiV1::class)->get('events', ListEventsAction::class);
+            $router->prefix('api/v1')->middleware(OptionalAuthenticateApiV1::class)->get('persons', ListPersonsAction::class);
             $router->prefix('api/v1')->get('years', ListYearsAction::class);
             $router->prefix('api/v1')->middleware(AuthenticateApiV1::class)->group(static function () use ($router): void {
                 $router->delete('auth/logout', LogoutAction::class);

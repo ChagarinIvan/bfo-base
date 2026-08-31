@@ -15,8 +15,8 @@
 | perPage |        нет | integer, 1–100 | Default 20. |
 
 Без `clubId` endpoint возвращает общий постраничный список active persons — это задел для будущей
-SPA-страницы персонов и следующих фильтров. `club_id` не является alias и не принимается;
-некорректно переданный `clubId` или `club_id` даёт 422. Для missing или inactive Club при переданном
+SPA-страницы персонов и следующих фильтров. `club_id` не является alias и игнорируется как
+неизвестный параметр. Для missing или inactive Club при переданном
 `clubId` endpoint возвращает пустой массив; detail page получает 404 через отдельный
 `GET /clubs/{clubId}`.
 

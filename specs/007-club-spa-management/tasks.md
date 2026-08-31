@@ -116,19 +116,19 @@ active-only count и порядок `name/id`; ввести 1–2, затем 3+
 
 ### Tests for User Story 2
 
-- [ ] T017 [P] [US2] Дополнить `tests/Application/Service/Club/ViewClubServiceTest.php` и `tests/Application/Service/Person/ListPersonsServiceTest.php` проверками compact projections, optional `clubId`, active parent club при переданном фильтре и отсутствия rich person fields.
-- [ ] T018 [P] [US2] Создать `tests/Feature/Api/V1/Club/ViewClubActionTest.php` и `tests/Feature/Api/V1/Person/ListPersonsActionTest.php` для public/auth serialization groups, 404 club detail, optional camelCase `clubId`, общей active-person выдачи без фильтра, active-only выдачи по клубу, stable lastname/firstname/id ordering, pagination headers и query-count без N+1.
-- [ ] T019 [P] [US2] Создать `resources/spa/pages/clubs/ClubDetailsPage.test.ts` для detail/person loading, empty/not-found/error states, pagination, birthYear, impressions и обычного legacy person href.
+- [X] T017 [P] [US2] Дополнить `tests/Application/Service/Club/ViewClubServiceTest.php` и `tests/Application/Service/Person/ListPersonsServiceTest.php` проверками compact projections, optional `clubId`, active parent club при переданном фильтре и отсутствия rich person fields.
+- [X] T018 [P] [US2] Создать `tests/Feature/Api/V1/Club/ViewClubActionTest.php` и `tests/Feature/Api/V1/Person/ListPersonsActionTest.php` для public/auth serialization groups, 404 club detail, optional camelCase `clubId`, игнорируемого legacy `club_id`, общей active-person выдачи без фильтра, active-only выдачи по клубу, stable lastname/firstname/id ordering, pagination headers и query-count без N+1.
+- [X] T019 [P] [US2] Создать `resources/spa/pages/clubs/ClubDetailsPage.test.ts` для detail/person loading, empty/not-found/error states, pagination, birthYear, impressions и обычного legacy person href.
 
 ### Implementation for User Story 2
 
-- [ ] T020 [US2] Адаптировать существующие `app/Application/Service/Club/ViewClub.php` и `app/Application/Service/Club/ViewClubService.php` к V1 target contract с единственным очищенным `app/Application/Dto/Club/ViewClubDto.php`; `LegacyViewClubDto` не создавать и не вводить второй club view path.
-- [ ] T021 [US2] Создать `app/Application/Dto/Person/SearchPersonDto.php`, `app/Application/Service/Person/ListPersons.php` и `app/Application/Service/Person/ListPersonsService.php` для компактного paginated V1 списка с опциональным `clubId` и возможностью будущих V1 filters.
-- [ ] T022 [US2] Расширить `app/Domain/Person/PersonRepository.php` и `app/Infrastructure/Laravel/Eloquent/Person/EloquentPersonRepository.php` paginated read path: active person, active parent club при переданном `clubId`, order lastname/firstname/id, без payments/protocol lines и с `Slice`.
-- [ ] T023 [US2] Создать `app/Bridge/Laravel/Http/Controllers/Api/V1/Club/ViewClubAction.php` и `app/Bridge/Laravel/Http/Controllers/Api/V1/Person/ListPersonsAction.php`; зарегистрировать optional-auth GET `/api/v1/clubs/{clubId}` и `/api/v1/persons` в `app/Bridge/Laravel/Provider/ApiV1RoutesServiceProvider.php`.
-- [ ] T024 [US2] Расширить `resources/spa/api/clubs.ts` detail-запросом и создать `resources/spa/api/persons.ts` для `clubId` paginated request с типами и errors из `resources/spa/api/types.ts`.
-- [ ] T025 [US2] Создать `resources/spa/pages/clubs/ClubDetailsPage.vue` с независимой person pagination, compact person table, `ImpressionDetails`, пустым/404/general-error состояниями и href `/persons/{id}/show`.
-- [ ] T026 [US2] Зарегистрировать `/app/clubs/:id` в `resources/spa/router/index.ts` и дополнить `resources/spa/router/index.test.ts` публичной detail-навигацией.
+- [X] T020 [US2] Адаптировать существующие `app/Application/Service/Club/ViewClub.php` и `app/Application/Service/Club/ViewClubService.php` к V1 target contract с единственным очищенным `app/Application/Dto/Club/ViewClubDto.php`; `LegacyViewClubDto` не создавать и не вводить второй club view path.
+- [X] T021 [US2] Создать `app/Application/Dto/Person/SearchPersonDto.php`, `app/Application/Service/Person/ListPersons.php` и `app/Application/Service/Person/ListPersonsService.php` для компактного paginated V1 списка с опциональным `clubId` и возможностью будущих V1 filters.
+- [X] T022 [US2] Расширить `app/Domain/Person/PersonRepository.php` и `app/Infrastructure/Laravel/Eloquent/Person/EloquentPersonRepository.php` paginated read path: active person, active parent club при переданном фильтре и без payments/protocol lines, order lastname/firstname/id и `Slice`.
+- [X] T023 [US2] Создать `app/Bridge/Laravel/Http/Controllers/Api/V1/Club/ViewClubAction.php` и `app/Bridge/Laravel/Http/Controllers/Api/V1/Person/ListPersonsAction.php`; зарегистрировать optional-auth GET `/api/v1/clubs/{clubId}` и `/api/v1/persons` в `app/Bridge/Laravel/Provider/ApiV1RoutesServiceProvider.php`.
+- [X] T024 [US2] Расширить `resources/spa/api/clubs.ts` detail-запросом и создать `resources/spa/api/persons.ts` для `clubId` paginated request с типами и errors из `resources/spa/api/types.ts`.
+- [X] T025 [US2] Создать `resources/spa/pages/clubs/ClubDetailsPage.vue` с независимой person pagination, compact person table, `ImpressionDetails`, пустым/404/general-error состояниями и href `/persons/{id}/show`.
+- [X] T026 [US2] Зарегистрировать `/app/clubs/:id` в `resources/spa/router/index.ts` и дополнить `resources/spa/router/index.test.ts` публичной detail-навигацией.
 
 **Checkpoint**: US1 и US2 работают как публичный путь «найти клуб → посмотреть active persons»;
 глубокие person pages не затронуты.

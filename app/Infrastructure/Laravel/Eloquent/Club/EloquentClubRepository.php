@@ -22,12 +22,19 @@ final class EloquentClubRepository implements ClubRepository
 
     public function byId(int $id): ?Club
     {
-        return Club::where('active', true)->withCount('persons')->find($id);
+        return Club::where('active', true)
+            ->withCount(['persons' => static fn (Builder $persons): Builder => $persons->where('active', true)])
+            ->find($id)
+        ;
     }
 
     public function lockById(int $id): ?Club
     {
-        return Club::where('active', true)->withCount('persons')->lockForUpdate()->find($id);
+        return Club::where('active', true)
+            ->withCount(['persons' => static fn (Builder $persons): Builder => $persons->where('active', true)])
+            ->lockForUpdate()
+            ->find($id)
+        ;
     }
 
     public function update(Club $club): void

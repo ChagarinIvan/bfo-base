@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Dto\Person;
 
 use App\Application\Dto\Auth\ImpressionDto;
+use App\Application\Dto\Serialization\Groups;
 
 final readonly class ViewPersonDto
 {
@@ -13,7 +14,9 @@ final readonly class ViewPersonDto
         public string $lastname,
         public string $firstname,
         public ?int $birthYear,
+        #[Groups(['authenticated'])]
         public ImpressionDto $created,
+        #[Groups(['authenticated'])]
         public ImpressionDto $updated,
     ) {
     }

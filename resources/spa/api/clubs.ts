@@ -11,3 +11,7 @@ export async function getClubs(
         headers: response.headers as Record<string, unknown>,
     }
 }
+
+export async function getClub(id: string): Promise<Club> {
+    return (await api.get<Club>(`/clubs/${id}`)).data
+}
