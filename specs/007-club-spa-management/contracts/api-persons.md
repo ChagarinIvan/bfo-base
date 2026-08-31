@@ -10,12 +10,14 @@
 
 | Параметр | Обязателен | Валидация | Значение |
 |---|-----------:|---|---|
-| clubId |        нет | integer, min 1 | Active Club, чьи active persons запрошены. |
+| clubId |        нет | integer, min 1 | Опционально ограничивает выдачу active persons указанным active Club. |
 | page |        нет | integer, min 1 | Default 1. |
 | perPage |        нет | integer, 1–100 | Default 20. |
 
-`club_id` не является alias и не принимается. Missing/invalid `clubId` даёт 422. Для missing или
-inactive Club endpoint возвращает пустой массив; detail page получает 404 через отдельный
+Без `clubId` endpoint возвращает общий постраничный список active persons — это задел для будущей
+SPA-страницы персонов и следующих фильтров. `club_id` не является alias и не принимается;
+некорректно переданный `clubId` или `club_id` даёт 422. Для missing или inactive Club при переданном
+`clubId` endpoint возвращает пустой массив; detail page получает 404 через отдельный
 `GET /clubs/{clubId}`.
 
 ## Response 200
@@ -47,4 +49,9 @@ Pagination headers идентичны Clubs V1. Данные для строки
 
 Legacy `/api/person` и `/api/persons` не изменяются и продолжают возвращать прежние форматы своим
 consumers. Новый endpoint существует только под `/api/v1/persons` и использует компактный
-`ViewPersonDto`; старый rich DTO называется `LegacyViewPersonDto`. Если эти консьюмеры есть в этом репозитории
+`ViewPersonDto`; старый rich DTO называется `LegacyViewPersonDto`. Существующие consumers rich DTO
+обновляются при rename только в imports/types и не переводятся на V1 в рамках этой фичи.
+
+`GET /api/v1/persons` — самостоятельный расширяемый контракт: отсутствие `clubId` означает общий
+active-person list, а будущие V1 filters не изменяют семантику legacy endpoints. Новые SPA-экраны
+используют только V1; legacy consumers продолжают использовать `/api/person` и `/api/persons`.

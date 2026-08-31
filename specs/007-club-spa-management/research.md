@@ -56,9 +56,11 @@ legacy person fields не нужны новым экранам и не долж�
 
 ## Active-only счётчик и запрос персонов
 
-**Решение**: club list/detail считает только `person.active=true`. Person pagination ограничивается
-`person.active=true`, обязательным `clubId` и активным parent club; сортировка
-`lastname ASC, firstname ASC, id ASC`. Clubs сортируются `name ASC, id ASC`.
+**Решение**: club list/detail считает только `person.active=true`. Person pagination всегда
+ограничивается `person.active=true`; опциональный `clubId` дополнительно ограничивает выдачу и
+требует active parent club. Без `clubId` endpoint возвращает общий active-person list, пригодный
+для будущей SPA-страницы персонов. Сортировка `lastname ASC, firstname ASC, id ASC`. Clubs
+сортируются `name ASC, id ASC`.
 
 **Обоснование**: счётчик всегда совпадает с доступным списком, отключённые записи не раскрываются,
 а tie-breaker исключает повторы и пропуски между страницами.
@@ -81,11 +83,12 @@ guard; короткое значение не отправляется.
 ## Создание, редактирование и уникальность имени
 
 **Решение**: одна `ClubDto` и одна SPA-форма используются для POST/PUT.
-`PreventDuplicateClubFactory` переключается с exact `name` на `normalizedName`. Domain updater
-нормализует имя тем же `ClubNameNormalizer`, обновляет `updated` impression и проверяет
-нормализованный duplicate с исключением текущего id. `ClubNotFound` и name conflict переводятся в
-стандартные Application errors; для field-level business error `HttpError`/`ApiErrorResponse`
-поддерживают optional `field` без изменения существующих ответов.
+`PreventDuplicateClubFactory` переключается с exact `name` на `normalizedName`. Application use
+case под транзакцией блокирует клуб, проверяет нормализованный duplicate с исключением текущего id
+и передаёт нормализованные данные в aggregate method `Club::updateInfo(ClubInfo, Impression)`.
+Aggregate обновляет имя и `updated` impression, затем записывает domain event. `ClubNotFound` и name
+conflict переводятся в стандартные Application errors; для field-level business error
+`HttpError`/`ApiErrorResponse` поддерживают optional `field` без изменения существующих ответов.
 
 **Обоснование**: duplicate — доменное правило, одинаковое для create/update; action остаётся
 тонким. Optional field позволяет SPA показать conflict под `name`, а не общей ошибкой.

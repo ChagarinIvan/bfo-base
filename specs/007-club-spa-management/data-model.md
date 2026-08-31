@@ -23,12 +23,15 @@ active Club + valid unique rename → active Club with updated Impression
 inactive/missing Club + update → not_found
 ```
 
+`Club::updateInfo(ClubInfo, Impression)` получает уже нормализованные name values, обновляет
+aggregate и записывает event обновления; отдельный `ClubUpdater` не создаётся.
+
 ### Person
 
 | Поле/связь | Правило V1 списка клуба |
 |---|---|
 | id | Стабильный идентификатор и часть legacy detail URL. |
-| club_id | Должен совпадать с обязательным `clubId`. |
+| club_id | При переданном `clubId` должен совпадать с ним; без фильтра не ограничивает выдачу. |
 | firstname / lastname | Отображаемые значения; default order lastname, firstname, id. |
 | birthday | Существующая nullable date; projection отдаёт только nullable `birthYear`. |
 | active | Только `true`; inactive не считается и не возвращается. |
@@ -53,10 +56,10 @@ inactive/missing Club + update → not_found
 
 | Поле | Валидация                          | Default |
 |---|------------------------------------|---|
-| clubId | nullable integer, min 1, camelCase | Нет: отсутствие даёт 422. |
+| clubId | nullable integer, min 1, camelCase | Нет: выдаются все active persons. |
 
-`ListPersons` передаёт `clubId` если он есть в paginated repository path. Другие legacy search fields в этот DTO
-не входят.
+`ListPersons` передаёт `clubId`, только если он есть в paginated repository path. Без него
+возвращается общий active-person list; другие legacy search fields в этот DTO не входят.
 
 ### ClubDto
 
@@ -131,7 +134,7 @@ Legacy `byCriteria()` и `oneByCriteria()` сохраняются для ids, no
 ### PersonRepository::paginate
 
 - optional `person.club_id=clubId`;
-- `person.active=true` и active parent Club;
+- `person.active=true`; active parent Club требуется, только когда передан `clubId`;
 - order `person.lastname ASC, person.firstname ASC, person.id ASC`;
 - без eager load payments, protocol lines и других rich relations;
 - `Slice<Person>` через `EloquentQueryAdapter`.

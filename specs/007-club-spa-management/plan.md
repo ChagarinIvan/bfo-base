@@ -50,7 +50,7 @@ legacy Blade
 |---|---:|---|
 | Application / Domain / Bridge / Infrastructure | ✅ | V1 actions и redirects — Bridge; DTO, commands и use cases — Application; правила имени — Domain; Eloquent pagination — Infrastructure. |
 | Не расширять legacy `app/Services` | ✅ | Новые use cases создаются только в `app/Application/Service`; существующие legacy consumers получают явно названные `Legacy*` Application adapters. |
-| Без фасадов и с DI | ✅ | Production-код получает repository/updater/clock/transaction/serializer через конструктор; новые facade-вызовы не добавляются. |
+| Без фасадов и с DI | ✅ | Production-код получает repository/clock/transaction/serializer через конструктор; новые facade-вызовы не добавляются. |
 | Unit + request/frontend tests | ✅ | Контракты list/view/create/update, auth groups, redirects, пагинация, сортировка, duplicate и N+1 покрываются тестами. |
 | Целевая архитектура важнее legacy patch | ✅ | V1 не вызывает Blade actions и старые API; старые богатые projections изолируются и не протекают в новый контракт. |
 | Только актуальный стек | ✅ | Используются уже установленные Laravel 13/Vue 3/PrimeVue/Vitest/Pagerfanta; новых зависимостей нет. |

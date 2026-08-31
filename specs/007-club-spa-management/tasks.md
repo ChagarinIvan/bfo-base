@@ -28,7 +28,7 @@ SPA/API-сценария.
 
 **Purpose**: зафиксировать реальные legacy consumers до массовых переименований и удаления.
 
-- [ ] T001 [P] Выполнить usage-аудит текущих club/person list DTO, services, Blade routes и club links в `app/Application/Dto/Club/`, `app/Application/Dto/Person/`, `app/Application/Service/Club/`, `app/Application/Service/Person/`, `app/Bridge/Laravel/`, `resources/views/` и `tests/`; использовать результат как allowlist для задач T002, T003 и T042–T046.
+- [ ] T001 [P] Выполнить usage-аудит текущих club/person list DTO, services, Blade routes и club links в `app/Application/Dto/Club/`, `app/Application/Dto/Person/`, `app/Application/Service/Club/`, `app/Application/Service/Person/`, `app/Bridge/Laravel/`, `resources/views/` и `tests/`; использовать результат как allowlist для задач T002, T003 и T045–T049.
 
 ---
 
@@ -89,15 +89,15 @@ active-only count и порядок `name/id`; ввести 1–2, затем 3+
 
 ### Tests for User Story 2
 
-- [ ] T017 [P] [US2] Дополнить `tests/Application/Service/Club/ViewClubServiceTest.php` и `tests/Application/Service/Person/ListPersonsServiceTest.php` проверками compact projections, active parent club и отсутствия rich person fields.
-- [ ] T018 [P] [US2] Создать `tests/Feature/Api/V1/Club/ViewClubActionTest.php` и `tests/Feature/Api/V1/Person/ListPersonsActionTest.php` для public/auth serialization groups, 404 club detail, required camelCase `clubId`, active-only выдачи, stable lastname/firstname/id ordering, pagination headers и query-count без N+1.
+- [ ] T017 [P] [US2] Дополнить `tests/Application/Service/Club/ViewClubServiceTest.php` и `tests/Application/Service/Person/ListPersonsServiceTest.php` проверками compact projections, optional `clubId`, active parent club при переданном фильтре и отсутствия rich person fields.
+- [ ] T018 [P] [US2] Создать `tests/Feature/Api/V1/Club/ViewClubActionTest.php` и `tests/Feature/Api/V1/Person/ListPersonsActionTest.php` для public/auth serialization groups, 404 club detail, optional camelCase `clubId`, общей active-person выдачи без фильтра, active-only выдачи по клубу, stable lastname/firstname/id ordering, pagination headers и query-count без N+1.
 - [ ] T019 [P] [US2] Создать `resources/spa/pages/clubs/ClubDetailsPage.test.ts` для detail/person loading, empty/not-found/error states, pagination, birthYear, impressions и обычного legacy person href.
 
 ### Implementation for User Story 2
 
-- [ ] T020 [US2] Создать V1 `app/Application/Service/Club/ViewClub.php` и `app/Application/Service/Club/ViewClubService.php` либо адаптировать существующие одноимённые классы к target contract, не ломая переименованные legacy consumers.
-- [ ] T021 [US2] Создать `app/Application/Dto/Person/SearchPersonDto.php`, `app/Application/Service/Person/ListPersons.php` и `app/Application/Service/Person/ListPersonsService.php` для компактного paginated V1 списка по обязательному `clubId`.
-- [ ] T022 [US2] Расширить `app/Domain/Person/PersonRepository.php` и `app/Infrastructure/Laravel/Eloquent/Person/EloquentPersonRepository.php` paginated read path: active person + active parent club, order lastname/firstname/id, без payments/protocol lines и с `Slice`.
+- [ ] T020 [US2] Адаптировать существующие `app/Application/Service/Club/ViewClub.php` и `app/Application/Service/Club/ViewClubService.php` к V1 target contract с единственным очищенным `app/Application/Dto/Club/ViewClubDto.php`; `LegacyViewClubDto` не создавать и не вводить второй club view path.
+- [ ] T021 [US2] Создать `app/Application/Dto/Person/SearchPersonDto.php`, `app/Application/Service/Person/ListPersons.php` и `app/Application/Service/Person/ListPersonsService.php` для компактного paginated V1 списка с опциональным `clubId` и возможностью будущих V1 filters.
+- [ ] T022 [US2] Расширить `app/Domain/Person/PersonRepository.php` и `app/Infrastructure/Laravel/Eloquent/Person/EloquentPersonRepository.php` paginated read path: active person, active parent club при переданном `clubId`, order lastname/firstname/id, без payments/protocol lines и с `Slice`.
 - [ ] T023 [US2] Создать `app/Bridge/Laravel/Http/Controllers/Api/V1/Club/ViewClubAction.php` и `app/Bridge/Laravel/Http/Controllers/Api/V1/Person/ListPersonsAction.php`; зарегистрировать optional-auth GET `/api/v1/clubs/{clubId}` и `/api/v1/persons` в `app/Bridge/Laravel/Provider/ApiV1RoutesServiceProvider.php`.
 - [ ] T024 [US2] Расширить `resources/spa/api/clubs.ts` detail-запросом и создать `resources/spa/api/persons.ts` для `clubId` paginated request с типами и errors из `resources/spa/api/types.ts`.
 - [ ] T025 [US2] Создать `resources/spa/pages/clubs/ClubDetailsPage.vue` с независимой person pagination, compact person table, `ImpressionDetails`, пустым/404/general-error состояниями и href `/persons/{id}/show`.
@@ -145,13 +145,13 @@ duplicate и validation отображаются под полем.
 
 ### Tests for User Story 4
 
-- [ ] T036 [P] [US4] Создать `tests/Application/Service/Club/UpdateClubInfoServiceTest.php` и `tests/Domain/Club/ClubUpdaterTest.php` для atomic rename, updated impression, self-exclusion и normalized duplicate.
+- [ ] T036 [P] [US4] Создать `tests/Application/Service/Club/UpdateClubInfoServiceTest.php` и `tests/Domain/Club/ClubTest.php` для atomic rename, updated impression, self-exclusion, normalized duplicate и записи `ClubInfoUpdated` aggregate event.
 - [ ] T037 [P] [US4] Создать `tests/Feature/Api/V1/Club/UpdateClubActionTest.php` для authenticated 200, 401, 404 inactive/missing, validation и 422 `field=name` без изменения данных.
 - [ ] T038 [P] [US4] Создать `resources/spa/pages/clubs/EditClubPage.test.ts` для prefilled form, guard, PUT field errors и перехода на detail после update.
 
 ### Implementation for User Story 4
 
-- [ ] T039 [US4] Создать `app/Domain/Club/ClubUpdater.php` и `app/Domain/Club/UpdateClubInput.php`, расширить `app/Domain/Club/Club.php` и provider bindings в `app/Bridge/Laravel/Provider/Club/ClubProvider.php` для normalised update и updated impression.
+- [ ] T039 [US4] Создать `app/Domain/Club/ClubInfo.php` и `app/Domain/Club/Event/ClubInfoUpdated.php`; перевести `app/Domain/Club/Club.php` на существующий aggregate pattern и добавить `updateInfo(ClubInfo, Impression)`, который обновляет name/normalize_name/updated и записывает event, без `ClubUpdater` или provider binding.
 - [ ] T040 [US4] Создать `app/Application/Service/Club/UpdateClubInfo.php`, `app/Application/Service/Club/UpdateClubInfoService.php` и необходимые application exceptions в `app/Application/Service/Club/Exception/` для lock/update/not-found/name conflict.
 - [ ] T041 [US4] Создать `app/Bridge/Laravel/Http/Controllers/Api/V1/Club/UpdateClubAction.php`, зарегистрировать authenticated PUT `/api/v1/clubs/{clubId}` в `app/Bridge/Laravel/Provider/ApiV1RoutesServiceProvider.php`, добавить update-запрос в `resources/spa/api/clubs.ts` и реализовать `resources/spa/pages/clubs/EditClubPage.vue` на общей `ClubForm.vue`.
 - [ ] T042 [US4] Добавить guarded `/app/clubs/:id/edit`, edit action на `resources/spa/pages/clubs/ClubDetailsPage.vue` и проверки route guard в `resources/spa/router/index.ts` и `resources/spa/router/index.test.ts`.
