@@ -5,10 +5,12 @@ import {
     debounce,
     formatDateRange,
     hasTooShortNameSearch,
+    isApiValidationError,
     massIconClass,
     paginationFromHeaders,
     resetPageOnFilterChange,
     shouldLoadUsers,
+    yearSelectOptions,
 } from './competitionModels'
 
 describe('competition models', () => {
@@ -34,6 +36,13 @@ describe('competition models', () => {
         })
 
         expect(competitionQuery({ name: ' ab ' })).toEqual({})
+    })
+
+    it('provides string labels for year select filtering', () => {
+        expect(yearSelectOptions([2026, 2025])).toEqual([
+            { label: '2026', value: 2026 },
+            { label: '2025', value: 2025 },
+        ])
     })
 
     it('reports only non-empty searches shorter than three characters', () => {
@@ -105,5 +114,32 @@ describe('competition models', () => {
         )
 
         expect(fieldErrors).toEqual({ name: 'Required' })
+    })
+
+    it('recognises an API validation response', () => {
+        expect(
+            isApiValidationError({
+                isAxiosError: true,
+                response: {
+                    status: 422,
+                    data: {
+                        errors: [
+                            {
+                                code: 'validation_error',
+                                field: 'date',
+                                message: 'validation.date_format',
+                            },
+                        ],
+                    },
+                },
+            }),
+        ).toBe(true)
+
+        expect(
+            isApiValidationError({
+                isAxiosError: true,
+                response: { status: 500, data: { errors: [] } },
+            }),
+        ).toBe(false)
     })
 })

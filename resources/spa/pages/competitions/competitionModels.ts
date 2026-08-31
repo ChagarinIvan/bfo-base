@@ -39,6 +39,12 @@ export function competitionQuery(
     return query
 }
 
+export function yearSelectOptions(
+    years: number[],
+): Array<{ label: string; value: number }> {
+    return years.map((year) => ({ label: String(year), value: year }))
+}
+
 export function debounce<TArguments extends unknown[]>(
     callback: (...arguments_: TArguments) => void,
     delay = NAME_SEARCH_DEBOUNCE_MS,
@@ -105,4 +111,24 @@ export function applyFieldErrors(
     for (const error of errors) {
         if (error.field) fieldErrors[error.field] = error.message
     }
+}
+
+export function isApiValidationError(exception: unknown): exception is {
+    response: { status: 422; data: { errors: ApiErrorItem[] } }
+} {
+    if (typeof exception !== 'object' || exception === null) return false
+    if (!('isAxiosError' in exception) || exception.isAxiosError !== true) {
+        return false
+    }
+
+    if (!('response' in exception) || typeof exception.response !== 'object') {
+        return false
+    }
+
+    const response = exception.response as {
+        status?: unknown
+        data?: { errors?: unknown }
+    }
+
+    return response.status === 422 && Array.isArray(response.data?.errors)
 }

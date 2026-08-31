@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Button from 'primevue/button'
@@ -26,15 +26,19 @@ import {
     debounce,
     formatDateRange,
     hasTooShortNameSearch,
+    isApiValidationError,
     massIconClass,
     paginationFromHeaders,
     resetPageOnFilterChange,
+    applyFieldErrors,
+    yearSelectOptions,
 } from './competitionModels'
 import type { Competition, PaginationHeaders, User } from '../../api/types'
 
 const competitions = ref<Competition[]>([])
 const users = ref<User[]>([])
 const years = ref<number[]>([])
+const yearOptions = computed(() => yearSelectOptions(years.value))
 const year = ref<number | null>(null)
 const name = ref('')
 const date = ref('')
@@ -46,6 +50,7 @@ const pagination = ref<PaginationHeaders>({
 })
 const loading = ref(false)
 const error = ref('')
+const fieldErrors = reactive<Record<string, string>>({})
 const deleting = ref(false)
 const selectedCompetition = ref<Competition | null>(null)
 const auth = useAuthStore()
@@ -80,6 +85,7 @@ function onNameChange(value: string | undefined): void {
 
 async function onDateChange(value: string | undefined): Promise<void> {
     date.value = value ?? ''
+    delete fieldErrors.date
     await load(
         resetPageOnFilterChange(pagination.value.currentPage),
         pagination.value.perPage,
@@ -116,7 +122,12 @@ async function load(
         if (auth.isAuthenticated) {
             users.value = await getUsers()
         }
-    } catch {
+    } catch (exception: unknown) {
+        if (isApiValidationError(exception)) {
+            applyFieldErrors(exception.response.data.errors, fieldErrors)
+            return
+        }
+
         error.value = t('spa.competitions.error')
     } finally {
         loading.value = false
@@ -191,7 +202,9 @@ onBeforeUnmount(() => {
                     <Select
                         id="competition-year"
                         v-model="year"
-                        :options="years"
+                        :options="yearOptions"
+                        option-label="label"
+                        option-value="value"
                         :placeholder="t('spa.competitions.year_placeholder')"
                         filter
                         filter-match-mode="contains"
@@ -220,6 +233,7 @@ onBeforeUnmount(() => {
                     input-id="competition-date-filter"
                     :label="t('spa.competitions.date_filter')"
                     :disabled="loading"
+                    :error="fieldErrors.date"
                     @update:model-value="onDateChange"
                 />
             </div>

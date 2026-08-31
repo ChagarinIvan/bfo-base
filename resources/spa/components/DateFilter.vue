@@ -7,9 +7,10 @@ const props = withDefaults(
         modelValue: string
         inputId: string
         label: string
+        error?: string
         disabled?: boolean
     }>(),
-    { disabled: false },
+    { disabled: false, error: '' },
 )
 
 const inputValue = ref(props.modelValue)
@@ -51,5 +52,6 @@ function onInput(value: string | undefined): void {
             maxlength="10"
             @update:model-value="onInput"
         />
+        <small v-if="error" class="field-error">{{ error }}</small>
     </div>
 </template>
