@@ -17,6 +17,7 @@ import { getYears } from '../../api/years'
 import { useAuthStore } from '../../stores/auth'
 import { t } from '../../i18n'
 import ImpressionDetails from '../../components/ImpressionDetails.vue'
+import DateFilter from '../../components/DateFilter.vue'
 import CompetitionActionMenu from '../../components/actions/CompetitionActionMenu.vue'
 import ConfirmDeleteDialog from '../../components/actions/ConfirmDeleteDialog.vue'
 import { useToast } from 'primevue/usetoast'
@@ -213,18 +214,13 @@ onBeforeUnmount(() => {
                         >{{ t('spa.competitions.name_hint') }}</small
                     >
                 </div>
-                <div class="filter-field">
-                    <label for="competition-date-filter">{{
-                        t('spa.competitions.date_filter')
-                    }}</label>
-                    <InputText
-                        id="competition-date-filter"
-                        v-model="date"
-                        :disabled="loading"
-                        type="date"
-                        @update:model-value="onDateChange"
-                    />
-                </div>
+                <DateFilter
+                    v-model="date"
+                    input-id="competition-date-filter"
+                    :label="t('spa.competitions.date_filter')"
+                    :disabled="loading"
+                    @update:model-value="onDateChange"
+                />
             </div>
         </template>
     </Card>

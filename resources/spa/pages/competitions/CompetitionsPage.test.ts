@@ -35,6 +35,12 @@ describe('competitions page model', () => {
         )
     })
 
+    it('keeps a date filter in YYYY-MM-DD format', () => {
+        expect(
+            competitionQuery({ year: 2026, date: '2026-07-04' }),
+        ).toMatchObject({ date: '2026-07-04' })
+    })
+
     it('reads pagination metadata from API response headers', () => {
         expect(
             paginationFromHeaders({

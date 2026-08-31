@@ -1,27 +1,24 @@
 import type { Impression, User } from '../api/types'
 
-const shortDateFormatter = new Intl.DateTimeFormat('be-BY', {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-})
+function formatDate(value: string, withSeconds: boolean): string {
+    const match = /^(\d{4}-\d{2}-\d{2})(?:T(\d{2}:\d{2}(?::\d{2})?))?/.exec(
+        value,
+    )
 
-const fullDateFormatter = new Intl.DateTimeFormat('be-BY', {
-    dateStyle: 'full',
-    timeStyle: 'long',
-})
+    if (!match) return value
 
-function formatDate(value: string, formatter: Intl.DateTimeFormat): string {
-    const date = new Date(value)
+    const time = match[2]
+    if (!time) return match[1]
 
-    return Number.isNaN(date.getTime()) ? value : formatter.format(date)
+    return `${match[1]} ${withSeconds ? time : time.slice(0, 5)}`
 }
 
 export function formatImpressionDate(value: string): string {
-    return formatDate(value, shortDateFormatter)
+    return formatDate(value, false)
 }
 
 export function formatImpressionFullDate(value: string): string {
-    return formatDate(value, fullDateFormatter)
+    return formatDate(value, true)
 }
 
 export function impressionUserLabel(
