@@ -7,6 +7,7 @@ namespace App\Bridge\Laravel\Provider;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Auth\ListUsersAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Auth\LoginAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Auth\LogoutAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Club\ListClubsAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Competition\CreateCompetitionAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Competition\DeleteCompetitionAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Competition\ListCompetitionsAction;
@@ -29,6 +30,7 @@ final class ApiV1RoutesServiceProvider extends ServiceProvider
             $router->prefix('api/v1')->middleware('throttle:10,1')->post('auth/login', LoginAction::class);
             $router->prefix('api/v1')->middleware(OptionalAuthenticateApiV1::class)->get('competitions', ListCompetitionsAction::class);
             $router->prefix('api/v1')->middleware(OptionalAuthenticateApiV1::class)->get('competitions/{competitionId}', ViewCompetitionAction::class);
+            $router->prefix('api/v1')->middleware(OptionalAuthenticateApiV1::class)->get('clubs', ListClubsAction::class);
             $router->prefix('api/v1')->middleware(OptionalAuthenticateApiV1::class)->get('events', ListEventsAction::class);
             $router->prefix('api/v1')->get('years', ListYearsAction::class);
             $router->prefix('api/v1')->middleware(AuthenticateApiV1::class)->group(static function () use ($router): void {

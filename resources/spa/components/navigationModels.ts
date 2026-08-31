@@ -18,7 +18,7 @@ export const competitionNavigation: NavigationItem[] = [
 
 export const personsNavigation: NavigationItem[] = [
     { label: 'spa.nav.persons', href: '/persons' },
-    { label: 'spa.nav.clubs', href: '/clubs' },
+    { label: 'spa.nav.clubs', href: '/app/clubs', spa: true },
     { label: 'spa.nav.ranks', href: '/ranks/list/%D0%9C%D0%A1' },
 ]
 

@@ -88,18 +88,18 @@ active-only count и порядок `name/id`; ввести 1–2, затем 3+
 
 ### Tests for User Story 1
 
-- [ ] T008 [P] [US1] Дополнить `tests/Application/Service/Club/ListClubsServiceTest.php` тестами paginated `Slice`, trim/minimum name и mapping активного `personsCount`.
-- [ ] T009 [P] [US1] Создать `tests/Feature/Api/V1/Club/ListClubsActionTest.php` для public/auth projection, pagination headers, camelCase `perPage`, filter 422 `field=name`, stable name/id ordering, active-only count и query-count без N+1 для одной и нескольких строк.
-- [ ] T010 [P] [US1] Создать `resources/spa/api/clubs.test.ts` и `resources/spa/pages/clubs/ClubsPage.test.ts` для request query, loading/empty/error, debounce, minimum-length hint, field errors, page reset и stale-response guard.
+- [X] T008 [P] [US1] Создать `tests/Application/Service/Club/ListClubsServiceTest.php` с тестами paginated `Slice`, trim/minimum name и mapping активного `personsCount`.
+- [X] T009 [P] [US1] Создать `tests/Feature/Api/V1/Club/ListClubsActionTest.php` для public/auth projection, pagination headers, camelCase `perPage`, filter 422 `field=name`, stable name/id ordering, active-only count и query-count без N+1 для одной и нескольких строк.
+- [X] T010 [P] [US1] Создать `resources/spa/api/clubs.test.ts` и `resources/spa/pages/clubs/ClubsPage.test.ts` для request query, loading/empty/error, debounce, minimum-length hint, field errors, page reset и stale-response guard.
 
 ### Implementation for User Story 1
 
-- [ ] T011 [US1] Создать `app/Application/Dto/Club/SearchClubDto.php`, `app/Application/Service/Club/ListClubs.php` и `app/Application/Service/Club/ListClubsService.php` для V1 paginated search по `name` без использования legacy array path.
-- [ ] T012 [US1] Расширить `app/Domain/Club/ClubRepository.php` paginated read contract и реализовать constrained active-person count, case-insensitive name search, stable `name/id` order и `Slice` в `app/Infrastructure/Laravel/Eloquent/Club/EloquentClubRepository.php`.
-- [ ] T013 [US1] Создать `app/Bridge/Laravel/Http/Controllers/Api/V1/Club/ListClubsAction.php` и зарегистрировать public optional-auth GET `/api/v1/clubs` в `app/Bridge/Laravel/Provider/ApiV1RoutesServiceProvider.php`.
-- [ ] T014 [US1] Создать `resources/spa/api/clubs.ts` с list-запросом `/clubs` и pagination headers, используя типы из `resources/spa/api/types.ts`.
-- [ ] T015 [US1] Создать `resources/spa/pages/clubs/ClubsPage.vue` и `resources/spa/pages/clubs/clubModels.ts` с единым name filter, PrimeVue пагинацией, состояниями loading/empty/general error и authenticated impressions.
-- [ ] T016 [US1] Зарегистрировать `/app/clubs` и fallback-навигацию в `resources/spa/router/index.ts`, обновить пункт Clubs в `resources/spa/components/AppLayout.vue` и `resources/spa/components/navigationModels.ts`, затем обновить router/layout тесты в `resources/spa/router/index.test.ts` и `resources/spa/components/AppLayout.test.ts`.
+- [X] T011 [US1] Создать `app/Application/Dto/Club/SearchClubDto.php`, `app/Application/Service/Club/ListClubs.php` и `app/Application/Service/Club/ListClubsService.php` для V1 paginated search по `name` без использования legacy array path.
+- [X] T012 [US1] Расширить `app/Domain/Club/ClubRepository.php` paginated read contract и реализовать constrained active-person count, case-insensitive name search, stable `name/id` order и `Slice` в `app/Infrastructure/Laravel/Eloquent/Club/EloquentClubRepository.php`.
+- [X] T013 [US1] Создать `app/Bridge/Laravel/Http/Controllers/Api/V1/Club/ListClubsAction.php` и зарегистрировать public optional-auth GET `/api/v1/clubs` в `app/Bridge/Laravel/Provider/ApiV1RoutesServiceProvider.php`.
+- [X] T014 [US1] Создать `resources/spa/api/clubs.ts` с list-запросом `/clubs` и pagination headers, используя типы из `resources/spa/api/types.ts`.
+- [X] T015 [US1] Создать `resources/spa/pages/clubs/ClubsPage.vue` и `resources/spa/pages/clubs/clubModels.ts` с единым name filter, PrimeVue пагинацией, состояниями loading/empty/general error и authenticated impressions.
+- [X] T016 [US1] Зарегистрировать `/app/clubs` и fallback-навигацию в `resources/spa/router/index.ts`, обновить пункт Clubs в `resources/spa/components/AppLayout.vue` и `resources/spa/components/navigationModels.ts`, затем обновить router/layout тесты в `resources/spa/router/index.test.ts` и `resources/spa/components/AppLayout.test.ts`.
 
 **Checkpoint**: US1 полностью работает через новый API и SPA без авторизации; список может быть
 демонстрирован как MVP.

@@ -88,14 +88,25 @@ async function logout(): Promise<void> {
                         <i class="pi pi-angle-down app-nav-menu-chevron" />
                     </summary>
                     <div class="app-nav-dropdown">
-                        <a
+                        <template
                             v-for="item in personsNavigation"
                             :key="item.href"
-                            class="app-nav-dropdown-link"
-                            :href="item.href"
                         >
-                            {{ t(item.label) }}
-                        </a>
+                            <RouterLink
+                                v-if="item.spa"
+                                class="app-nav-dropdown-link"
+                                :to="item.href"
+                            >
+                                {{ t(item.label) }}
+                            </RouterLink>
+                            <a
+                                v-else
+                                class="app-nav-dropdown-link"
+                                :href="item.href"
+                            >
+                                {{ t(item.label) }}
+                            </a>
+                        </template>
                     </div>
                 </details>
             </div>

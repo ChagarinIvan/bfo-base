@@ -7,8 +7,11 @@ namespace App\Infrastructure\Laravel\Eloquent\Club;
 use App\Domain\Club\Club;
 use App\Domain\Club\ClubRepository;
 use App\Domain\Shared\Criteria;
+use App\Domain\Shared\Pagination\Slice;
+use App\Infrastructure\Laravel\Eloquent\Pagination\EloquentQueryAdapter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use function mb_strtolower;
 
 final class EloquentClubRepository implements ClubRepository
 {
@@ -43,6 +46,31 @@ final class EloquentClubRepository implements ClubRepository
         $club = $this->buildQuery($criteria)->first();
 
         return $club;
+    }
+
+    /** @return Slice<Club> */
+    public function paginate(Criteria $criteria): Slice
+    {
+        return new Slice(new EloquentQueryAdapter($this->createPaginatedQuery($criteria)));
+    }
+
+    /** @return Builder<Club> */
+    private function createPaginatedQuery(Criteria $criteria): Builder
+    {
+        $query = Club::query()
+            ->where('active', true)
+            ->withCount(['persons' => static fn (Builder $persons): Builder => $persons->where('active', true)])
+            ->orderBy('name')
+            ->orderBy('id');
+
+        if ($criteria->hasParam('name')) {
+            $query->whereRaw(
+                'LOWER(name) LIKE ?',
+                ['%' . mb_strtolower((string) $criteria->param('name')) . '%'],
+            );
+        }
+
+        return $query;
     }
 
     private function buildQuery(Criteria $criteria): Builder

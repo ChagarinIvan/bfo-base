@@ -196,7 +196,18 @@ body {
     box-shadow: 0 0.25rem 0.75rem rgb(33 37 41 / 7%);
 }
 
+.clubs-table {
+    overflow: hidden;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.25rem 0.75rem rgb(33 37 41 / 7%);
+}
+
 .competitions-paginator {
+    margin-top: 1rem;
+    border-radius: 0.5rem;
+}
+
+.clubs-paginator {
     margin-top: 1rem;
     border-radius: 0.5rem;
 }

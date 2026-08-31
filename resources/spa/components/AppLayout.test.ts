@@ -18,9 +18,10 @@ describe('hybrid SPA navbar', () => {
         ])
         expect(personsNavigation.map((item) => item.href)).toEqual([
             '/persons',
-            '/clubs',
+            '/app/clubs',
             '/ranks/list/%D0%9C%D0%A1',
         ])
+        expect(personsNavigation[1].spa).toBe(true)
     })
 
     it('keeps authenticated links outside the removed help menu', () => {

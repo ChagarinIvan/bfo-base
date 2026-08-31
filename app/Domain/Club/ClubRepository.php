@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Club;
 
 use App\Domain\Shared\Criteria;
+use App\Domain\Shared\Pagination\Slice;
 use Illuminate\Support\Collection;
 
 interface ClubRepository
@@ -20,4 +21,7 @@ interface ClubRepository
     public function byCriteria(Criteria $criteria): Collection;
 
     public function oneByCriteria(Criteria $criteria): ?Club;
+
+    /** @return Slice<Club> */
+    public function paginate(Criteria $criteria): Slice;
 }

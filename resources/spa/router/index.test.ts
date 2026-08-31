@@ -68,6 +68,14 @@ describe('SPA navigation guard', () => {
         expect(router.currentRoute.value.path).toBe('/app/competitions/42')
     })
 
+    it('resolves the public clubs listing route', async () => {
+        const router = createAppRouter(createMemoryHistory())
+
+        await router.push('/app/clubs')
+
+        expect(router.currentRoute.value.path).toBe('/app/clubs')
+    })
+
     it('protects the competition edit route', async () => {
         const router = createAppRouter(createMemoryHistory())
 
@@ -91,7 +99,11 @@ describe('SPA navigation guard', () => {
             ...authenticatedCompetitionNavigation,
             ...authenticatedAccountNavigation,
         ]) {
-            expect(registeredPaths).not.toContain(item.href)
+            if (item.spa) {
+                expect(registeredPaths).toContain(item.href)
+            } else {
+                expect(registeredPaths).not.toContain(item.href)
+            }
         }
     })
 })
