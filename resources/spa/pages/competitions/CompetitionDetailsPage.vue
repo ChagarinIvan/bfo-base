@@ -195,6 +195,8 @@ async function deleteCurrentCompetition(): Promise<void> {
                         icon="pi pi-plus"
                         :label="t('app.competition.add_event')"
                         severity="success"
+                        text
+                        class="competition-legacy-action"
                     />
                     <Button
                         as="a"
@@ -202,6 +204,8 @@ async function deleteCurrentCompetition(): Promise<void> {
                         icon="pi pi-clone"
                         :label="t('app.competition.sum')"
                         severity="info"
+                        text
+                        class="competition-legacy-action"
                     />
                 </span>
             </template>

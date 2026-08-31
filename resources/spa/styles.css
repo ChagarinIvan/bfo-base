@@ -232,6 +232,10 @@ body {
     gap: 0.25rem;
 }
 
+.competition-legacy-action {
+    text-decoration: none;
+}
+
 .section-title {
     margin: 0 0 0.75rem;
     font-size: 1.35rem;
