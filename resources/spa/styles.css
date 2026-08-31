@@ -205,19 +205,6 @@ body {
     margin-bottom: 1.5rem;
 }
 
-.competition-impressions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.25rem;
-    margin-bottom: 1rem;
-}
-
-.competition-details-label {
-    display: block;
-    margin-bottom: 0.25rem;
-    font-weight: 600;
-}
-
 .competition-details-info {
     width: 100%;
     border-collapse: collapse;

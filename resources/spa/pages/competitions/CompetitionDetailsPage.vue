@@ -119,31 +119,6 @@ async function deleteCurrentCompetition(): Promise<void> {
         <Card class="competition-details-card">
             <template #title>{{ competition.name }}</template>
             <template #content>
-                <div
-                    v-if="auth.isAuthenticated"
-                    class="competition-impressions"
-                >
-                    <div>
-                        <span class="competition-details-label">
-                            {{ t('spa.competitions.created') }}
-                        </span>
-                        <ImpressionDetails
-                            :impression="competition.created"
-                            :users="users"
-                            :label="t('spa.competitions.created')"
-                        />
-                    </div>
-                    <div>
-                        <span class="competition-details-label">
-                            {{ t('spa.competitions.updated') }}
-                        </span>
-                        <ImpressionDetails
-                            :impression="competition.updated"
-                            :users="users"
-                            :label="t('spa.competitions.updated')"
-                        />
-                    </div>
-                </div>
                 <table class="competition-details-info">
                     <tbody>
                         <tr>
@@ -177,6 +152,30 @@ async function deleteCurrentCompetition(): Promise<void> {
                                             : 'spa.competitions.mass_no',
                                     )
                                 }}
+                            </td>
+                        </tr>
+                        <tr v-if="auth.isAuthenticated">
+                            <th scope="row">
+                                {{ t('spa.competitions.created') }}
+                            </th>
+                            <td>
+                                <ImpressionDetails
+                                    :impression="competition.created"
+                                    :users="users"
+                                    :label="t('spa.competitions.created')"
+                                />
+                            </td>
+                        </tr>
+                        <tr v-if="auth.isAuthenticated">
+                            <th scope="row">
+                                {{ t('spa.competitions.updated') }}
+                            </th>
+                            <td>
+                                <ImpressionDetails
+                                    :impression="competition.updated"
+                                    :users="users"
+                                    :label="t('spa.competitions.updated')"
+                                />
                             </td>
                         </tr>
                     </tbody>

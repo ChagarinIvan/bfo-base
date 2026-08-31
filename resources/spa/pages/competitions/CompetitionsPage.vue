@@ -192,6 +192,7 @@ onBeforeUnmount(() => {
                         :options="years"
                         :placeholder="t('spa.competitions.year_placeholder')"
                         filter
+                        filter-match-mode="contains"
                         :filter-placeholder="t('spa.competitions.year_filter')"
                         :disabled="loading"
                         @update:model-value="onYearChange"
