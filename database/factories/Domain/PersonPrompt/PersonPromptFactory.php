@@ -14,7 +14,6 @@ class PersonPromptFactory extends Factory
     public function definition(): array
     {
         return [
-            'id' => $this->faker->numberBetween(1, 100),
             'person_id' => $this->faker->numberBetween(1, 100),
             'prompt' => $this->faker->name,
             'metaphone' => $this->faker->name,
