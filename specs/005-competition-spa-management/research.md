@@ -28,7 +28,7 @@ Eloquent могут сохранить свои существующие име�
 
 ## Этапы без N+1
 
-**Решение**: переименовать существующий `EventSearchDto` в `SearchEventDto` и прежний Blade service в `ListLegacyEventsService`. Новый `ListEventsService` получает тот же `ListEvents` command, возвращает `Slice<ViewEventDto>` и использует `EventRepository::paginate()`. В текущую V1-проекцию не входят flags и cups; число участников добавляется одним relation count в основном запросе.
+**Решение**: переименовать существующий `EventSearchDto` в `SearchEventDto` и прежний Blade service в `ListLegacyEventsService`. Новый `ListEventsService` получает тот же `ListEvents` command, возвращает `Slice<ViewEventDto>` и использует `EventRepository::paginate()`. В текущую V1-проекцию не входят flags и cups; число участников добавляется одним relation count в основном запросе, а parent competition ограничивается активными записями.
 
 **Обоснование**: существующий полный `LegacyViewEventDto` содержит доменные объекты и избыточные данные, но нужен Blade. Отдельный view DTO не раскрывает модель в V1 API, а расширение существующих command/service сохраняет поток 004 и позволяет тестировать фиксированное число запросов.
 
@@ -40,7 +40,8 @@ Eloquent могут сохранить свои существующие име�
 
 **Обоснование**: повторяется проверенная доменная семантика без второй реализации и физического удаления истории.
 
-**Альтернативы**: физическое удаление запрещено спекой; новый delete service запрещён конституцией.
+**Альтернативы**: физическое удаление запрещено спекой; отдельный legacy delete service не нужен,
+поскольку операция использует существующее Application use case и доменное правило.
 
 ## Общая форма и hybrid navbar
 

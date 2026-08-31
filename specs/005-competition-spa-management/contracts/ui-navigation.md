@@ -28,6 +28,7 @@ The list name link uses the SPA detail route. The event link and other unmigrate
 | Authenticated | Account | Logout | Revokes SPA token. |
 
 Auth-only entries are absent for visitors. Legacy entries are ordinary `href` values, not nonexistent Vue routes.
+Flags and cups are not part of the V1 event projection or this SPA event-table scope.
 
 ## Shared interaction rules
 

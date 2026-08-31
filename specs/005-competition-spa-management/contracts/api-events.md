@@ -30,7 +30,9 @@ competition returns the same empty array as a competition without active events.
 ]
 ```
 
-Only active events are returned in date order. All data required by the table and legacy links is included without a query per element. Optional valid Bearer token adds the existing `created` and `updated` impressions.
+Only active events belonging to an active competition are returned in date order. All data required
+by the table and legacy links is included without a query per element. Optional valid Bearer token
+adds the existing `created` and `updated` impressions.
 
 Pagination metadata is returned through the same `X-Pagination-Current-Page`,
 `X-Pagination-Per-Page`, `X-Pagination-Total`, and `X-Pagination-Last-Page`

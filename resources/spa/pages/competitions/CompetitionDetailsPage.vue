@@ -266,6 +266,7 @@ async function deleteCurrentCompetition(): Promise<void> {
                         :label="t('spa.competition.edit.action')"
                         severity="secondary"
                         text
+                        class="competition-legacy-action"
                     />
                 </template>
             </Column>

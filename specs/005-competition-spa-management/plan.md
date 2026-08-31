@@ -25,7 +25,7 @@
 | Принцип | Статус | Решение |
 |---|---|---|
 | Слои Application / Domain / Bridge / Infrastructure | ✅ | V1 actions — Bridge; search/view DTO, commands и assemblers — Application; soft-delete остаётся доменным правилом. |
-| Не создавать новые Services/Repositories | ✅ | `ListLegacyEventsService` сохраняет Blade read-path, а `ListEventsService` становится V1 read-path; оба используют один `ListEvents` command и `EventRepository`. |
+| Legacy `app/Services` не расширять; Application services разрешены | ✅ | `ListLegacyEventsService` и `ListEventsService` находятся в `app/Application/Service`; legacy Blade path сохраняется, а V1 read path использует целевой Application service. |
 | DI и без фасадов | ✅ | Зависимости через конструктор; facade не нужен. |
 | Обязательные тесты | ✅ | Request/Vitest/N+1 регрессии планируются для каждого нового поведения. |
 | Legacy coexistence | ✅ | Не меняются legacy HTTP routes; ссылки на неперенесённые функции остаются обычными legacy href. |
@@ -56,7 +56,7 @@ specs/005-competition-spa-management/
 app/
 ├── Application/
 │   ├── Dto/Competition/             # query/view/assembler
-│   ├── Dto/Event/                   # SearchEventDto, view DTO и EventAssembler
+│   ├── Dto/Event/                   # SearchEventDto, EventPagination, view DTO и EventAssembler
 │   └── Service/Event/               # ListEvents command, ListLegacyEventsService и V1 ListEventsService
 ├── Bridge/Laravel/Http/Controllers/Api/V1/
 │   ├── Competition/                 # GET one, PUT, DELETE, list filters
@@ -66,7 +66,7 @@ app/
 
 resources/spa/
 ├── api/
-├── components/                      # action menu, confirmation, simple buttons
+├── components/                      # DateFilter, action menu, confirmation, simple buttons
 ├── pages/competitions/
 │   ├── CompetitionsPage.vue
 │   ├── CompetitionDetailsPage.vue
@@ -79,16 +79,17 @@ resources/spa/
 ### API and UI decisions
 
 - Extend `GET /api/v1/competitions` with `name` and `date`, preserving `year`, `page`, `perPage`, pagination headers and camelCase V1 request naming.
-- Add public `GET /competitions/{id}` and `GET /events?competitionId=`; add protected `PUT` and `DELETE /competitions/{id}`.
+- Add public `GET /api/v1/competitions/{competitionId}` and `GET /api/v1/events?competitionId=`;
+  add protected `PUT` and `DELETE /api/v1/competitions/{competitionId}`.
 - Expand existing `SearchCompetitionDto`, list command and repository query for filters. Existing `ViewCompetition`, `UpdateCompetitionInfo` and `DisableCompetition` commands/use cases remain the mutation path.
 - Rename the existing `EventSearchDto` to `SearchEventDto` and use it in the existing `ListEvents` command. Rename the former Blade service to `ListLegacyEventsService`; `ListEventsService::execute(new ListEvents($search))` is the V1 path and returns `Slice<ViewEventDto>` through `EventRepository::paginate()` and `EventAssembler::toViewEventDto()`.
-- The V1 repository query obtains the participant total with one `withCount`, not per-row queries. Flags and cups are outside this projection; `ListLegacyEventsService` and `LegacyViewEventDto` remain for Blade consumers.
+- The V1 repository query obtains the participant total with one `withCount`, requires an active parent competition, and does not query per row. Flags and cups are outside this projection; `ListLegacyEventsService` and `LegacyViewEventDto` remain for Blade consumers.
 - `CompetitionForm` owns shared fields and field errors; create/edit pages provide initial values and submit behaviour. Action menu and delete dialog are reusable components.
 - Navbar is a single declaration of SPA routes and legacy href links, with auth-only visibility from the store.
 
 ## Post-design Constitution Check
 
-All gates remain passed. The plan follows the 004 naming and flow: action → `SearchEventDto` + `Pagination` → existing `ListEvents` command → V1 `ListEventsService` → `EventRepository::paginate()` → `EventAssembler` → `Slice<ViewEventDto>`. `ListLegacyEventsService` isolates unchanged Blade behaviour; no repository is added.
+All gates remain passed. The plan follows the 004 naming and flow: action → `SearchEventDto` + `EventPagination` → existing `ListEvents` command → V1 `ListEventsService` → `EventRepository::paginate()` → `EventAssembler` → `Slice<ViewEventDto>`. `ListLegacyEventsService` isolates unchanged Blade behaviour; no legacy `app/Services` class is added.
 
 ## Complexity Tracking
 

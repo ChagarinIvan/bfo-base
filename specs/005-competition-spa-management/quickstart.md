@@ -34,7 +34,8 @@ Expected: only matching records appear; all inclusive boundaries match; paginati
 3. Open the event link from the table.
 4. Open a competition with no events and a nonexistent id.
 
-Expected: links go to working legacy pages; empty and missing states are understandable; no hidden browser console/network error.
+Expected: the event link goes to a working legacy page; empty and missing states are understandable;
+no hidden browser console/network error.
 
 ## Scenario 3: Authenticated update and soft delete
 

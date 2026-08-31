@@ -71,6 +71,7 @@ function onNameChange(value: string | undefined): void {
 
     if (hasTooShortNameSearch(name.value)) {
         debouncedNameSearch.cancel()
+        void load(resetPageOnFilterChange(pagination.value.currentPage))
         return
     }
 

@@ -52,11 +52,11 @@ description: "Задачи реализации: управление сорев
 
 ### Implementation for User Story 1
 
-- [X] T007 [US1] Add DTO-specific request normalization before validation in `app/Application/Dto/AbstractDto.php` and `app/Bridge/Laravel/Http/Controllers/ApiAction.php`, then extend `SearchCompetitionDto` and `Pagination` request mapping for trimmed `name`, `year`, `date`, and camelCase `perPage` in `app/Application/Dto/Competition/CompetitionSearchDto.php` and `app/Application/Dto/Pagination/Pagination.php` without adding an `active` API field.
+- [X] T007 [US1] Add DTO-specific request normalization before validation in `app/Application/Dto/AbstractDto.php` and `app/Bridge/Laravel/Http/Controllers/ApiAction.php`, then extend `SearchCompetitionDto` and `Pagination` request mapping for trimmed `name`, `year`, `date`, and camelCase `perPage` in `app/Application/Dto/Competition/SearchCompetitionDto.php` and `app/Application/Dto/Pagination/Pagination.php` without adding an `active` API field; omitted `year` defaults to the current year.
 - [X] T008 [US1] Preserve false-safe criteria construction while passing the expanded search DTO through `app/Application/Service/Competition/ListCompetitions.php`.
 - [X] T009 [US1] Implement active-only case-insensitive year/name/date filtering with inclusive `from <= date <= to` matching in `app/Infrastructure/Laravel/Eloquent/Competition/EloquentCompetitionRepository.php`.
 - [X] T010 [US1] Keep the V1 list action thin and pass the expanded DTO/pagination flow through `app/Bridge/Laravel/Http/Controllers/Api/V1/Competition/ListCompetitionsAction.php`.
-- [X] T011 [US1] Add name input with 300ms debounce, date filter, local minimum-length feedback, filter-aware pagination reset, and typed API loading in `resources/spa/pages/competitions/CompetitionsPage.vue`.
+- [X] T011 [US1] Add name input with 300ms debounce, date filter, local minimum-length feedback, filter-aware pagination reset, and typed API loading in `resources/spa/pages/competitions/CompetitionsPage.vue`; use reusable `resources/spa/components/DateFilter.vue` and do not request incomplete dates.
 
 **Checkpoint**: User Story 1 is independently usable from `/app/competitions`; invalid short requests receive `422`, and no inactive competition is exposed.
 
@@ -64,11 +64,12 @@ description: "Задачи реализации: управление сорев
 
 ## Phase 4: User Story 2 — Просмотреть соревнование и его этапы (Priority: P1)
 
-**Goal**: Посетитель открывает SPA-детали активного соревнования и его активные этапы without
-N+1; переход к отдельному этапу остаётся legacy link.
+**Goal**: Посетитель открывает SPA-детали активного соревнования и его активные этапы без
+N+1; переход к отдельному этапу остаётся ссылкой на legacy-страницу.
 
 **Independent Test**: Открыть активное соревнование с несколькими этапами, проверить поля
-таблицы и `participantsCount`; проверить пустой список этапов, включая inactive/missing competition.
+таблицы и `participantsCount`; проверить пустой список этапов, включая неактивное или
+отсутствующее соревнование.
 
 ### Tests for User Story 2
 
@@ -82,8 +83,8 @@ N+1; переход к отдельному этапу остаётся legacy l
 - [X] T016 [US2] Rename `EventSearchDto` to `SearchEventDto`, accept V1 camelCase `competitionId`, and update all PHP consumers in `app/Application/Dto/Event/SearchEventDto.php`, `app/Application/Service/Event/ListEvents.php`, `app/Application/Handler/Event/DisableCompetitionHandler.php`, and affected Bridge actions/tests.
 - [X] T017 [US2] Add compact scalar `ViewEventDto` and `EventAssembler::toViewEventDto()` in `app/Application/Dto/Event/ViewEventDto.php` and `app/Application/Dto/Event/EventAssembler.php`, keeping `LegacyViewEventDto` unchanged for Blade.
 - [X] T018 [US2] Rename the Blade service to `ListLegacyEventsService`, then make `ListEventsService::execute(ListEvents $command)` return `Slice<ViewEventDto>` through the V1 command/service path.
-- [X] T019 [US2] Add active-only `EventRepository::paginate()` with one protocol-line relation count for the V1 list path in `app/Infrastructure/Laravel/Eloquent/Event/EloquentEventRepository.php`, without loading flags or cups into the V1 projection.
-- [X] T020 [US2] Add public V1 `ViewCompetitionAction` and `ListEventsAction` in `app/Bridge/Laravel/Http/Controllers/Api/V1/Competition/ViewCompetitionAction.php` and `app/Bridge/Laravel/Http/Controllers/Api/V1/Event/ListEventsAction.php`; `ListEventsAction` follows DTO + pagination → command → V1 service → assembler flow and returns an empty serialized Slice when no active events match `competitionId`.
+- [X] T019 [US2] Add active-only `EventRepository::paginate()` with one protocol-line relation count and an active-parent-competition condition for the V1 list path in `app/Infrastructure/Laravel/Eloquent/Event/EloquentEventRepository.php`, without loading flags or cups into the V1 projection.
+- [X] T020 [US2] Add public V1 `ViewCompetitionAction` and `ListEventsAction` in `app/Bridge/Laravel/Http/Controllers/Api/V1/Competition/ViewCompetitionAction.php` and `app/Bridge/Laravel/Http/Controllers/Api/V1/Event/ListEventsAction.php`; `ListEventsAction` follows `SearchEventDto` + `EventPagination` → command → V1 service → assembler flow, limits `perPage` to 20, and returns an empty serialized Slice when no active events match `competitionId`.
 - [X] T021 [US2] Register the new public competition and event read actions in `app/Bridge/Laravel/Provider/ApiV1RoutesServiceProvider.php` and preserve optional Bearer impressions.
 - [X] T022 [P] [US2] Implement typed get-one and event-list calls in `resources/spa/api/competitions.ts` and `resources/spa/api/events.ts`.
 - [X] T023 [US2] Add `CompetitionDetailsPage.vue` with loading/error/empty states, event table, and legacy event links in `resources/spa/pages/competitions/CompetitionDetailsPage.vue`.
@@ -174,7 +175,7 @@ details render consistently and their unit tests cover shared state.
 
 ### Phase 8 validation log
 
-- `npm run ci`: passed (lint, typecheck, 17 Vitest files / 45 tests, SPA build).
+- `npm run ci`: passed (lint, typecheck, 17 Vitest files / 46 tests, SPA build).
 - Targeted PHP suite: 43/46 passed on the first run; the remaining 3 errors were caused by the shared MySQL test database being left without a consistent `migrations` table. The complete rerun and final suite passed.
 - `composer cs`, `composer stan`, `composer rector -- --dry-run`: passed.
 - `composer test`: passed (346 tests, 2632 assertions).
@@ -227,5 +228,5 @@ Setup → Foundational → US1 (MVP) → US2 → US3 → US4 → US5 → Polish
 
 - `[P]` means the task uses distinct files and may be parallelised after stated dependencies.
 - Every story task carries its `[US#]` label; setup, foundational, and polish tasks intentionally do not.
-- No task creates a new `*Service` or `*Repository`: V1 actions reuse existing commands/services and assemblers, while new DTOs are Application read models.
+- No task creates a new service in legacy `app/Services`; Application services/use cases in `app/Application/Service` are allowed target-layer orchestration, while new DTOs are Application read models.
 - The active-record rule remains repository-owned; `active` is not added to V1 query parameters or SPA types.

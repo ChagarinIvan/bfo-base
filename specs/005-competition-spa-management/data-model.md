@@ -29,7 +29,7 @@
 
 ## Input DTOs и commands
 
-### CompetitionSearchDto
+### SearchCompetitionDto
 
 Расширяет существующий список.
 
@@ -38,7 +38,7 @@
 | year | Допустимый год системы | Текущий год. |
 | name | Trimmed, 3–255 символов, optional | Нет фильтра. |
 | date | `YYYY-MM-DD`, optional | Нет фильтра. |
-| page / perPage | Стандартная pagination validation | 1 / 20. |
+| page / perPage | `page >= 1`; competition list uses shared limit, event list uses `perPage <= 20` | 1 / 20. |
 
 `ListCompetitions` command переносит DTO в существующий list use case.
 
@@ -48,9 +48,12 @@
 
 ### SearchEventDto
 
-`EventSearchDto` переименовывается в `SearchEventDto` во всех существующих consumers. V1 action принимает обязательный положительный `competitionId`; остальные прежние поля (`year`, `flagId`, `notRelatedToCup`) остаются опциональными для legacy callers. Отсутствующий или мягко удалённый родитель не проверяется отдельно и даёт пустой список, как соревнование без активных этапов.
+`EventSearchDto` переименовывается в `SearchEventDto` во всех существующих consumers. V1 action принимает обязательный положительный `competitionId`; остальные прежние поля (`year`, `flagId`, `notRelatedToCup`) остаются опциональными для legacy callers. Отсутствующий или мягко удалённый родитель даёт пустой список, как соревнование без активных этапов; выборка также требует `competition.active=true`.
 
-`ListEventsAction` принимает `SearchEventDto` и `Pagination`, создаёт существующий `ListEvents` command и вызывает новый `ListEventsService::execute()`. Метод возвращает `Slice<ViewEventDto>` с компактным V1 DTO. `ListLegacyEventsService::execute()` и `LegacyViewEventDto` продолжают обслуживать Blade.
+`ListEventsAction` принимает `SearchEventDto` и event-specific `EventPagination` с максимальным
+`perPage=20`, создаёт существующий `ListEvents` command и вызывает новый `ListEventsService::execute()`.
+Метод возвращает `Slice<ViewEventDto>` с компактным V1 DTO. `ListLegacyEventsService::execute()` и
+`LegacyViewEventDto` продолжают обслуживать Blade.
 
 ## View DTOs
 
@@ -82,6 +85,8 @@ by: string user id
 ## SPA state
 
 - **CompetitionFilters**: year, pending name, applied name, date, pagination; pending name не уходит до трёх символов и debounce.
+- **DateFilter**: общий текстовый компонент с отображением `YYYY-MM-DD`; наружу эмитит пустое или
+  только полностью введённое значение, чтобы частичный ввод не отправлялся в API.
 - **CompetitionFormState**: поля соревнования, field errors и submit state, общие для create/edit.
 - **DeleteConfirmation**: выбранное соревнование, visibility и submit state; DELETE возможен только после confirm.
 
@@ -92,4 +97,7 @@ Competition 1 ── * Event
 Event 1 ── * Distance ── * ProtocolLine
 ```
 
-`EventRepository::paginate()` для V1 list path добавляет количество участников через один `withCount` для страницы. `ListEventsService::execute()` передаёт полученные Event в `EventAssembler::toViewEventDto()`; flags и cups пока не входят в V1 DTO. `byCriteria()` остаётся путём legacy service.
+`EventRepository::paginate()` для V1 list path ограничивает события активным parent competition и
+добавляет количество участников через один `withCount` для страницы. `ListEventsService::execute()`
+передаёт полученные Event в `EventAssembler::toViewEventDto()`; flags и cups пока не входят в V1 DTO.
+`byCriteria()` остаётся путём legacy service.
