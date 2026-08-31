@@ -85,10 +85,10 @@ by: string user id
 ## SPA state
 
 - **CompetitionFilters**: year, pending name, applied name, date, pagination; pending name не уходит до трёх символов и debounce.
-- **DateFilter**: общий текстовый компонент для фильтров и create/edit-форм с отображением и
-  placeholder `YYYY-MM-DD`; наружу эмитит пустое или только полностью введённое значение, чтобы
-  частичный ввод не отправлялся в API. Все даты SPA в state, API и UI используют только формат
-  `YYYY-MM-DD` (`Y-m-d`), без локализованных названий месяцев.
+- **DateFilter**: общий wrapper над PrimeVue DatePicker для фильтров и create/edit-форм с
+  отображением и placeholder `YYYY-MM-DD`; наружу эмитит пустое или полностью выбранное значение
+  в виде строки, чтобы частичный ввод не отправлялся в API. Все даты SPA в state, API и UI используют
+  только формат `YYYY-MM-DD` (`Y-m-d`), без локализованных названий месяцев.
 - **CompetitionFormState**: поля соревнования, field errors и submit state, общие для create/edit.
 - **DeleteConfirmation**: выбранное соревнование, visibility и submit state; DELETE возможен только после confirm.
 

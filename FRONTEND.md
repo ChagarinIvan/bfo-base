@@ -45,11 +45,11 @@ All SPA dates use the ISO calendar format `YYYY-MM-DD` (`Y-m-d`):
 - dates displayed in tables, details and impression summaries;
 - date input placeholders and validation examples.
 
-Use the reusable `resources/spa/components/DateFilter.vue` for date inputs in
-filters and create/edit forms. It displays the `YYYY-MM-DD` placeholder and
-emits an empty value or a complete date value, so partial input is not sent to
-the API. Do not use locale-formatted months or a separate date-input format in
-new SPA code.
+Use the reusable PrimeVue DatePicker wrapper
+`resources/spa/components/DateFilter.vue` for date inputs in filters and
+create/edit forms. It displays the `YYYY-MM-DD` placeholder and emits an empty
+value or a complete date value, so partial input is not sent to the API. Do not
+use locale-formatted months or a separate date-input format in new SPA code.
 
 The competitions page loads its year options from GET /api/v1/years. The
 frontend keeps this small, stable response in memory and localStorage for one
