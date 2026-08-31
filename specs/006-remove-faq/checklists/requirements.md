@@ -1,36 +1,36 @@
 # Specification Quality Checklist: Удаление FAQ-раздела
 
-**Purpose**: Validate specification completeness and quality before proceeding to planning
-**Created**: 2026-08-31
-**Feature**: [spec.md](../spec.md)
+**Назначение**: проверить полноту и качество спецификации перед планированием
+**Создано**: 2026-08-31
+**Фича**: [spec.md](../spec.md)
 
-## Content Quality
+## Качество содержания
 
-- [x] No implementation details (languages, frameworks, APIs)
-- [x] Focused on user value and business needs
-- [x] Written for non-technical stakeholders
-- [x] All mandatory sections completed
+- [x] Нет деталей реализации (языков, фреймворков, API)
+- [x] Фокус на пользе для пользователя и бизнес-потребностях
+- [x] Написана для нетехнических заинтересованных лиц
+- [x] Все обязательные разделы заполнены
 
-## Requirement Completeness
+## Полнота требований
 
-- [x] No [NEEDS CLARIFICATION] markers remain
-- [x] Requirements are testable and unambiguous
-- [x] Success criteria are measurable
-- [x] Success criteria are technology-agnostic
-- [x] All acceptance scenarios are defined
-- [x] Edge cases are identified
-- [x] Scope is clearly bounded
-- [x] Dependencies and assumptions identified
+- [x] Маркеров [NEEDS CLARIFICATION] не осталось
+- [x] Требования проверяемы и однозначны
+- [x] Критерии успеха измеримы
+- [x] Критерии успеха не зависят от технологий
+- [x] Все сценарии приёмки определены
+- [x] Граничные случаи выявлены
+- [x] Область задачи чётко ограничена
+- [x] Зависимости и допущения определены
 
-## Feature Readiness
+## Готовность фичи
 
-- [x] All functional requirements have clear acceptance criteria
-- [x] User scenarios cover primary flows
-- [x] Feature meets measurable outcomes defined in Success Criteria
-- [x] No implementation details leak into specification
+- [x] Все функциональные требования имеют ясные критерии приёмки
+- [x] Пользовательские сценарии покрывают основные потоки
+- [x] Фича соответствует измеримым результатам из критериев успеха
+- [x] В спецификацию не просачиваются детали реализации
 
-## Notes
+## Примечания
 
-- Specification is ready for $speckit-plan.
-- Repository-wide usage checks are an explicit implementation prerequisite before
-  removing any API-related code.
+- Спецификация готова для $speckit-plan.
+- Проверка использования по всему репозиторию является явным предварительным
+  условием реализации перед удалением любого кода, связанного с API.
