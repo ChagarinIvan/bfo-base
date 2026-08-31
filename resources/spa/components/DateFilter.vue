@@ -8,9 +8,10 @@ const props = withDefaults(
         inputId: string
         label: string
         error?: string
+        required?: boolean
         disabled?: boolean
     }>(),
-    { disabled: false, error: '' },
+    { disabled: false, error: '', required: false },
 )
 
 const inputValue = ref(props.modelValue)
@@ -45,6 +46,7 @@ function onInput(value: string | undefined): void {
             :id="inputId"
             v-model="inputValue"
             :disabled="disabled"
+            :required="required"
             type="text"
             inputmode="numeric"
             autocomplete="off"

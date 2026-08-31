@@ -6,6 +6,7 @@ import InputText from 'primevue/inputtext'
 import Message from 'primevue/message'
 import Textarea from 'primevue/textarea'
 import { t } from '../../i18n'
+import DateFilter from '../../components/DateFilter.vue'
 import { isDateRangeValid } from './competitionModels'
 import { competitionFormInitialValue } from './competitionFormModels'
 import type { CreateCompetitionRequest } from '../../api/types'
@@ -74,34 +75,22 @@ function submit(): void {
             }}</small>
         </div>
         <div class="form-grid">
-            <div class="form-field">
-                <label for="competition-from">{{
-                    t('spa.competition.create.from')
-                }}</label>
-                <InputText
-                    id="competition-from"
-                    v-model="form.from"
-                    required
-                    type="date"
-                />
-                <small v-if="fieldError('from')" class="field-error">{{
-                    fieldError('from')
-                }}</small>
-            </div>
-            <div class="form-field">
-                <label for="competition-to">{{
-                    t('spa.competition.create.to')
-                }}</label>
-                <InputText
-                    id="competition-to"
-                    v-model="form.to"
-                    required
-                    type="date"
-                />
-                <small v-if="fieldError('to')" class="field-error">{{
-                    fieldError('to')
-                }}</small>
-            </div>
+            <DateFilter
+                v-model="form.from"
+                class="form-field"
+                input-id="competition-from"
+                :label="t('spa.competition.create.from')"
+                :error="fieldError('from')"
+                required
+            />
+            <DateFilter
+                v-model="form.to"
+                class="form-field"
+                input-id="competition-to"
+                :label="t('spa.competition.create.to')"
+                :error="fieldError('to')"
+                required
+            />
         </div>
         <div class="form-checkbox">
             <Checkbox v-model="form.mass" input-id="competition-mass" binary />
