@@ -175,14 +175,6 @@ onBeforeUnmount(() => {
             </template>
         </Column>
         <Column field="personsCount" :header="t('spa.clubs.persons_count')" />
-        <Column v-if="auth.isAuthenticated" :header="t('spa.club.edit.action')">
-            <template #body="{ data }">
-                <EditActionButton
-                    :to="`/app/clubs/${data.id}/edit`"
-                    :label="t('spa.club.edit.action')"
-                />
-            </template>
-        </Column>
         <Column v-if="auth.isAuthenticated" :header="t('spa.clubs.created')">
             <template #body="{ data }">
                 <ImpressionDetails
@@ -198,6 +190,14 @@ onBeforeUnmount(() => {
                     :impression="data.updated"
                     :users="users"
                     :label="t('spa.clubs.updated')"
+                />
+            </template>
+        </Column>
+        <Column v-if="auth.isAuthenticated" :header="t('spa.club.edit.action')">
+            <template #body="{ data }">
+                <EditActionButton
+                    :to="`/app/clubs/${data.id}/edit`"
+                    :label="t('spa.club.edit.action')"
                 />
             </template>
         </Column>
