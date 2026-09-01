@@ -8,7 +8,7 @@ use App\Application\Dto\Auth\UserId;
 use App\Application\Dto\Club\ClubDto;
 use App\Domain\Club\ClubInfo;
 use App\Domain\Club\ClubInput;
-use App\Domain\Club\Factory\ClubNameNormalizer;
+use App\Domain\Club\ClubNameNormalizer;
 use function trim;
 
 final readonly class UpdateClubInfo

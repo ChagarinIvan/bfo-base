@@ -12,6 +12,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use RuntimeException;
 use function file_get_contents;
+use function trim;
 
 readonly class ParserService
 {
@@ -28,7 +29,11 @@ readonly class ParserService
         );
         Log::info('Parse class ' . $parser::class);
 
-        return $parser->parse($protocol->content);
+        return $parser->parse($protocol->content)->map(static function (array $line): array {
+            $line['club'] = trim($line['club']);
+
+            return $line;
+        });
     }
 
     /**

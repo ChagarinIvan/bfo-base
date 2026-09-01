@@ -11,7 +11,7 @@ use App\Application\Service\Club\ListLegacyClubs;
 use App\Application\Service\Club\ListLegacyClubsService;
 use App\Application\Service\Person\ListLegacyPersons;
 use App\Application\Service\Person\ListLegacyPersonsService;
-use App\Domain\Club\NormalizedNameClubFinder;
+use App\Domain\Club\ClubNameNormalizer;
 use App\Domain\Distance\Distance;
 use Illuminate\Contracts\View\View;
 use function array_column;
@@ -26,9 +26,10 @@ trait RendersEventDistance
 {
     protected function renderEventDistance(
         LegacyViewEventDto $event,
-        Distance           $distance,
-        ListLegacyClubsService   $clubsService,
+        Distance $distance,
+        ListLegacyClubsService $clubsService,
         ListLegacyPersonsService $personsService,
+        ClubNameNormalizer $clubNameNormalizer,
     ): View {
         $protocolLines = $distance->protocolLines;
 
@@ -51,12 +52,12 @@ trait RendersEventDistance
 
         $clubs = [];
         foreach ($clubsService->execute(new ListLegacyClubs(new LegacySearchClubDto())) as $club) {
-            $clubs[NormalizedNameClubFinder::normalizeName($club->name)] = $club;
+            $clubs[$clubNameNormalizer->normalize($club->name)] = $club;
         }
 
         $clubsByLine = [];
         foreach ($protocolLines as $protocolLine) {
-            $normalized = NormalizedNameClubFinder::normalizeName($protocolLine->club);
+            $normalized = $clubNameNormalizer->normalize($protocolLine->club);
             if (isset($clubs[$normalized])) {
                 $clubsByLine[$protocolLine->id] = $clubs[$normalized];
             }

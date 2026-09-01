@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Provider\Club;
 
-use App\Domain\Club\ClubFinder;
 use App\Domain\Club\ClubRepository;
 use App\Domain\Club\ClubUpdater;
 use App\Domain\Club\Factory\ClubFactory;
 use App\Domain\Club\Factory\PreventDuplicateClubFactory;
 use App\Domain\Club\Factory\StandardClubFactory;
-use App\Domain\Club\NormalizedNameClubFinder;
 use App\Domain\Club\PreventDuplicateClubUpdater;
 use App\Domain\Club\StandardClubUpdater;
 use App\Infrastructure\Laravel\Eloquent\Club\EloquentClubRepository;
@@ -21,10 +19,6 @@ final class ClubProvider extends ServiceProvider
     public function boot(): void
     {
         $this->app->bind(ClubRepository::class, EloquentClubRepository::class);
-
-        $this->app->bind(ClubFinder::class, fn (): NormalizedNameClubFinder => new NormalizedNameClubFinder(
-            $this->app->get(ClubRepository::class),
-        ));
 
         $this->app->bind(StandardClubFactory::class, StandardClubFactory::class);
 

@@ -11,7 +11,8 @@ use App\Application\Service\Person\AddPerson;
 use App\Application\Service\Person\AddPersonService;
 use App\Application\Service\Person\Exception\FailedToAddPerson;
 use App\Domain\Club\Club;
-use App\Domain\Club\ClubFinder;
+use App\Domain\Club\ClubNameNormalizer;
+use App\Domain\Club\ClubRepository;
 use App\Domain\Person\Citizenship;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Models\IdentLine;
@@ -39,7 +40,8 @@ final class IdentProtocolLineCommand extends Command
 
     public function handle(
         RankService $rankService,
-        ClubFinder $clubFinder,
+        ClubRepository $clubs,
+        ClubNameNormalizer $clubNameNormalizer,
         ProtocolLineService $protocolLineService,
         ProtocolLineIdentService $protocolLineIdentService,
     ): void {
@@ -68,7 +70,7 @@ final class IdentProtocolLineCommand extends Command
 
             /** @var ProtocolLine $protocolLine */
             $protocolLine = $protocolLines->first();
-            $club = $clubFinder->findByName($protocolLine->club);
+            $club = $clubs->oneByNormalizedName($clubNameNormalizer->normalize($protocolLine->club));
 
             $personInfo = new PersonInfoDto;
             $personInfo->lastname = $protocolLine->lastname;

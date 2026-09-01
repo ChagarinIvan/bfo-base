@@ -7,10 +7,10 @@ namespace App\Application\Service\Club;
 use App\Application\Dto\Club\ClubAssembler;
 use App\Application\Dto\Club\ViewClubDto;
 use App\Application\Service\Club\Exception\FailedToAddClub;
+use App\Domain\Club\ClubNameNormalizer;
 use App\Domain\Club\ClubRepository;
 use App\Domain\Club\Exception\ClubAlreadyExist;
 use App\Domain\Club\Factory\ClubFactory;
-use App\Domain\Club\Factory\ClubNameNormalizer;
 
 final readonly class AddClubService
 {

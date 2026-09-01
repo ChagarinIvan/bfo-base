@@ -8,10 +8,10 @@ use App\Application\Dto\Club\ClubAssembler;
 use App\Application\Dto\Club\ViewClubDto;
 use App\Application\Service\Club\Exception\ClubNotFound;
 use App\Application\Service\Club\Exception\FailedToUpdateClub;
+use App\Domain\Club\ClubNameNormalizer;
 use App\Domain\Club\ClubRepository;
 use App\Domain\Club\ClubUpdater;
 use App\Domain\Club\Exception\ClubAlreadyExist;
-use App\Domain\Club\Factory\ClubNameNormalizer;
 use App\Domain\Shared\TransactionManager;
 
 final readonly class UpdateClubInfoService
