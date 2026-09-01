@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Http\Controllers\Cup;
 
-use App\Application\Dto\Club\ClubSearchDto;
+use App\Application\Dto\Club\LegacySearchClubDto;
 use App\Application\Dto\Club\ViewClubDto;
 use App\Application\Dto\CupEvent\ViewCupEventPointDto;
-use App\Application\Service\Club\ListClubs;
-use App\Application\Service\Club\ListClubsService;
+use App\Application\Service\Club\ListLegacyClubs;
+use App\Application\Service\Club\ListLegacyClubsService;
 use App\Application\Service\Cup\CalculateCupEvent;
 use App\Application\Service\Cup\CalculateCupEventService;
 use App\Application\Service\Cup\Exception\CupNotFound;
@@ -31,7 +31,7 @@ class ShowCupEventGroupAction extends BaseController
         string $cupEventId,
         string $groupId,
         CalculateCupEventService $service,
-        ListClubsService $clubsService,
+        ListLegacyClubsService $clubsService,
     ): RedirectResponse|View {
         try {
             $calculatedCupEvent = $service->execute(new CalculateCupEvent($cupId, $cupEventId, $groupId));
@@ -60,7 +60,7 @@ class ShowCupEventGroupAction extends BaseController
      *
      * @return array<string, ViewClubDto>
      */
-    private function loadClubs(ListClubsService $clubsService, array $points): array
+    private function loadClubs(ListLegacyClubsService $clubsService, array $points): array
     {
         $clubIds = array_values(array_unique(array_filter(array_column($points, 'personClubId'))));
 
@@ -69,7 +69,7 @@ class ShowCupEventGroupAction extends BaseController
         }
 
         $clubs = [];
-        foreach ($clubsService->execute(new ListClubs(new ClubSearchDto(ids: $clubIds))) as $club) {
+        foreach ($clubsService->execute(new ListLegacyClubs(new LegacySearchClubDto(ids: $clubIds))) as $club) {
             $clubs[$club->id] = $club;
         }
 

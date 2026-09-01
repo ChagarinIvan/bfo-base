@@ -7,7 +7,7 @@ namespace App\Application\Service\Club;
 use App\Application\Dto\Club\ClubAssembler;
 use App\Application\Dto\Club\ViewClubDto;
 use App\Domain\Club\ClubRepository;
-use function array_map;
+use App\Domain\Shared\Pagination\Slice;
 
 final readonly class ListClubsService
 {
@@ -17,12 +17,12 @@ final readonly class ListClubsService
     ) {
     }
 
-    /** @return ViewClubDto[] */
-    public function execute(ListClubs $command): array
+    /** @return Slice<ViewClubDto> */
+    public function execute(ListClubs $command): Slice
     {
-        return array_map(
-            $this->assembler->toViewClubDto(...),
-            $this->clubs->byCriteria($command->criteria())->all()
-        );
+        return $this->clubs
+            ->paginate($command->criteria())
+            ->map($this->assembler->toViewClubDto(...))
+        ;
     }
 }

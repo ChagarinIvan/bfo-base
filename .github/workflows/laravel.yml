@@ -67,6 +67,8 @@ jobs:
 
   frontend-checks:
     runs-on: ubuntu-latest
+    env:
+      NPM_CONFIG_REGISTRY: https://registry.npmjs.org/
 
     steps:
     - uses: actions/checkout@v4
@@ -75,6 +77,6 @@ jobs:
         node-version: '22'
         cache: npm
     - name: Install frontend dependencies
-      run: npm ci --ignore-scripts --no-audit --no-fund
+      run: npm ci --registry=https://registry.npmjs.org/ --ignore-scripts --no-audit --no-fund
     - name: Execute frontend quality gate
       run: npm run ci

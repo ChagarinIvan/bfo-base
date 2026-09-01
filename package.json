@@ -20,13 +20,14 @@
         "ci": "npm run lint && npm run typecheck && npm run test && npm run build:spa"
     },
     "devDependencies": {
+        "@typescript-eslint/parser": "^8.19.1",
         "@vitejs/plugin-vue": "^5.2.1",
         "@vue/test-utils": "^2.4.6",
         "axios": "^1.8.4",
         "cross-env": "^7.0",
         "eslint": "^9.17.0",
         "eslint-plugin-vue": "^10.1.0",
-        "@typescript-eslint/parser": "^8.19.1",
+        "happy-dom": "^20.12.0",
         "laravel-mix": "^6.0.39",
         "lodash": "^4.17.19",
         "prettier": "^3.4.2",

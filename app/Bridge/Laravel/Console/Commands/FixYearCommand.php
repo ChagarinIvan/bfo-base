@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Bridge\Laravel\Console\Commands;
 
 use App\Application\Dto\Auth\UserId;
+use App\Application\Dto\Person\LegacySearchPersonDto;
 use App\Application\Dto\Person\PersonInfoDto;
-use App\Application\Dto\Person\PersonSearchDto;
-use App\Application\Service\Person\ListPersons;
-use App\Application\Service\Person\ListPersonsService;
+use App\Application\Service\Person\ListLegacyPersons;
+use App\Application\Service\Person\ListLegacyPersonsService;
 use App\Application\Service\Person\UpdatePersonInfo;
 use App\Application\Service\Person\UpdatePersonInfoService;
 use App\Application\Service\Person\ViewPerson;
@@ -25,7 +25,7 @@ final class FixYearCommand extends Command
 {
     public function __construct(
         private readonly UpdatePersonInfoService $service,
-        private readonly ListPersonsService $persons,
+        private readonly ListLegacyPersonsService $persons,
         private readonly ViewPersonService $person,
     ) {
         parent::__construct();
@@ -36,7 +36,7 @@ final class FixYearCommand extends Command
         $this->info('Start');
         $userId = (int) $this->argument('user_id');
         $year = $this->argument('year');
-        $persons = $this->persons->execute(new ListPersons(new PersonSearchDto(year: $year)));
+        $persons = $this->persons->execute(new ListLegacyPersons(new LegacySearchPersonDto(year: $year)));
         $this->info(sprintf('Has %d persons', count($persons)));
 
         foreach ($persons as $person) {

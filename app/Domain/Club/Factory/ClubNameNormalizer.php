@@ -8,6 +8,7 @@ use App\Domain\Shared\SymbolNormalizer;
 use function mb_strtolower;
 use function preg_replace;
 use function str_replace;
+use function trim;
 
 final readonly class ClubNameNormalizer
 {
@@ -22,7 +23,7 @@ final readonly class ClubNameNormalizer
 
     public function normalize(string $clubName): string
     {
-        $clubName = mb_strtolower($clubName);
+        $clubName = mb_strtolower(trim($clubName));
         $clubName = str_replace(['\'', '"', '«', '»'], '', $clubName);
         $clubName = preg_replace('#\s+#', ' ', $clubName);
 

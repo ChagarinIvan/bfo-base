@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tests\Application\Service\Person;
 
 use App\Application\Dto\Auth\AuthAssembler;
+use App\Application\Dto\Person\LegacyViewPersonDto;
 use App\Application\Dto\Person\PersonAssembler;
-use App\Application\Dto\Person\ViewPersonDto;
 use App\Application\Service\Person\Exception\PersonNotFound;
 use App\Application\Service\Person\ViewPerson;
 use App\Application\Service\Person\ViewPersonService;
@@ -60,7 +60,7 @@ final class ViewPersonServiceTest extends TestCase
 
         $dto = $this->service->execute(new ViewPerson((string) $person->id));
 
-        $this->assertInstanceOf(ViewPersonDto::class, $dto);
+        $this->assertInstanceOf(LegacyViewPersonDto::class, $dto);
         $this->assertEquals($person->lastname, $dto->lastname);
     }
 }

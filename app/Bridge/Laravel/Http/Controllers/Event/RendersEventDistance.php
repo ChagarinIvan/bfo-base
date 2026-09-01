@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Http\Controllers\Event;
 
-use App\Application\Dto\Club\ClubSearchDto;
+use App\Application\Dto\Club\LegacySearchClubDto;
 use App\Application\Dto\Event\LegacyViewEventDto;
-use App\Application\Dto\Person\PersonSearchDto;
-use App\Application\Service\Club\ListClubs;
-use App\Application\Service\Club\ListClubsService;
-use App\Application\Service\Person\ListPersons;
-use App\Application\Service\Person\ListPersonsService;
+use App\Application\Dto\Person\LegacySearchPersonDto;
+use App\Application\Service\Club\ListLegacyClubs;
+use App\Application\Service\Club\ListLegacyClubsService;
+use App\Application\Service\Person\ListLegacyPersons;
+use App\Application\Service\Person\ListLegacyPersonsService;
 use App\Domain\Club\NormalizedNameClubFinder;
 use App\Domain\Distance\Distance;
 use Illuminate\Contracts\View\View;
@@ -27,8 +27,8 @@ trait RendersEventDistance
     protected function renderEventDistance(
         LegacyViewEventDto $event,
         Distance           $distance,
-        ListClubsService   $clubsService,
-        ListPersonsService $personsService,
+        ListLegacyClubsService   $clubsService,
+        ListLegacyPersonsService $personsService,
     ): View {
         $protocolLines = $distance->protocolLines;
 
@@ -44,16 +44,15 @@ trait RendersEventDistance
 
         $personIds = $protocolLines->pluck('person_id')->filter()->unique()->values()->all();
         $persons = array_column(
-            array: $personsService->execute(new ListPersons(new PersonSearchDto(ids: $personIds))),
+            array: $personsService->execute(new ListLegacyPersons(new LegacySearchPersonDto(ids: $personIds))),
             column_key: null,
             index_key: 'id',
         );
 
-        $clubs = array_column(
-            array: $clubsService->execute(new ListClubs(new ClubSearchDto())),
-            column_key: null,
-            index_key: 'normalizeName',
-        );
+        $clubs = [];
+        foreach ($clubsService->execute(new ListLegacyClubs(new LegacySearchClubDto())) as $club) {
+            $clubs[NormalizedNameClubFinder::normalizeName($club->name)] = $club;
+        }
 
         $clubsByLine = [];
         foreach ($protocolLines as $protocolLine) {

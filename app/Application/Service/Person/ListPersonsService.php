@@ -7,7 +7,7 @@ namespace App\Application\Service\Person;
 use App\Application\Dto\Person\PersonAssembler;
 use App\Application\Dto\Person\ViewPersonDto;
 use App\Domain\Person\PersonRepository;
-use function array_map;
+use App\Domain\Shared\Pagination\Slice;
 
 final readonly class ListPersonsService
 {
@@ -17,12 +17,12 @@ final readonly class ListPersonsService
     ) {
     }
 
-    /** @return ViewPersonDto[] */
-    public function execute(ListPersons $command): array
+    /** @return Slice<ViewPersonDto> */
+    public function execute(ListPersons $command): Slice
     {
-        return array_map(
-            $this->assembler->toViewPersonDto(...),
-            $this->persons->byCriteria($command->criteria())->all()
-        );
+        return $this->persons
+            ->paginate($command->criteria())
+            ->map($this->assembler->toViewPersonDto(...))
+        ;
     }
 }

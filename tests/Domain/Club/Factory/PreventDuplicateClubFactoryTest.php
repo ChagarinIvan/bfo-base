@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace Tests\Domain\Club\Factory;
 
 use App\Domain\Club\Club;
+use App\Domain\Club\ClubInfo;
+use App\Domain\Club\ClubInput;
 use App\Domain\Club\ClubRepository;
 use App\Domain\Club\Exception\ClubAlreadyExist;
 use App\Domain\Club\Factory\ClubFactory;
-use App\Domain\Club\Factory\ClubInput;
 use App\Domain\Club\Factory\PreventDuplicateClubFactory;
 use App\Domain\Shared\Criteria;
 use PHPUnit\Framework\Attributes\Test;
@@ -37,35 +38,35 @@ final class PreventDuplicateClubFactoryTest extends TestCase
     public function it_fails_when_club_with_same_name_already_exists(): void
     {
         $this->expectException(ClubAlreadyExist::class);
-        $this->expectExceptionMessageIsOrContains('Club with name "test club" already exist.');
+        $this->expectExceptionMessageIsOrContains('Club with name "Тэст клуб" already exist.');
 
         $this->decorated->expects($this->never())->method('create');
         $this->clubs
             ->expects($this->once())
             ->method('oneByCriteria')
-            ->with(new Criteria(['name' => 'test club']))
-            ->willReturn(Club::factory()->makeOne())
+            ->with(new Criteria(['normalizedName' => 'тэст клуб']))
+            ->willReturn($this->createStub(Club::class))
         ;
 
-        $this->factory->create(new ClubInput('test club', 1));
+        $this->factory->create(new ClubInput(new ClubInfo('Тэст клуб', 'тэст клуб'), 1));
     }
 
     #[Test]
     public function it_propagates_club_creation_on_equal_club_not_exists(): void
     {
-        $input = new ClubInput('test club', 1);
+        $input = new ClubInput(new ClubInfo('Тэст клуб', 'тэст клуб'), 1);
 
         $this->decorated
             ->expects($this->once())
             ->method('create')
             ->with($this->identicalTo($input))
-            ->willReturn(Club::factory()->makeOne())
+            ->willReturn($this->createStub(Club::class))
         ;
 
         $this->clubs
             ->expects($this->once())
             ->method('oneByCriteria')
-            ->with(new Criteria(['name' => 'test club']))
+            ->with(new Criteria(['normalizedName' => 'тэст клуб']))
             ->willReturn(null)
         ;
 

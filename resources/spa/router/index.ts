@@ -9,6 +9,10 @@ import CompetitionsPage from '../pages/competitions/CompetitionsPage.vue'
 import CreateCompetitionPage from '../pages/competitions/CreateCompetitionPage.vue'
 import CompetitionDetailsPage from '../pages/competitions/CompetitionDetailsPage.vue'
 import EditCompetitionPage from '../pages/competitions/EditCompetitionPage.vue'
+import ClubsPage from '../pages/clubs/ClubsPage.vue'
+import ClubDetailsPage from '../pages/clubs/ClubDetailsPage.vue'
+import CreateClubPage from '../pages/clubs/CreateClubPage.vue'
+import EditClubPage from '../pages/clubs/EditClubPage.vue'
 import LoginPage from '../pages/auth/LoginPage.vue'
 
 export function createAppRouter(
@@ -20,6 +24,18 @@ export function createAppRouter(
         history,
         routes: [
             { path: '/app/competitions', component: CompetitionsPage },
+            { path: '/app/clubs', component: ClubsPage },
+            { path: '/app/clubs/:id', component: ClubDetailsPage },
+            {
+                path: '/app/clubs/create',
+                component: CreateClubPage,
+                meta: { requiresAuth: true },
+            },
+            {
+                path: '/app/clubs/:id/edit',
+                component: EditClubPage,
+                meta: { requiresAuth: true },
+            },
             {
                 path: '/app/competitions/create',
                 component: CreateCompetitionPage,

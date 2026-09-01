@@ -6,12 +6,16 @@ namespace Tests\Application\Service\Person;
 
 use App\Application\Dto\Auth\AuthAssembler;
 use App\Application\Dto\Person\PersonAssembler;
-use App\Application\Dto\Person\PersonSearchDto;
+use App\Application\Dto\Person\SearchPersonDto;
 use App\Application\Service\Person\ListPersons;
 use App\Application\Service\Person\ListPersonsService;
+use App\Domain\Auth\Impression;
 use App\Domain\Person\Person;
 use App\Domain\Person\PersonRepository;
 use App\Domain\Shared\Criteria;
+use App\Domain\Shared\Pagination\Slice;
+use Carbon\Carbon;
+use Pagerfanta\Adapter\ArrayAdapter;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
@@ -20,32 +24,66 @@ final class ListPersonsServiceTest extends TestCase
 {
     private ListPersonsService $service;
 
-    private MockObject&PersonRepository $clubs;
+    private MockObject&PersonRepository $persons;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->service = new ListPersonsService(
-            $this->clubs = $this->createMock(PersonRepository::class),
+            $this->persons = $this->createMock(PersonRepository::class),
             new PersonAssembler(new AuthAssembler),
         );
     }
 
     #[Test]
-    public function it_gets_list_of_persons(): void
+    public function it_returns_a_compact_paginated_person_slice_for_a_club(): void
     {
-        $persons = Person::factory(count: 2)->make();
+        $person = $this->createStub(Person::class);
+        $person->method('__get')->willReturnMap([
+            ['id', 42],
+            ['lastname', 'Ivanov'],
+            ['firstname', 'Ivan'],
+            ['birthday', new Carbon('2001-06-04')],
+            ['created', $this->impressionValue()],
+            ['updated', $this->impressionValue()],
+        ]);
 
-        $this->clubs
+        $this->persons
             ->expects($this->once())
-            ->method('byCriteria')
+            ->method('paginate')
+            ->with(new Criteria(['clubId' => 7]))
+            ->willReturn(new Slice(new ArrayAdapter([$person])))
+        ;
+        $result = $this->service->execute(
+            new ListPersons(new SearchPersonDto(clubId: 7)),
+        );
+
+        $items = $result->items();
+        $this->assertSame('42', $items[0]->id);
+        $this->assertSame(2001, $items[0]->birthYear);
+        $this->assertObjectNotHasProperty('birthday', $items[0]);
+        $this->assertObjectNotHasProperty('citizenship', $items[0]);
+        $this->assertObjectNotHasProperty('clubId', $items[0]);
+    }
+
+    #[Test]
+    public function it_leaves_the_club_filter_optional_for_the_general_v1_list(): void
+    {
+        $this->persons
+            ->expects($this->once())
+            ->method('paginate')
             ->with(Criteria::empty())
-            ->willReturn($persons)
+            ->willReturn(new Slice(new ArrayAdapter([])))
         ;
 
-        $result = $this->service->execute(new ListPersons(new PersonSearchDto()));
+        $result = $this->service->execute(new ListPersons(new SearchPersonDto()));
 
-        $this->assertCount(2, $result);
+        $this->assertCount(0, $result);
+    }
+
+    private function impressionValue(): Impression
+    {
+        return new Impression(new Carbon('2026-01-01'), 1);
     }
 }

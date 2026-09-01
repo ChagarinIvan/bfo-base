@@ -10,8 +10,10 @@ use App\Application\Dto\Club\ViewClubDto;
 use App\Application\Service\Club\Exception\ClubNotFound;
 use App\Application\Service\Club\ViewClub;
 use App\Application\Service\Club\ViewClubService;
+use App\Domain\Auth\Impression;
 use App\Domain\Club\Club;
 use App\Domain\Club\ClubRepository;
+use Carbon\Carbon;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
@@ -51,8 +53,15 @@ final class ViewClubServiceTest extends TestCase
     #[Test]
     public function it_shows_club(): void
     {
-        /** @var Club $club */
-        $club = Club::factory()->makeOne();
+        $club = $this->createStub(Club::class);
+        $club->method('__get')->willReturnMap([
+            ['id', 1],
+            ['name', 'Club'],
+            ['persons_count', 3],
+            ['created', $this->impressionValue()],
+            ['updated', $this->impressionValue()],
+        ]);
+        $club->method('__isset')->willReturnMap([['persons_count', true]]);
 
         $this->clubs
             ->expects($this->once())
@@ -65,6 +74,13 @@ final class ViewClubServiceTest extends TestCase
         $result = $this->service->execute($command);
 
         $this->assertInstanceOf(ViewClubDto::class, $result);
-        $this->assertEquals($club->id, $result->id);
+        $this->assertSame('1', $result->id);
+        $this->assertSame(3, $result->personsCount);
+        $this->assertObjectNotHasProperty('normalizeName', $result);
+    }
+
+    private function impressionValue(): Impression
+    {
+        return new Impression(new Carbon('2026-01-01'), 1);
     }
 }

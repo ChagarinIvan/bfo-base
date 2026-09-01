@@ -7,7 +7,7 @@ namespace App\Application\Service\Competition\Exception;
 use App\Application\Exception\ApplicationException;
 use App\Application\Exception\HttpError;
 
-#[HttpError(status: 404, code: 'not_found')]
+#[HttpError(status: 404, code: 'competition_not_found')]
 final class CompetitionNotFound extends ApplicationException
 {
 }

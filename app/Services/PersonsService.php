@@ -25,7 +25,7 @@ class PersonsService
     ];
 
     public function __construct(
-        private readonly ClubFinder $clubFinder
+        private readonly ClubFinder $clubFinder,
     ) {
     }
 

@@ -17,7 +17,7 @@ final readonly class PersonAssembler
     {
     }
 
-    public function toViewPersonDto(Person $person, bool $withProtocolLines = false): ViewPersonDto
+    public function toLegacyViewPersonDto(Person $person, bool $withProtocolLines = false): LegacyViewPersonDto
     {
         if ($withProtocolLines) {
             $groupedProtocolLines = $person->protocolLines->groupBy(static fn (ProtocolLine $line) => $line->distance->event->date->format('Y'));
@@ -25,7 +25,7 @@ final readonly class PersonAssembler
             $groupedProtocolLines = $groupedProtocolLines->sortKeysDesc();
         }
 
-        return new ViewPersonDto(
+        return new LegacyViewPersonDto(
             id: (string) $person->id,
             lastname: $person->lastname,
             firstname: $person->firstname,
@@ -40,6 +40,18 @@ final readonly class PersonAssembler
             groupedByYearProtocolLines: $withProtocolLines
                 ? array_map(fn (Collection $c) => $c->map($this->toViewPersonProtocolLineDto(...))->all(), $groupedProtocolLines->all())
                 : [],
+        );
+    }
+
+    public function toViewPersonDto(Person $person): ViewPersonDto
+    {
+        return new ViewPersonDto(
+            id: (string) $person->id,
+            lastname: $person->lastname,
+            firstname: $person->firstname,
+            birthYear: $person->birthday?->year,
+            created: $this->authAssembler->toImpressionDto($person->created),
+            updated: $this->authAssembler->toImpressionDto($person->updated),
         );
     }
 

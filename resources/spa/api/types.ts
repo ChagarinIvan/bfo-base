@@ -32,6 +32,23 @@ export interface Event {
     updated?: Impression
 }
 
+export interface Club {
+    id: string
+    name: string
+    personsCount: number
+    created?: Impression
+    updated?: Impression
+}
+
+export interface Person {
+    id: string
+    lastname: string
+    firstname: string
+    birthYear: number | null
+    created?: Impression
+    updated?: Impression
+}
+
 export interface AuthToken {
     token: string
     token_type: string
@@ -56,6 +73,24 @@ export interface CreateCompetitionRequest {
     to: string
     mass: boolean
 }
+
+export interface ClubSearchQuery {
+    name?: string
+    page?: number
+    perPage?: number
+}
+
+export interface PersonSearchQuery {
+    clubId?: number
+    page?: number
+    perPage?: number
+}
+
+export interface CreateClubRequest {
+    name: string
+}
+
+export type UpdateClubRequest = CreateClubRequest
 
 export type UpdateCompetitionRequest = CreateCompetitionRequest
 

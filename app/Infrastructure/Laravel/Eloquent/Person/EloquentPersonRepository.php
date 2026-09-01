@@ -8,6 +8,9 @@ use App\Domain\Person\Person;
 use App\Domain\Person\PersonInfo;
 use App\Domain\Person\PersonRepository;
 use App\Domain\Shared\Criteria;
+use App\Domain\Shared\Pagination\Slice;
+use App\Infrastructure\Laravel\Eloquent\Pagination\EloquentQueryAdapter;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
 final class EloquentPersonRepository implements PersonRepository
@@ -79,5 +82,32 @@ final class EloquentPersonRepository implements PersonRepository
     public function oneByCriteria(Criteria $criteria): ?Person
     {
         return $this->byCriteria($criteria)->first();
+    }
+
+    /** @return Slice<Person> */
+    public function paginate(Criteria $criteria): Slice
+    {
+        return new Slice(new EloquentQueryAdapter($this->createPaginatedQuery($criteria)));
+    }
+
+    /** @return Builder<Person> */
+    private function createPaginatedQuery(Criteria $criteria): Builder
+    {
+        $query = Person::query()
+            ->where('person.active', true)
+            ->select('person.*')
+            ->orderBy('person.lastname')
+            ->orderBy('person.firstname')
+            ->orderBy('person.id');
+
+        if ($criteria->hasParam('clubId')) {
+            $query
+                ->join('club', 'club.id', '=', 'person.club_id')
+                ->where('club.active', true)
+                ->where('person.club_id', $criteria->param('clubId'))
+            ;
+        }
+
+        return $query;
     }
 }

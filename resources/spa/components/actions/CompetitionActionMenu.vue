@@ -1,22 +1,18 @@
 <script setup lang="ts">
-import Button from 'primevue/button'
-import { useRouter } from 'vue-router'
 import { t } from '../../i18n'
 import { competitionActionRoute } from './actionModels'
+import EditActionButton from './EditActionButton.vue'
+import Button from 'primevue/button'
 
 const props = defineProps<{ competitionId: string }>()
 const emit = defineEmits<{ delete: [] }>()
-const router = useRouter()
 </script>
 
 <template>
     <span class="competition-action-menu">
-        <Button
-            icon="pi pi-pencil"
+        <EditActionButton
+            :to="competitionActionRoute(props.competitionId)"
             :label="t('spa.competition.edit.action')"
-            severity="secondary"
-            text
-            @click="router.push(competitionActionRoute(props.competitionId))"
         />
         <Button
             icon="pi pi-trash"

@@ -4,14 +4,16 @@ declare(strict_types=1);
 
 namespace App\Application\Service\Club\Exception;
 
-use DomainException;
-use RuntimeException;
+use App\Application\Exception\ApplicationException;
+use App\Application\Exception\HttpError;
+use App\Domain\Club\Exception\ClubAlreadyExist;
 use function sprintf;
 
-final class FailedToAddClub extends RuntimeException
+#[HttpError(status: 409, code: 'club_name_already_exists')]
+final class FailedToAddClub extends ApplicationException
 {
-    public static function dueError(DomainException $e): self
+    public static function dueError(ClubAlreadyExist $exception): self
     {
-        return new self(sprintf('Unable to add club. Reason: %s', $e->getMessage()), previous: $e);
+        return new self(sprintf('Unable to add club. Reason: %s', $exception->getMessage()), previous: $exception);
     }
 }

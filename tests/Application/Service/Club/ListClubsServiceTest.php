@@ -6,12 +6,16 @@ namespace Tests\Application\Service\Club;
 
 use App\Application\Dto\Auth\AuthAssembler;
 use App\Application\Dto\Club\ClubAssembler;
-use App\Application\Dto\Club\ClubSearchDto;
+use App\Application\Dto\Club\SearchClubDto;
 use App\Application\Service\Club\ListClubs;
 use App\Application\Service\Club\ListClubsService;
+use App\Domain\Auth\Impression;
 use App\Domain\Club\Club;
 use App\Domain\Club\ClubRepository;
 use App\Domain\Shared\Criteria;
+use App\Domain\Shared\Pagination\Slice;
+use Carbon\Carbon;
+use Pagerfanta\Adapter\ArrayAdapter;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
@@ -33,36 +37,52 @@ final class ListClubsServiceTest extends TestCase
     }
 
     #[Test]
-    public function it_gets_list_of_clubs(): void
+    public function it_returns_a_paginated_club_slice(): void
     {
-        $clubs = Club::factory(count: 2)->make();
+        $club = $this->createStub(Club::class);
+        $club->method('__get')->willReturnMap([
+            ['id', 42],
+            ['name', 'Minsk Orienteering'],
+            ['persons_count', 7],
+            ['created', $this->impressionValue()],
+            ['updated', $this->impressionValue()],
+        ]);
+        $club->method('__isset')->willReturnMap([['persons_count', true]]);
 
         $this->clubs
             ->expects($this->once())
-            ->method('byCriteria')
-            ->with(Criteria::empty())
-            ->willReturn($clubs)
+            ->method('paginate')
+            ->with(new Criteria(['name' => 'Minsk Orienteering']))
+            ->willReturn(new Slice(new ArrayAdapter([$club])))
         ;
 
-        $result = $this->service->execute(new ListClubs(new ClubSearchDto()));
+        $result = $this->service->execute(
+            new ListClubs(new SearchClubDto(name: '  Minsk Orienteering  ')),
+        );
 
-        $this->assertCount(2, $result);
+        $this->assertInstanceOf(Slice::class, $result);
+        $items = $result->items();
+        $this->assertSame('42', $items[0]->id);
+        $this->assertSame(7, $items[0]->personsCount);
     }
 
     #[Test]
-    public function it_filters_clubs_by_ids(): void
+    public function it_omits_an_empty_name_filter(): void
     {
-        $clubs = Club::factory(count: 2)->make();
-
         $this->clubs
             ->expects($this->once())
-            ->method('byCriteria')
-            ->with(new Criteria(['ids' => [1, 2]]))
-            ->willReturn($clubs)
+            ->method('paginate')
+            ->with(Criteria::empty())
+            ->willReturn(new Slice(new ArrayAdapter([])))
         ;
 
-        $result = $this->service->execute(new ListClubs(new ClubSearchDto(ids: [1, 2])));
+        $result = $this->service->execute(new ListClubs(new SearchClubDto(name: '  ')));
 
-        $this->assertCount(2, $result);
+        $this->assertCount(0, $result);
+    }
+
+    private function impressionValue(): Impression
+    {
+        return new Impression(new Carbon('2026-01-01'), 1);
     }
 }

@@ -1,5 +1,5 @@
 @php
-    use App\Application\Dto\Person\ViewPersonDto;
+    use App\Application\Dto\Person\LegacyViewPersonDto;
     use App\Bridge\Laravel\Http\Controllers\Event\ShowEventDistanceAction;
     use App\Bridge\Laravel\Http\Controllers\Rank\ShowActivationFormAction;
     use App\Bridge\Laravel\Http\Controllers\Rank\ShowEditActivationDateFormAction;
@@ -9,7 +9,7 @@
     use Carbon\Carbon;
     /**
      * @var ViewRankDto[] $ranks;
-     * @var ViewPersonDto $person;
+     * @var LegacyViewPersonDto $person;
      * @var ViewRankDto|null $actualRank;
      */
 @endphp

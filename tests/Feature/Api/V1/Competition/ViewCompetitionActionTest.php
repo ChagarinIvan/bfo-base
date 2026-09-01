@@ -41,11 +41,11 @@ final class ViewCompetitionActionTest extends TestCase
 
         $this->getJson('/api/v1/competitions/999999')
             ->assertNotFound()
-            ->assertJsonPath('errors.0.code', 'not_found')
+            ->assertJsonPath('errors.0.code', 'competition_not_found')
         ;
         $this->getJson("/api/v1/competitions/{$inactiveCompetition->id}")
             ->assertNotFound()
-            ->assertJsonPath('errors.0.code', 'not_found')
+            ->assertJsonPath('errors.0.code', 'competition_not_found')
         ;
     }
 

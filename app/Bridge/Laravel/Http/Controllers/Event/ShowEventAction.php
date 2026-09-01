@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Http\Controllers\Event;
 
-use App\Application\Service\Club\ListClubsService;
+use App\Application\Service\Club\ListLegacyClubsService;
 use App\Application\Service\Event\Exception\EventNotFound;
 use App\Application\Service\Event\ViewEvent;
 use App\Application\Service\Event\ViewEventService;
-use App\Application\Service\Person\ListPersonsService;
+use App\Application\Service\Person\ListLegacyPersonsService;
 use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionAction;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -25,8 +25,8 @@ class ShowEventAction extends BaseController
     public function __invoke(
         string $eventId,
         ViewEventService $eventService,
-        ListPersonsService $personsService,
-        ListClubsService $clubsService,
+        ListLegacyPersonsService $personsService,
+        ListLegacyClubsService $clubsService,
     ): RedirectResponse|View {
         try {
             $event = $eventService->execute(new ViewEvent($eventId));

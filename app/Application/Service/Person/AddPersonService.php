@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Application\Service\Person;
 
+use App\Application\Dto\Person\LegacyViewPersonDto;
 use App\Application\Dto\Person\PersonAssembler;
-use App\Application\Dto\Person\ViewPersonDto;
 use App\Application\Service\Person\Exception\FailedToAddPerson;
 use App\Domain\Person\Exception\PersonInfoAlreadyExist;
 use App\Domain\Person\Factory\PersonFactory;
@@ -21,7 +21,7 @@ final readonly class AddPersonService
     }
 
     /** @throws FailedToAddPerson */
-    public function execute(AddPerson $command): ViewPersonDto
+    public function execute(AddPerson $command): LegacyViewPersonDto
     {
         try {
             $person = $this->factory->create($command->personInput());
@@ -31,6 +31,6 @@ final readonly class AddPersonService
 
         $this->persons->add($person);
 
-        return $this->assembler->toViewPersonDto($person);
+        return $this->assembler->toLegacyViewPersonDto($person);
     }
 }

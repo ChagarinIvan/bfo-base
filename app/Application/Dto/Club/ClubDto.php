@@ -13,7 +13,7 @@ final class ClubDto extends AbstractDto
     public static function requestValidationRules(): array
     {
         return [
-            'name' => 'required|max:255',
+            'name' => 'required|string|max:255',
         ];
     }
 
