@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Bridge\Laravel\Http\Controllers\Rank;
 
 use App\Application\Service\Person\Exception\PersonNotFound;
+use App\Application\Service\Person\ListPersonRankHistory;
 use App\Application\Service\Person\ViewPerson;
 use App\Application\Service\Person\ViewPersonService;
-use App\Application\Service\Person\ListPersonRankHistory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller as BaseController;

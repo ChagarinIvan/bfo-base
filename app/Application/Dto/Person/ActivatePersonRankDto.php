@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Dto\Rank;
+namespace App\Application\Dto\Person;
 
 use App\Application\Dto\AbstractDto;
 
-final class ActivationDto extends AbstractDto
+final class ActivatePersonRankDto extends AbstractDto
 {
     public string $date;
 

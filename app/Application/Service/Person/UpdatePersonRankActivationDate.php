@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Service\Rank;
+namespace App\Application\Service\Person;
 
-use App\Application\Dto\Rank\UpdateActivationDto;
+use App\Application\Dto\Person\UpdatePersonRankActivationDateDto;
 use Carbon\Carbon;
 
-final readonly class UpdateRankActivationDate
+final readonly class UpdatePersonRankActivationDate
 {
     public function __construct(
         private string $id,
-        private UpdateActivationDto $dto,
+        private UpdatePersonRankActivationDateDto $dto,
     ) {
     }
 

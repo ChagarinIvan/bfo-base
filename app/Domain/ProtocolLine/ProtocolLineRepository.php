@@ -11,6 +11,8 @@ interface ProtocolLineRepository
 {
     public function byId(int $id, array $with = []): ?ProtocolLine;
 
+    public function lockById(int $id): ?ProtocolLine;
+
     public function byCriteria(Criteria $criteria): Collection;
 
     public function lockOneByCriteria(Criteria $criteria): ?ProtocolLine;

@@ -33,6 +33,14 @@ final readonly class ProtocolLinesRepository implements ProtocolLineRepository
         return $protocolLineQuery->first();
     }
 
+    public function lockById(int $id): ?ProtocolLine
+    {
+        /** @var ProtocolLine|null $protocolLine */
+        $protocolLine = ProtocolLine::query()->lockForUpdate()->find($id);
+
+        return $protocolLine;
+    }
+
     public function getLineForPersonOnEvent(int $personId, int $eventId): int
     {
         return (int)$this->db
