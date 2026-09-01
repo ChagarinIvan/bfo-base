@@ -6,19 +6,18 @@ import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Message from 'primevue/message'
 import Paginator, { type PageState } from 'primevue/paginator'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { getClub } from '../../api/clubs'
 import { getPersons } from '../../api/persons'
 import type { Club, PaginationHeaders, Person, User } from '../../api/types'
-import Button from 'primevue/button'
 import ImpressionDetails from '../../components/ImpressionDetails.vue'
+import EditActionButton from '../../components/actions/EditActionButton.vue'
 import { t } from '../../i18n'
 import { useAuthStore } from '../../stores/auth'
 import { getUsers } from '../../api/users'
 import { paginationFromHeaders } from '../listingModels'
 
 const route = useRoute()
-const router = useRouter()
 const auth = useAuthStore()
 const club = ref<Club | null>(null)
 const persons = ref<Person[]>([])
@@ -97,13 +96,6 @@ watch(
         <Card class="club-details-card">
             <template #title>
                 {{ club.name }}
-                <Button
-                    v-if="auth.isAuthenticated"
-                    icon="pi pi-pencil"
-                    :label="t('spa.club.edit.action')"
-                    text
-                    @click="router.push(`/app/clubs/${club.id}/edit`)"
-                />
             </template>
             <template #content>
                 <table class="club-details-info">
@@ -136,6 +128,11 @@ watch(
                         </tr>
                     </tbody>
                 </table>
+                <EditActionButton
+                    v-if="auth.isAuthenticated"
+                    :to="`/app/clubs/${club.id}/edit`"
+                    :label="t('spa.club.edit.action')"
+                />
             </template>
         </Card>
 

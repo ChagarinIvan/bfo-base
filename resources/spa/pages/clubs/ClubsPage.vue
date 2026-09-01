@@ -13,6 +13,7 @@ import { getClubs } from '../../api/clubs'
 import { getUsers } from '../../api/users'
 import type { Club, PaginationHeaders, User } from '../../api/types'
 import ImpressionDetails from '../../components/ImpressionDetails.vue'
+import EditActionButton from '../../components/actions/EditActionButton.vue'
 import { t } from '../../i18n'
 import { useAuthStore } from '../../stores/auth'
 import {
@@ -174,6 +175,14 @@ onBeforeUnmount(() => {
             </template>
         </Column>
         <Column field="personsCount" :header="t('spa.clubs.persons_count')" />
+        <Column v-if="auth.isAuthenticated" :header="t('spa.club.edit.action')">
+            <template #body="{ data }">
+                <EditActionButton
+                    :to="`/app/clubs/${data.id}/edit`"
+                    :label="t('spa.club.edit.action')"
+                />
+            </template>
+        </Column>
         <Column v-if="auth.isAuthenticated" :header="t('spa.clubs.created')">
             <template #body="{ data }">
                 <ImpressionDetails

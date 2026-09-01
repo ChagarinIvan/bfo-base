@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { useAuthStore } from '../stores/auth'
 import { t } from '../i18n'
 import { useRouter } from 'vue-router'
@@ -14,6 +15,15 @@ import {
 const auth = useAuthStore()
 const router = useRouter()
 const toast = useToast()
+const openMenu = ref<'competitions' | 'persons' | null>(null)
+
+function toggleMenu(menu: 'competitions' | 'persons'): void {
+    openMenu.value = openMenu.value === menu ? null : menu
+}
+
+function closeMenu(): void {
+    openMenu.value = null
+}
 
 async function logout(): Promise<void> {
     try {
@@ -43,13 +53,19 @@ async function logout(): Promise<void> {
                 <span>{{ t('spa.nav.brand') }}</span>
             </RouterLink>
             <div class="app-nav-links">
-                <details class="app-nav-menu">
-                    <summary class="app-nav-link">
+                <details
+                    class="app-nav-menu"
+                    :open="openMenu === 'competitions'"
+                >
+                    <summary
+                        class="app-nav-link"
+                        @click.prevent="toggleMenu('competitions')"
+                    >
                         <i class="pi pi-trophy" />
                         {{ t('spa.nav.competitions') }}
                         <i class="pi pi-angle-down app-nav-menu-chevron" />
                     </summary>
-                    <div class="app-nav-dropdown">
+                    <div class="app-nav-dropdown" @click="closeMenu">
                         <template
                             v-for="item in competitionNavigation"
                             :key="item.href"
@@ -81,13 +97,16 @@ async function logout(): Promise<void> {
                         </template>
                     </div>
                 </details>
-                <details class="app-nav-menu">
-                    <summary class="app-nav-link">
+                <details class="app-nav-menu" :open="openMenu === 'persons'">
+                    <summary
+                        class="app-nav-link"
+                        @click.prevent="toggleMenu('persons')"
+                    >
                         <i class="pi pi-users" />
                         {{ t('spa.nav.persons') }}
                         <i class="pi pi-angle-down app-nav-menu-chevron" />
                     </summary>
-                    <div class="app-nav-dropdown">
+                    <div class="app-nav-dropdown" @click="closeMenu">
                         <template
                             v-for="item in personsNavigation"
                             :key="item.href"
