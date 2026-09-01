@@ -46,6 +46,17 @@ final class CreateClubActionTest extends TestCase
     }
 
     #[Test]
+    public function it_rejects_a_normalized_variant_of_an_existing_name(): void
+    {
+        Sanctum::actingAs($this->createUser());
+        Club::factory()->createOne(['name' => 'БГУ', 'normalize_name' => 'бгу']);
+
+        $this->postJson('/api/v1/clubs', ['name' => 'BSU'])
+            ->assertStatus(409)
+            ->assertJsonFragment(['code' => 'club_name_already_exists']);
+    }
+
+    #[Test]
     public function it_returns_validation_field_error_for_invalid_name(): void
     {
         Sanctum::actingAs($this->createUser());

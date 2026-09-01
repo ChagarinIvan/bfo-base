@@ -42,6 +42,11 @@ final class EloquentClubRepository implements ClubRepository
         $club->save();
     }
 
+    public function oneByNormalizedName(string $normalizedName): ?Club
+    {
+        return Club::where('active', true)->where('normalize_name', $normalizedName)->first();
+    }
+
     public function byCriteria(Criteria $criteria): Collection
     {
         return $this->buildQuery($criteria)->get();
@@ -94,14 +99,6 @@ final class EloquentClubRepository implements ClubRepository
 
         if ($criteria->hasParam('name')) {
             $query->where('name', $criteria->param('name'));
-        }
-
-        if ($criteria->hasParam('normalizedName')) {
-            $query->where('normalize_name', $criteria->param('normalizedName'));
-        }
-
-        if ($criteria->hasParam('excludeId')) {
-            $query->where('id', '!=', $criteria->param('excludeId'));
         }
 
         return $query;

@@ -20,8 +20,8 @@ description: "Задачи для единой нормализации назв
 
 **Цель**: зафиксировать целевой контракт и регрессионные примеры до рефакторинга.
 
-- [ ] T001 [P] Создать unit-тест единого нормализатора с регистром, внешними/повторными пробелами, кавычками, аналогами символов и EDIT_MAP в tests/Domain/Club/ClubNameNormalizerTest.php
-- [ ] T002 [P] Создать integration-тест поиска активного клуба по уже нормализованному имени в tests/Infrastructure/Laravel/Eloquent/Club/EloquentClubRepositoryTest.php
+- [X] T001 [P] Создать unit-тест единого нормализатора с регистром, внешними/повторными пробелами, кавычками, аналогами символов и EDIT_MAP в tests/Domain/Club/ClubNameNormalizerTest.php
+- [X] T002 [P] Создать integration-тест поиска активного клуба по уже нормализованному имени в tests/Infrastructure/Laravel/Eloquent/Club/EloquentClubRepositoryTest.php
 
 ---
 
@@ -31,8 +31,8 @@ description: "Задачи для единой нормализации назв
 
 **⚠️ Критично**: завершить фазу до задач пользовательских историй.
 
-- [ ] T003 Перенести app/Domain/Club/Factory/ClubNameNormalizer.php в app/Domain/Club/ClubNameNormalizer.php и обновить его imports/uses в app/Application/Service/Club/AddClub.php, app/Application/Service/Club/AddClubService.php, app/Application/Service/Club/UpdateClubInfo.php, app/Application/Service/Club/UpdateClubInfoService.php, tests/Application/Service/Club/AddClubServiceTest.php и tests/Application/Service/Club/UpdateClubInfoServiceTest.php
-- [ ] T004 Добавить семантический поиск по уже нормализованному имени в app/Domain/Club/ClubRepository.php и app/Infrastructure/Laravel/Eloquent/Club/EloquentClubRepository.php, сохранив фильтрацию только активных клубов
+- [X] T003 Перенести app/Domain/Club/Factory/ClubNameNormalizer.php в app/Domain/Club/ClubNameNormalizer.php и обновить его imports/uses в app/Application/Service/Club/AddClub.php, app/Application/Service/Club/AddClubService.php, app/Application/Service/Club/UpdateClubInfo.php, app/Application/Service/Club/UpdateClubInfoService.php, tests/Application/Service/Club/AddClubServiceTest.php и tests/Application/Service/Club/UpdateClubInfoServiceTest.php
+- [X] T004 Добавить семантический поиск по уже нормализованному имени в app/Domain/Club/ClubRepository.php и app/Infrastructure/Laravel/Eloquent/Club/EloquentClubRepository.php, сохранив фильтрацию только активных клубов
 
 **Контрольная точка**: один normalizer и repository lookup существуют, узкие тесты T001–T002 проходят.
 
@@ -47,12 +47,12 @@ description: "Задачи для единой нормализации назв
 
 ### Тесты для пользовательской истории 1
 
-- [ ] T005 [P] [US1] Обновить mock-ожидания semantic lookup в tests/Domain/Club/Factory/PreventDuplicateClubFactoryTest.php и tests/Domain/Club/ClubUpdaterTest.php
-- [ ] T006 [P] [US1] Добавить API-регрессии для эквивалентных вариантов названия при создании и обновлении в tests/Feature/Api/V1/Club/CreateClubActionTest.php и tests/Feature/Api/V1/Club/UpdateClubActionTest.php
+- [X] T005 [P] [US1] Обновить mock-ожидания semantic lookup в tests/Domain/Club/Factory/PreventDuplicateClubFactoryTest.php и tests/Domain/Club/ClubUpdaterTest.php
+- [X] T006 [P] [US1] Добавить API-регрессии для эквивалентных вариантов названия при создании и обновлении в tests/Feature/Api/V1/Club/CreateClubActionTest.php и tests/Feature/Api/V1/Club/UpdateClubActionTest.php
 
 ### Реализация пользовательской истории 1
 
-- [ ] T007 [US1] Перевести duplicate check на semantic repository lookup в app/Domain/Club/Factory/PreventDuplicateClubFactory.php и app/Domain/Club/PreventDuplicateClubUpdater.php
+- [X] T007 [US1] Перевести duplicate check на semantic repository lookup в app/Domain/Club/Factory/PreventDuplicateClubFactory.php и app/Domain/Club/PreventDuplicateClubUpdater.php
 
 **Контрольная точка**: US1 полностью проверяема без сценариев протоколов и импорта.
 
@@ -67,13 +67,13 @@ legacy-протокол с таким историческим значение�
 
 ### Тесты для пользовательской истории 2
 
-- [ ] T008 [P] [US2] Создать регрессионный тест central parser pipeline для trim поля club в tests/Services/ParserServiceTest.php
-- [ ] T009 [P] [US2] Создать request-тест сопоставления клуба с внешними пробелами при legacy-рендере в tests/Bridge/Laravel/Http/Controllers/Event/ShowEventActionTest.php
+- [X] T008 [P] [US2] Создать регрессионный тест central parser pipeline для trim поля club в tests/Services/ParserServiceTest.php
+- [X] T009 [P] [US2] Создать request-тест сопоставления клуба с внешними пробелами при legacy-рендере в tests/Bridge/Laravel/Http/Controllers/Event/ShowEventActionTest.php
 
 ### Реализация пользовательской истории 2
 
-- [ ] T010 [US2] Централизованно очищать поле club в результатах protocol parser в app/Services/ParserService.php
-- [ ] T011 [US2] Заменить static normalizer удаляемого Finder на ClubNameNormalizer в app/Bridge/Laravel/Http/Controllers/Event/RendersEventDistance.php и передать зависимость через app/Bridge/Laravel/Http/Controllers/Event/ShowEventAction.php и app/Bridge/Laravel/Http/Controllers/Event/ShowEventDistanceAction.php
+- [X] T010 [US2] Централизованно очищать поле club в результатах protocol parser в app/Services/ParserService.php
+- [X] T011 [US2] Заменить static normalizer удаляемого Finder на ClubNameNormalizer в app/Bridge/Laravel/Http/Controllers/Event/RendersEventDistance.php и передать зависимость через app/Bridge/Laravel/Http/Controllers/Event/ShowEventAction.php и app/Bridge/Laravel/Http/Controllers/Event/ShowEventDistanceAction.php
 
 **Контрольная точка**: US2 сохраняет ссылки legacy-протокола и не создаёт N+1.
 
@@ -89,12 +89,12 @@ legacy-протокол с таким историческим значение�
 
 ### Тесты для пользовательской истории 3
 
-- [ ] T012 [P] [US3] Добавить unit-регрессию извлечения персоны из protocol line через общий normalizer и mock ClubRepository в tests/Services/PersonsServiceTest.php
+- [X] T012 [P] [US3] Добавить unit-регрессию извлечения персоны из protocol line через общий normalizer и mock ClubRepository в tests/Services/PersonsServiceTest.php
 
 ### Реализация пользовательской истории 3
 
-- [ ] T013 [US3] Перевести lookup клуба в app/Services/PersonsService.php, app/Bridge/Laravel/Console/Commands/IdentProtocolLineCommand.php и app/Infrastructure/Integration/OrientBy/OrientBySyncService.php на ClubNameNormalizer и ClubRepository
-- [ ] T014 [US3] Удалить app/Domain/Club/ClubFinder.php, app/Domain/Club/NormalizedNameClubFinder.php и tests/Domain/Club/NormalizedNameClubFinderTest.php; очистить Finder binding/imports в app/Bridge/Laravel/Provider/Club/ClubProvider.php и проверить отсутствие usages
+- [X] T013 [US3] Перевести lookup клуба в app/Services/PersonsService.php, app/Bridge/Laravel/Console/Commands/IdentProtocolLineCommand.php и app/Infrastructure/Integration/OrientBy/OrientBySyncService.php на ClubNameNormalizer и ClubRepository
+- [X] T014 [US3] Удалить app/Domain/Club/ClubFinder.php, app/Domain/Club/NormalizedNameClubFinder.php и tests/Domain/Club/NormalizedNameClubFinderTest.php; очистить Finder binding/imports в app/Bridge/Laravel/Provider/Club/ClubProvider.php и проверить отсутствие usages
 
 **Контрольная точка**: все runtime-потребители используют один normalizer, а Finder отсутствует.
 
@@ -104,8 +104,8 @@ legacy-протокол с таким историческим значение�
 
 **Цель**: подтвердить отсутствие регрессий, N+1 и расхождений со спецификацией.
 
-- [ ] T015 Выполнить сценарии из specs/008-club-name-normalization/quickstart.md, проверить git diff и отсутствие ClubFinder/NormalizedNameClubFinder через rg
-- [ ] T016 Выполнить финальные quality gates из composer.json, phpstan.neon, rector.php и phpunit.xml: composer cs, composer stan, composer rector -- --dry-run и composer test
+- [X] T015 Выполнить сценарии из specs/008-club-name-normalization/quickstart.md, проверить git diff и отсутствие ClubFinder/NormalizedNameClubFinder через rg
+- [X] T016 Выполнить финальные quality gates из composer.json, phpstan.neon, rector.php и phpunit.xml: composer cs, composer stan, composer rector -- --dry-run и composer test
 
 ---
 

@@ -11,7 +11,6 @@ use App\Domain\Club\ClubRepository;
 use App\Domain\Club\Exception\ClubAlreadyExist;
 use App\Domain\Club\Factory\ClubFactory;
 use App\Domain\Club\Factory\PreventDuplicateClubFactory;
-use App\Domain\Shared\Criteria;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
@@ -43,8 +42,8 @@ final class PreventDuplicateClubFactoryTest extends TestCase
         $this->decorated->expects($this->never())->method('create');
         $this->clubs
             ->expects($this->once())
-            ->method('oneByCriteria')
-            ->with(new Criteria(['normalizedName' => 'тэст клуб']))
+            ->method('oneByNormalizedName')
+            ->with('тэст клуб')
             ->willReturn($this->createStub(Club::class))
         ;
 
@@ -65,8 +64,8 @@ final class PreventDuplicateClubFactoryTest extends TestCase
 
         $this->clubs
             ->expects($this->once())
-            ->method('oneByCriteria')
-            ->with(new Criteria(['normalizedName' => 'тэст клуб']))
+            ->method('oneByNormalizedName')
+            ->with('тэст клуб')
             ->willReturn(null)
         ;
 

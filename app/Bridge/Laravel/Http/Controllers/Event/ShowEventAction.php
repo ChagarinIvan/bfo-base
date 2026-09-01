@@ -10,6 +10,7 @@ use App\Application\Service\Event\ViewEvent;
 use App\Application\Service\Event\ViewEventService;
 use App\Application\Service\Person\ListLegacyPersonsService;
 use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionAction;
+use App\Domain\Club\ClubNameNormalizer;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller as BaseController;
@@ -27,6 +28,7 @@ class ShowEventAction extends BaseController
         ViewEventService $eventService,
         ListLegacyPersonsService $personsService,
         ListLegacyClubsService $clubsService,
+        ClubNameNormalizer $clubNameNormalizer,
     ): RedirectResponse|View {
         try {
             $event = $eventService->execute(new ViewEvent($eventId));
@@ -39,6 +41,6 @@ class ShowEventAction extends BaseController
             return $this->redirector->action(ShowCompetitionAction::class, [$event->competitionId]);
         }
 
-        return $this->renderEventDistance($event, $distance, $clubsService, $personsService);
+        return $this->renderEventDistance($event, $distance, $clubsService, $personsService, $clubNameNormalizer);
     }
 }

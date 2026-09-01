@@ -18,6 +18,8 @@ interface ClubRepository
 
     public function update(Club $club): void;
 
+    public function oneByNormalizedName(string $normalizedName): ?Club;
+
     public function byCriteria(Criteria $criteria): Collection;
 
     public function oneByCriteria(Criteria $criteria): ?Club;

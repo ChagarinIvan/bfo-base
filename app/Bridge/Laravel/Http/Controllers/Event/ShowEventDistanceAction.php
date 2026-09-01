@@ -9,6 +9,7 @@ use App\Application\Service\Event\Exception\EventNotFound;
 use App\Application\Service\Event\ViewEvent;
 use App\Application\Service\Event\ViewEventService;
 use App\Application\Service\Person\ListLegacyPersonsService;
+use App\Domain\Club\ClubNameNormalizer;
 use App\Domain\Distance\Distance;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -27,6 +28,7 @@ class ShowEventDistanceAction extends BaseController
         ViewEventService $eventService,
         ListLegacyPersonsService $personsService,
         ListLegacyClubsService $clubsService,
+        ClubNameNormalizer $clubNameNormalizer,
     ): RedirectResponse|View {
         try {
             $event = $eventService->execute(new ViewEvent((string) $distance->event_id));
@@ -34,6 +36,6 @@ class ShowEventDistanceAction extends BaseController
             return $this->redirectTo404Error();
         }
 
-        return $this->renderEventDistance($event, $distance, $clubsService, $personsService);
+        return $this->renderEventDistance($event, $distance, $clubsService, $personsService, $clubNameNormalizer);
     }
 }

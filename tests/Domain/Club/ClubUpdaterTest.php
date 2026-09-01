@@ -14,7 +14,6 @@ use App\Domain\Club\Exception\ClubAlreadyExist;
 use App\Domain\Club\PreventDuplicateClubUpdater;
 use App\Domain\Club\StandardClubUpdater;
 use App\Domain\Shared\Clock;
-use App\Domain\Shared\Criteria;
 use Carbon\Carbon;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -42,9 +41,8 @@ final class ClubUpdaterTest extends TestCase
         $decorated = $this->createMock(ClubUpdater::class);
         $clubs = $this->createMock(ClubRepository::class);
         $club = $this->clubStub(1);
-        $clubs->expects($this->once())->method('oneByCriteria')->with(
-            new Criteria(['normalizedName' => 'новы клуб', 'excludeId' => 1]),
-        )->willReturn($this->createStub(Club::class));
+        $clubs->expects($this->once())->method('oneByNormalizedName')->with('новы клуб')
+            ->willReturn($this->clubStub(2));
         $decorated->expects($this->never())->method('update');
 
         $this->expectException(ClubAlreadyExist::class);
@@ -62,9 +60,8 @@ final class ClubUpdaterTest extends TestCase
         $club = $this->clubStub(1);
         $input = new ClubInput(new ClubInfo('Новы клуб', 'новы клуб'), 7);
 
-        $clubs->expects($this->once())->method('oneByCriteria')->with(
-            new Criteria(['normalizedName' => 'новы клуб', 'excludeId' => 1]),
-        )->willReturn(null);
+        $clubs->expects($this->once())->method('oneByNormalizedName')->with('новы клуб')
+            ->willReturn($club);
         $decorated->expects($this->once())->method('update')->with($club, $input)->willReturn($club);
 
         $this->assertSame($club, new PreventDuplicateClubUpdater($decorated, $clubs)->update($club, $input));

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Domain\Club;
 
 use App\Domain\Club\Exception\ClubAlreadyExist;
-use App\Domain\Shared\Criteria;
 
 final readonly class PreventDuplicateClubUpdater implements ClubUpdater
 {
@@ -17,12 +16,9 @@ final readonly class PreventDuplicateClubUpdater implements ClubUpdater
 
     public function update(Club $club, ClubInput $input): Club
     {
-        $criteria = new Criteria([
-            'normalizedName' => $input->info->normalizeName,
-            'excludeId' => $club->id,
-        ]);
+        $existingClub = $this->clubs->oneByNormalizedName($input->info->normalizeName);
 
-        if ($this->clubs->oneByCriteria($criteria) instanceof Club) {
+        if ($existingClub instanceof Club && $existingClub->id !== $club->id) {
             throw ClubAlreadyExist::byName($input->info->name);
         }
 

@@ -60,6 +60,18 @@ final class UpdateClubActionTest extends TestCase
     }
 
     #[Test]
+    public function it_rejects_a_normalized_variant_of_another_club_name(): void
+    {
+        Sanctum::actingAs($this->createUser());
+        $this->createClub(['name' => 'Тэст клуб', 'normalize_name' => 'тэст клуб']);
+        $club = $this->createClub(['name' => 'Бягучы клуб', 'normalize_name' => 'бягучы клуб']);
+
+        $this->putJson("/api/v1/clubs/{$club->id}", ['name' => '  ТЭСТ «КЛУБ»  '])
+            ->assertStatus(409)
+            ->assertJsonFragment(['code' => 'club_name_already_exists']);
+    }
+
+    #[Test]
     public function it_rejects_a_non_string_name_with_validation_error(): void
     {
         Sanctum::actingAs($this->createUser());
