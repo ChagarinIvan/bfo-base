@@ -3,14 +3,11 @@
     use App\Bridge\Laravel\Http\Controllers\Event\ShowEventDistanceAction;
     use App\Bridge\Laravel\Http\Controllers\Rank\ShowActivationFormAction;
     use App\Bridge\Laravel\Http\Controllers\Rank\ShowEditActivationDateFormAction;
-    use App\Application\Dto\Rank\ViewRankDto;
     use App\Domain\Rank\Rank;
-    use App\Bridge\Laravel\Http\Controllers\Rank\RefillPersonRanksAction;
-    use Carbon\Carbon;
     /**
-     * @var ViewRankDto[] $ranks;
+     * @var \App\Application\Dto\Rank\PersonRankHistoryDto[] $ranks;
      * @var LegacyViewPersonDto $person;
-     * @var ViewRankDto|null $actualRank;
+     * @var string $actualRank;
      */
 @endphp
 
@@ -20,23 +17,13 @@
 
 @section('content')
     <div class="row"><h4>{{ $person->lastname }} {{ $person->firstname }}</h4></div>
-    @if ($actualRank)
+    @if ($actualRank !== Rank::WithoutRank->value)
         <div class="row">
-            <h4>{{ $actualRank->rank ?? '' }} {{ __('app.common.do') }} {{ $actualRank->finishDate }}</h4>
+            <h4>{{ Rank::from($actualRank)->label() }} {{ __('app.common.do') }} {{ $actualRankFinishedOn ?? '-' }}</h4>
         </div>
     @else
-        <div class="row"><h4>{{ Rank::WITHOUT_RANK }}</h4></div>
+        <div class="row"><h4>{{ Rank::WithoutRank->label() }}</h4></div>
     @endif
-    @auth
-        <div class="row mb-3">
-            <div class="col-12">
-                <form method="POST" action="{{ action(RefillPersonRanksAction::class, [$person->id]) }}">
-                    @csrf
-                    <input type="submit" class="btn btn-outline-primary btn-sm m-1" value="{{ __('app.rank.refill') }}">
-                </form>
-            </div>
-        </div>
-    @endauth
     <div class="row">
         <table id="table"
                data-cookie="true"
@@ -66,58 +53,33 @@
                 @auth
                     <th></th>
                 @endauth
+                @auth
+                    <th></th>
+                @endauth
             </tr>
             </thead>
             <tbody>
-            @php
-                $previousRank = null;
-            @endphp
-            @foreach ($ranks as $index => $rank)
-                @php
-                    if ($previousRank !== $rank->rank) {
-                        $formalStartDate = null;
-                        $iMax = count($ranks);
-                        for ($i = $index + 1; $i < $iMax; $i++) {
-                            if ($ranks[$i]->rank !== $rank->rank) {
-                                $formalStartDate = Carbon::parse($ranks[$i]->finishDate)->addDay()->format('Y-m-d');
-                                break;
-                            }
-                        }
-
-                        if (!$formalStartDate) {
-                            $formalStartDate = $ranks[$i-1]->eventDate ?: $ranks[$i-1]->startDate;
-                        }
-                    }
-
-                    $previousRank = $rank->rank;
-                @endphp
-                <tr @if($rank->activatedDate) class="table-info" @else class="table-secondary" @endif>
+            @foreach ($ranks as $rank)
+                <tr @if($rank->activatedOn) class="table-info" @else class="table-secondary" @endif>
                     <td>{{ $rank->rank }}</td>
-                    <td>{{ $rank->eventDate ?: $rank->startDate }}</td>
-                    <td>{{ $rank->activatedDate ?: '-' }}</td>
+                    <td>{{ $rank->eventDate ?? $rank->achievedOn }}</td>
+                    <td>{{ $rank->activatedOn ?: '-' }}</td>
 {{--                    <td>{{ $formalStartDate }}</td>--}}
-                    <td>{{ $rank->finishDate }}</td>
+                    <td>{{ $rank->finishedOn ?? '-' }}</td>
                     <td>
-                        @if ($rank->distanceId !== null)
+                        @if ($rank->distanceId !== '')
                             <a href="{{ action(ShowEventDistanceAction::class, [$rank->distanceId]) }}#{{ $rank->protocolLineId }}"
                             >{{ $rank->competitionName }} ({{ $rank->eventName }})</a>
                         @endif
                     </td>
                     @auth
                         <td>
-                            @if($rank->activatedDate && !Rank::autoActivation($rank->rank))
-                                <x-button text="app.rank.activation.edit"
-                                          color="success"
-                                          icon="radioactive"
-                                          url="{{ action(ShowEditActivationDateFormAction::class, [$rank->id]) }}"
-                                />
-                            @endif
-                            @if(!$rank->activatedDate)
-                                <x-button text="app.rank.activation"
-                                          color="info"
-                                          icon="radioactive"
-                                          url="{{ action(ShowActivationFormAction::class, [$rank->id]) }}"
-                                />
+                            @if ($rank->activatedOn)
+                                <x-button text="app.rank.activation.edit" color="success" icon="radioactive"
+                                          url="{{ action(ShowEditActivationDateFormAction::class, [$rank->id]) }}" />
+                            @else
+                                <x-button text="app.rank.activation" color="info" icon="radioactive"
+                                          url="{{ action(ShowActivationFormAction::class, [$rank->id]) }}" />
                             @endif
                         </td>
                     @endauth

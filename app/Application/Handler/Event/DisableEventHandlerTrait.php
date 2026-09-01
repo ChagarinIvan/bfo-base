@@ -16,7 +16,6 @@ trait DisableEventHandlerTrait
 
         $this->distanceService->deleteEventDistances($event);
         $this->protocolLineService->deleteEventLines($event);
-        $this->ranksService->deleteEventRanks($event);
 
         foreach ($event->cups as $cup) {
             $this->clearCupCacheService->execute(new ClearCupCache((string) $cup->id));

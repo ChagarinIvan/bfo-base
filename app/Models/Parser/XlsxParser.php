@@ -155,12 +155,11 @@ class XlsxParser extends AbstractParser
     {
         $columnData = trim($columnData);
         switch ($column) {
-            case 'complete_rank':
             case 'rank':
-                if (Rank::validateRank($columnData)) {
-                    return $columnData;
-                }
-                break;
+            case 'club':
+                return $columnData;
+            case 'complete_rank':
+                return Rank::validateRank($columnData) ? $columnData : null;
             case 'time':
                 try {
                     $time = Carbon::createFromTimeString($columnData);
@@ -181,8 +180,6 @@ class XlsxParser extends AbstractParser
             case 'firstname':
             case 'lastname':
                 return mb_convert_case($columnData, MB_CASE_TITLE);
-            case 'club':
-                return $columnData;
         }
         return null;
     }

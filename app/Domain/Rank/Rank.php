@@ -4,44 +4,14 @@ declare(strict_types=1);
 
 namespace App\Domain\Rank;
 
-use App\Domain\Event\Event;
-use App\Domain\Person\Person;
-use App\Domain\Rank\Event\RankCreated;
-use App\Domain\Shared\AggregatedModel;
-use Carbon\Carbon;
-use Database\Factories\Domain\Rank\RankFactory;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Table;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use function array_flip;
-use function array_key_exists;
 use function array_map;
-use function count;
 use function in_array;
 use function mb_strtolower;
 use function str_replace;
+use function trim;
 
-/**
- * @property int $id
- * @property int $person_id
- * @property int|null $event_id
- *                              TODO use enum for this
- * @property string $rank
- * @property Carbon $start_date
- * @property Carbon $finish_date
- * @property Carbon|null $activated_date
- *
- * @property-read Event|null $event
- * @property Person $person
- */
-#[Fillable(['finish_date', 'activated_date'])]
-#[Table(name: 'ranks')]
-class Rank extends AggregatedModel
+enum Rank: string
 {
-    /** @see RankFactory */
-    use HasFactory;
-
     public const WSM_RANK = 'МСМК';
     public const SM_RANK = 'МС';
     public const SMC_RANK = 'КМС';
@@ -52,137 +22,155 @@ class Rank extends AggregatedModel
     public const JUNIOR_SECOND_RANK = 'IIю';
     public const JUNIOR_THIRD_RANK = 'IIIю';
     public const WITHOUT_RANK = 'б/р';
+    public const MAX_JUNIOR_AGE = 18;
 
-    public const RANKS = [
-        self::WSM_RANK => self::WSM_RANK,
-        self::SM_RANK => self::SM_RANK,
-        self::SMC_RANK => self::SMC_RANK,
-        self::FIRST_RANK => self::FIRST_RANK,
-        self::SECOND_RANK => self::SECOND_RANK,
-        self::THIRD_RANK => self::THIRD_RANK,
-        self::JUNIOR_FIRST_RANK => self::JUNIOR_FIRST_RANK,
-        self::JUNIOR_SECOND_RANK => self::JUNIOR_SECOND_RANK,
-        self::JUNIOR_THIRD_RANK => self::JUNIOR_THIRD_RANK,
-        self::WITHOUT_RANK => self::WITHOUT_RANK,
-    ];
-
-    public const NEXT_RANKS = [
+    public const array JUNIOR_RANKS = [self::JUNIOR_FIRST_RANK, self::JUNIOR_SECOND_RANK, self::JUNIOR_THIRD_RANK];
+    public const array NEXT_RANKS = [
         self::SM_RANK => self::WSM_RANK,
         self::SMC_RANK => self::SM_RANK,
         self::FIRST_RANK => self::SMC_RANK,
         self::SECOND_RANK => self::FIRST_RANK,
         self::THIRD_RANK => self::SECOND_RANK,
     ];
-
-    public const JUNIOR_RANKS = [
+    public const array RANKS = [
+        self::WSM_RANK,
+        self::SM_RANK,
+        self::SMC_RANK,
+        self::FIRST_RANK,
+        self::SECOND_RANK,
+        self::THIRD_RANK,
         self::JUNIOR_FIRST_RANK,
         self::JUNIOR_SECOND_RANK,
         self::JUNIOR_THIRD_RANK,
     ];
 
-    public const MAX_JUNIOR_AGE = 18;
-
-    private const array PART_REPLACES = [
-        'к' => 'к',
-        '1ю' => 'iю',
-        '2ю' => 'iiю',
-        '3ю' => 'iiiю',
-        '1р' => 'i',
-        '2р' => 'ii',
-        '3р' => 'iii',
-        'k' => 'к',
-        'm' => 'м',
-        'c' => 'с',
-        '/' => '',
-        '\\' => '',
-    ];
-
-    private const array FULL_REPLACES = [
-        '1' => 'i',
-        '2' => 'ii',
-        '3' => 'iii',
-    ];
-
-    private static array $preparedRanks = [];
-
-    public static function validateRank(string $rank): bool
+    public static function autoActivation(?string $value): bool
     {
-        return in_array(self::prepareRank($rank), self::getPreparedRanks(), true);
+        return ($rank = self::fromProtocolValue($value)) !== null && $rank->isAutomaticallyActivated();
     }
 
-    public static function getRank(?string $rank): ?string
+    /** @return list<string> */
+    public static function strongerRank(string $value): array
     {
-        if ($rank === null) {
+        $rank = self::fromProtocolValue($value);
+
+        return $rank === null ? [] : array_map(static fn (self $item): string => $item->label(), $rank->strongerRanks());
+    }
+
+    public static function fromProtocolValue(?string $value): ?self
+    {
+        if ($value === null || trim($value) === '') {
             return null;
         }
-        $ranks = array_flip(self::getPreparedRanks());
-        $rank = self::prepareRank($rank);
-        if (array_key_exists($rank, $ranks)) {
-            return $ranks[$rank];
-        }
-        return null;
+
+        $value = mb_strtolower(trim($value));
+        $value = str_replace(['к', 'k', 'm', 'c', '/', '\\'], ['к', 'к', 'м', 'с', '', ''], $value);
+        $value = match ($value) {
+            '1' => 'i', '2' => 'ii', '3' => 'iii',
+            '1ю' => 'iю', '2ю' => 'iiю', '3ю' => 'iiiю',
+            default => $value,
+        };
+
+        return match ($value) {
+            'мсмк' => self::WorldClassMaster,
+            'мс' => self::MasterOfSport,
+            'кмс' => self::CandidateMaster,
+            'i' => self::FirstRank,
+            'ii' => self::SecondRank,
+            'iii' => self::ThirdRank,
+            'iю' => self::JuniorFirstRank,
+            'iiю' => self::JuniorSecondRank,
+            'iiiю' => self::JuniorThirdRank,
+            'бр' => self::WithoutRank,
+            default => null,
+        };
     }
 
-    public static function autoActivation(string $rank): bool
+    public static function validateProtocolValue(string $value): bool
     {
-        return !in_array($rank, [self::SMC_RANK, self::SM_RANK, self::WSM_RANK], true);
+        return self::fromProtocolValue($value) !== null;
     }
 
-    public static function strongerRank(string $rank): array
+    /** @deprecated Parser compatibility; new Domain code uses fromProtocolValue(). */
+    public static function validateRank(string $value): bool
     {
-        $ranks = [];
-        while(isset(self::NEXT_RANKS[$rank])) {
-            $rank = self::NEXT_RANKS[$rank];
-            $ranks[] = $rank;
-        }
-
-        return $ranks;
+        return self::validateProtocolValue($value);
     }
 
-    private static function getPreparedRanks(): array
+    /** @deprecated Parser compatibility; new Domain code uses fromProtocolValue(). */
+    public static function getRank(?string $value): ?string
     {
-        if (count(self::$preparedRanks) === 0) {
-            self::$preparedRanks = array_map(self::prepareRank(...), self::RANKS);
-        }
-        return self::$preparedRanks;
+        return self::fromProtocolValue($value)?->label();
     }
 
-    private static function prepareRank(string $rank): string
+    /** @return list<self> */
+    public static function ordered(): array
     {
-        $rank = mb_strtolower($rank);
-        foreach (self::PART_REPLACES as $search => $replace) {
-            $rank = str_replace($search, $replace, $rank);
-        }
-        foreach (self::FULL_REPLACES as $search => $replace) {
-            if ($search == $rank) {
-                $rank = $replace;
-            }
-        }
-        return $rank;
+        return self::cases();
     }
 
-    public function event(): HasOne
+    public function label(): string
     {
-        return $this->hasOne(Event::class, 'id', 'event_id');
+        return match ($this) {
+            self::WorldClassMaster => 'МСМК',
+            self::MasterOfSport => 'МС',
+            self::CandidateMaster => 'КМС',
+            self::FirstRank => 'I',
+            self::SecondRank => 'II',
+            self::ThirdRank => 'III',
+            self::JuniorFirstRank => 'Iю',
+            self::JuniorSecondRank => 'IIю',
+            self::JuniorThirdRank => 'IIIю',
+            self::WithoutRank => 'б/р',
+        };
     }
 
-    public function person(): HasOne
+    public function isJunior(): bool
     {
-        return $this->hasOne(Person::class, 'id', 'person_id');
+        return in_array($this, [self::JuniorFirstRank, self::JuniorSecondRank, self::JuniorThirdRank], true);
     }
 
-    public function create(): void
+    public function isAutomaticallyActivated(): bool
     {
-        $this->recordThat(new RankCreated($this));
+        return !in_array($this, [self::CandidateMaster, self::MasterOfSport, self::WorldClassMaster], true);
+    }
 
-        $this->save();
-    }
-    protected function casts(): array
+    /** @return list<self> */
+    public function strongerRanks(): array
     {
-        return [
-            'start_date' => 'datetime:Y-m-d',
-            'finish_date' => 'datetime:Y-m-d',
-            'activated_date' => 'datetime:Y-m-d',
-        ];
+        return match ($this) {
+            self::ThirdRank => [self::SecondRank, self::FirstRank, self::CandidateMaster, self::MasterOfSport, self::WorldClassMaster],
+            self::SecondRank => [self::FirstRank, self::CandidateMaster, self::MasterOfSport, self::WorldClassMaster],
+            self::FirstRank => [self::CandidateMaster, self::MasterOfSport, self::WorldClassMaster],
+            self::CandidateMaster => [self::MasterOfSport, self::WorldClassMaster],
+            self::MasterOfSport => [self::WorldClassMaster],
+            default => [],
+        };
     }
+
+    public function strength(): int
+    {
+        return match ($this) {
+            self::WithoutRank => 0,
+            self::JuniorThirdRank => 1,
+            self::JuniorSecondRank => 2,
+            self::JuniorFirstRank => 3,
+            self::ThirdRank => 4,
+            self::SecondRank => 5,
+            self::FirstRank => 6,
+            self::CandidateMaster => 7,
+            self::MasterOfSport => 8,
+            self::WorldClassMaster => 9,
+        };
+    }
+    case WorldClassMaster = 'world_class_master';
+    case MasterOfSport = 'master_of_sport';
+    case CandidateMaster = 'candidate_master';
+    case FirstRank = 'first_rank';
+    case SecondRank = 'second_rank';
+    case ThirdRank = 'third_rank';
+    case JuniorFirstRank = 'junior_first_rank';
+    case JuniorSecondRank = 'junior_second_rank';
+    case JuniorThirdRank = 'junior_third_rank';
+    case WithoutRank = 'without_rank';
 }

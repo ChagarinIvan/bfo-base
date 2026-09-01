@@ -11,7 +11,6 @@ use App\Services\DistanceService;
 use App\Services\ParserService;
 use App\Services\ProtocolLineIdentService;
 use App\Services\ProtocolLineService;
-use App\Services\RankService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 final class UpdateEventHandler extends ParseProtocolHandler implements ShouldQueue
@@ -23,7 +22,6 @@ final class UpdateEventHandler extends ParseProtocolHandler implements ShouldQue
         ParserService $parser,
         ProtocolLineService $protocolLineService,
         ProtocolLineIdentService $identService,
-        protected readonly RankService $ranksService,
         protected readonly DistanceService $distanceService,
         protected readonly ClearCupCacheService $clearCupCacheService,
     ) {

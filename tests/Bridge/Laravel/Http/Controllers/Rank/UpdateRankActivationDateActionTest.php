@@ -8,6 +8,7 @@ use App\Bridge\Laravel\Http\Controllers\Rank\UpdateRankActivationDateAction;
 use App\Domain\Auth\User;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\Rank\Rank;
+use App\Infrastructure\Laravel\Eloquent\Person\PersonRankHistoryRecord;
 use Database\Seeders\ProtocolLinesSeeder;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -42,10 +43,22 @@ final class UpdateRankActivationDateActionTest extends TestCase
         $this->seed(ProtocolLinesSeeder::class);
 
         ProtocolLine::factory()->createOne(['id' => 107, 'distance_id' => 104, 'complete_rank' => Rank::SMC_RANK, 'person_id' => 102]);
-        /** @var Rank $rank */
-        $rank = Rank::factory()->createOne(['person_id' => 102, 'rank' => Rank::SMC_RANK, 'event_id' => 102, 'start_date' => '2024-02-20', 'activated_date' => '2024-02-20']);
+        $line = ProtocolLine::query()->with('distance.event.competition')->findOrFail(107);
+        $history = PersonRankHistoryRecord::query()->create([
+            'person_id' => 102,
+            'protocol_line_id' => 107,
+            'distance_id' => $line->distance_id,
+            'event_id' => $line->distance->event_id,
+            'competition_id' => $line->distance->event->competition_id,
+            'rank' => Rank::CandidateMaster,
+            'change_type' => 'completion',
+            'achieved_on' => '2024-02-20',
+            'activated_on' => '2024-02-20',
+            'started_on' => '2024-02-20',
+            'finished_on' => '2026-02-20',
+        ]);
 
-        $this->post("/ranks/$rank->id/update-activation", ['date' => '2024-02-21'])->assertStatus(Response::HTTP_FOUND);
+        $this->post("/ranks/$history->id/update-activation", ['date' => '2024-02-21'])->assertStatus(Response::HTTP_FOUND);
 
         $this->assertDatabaseHas('protocol_lines', [
             'id' => 107,
@@ -53,12 +66,11 @@ final class UpdateRankActivationDateActionTest extends TestCase
             'activate_rank' => '2024-02-21',
         ]);
 
-        $this->assertDatabaseHas('ranks', [
+        $this->assertDatabaseHas('person_rank_histories', [
             'person_id' => 102,
-            'event_id' => 102,
-            'rank' => Rank::SMC_RANK,
-            'start_date' => '2022-03-02',
-            'activated_date' => '2024-02-21',
+            'protocol_line_id' => 107,
+            'rank' => 'candidate_master',
+            'activated_on' => '2024-02-21',
         ]);
     }
 
@@ -75,10 +87,22 @@ final class UpdateRankActivationDateActionTest extends TestCase
         $this->seed(ProtocolLinesSeeder::class);
 
         ProtocolLine::factory()->createOne(['id' => 107, 'distance_id' => 104, 'complete_rank' => Rank::SMC_RANK, 'person_id' => 102]);
-        /** @var Rank $rank */
-        $rank = Rank::factory()->createOne(['person_id' => 102, 'rank' => Rank::SMC_RANK, 'event_id' => 102, 'start_date' => '2024-02-20', 'activated_date' => '2024-02-20']);
+        $line = ProtocolLine::query()->with('distance.event.competition')->findOrFail(107);
+        $history = PersonRankHistoryRecord::query()->create([
+            'person_id' => 102,
+            'protocol_line_id' => 107,
+            'distance_id' => $line->distance_id,
+            'event_id' => $line->distance->event_id,
+            'competition_id' => $line->distance->event->competition_id,
+            'rank' => Rank::CandidateMaster,
+            'change_type' => 'completion',
+            'achieved_on' => '2024-02-20',
+            'activated_on' => '2024-02-20',
+            'started_on' => '2024-02-20',
+            'finished_on' => '2026-02-20',
+        ]);
 
-        $this->post("/ranks/$rank->id/update-activation", ['date' => ''])->assertStatus(Response::HTTP_FOUND);
+        $this->post("/ranks/$history->id/update-activation", ['date' => ''])->assertStatus(Response::HTTP_FOUND);
 
         $this->assertDatabaseHas('protocol_lines', [
             'id' => 107,
@@ -86,12 +110,10 @@ final class UpdateRankActivationDateActionTest extends TestCase
             'activate_rank' => null,
         ]);
 
-        $this->assertDatabaseHas('ranks', [
+        $this->assertDatabaseMissing('person_rank_histories', [
             'person_id' => 102,
-            'event_id' => 102,
-            'rank' => Rank::SMC_RANK,
-            'start_date' => '2022-03-02',
-            'activated_date' => null,
+            'protocol_line_id' => 107,
+            'activated_on' => '2024-02-20',
         ]);
     }
 }

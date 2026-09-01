@@ -7,6 +7,8 @@ namespace App\Infrastructure\Laravel\Eloquent\Person;
 use App\Domain\Person\Person;
 use App\Domain\Person\PersonInfo;
 use App\Domain\Person\PersonRepository;
+use App\Domain\Rank\CalculatedPersonRank;
+use App\Domain\Rank\PersonRankHistory;
 use App\Domain\Shared\Criteria;
 use App\Domain\Shared\Pagination\Slice;
 use App\Infrastructure\Laravel\Eloquent\Pagination\EloquentQueryAdapter;
@@ -35,6 +37,29 @@ final class EloquentPersonRepository implements PersonRepository
         $person->save();
     }
 
+    public function saveRankProjection(Person $person, CalculatedPersonRank $projection): void
+    {
+        $person->save();
+        PersonRankHistoryRecord::query()->where('person_id', $person->id)->delete();
+
+        foreach ($projection->history as $history) {
+            /** @var PersonRankHistory $history */
+            PersonRankHistoryRecord::query()->create([
+                'person_id' => $person->id,
+                'protocol_line_id' => $history->protocolLineId,
+                'distance_id' => $history->distanceId,
+                'event_id' => $history->eventId,
+                'competition_id' => $history->competitionId,
+                'rank' => $history->rank->value,
+                'change_type' => $history->changeType,
+                'achieved_on' => $history->achievedOn,
+                'activated_on' => $history->activatedOn,
+                'started_on' => $history->startedOn,
+                'finished_on' => $history->finishedOn,
+            ]);
+        }
+    }
+
     public function byCriteria(Criteria $criteria): Collection
     {
         $query = Person::where('person.active', true)
@@ -49,6 +74,14 @@ final class EloquentPersonRepository implements PersonRepository
 
         if ($criteria->hasParam('clubId')) {
             $query->where('person.club_id', $criteria->param('clubId'));
+        }
+
+        if ($criteria->hasParam('rankId')) {
+            $query->where('person.current_rank', $criteria->param('rankId'));
+        }
+
+        if ($criteria->hasParam('rankFinishedBefore')) {
+            $query->where('person.current_rank_finished_on', '<', $criteria->param('rankFinishedBefore'));
         }
 
         if ($criteria->hasParam('year')) {
@@ -106,6 +139,10 @@ final class EloquentPersonRepository implements PersonRepository
                 ->where('club.active', true)
                 ->where('person.club_id', $criteria->param('clubId'))
             ;
+        }
+
+        if ($criteria->hasParam('rankId')) {
+            $query->where('person.current_rank', $criteria->param('rankId'));
         }
 
         return $query;

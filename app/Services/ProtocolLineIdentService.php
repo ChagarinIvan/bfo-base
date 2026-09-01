@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Bridge\Laravel\Jobs\RebuildPersonRanksJob;
 use App\Domain\PersonPrompt\PersonPrompt;
 use App\Domain\ProtocolLine\ProtocolLine;
-use App\Jobs\RefillPersonRankJob;
 use App\Models\IdentLine;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
@@ -114,11 +114,10 @@ class ProtocolLineIdentService
         $notIdentedLines = $notIdentedLines->keyBy('id');
         $identedLines = ProtocolLine::find($protocolLines->diffKeys($notIdentedLines)->keys());
         Log::info(sprintf('Idented %d lines.', $identedLines->count()));
-        // надо для определившихся добавить разряды
-        foreach ($identedLines as $line) {
-            Log::info(sprintf('Re fill person "%d" rank.', $line->person_id));
-            /** @var ProtocolLine $line */
-            RefillPersonRankJob::dispatch($line->person_id);
+        // Пересчитываем затронутых спортсменов одной идемпотентной batch-задачей.
+        $personIds = $identedLines->pluck('person_id')->filter()->unique()->values()->all();
+        if ($personIds !== []) {
+            RebuildPersonRanksJob::dispatch($personIds);
         }
 
         // create ident line

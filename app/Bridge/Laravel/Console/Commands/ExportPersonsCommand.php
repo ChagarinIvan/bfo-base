@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Console\Commands;
 
-use App\Application\Service\Rank\ActivePersonRank;
-use App\Application\Service\Rank\ActivePersonRankService;
 use App\Domain\Person\Person;
 use App\Services\PersonsService;
 use Illuminate\Console\Attributes\Signature;
@@ -29,7 +27,6 @@ class ExportPersonsCommand extends Command
     public function __construct(
         private readonly PersonsService $service,
         private readonly Filesystem $storage,
-        private readonly ActivePersonRankService $rankService,
         LogManager $loggerManager,
     ) {
         parent::__construct();
@@ -63,9 +60,7 @@ class ExportPersonsCommand extends Command
                     $person->lastname,
                     $person->firstname,
                     $person->birthday?->format('Y-m-d'),
-                    $this->rankService
-                        ->execute(new ActivePersonRank((string)$person->id))
-                        ?->rank,
+                    $person->current_rank->label(),
                 ], ';', escape: '\\');
             }
 

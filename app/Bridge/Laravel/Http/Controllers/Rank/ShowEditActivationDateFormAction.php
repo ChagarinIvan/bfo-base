@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Http\Controllers\Rank;
 
-use App\Application\Service\Rank\Exception\RankNotFound;
-use App\Application\Service\Rank\ViewRank;
-use App\Application\Service\Rank\ViewRankService;
+use App\Application\Port\PersonRankHistoryReader;
+use App\Application\Service\Person\Exception\PersonRankNotFound;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller as BaseController;
@@ -17,11 +16,11 @@ class ShowEditActivationDateFormAction extends BaseController
 
     public function __invoke(
         string $rankId,
-        ViewRankService $service,
+        PersonRankHistoryReader $reader,
     ): RedirectResponse|View {
         try {
-            $rank = $service->execute(new ViewRank($rankId));
-        } catch (RankNotFound) {
+            $rank = $reader->byId((int) $rankId) ?? throw new PersonRankNotFound();
+        } catch (PersonRankNotFound) {
             return $this->redirectTo404Error();
         }
 

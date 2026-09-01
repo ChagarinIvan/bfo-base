@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use function trim;
 
 /**
  * @property int $id
@@ -92,7 +93,7 @@ class ProtocolLine extends AggregatedModel
         $this->prepared_line = PersonsIdentService::makeIdentLine($this->lastname, $this->firstname, $this->year ? (int)$this->year : null);
 
         //чистим разряды
-        $this->rank = Rank::getRank($this->rank) ?? '';
+        $this->rank = trim($this->rank);
         $this->complete_rank = Rank::getRank($this->complete_rank) ?? '';
         $this->distance_id = $distanceId;
     }

@@ -7,11 +7,12 @@ namespace App\Bridge\Laravel\Http\Controllers\Person;
 use App\Application\Dto\Auth\UserId;
 use App\Application\Service\Person\DisablePerson;
 use App\Application\Service\Person\DisablePersonService;
+use App\Application\Service\Rank\RebuildPersonRanks;
+use App\Application\Service\Rank\RebuildPersonRanksService;
 use App\Domain\Person\Person;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Services\PersonPromptService;
 use App\Services\ProtocolLineService;
-use App\Services\RankService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller as BaseController;
 
@@ -25,7 +26,7 @@ class SetProtocolLinePersonAction extends BaseController
         UserId $userId,
         ProtocolLineService $protocolLineService,
         PersonPromptService $personPromptService,
-        RankService $rankService,
+        RebuildPersonRanksService $rankService,
         DisablePersonService $disablePersonService,
     ): RedirectResponse {
         /** @var ProtocolLine $protocolLine */
@@ -44,8 +45,8 @@ class SetProtocolLinePersonAction extends BaseController
         $protocolLineService->reSetPerson($protocolLinesToUpdate, $person->id);
         $personPromptService->changePromptForLine($preparedLine, $person->id);
 
-        $rankService->reFillRanksForPerson($person->id);
-        $oldPersons->each(static fn (int $personId) => $rankService->reFillRanksForPerson($personId));
+        $rankService->execute(new RebuildPersonRanks($person->id));
+        $oldPersons->each(static fn (int $personId) => $rankService->execute(new RebuildPersonRanks($personId)));
 
         if (ProtocolLine::wherePersonId($oldPersonId)->count() === 0) {
             $disablePersonService->execute(new DisablePerson((string)$oldPersonId, $userId));

@@ -22,6 +22,8 @@ final readonly class LegacyViewPersonDto
         public ?string $lastPaymentDate,
         /** @var array<string, ViewPersonProtocolLineDto[]> */
         public array $groupedByYearProtocolLines = [],
+        public string $currentRankId = 'without_rank',
+        public ?string $currentRankFinishedOn = null,
     ) {
     }
 }

@@ -1,0 +1,55 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Infrastructure\Laravel\Eloquent\Person;
+
+use App\Domain\ProtocolLine\ProtocolLine;
+use App\Domain\Rank\Rank;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Table;
+use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+/**
+ * @property int $id
+ * @property int $person_id
+ * @property int $protocol_line_id
+ * @property int $distance_id
+ * @property int $event_id
+ * @property int $competition_id
+ * @property Rank $rank
+ * @property string $change_type
+ * @property Carbon $achieved_on
+ * @property Carbon|null $activated_on
+ * @property Carbon $started_on
+ * @property Carbon|null $finished_on
+ * @property-read ProtocolLine|null $protocolLine
+ */
+
+#[Fillable([
+    'person_id', 'protocol_line_id', 'distance_id', 'event_id', 'competition_id',
+    'rank', 'change_type', 'achieved_on', 'activated_on', 'started_on', 'finished_on',
+])]
+#[Table(name: 'person_rank_histories')]
+#[WithoutTimestamps]
+final class PersonRankHistoryRecord extends Model
+{
+    public function protocolLine(): BelongsTo
+    {
+        return $this->belongsTo(ProtocolLine::class);
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'rank' => Rank::class,
+            'achieved_on' => 'datetime:Y-m-d',
+            'activated_on' => 'datetime:Y-m-d',
+            'started_on' => 'datetime:Y-m-d',
+            'finished_on' => 'datetime:Y-m-d',
+        ];
+    }
+}

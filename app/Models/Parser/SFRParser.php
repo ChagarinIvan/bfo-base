@@ -178,12 +178,13 @@ class SFRParser extends AbstractParser
     {
         $columnData = trim($columnData);
         switch ($column) {
-            case 'complete_rank':
             case 'rank':
-                if (Rank::validateRank($columnData)) {
-                    return $columnData;
-                }
-                break;
+            case 'lastname':
+            case 'club':
+            case 'firstname':
+                return $columnData;
+            case 'complete_rank':
+                return Rank::validateRank($columnData) ? $columnData : null;
             case 'time':
                 try {
                     $time = Carbon::createFromTimeString($columnData);
@@ -201,10 +202,6 @@ class SFRParser extends AbstractParser
             case 'year':
             case 'points':
                 return (int)$columnData;
-            case 'lastname':
-            case 'club':
-            case 'firstname':
-                return $columnData;
         }
         return null;
     }

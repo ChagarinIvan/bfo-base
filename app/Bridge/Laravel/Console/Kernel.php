@@ -6,13 +6,11 @@ namespace App\Bridge\Laravel\Console;
 
 use App\Bridge\Laravel\Console\Commands\DeleteInactivePersonsPromptsCommand;
 use App\Bridge\Laravel\Console\Commands\FixInactivePersonsProtocolLinesCommand;
-use App\Bridge\Laravel\Console\Commands\FixRankCommand;
 use App\Bridge\Laravel\Console\Commands\FixYearCommand;
 use App\Bridge\Laravel\Console\Commands\IdentProtocolLineCommand;
 use App\Bridge\Laravel\Console\Commands\PruneInactivePersonsCommand;
-use App\Bridge\Laravel\Console\Commands\RankValidationCommand;
-use App\Bridge\Laravel\Console\Commands\RecalculatingRanks;
-use App\Bridge\Laravel\Console\Commands\ReFillPersonRanksCommand;
+use App\Bridge\Laravel\Console\Commands\RebuildExpiredPersonRanksCommand;
+use App\Bridge\Laravel\Console\Commands\RefillPersonRanksCommand;
 use App\Bridge\Laravel\Console\Commands\SimpleIndentCommand;
 use App\Bridge\Laravel\Console\Commands\StartBigIdentCommand;
 use App\Bridge\Laravel\Console\Commands\SyncPersonsCommand;
@@ -33,13 +31,11 @@ class Kernel extends ConsoleKernel
         IdentProtocolLineCommand::class,
         SimpleIndentCommand::class,
         StartBigIdentCommand::class,
-        RankValidationCommand::class,
         SyncPersonsCommand::class,
         SyncStoredPersonsCommand::class,
-        RecalculatingRanks::class,
-        FixRankCommand::class,
         FixYearCommand::class,
-        ReFillPersonRanksCommand::class,
+        RefillPersonRanksCommand::class,
+        RebuildExpiredPersonRanksCommand::class,
         PruneInactivePersonsCommand::class,
         DeleteInactivePersonsPromptsCommand::class,
         FixInactivePersonsProtocolLinesCommand::class,
@@ -53,7 +49,7 @@ class Kernel extends ConsoleKernel
         $schedule->command(SimpleIndentCommand::class, ['userId' => User::SYSTEM_USER_ID])->dailyAt('01:00')->runInBackground();
         $schedule->command(PruneInactivePersonsCommand::class, ['userId' => User::SYSTEM_USER_ID])->dailyAt('02:00')->runInBackground();
         $schedule->command(StartBigIdentCommand::class, ['userId' => User::SYSTEM_USER_ID])->dailyAt('03:00')->runInBackground();
-        $schedule->command(RankValidationCommand::class, ['userId' => User::SYSTEM_USER_ID])->weekly()->at('02:00')->runInBackground();
+        $schedule->command(RebuildExpiredPersonRanksCommand::class)->dailyAt('00:10')->runInBackground();
         //        $schedule->command(SyncPersonsCommand::class)->weekly()->runInBackground();
 
         for ($i = 0; $i < 4; $i++) {

@@ -1,8 +1,8 @@
 @php
     use App\Bridge\Laravel\Http\Controllers\Rank\ActivatePersonRankAction;
-    use App\Application\Dto\Rank\ViewRankDto;
+    use App\Application\Dto\Rank\PersonRankHistoryDto;
     /**
-     * @var ViewRankDto $rank;
+     * @var PersonRankHistoryDto $rank;
      */
 @endphp
 

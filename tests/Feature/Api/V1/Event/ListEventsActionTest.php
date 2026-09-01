@@ -141,9 +141,15 @@ final class ListEventsActionTest extends TestCase
     private function createProtocolLine(Event $event): ProtocolLine
     {
         /** @var Distance $distance */
-        $distance = Distance::factory()->createOne(['event_id' => $event->id]);
+        $distance = Distance::factory()->createOne([
+            'id' => (int) Distance::query()->max('id') + 1,
+            'event_id' => $event->id,
+        ]);
         /** @var ProtocolLine $protocolLine */
-        $protocolLine = ProtocolLine::factory()->createOne(['distance_id' => $distance->id]);
+        $protocolLine = ProtocolLine::factory()->createOne([
+            'id' => (int) ProtocolLine::query()->max('id') + 1,
+            'distance_id' => $distance->id,
+        ]);
 
         return $protocolLine;
     }

@@ -13,6 +13,7 @@ use App\Domain\Group\Group;
 use App\Domain\Person\Person;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\Rank\Rank;
+use App\Infrastructure\Laravel\Eloquent\Person\PersonRankHistoryRecord;
 use App\Models\Year;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -52,22 +53,6 @@ final class ShowPersonRanksActionTest extends TestCase
         $event = Event::factory()->createOne(['competition_id' => $competition->id, 'date' => '2025-01-01']);
         /** @var Person $person */
         $person = Person::factory()->createOne(['id' => 1, 'firstname' => 'John', 'lastname' => 'Doe']);
-        Rank::factory()->createOne([
-            'person_id' => $person->id,
-            'event_id' => $event->id,
-            'start_date' => "{$year->previous()->previous()->previous()->value}-01-01",
-            'finish_date' => "{$year->previous()->previous()->previous()->value}-12-31",
-            'activated_date' => "{$year->previous()->previous()->previous()->value}-01-01",
-            'rank' => Rank::FIRST_RANK,
-        ]);
-        Rank::factory()->createOne([
-            'person_id' => $person->id,
-            'event_id' => $event->id,
-            'start_date' => "{$year->previous()->previous()->value}-01-01",
-            'finish_date' => "$year->value-01-01",
-            'activated_date' => "{$year->previous()->previous()->value}-01-01",
-            'rank' => Rank::SMC_RANK,
-        ]);
         Group::factory(state: ['id' => 101, 'name' => 'M21'])->createOne();
         Distance::factory(state: ['id' => 101, 'event_id' => $event->id, 'group_id' => 101])->createOne();
         ProtocolLine::factory(state: [
@@ -77,6 +62,24 @@ final class ShowPersonRanksActionTest extends TestCase
             'complete_rank' => 'I',
             'activate_rank' => "{$year->previous()->value}-01-01",
         ])->createOne();
+
+        $person->update([
+            'current_rank' => Rank::FirstRank,
+            'current_rank_finished_on' => ($year->value + 1) . '-01-01',
+        ]);
+        PersonRankHistoryRecord::create([
+            'person_id' => $person->id,
+            'protocol_line_id' => 101,
+            'distance_id' => 101,
+            'event_id' => $event->id,
+            'competition_id' => $competition->id,
+            'rank' => Rank::CandidateMaster,
+            'change_type' => 'completion',
+            'achieved_on' => '2022-01-01',
+            'activated_on' => '2022-01-01',
+            'started_on' => '2022-01-01',
+            'finished_on' => '2023-01-01',
+        ]);
         ProtocolLine::factory(state: [
             'id' => 102,
             'distance_id' => 101,
@@ -84,6 +87,19 @@ final class ShowPersonRanksActionTest extends TestCase
             'complete_rank' => 'II',
             'activate_rank' => "{$year->previous()->value}-01-01",
         ])->createOne();
+        PersonRankHistoryRecord::create([
+            'person_id' => $person->id,
+            'protocol_line_id' => 102,
+            'distance_id' => 101,
+            'event_id' => $event->id,
+            'competition_id' => $competition->id,
+            'rank' => Rank::FirstRank,
+            'change_type' => 'promotion',
+            'achieved_on' => ($year->previous()->value) . '-01-01',
+            'activated_on' => ($year->previous()->value) . '-01-01',
+            'started_on' => ($year->previous()->value) . '-01-01',
+            'finished_on' => ($year->value + 1) . '-01-01',
+        ]);
 
         $next = $year->value + 1;
         $this->get("/ranks/person/$person->id")

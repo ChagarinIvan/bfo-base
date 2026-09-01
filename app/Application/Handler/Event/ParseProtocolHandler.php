@@ -32,7 +32,7 @@ abstract class ParseProtocolHandler
             Log::info(sprintf('Parsed %d lines.', $lineList->count()));
             $lines = $this->protocolLineService->fillProtocolLines($eventId, $lineList);
             Log::info(sprintf('Filled %d lines.', $lines->count()));
-            $this->identService->identPersons($lineList);
+            $this->identService->identPersons($lines);
         } catch (Exception $e) {
             Log::error($e->getMessage());
         }

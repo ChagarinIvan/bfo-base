@@ -13,12 +13,9 @@ use App\Domain\Club\Club;
 use App\Domain\Club\ClubNameNormalizer;
 use App\Domain\Club\ClubRepository;
 use App\Domain\Person\Person;
-use App\Domain\Rank\Rank;
 use App\Domain\Shared\Clock;
 use App\Services\PersonsIdentService;
 use App\Services\PersonsService;
-use App\Services\RankService;
-use Carbon\Carbon;
 use Illuminate\Log\LogManager;
 use Psr\Log\LoggerInterface;
 use function array_keys;
@@ -32,7 +29,6 @@ class OrientBySyncService
     public function __construct(
         private readonly PersonsIdentService $identService,
         private readonly PersonsService $personsService,
-        private readonly RankService $rankService,
         private readonly ClubRepository $clubs,
         private readonly ClubNameNormalizer $clubNameNormalizer,
         private readonly CreateOrUpdatePersonPaymentsService $createOrUpdatePersonPaymentsService,
@@ -132,10 +128,6 @@ class OrientBySyncService
 
                 $person->create();
 
-                if ($personDto->rank) {
-                    $this->setRank($person->id, $personDto->rank);
-                }
-
                 if ($personDto->paid && $personDto->paymentDate()) {
                     $dto = new PersonPaymentDto();
                     $dto->personId = (string) $person->id;
@@ -166,19 +158,5 @@ class OrientBySyncService
             }
         }
         return false;
-    }
-
-    private function setRank(int $personId, ?string $rankData): void
-    {
-        if (Rank::getRank($rankData)) {
-            $rank = new Rank();
-            $rank->person_id = $personId;
-            $rank->rank = Rank::getRank($rankData);
-            $rank->start_date = Carbon::now();
-            $rank->finish_date = $rank->start_date->clone()->addYears(2);
-            $rank->activated_date = $rank->start_date;
-
-            $this->rankService->storeRank($rank);
-        }
     }
 }

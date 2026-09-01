@@ -7,9 +7,12 @@ namespace Tests\Bridge\Laravel\Http\Controllers\Rank;
 use App\Bridge\Laravel\Http\Controllers\Rank\ShowActivationFormAction;
 use App\Domain\Auth\User;
 use App\Domain\Competition\Competition;
+use App\Domain\Distance\Distance;
 use App\Domain\Event\Event;
 use App\Domain\Person\Person;
+use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\Rank\Rank;
+use App\Infrastructure\Laravel\Eloquent\Person\PersonRankHistoryRecord;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
@@ -47,8 +50,21 @@ final class ShowActivationFormActionTest extends TestCase
         $event = Event::factory()->createOne(['competition_id' => $competition->id]);
         /** @var Person $person */
         $person = Person::factory()->createOne();
-        /** @var Rank $rank */
-        $rank = Rank::factory()->createOne(['person_id' => $person->id, 'event_id' => $event->id]);
+        $distance = Distance::factory()->createOne(['event_id' => $event->id]);
+        /** @var ProtocolLine $protocolLine */
+        $protocolLine = ProtocolLine::factory()->createOne(['distance_id' => (int) $distance->getKey(), 'person_id' => $person->id, 'complete_rank' => 'КМС']);
+        $rank = PersonRankHistoryRecord::query()->create([
+            'person_id' => $person->id,
+            'protocol_line_id' => (int) $protocolLine->getKey(),
+            'distance_id' => (int) $distance->getKey(),
+            'event_id' => $event->id,
+            'competition_id' => $competition->id,
+            'rank' => Rank::CandidateMaster,
+            'change_type' => 'completion',
+            'achieved_on' => '2024-01-01',
+            'started_on' => '2024-01-01',
+            'finished_on' => '2026-01-01',
+        ]);
 
         $this->get("/ranks/$rank->id/activate")
             ->assertStatus(Response::HTTP_OK)

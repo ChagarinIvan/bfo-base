@@ -7,10 +7,7 @@ namespace App\Bridge\Laravel\Http\Controllers\Rank;
 use App\Application\Service\Person\Exception\PersonNotFound;
 use App\Application\Service\Person\ViewPerson;
 use App\Application\Service\Person\ViewPersonService;
-use App\Application\Service\Rank\ActivePersonRank;
-use App\Application\Service\Rank\ActivePersonRankService;
-use App\Application\Service\Rank\PersonRanks;
-use App\Application\Service\Rank\PersonRanksService;
+use App\Application\Service\Person\ListPersonRankHistory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller as BaseController;
@@ -22,8 +19,7 @@ class ShowPersonRanksAction extends BaseController
     public function __invoke(
         string $personId,
         ViewPersonService $personService,
-        PersonRanksService $ranksService,
-        ActivePersonRankService $activeRankService,
+        ListPersonRankHistory $history,
     ): RedirectResponse|View {
         try {
             $person = $personService->execute(new ViewPerson($personId));
@@ -31,13 +27,13 @@ class ShowPersonRanksAction extends BaseController
             return $this->redirectTo404Error();
         }
 
-        $activeRank = $activeRankService->execute(new ActivePersonRank($personId));
-        $ranks = $ranksService->execute(new PersonRanks($personId));
+        $ranks = $history->execute((int) $personId);
 
         /** @see /resources/views/ranks/show-person-ranks.blade.php */
         return $this->view('ranks.show-person-ranks', [
             'ranks' => $ranks,
-            'actualRank' => $activeRank,
+            'actualRank' => $person->currentRankId,
+            'actualRankFinishedOn' => $person->currentRankFinishedOn,
             'person' => $person,
         ]);
     }

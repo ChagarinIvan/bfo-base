@@ -12,6 +12,7 @@ use App\Domain\Person\Event\PersonInfoUpdated;
 use App\Domain\PersonPayment\PersonPayment;
 use App\Domain\PersonPrompt\PersonPrompt;
 use App\Domain\ProtocolLine\ProtocolLine;
+use App\Domain\Rank\CalculatedPersonRank;
 use App\Domain\Rank\Rank;
 use App\Domain\Shared\AggregatedModel;
 use App\Infrastructure\Laravel\Eloquent\Auth\ImpressionCast;
@@ -33,6 +34,10 @@ use Illuminate\Support\Collection;
  * @property Citizenship $citizenship
  * @property bool $from_base
  * @property bool $active
+ * @property Rank $current_rank
+ * @property Carbon|null $current_rank_started_on
+ * @property Carbon|null $current_rank_activated_on
+ * @property Carbon|null $current_rank_finished_on
  *
  * @property Impression $created
  * @property Impression $updated
@@ -43,11 +48,10 @@ use Illuminate\Support\Collection;
  * @property-read null|Club $club
  * @property-read PersonPrompt[]|Collection $prompts
  * @property-read PersonPayment[]|Collection $payments
- * @property-read Rank[]|Collection $ranks
  *
  * @see PersonFactory
  */
-#[Fillable(['lastname', 'firstname', 'birthday', 'club_id', 'from_base', 'created', 'updated'])]
+#[Fillable(['lastname', 'firstname', 'birthday', 'club_id', 'from_base', 'created', 'updated', 'current_rank', 'current_rank_started_on', 'current_rank_activated_on', 'current_rank_finished_on'])]
 #[Table(name: 'person')]
 class Person extends AggregatedModel
 {
@@ -67,11 +71,6 @@ class Person extends AggregatedModel
     public function payments(): HasMany
     {
         return $this->hasMany(PersonPayment::class);
-    }
-
-    public function ranks(): HasMany
-    {
-        return $this->hasMany(Rank::class);
     }
 
     public function club(): HasOne
@@ -106,12 +105,24 @@ class Person extends AggregatedModel
 
         $this->recordThat(new PersonDisabled($this));
     }
+
+    public function replaceRankProjection(CalculatedPersonRank $projection): void
+    {
+        $this->current_rank = $projection->currentRank;
+        $this->current_rank_started_on = $projection->startedOn?->toMutable();
+        $this->current_rank_activated_on = $projection->activatedOn?->toMutable();
+        $this->current_rank_finished_on = $projection->finishedOn?->toMutable();
+    }
     protected function casts(): array
     {
         return [
             'prompt' => 'array',
             'citizenship' => Citizenship::class,
             'birthday' => 'datetime:Y-m-d',
+            'current_rank' => Rank::class,
+            'current_rank_started_on' => 'datetime:Y-m-d',
+            'current_rank_activated_on' => 'datetime:Y-m-d',
+            'current_rank_finished_on' => 'datetime:Y-m-d',
             'created' => ImpressionCast::class,
             'updated' => ImpressionCast::class,
         ];

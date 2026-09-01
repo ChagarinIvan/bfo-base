@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Http\Controllers\Rank;
 
-use App\Application\Dto\Rank\UpdateActivationDto;
-use App\Application\Service\Rank\UpdateRankActivationDate;
-use App\Application\Service\Rank\UpdateRankActivationDateService;
+use App\Application\Dto\Person\UpdatePersonRankActivationDateDto;
+use App\Application\Service\Person\UpdatePersonRankActivationDate;
+use App\Application\Service\Person\UpdatePersonRankActivationDateService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller as BaseController;
 
@@ -16,11 +16,11 @@ final class UpdateRankActivationDateAction extends BaseController
 
     public function __invoke(
         string $id,
-        UpdateActivationDto $activation,
-        UpdateRankActivationDateService $service,
+        UpdatePersonRankActivationDateDto $activation,
+        UpdatePersonRankActivationDateService $service,
     ): RedirectResponse {
-        $rank = $service->execute(new UpdateRankActivationDate($id, $activation));
+        $personId = $service->execute(new UpdatePersonRankActivationDate($id, $activation));
 
-        return $this->redirector->action(ShowPersonRanksAction::class, [$rank->personId]);
+        return $this->redirector->action(ShowPersonRanksAction::class, [$personId]);
     }
 }

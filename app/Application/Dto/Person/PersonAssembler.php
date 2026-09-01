@@ -8,6 +8,7 @@ use App\Application\Dto\Auth\AuthAssembler;
 use App\Domain\Person\Person;
 use App\Domain\PersonPayment\PersonPayment;
 use App\Domain\ProtocolLine\ProtocolLine;
+use App\Domain\Rank\Rank;
 use Illuminate\Support\Collection;
 use function array_map;
 
@@ -40,6 +41,8 @@ final readonly class PersonAssembler
             groupedByYearProtocolLines: $withProtocolLines
                 ? array_map(fn (Collection $c) => $c->map($this->toViewPersonProtocolLineDto(...))->all(), $groupedProtocolLines->all())
                 : [],
+            currentRankId: ($person->current_rank ?? Rank::WithoutRank)->value,
+            currentRankFinishedOn: $person->current_rank_finished_on?->format('Y-m-d'),
         );
     }
 
@@ -50,6 +53,7 @@ final readonly class PersonAssembler
             lastname: $person->lastname,
             firstname: $person->firstname,
             birthYear: $person->birthday?->year,
+            rankId: ($person->current_rank ?? Rank::WithoutRank)->value,
             created: $this->authAssembler->toImpressionDto($person->created),
             updated: $this->authAssembler->toImpressionDto($person->updated),
         );
