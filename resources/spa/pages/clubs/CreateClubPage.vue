@@ -51,10 +51,12 @@ async function submit(value: CreateClubRequest): Promise<void> {
         if (isValidationError(exception) && exception.response) {
             applyFieldErrors(exception.response.data.errors, fieldErrors)
         }
-        error.value =
-            isValidationError(exception) && exception.response
-                ? messageFor(exception)
-                : t('spa.club.create.error')
+        if (
+            isValidationError(exception) &&
+            exception.response?.status === 409
+        ) {
+            error.value = messageFor(exception)
+        }
     } finally {
         pending.value = false
     }

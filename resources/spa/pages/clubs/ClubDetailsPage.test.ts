@@ -1,16 +1,48 @@
-import { createMemoryHistory, createRouter } from 'vue-router'
-import { describe, expect, it } from 'vitest'
+// @vitest-environment happy-dom
+
+import { flushPromises, mount } from '@vue/test-utils'
+import { describe, expect, it, vi } from 'vitest'
 import ClubDetailsPage from './ClubDetailsPage.vue'
 
+const { getClub, getPersons } = vi.hoisted(() => ({
+    getClub: vi.fn(),
+    getPersons: vi.fn(),
+}))
+
+vi.mock('../../api/clubs', () => ({ getClub }))
+vi.mock('../../api/persons', () => ({ getPersons }))
+vi.mock('../../api/users', () => ({ getUsers: vi.fn().mockResolvedValue([]) }))
+vi.mock('../../stores/auth', () => ({
+    useAuthStore: () => ({ isAuthenticated: false }),
+}))
+vi.mock('vue-router', () => ({
+    useRoute: () => ({ params: { id: '42' } }),
+    useRouter: () => ({ push: vi.fn() }),
+}))
+
 describe('club details page', () => {
-    it('is the component rendered by the public SPA detail route', () => {
-        const router = createRouter({
-            history: createMemoryHistory(),
-            routes: [{ path: '/app/clubs/:id', component: ClubDetailsPage }],
+    it('loads persons and links both person names to the legacy page', async () => {
+        getClub.mockResolvedValue({ id: '42', name: 'Клуб', personsCount: 1 })
+        getPersons.mockResolvedValue({
+            data: [
+                {
+                    id: '7',
+                    lastname: 'Іваноў',
+                    firstname: 'Ян',
+                    birthYear: 2001,
+                },
+            ],
+            headers: {},
         })
 
-        expect(
-            router.resolve('/app/clubs/42').matched[0]?.components?.default,
-        ).toBe(ClubDetailsPage)
+        const wrapper = mount(ClubDetailsPage)
+        await flushPromises()
+
+        expect(getPersons).toHaveBeenCalledWith({
+            clubId: 42,
+            page: 1,
+            perPage: 20,
+        })
+        expect(wrapper.findAll('a[href="/persons/7/show"]')).toHaveLength(2)
     })
 })

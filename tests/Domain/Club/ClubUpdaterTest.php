@@ -41,9 +41,9 @@ final class ClubUpdaterTest extends TestCase
     {
         $decorated = $this->createMock(ClubUpdater::class);
         $clubs = $this->createMock(ClubRepository::class);
-        $club = $this->createStub(Club::class);
+        $club = $this->clubStub(1);
         $clubs->expects($this->once())->method('oneByCriteria')->with(
-            new Criteria(['name' => 'Новы клуб', 'normalizedName' => 'новы клуб']),
+            new Criteria(['normalizedName' => 'новы клуб', 'excludeId' => 1]),
         )->willReturn($this->createStub(Club::class));
         $decorated->expects($this->never())->method('update');
 
@@ -52,5 +52,29 @@ final class ClubUpdaterTest extends TestCase
             $club,
             new ClubInput(new ClubInfo('Новы клуб', 'новы клуб'), 7),
         );
+    }
+
+    #[Test]
+    public function duplicate_updater_delegates_when_only_the_current_club_matches(): void
+    {
+        $decorated = $this->createMock(ClubUpdater::class);
+        $clubs = $this->createMock(ClubRepository::class);
+        $club = $this->clubStub(1);
+        $input = new ClubInput(new ClubInfo('Новы клуб', 'новы клуб'), 7);
+
+        $clubs->expects($this->once())->method('oneByCriteria')->with(
+            new Criteria(['normalizedName' => 'новы клуб', 'excludeId' => 1]),
+        )->willReturn(null);
+        $decorated->expects($this->once())->method('update')->with($club, $input)->willReturn($club);
+
+        $this->assertSame($club, new PreventDuplicateClubUpdater($decorated, $clubs)->update($club, $input));
+    }
+
+    private function clubStub(int $id): Club
+    {
+        $club = $this->createStub(Club::class);
+        $club->method('__get')->willReturnMap([['id', $id]]);
+
+        return $club;
     }
 }

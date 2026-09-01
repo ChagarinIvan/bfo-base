@@ -18,8 +18,8 @@ final readonly class PreventDuplicateClubUpdater implements ClubUpdater
     public function update(Club $club, ClubInput $input): Club
     {
         $criteria = new Criteria([
-            'name' => $input->info->name,
             'normalizedName' => $input->info->normalizeName,
+            'excludeId' => $club->id,
         ]);
 
         if ($this->clubs->oneByCriteria($criteria) instanceof Club) {

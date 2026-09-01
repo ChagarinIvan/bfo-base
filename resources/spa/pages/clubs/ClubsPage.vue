@@ -50,9 +50,14 @@ function onNameChange(value: string | undefined): void {
     name.value = value ?? ''
     delete fieldErrors.name
 
-    if (hasTooShortNameSearch(name.value)) {
+    if (!name.value.trim()) {
         debouncedNameSearch.cancel()
         void load(resetPageOnFilterChange(pagination.value.currentPage))
+        return
+    }
+
+    if (hasTooShortNameSearch(name.value)) {
+        debouncedNameSearch.cancel()
         return
     }
 

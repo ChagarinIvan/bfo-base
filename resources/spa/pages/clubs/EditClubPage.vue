@@ -20,6 +20,16 @@ const error = ref('')
 const loading = ref(true)
 const pending = ref(false)
 
+function isNotFound(exception: unknown): boolean {
+    return (
+        typeof exception === 'object' &&
+        exception !== null &&
+        'isAxiosError' in exception &&
+        exception.isAxiosError === true &&
+        (exception as AxiosError).response?.status === 404
+    )
+}
+
 function isValidationError(
     exception: unknown,
 ): exception is AxiosError<ApiErrorResponse> {
@@ -42,8 +52,10 @@ function messageFor(exception: AxiosError<ApiErrorResponse>): string {
 async function load(): Promise<void> {
     try {
         club.value = await getClub(String(route.params.id))
-    } catch {
-        error.value = t('spa.club.details.not_found')
+    } catch (exception: unknown) {
+        error.value = isNotFound(exception)
+            ? t('spa.club.details.not_found')
+            : t('spa.club.edit.error')
     } finally {
         loading.value = false
     }
@@ -65,10 +77,12 @@ async function submit(value: CreateClubRequest): Promise<void> {
         if (isValidationError(exception) && exception.response) {
             applyFieldErrors(exception.response.data.errors, fieldErrors)
         }
-        error.value =
-            isValidationError(exception) && exception.response
-                ? messageFor(exception)
-                : t('spa.club.edit.error')
+        if (
+            isValidationError(exception) &&
+            exception.response?.status === 409
+        ) {
+            error.value = messageFor(exception)
+        }
     } finally {
         pending.value = false
     }

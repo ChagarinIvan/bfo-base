@@ -18,7 +18,6 @@ final class EloquentClubRepository implements ClubRepository
     public function add(Club $club): void
     {
         $club->create();
-        $club->save();
     }
 
     public function byId(int $id): ?Club
@@ -99,6 +98,10 @@ final class EloquentClubRepository implements ClubRepository
 
         if ($criteria->hasParam('normalizedName')) {
             $query->where('normalize_name', $criteria->param('normalizedName'));
+        }
+
+        if ($criteria->hasParam('excludeId')) {
+            $query->where('id', '!=', $criteria->param('excludeId'));
         }
 
         return $query;

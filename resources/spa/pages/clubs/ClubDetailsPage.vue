@@ -151,7 +151,13 @@ watch(
                     }}</a>
                 </template>
             </Column>
-            <Column field="firstname" :header="t('spa.person.firstname')" />
+            <Column field="firstname" :header="t('spa.person.firstname')">
+                <template #body="{ data }">
+                    <a :href="`/persons/${data.id}/show`">{{
+                        data.firstname
+                    }}</a>
+                </template>
+            </Column>
             <Column field="birthYear" :header="t('spa.person.birth_year')" />
             <Column
                 v-if="auth.isAuthenticated"

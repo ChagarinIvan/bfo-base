@@ -59,6 +59,17 @@ final class UpdateClubActionTest extends TestCase
             ->assertJsonMissingPath('errors.0.field');
     }
 
+    #[Test]
+    public function it_rejects_a_non_string_name_with_validation_error(): void
+    {
+        Sanctum::actingAs($this->createUser());
+        $club = $this->createClub();
+
+        $this->putJson("/api/v1/clubs/{$club->id}", ['name' => ['not', 'a', 'string']])
+            ->assertUnprocessable()
+            ->assertJsonFragment(['field' => 'name']);
+    }
+
     private function createUser(): SanctumUser
     {
         return SanctumUser::query()->create([
