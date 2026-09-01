@@ -24,7 +24,9 @@ inactive/missing Club + update → not_found
 ```
 
 `Club::updateInfo(ClubInfo, Impression)` получает уже нормализованные name values, обновляет
-aggregate и записывает event обновления; отдельный `ClubUpdater` не создаётся.
+aggregate и записывает event обновления. Вызов проходит через доменный `ClubUpdater`: стандартный
+updater собирает `Impression`, а `PreventDuplicateClubUpdater` проверяет конфликт по `name` и
+`normalizedName` перед делегированием.
 
 ### Person
 
@@ -37,7 +39,8 @@ aggregate и записывает event обновления; отдельный
 | active | Только `true`; inactive не считается и не возвращается. |
 | created / updated | Только authenticated projection. |
 
-Связь: `Club 1 ── * Person`. Person list также требует активного parent Club.
+Связь: `Club 1 ── * Person`. При переданном `clubId` person list ограничивается активным клубом;
+без `clubId` это общий список активных персонов для будущих фильтров.
 
 Новых таблиц, колонок и migrations нет.
 
@@ -67,8 +70,12 @@ aggregate и записывает event обновления; отдельный
 name: required trimmed string, max 255
 ```
 
-Одинаково используется `AddClub` и `UpdateClubInfo`. Duplicate после нормализации возвращает 422
-field error `name`. Update с тем же normalized name собственного клуба допустим.
+Одинаково используется `AddClub` и `UpdateClubInfo`. Duplicate после нормализации возвращает 409
+business-conflict с кодом `club_name_already_exists` без `field`; ошибки обязательности/формата
+DTO возвращают 422. Update с тем же normalized name собственного клуба допустим.
+
+`UpdateClubInfoService` блокирует клуб, готовит `ClubInput` с `ClubInfo` и user id, а при полном
+совпадении текущих `name` и `normalize_name` возвращает DTO без вызова updater и repository update.
 
 ### Legacy inputs
 

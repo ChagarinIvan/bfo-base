@@ -1,5 +1,4 @@
 @php
-    use App\Bridge\Laravel\Http\Controllers\Club\ShowClubsListAction;
     use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionsListAction;
     use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupsListAction;
     use App\Bridge\Laravel\Http\Controllers\Flags\ShowFlagsListAction;
@@ -83,7 +82,7 @@
                         </li>
                         <li>
                             <a class="dropdown-item {{ $isClubsRoute ? 'active' : '' }}"
-                               href="{{ action(ShowClubsListAction::class) }}"
+                               href="/app/clubs"
                             >{{ __('app.navbar.clubs') }}</a>
                         </li>
                         <li>

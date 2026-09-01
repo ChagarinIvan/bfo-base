@@ -10,12 +10,14 @@ use App\Application\Service\Club\Exception\FailedToAddClub;
 use App\Domain\Club\ClubRepository;
 use App\Domain\Club\Exception\ClubAlreadyExist;
 use App\Domain\Club\Factory\ClubFactory;
+use App\Domain\Club\Factory\ClubNameNormalizer;
 
 final readonly class AddClubService
 {
     public function __construct(
         private ClubFactory $factory,
         private ClubRepository $clubs,
+        private ClubNameNormalizer $normalizer,
         private ClubAssembler $assembler,
     ) {
     }
@@ -24,7 +26,7 @@ final readonly class AddClubService
     public function execute(AddClub $command): ViewClubDto
     {
         try {
-            $club = $this->factory->create($command->clubInput());
+            $club = $this->factory->create($command->clubInput($this->normalizer));
         } catch (ClubAlreadyExist $e) {
             throw FailedToAddClub::dueError($e);
         }

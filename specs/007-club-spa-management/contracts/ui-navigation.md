@@ -16,10 +16,13 @@ update SPA открывает `/app/clubs/{id}`. Club list/detail показыв
 ## Interaction rules
 
 - Единственный filter списка клубов — name: trim, minimum 3, debounce 300 ms.
-- Один-два символа дают локальную подсказку и не отправляются; API 422 показывается под name.
+- Один-два символа дают локальную подсказку и не отправляются; API validation 422 с `field=name`
+  показывается под name. Business conflict 409 без `field` переводится по коду
+  `club_name_already_exists` и показывается как сообщение формы.
 - Изменение/очистка filter сбрасывает page=1; последний запрос выигрывает race.
 - Loading, empty, not-found и general error различаются.
-- Club form одна для create/edit; duplicate и validation остаются у поля name.
+- Club form одна для create/edit; validation остаётся у поля name, а duplicate отображается общим
+  сообщением формы по коду бизнес-ошибки.
 - Person name ведёт обычным `href` на `/persons/{id}/show`, не в Vue Router.
 - Person table не добавляет filter в этой фиче; она использует server pagination.
 - Impressions используют общий `ImpressionDetails`; даты не локализуют названия месяцев.
@@ -50,4 +53,3 @@ Redirect routes не рендерят Blade и не выполняют стар�
 `components/club-link.blade.php` сохраняется, пока используется через `@include`, но его href
 становится SPA. Legacy club/person list services, forms, console commands, `/api/person` и
 `/api/persons` сохраняются под `Legacy*` именами.
-

@@ -17,6 +17,7 @@ final class EloquentClubRepository implements ClubRepository
 {
     public function add(Club $club): void
     {
+        $club->create();
         $club->save();
     }
 

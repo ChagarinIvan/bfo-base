@@ -1,5 +1,10 @@
 import { api } from './client'
-import type { Club, ClubSearchQuery, PaginatedApiResponse } from './types'
+import type {
+    Club,
+    ClubSearchQuery,
+    CreateClubRequest,
+    PaginatedApiResponse,
+} from './types'
 
 export async function getClubs(
     query: ClubSearchQuery = {},
@@ -14,4 +19,15 @@ export async function getClubs(
 
 export async function getClub(id: string): Promise<Club> {
     return (await api.get<Club>(`/clubs/${id}`)).data
+}
+
+export async function createClub(payload: CreateClubRequest): Promise<Club> {
+    return (await api.post<Club>('/clubs', payload)).data
+}
+
+export async function updateClub(
+    id: string,
+    payload: CreateClubRequest,
+): Promise<Club> {
+    return (await api.put<Club>(`/clubs/${id}`, payload)).data
 }

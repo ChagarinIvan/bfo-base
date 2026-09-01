@@ -7,6 +7,8 @@ import InputText from 'primevue/inputtext'
 import Message from 'primevue/message'
 import Paginator, { type PageState } from 'primevue/paginator'
 import Toolbar from 'primevue/toolbar'
+import Button from 'primevue/button'
+import { useRouter } from 'vue-router'
 import { getClubs } from '../../api/clubs'
 import { getUsers } from '../../api/users'
 import type { Club, PaginationHeaders, User } from '../../api/types'
@@ -37,6 +39,7 @@ const loading = ref(false)
 const error = ref('')
 const fieldErrors = reactive<Record<string, string>>({})
 const auth = useAuthStore()
+const router = useRouter()
 let latestRequest = 0
 
 const debouncedNameSearch = debounce(() => {
@@ -110,6 +113,15 @@ onBeforeUnmount(() => {
     <Toolbar class="page-toolbar">
         <template #start>
             <h1 class="page-title">{{ t('spa.clubs.title') }}</h1>
+        </template>
+        <template #end>
+            <Button
+                v-if="auth.isAuthenticated"
+                :label="t('spa.club.create.action')"
+                icon="pi pi-plus"
+                severity="success"
+                @click="router.push('/app/clubs/create')"
+            />
         </template>
     </Toolbar>
 

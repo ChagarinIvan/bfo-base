@@ -141,8 +141,8 @@ Target и legacy projections персон разделяются именами.
   target/legacy person DTO, commands, пагинацию и SPA state.
 - [api-clubs.md](contracts/api-clubs.md) фиксирует list/view/create/update, auth groups, validation и
   ошибки.
-- [api-persons.md](contracts/api-persons.md) фиксирует compact `ViewPersonDto`, обязательный
-  `clubId`, active-only и стабильную пагинацию.
+- [api-persons.md](contracts/api-persons.md) фиксирует compact `ViewPersonDto`, опциональный
+  `clubId`, общий active-only список без фильтра и стабильную пагинацию.
 - [ui-navigation.md](contracts/ui-navigation.md) фиксирует SPA routes, auth guards, legacy person
   links, navbar и compatibility redirects.
 - [quickstart.md](quickstart.md) описывает end-to-end и automated validation.

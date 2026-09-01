@@ -145,21 +145,21 @@ normalized duplicate, 401 и отсутствие общей ошибки вме
 
 ### Tests for User Story 3
 
-- [ ] T027 [P] [US3] Дополнить `tests/Domain/Club/Factory/PreventDuplicateClubFactoryTest.php` и `tests/Application/Service/Club/AddClubServiceTest.php` нормализованными duplicate cases и созданием с trimmed name.
-- [ ] T028 [P] [US3] Создать `tests/Feature/Api/V1/Club/CreateClubActionTest.php` для 201 authenticated create, public 401, required/max validation и normalized duplicate 422 `field=name`.
-- [ ] T029 [P] [US3] Создать `resources/spa/pages/clubs/ClubForm.test.ts` и `resources/spa/pages/clubs/CreateClubPage.test.ts` для guard, submit, field errors, сохранения ввода и перехода на detail после 201.
+- [X] T027 [P] [US3] Дополнить `tests/Domain/Club/Factory/PreventDuplicateClubFactoryTest.php` и `tests/Application/Service/Club/AddClubServiceTest.php` нормализованными duplicate cases и созданием с trimmed name.
+- [X] T028 [P] [US3] Создать `tests/Feature/Api/V1/Club/CreateClubActionTest.php` для 201 authenticated create, public 401, required/max validation 422 и normalized duplicate 409 с уникальным code.
+- [X] T029 [P] [US3] Создать `resources/spa/pages/clubs/ClubForm.test.ts` и `resources/spa/pages/clubs/CreateClubPage.test.ts` для guard, submit, field errors, сохранения ввода и перехода на detail после 201.
 
 ### Implementation for User Story 3
 
-- [ ] T030 [US3] Изменить `app/Domain/Club/Factory/PreventDuplicateClubFactory.php`, `app/Domain/Club/Factory/ClubNameNormalizer.php` и связанные Club factory inputs так, чтобы create проверял duplicate по normalized name и сохранял нормализованное значение.
-- [ ] T031 [US3] Добавить optional `field` в `app/Application/Exception/HttpError.php` и сериализацию этого поля в `app/Bridge/Laravel/Http/Serialization/ApiErrorResponse.php`, сохранив формат существующих ошибок без поля.
-- [ ] T032 [US3] Привязать create business conflict к `name` в `app/Application/Service/Club/Exception/FailedToAddClub.php` и использовать его в `app/Application/Service/Club/AddClubService.php`.
-- [ ] T033 [US3] Создать `app/Bridge/Laravel/Http/Controllers/Api/V1/Club/CreateClubAction.php` и зарегистрировать authenticated POST `/api/v1/clubs` в `app/Bridge/Laravel/Provider/ApiV1RoutesServiceProvider.php`.
-- [ ] T034 [US3] Дополнить `resources/spa/api/clubs.ts` create-запросом и создать общую `resources/spa/pages/clubs/ClubForm.vue` с name validation/error state и форматом дат `YYYY-MM-DD` через `resources/spa/components/ImpressionDetails.vue`.
-- [ ] T035 [US3] Создать `resources/spa/pages/clubs/CreateClubPage.vue`, зарегистрировать guarded `/app/clubs/create` в `resources/spa/router/index.ts` и добавить authenticated действие «Добавить клуб» в `resources/spa/pages/clubs/ClubsPage.vue`.
+- [X] T030 [US3] Изменить `app/Domain/Club/Factory/PreventDuplicateClubFactory.php`, `app/Domain/Club/Factory/ClubNameNormalizer.php` и `app/Domain/Club/ClubInput.php` так, чтобы create проверял duplicate по normalized name и сохранял trimmed name вместе с нормализованным значением.
+- [X] T031 [US3] Сериализовать стандартные validation `field` в `app/Bridge/Laravel/Http/Serialization/ApiErrorResponse.php`, сохранив бизнес-ошибки без `field`; `HttpError` содержит только `status` и уникальный `code`.
+- [X] T032 [US3] Возвращать create business conflict из `app/Application/Service/Club/Exception/FailedToAddClub.php` как HTTP 409 с кодом `club_name_already_exists` и переводить код на SPA-форме.
+- [X] T033 [US3] Создать `app/Bridge/Laravel/Http/Controllers/Api/V1/Club/CreateClubAction.php` и зарегистрировать authenticated POST `/api/v1/clubs` в `app/Bridge/Laravel/Provider/ApiV1RoutesServiceProvider.php`.
+- [X] T034 [US3] Дополнить `resources/spa/api/clubs.ts` create-запросом и создать общую `resources/spa/pages/clubs/ClubForm.vue` с name validation/error state и форматом дат `YYYY-MM-DD` через `resources/spa/components/ImpressionDetails.vue`.
+- [X] T035 [US3] Создать `resources/spa/pages/clubs/CreateClubPage.vue`, зарегистрировать guarded `/app/clubs/create` в `resources/spa/router/index.ts` и добавить authenticated действие «Добавить клуб» в `resources/spa/pages/clubs/ClubsPage.vue`.
 
-**Checkpoint**: аутентифицированный пользователь может создать клуб исключительно через SPA/V1, а
-duplicate и validation отображаются под полем.
+**Checkpoint**: аутентифицированный пользователь может создать клуб исключительно через SPA/V1;
+validation отображается под полем, а duplicate переводится по коду и показывается сообщением формы.
 
 ---
 
@@ -172,19 +172,19 @@ duplicate и validation отображаются под полем.
 
 ### Tests for User Story 4
 
-- [ ] T036 [P] [US4] Создать `tests/Application/Service/Club/UpdateClubInfoServiceTest.php` и `tests/Domain/Club/ClubTest.php` для atomic rename, updated impression, self-exclusion, normalized duplicate и записи `ClubInfoUpdated` aggregate event.
-- [ ] T037 [P] [US4] Создать `tests/Feature/Api/V1/Club/UpdateClubActionTest.php` для authenticated 200, 401, 404 inactive/missing, validation и 422 `field=name` без изменения данных.
-- [ ] T038 [P] [US4] Создать `resources/spa/pages/clubs/EditClubPage.test.ts` для prefilled form, guard, PUT field errors и перехода на detail после update.
+- [X] T036 [P] [US4] Создать unit tests `tests/Application/Service/Club/UpdateClubInfoServiceTest.php` и `tests/Domain/Club/ClubUpdaterTest.php` для not-found, atomic rename, updated impression, duplicate, записи `ClubInfoUpdated` и идемпотентного выхода без updater/repository update; использовать моки и стабы без базы.
+- [X] T037 [P] [US4] Создать `tests/Feature/Api/V1/Club/UpdateClubActionTest.php` для authenticated 200, 401, 404 inactive/missing, validation 422 и duplicate 409 с уникальным code без изменения данных.
+- [X] T038 [P] [US4] Создать `resources/spa/pages/clubs/EditClubPage.test.ts` для prefilled form, guard, PUT field errors и перехода на detail после update.
 
 ### Implementation for User Story 4
 
-- [ ] T039 [US4] Создать `app/Domain/Club/ClubInfo.php` и `app/Domain/Club/Event/ClubInfoUpdated.php`; перевести `app/Domain/Club/Club.php` на существующий aggregate pattern и добавить `updateInfo(ClubInfo, Impression)`, который обновляет name/normalize_name/updated и записывает event, без `ClubUpdater` или provider binding.
-- [ ] T040 [US4] Создать `app/Application/Service/Club/UpdateClubInfo.php`, `app/Application/Service/Club/UpdateClubInfoService.php` и необходимые application exceptions в `app/Application/Service/Club/Exception/` для lock/update/not-found/name conflict.
-- [ ] T041 [US4] Создать `app/Bridge/Laravel/Http/Controllers/Api/V1/Club/UpdateClubAction.php`, зарегистрировать authenticated PUT `/api/v1/clubs/{clubId}` в `app/Bridge/Laravel/Provider/ApiV1RoutesServiceProvider.php`, добавить update-запрос в `resources/spa/api/clubs.ts` и реализовать `resources/spa/pages/clubs/EditClubPage.vue` на общей `ClubForm.vue`.
-- [ ] T042 [US4] Добавить guarded `/app/clubs/:id/edit`, edit action на `resources/spa/pages/clubs/ClubDetailsPage.vue` и проверки route guard в `resources/spa/router/index.ts` и `resources/spa/router/index.test.ts`.
+- [X] T039 [US4] Создать `app/Domain/Club/ClubInfo.php`, `app/Domain/Club/ClubInput.php`, `app/Domain/Club/ClubUpdater.php`, `app/Domain/Club/StandardClubUpdater.php`, `app/Domain/Club/PreventDuplicateClubUpdater.php` и `app/Domain/Club/Event/ClubInfoUpdated.php`; перевести `app/Domain/Club/Club.php` на aggregate pattern и добавить `updateInfo(ClubInfo, Impression)`, который обновляет name/normalize_name/updated и записывает event.
+- [X] T040 [US4] Создать `app/Application/Service/Club/UpdateClubInfo.php`, `app/Application/Service/Club/UpdateClubInfoService.php` и необходимые application exceptions в `app/Application/Service/Club/Exception/`; сервис блокирует клуб, маппит duplicate в 409 и возвращает текущий DTO без updater/repository update при идемпотентном входе.
+- [X] T041 [US4] Создать `app/Bridge/Laravel/Http/Controllers/Api/V1/Club/UpdateClubAction.php`, зарегистрировать authenticated PUT `/api/v1/clubs/{clubId}` в `app/Bridge/Laravel/Provider/ApiV1RoutesServiceProvider.php`, добавить update-запрос в `resources/spa/api/clubs.ts` и реализовать `resources/spa/pages/clubs/EditClubPage.vue` на общей `ClubForm.vue`.
+- [X] T042 [US4] Добавить guarded `/app/clubs/:id/edit`, edit action на `resources/spa/pages/clubs/ClubDetailsPage.vue` и проверки route guard в `resources/spa/router/index.ts` и `resources/spa/router/index.test.ts`.
 
-**Checkpoint**: create и edit используют одну форму и одни доменные правила, а detail/list сразу
-показывают актуальное имя и authenticated impressions.
+**Checkpoint**: create и edit используют одну форму и одни доменные правила, duplicate возвращается
+как 409 без `field`, а detail/list сразу показывают актуальное имя и authenticated impressions.
 
 ---
 
@@ -199,16 +199,16 @@ console и используемые legacy forms не регрессировал
 
 ### Tests for User Story 5
 
-- [ ] T043 [P] [US5] Создать `tests/Feature/Api/V1/Club/LegacyClubRoutesTest.php` для 301 `/clubs`, `/clubs/create`, `/clubs/{clubId}/show`, отсутствующего POST `/clubs/store` и отсутствия Blade render/business logic.
-- [ ] T044 [P] [US5] Обновить `tests/Bridge/Laravel/Http/Controllers/Person/ShowPersonActionTest.php`, `tests/Bridge/Laravel/Http/Controllers/Api/ListPersonActionTest.php` и `tests/Bridge/Laravel/Http/Controllers/Api/PersonControllerTest.php` для сохранения rich legacy projection и deep person paths после rename.
+- [X] T043 [P] [US5] Создать `tests/Feature/Api/V1/Club/LegacyClubRoutesTest.php` для 301 `/clubs`, `/clubs/create`, `/clubs/{clubId}/show`, отсутствующего POST `/clubs/store` и отсутствия Blade render/business logic.
+- [X] T044 [P] [US5] Обновить `tests/Bridge/Laravel/Http/Controllers/Person/ShowPersonActionTest.php`, `tests/Bridge/Laravel/Http/Controllers/Api/ListPersonActionTest.php` и `tests/Bridge/Laravel/Http/Controllers/Api/PersonControllerTest.php` для сохранения rich legacy projection и deep person paths после rename.
 
 ### Implementation for User Story 5
 
-- [ ] T045 [US5] Заменить club GET routes в `app/Bridge/Laravel/Provider/WebRoutesServiceProvider.php` на permanent redirects `/clubs` → `/app/clubs`, `/clubs/create` → `/app/clubs/create`, `/clubs/{clubId}/show` → `/app/clubs/{clubId}` и удалить POST `/clubs/store`.
-- [ ] T046 [US5] Удалить заменённые Blade actions и tests: `app/Bridge/Laravel/Http/Controllers/Club/ClubAction.php`, `ShowClubsListAction.php`, `ShowCreateClubFormAction.php`, `ShowClubAction.php`, `StoreClubsAction.php`, `tests/Bridge/Laravel/Http/Controllers/Club/ShowClubsListActionTest.php`, `ShowClubActionTest.php`, `StoreClubsActionTest.php`.
-- [ ] T047 [US5] Удалить заменённые Blade views `resources/views/clubs/index.blade.php`, `resources/views/clubs/create.blade.php`, `resources/views/clubs/show.blade.php` и только obsolete club-translation keys из `resources/lang/by.json` и `resources/lang/ru.json`; сохранить `app.navbar.clubs` и `spa.nav.clubs` после поиска оставшихся consumers.
-- [ ] T048 [US5] Перевести legacy navbar и все найденные club links на SPA в `resources/views/layouts/navbar.blade.php`, `resources/views/components/club-link.blade.php`, `resources/views/events/`, `resources/views/cup/`, `resources/vue/components/person/Persons.vue` и других найденных consumers; сохранить person deep links и partial `club-link.blade.php`, если он остаётся подключён через `@include`.
-- [ ] T049 [US5] После повторного usage-аудита удалить только подтверждённо мёртвые `app/Bridge/Laravel/View/Components/ClubLink.php`, его registration в `app/Bridge/Laravel/Provider/ViewProvider.php`, и `app/Application/Service/Club/DisableClub.php` с `DisableClubService.php` и `tests/Application/Service/Club/DisableClubServiceTest.php`; сохранить любой артефакт с оставшимся consumer.
+- [X] T045 [US5] Заменить club GET routes в `app/Bridge/Laravel/Provider/WebRoutesServiceProvider.php` на permanent redirects `/clubs` → `/app/clubs`, `/clubs/create` → `/app/clubs/create`, `/clubs/{clubId}/show` → `/app/clubs/{clubId}` и удалить POST `/clubs/store`.
+- [X] T046 [US5] Удалить заменённые Blade actions и tests: `app/Bridge/Laravel/Http/Controllers/Club/ClubAction.php`, `ShowClubsListAction.php`, `ShowCreateClubFormAction.php`, `ShowClubAction.php`, `StoreClubsAction.php`, `tests/Bridge/Laravel/Http/Controllers/Club/ShowClubsListActionTest.php`, `ShowClubActionTest.php`, `StoreClubsActionTest.php`.
+- [X] T047 [US5] Удалить заменённые Blade views `resources/views/clubs/index.blade.php`, `resources/views/clubs/create.blade.php`, `resources/views/clubs/show.blade.php` и только obsolete club-translation keys из `resources/lang/by.json` и `resources/lang/ru.json`; сохранить `app.navbar.clubs` и `spa.nav.clubs` после поиска оставшихся consumers.
+- [X] T048 [US5] Перевести legacy navbar и все найденные club links на SPA в `resources/views/layouts/navbar.blade.php`, `resources/views/components/club-link.blade.php`, `resources/views/events/`, `resources/views/cup/`, `resources/vue/components/person/Persons.vue` и других найденных consumers; сохранить person deep links и partial `club-link.blade.php`, если он остаётся подключён через `@include`.
+- [X] T049 [US5] После повторного usage-аудита удалить только подтверждённо мёртвые `app/Bridge/Laravel/View/Components/ClubLink.php`, его registration в `app/Bridge/Laravel/Provider/ViewProvider.php`, и `app/Application/Service/Club/DisableClub.php` с `DisableClubService.php` и `tests/Application/Service/Club/DisableClubServiceTest.php`; сохранить любой артефакт с оставшимся consumer.
 
 **Checkpoint**: второй club UI удалён, старые GET-ссылки сохраняют bookmarks через 301, а
 используемые legacy person/event/cup/console paths работают через явно именованные adapters.
@@ -219,10 +219,10 @@ console и используемые legacy forms не регрессировал
 
 **Purpose**: подтвердить контракты, отсутствие регрессий и Definition of Done.
 
-- [ ] T050 [P] Проверить [quickstart.md](quickstart.md) вручную: public/auth list/detail/persons, forms, field errors, `YYYY-MM-DD`, redirects и legacy compatibility; зафиксировать отклонения в `specs/007-club-spa-management/quickstart.md` только если контракт изменился осознанно.
-- [ ] T051 [P] Выполнить финальный поиск удалённых club Blade routes/actions/views и устаревших `ViewPersonDto` usages в `app/`, `resources/` и `tests/`; сверить оставшиеся legacy consumers с `specs/007-club-spa-management/data-model.md`.
-- [ ] T052 Выполнить frontend quality gates для изменённых `resources/spa/`: `npm run ci` и targeted Vitest suites `resources/spa/api/clubs.test.ts` и `resources/spa/pages/clubs/`.
-- [ ] T053 Выполнить backend quality gates: `vendor/bin/phpunit tests/Feature/Api/V1/Club tests/Feature/Api/V1/Person tests/Application/Service/Club tests/Application/Service/Person`, затем `composer cs`, `composer stan`, `composer rector -- --dry-run`, `composer test` и `git diff --check`.
+- [X] T050 [P] Проверить [quickstart.md](quickstart.md) вручную: public/auth list/detail/persons, forms, field errors, `YYYY-MM-DD`, redirects и legacy compatibility; зафиксировать отклонения в `specs/007-club-spa-management/quickstart.md` только если контракт изменился осознанно.
+- [X] T051 [P] Выполнить финальный поиск удалённых club Blade routes/actions/views и устаревших `ViewPersonDto` usages в `app/`, `resources/` и `tests/`; сверить оставшиеся legacy consumers с `specs/007-club-spa-management/data-model.md`.
+- [X] T052 Выполнить frontend quality gates для изменённых `resources/spa/`: `npm run ci` и targeted Vitest suites `resources/spa/api/clubs.test.ts` и `resources/spa/pages/clubs/`.
+- [X] T053 Выполнить backend quality gates: `vendor/bin/phpunit tests/Feature/Api/V1/Club tests/Feature/Api/V1/Person tests/Application/Service/Club tests/Application/Service/Person`, затем `composer cs`, `composer stan`, `composer rector -- --dry-run`, `composer test` и `git diff --check`.
 
 ---
 

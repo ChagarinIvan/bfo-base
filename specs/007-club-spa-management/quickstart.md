@@ -52,7 +52,8 @@ curl -i 'http://localhost:8000/api/v1/persons?clubId=42&page=1&perPage=20'
 curl -i 'http://localhost:8000/api/v1/persons?club_id=42'
 ```
 
-Ожидается direct compact array для первого запроса и 422 `field=clubId` для snake_case.
+Ожидается direct compact array для обоих запросов: `club_id` — legacy-совместимый неизвестный
+параметр и игнорируется.
 
 ## Сценарий 3: authenticated create/edit и impressions
 
@@ -61,7 +62,8 @@ curl -i 'http://localhost:8000/api/v1/persons?club_id=42'
 3. Отредактировать name; затем отправить пустое, >255 и normalized duplicate name.
 4. Повторить list/detail/person requests с Bearer.
 
-Ожидается: create 201, update 200; ошибки показаны под name без потери ввода; собственное
+Ожидается: create 201, update 200; ошибки валидации 422 показаны под name, а бизнес-конфликты 409
+с кодом `club_name_already_exists` — общим сообщением формы, без потери ввода; собственное
 неизменённое normalized name допустимо; authenticated responses содержат `created`/`updated`, UI
 показывает даты с календарной частью `YYYY-MM-DD`.
 
@@ -115,4 +117,3 @@ git diff --check
 Ожидается exit code 0. Request tests покрывают public/auth projections, pagination headers,
 filter/validation, stable ordering, active-only counts, create/update/not-found и отсутствие N+1;
 frontend tests — routes/guards, debounce, field errors, forms, details, links и stale responses.
-

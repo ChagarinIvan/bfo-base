@@ -1,5 +1,4 @@
 @php
-    use App\Bridge\Laravel\Http\Controllers\Club\ShowClubAction;
     use App\Application\Dto\Club\ViewClubDto;
     use App\Application\Dto\Event\ViewEventDto;
     use App\Application\Dto\Person\LegacyViewPersonDto;
@@ -168,7 +167,7 @@
                             @endif
                             @if($club = $clubsByLine[$line->id] ?? null)
                                 <td>
-                                    <a href="{{ action(ShowClubAction::class, [$club->id]) }}">
+                                    <a href="/app/clubs/{{ $club->id }}">
                                         {{ ($line->club) }}
                                     </a>
                                 </td>

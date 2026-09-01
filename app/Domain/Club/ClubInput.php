@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Club\Factory;
+namespace App\Domain\Club;
 
 final readonly class ClubInput
 {
     public function __construct(
-        public string $name,
+        public ClubInfo $info,
         public int $userId,
     ) {
     }

@@ -53,11 +53,11 @@ final class ViewClubActionTest extends TestCase
 
         $this->getJson('/api/v1/clubs/999999')
             ->assertNotFound()
-            ->assertJsonPath('errors.0.code', 'not_found')
+            ->assertJsonPath('errors.0.code', 'club_not_found')
         ;
         $this->getJson("/api/v1/clubs/{$inactiveClub->id}")
             ->assertNotFound()
-            ->assertJsonPath('errors.0.code', 'not_found')
+            ->assertJsonPath('errors.0.code', 'club_not_found')
         ;
     }
 

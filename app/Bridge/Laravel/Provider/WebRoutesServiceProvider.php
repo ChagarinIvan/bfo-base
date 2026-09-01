@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Provider;
 
-use App\Bridge\Laravel\Http\Controllers\Club\ShowClubAction;
-use App\Bridge\Laravel\Http\Controllers\Club\ShowClubsListAction;
-use App\Bridge\Laravel\Http\Controllers\Club\ShowCreateClubFormAction;
-use App\Bridge\Laravel\Http\Controllers\Club\StoreClubsAction;
 use App\Bridge\Laravel\Http\Controllers\Competition\DeleteCompetitionAction;
 use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionAction;
 use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionsListAction;
@@ -200,16 +196,10 @@ class WebRoutesServiceProvider extends ServiceProvider
                     });
                 });
 
-                //clubs
-                $this->routeRegistrar->prefix('clubs')->group(function (): void {
-                    $this->route->get('/', ShowClubsListAction::class);
-                    $this->route->get('{clubId}/show', ShowClubAction::class);
-
-                    $this->middleware(['auth'])->group(function (): void {
-                        $this->route->get('create', ShowCreateClubFormAction::class);
-                        $this->route->post('store', StoreClubsAction::class);
-                    });
-                });
+                //clubs legacy bookmarks
+                $this->route->get('clubs', fn () => $this->redirector->to('/app/clubs', 301));
+                $this->route->get('clubs/create', fn () => $this->redirector->to('/app/clubs/create', 301));
+                $this->route->get('clubs/{clubId}/show', fn (string $clubId) => $this->redirector->to("/app/clubs/{$clubId}", 301));
 
                 //localization
                 //only by locale

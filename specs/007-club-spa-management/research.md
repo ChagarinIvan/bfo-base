@@ -83,15 +83,17 @@ guard; короткое значение не отправляется.
 ## Создание, редактирование и уникальность имени
 
 **Решение**: одна `ClubDto` и одна SPA-форма используются для POST/PUT.
-`PreventDuplicateClubFactory` переключается с exact `name` на `normalizedName`. Application use
-case под транзакцией блокирует клуб, проверяет нормализованный duplicate с исключением текущего id
-и передаёт нормализованные данные в aggregate method `Club::updateInfo(ClubInfo, Impression)`.
+`PreventDuplicateClubFactory` проверяет create по normalized name. Application use case под
+транзакцией блокирует клуб, готовит нормализованный `ClubInput` и передаёт его в доменный
+`ClubUpdater`. `PreventDuplicateClubUpdater` проверяет конфликт по имени и нормализованному имени,
+а `StandardClubUpdater` собирает `Impression` и вызывает `Club::updateInfo(ClubInfo, Impression)`.
+При полном совпадении текущих значений сервис идемпотентно возвращает DTO без updater и сохранения.
 Aggregate обновляет имя и `updated` impression, затем записывает domain event. `ClubNotFound` и name
-conflict переводятся в стандартные Application errors; для field-level business error
-`HttpError`/`ApiErrorResponse` поддерживают optional `field` без изменения существующих ответов.
+conflict переводятся в Application errors. Бизнес-конфликт возвращается как 409 с уникальным кодом
+и сообщением без `field`; `field` остаётся только у validation errors.
 
 **Обоснование**: duplicate — доменное правило, одинаковое для create/update; action остаётся
-тонким. Optional field позволяет SPA показать conflict под `name`, а не общей ошибкой.
+тонким. Код бизнес-ошибки позволяет SPA перевести конфликт и показать его на уровне формы.
 
 **Альтернативы**: проверка в Vue обходится прямым API; проверка в controller нарушает слои;
 DB unique migration не выбрана, потому что схема данных явно вне scope и требует отдельного аудита

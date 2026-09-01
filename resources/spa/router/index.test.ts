@@ -95,6 +95,16 @@ describe('SPA navigation guard', () => {
         )
     })
 
+    it('protects club create and edit routes', async () => {
+        const router = createAppRouter(createMemoryHistory())
+
+        await router.push('/app/clubs/create')
+        expect(router.currentRoute.value.path).toBe('/app/login')
+
+        await router.push('/app/clubs/42/edit')
+        expect(router.currentRoute.value.path).toBe('/app/login')
+    })
+
     it('keeps legacy navigation destinations outside the SPA router', () => {
         const router = createAppRouter(createMemoryHistory())
         const registeredPaths = router.getRoutes().map((route) => route.path)

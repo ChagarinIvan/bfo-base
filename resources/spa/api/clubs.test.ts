@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { api } from './client'
-import { getClub, getClubs } from './clubs'
+import { createClub, getClub, getClubs, updateClub } from './clubs'
 
 vi.mock('./client', () => ({
-    api: { get: vi.fn() },
+    api: { get: vi.fn(), post: vi.fn(), put: vi.fn() },
 }))
 
 describe('clubs api', () => {
@@ -38,5 +38,16 @@ describe('clubs api', () => {
             personsCount: 3,
         })
         expect(api.get).toHaveBeenCalledWith('/clubs/42')
+    })
+
+    it('creates and updates a club through V1', async () => {
+        vi.mocked(api.post).mockResolvedValue({ data: { id: '1' } })
+        vi.mocked(api.put).mockResolvedValue({ data: { id: '1' } })
+
+        await createClub({ name: 'Club' })
+        await updateClub('1', { name: 'Updated' })
+
+        expect(api.post).toHaveBeenCalledWith('/clubs', { name: 'Club' })
+        expect(api.put).toHaveBeenCalledWith('/clubs/1', { name: 'Updated' })
     })
 })

@@ -1,5 +1,4 @@
 @php
-    use App\Bridge\Laravel\Http\Controllers\Club\ShowClubAction;
     use App\Bridge\Laravel\Http\Controllers\Cup\ExportCupGroupTableAction;
     use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupEventGroupAction;
     use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupTableAction;
@@ -114,7 +113,7 @@
                                     $club = $clubs[$person->clubId] ?? null;
                                 @endphp
                                 @if($club)
-                                    <a href="{{ action(ShowClubAction::class, [$club->id]) }}">{{ $club->name }}</a>
+                                    <a href="/app/clubs/{{ $club->id }}">{{ $club->name }}</a>
                                 @endif
                             </td>
                             @foreach($cupEvents as $cupEvent)

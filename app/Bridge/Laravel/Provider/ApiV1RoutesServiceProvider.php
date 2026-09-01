@@ -7,7 +7,9 @@ namespace App\Bridge\Laravel\Provider;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Auth\ListUsersAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Auth\LoginAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Auth\LogoutAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Club\CreateClubAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Club\ListClubsAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Club\UpdateClubAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Club\ViewClubAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Competition\CreateCompetitionAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Competition\DeleteCompetitionAction;
@@ -40,6 +42,8 @@ final class ApiV1RoutesServiceProvider extends ServiceProvider
             $router->prefix('api/v1')->middleware(AuthenticateApiV1::class)->group(static function () use ($router): void {
                 $router->delete('auth/logout', LogoutAction::class);
                 $router->get('users', ListUsersAction::class);
+                $router->post('clubs', CreateClubAction::class);
+                $router->put('clubs/{clubId}', UpdateClubAction::class);
                 $router->post('competitions', CreateCompetitionAction::class);
                 $router->put('competitions/{competitionId}', UpdateCompetitionAction::class);
                 $router->delete('competitions/{competitionId}', DeleteCompetitionAction::class);

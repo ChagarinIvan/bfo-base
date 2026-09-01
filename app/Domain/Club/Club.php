@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace App\Domain\Club;
 
 use App\Domain\Auth\Impression;
+use App\Domain\Club\Event\ClubCreated;
+use App\Domain\Club\Event\ClubInfoUpdated;
 use App\Domain\Person\Person;
+use App\Domain\Shared\AggregatedModel;
 use App\Infrastructure\Laravel\Eloquent\Auth\ImpressionCast;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 
@@ -26,7 +28,7 @@ use Illuminate\Support\Collection;
  * @property-read  Person[]|Collection $persons
  */
 #[Table(name: 'club')]
-class Club extends Model
+class Club extends AggregatedModel
 {
     use HasFactory;
 
@@ -39,6 +41,22 @@ class Club extends Model
     {
         $this->updated = $impression;
         $this->active = false;
+    }
+
+    public function create(): void
+    {
+        $this->recordThat(new ClubCreated($this));
+
+        $this->save();
+    }
+
+    public function updateInfo(ClubInfo $info, Impression $impression): void
+    {
+        $this->name = $info->name;
+        $this->normalize_name = $info->normalizeName;
+        $this->updated = $impression;
+
+        $this->recordThat(new ClubInfoUpdated($this));
     }
     protected function casts(): array
     {

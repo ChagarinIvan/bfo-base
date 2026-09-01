@@ -54,7 +54,8 @@ impressions. Missing/inactive id возвращает 404 error envelope.
 ```
 
 Response 201 — созданный `ViewClubDto` с impressions. Ошибки: 401; 422 для required/max и
-normalized duplicate. Field-level ответ:
+409 для normalized duplicate с кодом `club_name_already_exists` без `field`. Missing/inactive
+club — 404 с кодом `club_not_found`. Field-level ответ используется только для 422 validation:
 
 ```json
 {
@@ -67,8 +68,9 @@ normalized duplicate. Field-level ответ:
 ## PUT /clubs/{clubId}
 
 Требует Bearer и то же body/validation, что POST. Response 200 — обновлённый `ViewClubDto`.
-Переименование в собственное normalized name допустимо. Duplicate другого клуба — 422 `name`;
-missing/inactive — 404; без токена — 401.
+Переименование в собственное normalized name допустимо. Duplicate другого клуба — 409 с кодом
+`club_name_already_exists` без `field`; missing/inactive — 404 с кодом `club_not_found`; без
+токена — 401.
 
 ## Поля ViewClubDto
 

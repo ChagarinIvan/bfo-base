@@ -7,7 +7,7 @@ namespace App\Application\Service\Club\Exception;
 use App\Application\Exception\ApplicationException;
 use App\Application\Exception\HttpError;
 
-#[HttpError(status: 404, code: 'not_found')]
+#[HttpError(status: 404, code: 'club_not_found')]
 final class ClubNotFound extends ApplicationException
 {
 }
