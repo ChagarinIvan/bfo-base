@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Models\Parser;
 
-use App\Domain\Rank\Rank;
 use DOMDocument;
 use DOMXPath;
 use Exception;
@@ -94,7 +93,7 @@ class AlbatrosTimingParser extends AbstractParser
                 }
                 if ($withCompletedRank) {
                     $completeRank = $lineData[$fieldsCount - $indent];
-                    if ((Rank::validateRank($completeRank) || $completeRank === '-') && !in_array($completeRank, ['1', '2', '3'], true)) {
+                    if (($this->rankNormalizer->isValid($completeRank) || $completeRank === '-') && !in_array($completeRank, ['1', '2', '3'], true)) {
                         $protocolLine['complete_rank'] = $completeRank;
                         $indent++;
                     } elseif ($completeRank === 'в/к') {

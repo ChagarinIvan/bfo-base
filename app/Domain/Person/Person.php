@@ -9,13 +9,14 @@ use App\Domain\Club\Club;
 use App\Domain\Person\Event\PersonCreated;
 use App\Domain\Person\Event\PersonDisabled;
 use App\Domain\Person\Event\PersonInfoUpdated;
+use App\Domain\Person\Event\PersonRanksUpdated;
 use App\Domain\PersonPayment\PersonPayment;
 use App\Domain\PersonPrompt\PersonPrompt;
 use App\Domain\ProtocolLine\ProtocolLine;
-use App\Domain\Rank\CalculatedPersonRank;
 use App\Domain\Rank\Rank;
 use App\Domain\Shared\AggregatedModel;
 use App\Infrastructure\Laravel\Eloquent\Auth\ImpressionCast;
+use App\Infrastructure\Laravel\Eloquent\Person\PersonRankHistoryRecord;
 use Carbon\Carbon;
 use Database\Factories\Domain\Person\PersonFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -58,6 +59,9 @@ class Person extends AggregatedModel
     /** @see PersonFactory */
     use HasFactory;
 
+    /** @var list<PersonRankHistory>|null */
+    private ?array $rankHistoryToPersist = null;
+
     public function protocolLines(): HasMany
     {
         return $this->hasMany(ProtocolLine::class);
@@ -71,6 +75,20 @@ class Person extends AggregatedModel
     public function payments(): HasMany
     {
         return $this->hasMany(PersonPayment::class);
+    }
+
+    /** @return HasMany<PersonRankHistoryRecord, $this> */
+    public function rankHistoryRecords(): HasMany
+    {
+        return $this->hasMany(PersonRankHistoryRecord::class);
+    }
+
+    /** @return Collection<int, PersonRankHistory> */
+    public function rankHistories(): Collection
+    {
+        return $this->rankHistoryRecords
+            ->map(static fn (PersonRankHistoryRecord $record): PersonRankHistory => $record->toDomain())
+            ->values();
     }
 
     public function club(): HasOne
@@ -106,13 +124,35 @@ class Person extends AggregatedModel
         $this->recordThat(new PersonDisabled($this));
     }
 
-    public function replaceRankProjection(CalculatedPersonRank $projection): void
+    public function updateRanks(PersonRankState $rankState, Impression $impression): void
     {
-        $this->current_rank = $projection->currentRank;
-        $this->current_rank_started_on = $projection->startedOn?->toMutable();
-        $this->current_rank_activated_on = $projection->activatedOn?->toMutable();
-        $this->current_rank_finished_on = $projection->finishedOn?->toMutable();
+        $this->current_rank = $rankState->current->rank;
+        $this->current_rank_started_on = $rankState->current->startedOn;
+        $this->current_rank_activated_on = $rankState->current->activatedOn;
+        $this->current_rank_finished_on = $rankState->current->finishedOn;
+        $this->updated = $impression;
+
+        $this->rankHistoryToPersist = $rankState->history;
+
+        $this->recordThat(new PersonRanksUpdated($this));
     }
+
+    public function currentRank(): PersonRank
+    {
+        return new PersonRank(
+            rank: $this->current_rank ?? Rank::WithoutRank,
+            startedOn: $this->current_rank_started_on,
+            activatedOn: $this->current_rank_activated_on,
+            finishedOn: $this->current_rank_finished_on,
+        );
+    }
+
+    /** @return list<PersonRankHistory>|null */
+    public function rankHistoryToPersist(): ?array
+    {
+        return $this->rankHistoryToPersist;
+    }
+
     protected function casts(): array
     {
         return [

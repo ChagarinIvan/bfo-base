@@ -170,11 +170,11 @@ routes, Blade-шаблонам, bindings, переводам и тестам.
 
 **Решение**: у разрядов не будет отдельного `RankRepository`. `PersonRepository` отвечает
 за атомарное сохранение текущих полей `Person` и принадлежащей ему истории; узкий port
-`RankFacts` читает только необходимые protocol-derived факты через Eloquent adapter.
+`RankFactsCollector` читает только необходимые protocol-derived факты через Eloquent adapter.
 Domain-калькулятор не зависит ни от одного репозитория.
 
 **Обоснование**: это отражает ownership истории человеком и не оставляет в целевом пути
-legacy `app/Repositories` или искусственный persistence boundary для не-агрегата. `RankFacts`
+legacy `app/Repositories` или искусственный persistence boundary для не-агрегата. `RankFactsCollector`
 не расширяет общий `ProtocolLineRepository` и не создаёт второй domain aggregate.
 
 **Рассмотренные альтернативы**:

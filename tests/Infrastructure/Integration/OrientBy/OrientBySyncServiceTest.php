@@ -58,7 +58,7 @@ final class OrientBySyncServiceTest extends TestCase
 
         $person->refresh();
         $this->assertSame(Rank::FirstRank, $person->current_rank);
-        $this->assertSame('2026-01-01', $person->current_rank_started_on?->toDateString());
+        $this->assertSame('2026-01-01', $person->current_rank_started_on?->format('Y-m-d'));
         self::assertDatabaseCount('person_rank_histories', 0);
     }
 

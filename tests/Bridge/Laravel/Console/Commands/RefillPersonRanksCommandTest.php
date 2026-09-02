@@ -29,7 +29,10 @@ final class RefillPersonRanksCommandTest extends TestCase
             'current_rank_finished_on' => '2028-01-01',
         ]);
 
-        $this->artisan('ranks:refill')->assertSuccessful();
+        $this->artisan('persons:ranks:refill 1')
+            ->expectsOutput('Starting person-rank refill.')
+            ->expectsOutput('Finished person-rank refill: 1 people rebuilt.')
+            ->assertSuccessful();
 
         $person->refresh();
         $this->assertSame(Rank::WithoutRank, $person->current_rank);

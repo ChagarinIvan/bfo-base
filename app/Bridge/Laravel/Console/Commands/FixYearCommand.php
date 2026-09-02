@@ -40,7 +40,7 @@ final class FixYearCommand extends Command
         $this->info(sprintf('Has %d persons', count($persons)));
 
         foreach ($persons as $person) {
-            $person = $this->person->execute(new ViewPerson($person->id, true));
+            $person = $this->person->execute(new ViewPerson($person->id, includeProtocolLines: true));
             $groupedByYearProtocolLines = $person->groupedByYearProtocolLines;
             $protocolLines = array_shift($groupedByYearProtocolLines);
             $info = new PersonInfoDto();

@@ -45,7 +45,7 @@ export interface Person {
     lastname: string
     firstname: string
     birthYear: number | null
-    rankId: string
+    rankId: number
     created?: Impression
     updated?: Impression
 }
@@ -83,7 +83,7 @@ export interface ClubSearchQuery {
 
 export interface PersonSearchQuery {
     clubId?: number
-    rankId?: string
+    rankId?: number
     page?: number
     perPage?: number
 }

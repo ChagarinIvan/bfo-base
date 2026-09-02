@@ -10,8 +10,8 @@ use App\Application\Dto\Person\PersonInfoDto;
 use App\Application\Service\Person\AddPerson;
 use App\Application\Service\Person\AddPersonService;
 use App\Application\Service\Person\Exception\FailedToAddPerson;
-use App\Application\Service\Rank\RebuildPersonRanks;
-use App\Application\Service\Rank\RebuildPersonRanksService;
+use App\Application\Service\Person\RebuildPersonRanks;
+use App\Application\Service\Person\RebuildPersonRanksService;
 use App\Domain\Club\Club;
 use App\Domain\Club\ClubNameNormalizer;
 use App\Domain\Club\ClubRepository;
@@ -63,7 +63,7 @@ final class IdentProtocolLineCommand extends Command
                 $protocolLine->save();
             });
 
-            $rankService->execute(new RebuildPersonRanks($personId));
+            $rankService->execute(new RebuildPersonRanks($personId, new UserId($userId)));
         } else {
             if ($protocolLines->isEmpty()) {
                 return;
@@ -99,7 +99,7 @@ final class IdentProtocolLineCommand extends Command
                 $protocolLine->save();
             });
 
-            $rankService->execute(new RebuildPersonRanks($personId));
+            $rankService->execute(new RebuildPersonRanks($personId, new UserId($userId)));
         }
     }
 }

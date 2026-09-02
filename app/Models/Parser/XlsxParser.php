@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Models\Parser;
 
-use App\Domain\Rank\Rank;
 use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -159,7 +158,7 @@ class XlsxParser extends AbstractParser
             case 'club':
                 return $columnData;
             case 'complete_rank':
-                return Rank::validateRank($columnData) ? $columnData : null;
+                return $this->rankNormalizer->isValid($columnData) ? $columnData : null;
             case 'time':
                 try {
                     $time = Carbon::createFromTimeString($columnData);

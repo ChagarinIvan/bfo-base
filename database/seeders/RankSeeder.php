@@ -49,12 +49,12 @@ class RankSeeder extends Seeder
 
         Person::factory(state: ['id' => 1001])->createOne();
 
-        ProtocolLine::factory(state: ['distance_id' => 1001, 'person_id' => 1001, 'activate_rank' => '2019-04-14', 'complete_rank' => Rank::SECOND_RANK])->createOne();
-        ProtocolLine::factory(state: ['distance_id' => 1002, 'person_id' => 1001, 'activate_rank' => '2019-05-14', 'complete_rank' => Rank::SECOND_RANK])->createOne();
-        ProtocolLine::factory(state: ['distance_id' => 1003, 'person_id' => 1001, 'activate_rank' => '2020-08-29', 'complete_rank' => Rank::FIRST_RANK])->createOne();
-        ProtocolLine::factory(state: ['distance_id' => 1004, 'person_id' => 1001, 'activate_rank' => '2021-08-29', 'complete_rank' => Rank::FIRST_RANK])->createOne();
-        ProtocolLine::factory(state: ['distance_id' => 1007, 'person_id' => 1001, 'activate_rank' => '2023-07-01', 'complete_rank' => Rank::FIRST_RANK])->createOne();
-        ProtocolLine::factory(state: ['distance_id' => 1005, 'person_id' => 1001, 'activate_rank' => '2024-05-08', 'complete_rank' => Rank::FIRST_RANK])->createOne();
-        ProtocolLine::factory(state: ['distance_id' => 1006, 'person_id' => 1001, 'activate_rank' => null, 'complete_rank' => Rank::SMC_RANK])->createOne();
+        ProtocolLine::factory(state: ['distance_id' => 1001, 'person_id' => 1001, 'activate_rank' => '2019-04-14', 'complete_rank' => Rank::SecondRank->label()])->createOne();
+        ProtocolLine::factory(state: ['distance_id' => 1002, 'person_id' => 1001, 'activate_rank' => '2019-05-14', 'complete_rank' => Rank::SecondRank->label()])->createOne();
+        ProtocolLine::factory(state: ['distance_id' => 1003, 'person_id' => 1001, 'activate_rank' => '2020-08-29', 'complete_rank' => Rank::FirstRank->label()])->createOne();
+        ProtocolLine::factory(state: ['distance_id' => 1004, 'person_id' => 1001, 'activate_rank' => '2021-08-29', 'complete_rank' => Rank::FirstRank->label()])->createOne();
+        ProtocolLine::factory(state: ['distance_id' => 1007, 'person_id' => 1001, 'activate_rank' => '2023-07-01', 'complete_rank' => Rank::FirstRank->label()])->createOne();
+        ProtocolLine::factory(state: ['distance_id' => 1005, 'person_id' => 1001, 'activate_rank' => '2024-05-08', 'complete_rank' => Rank::FirstRank->label()])->createOne();
+        ProtocolLine::factory(state: ['distance_id' => 1006, 'person_id' => 1001, 'activate_rank' => null, 'complete_rank' => 'КМС'])->createOne();
     }
 }

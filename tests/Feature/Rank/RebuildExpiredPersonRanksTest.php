@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Rank;
 
-use App\Application\Service\Rank\RebuildExpiredPersonRanksService;
+use App\Application\Dto\Auth\UserId;
+use App\Application\Service\Person\RebuildExpiredPersonRanks;
+use App\Application\Service\Person\RebuildExpiredPersonRanksService;
 use App\Domain\Person\Person;
 use App\Domain\Rank\Rank;
 use Carbon\Carbon;
@@ -32,7 +34,10 @@ final class RebuildExpiredPersonRanksTest extends TestCase
             'current_rank_finished_on' => Carbon::today()->addDay(),
         ]);
 
-        app(RebuildExpiredPersonRanksService::class)->execute();
+        app(RebuildExpiredPersonRanksService::class)->execute(new RebuildExpiredPersonRanks(
+            userId: new UserId(1),
+            criteria: ['rankFinishedBefore' => Carbon::today()],
+        ));
 
         $expired->refresh();
         $actual->refresh();

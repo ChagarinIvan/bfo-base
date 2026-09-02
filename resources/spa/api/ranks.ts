@@ -1,13 +1,28 @@
 import { api } from './client'
 
 export interface RankOption {
-    id: string
+    id: number
     label: string
 }
 
 const RANKS_CACHE_KEY = 'spa_ranks_cache'
 const RANKS_CACHE_TTL_MS = 60 * 60 * 1000
 let memoryCache: { expiresAt: number; ranks: RankOption[] } | null = null
+
+function isRankCache(value: unknown): value is { expiresAt: number; ranks: RankOption[] } {
+    return typeof value === 'object'
+        && value !== null
+        && 'expiresAt' in value
+        && typeof value.expiresAt === 'number'
+        && 'ranks' in value
+        && Array.isArray(value.ranks)
+        && value.ranks.every((rank): rank is RankOption => typeof rank === 'object'
+            && rank !== null
+            && 'id' in rank
+            && Number.isInteger(rank.id)
+            && 'label' in rank
+            && typeof rank.label === 'string')
+}
 
 export function clearRanksCache(): void {
     memoryCache = null
@@ -28,11 +43,7 @@ export async function getRanks(): Promise<RankOption[]> {
             const stored = JSON.parse(
                 localStorage.getItem(RANKS_CACHE_KEY) ?? 'null',
             ) as typeof memoryCache
-            if (
-                stored &&
-                stored.expiresAt > now &&
-                Array.isArray(stored.ranks)
-            ) {
+            if (isRankCache(stored) && stored.expiresAt > now) {
                 memoryCache = stored
                 return stored.ranks
             }

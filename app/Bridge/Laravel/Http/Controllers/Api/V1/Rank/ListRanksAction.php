@@ -12,7 +12,7 @@ final class ListRanksAction extends BaseController
 {
     use ApiAction;
 
-    /** @return list<array{id: string, label: string}> */
+    /** @return list<array{id: int, label: string}> */
     public function __invoke(ListRanks $listRanks): array
     {
         return $listRanks->execute();

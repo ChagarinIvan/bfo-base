@@ -41,8 +41,8 @@ line и подтвердить, что текущий разряд и истор
 ### 5. API и отсутствие N+1
 
 Запросить `GET /api/v1/ranks` и проверить полный отсортированный каталог `id/label`.
-Запросить `GET /api/v1/persons?rankId=first_rank` и
-`GET /api/v1/persons?rankId=without_rank`; проверить поле `rankId`, фильтр, пагинацию и
+Запросить `GET /api/v1/persons?rankId=6` и
+`GET /api/v1/persons?rankId=0`; проверить поле `rankId`, фильтр, пагинацию и
 валидацию недопустимого значения. Проверить SPA-кэш справочника: hit, истечение часа и
 некорректные данные `localStorage`. Интеграционный query-test подтверждает, что увеличение
 размера страницы не добавляет обращений для определения ранга. Проверить `EXPLAIN` списка
@@ -67,12 +67,12 @@ line и подтвердить, что текущий разряд и истор
 - `composer cs` — OK.
 - `composer stan` — OK, включая `app`, `tests` и `config`.
 - `composer rector -- --dry-run` — OK.
-- Узкий набор фичи — OK: 38 тестов, 146 assertions, 1 PHPUnit notice.
-- Последний полный `composer test` — OK: 352 теста, 2733 assertions, 1 PHPUnit notice; после финальных локальных правок повтор не запускался по решению владельца задачи.
+- Узкий набор фичи — OK: 42 теста, 166 assertions, 2 PHPUnit notices.
+- Полный `composer test` после PR-правок — OK: 368 тестов, 2798 assertions, 2 PHPUnit notices.
 - `npm run ci` — OK: lint, typecheck, 69 Vitest-тестов и SPA build; SPA-файлы после этого не менялись.
 
 Projection, enum, history persistence, `/api/v1/ranks`, `rankId`-фильтр,
-rebuild-команда, batch job и ежедневное истечение реализованы. Удалены
+rebuild-команда `persons:ranks:refill {userId}`, batch job и ежедневное истечение реализованы. Удалены
 устаревшие rank services/repositories/aggregate, старый список/check/export и
 веб-refill entry point; сохранены только history и ручная активация. Повторная
 идентификация protocol lines отправляет одну batch-задачу на уникальных людей.

@@ -66,11 +66,11 @@ final class ListPersonsActionTest extends TestCase
         DB::table('person')->where('id', 2)->update(['current_rank' => Rank::SecondRank->value]);
         DB::table('person')->where('id', 3)->update(['current_rank' => Rank::WithoutRank->value]);
 
-        $this->getJson('/api/v1/persons?rankId=first_rank')
+        $this->getJson('/api/v1/persons?rankId=6')
             ->assertOk()
             ->assertJsonCount(1)
             ->assertJsonPath('0.id', '1')
-            ->assertJsonPath('0.rankId', 'first_rank')
+            ->assertJsonPath('0.rankId', 6)
         ;
     }
 
@@ -82,18 +82,18 @@ final class ListPersonsActionTest extends TestCase
         DB::table('person')->where('id', 1)->update(['current_rank' => Rank::FirstRank->value]);
         DB::table('person')->where('id', 2)->update(['current_rank' => Rank::WithoutRank->value]);
 
-        $this->getJson('/api/v1/persons?rankId=without_rank')
+        $this->getJson('/api/v1/persons?rankId=0')
             ->assertOk()
             ->assertJsonCount(1)
             ->assertJsonPath('0.id', '2')
-            ->assertJsonPath('0.rankId', 'without_rank')
+            ->assertJsonPath('0.rankId', 0)
         ;
     }
 
     #[Test]
     public function it_rejects_an_unknown_rank_id(): void
     {
-        $this->getJson('/api/v1/persons?rankId=unknown_rank')
+        $this->getJson('/api/v1/persons?rankId=99')
             ->assertUnprocessable()
             ->assertJsonPath('errors.0.field', 'rankId')
         ;

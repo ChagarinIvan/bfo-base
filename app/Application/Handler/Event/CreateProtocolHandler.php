@@ -11,6 +11,6 @@ final class CreateProtocolHandler extends ParseProtocolHandler implements Should
 {
     public function handle(EventCreated $systemEvent): void
     {
-        $this->parse($systemEvent->event->file, $systemEvent->event->id);
+        $this->parse($systemEvent->event->file, $systemEvent->event->id, $systemEvent->event->created);
     }
 }

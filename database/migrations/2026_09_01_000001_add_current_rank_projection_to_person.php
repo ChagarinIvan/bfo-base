@@ -11,7 +11,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('person', static function (Blueprint $table): void {
-            $table->string('current_rank')->default('without_rank')->after('active');
+            $table->unsignedTinyInteger('current_rank')->default(0)->after('active');
             $table->date('current_rank_started_on')->nullable()->after('current_rank');
             $table->date('current_rank_activated_on')->nullable()->after('current_rank_started_on');
             $table->date('current_rank_finished_on')->nullable()->after('current_rank_activated_on');

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Models\Parser;
 
-use App\Domain\Rank\Rank;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use PhpOffice\PhpSpreadsheet\Reader\Exception;
@@ -53,8 +52,8 @@ class OldObelarusNetXlsxParser extends AbstractParser
             $protocolLine = [
                 'serial_number' => (int)$line[0],
                 'runner_number' => (int)$line[4],
-                'rank' => Rank::validateRank($line[7]) ? $line[7] : null,
-                'complete_rank' => Rank::validateRank($line[8]) ? $line[8] : null,
+                'rank' => $this->rankNormalizer->isValid($line[7]) ? $line[7] : null,
+                'complete_rank' => $this->rankNormalizer->isValid($line[8]) ? $line[8] : null,
                 'club' => mb_convert_case(mb_strtolower($line[3]), MB_CASE_TITLE, "UTF-8"),
                 'place' => is_numeric($line[6]) ? (int)$line[6] : null,
                 'points' => is_numeric($line[9]) ? (int)$line[9] : 0,

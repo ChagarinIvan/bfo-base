@@ -29,13 +29,13 @@ description: "Задачи реализации актуального разр�
 **Цель**: создать чистую доменную модель, схему проекции и целевые persistence-порты без параллельного legacy-пути.
 
 - [X] T005 Атомарно переключить usages с прежнего Eloquent aggregate/repository на целевую модель, удалив legacy-контракт из `app/Domain/Rank/RankRepository.php` и заменив прежний `app/Domain/Rank/Rank.php` новым enum без промежуточного рабочего состояния с двумя типами `Rank`.
-- [X] T006 Реализовать string-backed enum, нормализацию обозначений из protocol line, порядок силы, labels и признаки спортивных правил в `app/Domain/Rank/Rank.php` и покрыть cases/invalid input в `tests/Domain/Rank/RankTest.php`.
-- [X] T007 [P] Ввести чистые входные и выходные объекты расчёта в `app/Domain/Rank/RankAchievement.php`, `app/Domain/Rank/CalculatedPersonRank.php` и `app/Domain/Person/PersonRankHistory.php`.
+- [X] T006 Реализовать integer-backed enum, нормализацию обозначений из protocol line, порядок силы, labels и признаки спортивных правил в `app/Domain/Rank/Rank.php` и покрыть cases/invalid input в `tests/Domain/Rank/RankTest.php`.
+- [X] T007 [P] Ввести чистые входные и выходные объекты расчёта в `app/Domain/Rank/RankFact.php`, `app/Domain/Person/PersonRank.php`, `app/Domain/Rank/PersonRankState.php` и `app/Domain/Rank/PersonRankHistory.php`.
 - [X] T008 Реализовать чистый калькулятор, перенеся в него подтверждённое T002 поведение, в `app/Domain/Rank/RankCalculator.php` и адаптировать `tests/Domain/Rank/RankCalculationCharacterizationTest.php` к новому входу.
 - [X] T009 Расширить aggregate `Person` операцией атомарной замены materialized rank state и owned history в `app/Domain/Person/Person.php`, не загружая историю при обычном чтении человека.
 - [X] T010 Добавить обратимую миграцию `database/migrations/*_add_current_rank_projection_to_persons.php` для `persons.current_rank`, дат актуального периода и lean-индексов `(current_rank, active)` и `current_rank_finished_on`.
 - [X] T011 Добавить обратимую миграцию `database/migrations/*_create_person_rank_histories_table.php` с protocol line, прямыми `distance_id`/`event_id`/`competition_id`, датами, типом изменения и индексами из `specs/009-rank-projection/data-model.md`.
-- [X] T012 Выделить чтение фактов protocol lines в целевой порт `app/Domain/Rank/RankFacts.php` и Eloquent adapter `app/Infrastructure/Laravel/Eloquent/Rank/EloquentRankFacts.php`; это заменяет legacy repository без создания нового `ProtocolLineRepository`-контракта.
+- [X] T012 Выделить чтение фактов protocol lines в целевой порт `app/Domain/Rank/RankFactsCollector.php` и Eloquent adapter `app/Infrastructure/Laravel/Eloquent/Rank/EloquentRankFactsCollector.php`; это заменяет legacy repository без создания нового `ProtocolLineRepository`-контракта.
 - [X] T013 Изменить `app/Infrastructure/Laravel/Eloquent/Person/EloquentPersonRepository.php` и `app/Domain/Person/PersonRepository.php`, чтобы они транзакционно сохраняли текущие поля Person и заменяли принадлежащую историю без отдельного rank repository.
 - [X] T014 Покрыть persistence-схему, enum casts, атомарную замену истории и требуемые планы запросов в `tests/Infrastructure/Laravel/Eloquent/Person/EloquentPersonRepositoryTest.php` и `tests/Infrastructure/Laravel/Eloquent/Person/PersonRankQueryPlanTest.php`; подготовить в `app/Bridge/Laravel/Console/Commands/RefillPersonRanksCommand.php` безопасный первичный полный backfill после миграции.
 
@@ -51,7 +51,7 @@ description: "Задачи реализации актуального разр�
 
 ### Тесты пользовательской истории 1
 
-- [X] T015 [P] [US1] Добавить API integration-тесты `rankId`, фильтра `without_rank`, ошибок недопустимого ID, пагинации и отсутствия N+1 в `tests/Feature/Api/V1/Person/ListPersonsActionTest.php`.
+- [X] T015 [P] [US1] Добавить API integration-тесты `rankId`, фильтра `0` (без разряда), ошибок недопустимого ID, пагинации и отсутствия N+1 в `tests/Feature/Api/V1/Person/ListPersonsActionTest.php`.
 - [X] T016 [P] [US1] Добавить contract-тест стабильного порядка и `id`/`label` справочника в `tests/Feature/Api/V1/Rank/ListRanksActionTest.php`.
 - [X] T017 [P] [US1] Добавить unit-тест кэша справочника (memory, один час `localStorage`, invalid cache) в `resources/spa/api/ranks.test.ts`.
 
@@ -106,8 +106,8 @@ description: "Задачи реализации актуального разр�
 
 ### Реализация пользовательской истории 3
 
-- [X] T035 [US3] Реализовать read use case истории только из `PersonRankHistory` в `app/Application/Service/Person/ListPersonRankHistory.php`, `app/Application/Dto/Person/PersonRankHistoryDto.php` и `app/Application/Port/PersonRankHistoryReader.php` с Eloquent adapter без загрузки истории на обычном списке персон.
-- [X] T036 [US3] Перевести history action и Artisan entry point на T035/T027; отдельный веб-refill action и его оболочка удалены как лишняя точка входа, полный refill выполняется через `ranks:refill`.
+- [X] T035 [US3] Реализовать чтение истории через `ViewPerson` с опциональным `withRanksHistory`, eager-load relation в `ViewPersonService`, сборку в `PersonAssembler` и `PersonRankHistoryDto`, без загрузки истории на обычном списке персон.
+- [X] T036 [US3] Перевести history action и Artisan entry point на T035/T027; отдельный веб-refill action и его оболочка удалены как лишняя точка входа, полный refill выполняется через `persons:ranks:refill {userId}`.
 - [X] T037 [US3] Подключить ежедневный Scheduler, который находит только истёкшие `current_rank_finished_on` и отправляет их в T027, в `app/Bridge/Laravel/Console/Kernel.php` и `app/Application/Service/Rank/RebuildExpiredPersonRanksService.php`.
 - [X] T038 [US3] Выполнить узкие тесты full refill, истории и ежедневного истечения в `tests/Bridge/Laravel/Console/Commands/RefillPersonRanksCommandTest.php`, `tests/Feature/Rank/RefillPersonRanksTest.php`, `tests/Feature/Rank/RebuildExpiredPersonRanksTest.php` и `tests/Bridge/Laravel/Http/Controllers/Rank/ShowPersonRanksActionTest.php`.
 
@@ -139,6 +139,14 @@ description: "Задачи реализации актуального разр�
 - [X] T045 Выполнить полный набор гейтов один раз: `composer cs`, `composer stan`, `composer rector -- --dry-run`, `composer test` и frontend CI `npm run ci`; зафиксировать результат в `specs/009-rank-projection/quickstart.md`.
 - [X] T046 Выполнить API/SPA validation из `specs/009-rank-projection/quickstart.md`, проверить N+1 и `EXPLAIN` трёх запросов, затем зафиксировать результаты в `specs/009-rank-projection/quickstart.md`.
 - [X] T047 Сверить итоговую реализацию с FR-001–FR-020, SC-001–SC-008 и контрактами в `specs/009-rank-projection/spec.md` и `specs/009-rank-projection/contracts/`.
+
+### Правки по PR review
+
+- [X] T048 Исправить удаление/замену протокола: до cleanup собрать unique person IDs, выполнить rebuild с `Impression` события и удалить derived history каскадно вместе с источником.
+- [X] T049 Восстановить продление периода для активных одинаковых разрядов; отделить `RankNormalizer`, оставить Carbon в domain calculation и ввести `PersonRank` + `PersonRanksUpdated`.
+- [X] T050 Убрать выделенный persistence/read path projection: use case меняет aggregate и вызывает `PersonRepository::update()`, history читается сервисами через Person; удалить Application ports и adapters.
+- [X] T051 Сделать refill/expiry потоковыми; команды принимают `userId`, выводят start/finish, а сервисы создают `Impression` через `Clock`; event/job paths передают автора исходного события.
+- [X] T052 Перевести `Rank` и контракт SPA/API на integer backed values: хранить `current_rank` и history `rank` в `unsignedTinyInteger`, передавать числовой `rankId` и сравнивать enum по `value` без `strength()`.
 
 ---
 

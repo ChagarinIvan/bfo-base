@@ -16,11 +16,11 @@ final class SearchPersonDto extends AbstractDto
     {
         return [
             'clubId' => ['nullable', 'integer', 'min:1'],
-            'rankId' => ['nullable', 'string', 'in:' . implode(',', array_map(static fn (Rank $rank): string => $rank->value, Rank::cases()))],
+            'rankId' => ['nullable', 'integer', 'in:' . implode(',', array_map(static fn (Rank $rank): int => $rank->value, Rank::cases()))],
         ];
     }
 
-    public function __construct(public ?int $clubId = null, public ?string $rankId = null)
+    public function __construct(public ?int $clubId = null, public ?int $rankId = null)
     {
     }
 
@@ -31,7 +31,7 @@ final class SearchPersonDto extends AbstractDto
             $this->clubId = (int) $data['clubId'];
         }
         if (array_key_exists('rankId', $data)) {
-            $this->rankId = (string) $data['rankId'];
+            $this->rankId = (int) $data['rankId'];
         }
 
         return $this;

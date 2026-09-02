@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Laravel\Eloquent\Person;
 
+use App\Domain\Person\Person;
+use App\Domain\Person\PersonRankHistory;
+use App\Domain\Person\RankChangeType;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\Rank\Rank;
 use Carbon\Carbon;
@@ -21,7 +24,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $event_id
  * @property int $competition_id
  * @property Rank $rank
- * @property string $change_type
+ * @property RankChangeType $change_type
  * @property Carbon $achieved_on
  * @property Carbon|null $activated_on
  * @property Carbon $started_on
@@ -42,10 +45,32 @@ final class PersonRankHistoryRecord extends Model
         return $this->belongsTo(ProtocolLine::class);
     }
 
+    public function person(): BelongsTo
+    {
+        return $this->belongsTo(Person::class);
+    }
+
+    public function toDomain(): PersonRankHistory
+    {
+        return new PersonRankHistory(
+            protocolLineId: $this->protocol_line_id,
+            distanceId: $this->distance_id,
+            eventId: $this->event_id,
+            competitionId: $this->competition_id,
+            rank: $this->rank,
+            changeType: $this->change_type,
+            achievedOn: $this->achieved_on,
+            activatedOn: $this->activated_on,
+            startedOn: $this->started_on,
+            finishedOn: $this->finished_on,
+        );
+    }
+
     protected function casts(): array
     {
         return [
             'rank' => Rank::class,
+            'change_type' => RankChangeType::class,
             'achieved_on' => 'datetime:Y-m-d',
             'activated_on' => 'datetime:Y-m-d',
             'started_on' => 'datetime:Y-m-d',

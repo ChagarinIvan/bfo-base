@@ -28,7 +28,7 @@
 *Гейт до исследования и после дизайна: пройден.*
 
 - **Слои**: enum `Rank` и вычисление правил изолируются в Domain; Application оркестрирует транзакционный rebuild; Bridge запускает HTTP/queue/scheduler; Eloquent и bulk-запросы остаются в Infrastructure.
-- **Legacy containment**: `app/Services/RankService`, `app/Repositories/RanksRepository` и разрозненные jobs/commands не расширяются и не сохраняются. Отдельный rank-репозиторий не создаётся: `PersonRepository` сохраняет owned state и историю, а узкий `RankFacts` port читает protocol-derived факты через Infrastructure.
+- **Legacy containment**: `app/Services/RankService`, `app/Repositories/RanksRepository` и разрозненные jobs/commands не расширяются и не сохраняются. Отдельный rank-репозиторий не создаётся: `PersonRepository` сохраняет owned state и историю, а узкий `RankFactsCollector` port читает protocol-derived факты через Infrastructure.
 - **Зависимости**: новые классы получают зависимости через конструктор. Фасады и service locator в новом пути не используются.
 - **Тестирование**: характеристические и Domain/Application unit-тесты не создают Eloquent-модели; реальные записи допустимы только в integration/API тестах. Полные гейты — один раз в конце фичи.
 - **N+1**: list/export используют материализованные поля `Person`; история получает источники пакетно.
@@ -74,7 +74,7 @@ tests/
 
 **Решение по структуре**: новый путь не добавляет классы в `app/Services` или
 `app/Repositories` и не оставляет параллельный rank persistence. `PersonRepository` сохраняет
-owned state и историю; `RankFacts` — узкий целевой port для чтения фактов разрядов из protocol
+owned state и историю; `RankFactsCollector` — узкий целевой port для чтения фактов разрядов из protocol
 lines. Прежняя самостоятельная модель `Rank` заменяется производной историей, принадлежащей
 `Person`, с инфраструктурным хранением.
 

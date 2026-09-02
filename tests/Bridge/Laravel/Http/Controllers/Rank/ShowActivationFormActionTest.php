@@ -66,9 +66,9 @@ final class ShowActivationFormActionTest extends TestCase
             'finished_on' => '2026-01-01',
         ]);
 
-        $this->get("/ranks/$rank->id/activate")
+        $this->get("/ranks/$protocolLine->id/activate")
             ->assertStatus(Response::HTTP_OK)
-            ->assertSee(sprintf('<form method="POST" action="http://localhost/ranks/%s/activate">', $rank->id), false)
+            ->assertSee(sprintf('<form method="POST" action="http://localhost/ranks/%s/activate">', $protocolLine->id), false)
         ;
     }
 }

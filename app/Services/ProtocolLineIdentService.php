@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Bridge\Laravel\Jobs\RebuildPersonRanksJob;
+use App\Domain\Auth\Impression;
 use App\Domain\PersonPrompt\PersonPrompt;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Models\IdentLine;
@@ -105,7 +106,7 @@ class ProtocolLineIdentService
      * - по прямому совпадению идентификатора (на лету)
      * - по расстоянию левенштейна (в очередь)
      */
-    public function identPersons(Collection $protocolLines): void
+    public function identPersons(Collection $protocolLines, Impression $impression): void
     {
         // пробуем идентифицировать людей из нового протокола прямым подобием идентификационных строк
         $notIdentedLines = $this->simpleIdent($protocolLines);
@@ -117,7 +118,7 @@ class ProtocolLineIdentService
         // Пересчитываем затронутых спортсменов одной идемпотентной batch-задачей.
         $personIds = $identedLines->pluck('person_id')->filter()->unique()->values()->all();
         if ($personIds !== []) {
-            RebuildPersonRanksJob::dispatch($personIds);
+            RebuildPersonRanksJob::dispatch($personIds, $impression);
         }
 
         // create ident line

@@ -8,11 +8,12 @@
     use App\Bridge\Laravel\Http\Controllers\Rank\ShowPersonRanksAction;
     use App\Application\Dto\Person\LegacyViewPersonDto;
     use App\Domain\Person\Citizenship;
+    use App\Domain\Rank\Rank;
     use Illuminate\Support\Str;
 
     /**
      * @var LegacyViewPersonDto $person
-     * @var string $rank
+     * @var int $rank
      */
 
     $personName = "{$person->lastname}_$person->firstname";
@@ -23,10 +24,10 @@
 @section('title', $person->lastname . ' ' . $person->firstname)
 
 @section('content')
-    @if ($rank !== 'without_rank')
+    @if ($rank !== Rank::WithoutRank->value)
         <div class="row mb-3">
             <div class="col-12">
-                <h4>{{ \App\Domain\Rank\Rank::from($rank)->label() }} {{ __('app.common.do') }} {{ $rankFinishedOn ?? '-' }}</h4>
+                <h4>{{ Rank::from($rank)->label() }} {{ __('app.common.do') }} {{ $rankFinishedOn ?? '-' }}</h4>
             </div>
         </div>
     @endif

@@ -20,7 +20,7 @@ class ShowPersonAction extends BaseController
         ViewPersonService $service,
     ): RedirectResponse|View {
         try {
-            $person = $service->execute(new ViewPerson($id, true));
+            $person = $service->execute(new ViewPerson($id, includeProtocolLines: true));
         } catch (PersonNotFound) {
             return $this->redirector->action(ShowPersonsListAction::class);
         }

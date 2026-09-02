@@ -8,7 +8,7 @@ use App\Domain\Distance\Distance;
 use App\Domain\Event\Event;
 use App\Domain\Group\Group;
 use App\Domain\ProtocolLine\ProtocolLine;
-use App\Domain\Rank\Rank;
+use App\Domain\Rank\RankNormalizer;
 use App\Repositories\GroupsRepository;
 use App\Repositories\ProtocolLinesRepository;
 use Illuminate\Support\Collection;
@@ -19,7 +19,8 @@ class ProtocolLineService
 {
     public function __construct(
         private readonly ProtocolLinesRepository $protocolLinesRepository,
-        private readonly GroupsRepository $groupsRepository
+        private readonly GroupsRepository $groupsRepository,
+        private readonly RankNormalizer $rankNormalizer,
     ) {
     }
 
@@ -45,9 +46,15 @@ class ProtocolLineService
             }
 
             $distance = $this->findDistance($group->id, $eventId, (int)($lineData['distance']['length'] ?? 0), (int)($lineData['distance']['points'] ?? 0));
-            $protocolLine->fillProtocolLine($distance->id);
+            $protocolLine->fillProtocolLine(
+                $distance->id,
+                $this->rankNormalizer->normalize($protocolLine->complete_rank)?->label() ?? '',
+            );
+
             $protocolLine->save();
-            $protocolLine->activate_rank = Rank::autoActivation($protocolLine->complete_rank)
+
+            $rank = $this->rankNormalizer->normalize($protocolLine->complete_rank);
+            $protocolLine->activate_rank = $rank?->isAutomaticallyActivated()
                 ? $protocolLine->event->date
                 : null;
             $protocolLine->save();
@@ -80,6 +87,17 @@ class ProtocolLineService
     public function deleteEventLines(Event $event): void
     {
         $event->protocolLines()->delete();
+    }
+
+    /** @return list<int> */
+    public function personIdsForEvent(Event $event): array
+    {
+        return $event->protocolLines()
+            ->whereNotNull('person_id')
+            ->distinct()
+            ->pluck('person_id')
+            ->map(static fn (int $personId): int => $personId)
+            ->all();
     }
 
     public function fastIdent(Collection $linesIds): void

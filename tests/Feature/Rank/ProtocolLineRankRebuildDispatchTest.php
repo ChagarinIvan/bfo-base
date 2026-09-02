@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature\Rank;
 
 use App\Bridge\Laravel\Jobs\RebuildPersonRanksJob;
+use App\Domain\Auth\Impression;
 use App\Domain\Competition\Competition;
 use App\Domain\Distance\Distance;
 use App\Domain\Event\Event;
@@ -14,6 +15,7 @@ use App\Domain\ProtocolLine\ProtocolLine;
 use App\Services\PersonPromptService;
 use App\Services\ProtocolLineIdentService;
 use App\Services\ProtocolLineService;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Queue;
@@ -45,7 +47,7 @@ final class ProtocolLineRankRebuildDispatchTest extends TestCase
         Queue::fake();
 
         new ProtocolLineIdentService($protocolLines, new PersonPromptService(), new Phonetics())
-            ->identPersons(collect([$firstLine, $secondLine]));
+            ->identPersons(collect([$firstLine, $secondLine]), new Impression(Carbon::parse('2026-01-01'), 1));
 
         Queue::assertPushed(RebuildPersonRanksJob::class, static fn(RebuildPersonRanksJob $job): bool => $job->personIds === [7]);
         Queue::assertPushed(RebuildPersonRanksJob::class, 1);

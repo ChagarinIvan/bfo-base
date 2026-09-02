@@ -14,10 +14,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('person_id')->constrained('person')->cascadeOnDelete();
             $table->foreignId('protocol_line_id')->constrained('protocol_lines')->cascadeOnDelete();
-            $table->foreignId('distance_id')->constrained('distances')->restrictOnDelete();
-            $table->foreignId('event_id')->constrained('events')->restrictOnDelete();
-            $table->foreignId('competition_id')->constrained('competitions')->restrictOnDelete();
-            $table->string('rank');
+            $table->foreignId('distance_id')->constrained('distances')->cascadeOnDelete();
+            $table->foreignId('event_id')->constrained('events')->cascadeOnDelete();
+            $table->foreignId('competition_id')->constrained('competitions')->cascadeOnDelete();
+            $table->unsignedTinyInteger('rank');
             $table->string('change_type');
             $table->date('achieved_on');
             $table->date('activated_on')->nullable();

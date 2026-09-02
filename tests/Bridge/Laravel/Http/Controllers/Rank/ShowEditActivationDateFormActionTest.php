@@ -52,7 +52,12 @@ final class ShowEditActivationDateFormActionTest extends TestCase
         $person = Person::factory()->createOne();
         $distance = Distance::factory()->createOne(['event_id' => $event->id]);
         /** @var ProtocolLine $protocolLine */
-        $protocolLine = ProtocolLine::factory()->createOne(['distance_id' => (int) $distance->getKey(), 'person_id' => $person->id, 'complete_rank' => 'КМС']);
+        $protocolLine = ProtocolLine::factory()->createOne([
+            'distance_id' => (int) $distance->getKey(),
+            'person_id' => $person->id,
+            'complete_rank' => 'КМС',
+            'activate_rank' => '1992-11-10',
+        ]);
         $rank = PersonRankHistoryRecord::query()->create([
             'person_id' => $person->id,
             'protocol_line_id' => (int) $protocolLine->getKey(),
@@ -67,9 +72,9 @@ final class ShowEditActivationDateFormActionTest extends TestCase
             'finished_on' => '1994-11-10',
         ]);
 
-        $this->get("/ranks/$rank->id/update-activation")
+        $this->get("/ranks/$protocolLine->id/update-activation")
             ->assertStatus(Response::HTTP_OK)
-            ->assertSee(sprintf('<form method="POST" action="http://localhost/ranks/%s/update-activation">', $rank->id), false)
+            ->assertSee(sprintf('<form method="POST" action="http://localhost/ranks/%s/update-activation">', $protocolLine->id), false)
             ->assertSee('<input class="form-control" type="date" id="date" name="date" value="1992-11-10">', false)
         ;
     }

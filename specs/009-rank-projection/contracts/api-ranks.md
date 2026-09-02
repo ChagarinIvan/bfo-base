@@ -7,17 +7,17 @@
 
 ```json
 [
-  {"id": "world_class_master", "label": "МСМК"},
-  {"id": "master_of_sport", "label": "МС"},
-  {"id": "candidate_master", "label": "КМС"},
-  {"id": "first_rank", "label": "I"},
-  {"id": "without_rank", "label": "б/р"}
+  {"id": 9, "label": "МСМК"},
+  {"id": 8, "label": "МС"},
+  {"id": 7, "label": "КМС"},
+  {"id": 6, "label": "I"},
+  {"id": 0, "label": "б/р"}
 ]
 ```
 
 | Поле | Тип | Описание |
 |------|-----|----------|
-| `id` | string | Backed value enum `Rank`, стабильный идентификатор для API, persistence и параметров фильтра. |
+| `id` | integer | Backed value enum `Rank`, стабильный идентификатор для API, persistence и параметров фильтра. |
 | `label` | string | Строковое представление enum для отображения пользователю. |
 
 Endpoint не требует авторизации и не имеет параметров. Клиент кэширует успешный ответ в

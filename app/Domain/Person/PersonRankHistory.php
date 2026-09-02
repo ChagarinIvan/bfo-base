@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Rank;
+namespace App\Domain\Person;
 
-use Carbon\CarbonImmutable;
+use App\Domain\Rank\Rank;
+use Carbon\Carbon;
 
 final readonly class PersonRankHistory
 {
@@ -14,11 +15,11 @@ final readonly class PersonRankHistory
         public int $eventId,
         public int $competitionId,
         public Rank $rank,
-        public string $changeType,
-        public CarbonImmutable $achievedOn,
-        public ?CarbonImmutable $activatedOn,
-        public CarbonImmutable $startedOn,
-        public ?CarbonImmutable $finishedOn,
+        public RankChangeType $changeType,
+        public Carbon $achievedOn,
+        public ?Carbon $activatedOn,
+        public Carbon $startedOn,
+        public ?Carbon $finishedOn,
     ) {
     }
 }

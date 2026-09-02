@@ -76,10 +76,10 @@
                         <td>
                             @if ($rank->activatedOn)
                                 <x-button text="app.rank.activation.edit" color="success" icon="radioactive"
-                                          url="{{ action(ShowEditActivationDateFormAction::class, [$rank->id]) }}" />
+                                          url="{{ action(ShowEditActivationDateFormAction::class, [$rank->protocolLineId]) }}" />
                             @else
                                 <x-button text="app.rank.activation" color="info" icon="radioactive"
-                                          url="{{ action(ShowActivationFormAction::class, [$rank->id]) }}" />
+                                          url="{{ action(ShowActivationFormAction::class, [$rank->protocolLineId]) }}" />
                             @endif
                         </td>
                     @endauth

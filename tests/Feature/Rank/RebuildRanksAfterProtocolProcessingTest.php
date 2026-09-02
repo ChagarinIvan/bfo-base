@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Rank;
 
-use App\Application\Service\Rank\RebuildPersonRanks;
-use App\Application\Service\Rank\RebuildPersonRanksService;
+use App\Application\Dto\Auth\UserId;
+use App\Application\Service\Person\RebuildPersonRanks;
+use App\Application\Service\Person\RebuildPersonRanksService;
 use App\Domain\Competition\Competition;
 use App\Domain\Distance\Distance;
 use App\Domain\Event\Event;
@@ -67,6 +68,6 @@ final class RebuildRanksAfterProtocolProcessingTest extends TestCase
 
     private function rebuild(int $personId): void
     {
-        app(RebuildPersonRanksService::class)->execute(new RebuildPersonRanks($personId));
+        app(RebuildPersonRanksService::class)->execute(new RebuildPersonRanks($personId, new UserId(1)));
     }
 }

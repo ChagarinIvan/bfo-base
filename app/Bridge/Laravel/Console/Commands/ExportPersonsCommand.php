@@ -60,7 +60,7 @@ class ExportPersonsCommand extends Command
                     $person->lastname,
                     $person->firstname,
                     $person->birthday?->format('Y-m-d'),
-                    $person->current_rank->label(),
+                    $person->currentRank()->rank->label(),
                 ], ';', escape: '\\');
             }
 

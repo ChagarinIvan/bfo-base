@@ -19,6 +19,6 @@ final class ListRanksTest extends TestCase
 
         $this->assertSame(Rank::cases()[0]->value, $result[0]['id']);
         $this->assertSame(Rank::cases()[0]->label(), $result[0]['label']);
-        $this->assertSame('without_rank', array_last($result)['id']);
+        $this->assertSame(0, array_last($result)['id']);
     }
 }

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Models\Parser;
 
-use App\Domain\Rank\Rank;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use function array_key_exists;
@@ -272,7 +271,7 @@ class OBelarusNetRelayParser extends AbstractParser
             }
         } elseif ($column === 'complete_rank') {
             $column = $lineData[$fieldsCount - $indent];
-            if ((Rank::validateRank($column) || $column === '-') && !in_array($column, ['1', '2', '3'], true)) {
+            if (($this->rankNormalizer->isValid($column) || $column === '-') && !in_array($column, ['1', '2', '3'], true)) {
                 $indent++;
                 $this->commandRank = $column;
             }
@@ -316,7 +315,7 @@ class OBelarusNetRelayParser extends AbstractParser
             $protocolLine['time'] = Carbon::createFromTimeString($timeColumn);
         } elseif ($column === 'rank') {
             $rank = $lineData[$fieldsCount - $indent];
-            if (Rank::validateRank($rank)) {
+            if ($this->rankNormalizer->isValid($rank)) {
                 $indent++;
                 $protocolLine['rank'] = $rank;
             }

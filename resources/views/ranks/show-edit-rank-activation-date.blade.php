@@ -1,8 +1,8 @@
 @php
     use App\Bridge\Laravel\Http\Controllers\Rank\UpdateRankActivationDateAction;
-    use App\Application\Dto\Rank\PersonRankHistoryDto;
+    use App\Domain\ProtocolLine\ProtocolLine;
     /**
-     * @var PersonRankHistoryDto $rank;
+     * @var ProtocolLine $rank;
      */
 @endphp
 
@@ -15,7 +15,7 @@
         <form method="POST" action="{{ action(UpdateRankActivationDateAction::class, [$rank->id]) }}">
             @csrf
             <div class="form-floating mb-3">
-                <input class="form-control" type="date" id="date" name="date" value="{{ $rank->activatedOn }}">
+                <input class="form-control" type="date" id="date" name="date" value="{{ $rank->activate_rank?->format('Y-m-d') }}">
                 <label for="date">{{ __('app.common.date') }}</label>
             </div>
             <div class="col-12">

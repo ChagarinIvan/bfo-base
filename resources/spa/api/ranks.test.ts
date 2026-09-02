@@ -11,7 +11,7 @@ describe('ranks api', () => {
     })
 
     it('loads and caches rank options', async () => {
-        const data = [{ id: 'first_rank', label: 'I' }]
+        const data = [{ id: 6, label: 'I' }]
         vi.mocked(api.get).mockResolvedValue({ data })
 
         await expect(getRanks()).resolves.toEqual(data)

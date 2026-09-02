@@ -42,7 +42,7 @@ final class UpdateRankActivationDateActionTest extends TestCase
 
         $this->seed(ProtocolLinesSeeder::class);
 
-        ProtocolLine::factory()->createOne(['id' => 107, 'distance_id' => 104, 'complete_rank' => Rank::SMC_RANK, 'person_id' => 102]);
+        ProtocolLine::factory()->createOne(['id' => 107, 'distance_id' => 104, 'complete_rank' => Rank::CandidateMaster->label(), 'person_id' => 102]);
         $line = ProtocolLine::query()->with('distance.event.competition')->findOrFail(107);
         $history = PersonRankHistoryRecord::query()->create([
             'person_id' => 102,
@@ -58,7 +58,7 @@ final class UpdateRankActivationDateActionTest extends TestCase
             'finished_on' => '2026-02-20',
         ]);
 
-        $this->post("/ranks/$history->id/update-activation", ['date' => '2024-02-21'])->assertStatus(Response::HTTP_FOUND);
+        $this->post("/ranks/$line->id/update-activation", ['date' => '2024-02-21'])->assertStatus(Response::HTTP_FOUND);
 
         $this->assertDatabaseHas('protocol_lines', [
             'id' => 107,
@@ -69,7 +69,7 @@ final class UpdateRankActivationDateActionTest extends TestCase
         $this->assertDatabaseHas('person_rank_histories', [
             'person_id' => 102,
             'protocol_line_id' => 107,
-            'rank' => 'candidate_master',
+            'rank' => Rank::CandidateMaster->value,
             'activated_on' => '2024-02-21',
         ]);
     }
@@ -86,7 +86,7 @@ final class UpdateRankActivationDateActionTest extends TestCase
 
         $this->seed(ProtocolLinesSeeder::class);
 
-        ProtocolLine::factory()->createOne(['id' => 107, 'distance_id' => 104, 'complete_rank' => Rank::SMC_RANK, 'person_id' => 102]);
+        ProtocolLine::factory()->createOne(['id' => 107, 'distance_id' => 104, 'complete_rank' => Rank::CandidateMaster->label(), 'person_id' => 102]);
         $line = ProtocolLine::query()->with('distance.event.competition')->findOrFail(107);
         $history = PersonRankHistoryRecord::query()->create([
             'person_id' => 102,
@@ -102,7 +102,7 @@ final class UpdateRankActivationDateActionTest extends TestCase
             'finished_on' => '2026-02-20',
         ]);
 
-        $this->post("/ranks/$history->id/update-activation", ['date' => ''])->assertStatus(Response::HTTP_FOUND);
+        $this->post("/ranks/$line->id/update-activation", ['date' => ''])->assertStatus(Response::HTTP_FOUND);
 
         $this->assertDatabaseHas('protocol_lines', [
             'id' => 107,

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Models\Parser;
 
-use App\Domain\Rank\Rank;
 use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -198,7 +197,7 @@ class OParser extends AbstractParser
         }
         if ($column === 'rank') {
             $rank = $lineData[$fieldsCount - $indent];
-            if (Rank::validateRank($rank)) {
+            if ($this->rankNormalizer->isValid($rank)) {
                 $indent++;
                 return $rank;
             }

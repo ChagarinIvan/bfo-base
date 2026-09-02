@@ -8,11 +8,12 @@ final readonly class PersonRankHistoryDto
 {
     public function __construct(
         public string $id,
+        public string $personId,
         public string $protocolLineId,
         public string $distanceId,
         public string $eventId,
         public string $competitionId,
-        public string $rankId,
+        public int $rankId,
         public string $changeType,
         public string $achievedOn,
         public ?string $activatedOn,

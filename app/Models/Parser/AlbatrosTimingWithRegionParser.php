@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Models\Parser;
 
-use App\Domain\Rank\Rank;
 use DOMDocument;
 use DOMXPath;
 use Exception;
@@ -217,7 +216,7 @@ class AlbatrosTimingWithRegionParser extends AbstractParser
         }
         if ($column === 'rank') {
             $rank = $lineData[$fieldsCount - $indent];
-            if (Rank::validateRank($rank)) {
+            if ($this->rankNormalizer->isValid($rank)) {
                 $indent++;
                 return $rank;
             }

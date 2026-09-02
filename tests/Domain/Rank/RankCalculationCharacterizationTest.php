@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Tests\Domain\Rank;
 
-use App\Domain\Rank\CalculatedPersonRank;
-use App\Domain\Rank\PersonRankHistory;
+use App\Domain\Person\Person;
+use App\Domain\Person\PersonRankHistory;
+use App\Domain\Person\PersonRankState;
+use App\Domain\Person\RankCalculator;
+use App\Domain\Person\RankChangeType;
+use App\Domain\Person\RankFact;
 use App\Domain\Rank\Rank;
-use App\Domain\Rank\RankAchievement;
-use App\Domain\Rank\RankCalculator;
-use Carbon\CarbonImmutable;
+use Carbon\Carbon;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use function array_map;
@@ -21,7 +23,7 @@ final class RankCalculationCharacterizationTest extends TestCase
     {
         $result = $this->calculate([]);
 
-        $this->assertSame(Rank::WithoutRank, $result->currentRank);
+        $this->assertSame(Rank::WithoutRank, $result->current->rank);
         $this->assertSame([], $result->history);
     }
 
@@ -30,10 +32,10 @@ final class RankCalculationCharacterizationTest extends TestCase
     {
         $result = $this->calculate([$this->achievement(Rank::FirstRank, '2026-01-10')]);
 
-        $this->assertSame(Rank::FirstRank, $result->currentRank);
-        $this->assertSame('2026-01-10', $result->activatedOn?->toDateString());
-        $this->assertSame('2028-01-10', $result->finishedOn?->toDateString());
-        $this->assertSame('completion', $result->history[0]->changeType);
+        $this->assertSame(Rank::FirstRank, $result->current->rank);
+        $this->assertSame('2026-01-10', $result->current->activatedOn?->format('Y-m-d'));
+        $this->assertSame('2028-01-10', $result->current->finishedOn?->format('Y-m-d'));
+        $this->assertSame(RankChangeType::Completion, $result->history[0]->changeType);
     }
 
     #[Test]
@@ -41,9 +43,9 @@ final class RankCalculationCharacterizationTest extends TestCase
     {
         $result = $this->calculate([$this->achievement(Rank::MasterOfSport, '2026-01-10')]);
 
-        $this->assertSame(Rank::WithoutRank, $result->currentRank);
-        $this->assertNotInstanceOf(CarbonImmutable::class, $result->history[0]->activatedOn);
-        $this->assertSame('completion', $result->history[0]->changeType);
+        $this->assertSame(Rank::WithoutRank, $result->current->rank);
+        $this->assertNotInstanceOf(Carbon::class, $result->history[0]->activatedOn);
+        $this->assertSame(RankChangeType::Completion, $result->history[0]->changeType);
     }
 
     #[Test]
@@ -53,9 +55,9 @@ final class RankCalculationCharacterizationTest extends TestCase
             $this->achievement(Rank::CandidateMaster, '2026-01-10', activatedOn: '2026-02-01'),
         ]);
 
-        $this->assertSame(Rank::CandidateMaster, $result->currentRank);
-        $this->assertSame('2026-02-01', $result->startedOn?->toDateString());
-        $this->assertSame('2028-02-01', $result->finishedOn?->toDateString());
+        $this->assertSame(Rank::CandidateMaster, $result->current->rank);
+        $this->assertSame('2026-02-01', $result->current->startedOn?->format('Y-m-d'));
+        $this->assertSame('2028-02-01', $result->current->finishedOn?->format('Y-m-d'));
     }
 
     #[Test]
@@ -68,10 +70,10 @@ final class RankCalculationCharacterizationTest extends TestCase
         ]);
 
         $this->assertSame(['completion', 'extension', 'promotion'], array_map(
-            static fn (PersonRankHistory $history): string => $history->changeType,
+            static fn (PersonRankHistory $history): string => $history->changeType->value,
             $result->history,
         ));
-        $this->assertSame(Rank::SecondRank, $result->currentRank);
+        $this->assertSame(Rank::SecondRank, $result->current->rank);
     }
 
     #[Test]
@@ -82,36 +84,24 @@ final class RankCalculationCharacterizationTest extends TestCase
             $this->achievement(Rank::SecondRank, '2026-01-10', 2),
         ]);
 
-        $this->assertSame('downgrade', $result->history[1]->changeType);
-    }
-
-    #[Test]
-    public function it_ignores_mass_and_out_of_competition_achievements(): void
-    {
-        $result = $this->calculate([
-            $this->achievement(Rank::FirstRank, '2026-01-10', massCompetition: true),
-            $this->achievement(Rank::SecondRank, '2026-01-11', outOfCompetition: true),
-        ]);
-
-        $this->assertSame(Rank::WithoutRank, $result->currentRank);
-        $this->assertSame([], $result->history);
+        $this->assertSame(RankChangeType::Downgrade, $result->history[1]->changeType);
     }
 
     #[Test]
     public function it_enforces_the_junior_age_limit_and_awards_junior_third_rank_after_three_results(): void
     {
         $adult = $this->calculate([
-            $this->achievement(Rank::JuniorFirstRank, '2026-01-10', birthday: '2000-01-01'),
-        ]);
+            $this->achievement(Rank::JuniorFirstRank, '2026-01-10'),
+        ], '2000-01-01');
         $junior = $this->calculate([
-            $this->achievement(Rank::WithoutRank, '2026-01-10', 1, birthday: '2010-01-01'),
-            $this->achievement(Rank::WithoutRank, '2026-02-10', 2, birthday: '2010-01-01'),
-            $this->achievement(Rank::WithoutRank, '2026-03-10', 3, birthday: '2010-01-01'),
-        ]);
+            $this->achievement(Rank::WithoutRank, '2026-01-10', 1),
+            $this->achievement(Rank::WithoutRank, '2026-02-10', 2),
+            $this->achievement(Rank::WithoutRank, '2026-03-10', 3),
+        ], '2010-01-01');
 
-        $this->assertSame(Rank::WithoutRank, $adult->currentRank);
-        $this->assertSame(Rank::JuniorThirdRank, $junior->currentRank);
-        $this->assertSame('junior_third', $junior->history[0]->changeType);
+        $this->assertSame(Rank::WithoutRank, $adult->current->rank);
+        $this->assertSame(Rank::JuniorThirdRank, $junior->current->rank);
+        $this->assertSame(RankChangeType::Completion, $junior->history[0]->changeType);
     }
 
     #[Test]
@@ -119,38 +109,43 @@ final class RankCalculationCharacterizationTest extends TestCase
     {
         $result = new RankCalculator()->calculate([
             $this->achievement(Rank::FirstRank, '2024-01-10'),
-        ], CarbonImmutable::parse('2026-01-11'));
+        ], $this->person(null), Carbon::parse('2026-01-11'));
 
-        $this->assertSame(Rank::WithoutRank, $result->currentRank);
+        $this->assertSame(Rank::WithoutRank, $result->current->rank);
     }
 
-    /** @param list<RankAchievement> $achievements */
-    private function calculate(array $achievements): CalculatedPersonRank
+    /** @param list<RankFact> $achievements */
+    private function calculate(array $achievements, ?string $birthday = null): PersonRankState
     {
-        return new RankCalculator()->calculate($achievements, CarbonImmutable::parse('2026-07-01'));
+        return new RankCalculator()->calculate(
+            $achievements,
+            $this->person($birthday),
+            Carbon::parse('2026-07-01'),
+        );
     }
 
     private function achievement(
         Rank $rank,
         string $achievedOn,
         int $protocolLineId = 1,
-        bool $massCompetition = false,
-        bool $outOfCompetition = false,
-        ?string $birthday = null,
         ?string $activatedOn = null,
-    ): RankAchievement {
-        return new RankAchievement(
-            personId: 1,
+    ): RankFact {
+        return new RankFact(
             protocolLineId: $protocolLineId,
             distanceId: $protocolLineId + 10,
             eventId: $protocolLineId + 20,
             competitionId: $protocolLineId + 30,
             rank: $rank,
-            achievedOn: CarbonImmutable::parse($achievedOn),
-            activatedOn: $activatedOn === null ? null : CarbonImmutable::parse($activatedOn),
-            massCompetition: $massCompetition,
-            outOfCompetition: $outOfCompetition,
-            birthday: $birthday === null ? null : CarbonImmutable::parse($birthday),
+            achievedOn: Carbon::parse($achievedOn),
+            activatedOn: $activatedOn === null ? null : Carbon::parse($activatedOn),
         );
+    }
+
+    private function person(?string $birthday): Person
+    {
+        $person = new Person();
+        $person->birthday = $birthday === null ? null : Carbon::parse($birthday);
+
+        return $person;
     }
 }

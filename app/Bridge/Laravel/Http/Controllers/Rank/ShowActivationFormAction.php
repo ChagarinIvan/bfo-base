@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Http\Controllers\Rank;
 
-use App\Application\Port\PersonRankHistoryReader;
-use App\Application\Service\Person\Exception\PersonRankNotFound;
+use App\Domain\ProtocolLine\ProtocolLineRepository;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller as BaseController;
@@ -15,12 +14,11 @@ class ShowActivationFormAction extends BaseController
     use RankAction;
 
     public function __invoke(
-        string $rankId,
-        PersonRankHistoryReader $reader,
+        string $protocolLineId,
+        ProtocolLineRepository $protocolLines,
     ): RedirectResponse|View {
-        try {
-            $rank = $reader->byId((int) $rankId) ?? throw new PersonRankNotFound();
-        } catch (PersonRankNotFound) {
+        $rank = $protocolLines->byId((int) $protocolLineId);
+        if ($rank === null) {
             return $this->redirectTo404Error();
         }
 
