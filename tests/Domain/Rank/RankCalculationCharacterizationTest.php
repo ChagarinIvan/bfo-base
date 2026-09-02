@@ -35,7 +35,7 @@ final class RankCalculationCharacterizationTest extends TestCase
         $this->assertSame(Rank::FirstRank, $result->current->rank);
         $this->assertSame('2026-01-10', $result->current->activatedOn?->format('Y-m-d'));
         $this->assertSame('2028-01-10', $result->current->finishedOn?->format('Y-m-d'));
-        $this->assertSame(RankChangeType::Completion, $result->history[0]->changeType);
+        $this->assertSame(RankChangeType::Completion, $result->history[0]->change_type);
     }
 
     #[Test]
@@ -44,8 +44,8 @@ final class RankCalculationCharacterizationTest extends TestCase
         $result = $this->calculate([$this->achievement(Rank::MasterOfSport, '2026-01-10')]);
 
         $this->assertSame(Rank::WithoutRank, $result->current->rank);
-        $this->assertNotInstanceOf(Carbon::class, $result->history[0]->activatedOn);
-        $this->assertSame(RankChangeType::Completion, $result->history[0]->changeType);
+        $this->assertNotInstanceOf(Carbon::class, $result->history[0]->activated_on);
+        $this->assertSame(RankChangeType::Completion, $result->history[0]->change_type);
     }
 
     #[Test]
@@ -70,7 +70,7 @@ final class RankCalculationCharacterizationTest extends TestCase
         ]);
 
         $this->assertSame(['completion', 'extension', 'promotion'], array_map(
-            static fn (PersonRankHistory $history): string => $history->changeType->value,
+            static fn (PersonRankHistory $history): string => $history->change_type->value,
             $result->history,
         ));
         $this->assertSame(Rank::SecondRank, $result->current->rank);
@@ -84,7 +84,7 @@ final class RankCalculationCharacterizationTest extends TestCase
             $this->achievement(Rank::SecondRank, '2026-01-10', 2),
         ]);
 
-        $this->assertSame(RankChangeType::Downgrade, $result->history[1]->changeType);
+        $this->assertSame(RankChangeType::Downgrade, $result->history[1]->change_type);
     }
 
     #[Test]
@@ -101,7 +101,7 @@ final class RankCalculationCharacterizationTest extends TestCase
 
         $this->assertSame(Rank::WithoutRank, $adult->current->rank);
         $this->assertSame(Rank::JuniorThirdRank, $junior->current->rank);
-        $this->assertSame(RankChangeType::Completion, $junior->history[0]->changeType);
+        $this->assertSame(RankChangeType::Completion, $junior->history[0]->change_type);
     }
 
     #[Test]

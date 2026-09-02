@@ -12,9 +12,9 @@ use App\Domain\Distance\Distance;
 use App\Domain\Event\Event;
 use App\Domain\Group\Group;
 use App\Domain\Person\Person;
+use App\Domain\Person\PersonRankHistory;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\Rank\Rank;
-use App\Infrastructure\Laravel\Eloquent\Person\PersonRankHistoryRecord;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -63,13 +63,13 @@ final class RefillPersonRanksTest extends TestCase
             'competition_id' => $competition->id,
             'rank' => Rank::FirstRank->value,
         ]);
-        $firstHistory = PersonRankHistoryRecord::query()->sole()->attributesToArray();
+        $firstHistory = PersonRankHistory::query()->sole()->getRawOriginal();
         unset($firstHistory['id']);
 
         $this->rebuild($person->id);
 
         self::assertDatabaseCount('person_rank_histories', 1);
-        $secondHistory = PersonRankHistoryRecord::query()->sole()->attributesToArray();
+        $secondHistory = PersonRankHistory::query()->sole()->getRawOriginal();
         unset($secondHistory['id']);
         $this->assertSame($firstHistory, $secondHistory);
     }

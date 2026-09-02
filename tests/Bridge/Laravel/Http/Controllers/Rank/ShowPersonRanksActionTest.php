@@ -11,9 +11,9 @@ use App\Domain\Distance\Distance;
 use App\Domain\Event\Event;
 use App\Domain\Group\Group;
 use App\Domain\Person\Person;
+use App\Domain\Person\PersonRankHistory;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\Rank\Rank;
-use App\Infrastructure\Laravel\Eloquent\Person\PersonRankHistoryRecord;
 use App\Models\Year;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -67,7 +67,7 @@ final class ShowPersonRanksActionTest extends TestCase
             'current_rank' => Rank::FirstRank,
             'current_rank_finished_on' => ($year->value + 1) . '-01-01',
         ]);
-        PersonRankHistoryRecord::create([
+        PersonRankHistory::create([
             'person_id' => $person->id,
             'protocol_line_id' => 101,
             'distance_id' => 101,
@@ -87,7 +87,7 @@ final class ShowPersonRanksActionTest extends TestCase
             'complete_rank' => 'II',
             'activate_rank' => "{$year->previous()->value}-01-01",
         ])->createOne();
-        PersonRankHistoryRecord::create([
+        PersonRankHistory::create([
             'person_id' => $person->id,
             'protocol_line_id' => 102,
             'distance_id' => 101,

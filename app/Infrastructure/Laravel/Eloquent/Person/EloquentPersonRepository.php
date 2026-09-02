@@ -12,7 +12,6 @@ use App\Domain\Person\PersonResources;
 use App\Domain\Shared\Criteria;
 use App\Domain\Shared\Pagination\Slice;
 use App\Infrastructure\Laravel\Eloquent\Pagination\EloquentQueryAdapter;
-use App\Infrastructure\Laravel\Eloquent\Person\PersonRankHistoryRecord;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
@@ -29,7 +28,7 @@ final class EloquentPersonRepository implements PersonRepository
         }
 
         if ($resources->rankHistory) {
-            $query->with(['rankHistoryRecords' => static function (Relation $relation): void {
+            $query->with(['rankHistories' => static function (Relation $relation): void {
                 $relation->getQuery()
                     ->with('protocolLine.distance.event.competition')
                     ->orderBy('achieved_on')
@@ -60,23 +59,11 @@ final class EloquentPersonRepository implements PersonRepository
             return;
         }
 
-        PersonRankHistoryRecord::query()->where('person_id', $person->id)->delete();
+        PersonRankHistory::query()->where('person_id', $person->id)->delete();
 
         foreach ($history as $row) {
             /** @var PersonRankHistory $row */
-            PersonRankHistoryRecord::query()->create([
-                'person_id' => $person->id,
-                'protocol_line_id' => $row->protocolLineId,
-                'distance_id' => $row->distanceId,
-                'event_id' => $row->eventId,
-                'competition_id' => $row->competitionId,
-                'rank' => $row->rank->value,
-                'change_type' => $row->changeType->value,
-                'achieved_on' => $row->achievedOn,
-                'activated_on' => $row->activatedOn,
-                'started_on' => $row->startedOn,
-                'finished_on' => $row->finishedOn,
-            ]);
+            $row->save();
         }
     }
 

@@ -10,9 +10,9 @@ use App\Domain\Competition\Competition;
 use App\Domain\Distance\Distance;
 use App\Domain\Event\Event;
 use App\Domain\Person\Person;
+use App\Domain\Person\PersonRankHistory;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\Rank\Rank;
-use App\Infrastructure\Laravel\Eloquent\Person\PersonRankHistoryRecord;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
@@ -58,7 +58,7 @@ final class ShowEditActivationDateFormActionTest extends TestCase
             'complete_rank' => 'КМС',
             'activate_rank' => '1992-11-10',
         ]);
-        $rank = PersonRankHistoryRecord::query()->create([
+        $rank = PersonRankHistory::query()->create([
             'person_id' => $person->id,
             'protocol_line_id' => (int) $protocolLine->getKey(),
             'distance_id' => (int) $distance->getKey(),

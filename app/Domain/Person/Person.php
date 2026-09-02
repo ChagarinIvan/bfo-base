@@ -16,7 +16,6 @@ use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\Rank\Rank;
 use App\Domain\Shared\AggregatedModel;
 use App\Infrastructure\Laravel\Eloquent\Auth\ImpressionCast;
-use App\Infrastructure\Laravel\Eloquent\Person\PersonRankHistoryRecord;
 use Carbon\Carbon;
 use Database\Factories\Domain\Person\PersonFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -77,18 +76,10 @@ class Person extends AggregatedModel
         return $this->hasMany(PersonPayment::class);
     }
 
-    /** @return HasMany<PersonRankHistoryRecord, $this> */
-    public function rankHistoryRecords(): HasMany
+    /** @return HasMany<PersonRankHistory, $this> */
+    public function rankHistories(): HasMany
     {
-        return $this->hasMany(PersonRankHistoryRecord::class);
-    }
-
-    /** @return Collection<int, PersonRankHistory> */
-    public function rankHistories(): Collection
-    {
-        return $this->rankHistoryRecords
-            ->map(static fn (PersonRankHistoryRecord $record): PersonRankHistory => $record->toDomain())
-            ->values();
+        return $this->hasMany(PersonRankHistory::class);
     }
 
     public function club(): HasOne

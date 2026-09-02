@@ -13,7 +13,7 @@
 ## Технический контекст
 
 **Язык/версия**: PHP 8.5, Laravel 13  
-**Основные зависимости**: PHP 8.5 string-backed enum `App\Domain\Rank\Rank`, Laravel Queue и Scheduler, Eloquent, PHPUnit 13, PHPStan/Larastan, Rector
+**Основные зависимости**: PHP 8.5 integer-backed enum `App\Domain\Rank\Rank`, Laravel Queue и Scheduler, Eloquent, PHPUnit 13, PHPStan/Larastan, Rector
 **Хранение**: MySQL 8.4; Redis для очереди  
 **Тестирование**: PHPUnit; Domain/Application unit-тесты на фактах, моках и стабах; persistence/API — с реальной БД  
 **Целевая платформа**: Laravel-монолит, SPA JSON API и переходные Blade-экраны  
@@ -97,3 +97,10 @@ commands, обработчики событий, HTTP actions, routes, Blade vie
 ## Отслеживание сложности
 
 Не требуется: дизайн соответствует конституции.
+
+## Ретроспективные уточнения реализации
+
+- `Rank` и API/SPA используют integer-backed values; значение `0` означает отсутствие разряда.
+- `PersonRankHistory` реализована как обычная Eloquent-модель без `AggregatedModel`, потому что репозиторию необходимо сохранять вычисленные несохранённые экземпляры через `save()`.
+- Для queued rebuild после ручной активации используется `ShouldQueueAfterCommit`.
+- Full refill и expiry обходят активных Person через `idsByCriteria()`/`lazyById()`, не загружая всех спортсменов в память.

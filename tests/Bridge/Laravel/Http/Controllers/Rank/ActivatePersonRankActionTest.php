@@ -6,9 +6,9 @@ namespace Tests\Bridge\Laravel\Http\Controllers\Rank;
 
 use App\Bridge\Laravel\Http\Controllers\Rank\ActivatePersonRankAction;
 use App\Domain\Auth\User;
+use App\Domain\Person\PersonRankHistory;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\Rank\Rank;
-use App\Infrastructure\Laravel\Eloquent\Person\PersonRankHistoryRecord;
 use Database\Seeders\ProtocolLinesSeeder;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -44,7 +44,7 @@ final class ActivatePersonRankActionTest extends TestCase
 
         ProtocolLine::factory()->createOne(['id' => 107, 'distance_id' => 104, 'complete_rank' => Rank::CandidateMaster->label(), 'person_id' => 102]);
         $line = ProtocolLine::query()->with('distance.event.competition')->findOrFail(107);
-        $history = PersonRankHistoryRecord::query()->create([
+        $history = PersonRankHistory::query()->create([
             'person_id' => 102,
             'protocol_line_id' => 107,
             'distance_id' => $line->distance_id,

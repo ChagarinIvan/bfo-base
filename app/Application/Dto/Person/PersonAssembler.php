@@ -6,10 +6,10 @@ namespace App\Application\Dto\Person;
 
 use App\Application\Dto\Auth\AuthAssembler;
 use App\Domain\Person\Person;
+use App\Domain\Person\PersonRankHistory;
 use App\Domain\Person\PersonResources;
 use App\Domain\PersonPayment\PersonPayment;
 use App\Domain\ProtocolLine\ProtocolLine;
-use App\Infrastructure\Laravel\Eloquent\Person\PersonRankHistoryRecord;
 use Illuminate\Support\Collection;
 use function array_map;
 
@@ -46,7 +46,13 @@ final readonly class PersonAssembler
                 : [],
             currentRankId: $currentRank->rank->value,
             currentRankFinishedOn: $currentRank->finishedOn?->format('Y-m-d'),
-            rankHistory: $resources->rankHistory ? $person->rankHistoryRecords->map($this->toPersonRankHistoryDto(...))->all() : [],
+            rankHistory: $resources->rankHistory
+                ? $person->rankHistories->map(fn (PersonRankHistory $history): PersonRankHistoryDto => $this->toPersonRankHistoryDto(
+                    $history,
+                    (int) $person->id,
+                    $history->protocolLine,
+                ))->all()
+                : [],
         );
     }
 
@@ -84,13 +90,13 @@ final readonly class PersonAssembler
         );
     }
 
-    private function toPersonRankHistoryDto(PersonRankHistoryRecord $history): PersonRankHistoryDto
+    private function toPersonRankHistoryDto(PersonRankHistory $history, int $personId, ?ProtocolLine $protocolLine = null): PersonRankHistoryDto
     {
-        $event = $history->protocolLine?->distance?->event;
+        $event = $protocolLine?->distance?->event;
 
         return new PersonRankHistoryDto(
-            id: (string) $history->id,
-            personId: (string) $history->person_id,
+            id: (string) $history->protocol_line_id,
+            personId: (string) $personId,
             protocolLineId: (string) $history->protocol_line_id,
             distanceId: (string) $history->distance_id,
             eventId: (string) $history->event_id,

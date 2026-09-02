@@ -8,9 +8,9 @@ use App\Application\Dto\Auth\UserId;
 use App\Application\Service\Person\RebuildPersonRanks;
 use App\Application\Service\Person\RebuildPersonRanksService;
 use App\Domain\ProtocolLine\Event\ProtocolLineRankActivated;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Contracts\Queue\ShouldQueueAfterCommit;
 
-final readonly class ProtocolLineRankActivatedHandler implements ShouldQueue
+final readonly class ProtocolLineRankActivatedHandler implements ShouldQueueAfterCommit
 {
     public function __construct(private RebuildPersonRanksService $service)
     {

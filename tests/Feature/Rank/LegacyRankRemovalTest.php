@@ -32,6 +32,9 @@ final class LegacyRankRemovalTest extends TestCase
             'app/Infrastructure/Laravel/Eloquent/Rank/LegacyRank.php',
             'app/Application/Service/Rank/ActivePersonRankService.php',
             'app/Bridge/Laravel/Console/Commands/RecalculatingRanks.php',
+            'app/Bridge/Laravel/Console/Commands/FixRankCommand.php',
+            'app/Filters/RanksFilter.php',
+            'app/Application/Service/Person/Exception/PersonRankNotFound.php',
         ] as $path) {
             $this->assertFileDoesNotExist(base_path($path));
         }
