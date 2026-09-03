@@ -202,7 +202,7 @@ class WinOrientHtmlParser extends AbstractParser
                 } catch (Exception) {
                     $time = null;
                 }
-            } elseif ($time === 'снят' || str_contains($time, '24.4') || str_contains($time, '20.10')) {
+            } elseif ($time === 'снят' || str_contains($time, 'н.старт') || str_contains($time, '24.4') || str_contains($time, '20.10')) {
                 $time = null;
             } else {
                 $indent++;
