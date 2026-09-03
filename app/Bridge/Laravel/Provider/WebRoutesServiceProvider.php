@@ -79,14 +79,9 @@ use App\Bridge\Laravel\Http\Controllers\PersonPrompt\ShowPersonPromptsListAction
 use App\Bridge\Laravel\Http\Controllers\PersonPrompt\StorePersonPromptAction;
 use App\Bridge\Laravel\Http\Controllers\PersonPrompt\UpdatePersonPromptAction;
 use App\Bridge\Laravel\Http\Controllers\Rank\ActivatePersonRankAction;
-use App\Bridge\Laravel\Http\Controllers\Rank\CheckPersonsRanksAction;
-use App\Bridge\Laravel\Http\Controllers\Rank\ExportPersonsRanksAction;
-use App\Bridge\Laravel\Http\Controllers\Rank\RefillPersonRanksAction;
 use App\Bridge\Laravel\Http\Controllers\Rank\ShowActivationFormAction;
-use App\Bridge\Laravel\Http\Controllers\Rank\ShowCheckPersonsRanksFormAction;
 use App\Bridge\Laravel\Http\Controllers\Rank\ShowEditActivationDateFormAction;
 use App\Bridge\Laravel\Http\Controllers\Rank\ShowPersonRanksAction;
-use App\Bridge\Laravel\Http\Controllers\Rank\ShowRanksListAction;
 use App\Bridge\Laravel\Http\Controllers\Rank\UpdateRankActivationDateAction;
 use App\Bridge\Laravel\Http\Controllers\Registration\SendRegistrationDataAction;
 use App\Bridge\Laravel\Http\Controllers\Registration\ShowRegistrationFormAction;
@@ -181,18 +176,13 @@ class WebRoutesServiceProvider extends ServiceProvider
 
                 //ranks
                 $this->routeRegistrar->prefix('ranks')->group(function (): void {
-                    $this->route->get('list/{rank}', ShowRanksListAction::class);
                     $this->route->get('person/{personId}', ShowPersonRanksAction::class);
-                    $this->route->get('check', ShowCheckPersonsRanksFormAction::class);
-                    $this->route->post('check', CheckPersonsRanksAction::class);
 
                     $this->middleware(['auth'])->group(function (): void {
-                        $this->route->get('export', ExportPersonsRanksAction::class);
-                        $this->route->post('person/{personId}/refill', RefillPersonRanksAction::class);
-                        $this->route->get('{rankId}/activate', ShowActivationFormAction::class);
-                        $this->route->get('{rankId}/update-activation', ShowEditActivationDateFormAction::class);
-                        $this->route->post('{rankId}/activate', ActivatePersonRankAction::class);
-                        $this->route->post('{rankId}/update-activation', UpdateRankActivationDateAction::class);
+                        $this->route->get('{protocolLineId}/activate', ShowActivationFormAction::class);
+                        $this->route->get('{protocolLineId}/update-activation', ShowEditActivationDateFormAction::class);
+                        $this->route->post('{protocolLineId}/activate', ActivatePersonRankAction::class);
+                        $this->route->post('{protocolLineId}/update-activation', UpdateRankActivationDateAction::class);
                     });
                 });
 

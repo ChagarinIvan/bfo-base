@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Models\Parser;
 
-use App\Domain\Rank\Rank;
 use DOMDocument;
 use DOMXPath;
 use Illuminate\Support\Carbon;
@@ -222,7 +221,7 @@ class AlbatrosRelayParser extends AbstractParser
             $protocolLine['time'] = Carbon::createFromTimeString($timeColumn);
         } elseif ($column === 'rank') {
             $rank = $lineData[$fieldsCount - $indent];
-            if (Rank::validateRank($rank)) {
+            if ($this->rankNormalizer->isValid($rank)) {
                 $indent++;
                 $protocolLine['rank'] = $rank;
             }

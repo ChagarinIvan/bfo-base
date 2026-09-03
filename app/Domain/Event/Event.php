@@ -12,7 +12,6 @@ use App\Domain\Event\Event\EventCreated;
 use App\Domain\Event\Event\EventDisabled;
 use App\Domain\Event\Event\EventUpdated;
 use App\Domain\ProtocolLine\ProtocolLine;
-use App\Domain\Rank\Rank;
 use App\Domain\Shared\AggregatedModel;
 use App\Infrastructure\Laravel\Eloquent\Auth\ImpressionCast;
 use App\Models\Flag;
@@ -79,11 +78,6 @@ class Event extends AggregatedModel
     public function flags(): BelongsToMany
     {
         return $this->belongsToMany(Flag::class, 'event_flags');
-    }
-
-    public function ranks(): Builder|HasMany
-    {
-        return $this->hasMany(Rank::class);
     }
 
     public function disable(Impression $impression): void

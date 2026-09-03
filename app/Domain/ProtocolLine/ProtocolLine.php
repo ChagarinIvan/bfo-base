@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Domain\ProtocolLine;
 
+use App\Domain\Auth\Impression;
 use App\Domain\Distance\Distance;
 use App\Domain\Event\Event;
 use App\Domain\Person\Person;
 use App\Domain\ProtocolLine\Event\ProtocolLineRankActivated;
-use App\Domain\Rank\Rank;
 use App\Domain\Shared\AggregatedModel;
 use App\Services\PersonsIdentService;
 use Carbon\Carbon;
@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use function trim;
 
 /**
  * @property int $id
@@ -87,21 +88,21 @@ class ProtocolLine extends AggregatedModel
         return $this->BelongsTo(Person::class, 'person_id', 'id');
     }
 
-    public function fillProtocolLine(int $distanceId): void
+    public function fillProtocolLine(int $distanceId, string $completeRank): void
     {
         $this->prepared_line = PersonsIdentService::makeIdentLine($this->lastname, $this->firstname, $this->year ? (int)$this->year : null);
 
         //чистим разряды
-        $this->rank = Rank::getRank($this->rank) ?? '';
-        $this->complete_rank = Rank::getRank($this->complete_rank) ?? '';
+        $this->rank = trim($this->rank);
+        $this->complete_rank = $completeRank;
         $this->distance_id = $distanceId;
     }
 
-    public function activateRank(?Carbon $date): void
+    public function activateRank(?Carbon $date, Impression $impression): void
     {
         $this->activate_rank = $date;
 
-        $this->recordThat(new ProtocolLineRankActivated($this));
+        $this->recordThat(new ProtocolLineRankActivated($this, $impression));
     }
     protected function casts(): array
     {

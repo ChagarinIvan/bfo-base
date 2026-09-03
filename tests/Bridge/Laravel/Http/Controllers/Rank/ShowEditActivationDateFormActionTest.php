@@ -7,8 +7,11 @@ namespace Tests\Bridge\Laravel\Http\Controllers\Rank;
 use App\Bridge\Laravel\Http\Controllers\Rank\ShowEditActivationDateFormAction;
 use App\Domain\Auth\User;
 use App\Domain\Competition\Competition;
+use App\Domain\Distance\Distance;
 use App\Domain\Event\Event;
 use App\Domain\Person\Person;
+use App\Domain\Person\PersonRankHistory;
+use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\Rank\Rank;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -47,12 +50,31 @@ final class ShowEditActivationDateFormActionTest extends TestCase
         $event = Event::factory()->createOne(['competition_id' => $competition->id]);
         /** @var Person $person */
         $person = Person::factory()->createOne();
-        /** @var Rank $rank */
-        $rank = Rank::factory()->createOne(['person_id' => $person->id, 'event_id' => $event->id, 'start_date' => '1992-11-10']);
+        $distance = Distance::factory()->createOne(['event_id' => $event->id]);
+        /** @var ProtocolLine $protocolLine */
+        $protocolLine = ProtocolLine::factory()->createOne([
+            'distance_id' => (int) $distance->getKey(),
+            'person_id' => $person->id,
+            'complete_rank' => 'КМС',
+            'activate_rank' => '1992-11-10',
+        ]);
+        PersonRankHistory::query()->create([
+            'person_id' => $person->id,
+            'protocol_line_id' => (int) $protocolLine->getKey(),
+            'distance_id' => (int) $distance->getKey(),
+            'event_id' => $event->id,
+            'competition_id' => $competition->id,
+            'rank' => Rank::CandidateMaster,
+            'change_type' => 'completion',
+            'achieved_on' => '1992-11-10',
+            'activated_on' => '1992-11-10',
+            'started_on' => '1992-11-10',
+            'finished_on' => '1994-11-10',
+        ]);
 
-        $this->get("/ranks/$rank->id/update-activation")
+        $this->get("/ranks/$protocolLine->id/update-activation")
             ->assertStatus(Response::HTTP_OK)
-            ->assertSee(sprintf('<form method="POST" action="http://localhost/ranks/%s/update-activation">', $rank->id), false)
+            ->assertSee(sprintf('<form method="POST" action="http://localhost/ranks/%s/update-activation">', $protocolLine->id), false)
             ->assertSee('<input class="form-control" type="date" id="date" name="date" value="1992-11-10">', false)
         ;
     }

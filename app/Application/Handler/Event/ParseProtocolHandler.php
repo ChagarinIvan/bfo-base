@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Handler\Event;
 
+use App\Domain\Auth\Impression;
 use App\Domain\Event\ProtocolStorage;
 use App\Services\ParserService;
 use App\Services\ProtocolLineIdentService;
@@ -22,7 +23,7 @@ abstract class ParseProtocolHandler
     ) {
     }
 
-    protected function parse(string $path, int $eventId): void
+    protected function parse(string $path, int $eventId, Impression $impression): void
     {
         Log::info('Parse protocol by path ' . $path);
 
@@ -32,7 +33,7 @@ abstract class ParseProtocolHandler
             Log::info(sprintf('Parsed %d lines.', $lineList->count()));
             $lines = $this->protocolLineService->fillProtocolLines($eventId, $lineList);
             Log::info(sprintf('Filled %d lines.', $lines->count()));
-            $this->identService->identPersons($lineList);
+            $this->identService->identPersons($lines, $impression);
         } catch (Exception $e) {
             Log::error($e->getMessage());
         }

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Models\Parser;
 
-use App\Domain\Rank\Rank;
 use DOMDocument;
 use DOMXPath;
 use Exception;
@@ -149,7 +148,7 @@ class HrodnoParser extends AbstractParser
                 break;
             case 'rank':
             case 'complete_rank':
-                if (Rank::validateRank($lineData)) {
+                if ($this->rankNormalizer->isValid($lineData)) {
                     $value = $lineData;
                 }
                 break;

@@ -6,18 +6,38 @@ namespace App\Infrastructure\Laravel\Eloquent\Person;
 
 use App\Domain\Person\Person;
 use App\Domain\Person\PersonInfo;
+use App\Domain\Person\PersonRankHistory;
 use App\Domain\Person\PersonRepository;
+use App\Domain\Person\PersonResources;
 use App\Domain\Shared\Criteria;
 use App\Domain\Shared\Pagination\Slice;
 use App\Infrastructure\Laravel\Eloquent\Pagination\EloquentQueryAdapter;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
+use Illuminate\Support\LazyCollection;
 
 final class EloquentPersonRepository implements PersonRepository
 {
-    public function byId(int $id): ?Person
+    public function byId(int $id, PersonResources $resources = new PersonResources()): ?Person
     {
-        return Person::where('active', true)->find($id);
+        $query = Person::where('active', true);
+
+        if ($resources->protocolLines) {
+            $query->with('protocolLines.distance.event.competition', 'protocolLines.distance.group');
+        }
+
+        if ($resources->rankHistory) {
+            $query->with(['rankHistories' => static function (Relation $relation): void {
+                $relation->getQuery()
+                    ->with('protocolLine.distance.event.competition')
+                    ->orderBy('achieved_on')
+                    ->orderBy('id')
+                ;
+            }]);
+        }
+
+        return $query->find($id);
     }
 
     public function lockById(int $id): ?Person
@@ -33,6 +53,18 @@ final class EloquentPersonRepository implements PersonRepository
     public function update(Person $person): void
     {
         $person->save();
+        $history = $person->rankHistoryToPersist();
+
+        if ($history === null) {
+            return;
+        }
+
+        PersonRankHistory::query()->where('person_id', $person->id)->delete();
+
+        foreach ($history as $row) {
+            /** @var PersonRankHistory $row */
+            $row->save();
+        }
     }
 
     public function byCriteria(Criteria $criteria): Collection
@@ -49,6 +81,14 @@ final class EloquentPersonRepository implements PersonRepository
 
         if ($criteria->hasParam('clubId')) {
             $query->where('person.club_id', $criteria->param('clubId'));
+        }
+
+        if ($criteria->hasParam('rankId')) {
+            $query->where('person.current_rank', $criteria->param('rankId'));
+        }
+
+        if ($criteria->hasParam('rankFinishedBefore')) {
+            $query->where('person.current_rank_finished_on', '<', $criteria->param('rankFinishedBefore'));
         }
 
         if ($criteria->hasParam('year')) {
@@ -79,9 +119,28 @@ final class EloquentPersonRepository implements PersonRepository
         return $query->get();
     }
 
+    /** @return LazyCollection<int, int> */
+    public function idsByCriteria(Criteria $criteria): LazyCollection
+    {
+        $query = Person::query()
+            ->where('person.active', true)
+            ->select('person.id')
+            ->orderBy('person.id')
+        ;
+
+        if ($criteria->hasParam('rankFinishedBefore')) {
+            $query->where('person.current_rank_finished_on', '<', $criteria->param('rankFinishedBefore'));
+        }
+
+        return $query->lazyById()->map(static fn (Person $person): int => $person->id);
+    }
+
     public function oneByCriteria(Criteria $criteria): ?Person
     {
-        return $this->byCriteria($criteria)->first();
+        /** @var Person|null $first */
+        $first = $this->byCriteria($criteria)->first();
+
+        return $first;
     }
 
     /** @return Slice<Person> */
@@ -106,6 +165,10 @@ final class EloquentPersonRepository implements PersonRepository
                 ->where('club.active', true)
                 ->where('person.club_id', $criteria->param('clubId'))
             ;
+        }
+
+        if ($criteria->hasParam('rankId')) {
+            $query->where('person.current_rank', $criteria->param('rankId'));
         }
 
         return $query;

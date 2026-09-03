@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Models\Parser;
 
-use App\Domain\Rank\Rank;
 use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -151,7 +150,7 @@ class XlsParser extends AbstractParser
         switch ($column) {
             case 'complete_rank':
             case 'rank':
-                if (Rank::validateRank($columnData)) {
+                if ($this->rankNormalizer->isValid($columnData)) {
                     return $columnData;
                 }
                 break;

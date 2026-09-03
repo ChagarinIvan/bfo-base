@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace App\Application\Service\Person;
 
+use App\Domain\Person\PersonResources;
+
 final readonly class ViewPerson
 {
     public function __construct(
         private string $id,
         private bool $includeProtocolLines = false,
+        private bool $includeRankHistory = false,
     ) {
     }
 
@@ -17,8 +20,11 @@ final readonly class ViewPerson
         return (int) $this->id;
     }
 
-    public function includeProtocolLines(): bool
+    public function resources(): PersonResources
     {
-        return $this->includeProtocolLines;
+        return new PersonResources(
+            protocolLines: $this->includeProtocolLines,
+            rankHistory: $this->includeRankHistory,
+        );
     }
 }

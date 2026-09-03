@@ -9,6 +9,7 @@ use App\Domain\Club\Club;
 use App\Domain\Person\Event\PersonCreated;
 use App\Domain\Person\Event\PersonDisabled;
 use App\Domain\Person\Event\PersonInfoUpdated;
+use App\Domain\Person\Event\PersonRanksUpdated;
 use App\Domain\PersonPayment\PersonPayment;
 use App\Domain\PersonPrompt\PersonPrompt;
 use App\Domain\ProtocolLine\ProtocolLine;
@@ -33,6 +34,10 @@ use Illuminate\Support\Collection;
  * @property Citizenship $citizenship
  * @property bool $from_base
  * @property bool $active
+ * @property Rank $current_rank
+ * @property Carbon|null $current_rank_started_on
+ * @property Carbon|null $current_rank_activated_on
+ * @property Carbon|null $current_rank_finished_on
  *
  * @property Impression $created
  * @property Impression $updated
@@ -43,16 +48,18 @@ use Illuminate\Support\Collection;
  * @property-read null|Club $club
  * @property-read PersonPrompt[]|Collection $prompts
  * @property-read PersonPayment[]|Collection $payments
- * @property-read Rank[]|Collection $ranks
  *
  * @see PersonFactory
  */
-#[Fillable(['lastname', 'firstname', 'birthday', 'club_id', 'from_base', 'created', 'updated'])]
+#[Fillable(['lastname', 'firstname', 'birthday', 'club_id', 'from_base', 'created', 'updated', 'current_rank', 'current_rank_started_on', 'current_rank_activated_on', 'current_rank_finished_on'])]
 #[Table(name: 'person')]
 class Person extends AggregatedModel
 {
     /** @see PersonFactory */
     use HasFactory;
+
+    /** @var list<PersonRankHistory>|null */
+    private ?array $rankHistoryToPersist = null;
 
     public function protocolLines(): HasMany
     {
@@ -69,9 +76,10 @@ class Person extends AggregatedModel
         return $this->hasMany(PersonPayment::class);
     }
 
-    public function ranks(): HasMany
+    /** @return HasMany<PersonRankHistory, $this> */
+    public function rankHistories(): HasMany
     {
-        return $this->hasMany(Rank::class);
+        return $this->hasMany(PersonRankHistory::class);
     }
 
     public function club(): HasOne
@@ -106,12 +114,46 @@ class Person extends AggregatedModel
 
         $this->recordThat(new PersonDisabled($this));
     }
+
+    public function updateRanks(PersonRankState $rankState, Impression $impression): void
+    {
+        $this->current_rank = $rankState->current->rank;
+        $this->current_rank_started_on = $rankState->current->startedOn;
+        $this->current_rank_activated_on = $rankState->current->activatedOn;
+        $this->current_rank_finished_on = $rankState->current->finishedOn;
+        $this->updated = $impression;
+
+        $this->rankHistoryToPersist = $rankState->history;
+
+        $this->recordThat(new PersonRanksUpdated($this));
+    }
+
+    public function currentRank(): PersonRank
+    {
+        return new PersonRank(
+            rank: $this->current_rank ?? Rank::WithoutRank,
+            startedOn: $this->current_rank_started_on,
+            activatedOn: $this->current_rank_activated_on,
+            finishedOn: $this->current_rank_finished_on,
+        );
+    }
+
+    /** @return list<PersonRankHistory>|null */
+    public function rankHistoryToPersist(): ?array
+    {
+        return $this->rankHistoryToPersist;
+    }
+
     protected function casts(): array
     {
         return [
             'prompt' => 'array',
             'citizenship' => Citizenship::class,
             'birthday' => 'datetime:Y-m-d',
+            'current_rank' => Rank::class,
+            'current_rank_started_on' => 'datetime:Y-m-d',
+            'current_rank_activated_on' => 'datetime:Y-m-d',
+            'current_rank_finished_on' => 'datetime:Y-m-d',
             'created' => ImpressionCast::class,
             'updated' => ImpressionCast::class,
         ];

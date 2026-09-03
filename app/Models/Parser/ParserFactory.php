@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\Parser;
 
+use App\Domain\Rank\RankNormalizer;
 use App\Models\Parser\List\CsvListParser;
 use Illuminate\Support\Collection;
 use RuntimeException;
@@ -38,7 +39,7 @@ class ParserFactory
     public static function createProtocolParser(string $protocol, Collection $groups, string $extension = 'html'): ParserInterface
     {
         foreach (self::PROTOCOL_PARSERS as $parser) {
-            $parser = new $parser($groups);
+            $parser = new $parser($groups, new RankNormalizer());
             if ($parser->check($protocol, $extension)) {
                 return $parser;
             }

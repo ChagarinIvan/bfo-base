@@ -11,7 +11,9 @@ use App\Application\Service\Person\ListPersons;
 use App\Application\Service\Person\ListPersonsService;
 use App\Domain\Auth\Impression;
 use App\Domain\Person\Person;
+use App\Domain\Person\PersonRank;
 use App\Domain\Person\PersonRepository;
+use App\Domain\Rank\Rank;
 use App\Domain\Shared\Criteria;
 use App\Domain\Shared\Pagination\Slice;
 use Carbon\Carbon;
@@ -48,6 +50,7 @@ final class ListPersonsServiceTest extends TestCase
             ['created', $this->impressionValue()],
             ['updated', $this->impressionValue()],
         ]);
+        $person->method('currentRank')->willReturn(new PersonRank(Rank::WithoutRank, null, null, null));
 
         $this->persons
             ->expects($this->once())

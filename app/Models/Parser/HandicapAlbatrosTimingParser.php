@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Models\Parser;
 
-use App\Domain\Rank\Rank;
 use DOMDocument;
 use DOMXPath;
 use Exception;
@@ -92,7 +91,7 @@ class HandicapAlbatrosTimingParser extends AbstractParser
                 }
                 if ($withCompletedRank) {
                     $protocolLine['complete_rank'] = $lineData[$fieldsCount - $indent++];
-                    if (!Rank::validateRank($protocolLine['complete_rank'])) {
+                    if (!$this->rankNormalizer->isValid($protocolLine['complete_rank'])) {
                         $protocolLine['complete_rank'] = '';
                     }
                 }

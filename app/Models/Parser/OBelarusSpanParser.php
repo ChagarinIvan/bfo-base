@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Models\Parser;
 
-use App\Domain\Rank\Rank;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use function array_key_exists;
@@ -194,7 +193,7 @@ class OBelarusSpanParser extends AbstractParser
             $protocolLine['place'] = null;
         } elseif ($column === 'complete_rank') {
             $rank = $lineData[$fieldsCount - $indent];
-            if (Rank::validateRank($rank)) {
+            if ($this->rankNormalizer->isValid($rank)) {
                 $indent++;
                 $protocolLine['complete_rank'] = $rank;
                 return $protocolLine;
@@ -253,7 +252,7 @@ class OBelarusSpanParser extends AbstractParser
             $protocolLine['time'] = Carbon::createFromTimeString($timeColumn);
         } elseif ($column === 'rank') {
             $rank = $lineData[$fieldsCount - $indent];
-            if (Rank::validateRank($rank)) {
+            if ($this->rankNormalizer->isValid($rank)) {
                 $indent++;
                 $protocolLine['rank'] = $rank;
             }

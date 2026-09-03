@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace App\Bridge\Laravel\Http\Controllers\Person;
 
 use App\Application\Dto\Auth\UserId;
+use App\Application\Service\Person\RebuildPersonRanks;
+use App\Application\Service\Person\RebuildPersonRanksService;
 use App\Domain\Auth\Impression;
 use App\Domain\Shared\Clock;
 use App\Services\PersonPromptService;
 use App\Services\PersonsService;
 use App\Services\ProtocolLineService;
-use App\Services\RankService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller as BaseController;
 
@@ -23,7 +24,7 @@ class ExtractPersonAction extends BaseController
         ProtocolLineService $protocolLineService,
         PersonsService $personsService,
         PersonPromptService $personPromptService,
-        RankService $rankService,
+        RebuildPersonRanksService $rebuildPersonRanksService,
         UserId $userId,
         Clock $clock,
     ): RedirectResponse {
@@ -36,8 +37,8 @@ class ExtractPersonAction extends BaseController
         $protocolLineService->reSetPerson($protocolLinesToUpdate, $person->id);
         $personPromptService->changePromptForLine($protocolLine->prepared_line, $person->id);
 
-        $rankService->reFillRanksForPerson($person->id);
-        $oldPersons->each(static fn (int $personId) => $rankService->reFillRanksForPerson($personId));
+        $rebuildPersonRanksService->execute(new RebuildPersonRanks($person->id, $userId));
+        $oldPersons->filter()->each(static fn (int $personId) => $rebuildPersonRanksService->execute(new RebuildPersonRanks($personId, $userId)));
 
         return $this->redirector->action(ShowPersonAction::class, [$person->id]);
     }

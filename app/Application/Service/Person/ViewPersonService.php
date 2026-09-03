@@ -20,8 +20,8 @@ final readonly class ViewPersonService
     /** @throws PersonNotFound */
     public function execute(ViewPerson $command): LegacyViewPersonDto
     {
-        $person = $this->persons->byId($command->id()) ?? throw new PersonNotFound();
+        $person = $this->persons->byId($command->id(), $command->resources()) ?? throw new PersonNotFound();
 
-        return $this->assembler->toLegacyViewPersonDto($person, $command->includeProtocolLines());
+        return $this->assembler->toLegacyViewPersonDto($person, $command->resources());
     }
 }

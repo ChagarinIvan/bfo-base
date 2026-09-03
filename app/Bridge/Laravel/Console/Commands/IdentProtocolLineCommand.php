@@ -10,6 +10,8 @@ use App\Application\Dto\Person\PersonInfoDto;
 use App\Application\Service\Person\AddPerson;
 use App\Application\Service\Person\AddPersonService;
 use App\Application\Service\Person\Exception\FailedToAddPerson;
+use App\Application\Service\Person\RebuildPersonRanks;
+use App\Application\Service\Person\RebuildPersonRanksService;
 use App\Domain\Club\Club;
 use App\Domain\Club\ClubNameNormalizer;
 use App\Domain\Club\ClubRepository;
@@ -18,7 +20,6 @@ use App\Domain\ProtocolLine\ProtocolLine;
 use App\Models\IdentLine;
 use App\Services\ProtocolLineIdentService;
 use App\Services\ProtocolLineService;
-use App\Services\RankService;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use function preg_match;
@@ -39,7 +40,7 @@ final class IdentProtocolLineCommand extends Command
     }
 
     public function handle(
-        RankService $rankService,
+        RebuildPersonRanksService $rankService,
         ClubRepository $clubs,
         ClubNameNormalizer $clubNameNormalizer,
         ProtocolLineService $protocolLineService,
@@ -62,7 +63,7 @@ final class IdentProtocolLineCommand extends Command
                 $protocolLine->save();
             });
 
-            $rankService->reFillRanksForPerson($personId);
+            $rankService->execute(new RebuildPersonRanks($personId, new UserId($userId)));
         } else {
             if ($protocolLines->isEmpty()) {
                 return;
@@ -98,7 +99,7 @@ final class IdentProtocolLineCommand extends Command
                 $protocolLine->save();
             });
 
-            $rankService->reFillRanksForPerson($personId);
+            $rankService->execute(new RebuildPersonRanks($personId, new UserId($userId)));
         }
     }
 }

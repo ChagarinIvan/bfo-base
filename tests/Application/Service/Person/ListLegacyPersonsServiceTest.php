@@ -12,7 +12,9 @@ use App\Application\Service\Person\ListLegacyPersonsService;
 use App\Domain\Auth\Impression;
 use App\Domain\Person\Citizenship;
 use App\Domain\Person\Person;
+use App\Domain\Person\PersonRank;
 use App\Domain\Person\PersonRepository;
+use App\Domain\Rank\Rank;
 use App\Domain\Shared\Criteria;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
@@ -62,6 +64,7 @@ final class ListLegacyPersonsServiceTest extends TestCase
             ['citizenship', Citizenship::BELARUS], ['club_id', null], ['protocol_lines_count', 0],
             ['created', $impression], ['updated', $impression], ['payments', new Collection()],
         ]);
+        $person->method('currentRank')->willReturn(new PersonRank(Rank::WithoutRank, null, null, null));
 
         return $person;
     }

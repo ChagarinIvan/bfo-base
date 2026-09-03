@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Models\Parser;
 
-use App\Domain\Rank\Rank;
 use DOMDocument;
 use DOMXPath;
 use Exception;
@@ -118,7 +117,7 @@ class AlbatrosRelayWithHeadersParser extends AbstractParser
                 $protocolLine['serial_number'] = $protocolLine['runner_number'];
                 $value = $lineData[$fieldsCount - $indent++ - 1];
 
-                if (Rank::validateRank($value)) {
+                if ($this->rankNormalizer->isValid($value)) {
                     $protocolLine['rank'] = $value;
                     $indent++;
                 }

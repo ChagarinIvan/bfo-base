@@ -6,6 +6,7 @@ namespace Tests\Feature\Api\V1\Person;
 
 use App\Domain\Club\Club;
 use App\Domain\Person\Person;
+use App\Domain\Rank\Rank;
 use App\Infrastructure\Sanctum\SanctumUser;
 use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -52,6 +53,49 @@ final class ListPersonsActionTest extends TestCase
             ->assertJsonMissingPath('0.citizenship')
             ->assertJsonMissingPath('0.clubId')
             ->assertJsonMissingPath('0.created')
+        ;
+    }
+
+    #[Test]
+    public function it_filters_persons_by_materialized_rank(): void
+    {
+        $this->createPerson(['id' => 1, 'current_rank' => Rank::FirstRank]);
+        $this->createPerson(['id' => 2, 'current_rank' => Rank::SecondRank]);
+        $this->createPerson(['id' => 3, 'current_rank' => Rank::WithoutRank]);
+        DB::table('person')->where('id', 1)->update(['current_rank' => Rank::FirstRank->value]);
+        DB::table('person')->where('id', 2)->update(['current_rank' => Rank::SecondRank->value]);
+        DB::table('person')->where('id', 3)->update(['current_rank' => Rank::WithoutRank->value]);
+
+        $this->getJson('/api/v1/persons?rankId=6')
+            ->assertOk()
+            ->assertJsonCount(1)
+            ->assertJsonPath('0.id', '1')
+            ->assertJsonPath('0.rankId', 6)
+        ;
+    }
+
+    #[Test]
+    public function it_filters_persons_without_a_rank(): void
+    {
+        $this->createPerson(['id' => 1, 'current_rank' => Rank::FirstRank]);
+        $this->createPerson(['id' => 2, 'current_rank' => Rank::WithoutRank]);
+        DB::table('person')->where('id', 1)->update(['current_rank' => Rank::FirstRank->value]);
+        DB::table('person')->where('id', 2)->update(['current_rank' => Rank::WithoutRank->value]);
+
+        $this->getJson('/api/v1/persons?rankId=0')
+            ->assertOk()
+            ->assertJsonCount(1)
+            ->assertJsonPath('0.id', '2')
+            ->assertJsonPath('0.rankId', 0)
+        ;
+    }
+
+    #[Test]
+    public function it_rejects_an_unknown_rank_id(): void
+    {
+        $this->getJson('/api/v1/persons?rankId=99')
+            ->assertUnprocessable()
+            ->assertJsonPath('errors.0.field', 'rankId')
         ;
     }
 

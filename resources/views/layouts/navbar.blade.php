@@ -6,9 +6,7 @@
     use App\Bridge\Laravel\Http\Controllers\Login\ShowLoginFormAction;
     use App\Bridge\Laravel\Http\Controllers\Login\SignOutAction;
     use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonsListAction;
-    use App\Bridge\Laravel\Http\Controllers\Rank\ShowRanksListAction;
     use App\Bridge\Laravel\Http\Controllers\Registration\ShowRegistrationFormAction;
-    use App\Domain\Rank\Rank;
     use App\Models\Year;
     /**
      * @var bool $isAuth;
@@ -18,7 +16,6 @@
      * @var bool $isCupsRoute;
      * @var bool $isPersonsRoute;
      * @var bool $isClubsRoute;
-     * @var bool $isRanksRoute;
      * @var bool $isFlagsRoute;
      * @var bool $isGroupsRoute;
      */
@@ -67,7 +64,7 @@
                     </ul>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle {{ ($isPersonsRoute || $isClubsRoute || $isRanksRoute) ? 'active' : '' }}"
+                    <a class="nav-link dropdown-toggle {{ ($isPersonsRoute || $isClubsRoute) ? 'active' : '' }}"
                        href="#"
                        id="personsDropdown"
                        role="button"
@@ -84,11 +81,6 @@
                             <a class="dropdown-item {{ $isClubsRoute ? 'active' : '' }}"
                                href="/app/clubs"
                             >{{ __('app.navbar.clubs') }}</a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item {{ $isRanksRoute ? 'active' : '' }}"
-                               href="{{ action(ShowRanksListAction::class, [Rank::SM_RANK]) }}"
-                            >{{ __('app.navbar.ranks') }}</a>
                         </li>
                     </ul>
                 </li>
