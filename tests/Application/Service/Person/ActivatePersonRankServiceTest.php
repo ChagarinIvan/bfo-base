@@ -15,6 +15,7 @@ use App\Domain\Shared\DummyTransactional;
 use App\Domain\Shared\FrozenClock;
 use Carbon\Carbon;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
 final class ActivatePersonRankServiceTest extends TestCase
@@ -38,13 +39,17 @@ final class ActivatePersonRankServiceTest extends TestCase
     #[Test]
     public function it_activates_rank_and_returns_person_id(): void
     {
-        /** @var ProtocolLine&\PHPUnit\Framework\MockObject\MockObject $line */
+        /** @var ProtocolLine&MockObject $line */
         $line = $this->createMock(ProtocolLine::class);
         $line->expects($this->once())->method('__get')->with('person_id')->willReturn(42);
         $line->expects($this->once())
             ->method('activateRank')
             ->with(
-                $this->callback(static fn (Carbon $date): bool => $date->toDateString() === '2026-09-10'),
+                $this->callback(function (Carbon $date): bool {
+                    $this->assertSame('2026-09-10', $date->toDateString());
+
+                    return true;
+                }),
                 $this->anything(),
             );
 

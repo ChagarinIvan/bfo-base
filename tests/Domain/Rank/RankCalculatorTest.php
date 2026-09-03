@@ -158,7 +158,7 @@ final class RankCalculatorTest extends TestCase
     #[Test]
     public function it_expires_rank_after_two_years_without_a_new_achievement(): void
     {
-        $result = $this->calculate([$this->achievement(Rank::FirstRank, '2024-01-10')], null);
+        $result = $this->calculate([$this->achievement(Rank::FirstRank, '2024-01-10')]);
 
         $this->assertSame(Rank::WithoutRank, $result->current->rank);
     }

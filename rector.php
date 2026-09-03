@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Rector\CodeQuality\Rector\Identical\FlipTypeControlToUseExclusiveTypeRector;
 use Rector\Config\RectorConfig;
 use Rector\Php81\Rector\Property\ReadOnlyPropertyRector;
+use Rector\PHPUnit\CodeQuality\Rector\MethodCall\AssertEmptyNullableObjectToAssertInstanceofRector;
 use Rector\PHPUnit\Set\PHPUnitSetList;
 use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
 use Rector\Renaming\Rector\PropertyFetch\RenamePropertyRector;
@@ -54,6 +55,9 @@ return RectorConfig::configure()
         AssertSeeToAssertSeeHtmlRector::class,
         FlipTypeControlToUseExclusiveTypeRector::class,
         StringToClassConstantRector::class,
+        // `assertNull()` is the precise assertion for nullable values; keeping it
+        // avoids Rector rewriting it to the less explicit `assertNotInstanceOf()`.
+        AssertEmptyNullableObjectToAssertInstanceofRector::class,
         // PHP 8.5 hooked properties cannot be declared readonly on the containing class.
         ReadOnlyPropertyRector::class => [
             __DIR__ . '/app/Application/Service/Competition/ListCompetitions.php',
