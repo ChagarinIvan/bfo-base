@@ -2,7 +2,6 @@
     use App\Application\Dto\Club\ViewClubDto;
     use App\Application\Dto\Event\ViewEventDto;
     use App\Application\Dto\Person\ViewPersonDto;
-    use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionAction;
     use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupAction;
     use App\Bridge\Laravel\Http\Controllers\Event\ShowEditEventFormAction;
     use App\Bridge\Laravel\Http\Controllers\Event\ShowEventDistanceAction;
