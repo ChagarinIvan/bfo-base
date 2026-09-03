@@ -1,5 +1,4 @@
 @php
-    use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionAction;
     use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupEventGroupAction;
     use App\Bridge\Laravel\Http\Controllers\Event\ShowEventDistanceAction;
     use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonAction;
@@ -19,7 +18,7 @@
 @section('content')
     <div class="row mb-3">
         <h4>
-            <a href="{{ action(ShowCompetitionAction::class, [$calculatedCupEvent->cupEvent->event->competitionId]) }}">{{ $calculatedCupEvent->cupEvent->event->competitionName }}</a>
+            <a href="/app/competitions/{{ $calculatedCupEvent->cupEvent->event->competitionId }}">{{ $calculatedCupEvent->cupEvent->event->competitionName }}</a>
         </h4>
     </div>
     @if($calculatedCupEvent->cupEvent->event->firstDistance)

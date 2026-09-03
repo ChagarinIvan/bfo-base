@@ -48,11 +48,8 @@ final class RemovedFaqRoutesTest extends TestCase
     }
 
     #[Test]
-    public function unrelated_competitions_route_remains_available(): void
+    public function root_redirects_to_spa_competitions(): void
     {
-        $this->get('/competitions?year=2021')
-            ->assertStatus(Response::HTTP_OK)
-            ->assertDontSee('/faq')
-        ;
+        $this->get('/')->assertRedirect('/app/competitions');
     }
 }

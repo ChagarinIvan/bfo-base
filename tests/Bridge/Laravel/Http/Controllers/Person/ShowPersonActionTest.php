@@ -37,7 +37,7 @@ final class ShowPersonActionTest extends TestCase
             ->assertStatus(Response::HTTP_OK)
             ->assertSee('<h4>Последняя оплата: 2023-01-11</h4>', false)
             ->assertSee('<td class="text-center" colspan="9"><b id="2022">2022</b></td>', false)
-            ->assertSee('<a href="http://localhost/competitions/1/show">', false)
+            ->assertSee('<a href="/app/competitions/1">', false)
             ->assertSee('<a href="http://localhost/events/d/104#106">', false)
             ->assertSee('<td>2022-03-02</td>', false)
             ->assertSee('<td>M21</td>', false)

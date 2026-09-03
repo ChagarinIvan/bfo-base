@@ -25,7 +25,7 @@ final class RemoveFaqNavigationTest extends TestCase
     #[Test]
     public function guest_does_not_see_faq_navigation(): void
     {
-        $this->get('/competitions?year=2021')
+        $this->get('/404')
             ->assertStatus(Response::HTTP_OK)
             ->assertDontSee('/faq')
             ->assertDontSee('apiDropdown')
@@ -39,7 +39,7 @@ final class RemoveFaqNavigationTest extends TestCase
         $user = User::factory()->createOne();
         $this->actingAs($user);
 
-        $this->get('/competitions?year=2021')
+        $this->get('/404')
             ->assertStatus(Response::HTTP_OK)
             ->assertDontSee('/faq')
             ->assertDontSee('apiDropdown')

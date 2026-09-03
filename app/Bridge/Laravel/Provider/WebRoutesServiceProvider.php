@@ -4,13 +4,6 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Provider;
 
-use App\Bridge\Laravel\Http\Controllers\Competition\DeleteCompetitionAction;
-use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionAction;
-use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionsListAction;
-use App\Bridge\Laravel\Http\Controllers\Competition\ShowCreateCompetitionFormAction;
-use App\Bridge\Laravel\Http\Controllers\Competition\ShowEditCompetitionFormAction;
-use App\Bridge\Laravel\Http\Controllers\Competition\StoreCompetitionAction;
-use App\Bridge\Laravel\Http\Controllers\Competition\UpdateCompetitionAction;
 use App\Bridge\Laravel\Http\Controllers\Cup\ClearCacheAction;
 use App\Bridge\Laravel\Http\Controllers\Cup\DeleteCupAction;
 use App\Bridge\Laravel\Http\Controllers\Cup\ExportCupGroupTableAction;
@@ -84,7 +77,6 @@ use App\Bridge\Laravel\Http\Controllers\Rank\ShowPersonRanksAction;
 use App\Bridge\Laravel\Http\Controllers\Rank\UpdateRankActivationDateAction;
 use App\Bridge\Laravel\Http\Controllers\Registration\SendRegistrationDataAction;
 use App\Bridge\Laravel\Http\Controllers\Registration\ShowRegistrationFormAction;
-use App\Models\Year;
 use Illuminate\Contracts\Routing\Registrar;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Routing\Redirector;
@@ -104,21 +96,7 @@ class WebRoutesServiceProvider extends ServiceProvider
 
         $this->routes(function (): void {
             $this->routeRegistrar->middleware('web')->group(function (): void {
-                $this->route->get('', fn () => $this->redirector->action(ShowCompetitionsListAction::class, ['year' => (string) Year::actualYear()->value]));
-
-                //competitions
-                $this->routeRegistrar->prefix('competitions')->group(function (): void {
-                    $this->route->get('', ShowCompetitionsListAction::class);
-                    $this->route->get('{competitionId}/show', ShowCompetitionAction::class);
-
-                    $this->middleware(['auth'])->group(function (): void {
-                        $this->route->get('create', ShowCreateCompetitionFormAction::class);
-                        $this->route->get('{competitionId}/edit', ShowEditCompetitionFormAction::class);
-                        $this->route->get('{competitionId}/delete', DeleteCompetitionAction::class);
-                        $this->route->post('store', StoreCompetitionAction::class);
-                        $this->route->post('{competitionId}/update', UpdateCompetitionAction::class);
-                    });
-                });
+                $this->route->get('', fn () => $this->redirector->to('/app/competitions'));
 
                 //event
                 $this->routeRegistrar->prefix('events')->group(function (): void {

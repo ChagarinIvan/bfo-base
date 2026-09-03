@@ -33,7 +33,7 @@
     <div class="row mb-3">
         <div class="col-12">
             <h4>
-                <a href="{{ action(ShowCompetitionAction::class, ['competitionId' => $event->competitionId]) }}">{{ $event->competitionName }}</a>
+                <a href="/app/competitions/{{ $event->competitionId }}">{{ $event->competitionName }}</a>
             </h4>
         </div>
     </div>

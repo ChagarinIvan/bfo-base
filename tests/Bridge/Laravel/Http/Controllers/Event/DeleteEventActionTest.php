@@ -41,7 +41,7 @@ final class DeleteEventActionTest extends TestCase
 
         $this->get("/events/101/delete")
             ->assertStatus(Response::HTTP_FOUND)
-            ->assertRedirect('/competitions/1/show');
+            ->assertRedirect('/app/competitions/1');
         ;
 
         $this->assertDatabaseHas('events', [

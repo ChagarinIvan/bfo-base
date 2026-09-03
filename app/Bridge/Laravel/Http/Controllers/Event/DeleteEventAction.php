@@ -10,7 +10,6 @@ use App\Application\Service\Event\DisableEventService;
 use App\Application\Service\Event\Exception\EventNotFound;
 use App\Application\Service\Event\ViewEvent;
 use App\Application\Service\Event\ViewEventService;
-use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionAction;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller as BaseController;
 
@@ -32,6 +31,6 @@ class DeleteEventAction extends BaseController
             return $this->redirectTo404Error();
         }
 
-        return $this->redirector->action(ShowCompetitionAction::class, [$event->competitionId]);
+        return $this->redirector->to('/app/competitions/' . $event->competitionId);
     }
 }

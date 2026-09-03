@@ -38,7 +38,7 @@ class ShowEventAction extends BaseController
 
         $distance = $event->firstDistance;
         if ($distance === null) {
-            return $this->redirector->action(ShowCompetitionAction::class, [$event->competitionId]);
+            return $this->redirector->to('/app/competitions/' . $event->competitionId);
         }
 
         return $this->renderEventDistance($event, $distance, $clubsService, $personsService, $clubNameNormalizer);

@@ -1,6 +1,5 @@
 @php
     use App\Application\Dto\Event\ViewEventDto;
-    use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionAction;
     use App\Bridge\Laravel\Http\Controllers\Event\ShowAddFlagToEventFormAction;
     use App\Bridge\Laravel\Http\Controllers\Event\ShowEventDistanceAction;
     use App\Models\Flag;
@@ -52,7 +51,7 @@
                 <tr>
                     <td>
                         <a class="d-none d-md-inline"
-                           href="{{ action(ShowCompetitionAction::class, [$event->competitionId]) }}">{{ Str::limit($event->competitionName, 30) }}</a>
+                           href="/app/competitions/{{ $event->competitionId }}">{{ Str::limit($event->competitionName, 30) }}</a>
                     </td>
                     <td>
                         @if($event->firstDistance)

@@ -54,7 +54,7 @@ final class UpdateEventActionTest extends TestCase
             'date' => '2023-01-01'
         ])
             ->assertStatus(Response::HTTP_FOUND)
-            ->assertRedirect('/competitions/1/show')
+            ->assertRedirect('/app/competitions/1')
         ;
 
         $this->assertDatabaseHas('events', [
@@ -90,7 +90,7 @@ final class UpdateEventActionTest extends TestCase
             'protocol' => $file,
         ])
             ->assertStatus(Response::HTTP_FOUND)
-            ->assertRedirect('/competitions/1/show')
+            ->assertRedirect('/app/competitions/1')
         ;
 
         Storage::delete('2023/2023-01-01_test_event.text/html');

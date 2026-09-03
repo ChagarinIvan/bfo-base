@@ -1,5 +1,4 @@
 @php
-    use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionAction;
     use App\Bridge\Laravel\Http\Controllers\Event\ShowEventDistanceAction;
     use App\Bridge\Laravel\Http\Controllers\Person\ExtractPersonAction;
     use App\Bridge\Laravel\Http\Controllers\Person\ShowEditPersonAction;
@@ -124,7 +123,7 @@
                     @endphp
                     <tr>
                         <td>
-                            <a href="{{ action(ShowCompetitionAction::class, [$line->competitionId]) }}">
+                            <a href="/app/competitions/{{ $line->competitionId }}">
                                 {{ Str::limit($line->competitionName, 20, '...') }}
                             </a>
                         </td>
