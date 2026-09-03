@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import type { AxiosError } from 'axios'
 import Card from 'primevue/card'
-import Column from 'primevue/column'
-import DataTable from 'primevue/datatable'
 import Message from 'primevue/message'
 import Paginator, { type PageState } from 'primevue/paginator'
 import { useRoute } from 'vue-router'
 import { getClub } from '../../api/clubs'
 import { getPersons } from '../../api/persons'
+import { getRanks, type RankOption } from '../../api/ranks'
 import type { Club, PaginationHeaders, Person, User } from '../../api/types'
 import ImpressionDetails from '../../components/ImpressionDetails.vue'
+import PersonTable from '../../components/PersonTable.vue'
 import EditActionButton from '../../components/actions/EditActionButton.vue'
 import { t } from '../../i18n'
 import { useAuthStore } from '../../stores/auth'
@@ -22,6 +22,7 @@ const auth = useAuthStore()
 const club = ref<Club | null>(null)
 const persons = ref<Person[]>([])
 const users = ref<User[]>([])
+const ranks = ref<RankOption[]>([])
 const personPagination = ref<PaginationHeaders>({
     currentPage: 1,
     perPage: 20,
@@ -30,6 +31,9 @@ const personPagination = ref<PaginationHeaders>({
 })
 const loading = ref(true)
 const error = ref('')
+const rankLabels = computed(() =>
+    Object.fromEntries(ranks.value.map((rank) => [rank.id, rank.label])),
+)
 
 function isNotFound(exception: unknown): boolean {
     return (
@@ -57,7 +61,8 @@ async function load(id: string): Promise<void> {
 
     try {
         club.value = await getClub(id)
-        await loadPersons(id)
+        const [loadedRanks] = await Promise.all([getRanks(), loadPersons(id)])
+        ranks.value = loadedRanks
         users.value = auth.isAuthenticated ? await getUsers() : []
     } catch (exception: unknown) {
         club.value = null
@@ -140,47 +145,14 @@ watch(
         <Message v-if="!persons.length" severity="secondary" :closable="false">
             {{ t('spa.club.details.empty') }}
         </Message>
-        <DataTable v-else :value="persons" striped-rows class="persons-table">
-            <Column field="lastname" :header="t('spa.person.lastname')">
-                <template #body="{ data }">
-                    <a :href="`/persons/${data.id}/show`">{{
-                        data.lastname
-                    }}</a>
-                </template>
-            </Column>
-            <Column field="firstname" :header="t('spa.person.firstname')">
-                <template #body="{ data }">
-                    <a :href="`/persons/${data.id}/show`">{{
-                        data.firstname
-                    }}</a>
-                </template>
-            </Column>
-            <Column field="birthYear" :header="t('spa.person.birth_year')" />
-            <Column
-                v-if="auth.isAuthenticated"
-                :header="t('spa.clubs.created')"
-            >
-                <template #body="{ data }">
-                    <ImpressionDetails
-                        :impression="data.created"
-                        :users="users"
-                        :label="t('spa.clubs.created')"
-                    />
-                </template>
-            </Column>
-            <Column
-                v-if="auth.isAuthenticated"
-                :header="t('spa.clubs.updated')"
-            >
-                <template #body="{ data }">
-                    <ImpressionDetails
-                        :impression="data.updated"
-                        :users="users"
-                        :label="t('spa.clubs.updated')"
-                    />
-                </template>
-            </Column>
-        </DataTable>
+        <PersonTable
+            v-else
+            :persons="persons"
+            :users="users"
+            :clubs="[{ id: club.id, name: club.name }]"
+            :authenticated="auth.isAuthenticated"
+            :rank-labels="rankLabels"
+        />
         <Paginator
             v-if="personPagination.total > 0"
             :first="

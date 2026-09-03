@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Bridge\Laravel\Console\Commands;
 
 use App\Application\Dto\Auth\UserId;
-use App\Application\Dto\Person\LegacySearchPersonDto;
 use App\Application\Dto\Person\PersonInfoDto;
-use App\Application\Service\Person\ListLegacyPersons;
-use App\Application\Service\Person\ListLegacyPersonsService;
+use App\Application\Dto\Person\SearchPersonDto;
+use App\Application\Service\Person\ListPersons;
+use App\Application\Service\Person\ListPersonsService;
 use App\Application\Service\Person\UpdatePersonInfo;
 use App\Application\Service\Person\UpdatePersonInfoService;
 use App\Application\Service\Person\ViewPerson;
@@ -17,15 +17,16 @@ use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use function array_shift;
-use function count;
 use function sprintf;
 
 #[Signature('persons:fix-age')]
 final class FixYearCommand extends Command
 {
+    private const int INFINITY = 10_000;
+
     public function __construct(
         private readonly UpdatePersonInfoService $service,
-        private readonly ListLegacyPersonsService $persons,
+        private readonly ListPersonsService $persons,
         private readonly ViewPersonService $person,
     ) {
         parent::__construct();
@@ -35,11 +36,10 @@ final class FixYearCommand extends Command
     {
         $this->info('Start');
         $userId = (int) $this->argument('user_id');
-        $year = $this->argument('year');
-        $persons = $this->persons->execute(new ListLegacyPersons(new LegacySearchPersonDto(year: $year)));
-        $this->info(sprintf('Has %d persons', count($persons)));
+        $year = (int) $this->argument('year');
+        $persons = $this->persons->execute(new ListPersons(new SearchPersonDto(birthYear: $year)));
 
-        foreach ($persons as $person) {
+        foreach ($persons->setPerPage(self::INFINITY)->getIterator() as $person) {
             $person = $this->person->execute(new ViewPerson($person->id, includeProtocolLines: true));
             $groupedByYearProtocolLines = $person->groupedByYearProtocolLines;
             $protocolLines = array_shift($groupedByYearProtocolLines);

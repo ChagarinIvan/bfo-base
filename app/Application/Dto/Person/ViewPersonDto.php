@@ -13,8 +13,9 @@ final readonly class ViewPersonDto
         public string $id,
         public string $lastname,
         public string $firstname,
-        public ?int $birthYear,
+        public ?string $birthday,
         public int $rankId,
+        public ?string $clubId,
         #[Groups(['authenticated'])]
         public ImpressionDto $created,
         #[Groups(['authenticated'])]

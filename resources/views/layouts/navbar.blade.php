@@ -5,7 +5,6 @@
     use App\Bridge\Laravel\Http\Controllers\Groups\ShowGroupsListAction;
     use App\Bridge\Laravel\Http\Controllers\Login\ShowLoginFormAction;
     use App\Bridge\Laravel\Http\Controllers\Login\SignOutAction;
-    use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonsListAction;
     use App\Bridge\Laravel\Http\Controllers\Registration\ShowRegistrationFormAction;
     use App\Models\Year;
     /**
@@ -74,7 +73,7 @@
                     <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="personsDropdown">
                         <li>
                             <a class="dropdown-item {{ $isPersonsRoute ? 'active' : '' }}"
-                               href="{{ action(ShowPersonsListAction::class) }}"
+                               href="/app/persons"
                             >{{ __('app.navbar.persons') }}</a>
                         </li>
                         <li>

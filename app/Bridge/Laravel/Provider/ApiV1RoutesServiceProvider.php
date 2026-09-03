@@ -8,6 +8,7 @@ use App\Bridge\Laravel\Http\Controllers\Api\V1\Auth\ListUsersAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Auth\LoginAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Auth\LogoutAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Club\CreateClubAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Club\ListAllClubAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Club\ListClubsAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Club\UpdateClubAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Club\ViewClubAction;
@@ -33,14 +34,20 @@ final class ApiV1RoutesServiceProvider extends ServiceProvider
 
         $this->routes(static function () use ($router): void {
             $router->prefix('api/v1')->middleware('throttle:10,1')->post('auth/login', LoginAction::class);
-            $router->prefix('api/v1')->middleware(OptionalAuthenticateApiV1::class)->get('competitions', ListCompetitionsAction::class);
-            $router->prefix('api/v1')->middleware(OptionalAuthenticateApiV1::class)->get('competitions/{competitionId}', ViewCompetitionAction::class);
-            $router->prefix('api/v1')->middleware(OptionalAuthenticateApiV1::class)->get('clubs', ListClubsAction::class);
-            $router->prefix('api/v1')->middleware(OptionalAuthenticateApiV1::class)->get('clubs/{clubId}', ViewClubAction::class);
-            $router->prefix('api/v1')->middleware(OptionalAuthenticateApiV1::class)->get('events', ListEventsAction::class);
-            $router->prefix('api/v1')->middleware(OptionalAuthenticateApiV1::class)->get('persons', ListPersonsAction::class);
+
+            $router->prefix('api/v1')->middleware(OptionalAuthenticateApiV1::class)->group(static function () use ($router): void {
+                $router->get('competitions', ListCompetitionsAction::class);
+                $router->get('competitions/{competitionId}', ViewCompetitionAction::class);
+                $router->get('clubs', ListClubsAction::class);
+                $router->get('clubs/all', ListAllClubAction::class);
+                $router->get('clubs/{clubId}', ViewClubAction::class);
+                $router->get('events', ListEventsAction::class);
+                $router->get('persons', ListPersonsAction::class);
+            });
+
             $router->prefix('api/v1')->get('ranks', ListRanksAction::class);
             $router->prefix('api/v1')->get('years', ListYearsAction::class);
+
             $router->prefix('api/v1')->middleware(AuthenticateApiV1::class)->group(static function () use ($router): void {
                 $router->delete('auth/logout', LogoutAction::class);
                 $router->get('users', ListUsersAction::class);

@@ -176,6 +176,14 @@ body {
     gap: 0.75rem;
 }
 
+.persons-filter-panel {
+    flex-wrap: wrap;
+}
+
+.persons-filter-panel .filter-field {
+    flex: 1 1 12rem;
+}
+
 .filter-field {
     display: grid;
     min-width: 12rem;

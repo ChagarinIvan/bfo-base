@@ -36,6 +36,8 @@
  * Date: 2021-03-02T17:08Z
  */
 
+/*! Axios v1.20.0 Copyright (c) 2026 Matt Zabriskie and contributors */
+
 /**
   * bootstrap-table - An extended table to integration with some of the most widely used CSS frameworks. (Supports Bootstrap, Semantic UI, Bulma, Material Design, Foundation)
   *

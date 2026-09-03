@@ -17,9 +17,8 @@ describe('hybrid SPA navbar', () => {
             { label: 'spa.nav.cups', href: '/cups' },
         ])
         expect(personsNavigation.map((item) => item.href)).toEqual([
-            '/persons',
+            '/app/persons',
             '/app/clubs',
-            '/ranks/list/%D0%9C%D0%A1',
         ])
         expect(personsNavigation[1].spa).toBe(true)
     })

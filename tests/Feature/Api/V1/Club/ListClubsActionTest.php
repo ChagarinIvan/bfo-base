@@ -49,6 +49,23 @@ final class ListClubsActionTest extends TestCase
     }
 
     #[Test]
+    public function it_returns_all_active_club_options_without_pagination(): void
+    {
+        $this->createClub(['id' => 2, 'name' => 'Same']);
+        $this->createClub(['id' => 1, 'name' => 'Same']);
+        $this->createClub(['id' => 3, 'name' => 'Inactive', 'active' => false]);
+
+        $this->getJson('/api/v1/clubs/all')
+            ->assertOk()
+            ->assertHeaderMissing('X-Pagination-Total')
+            ->assertExactJson([
+                ['id' => '1', 'name' => 'Same'],
+                ['id' => '2', 'name' => 'Same'],
+            ])
+        ;
+    }
+
+    #[Test]
     public function it_returns_only_active_clubs_and_active_person_counts(): void
     {
         $activeClub = $this->createClub(['id' => 1, 'name' => 'Active Club']);

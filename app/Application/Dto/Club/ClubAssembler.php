@@ -23,4 +23,12 @@ final readonly class ClubAssembler
             updated: $this->authAssembler->toImpressionDto($club->updated)
         );
     }
+
+    public function toClubOptionDto(Club $club): ClubOptionDto
+    {
+        return new ClubOptionDto(
+            id: (string) $club->id,
+            name: $club->name,
+        );
+    }
 }

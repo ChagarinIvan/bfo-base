@@ -49,6 +49,23 @@ final class EloquentPersonRepositoryTest extends TestCase
     }
 
     #[Test]
+    public function it_filters_paginated_persons_by_ids(): void
+    {
+        /** @var Person $person */
+        $person = Person::factory()->createOne(['id' => 1]);
+        Person::factory()->createOne(['id' => 2]);
+
+        $result = $this->repository
+            ->paginate(new Criteria(['ids' => [$person->id]]))
+            ->setPerPage(1000)
+            ->items()
+        ;
+
+        $this->assertCount(1, $result);
+        $this->assertSame($person->id, $result[0]->id);
+    }
+
+    #[Test]
     public function it_filters_by_club_id(): void
     {
         /** @var Club $club */

@@ -17,29 +17,45 @@ describe('persons api', () => {
                     id: '42',
                     lastname: 'Ivanov',
                     firstname: 'Ivan',
-                    birthYear: 2001,
+                    birthday: '2001-06-04',
                     rankId: 0,
+                    clubId: '7',
                 },
             ],
             headers,
         })
 
         await expect(
-            getPersons({ clubId: 7, page: 2, perPage: 10 }),
+            getPersons({
+                name: 'Ivan',
+                clubId: 7,
+                rankId: 0,
+                birthYear: 2001,
+                page: 2,
+                perPage: 10,
+            }),
         ).resolves.toEqual({
             data: [
                 {
                     id: '42',
                     lastname: 'Ivanov',
                     firstname: 'Ivan',
-                    birthYear: 2001,
+                    birthday: '2001-06-04',
                     rankId: 0,
+                    clubId: '7',
                 },
             ],
             headers,
         })
         expect(api.get).toHaveBeenCalledWith('/persons', {
-            params: { clubId: 7, page: 2, perPage: 10 },
+            params: {
+                name: 'Ivan',
+                clubId: 7,
+                rankId: 0,
+                birthYear: 2001,
+                page: 2,
+                perPage: 10,
+            },
         })
     })
 })

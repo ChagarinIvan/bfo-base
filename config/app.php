@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use App\Bridge\Laravel\Provider\ApiRoutesServiceProvider;
 use App\Bridge\Laravel\Provider\ApiV1RoutesServiceProvider;
 use App\Bridge\Laravel\Provider\Club\ClubProvider;
 use App\Bridge\Laravel\Provider\Competition\CompetitionProvider;
@@ -226,7 +225,6 @@ return [
 
         // routes
         WebRoutesServiceProvider::class,
-        ApiRoutesServiceProvider::class,
         ApiV1RoutesServiceProvider::class,
 
         // view

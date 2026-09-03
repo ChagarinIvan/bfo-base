@@ -13,6 +13,7 @@ import ClubsPage from '../pages/clubs/ClubsPage.vue'
 import ClubDetailsPage from '../pages/clubs/ClubDetailsPage.vue'
 import CreateClubPage from '../pages/clubs/CreateClubPage.vue'
 import EditClubPage from '../pages/clubs/EditClubPage.vue'
+import PersonsPage from '../pages/persons/PersonsPage.vue'
 import LoginPage from '../pages/auth/LoginPage.vue'
 
 export function createAppRouter(
@@ -26,6 +27,7 @@ export function createAppRouter(
             { path: '/app/competitions', component: CompetitionsPage },
             { path: '/app/clubs', component: ClubsPage },
             { path: '/app/clubs/:id', component: ClubDetailsPage },
+            { path: '/app/persons', component: PersonsPage },
             {
                 path: '/app/clubs/create',
                 component: CreateClubPage,

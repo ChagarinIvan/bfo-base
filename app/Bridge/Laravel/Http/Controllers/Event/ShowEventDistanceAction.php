@@ -8,7 +8,7 @@ use App\Application\Service\Club\ListLegacyClubsService;
 use App\Application\Service\Event\Exception\EventNotFound;
 use App\Application\Service\Event\ViewEvent;
 use App\Application\Service\Event\ViewEventService;
-use App\Application\Service\Person\ListLegacyPersonsService;
+use App\Application\Service\Person\ListPersonsService;
 use App\Domain\Club\ClubNameNormalizer;
 use App\Domain\Distance\Distance;
 use Illuminate\Contracts\View\View;
@@ -26,7 +26,7 @@ class ShowEventDistanceAction extends BaseController
     public function __invoke(
         Distance $distance,
         ViewEventService $eventService,
-        ListLegacyPersonsService $personsService,
+        ListPersonsService $personsService,
         ListLegacyClubsService $clubsService,
         ClubNameNormalizer $clubNameNormalizer,
     ): RedirectResponse|View {

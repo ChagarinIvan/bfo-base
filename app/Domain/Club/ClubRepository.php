@@ -20,6 +20,9 @@ interface ClubRepository
 
     public function oneByNormalizedName(string $normalizedName): ?Club;
 
+    /** @return Collection<int, Club> */
+    public function all(): Collection;
+
     public function byCriteria(Criteria $criteria): Collection;
 
     public function oneByCriteria(Criteria $criteria): ?Club;

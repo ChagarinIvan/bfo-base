@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
+use function mb_strtolower;
 
 final class EloquentPersonRepository implements PersonRepository
 {
@@ -159,6 +160,10 @@ final class EloquentPersonRepository implements PersonRepository
             ->orderBy('person.firstname')
             ->orderBy('person.id');
 
+        if ($criteria->hasParam('ids')) {
+            $query->whereIn('person.id', $criteria->param('ids'));
+        }
+
         if ($criteria->hasParam('clubId')) {
             $query
                 ->join('club', 'club.id', '=', 'person.club_id')
@@ -169,6 +174,29 @@ final class EloquentPersonRepository implements PersonRepository
 
         if ($criteria->hasParam('rankId')) {
             $query->where('person.current_rank', $criteria->param('rankId'));
+        }
+
+        if ($criteria->hasParam('name')) {
+            $name = mb_strtolower((string) $criteria->param('name'));
+            $query->where(static function (Builder $query) use ($name): void {
+                $query
+                    ->whereRaw('LOWER(person.lastname) LIKE ?', ['%' . $name . '%'])
+                    ->orWhereRaw('LOWER(person.firstname) LIKE ?', ['%' . $name . '%'])
+                ;
+            });
+        }
+
+        if ($criteria->hasParam('birthYear')) {
+            $query->whereYear('person.birthday', (int) $criteria->param('birthYear'));
+        }
+
+        if ($criteria->hasParam('withoutLinesAndPayments')) {
+            $query
+                ->leftJoin('protocol_lines', 'protocol_lines.person_id', '=', 'person.id')
+                ->whereNull('protocol_lines.id')
+                ->leftJoin('persons_payments', 'persons_payments.person_id', '=', 'person.id')
+                ->whereNull('persons_payments.id')
+            ;
         }
 
         return $query;

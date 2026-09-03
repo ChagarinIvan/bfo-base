@@ -6,12 +6,12 @@ namespace App\Bridge\Laravel\Http\Controllers\Cup;
 
 use App\Application\Dto\Club\LegacySearchClubDto;
 use App\Application\Dto\Club\ViewClubDto;
-use App\Application\Dto\Person\LegacySearchPersonDto;
-use App\Application\Dto\Person\LegacyViewPersonDto;
+use App\Application\Dto\Person\SearchPersonDto;
+use App\Application\Dto\Person\ViewPersonDto;
 use App\Application\Service\Club\ListLegacyClubs;
 use App\Application\Service\Club\ListLegacyClubsService;
-use App\Application\Service\Person\ListLegacyPersons;
-use App\Application\Service\Person\ListLegacyPersonsService;
+use App\Application\Service\Person\ListPersons;
+use App\Application\Service\Person\ListPersonsService;
 use App\Domain\Cup\Cup;
 use App\Domain\Cup\Group\CupGroupFactory;
 use App\Services\CupEventsService;
@@ -33,7 +33,7 @@ class ShowCupTableAction extends BaseController
         Cup $cup,
         string $cupGroupId,
         CupEventsService $service,
-        ListLegacyPersonsService $listPersonsService,
+        ListPersonsService $listPersonsService,
         ListLegacyClubsService $listClubsService,
     ): RedirectResponse|View {
         // fix wrong group
@@ -45,17 +45,23 @@ class ShowCupTableAction extends BaseController
         $cupGroup = CupGroupFactory::fromId($cupGroupId);
         $cupPoints = $service->calculateCup($cup, $cupEvents, $cupGroup);
 
-        /** @var array<int, LegacyViewPersonDto> $persons */
+        /** @var array<int, ViewPersonDto> $persons */
         $persons = array_column(
-            array: $listPersonsService->execute(new ListLegacyPersons(new LegacySearchPersonDto(ids: array_keys($cupPoints)))),
+            array: $listPersonsService
+                ->execute(new ListPersons(new SearchPersonDto(ids: array_keys($cupPoints))))
+                ->setPerPage(1000)
+                ->items(),
             column_key: null,
             index_key: 'id',
         );
 
-        $clubIds = array_values(array_filter(array_map(
-            static fn (LegacyViewPersonDto $person): ?string => $person->clubId,
+        $clubIds = array_map(
+            static fn(ViewPersonDto $person): ?string => $person->clubId,
             $persons,
-        )));
+        )
+                |> array_filter(...)
+                |> array_values(...)
+        ;
 
         /** @var array<int, ViewClubDto> $clubs */
         $clubs = array_column(

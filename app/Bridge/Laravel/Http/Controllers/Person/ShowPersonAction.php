@@ -22,7 +22,7 @@ class ShowPersonAction extends BaseController
         try {
             $person = $service->execute(new ViewPerson($id, includeProtocolLines: true));
         } catch (PersonNotFound) {
-            return $this->redirector->action(ShowPersonsListAction::class);
+            return $this->redirector->to('/app/persons');
         }
 
         /** @see /resources/views/persons/show.blade.php */

@@ -36,7 +36,6 @@ final readonly class PersonAssembler
             birthday: $person->birthday?->format('Y-m-d'),
             citizenship: $person->citizenship->value,
             clubId: $person->club_id ? (string) $person->club_id : null,
-            eventsCount: $person->protocol_lines_count ?? 0,
             created: $this->authAssembler->toImpressionDto($person->created),
             updated: $this->authAssembler->toImpressionDto($person->updated),
             // TODO remove
@@ -58,14 +57,13 @@ final readonly class PersonAssembler
 
     public function toViewPersonDto(Person $person): ViewPersonDto
     {
-        $currentRank = $person->currentRank();
-
         return new ViewPersonDto(
             id: (string) $person->id,
             lastname: $person->lastname,
             firstname: $person->firstname,
-            birthYear: $person->birthday?->year,
-            rankId: $currentRank->rank->value,
+            birthday: $person->birthday?->format('Y-m-d'),
+            rankId: $person->currentRank()->rank->value,
+            clubId: $person->club_id ? (string) $person->club_id : null,
             created: $this->authAssembler->toImpressionDto($person->created),
             updated: $this->authAssembler->toImpressionDto($person->updated),
         );

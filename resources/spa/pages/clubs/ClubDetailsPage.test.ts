@@ -12,6 +12,7 @@ const { getClub, getPersons } = vi.hoisted(() => ({
 vi.mock('../../api/clubs', () => ({ getClub }))
 vi.mock('../../api/persons', () => ({ getPersons }))
 vi.mock('../../api/users', () => ({ getUsers: vi.fn().mockResolvedValue([]) }))
+vi.mock('../../api/ranks', () => ({ getRanks: vi.fn().mockResolvedValue([]) }))
 vi.mock('../../stores/auth', () => ({
     useAuthStore: () => ({ isAuthenticated: false }),
 }))
@@ -29,13 +30,19 @@ describe('club details page', () => {
                     id: '7',
                     lastname: 'Іваноў',
                     firstname: 'Ян',
-                    birthYear: 2001,
+                    birthday: '2001-06-04',
                 },
             ],
             headers: {},
         })
 
-        const wrapper = mount(ClubDetailsPage)
+        const wrapper = mount(ClubDetailsPage, {
+            global: {
+                stubs: {
+                    RouterLink: { template: '<a><slot /></a>' },
+                },
+            },
+        })
         await flushPromises()
 
         expect(getPersons).toHaveBeenCalledWith({
