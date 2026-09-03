@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
+import Button from 'primevue/button'
 import ImpressionDetails from './ImpressionDetails.vue'
 import type { ClubOption, Person, User } from '../api/types'
 import { t } from '../i18n'
@@ -77,20 +78,27 @@ function birthYear(birthday: string | null): string {
                 />
             </template>
         </Column>
-        <Column v-if="authenticated" :header="t('spa.person.edit')">
+        <Column v-if="authenticated" :header="t('spa.person.actions')">
             <template #body="{ data }">
-                <a :href="`/persons/${data.id}/edit`">{{
-                    t('spa.person.edit')
-                }}</a>
-            </template>
-        </Column>
-        <Column v-if="authenticated" :header="t('spa.person.delete')">
-            <template #body="{ data }">
-                <a :href="`/persons/${data.id}/delete`">{{
-                    t('spa.person.delete')
-                }}</a>
+                <span class="action-menu">
+                    <Button
+                        as="a"
+                        :href="`/persons/${data.id}/edit`"
+                        icon="pi pi-pencil"
+                        :label="t('spa.person.edit')"
+                        severity="secondary"
+                        text
+                    />
+                    <Button
+                        as="a"
+                        :href="`/persons/${data.id}/delete`"
+                        icon="pi pi-trash"
+                        :label="t('spa.person.delete')"
+                        severity="danger"
+                        text
+                    />
+                </span>
             </template>
         </Column>
     </DataTable>
 </template>
-import { computed } from 'vue'

@@ -110,6 +110,19 @@ final class ListPersonsActionTest extends TestCase
     }
 
     #[Test]
+    public function it_treats_sql_like_wildcards_in_a_name_as_literal_text(): void
+    {
+        $this->createPerson(['id' => 1, 'lastname' => 'A%_']);
+        $this->createPerson(['id' => 2, 'lastname' => 'Axx']);
+
+        $this->getJson('/api/v1/persons?name=A%25_')
+            ->assertOk()
+            ->assertJsonCount(1)
+            ->assertJsonPath('0.id', '1')
+        ;
+    }
+
+    #[Test]
     public function it_rejects_a_person_name_shorter_than_three_characters(): void
     {
         $this->getJson('/api/v1/persons?name=ab')

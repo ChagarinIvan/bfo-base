@@ -35,4 +35,40 @@ describe('person table', () => {
         expect(wrapper.text()).toContain('2001')
         expect(wrapper.text()).toContain('I')
     })
+
+    it('renders edit and delete icon buttons in one authenticated actions column', () => {
+        const wrapper = mount(PersonTable, {
+            props: {
+                persons: [
+                    {
+                        id: '7',
+                        lastname: 'Іваноў',
+                        firstname: 'Ян',
+                        birthday: null,
+                        rankId: 6,
+                        clubId: null,
+                    },
+                ],
+                users: [],
+                authenticated: true,
+            },
+            global: {
+                stubs: {
+                    RouterLink: { template: '<a><slot /></a>' },
+                    ImpressionDetails: true,
+                },
+            },
+        })
+
+        expect(wrapper.text()).toContain('Дзеянні')
+        expect(wrapper.findAll('.action-menu .p-button')).toHaveLength(2)
+        expect(wrapper.find('.action-menu .pi-pencil').exists()).toBe(true)
+        expect(wrapper.find('.action-menu .pi-trash').exists()).toBe(true)
+        expect(
+            wrapper.find('.action-menu a[href="/persons/7/edit"]').exists(),
+        ).toBe(true)
+        expect(
+            wrapper.find('.action-menu a[href="/persons/7/delete"]').exists(),
+        ).toBe(true)
+    })
 })

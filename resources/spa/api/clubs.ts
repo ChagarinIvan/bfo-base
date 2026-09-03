@@ -12,6 +12,28 @@ const CLUB_OPTIONS_CACHE_KEY = 'spa_club_options_cache'
 let clubOptionsMemoryCache: { expiresAt: number; clubs: ClubOption[] } | null =
     null
 
+function isClubOptionsCache(
+    value: unknown,
+): value is { expiresAt: number; clubs: ClubOption[] } {
+    return (
+        typeof value === 'object' &&
+        value !== null &&
+        'expiresAt' in value &&
+        typeof value.expiresAt === 'number' &&
+        'clubs' in value &&
+        Array.isArray(value.clubs) &&
+        value.clubs.every(
+            (club): club is ClubOption =>
+                typeof club === 'object' &&
+                club !== null &&
+                'id' in club &&
+                typeof club.id === 'string' &&
+                'name' in club &&
+                typeof club.name === 'string',
+        )
+    )
+}
+
 export async function getClubs(
     query: ClubSearchQuery = {},
 ): Promise<PaginatedApiResponse<Club>> {
@@ -48,12 +70,8 @@ export async function getClubOptions(): Promise<ClubOption[]> {
         try {
             const stored = JSON.parse(
                 localStorage.getItem(CLUB_OPTIONS_CACHE_KEY) ?? 'null',
-            ) as typeof clubOptionsMemoryCache
-            if (
-                stored &&
-                stored.expiresAt > now &&
-                Array.isArray(stored.clubs)
-            ) {
+            ) as unknown
+            if (isClubOptionsCache(stored) && stored.expiresAt > now) {
                 clubOptionsMemoryCache = stored
                 return stored.clubs
             }

@@ -17,9 +17,14 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
 use function mb_strtolower;
+use function strtr;
 
 final class EloquentPersonRepository implements PersonRepository
 {
+    private static function escapeLikePattern(string $value): string
+    {
+        return strtr($value, ['!' => '!!', '%' => '!%', '_' => '!_']);
+    }
     public function byId(int $id, PersonResources $resources = new PersonResources()): ?Person
     {
         $query = Person::where('active', true);
@@ -177,11 +182,13 @@ final class EloquentPersonRepository implements PersonRepository
         }
 
         if ($criteria->hasParam('name')) {
-            $name = mb_strtolower((string) $criteria->param('name'));
-            $query->where(static function (Builder $query) use ($name): void {
+            $name = self::escapeLikePattern(mb_strtolower((string) $criteria->param('name')));
+
+            $pattern = '%' . $name . '%';
+            $query->where(static function (Builder $query) use ($pattern): void {
                 $query
-                    ->whereRaw('LOWER(person.lastname) LIKE ?', ['%' . $name . '%'])
-                    ->orWhereRaw('LOWER(person.firstname) LIKE ?', ['%' . $name . '%'])
+                    ->whereRaw("LOWER(person.lastname) LIKE ? ESCAPE '!'", [$pattern])
+                    ->orWhereRaw("LOWER(person.firstname) LIKE ? ESCAPE '!'", [$pattern])
                 ;
             });
         }

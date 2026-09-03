@@ -9,7 +9,6 @@ use App\Application\Service\Event\Exception\EventNotFound;
 use App\Application\Service\Event\ViewEvent;
 use App\Application\Service\Event\ViewEventService;
 use App\Application\Service\Person\ListPersonsService;
-use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionAction;
 use App\Domain\Club\ClubNameNormalizer;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;

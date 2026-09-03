@@ -3,7 +3,6 @@ import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Button from 'primevue/button'
-import Card from 'primevue/card'
 import InputText from 'primevue/inputtext'
 import Message from 'primevue/message'
 import Paginator, { type PageState } from 'primevue/paginator'
@@ -18,6 +17,7 @@ import { useAuthStore } from '../../stores/auth'
 import { t } from '../../i18n'
 import ImpressionDetails from '../../components/ImpressionDetails.vue'
 import DateFilter from '../../components/DateFilter.vue'
+import FilterPanel from '../../components/FilterPanel.vue'
 import CompetitionActionMenu from '../../components/actions/CompetitionActionMenu.vue'
 import ConfirmDeleteDialog from '../../components/actions/ConfirmDeleteDialog.vue'
 import { useToast } from 'primevue/usetoast'
@@ -192,53 +192,47 @@ onBeforeUnmount(() => {
         </template>
     </Toolbar>
 
-    <Card class="filter-card">
-        <template #content>
-            <div class="filter-panel">
-                <div class="filter-field">
-                    <label for="competition-year">{{
-                        t('spa.competitions.year')
-                    }}</label>
-                    <Select
-                        id="competition-year"
-                        v-model="year"
-                        :options="yearOptions"
-                        option-label="label"
-                        option-value="value"
-                        :placeholder="t('spa.competitions.year_placeholder')"
-                        filter
-                        filter-match-mode="contains"
-                        :filter-placeholder="t('spa.competitions.year_filter')"
-                        :disabled="loading"
-                        @update:model-value="onYearChange"
-                    />
-                </div>
-                <div class="filter-field">
-                    <label for="competition-name-filter">{{
-                        t('spa.competitions.name_filter')
-                    }}</label>
-                    <InputText
-                        id="competition-name-filter"
-                        v-model="name"
-                        @update:model-value="onNameChange"
-                    />
-                    <small
-                        v-if="hasTooShortNameSearch(name)"
-                        class="filter-hint"
-                        >{{ t('spa.competitions.name_hint') }}</small
-                    >
-                </div>
-                <DateFilter
-                    v-model="date"
-                    input-id="competition-date-filter"
-                    :label="t('spa.competitions.date_filter')"
-                    :disabled="loading"
-                    :error="fieldErrors.date"
-                    @update:model-value="onDateChange"
-                />
-            </div>
-        </template>
-    </Card>
+    <FilterPanel>
+        <div class="filter-field">
+            <label for="competition-year">{{
+                t('spa.competitions.year')
+            }}</label>
+            <Select
+                id="competition-year"
+                v-model="year"
+                :options="yearOptions"
+                option-label="label"
+                option-value="value"
+                :placeholder="t('spa.competitions.year_placeholder')"
+                filter
+                filter-match-mode="contains"
+                :filter-placeholder="t('spa.competitions.year_filter')"
+                :disabled="loading"
+                @update:model-value="onYearChange"
+            />
+        </div>
+        <div class="filter-field">
+            <label for="competition-name-filter">{{
+                t('spa.competitions.name_filter')
+            }}</label>
+            <InputText
+                id="competition-name-filter"
+                v-model="name"
+                @update:model-value="onNameChange"
+            />
+            <small v-if="hasTooShortNameSearch(name)" class="filter-hint">{{
+                t('spa.competitions.name_hint')
+            }}</small>
+        </div>
+        <DateFilter
+            v-model="date"
+            input-id="competition-date-filter"
+            :label="t('spa.competitions.date_filter')"
+            :disabled="loading"
+            :error="fieldErrors.date"
+            @update:model-value="onDateChange"
+        />
+    </FilterPanel>
 
     <Message v-if="loading" severity="info" :closable="false">{{
         t('spa.competitions.loading')

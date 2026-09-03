@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import Button from 'primevue/button'
-import Card from 'primevue/card'
 import InputText from 'primevue/inputtext'
 import Message from 'primevue/message'
 import Paginator, { type PageState } from 'primevue/paginator'
@@ -18,6 +17,7 @@ import type {
     User,
 } from '../../api/types'
 import PersonTable from '../../components/PersonTable.vue'
+import FilterPanel from '../../components/FilterPanel.vue'
 import { t } from '../../i18n'
 import { useAuthStore } from '../../stores/auth'
 import {
@@ -167,85 +167,80 @@ onBeforeUnmount(() => debouncedNameSearch.cancel())
         </template>
     </Toolbar>
 
-    <Card class="filter-card">
-        <template #content>
-            <div class="filter-panel persons-filter-panel">
-                <div class="filter-field">
-                    <label for="person-name-filter">{{
-                        t('spa.person.search')
-                    }}</label>
-                    <InputText
-                        id="person-name-filter"
-                        v-model="name"
-                        :invalid="Boolean(fieldErrors.name)"
-                        @update:model-value="onNameChange"
-                    />
-                    <small v-if="fieldErrors.name" class="p-error">{{
-                        fieldErrors.name
-                    }}</small>
-                    <small
-                        v-else-if="hasTooShortNameSearch(name)"
-                        class="filter-hint"
-                    >
-                        {{ t('spa.person.search_hint') }}
-                    </small>
-                </div>
-                <div class="filter-field">
-                    <label for="person-club-filter">{{
-                        t('spa.person.club_filter')
-                    }}</label>
-                    <Select
-                        id="person-club-filter"
-                        v-model="clubId"
-                        :options="clubOptions"
-                        option-label="name"
-                        option-value="id"
-                        @update:model-value="onFilterChange"
-                    />
-                </div>
-                <div class="filter-field">
-                    <label for="person-rank-filter">{{
-                        t('spa.person.rank_filter')
-                    }}</label>
-                    <Select
-                        id="person-rank-filter"
-                        v-model="rankId"
-                        :options="[
-                            { id: null, label: t('spa.person.all_options') },
-                            ...ranks,
-                        ]"
-                        option-label="label"
-                        option-value="id"
-                        @update:model-value="onFilterChange"
-                    />
-                </div>
-                <div class="filter-field">
-                    <label for="person-birth-year-filter">{{
-                        t('spa.person.birth_year_filter')
-                    }}</label>
-                    <Select
-                        id="person-birth-year-filter"
-                        v-model="birthYear"
-                        :options="[
-                            { label: t('spa.person.all_options'), value: null },
-                            ...yearOptions,
-                        ]"
-                        option-label="label"
-                        option-value="value"
-                        filter
-                        @update:model-value="onFilterChange"
-                    />
-                </div>
-            </div>
-        </template>
-    </Card>
+    <FilterPanel>
+        <div class="filter-field">
+            <label for="person-name-filter">{{ t('spa.person.search') }}</label>
+            <InputText
+                id="person-name-filter"
+                v-model="name"
+                :invalid="Boolean(fieldErrors.name)"
+                @update:model-value="onNameChange"
+            />
+            <small v-if="fieldErrors.name" class="p-error">{{
+                fieldErrors.name
+            }}</small>
+            <small v-else-if="hasTooShortNameSearch(name)" class="filter-hint">
+                {{ t('spa.person.search_hint') }}
+            </small>
+        </div>
+        <div class="filter-field">
+            <label for="person-club-filter">{{
+                t('spa.person.club_filter')
+            }}</label>
+            <Select
+                id="person-club-filter"
+                v-model="clubId"
+                :options="clubOptions"
+                option-label="name"
+                option-value="id"
+                @update:model-value="onFilterChange"
+            />
+        </div>
+        <div class="filter-field">
+            <label for="person-rank-filter">{{
+                t('spa.person.rank_filter')
+            }}</label>
+            <Select
+                id="person-rank-filter"
+                v-model="rankId"
+                :options="[
+                    { id: null, label: t('spa.person.all_options') },
+                    ...ranks,
+                ]"
+                option-label="label"
+                option-value="id"
+                @update:model-value="onFilterChange"
+            />
+        </div>
+        <div class="filter-field">
+            <label for="person-birth-year-filter">{{
+                t('spa.person.birth_year_filter')
+            }}</label>
+            <Select
+                id="person-birth-year-filter"
+                v-model="birthYear"
+                :options="[
+                    { label: t('spa.person.all_options'), value: null },
+                    ...yearOptions,
+                ]"
+                option-label="label"
+                option-value="value"
+                filter
+                @update:model-value="onFilterChange"
+            />
+        </div>
+    </FilterPanel>
 
     <Message v-if="loading" severity="info" :closable="false">{{
         t('spa.person.loading')
     }}</Message>
     <Message v-else-if="error" severity="error" :closable="false">
         {{ error }}
-        <Button :label="t('spa.person.retry')" text @click="void load()" />
+        <Button
+            :label="t('spa.person.retry')"
+            text
+            @click="void initialize()"
+        />
     </Message>
     <Message
         v-else-if="!persons.length"

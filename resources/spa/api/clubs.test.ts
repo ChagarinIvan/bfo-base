@@ -1,3 +1,5 @@
+// @vitest-environment happy-dom
+
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { api } from './client'
 import {
@@ -31,6 +33,25 @@ describe('clubs api', () => {
         await getClubOptions()
 
         expect(api.get).toHaveBeenCalledTimes(1)
+        expect(api.get).toHaveBeenCalledWith('/clubs/all')
+    })
+
+    it('ignores an invalid cached club option', async () => {
+        localStorage.setItem(
+            'spa_club_options_cache',
+            JSON.stringify({
+                expiresAt: Date.now() + 60_000,
+                clubs: [null],
+            }),
+        )
+        vi.mocked(api.get).mockResolvedValue({
+            data: [{ id: '1', name: 'Club' }],
+            headers: {},
+        })
+
+        await expect(getClubOptions()).resolves.toEqual([
+            { id: '1', name: 'Club' },
+        ])
         expect(api.get).toHaveBeenCalledWith('/clubs/all')
     })
 
