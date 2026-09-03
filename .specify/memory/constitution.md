@@ -1,13 +1,14 @@
 <!--
 Отчёт о синхронизации (Sync Impact Report)
 ===========================================
-Изменение версии: 2.2.1 → 2.2.2
-Обоснование бампа (PATCH): уточнено разграничение legacy `app/Services` и целевого
-`app/Application/Service`; Application-сервисы/use cases разрешены и являются предпочтительным
-способом оркестрации сценариев.
+Изменение версии: 2.2.3 → 2.3.0
+Обоснование бампа (MINOR): закреплены обязательные contracts для Application commands/use cases,
+criteria-based repositories, typed resources и доменных mutation services.
 
 Изменённые разделы:
-  - I. Слоистая архитектура и границы домена — уточнены правила для legacy и Application-сервисов.
+  - I. Слоистая архитектура и границы домена — добавлены правила Application command/use case.
+  - II. Без фасадов, зависимости через интерфейсы — добавлены criteria/resources/repository rules.
+  - VII. Commands, queries и mutation policies — новый обязательный принцип.
 
 Разделы, требующие сверки при следующей генерации:
   ✅ .specify/memory/constitution.md (этот файл)
@@ -18,7 +19,8 @@
 История: 1.0.0 (первичная ратификация) → 2.0.0 (переопределение принципов, перевод на RU) →
 2.1.0 (Services в легаси, раздел развёртывания) → 2.1.1 (PHP 8.4 по факту репозитория) →
 2.2.0 (принцип VI — импорт вместо FQCN) → 2.2.1 (синхронизация версий стека после апгрейда) →
-2.2.2 (разграничение legacy `app/Services` и Application-сервисов).
+2.2.2 (разграничение legacy `app/Services` и Application-сервисов) → 2.2.3 (уточнения стека) →
+2.3.0 (commands, criteria/resources и domain mutation policies).
 
 Отложенные TODO: нет. Дата ратификации сохранена (2026-08-18), дата последней правки — 2026-08-31.
 -->
@@ -118,6 +120,29 @@ BFO Base — бэкенд-платформа для белорусского с�
 Обоснование: единый стиль импортов делает код читаемым и диффы чистыми; полагаться только на
 автофикс — значит плодить лишний шум в правках.
 
+### VII. Commands, queries и mutation policies
+
+- Bridge action СОЗДАЁТ command и передаёт его в `ApplicationService::execute(Command $command)`.
+  Use case НЕ принимает набор scalar, DTO и auth-параметров напрямую.
+- Command может хранить transport DTO приватно, но наружу возвращает только primitives или domain
+  objects/value objects (`Input`, `Info`, `Criteria`, `Resources`). DTO НЕ покидает command через
+  getter.
+- Нормализация, duplicate prevention и иные повторяемые правила mutation принадлежат Domain
+  service/decorator (`*Updater`, `*Factory`), а не Application service. Application оркестрирует
+  lock, transaction, mapping domain exception в application error и persistence.
+- Aggregate создаётся и изменяется через намеренные domain methods. `Repository::add()` вызывает
+  aggregate `create()`, чтобы зафиксировать domain event; soft-delete/disable аналогично вызывает
+  aggregate method и domain event, а не присваивает поле в adapter.
+- Query ports используют `byCriteria(Criteria)` и `oneByCriteria(Criteria)` вместо специальных
+  finder-методов по отдельным полям. Связи для чтения передаются отдельным typed `*Resources` из
+  Application в repository; Criteria не используется как скрытый флаг eager-loading. Infrastructure
+  загружает только поля и relations, объявленные в Resources.
+- Если external input сравнивается с normalised persistence field, одна domain normalizer применяется
+  к обеим сторонам: при сохранении/поиске и непосредственно перед parser/import comparison.
+
+Обоснование: эти контракты исключают transport leakage в use cases, разрастание repository API,
+скрытые N+1 и потерю domain events при persistence-операциях.
+
 ## Технологические и архитектурные ограничения
 
 - Рантайм: PHP 8.5 на Laravel 13. Новый код ориентируется на актуальные версии.
@@ -184,4 +209,4 @@ BFO Base — бэкенд-платформа для белорусского с�
   повторяемости — оформляются поправкой.
 - Сложность требует обоснования: предпочитаем простейшее решение, удовлетворяющее принципам.
 
-**Версия**: 2.2.3 | **Ратифицирована**: 2026-08-18 | **Последняя правка**: 2026-08-31
+**Версия**: 2.3.0 | **Ратифицирована**: 2026-08-18 | **Последняя правка**: 2026-09-04

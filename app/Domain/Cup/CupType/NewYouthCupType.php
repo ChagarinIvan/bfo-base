@@ -11,6 +11,7 @@ use App\Domain\Cup\Group\CupGroupFactory;
 use App\Domain\Cup\Group\GroupAge;
 use App\Domain\Group\Group;
 use App\Domain\ProtocolLine\ProtocolLine;
+use App\Domain\Shared\Criteria;
 use Illuminate\Support\Collection;
 use function array_map;
 use function in_array;
@@ -134,7 +135,7 @@ class NewYouthCupType extends MasterCupType
             ->values()
             ->all();
 
-        return $this->groupsRepository->searchGroups($groupNames);
+        return $this->groupsRepository->byCriteria(new Criteria(['names' => $groupNames]));
     }
 
     protected function getGroupProtocolLines(CupEvent $cupEvent, CupGroup $group): Collection

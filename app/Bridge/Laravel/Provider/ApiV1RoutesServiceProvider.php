@@ -18,6 +18,11 @@ use App\Bridge\Laravel\Http\Controllers\Api\V1\Competition\ListCompetitionsActio
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Competition\UpdateCompetitionAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Competition\ViewCompetitionAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Event\ListEventsAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Group\DeleteGroupAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Group\ListGroupsAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Group\MergeGroupsAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Group\UpdateGroupAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Group\ViewGroupAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\ListPersonsAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Rank\ListRanksAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Year\ListYearsAction;
@@ -41,6 +46,8 @@ final class ApiV1RoutesServiceProvider extends ServiceProvider
                 $router->get('clubs', ListClubsAction::class);
                 $router->get('clubs/all', ListAllClubAction::class);
                 $router->get('clubs/{clubId}', ViewClubAction::class);
+                $router->get('groups', ListGroupsAction::class);
+                $router->get('groups/{groupId}', ViewGroupAction::class);
                 $router->get('events', ListEventsAction::class);
                 $router->get('persons', ListPersonsAction::class);
             });
@@ -53,6 +60,9 @@ final class ApiV1RoutesServiceProvider extends ServiceProvider
                 $router->get('users', ListUsersAction::class);
                 $router->post('clubs', CreateClubAction::class);
                 $router->put('clubs/{clubId}', UpdateClubAction::class);
+                $router->put('groups/{groupId}', UpdateGroupAction::class);
+                $router->delete('groups/{groupId}', DeleteGroupAction::class);
+                $router->post('groups/{sourceGroupId}/merge', MergeGroupsAction::class);
                 $router->post('competitions', CreateCompetitionAction::class);
                 $router->put('competitions/{competitionId}', UpdateCompetitionAction::class);
                 $router->delete('competitions/{competitionId}', DeleteCompetitionAction::class);

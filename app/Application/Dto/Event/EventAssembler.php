@@ -42,6 +42,7 @@ final readonly class EventAssembler
             description: $event->description,
             date: $event->date->format('Y-m-d'),
             participantsCount: (int) $event->getAttribute('protocol_lines_count'),
+            competitionName: $event->relationLoaded('competition') ? $event->competition?->name : null,
             created: $this->authAssembler->toImpressionDto($event->created),
             updated: $this->authAssembler->toImpressionDto($event->updated),
         );

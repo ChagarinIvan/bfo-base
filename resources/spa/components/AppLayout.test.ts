@@ -7,11 +7,16 @@ import {
 } from './navigationModels'
 
 describe('hybrid SPA navbar', () => {
-    it('keeps migrated competitions in SPA and public legacy destinations as href links', () => {
+    it('keeps migrated competitions and groups in SPA', () => {
         expect(competitionNavigation).toEqual([
             {
                 label: 'spa.nav.competitions',
                 href: '/app/competitions',
+                spa: true,
+            },
+            {
+                label: 'spa.nav.groups',
+                href: '/app/groups',
                 spa: true,
             },
             { label: 'spa.nav.cups', href: '/cups' },
@@ -26,7 +31,7 @@ describe('hybrid SPA navbar', () => {
     it('keeps authenticated links outside the removed help menu', () => {
         expect(
             authenticatedCompetitionNavigation.map((item) => item.href),
-        ).toEqual(['/groups'])
+        ).toEqual([])
         expect(authenticatedAccountNavigation.map((item) => item.href)).toEqual(
             ['/registration'],
         )

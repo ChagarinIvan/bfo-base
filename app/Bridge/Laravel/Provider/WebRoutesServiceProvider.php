@@ -43,11 +43,6 @@ use App\Bridge\Laravel\Http\Controllers\Flags\ShowFlagEventsAction;
 use App\Bridge\Laravel\Http\Controllers\Flags\ShowFlagsListAction;
 use App\Bridge\Laravel\Http\Controllers\Flags\StoreFlagAction;
 use App\Bridge\Laravel\Http\Controllers\Flags\UpdateFlagAction;
-use App\Bridge\Laravel\Http\Controllers\Groups\DeleteGroupAction;
-use App\Bridge\Laravel\Http\Controllers\Groups\ShowGroupAction;
-use App\Bridge\Laravel\Http\Controllers\Groups\ShowGroupsListAction;
-use App\Bridge\Laravel\Http\Controllers\Groups\ShowUnitGroupsAction;
-use App\Bridge\Laravel\Http\Controllers\Groups\UnitGroupsAction;
 use App\Bridge\Laravel\Http\Controllers\Login\MakeNewPasswordByTokenAction;
 use App\Bridge\Laravel\Http\Controllers\Login\ShowLoginFormAction;
 use App\Bridge\Laravel\Http\Controllers\Login\SignInAction;
@@ -212,15 +207,6 @@ class WebRoutesServiceProvider extends ServiceProvider
                         $this->route->get('{cupId}/{cupEventId}/edit', ShowEditCupEventFormAction::class);
                         $this->route->post('{cup}/{event}/update', UpdateCupEventAction::class);
                     });
-                });
-
-                //groups
-                $this->routeRegistrar->prefix('groups')->middleware(['auth'])->group(function (): void {
-                    $this->route->get('', ShowGroupsListAction::class);
-                    $this->route->get('{group}/delete', DeleteGroupAction::class);
-                    $this->route->get('{group}', ShowGroupAction::class);
-                    $this->route->get('{group}/unit', ShowUnitGroupsAction::class);
-                    $this->route->post('{group}/unit', UnitGroupsAction::class);
                 });
 
                 //auth group

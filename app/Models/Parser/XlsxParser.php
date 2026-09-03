@@ -42,9 +42,7 @@ class XlsxParser extends AbstractParser
             }
 
             if (
-                $this->groups
-                ->filter(static fn (string $groupName): bool => str_contains($lines[$i][0], $groupName))
-                ->count() >= 1
+                $this->containsKnownGroup($lines[$i][0])
             ) {
                 $groupNameWithDistance = $lines[$i][0];
                 $group = explode(',', $groupNameWithDistance)[0];

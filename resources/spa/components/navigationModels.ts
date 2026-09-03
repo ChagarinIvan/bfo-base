@@ -12,6 +12,7 @@ export interface NavigationItem {
 
 export const competitionNavigation: NavigationItem[] = [
     { label: 'spa.nav.competitions', href: '/app/competitions', spa: true },
+    { label: 'spa.nav.groups', href: '/app/groups', spa: true },
     { label: 'spa.nav.cups', href: '/cups' },
 ]
 
@@ -20,9 +21,7 @@ export const personsNavigation: NavigationItem[] = [
     { label: 'spa.nav.clubs', href: '/app/clubs', spa: true },
 ]
 
-export const authenticatedCompetitionNavigation: NavigationItem[] = [
-    { label: 'spa.nav.groups', href: '/groups' },
-]
+export const authenticatedCompetitionNavigation: NavigationItem[] = []
 
 export const authenticatedAccountNavigation: NavigationItem[] = [
     { label: 'spa.nav.registration', href: '/registration' },

@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Tests\Models\Parser;
 
 use App\Domain\Group\Group;
+use App\Domain\Group\GroupNameNormalizer;
 use App\Domain\ProtocolLine\ProtocolLine;
+use App\Domain\Shared\SymbolNormalizer;
 use App\Models\Parser\ParserFactory;
 use Carbon\Carbon;
 use Illuminate\Filesystem\FilesystemManager;
@@ -29,7 +31,12 @@ abstract class AbstractParser extends TestCase
 
         $parserClass = $this->getParser();
 
-        $parser = ParserFactory::createProtocolParser($protocolContent, Collection::make($this->getAllGroups())->pluck('name'), $extension);
+        $normalizer = new GroupNameNormalizer(new SymbolNormalizer);
+        $parser = ParserFactory::createProtocolParser(
+            $protocolContent,
+            Collection::make($this->getAllGroups())->pluck('name')->map($normalizer->normalize(...)),
+            $extension,
+        );
         $this->assertInstanceOf($parserClass, $parser);
 
         $lines = $parser->parse($protocolContent);

@@ -16,6 +16,7 @@ class GroupFactory extends Factory
         return [
             'id' => $this->faker->numberBetween(1, 100),
             'name' => $this->faker->name,
+            'normalize_name' => $this->faker->unique()->slug,
         ];
     }
 }

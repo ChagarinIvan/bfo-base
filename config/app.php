@@ -9,6 +9,7 @@ use App\Bridge\Laravel\Provider\Cup\CupProvider;
 use App\Bridge\Laravel\Provider\CupEvent\CupEventProvider;
 use App\Bridge\Laravel\Provider\Event\EventProvider;
 use App\Bridge\Laravel\Provider\EventHandlerServiceProvider;
+use App\Bridge\Laravel\Provider\Group\GroupProvider;
 use App\Bridge\Laravel\Provider\Person\PersonProvider;
 use App\Bridge\Laravel\Provider\PersonPayment\PersonPaymentProvider;
 use App\Bridge\Laravel\Provider\PersonPrompt\PersonPromptProvider;
@@ -212,6 +213,7 @@ return [
         CupProvider::class,
         CupEventProvider::class,
         EventProvider::class,
+        GroupProvider::class,
         PersonProvider::class,
         PersonPaymentProvider::class,
         PersonPromptProvider::class,

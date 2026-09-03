@@ -58,12 +58,12 @@ class SimplyParser extends AbstractParser
                 }
             } elseif (
                 (
-                    ($groupNameLine = trim($line, ' ,')) && $this->groups->containsStrict($groupNameLine)
+                    ($groupNameLine = trim($line, ' ,')) && $this->isKnownGroup($groupNameLine)
                 ) ||
                 (
                     $withSpace &&
                     ($groupNameLine = trim(substr($line, 0, strpos($line, ' ')), ' ,')) &&
-                    $this->groups->containsStrict($groupNameLine)
+                    $this->isKnownGroup($groupNameLine)
                 )
             ) {
                 $groupName = $groupNameLine;

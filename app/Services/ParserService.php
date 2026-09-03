@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Domain\Event\Protocol;
+use App\Domain\Group\GroupRepository;
 use App\Models\Parser\ParserFactory;
 use DOMDocument;
 use DOMXPath;
@@ -16,7 +17,7 @@ use function trim;
 
 readonly class ParserService
 {
-    public function __construct(private GroupsService $groupsService)
+    public function __construct(private GroupRepository $groups)
     {
     }
 
@@ -24,9 +25,10 @@ readonly class ParserService
     {
         $parser = ParserFactory::createProtocolParser(
             $protocol->content,
-            $this->groupsService->getAllGroupsWithout()->pluck('name'),
+            $this->groups->all()->pluck('normalize_name'),
             $protocol->extension,
         );
+
         Log::info('Parse class ' . $parser::class);
 
         return $parser->parse($protocol->content)->map(static function (array $line): array {

@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace Tests\Services;
 
 use App\Domain\Event\Protocol;
-use App\Repositories\GroupsRepository;
-use App\Services\GroupsService;
+use App\Domain\Group\GroupRepository;
 use App\Services\ParserService;
 use Illuminate\Support\Collection;
 use PHPUnit\Framework\Attributes\Test;
@@ -17,9 +16,9 @@ final class ParserServiceTest extends TestCase
     #[Test]
     public function it_trims_club_names_from_protocol_parsers(): void
     {
-        $groups = $this->createMock(GroupsRepository::class);
-        $groups->expects($this->once())->method('getAll')->willReturn(new Collection);
-        $parser = new ParserService(new GroupsService($groups));
+        $groups = $this->createMock(GroupRepository::class);
+        $groups->expects($this->once())->method('all')->willReturn(new Collection);
+        $parser = new ParserService($groups);
 
         $lines = $parser->parse(new Protocol($this->protocol(), 'html'));
 

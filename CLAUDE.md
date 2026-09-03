@@ -17,6 +17,13 @@
   Новые сценарии оформляем Application-сервисами; `app/Services` — legacy-слой,
   его не расширяем. Новые репозитории не создаём, фасады Laravel не используем;
   зависимости передаём через конструктор и интерфейсы.
+- Bridge actions формируют command; Application service принимает только command в `execute()`.
+  Command не возвращает transport DTO: только primitive либо domain input/value object. Повторяемые
+  mutation-правила живут в Domain `*Updater`/`*Factory`; aggregate `create`/`disable` фиксируют
+  domain events, а repository `add()` вызывает aggregate method.
+- Repository query API строится на `byCriteria`/`oneByCriteria`; required eager relations передаются
+  typed `*Resources` из Application, а не флагами внутри Criteria. Normalized input нормализуется
+  одним Domain normalizer до сравнения как при write, так и в parser/import flow.
 - Перед правкой проверяем `git status` и сохраняем незакоммиченные изменения
   пользователя. Не переключаем ветки и не откатываем файлы без явного запроса.
 - PHP 8.5 / Laravel 13; имена импортируем через `use`, inline-FQCN не пишем.

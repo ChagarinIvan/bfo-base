@@ -16,6 +16,7 @@ final readonly class ViewEventDto
         public string $description,
         public string $date,
         public int $participantsCount,
+        public ?string $competitionName,
         #[Groups(['authenticated'])]
         public ImpressionDto $created,
         #[Groups(['authenticated'])]

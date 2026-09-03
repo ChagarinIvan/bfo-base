@@ -15,6 +15,7 @@ use App\Domain\Distance\Distance;
 use App\Domain\Group\Group;
 use App\Domain\ProtocolLine\Criteria\CupEventDistancesProtocolLinesCriteria;
 use App\Domain\ProtocolLine\ProtocolLine;
+use App\Domain\Shared\Criteria;
 use App\Models\Year;
 use Illuminate\Support\Collection;
 use function array_key_exists;
@@ -372,7 +373,7 @@ class NewMasterCupType extends AbstractCupType
         $groupToCupMap = $groups->keyBy('name')->map(static fn ($g): string => $g['cupGroupId']);
 
         $result = $this->groupsRepository
-            ->searchGroups($groupNames->all())
+            ->byCriteria(new Criteria(['names' => $groupNames->all()]))
             ->map(static fn (Group $group): array => [
                 'id' => $group->id,
                 'name' => $group->name,
