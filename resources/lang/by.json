@@ -314,7 +314,7 @@
     "spa.group.filters.date": "Дата",
     "spa.group.edit.error": "Не атрымалася змяніць групу.",
     "spa.group.merge": "Аб'яднаць",
-    "spa.group.merge.confirm": "Аб'яднаць групы? Усе дыстанцыі будуць перанесеныя.",
+    "spa.group.merge.confirm": "Вы сапраўды хочаце аб'яднаць «:source» і «:target»? Усе дыстанцыі будуць перанесеныя.",
     "spa.group.merge.error": "Не атрымалася аб'яднаць групы.",
     "spa.common.cancel": "Скасаваць"
 }

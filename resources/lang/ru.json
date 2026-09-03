@@ -170,7 +170,7 @@
     "spa.group.filters.date": "Дата",
     "spa.group.edit.error": "Не удалось изменить группу.",
     "spa.group.merge": "Объединить",
-    "spa.group.merge.confirm": "Объединить группы? Все дистанции будут перенесены.",
+    "spa.group.merge.confirm": "Вы действительно хотите объединить «:source» и «:target»? Все дистанции будут перенесены.",
     "spa.group.merge.error": "Не удалось объединить группы.",
     "spa.common.cancel": "Отмена"
 }

@@ -2,14 +2,18 @@
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
 
-defineProps<{
-    visible: boolean
-    title: string
-    confirmation: string
-    cancelLabel: string
-    actionLabel: string
-    pending?: boolean
-}>()
+const props = withDefaults(
+    defineProps<{
+        visible: boolean
+        title: string
+        confirmation: string
+        cancelLabel: string
+        actionLabel: string
+        pending?: boolean
+        actionSeverity?: 'danger' | 'success'
+    }>(),
+    { actionSeverity: 'danger' },
+)
 
 const emit = defineEmits<{
     cancel: []
@@ -34,7 +38,7 @@ const emit = defineEmits<{
                 @click="emit('cancel')"
             />
             <Button
-                severity="danger"
+                :severity="props.actionSeverity"
                 :label="actionLabel"
                 :loading="pending"
                 @click="emit('confirm')"

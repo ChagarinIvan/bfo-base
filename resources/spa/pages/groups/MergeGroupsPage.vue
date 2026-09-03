@@ -135,7 +135,7 @@ onBeforeUnmount(() => filter.cancel())
             <Button
                 icon="pi pi-objects-column"
                 :label="t('spa.group.merge')"
-                severity="secondary"
+                severity="success"
                 text
                 @click="target = group"
             />
@@ -144,9 +144,15 @@ onBeforeUnmount(() => filter.cancel())
     <ConfirmDeleteDialog
         :visible="Boolean(target)"
         :title="t('spa.group.merge')"
-        :confirmation="t('spa.group.merge.confirm')"
+        :confirmation="
+            t('spa.group.merge.confirm', {
+                source: source?.name ?? '',
+                target: target?.name ?? '',
+            })
+        "
         :cancel-label="t('spa.common.cancel')"
         :action-label="t('spa.group.merge')"
+        action-severity="success"
         :pending="pending"
         @cancel="target = null"
         @confirm="confirm"
