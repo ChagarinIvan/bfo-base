@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace App\Bridge\Laravel\Http\Controllers\Registration;
 
 use App\Bridge\Laravel\Http\Controllers\AbstractAction;
-use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionsListAction;
 use App\Bridge\Laravel\Http\Controllers\Login\MakeNewPasswordByTokenAction;
 use App\Mail\RegistrationUrlMail;
-use App\Models\Year;
 use App\Services\ViewActionsService;
 use Illuminate\Contracts\Mail\Mailer;
 use Illuminate\Contracts\Routing\UrlGenerator;
@@ -39,6 +37,6 @@ class SendRegistrationDataAction extends AbstractAction
         $token = $this->encrypter->encrypt($email);
         $this->mailer->send(new RegistrationUrlMail($email, $this->urlGenerator->action(MakeNewPasswordByTokenAction::class, ['token' => $token])));
 
-        return $this->redirector->action(ShowCompetitionsListAction::class, ['year' => (string) Year::actualYear()->value]);
+        return $this->redirector->to('/app/competitions');
     }
 }
