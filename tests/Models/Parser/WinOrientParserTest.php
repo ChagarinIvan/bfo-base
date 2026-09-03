@@ -192,6 +192,24 @@ final class WinOrientParserTest extends AbstractParser
                 ],
             ]
         ];
+        yield [
+            '2026/20260725.htm',
+            184,
+            [
+                5 => [
+                    'Андрюшина',
+                    'Екатерина',
+                    'Минский р-н',
+                    2016,
+                    'б/р',
+                    4,
+                    null,
+                    null,
+                    '-',
+                    null,
+                ],
+            ],
+        ];
     }
     protected function getParser(): string
     {
