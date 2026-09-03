@@ -1,13 +1,59 @@
+// @vitest-environment happy-dom
+
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { api } from './client'
-import { createClub, getClub, getClubs, updateClub } from './clubs'
+import {
+    clearClubOptionsCache,
+    createClub,
+    getClub,
+    getClubOptions,
+    getClubs,
+    updateClub,
+} from './clubs'
 
 vi.mock('./client', () => ({
     api: { get: vi.fn(), post: vi.fn(), put: vi.fn() },
 }))
 
 describe('clubs api', () => {
-    beforeEach(() => vi.clearAllMocks())
+    beforeEach(() => {
+        vi.clearAllMocks()
+        clearClubOptionsCache()
+    })
+
+    it('requests and caches all club options', async () => {
+        vi.mocked(api.get).mockResolvedValue({
+            data: [{ id: '1', name: 'Club' }],
+            headers: {},
+        })
+
+        await expect(getClubOptions()).resolves.toEqual([
+            { id: '1', name: 'Club' },
+        ])
+        await getClubOptions()
+
+        expect(api.get).toHaveBeenCalledTimes(1)
+        expect(api.get).toHaveBeenCalledWith('/clubs/all')
+    })
+
+    it('ignores an invalid cached club option', async () => {
+        localStorage.setItem(
+            'spa_club_options_cache',
+            JSON.stringify({
+                expiresAt: Date.now() + 60_000,
+                clubs: [null],
+            }),
+        )
+        vi.mocked(api.get).mockResolvedValue({
+            data: [{ id: '1', name: 'Club' }],
+            headers: {},
+        })
+
+        await expect(getClubOptions()).resolves.toEqual([
+            { id: '1', name: 'Club' },
+        ])
+        expect(api.get).toHaveBeenCalledWith('/clubs/all')
+    })
 
     it('requests the paginated club listing and returns response metadata', async () => {
         const headers = { 'x-pagination-total': '2' }

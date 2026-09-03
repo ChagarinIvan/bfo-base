@@ -64,10 +64,45 @@ final class ListPersonsServiceTest extends TestCase
 
         $items = $result->items();
         $this->assertSame('42', $items[0]->id);
-        $this->assertSame(2001, $items[0]->birthYear);
-        $this->assertObjectNotHasProperty('birthday', $items[0]);
+        $this->assertSame('2001-06-04', $items[0]->birthday);
         $this->assertObjectNotHasProperty('citizenship', $items[0]);
-        $this->assertObjectNotHasProperty('clubId', $items[0]);
+        $this->assertNull($items[0]->clubId);
+    }
+
+    #[Test]
+    public function it_passes_the_normalized_name_filter_to_the_repository(): void
+    {
+        $this->persons
+            ->expects($this->once())
+            ->method('paginate')
+            ->with(new Criteria(['name' => 'Ivan']))
+            ->willReturn(new Slice(new ArrayAdapter([])))
+        ;
+
+        $search = (new SearchPersonDto)->fromArray(
+            SearchPersonDto::normaliseRequestData(['name' => '  Ivan  ']),
+        );
+
+        $result = $this->service->execute(new ListPersons($search));
+
+        $this->assertCount(0, $result);
+    }
+
+    #[Test]
+    public function it_passes_person_ids_to_the_repository(): void
+    {
+        $this->persons
+            ->expects($this->once())
+            ->method('paginate')
+            ->with(new Criteria(['ids' => [7, 8]]))
+            ->willReturn(new Slice(new ArrayAdapter([])))
+        ;
+
+        $result = $this->service->execute(
+            new ListPersons(new SearchPersonDto(ids: [7, 8])),
+        );
+
+        $this->assertCount(0, $result);
     }
 
     #[Test]
@@ -81,6 +116,23 @@ final class ListPersonsServiceTest extends TestCase
         ;
 
         $result = $this->service->execute(new ListPersons(new SearchPersonDto()));
+
+        $this->assertCount(0, $result);
+    }
+
+    #[Test]
+    public function it_passes_the_without_lines_and_payments_filter_to_the_repository(): void
+    {
+        $this->persons
+            ->expects($this->once())
+            ->method('paginate')
+            ->with(new Criteria(['withoutLinesAndPayments' => true]))
+            ->willReturn(new Slice(new ArrayAdapter([])))
+        ;
+
+        $result = $this->service->execute(
+            new ListPersons(new SearchPersonDto(withoutLinesAndPayments: true)),
+        );
 
         $this->assertCount(0, $result);
     }

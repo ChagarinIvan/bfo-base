@@ -6,11 +6,12 @@ namespace App\Bridge\Laravel\Http\Controllers\Event;
 
 use App\Application\Dto\Club\LegacySearchClubDto;
 use App\Application\Dto\Event\LegacyViewEventDto;
-use App\Application\Dto\Person\LegacySearchPersonDto;
+use App\Application\Dto\Person\SearchPersonDto;
+use App\Application\Dto\Person\ViewPersonDto;
 use App\Application\Service\Club\ListLegacyClubs;
 use App\Application\Service\Club\ListLegacyClubsService;
-use App\Application\Service\Person\ListLegacyPersons;
-use App\Application\Service\Person\ListLegacyPersonsService;
+use App\Application\Service\Person\ListPersons;
+use App\Application\Service\Person\ListPersonsService;
 use App\Domain\Club\ClubNameNormalizer;
 use App\Domain\Distance\Distance;
 use Illuminate\Contracts\View\View;
@@ -28,7 +29,7 @@ trait RendersEventDistance
         LegacyViewEventDto $event,
         Distance $distance,
         ListLegacyClubsService $clubsService,
-        ListLegacyPersonsService $personsService,
+        ListPersonsService $personsService,
         ClubNameNormalizer $clubNameNormalizer,
     ): View {
         $protocolLines = $distance->protocolLines;
@@ -44,8 +45,12 @@ trait RendersEventDistance
         }
 
         $personIds = $protocolLines->pluck('person_id')->filter()->unique()->values()->all();
+        /** @var array<int, ViewPersonDto> $persons */
         $persons = array_column(
-            array: $personsService->execute(new ListLegacyPersons(new LegacySearchPersonDto(ids: $personIds))),
+            array: $personsService
+                ->execute(new ListPersons(new SearchPersonDto(ids: $personIds)))
+                ->setPerPage(1000)
+                ->items(),
             column_key: null,
             index_key: 'id',
         );

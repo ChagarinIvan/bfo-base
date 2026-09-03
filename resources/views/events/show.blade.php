@@ -1,7 +1,8 @@
 @php
     use App\Application\Dto\Club\ViewClubDto;
     use App\Application\Dto\Event\ViewEventDto;
-    use App\Application\Dto\Person\LegacyViewPersonDto;
+    use App\Application\Dto\Person\ViewPersonDto;
+    use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionAction;
     use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupAction;
     use App\Bridge\Laravel\Http\Controllers\Event\ShowEditEventFormAction;
     use App\Bridge\Laravel\Http\Controllers\Event\ShowEventDistanceAction;
@@ -20,7 +21,7 @@
      * @var bool $withPoints
      * @var bool $withVk
      * @var array<int, ViewClubDto> $clubsByLine
-     * @var array<int, LegacyViewPersonDto> $persons
+     * @var array<int, ViewPersonDto> $persons
      */
 @endphp
 

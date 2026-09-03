@@ -19,7 +19,7 @@ final readonly class ListPersons
     {
         return new Criteria(array_filter(
             get_object_vars($this->search),
-            static fn (mixed $value): bool => $value !== null,
+            static fn (mixed $value): bool => $value !== null && $value !== '',
         ));
     }
 }

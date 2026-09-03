@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Bridge\Laravel\Console\Commands;
 
 use App\Application\Dto\Auth\UserId;
-use App\Application\Dto\Person\LegacySearchPersonDto;
+use App\Application\Dto\Person\SearchPersonDto;
 use App\Application\Service\Person\DisablePerson;
 use App\Application\Service\Person\DisablePersonService;
-use App\Application\Service\Person\ListLegacyPersons;
-use App\Application\Service\Person\ListLegacyPersonsService;
+use App\Application\Service\Person\ListPersons;
+use App\Application\Service\Person\ListPersonsService;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 
@@ -20,8 +20,10 @@ use Illuminate\Console\Command;
 #[Signature('persons:prune {userId}')]
 class PruneInactivePersonsCommand extends Command
 {
+    private const int INFINITY = 10_000;
+
     public function __construct(
-        private readonly ListLegacyPersonsService $listPersonsService,
+        private readonly ListPersonsService $listPersonsService,
         private readonly DisablePersonService $disablePersonService,
     ) {
         parent::__construct();
@@ -35,10 +37,10 @@ class PruneInactivePersonsCommand extends Command
         $count = 0;
 
         $persons = $this->listPersonsService->execute(
-            new ListLegacyPersons(new LegacySearchPersonDto(withoutLinesAndPayments: true))
+            new ListPersons(new SearchPersonDto(withoutLinesAndPayments: true)),
         );
 
-        foreach ($persons as $person) {
+        foreach ($persons->setPerPage(self::INFINITY)->getIterator() as $person) {
             $this->disablePersonService->execute(new DisablePerson($person->id, new UserId($userId)));
             $count++;
         }

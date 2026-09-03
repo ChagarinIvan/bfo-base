@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
-import { t } from '../../i18n'
 
 defineProps<{
     visible: boolean
-    competitionName: string
+    title: string
+    confirmation: string
+    cancelLabel: string
+    actionLabel: string
     pending?: boolean
 }>()
 
@@ -19,23 +21,21 @@ const emit = defineEmits<{
     <Dialog
         :visible="visible"
         modal
-        :header="t('spa.competition.delete.title')"
+        :header="title"
         :closable="!pending"
         @update:visible="emit('cancel')"
     >
-        <p>
-            {{ t('spa.competition.delete.confirm', { name: competitionName }) }}
-        </p>
+        <p>{{ confirmation }}</p>
         <template #footer>
             <Button
                 severity="secondary"
-                :label="t('spa.competition.delete.cancel')"
+                :label="cancelLabel"
                 :disabled="pending"
                 @click="emit('cancel')"
             />
             <Button
                 severity="danger"
-                :label="t('spa.competition.delete.action')"
+                :label="actionLabel"
                 :loading="pending"
                 @click="emit('confirm')"
             />

@@ -40,12 +40,18 @@ export interface Club {
     updated?: Impression
 }
 
+export interface ClubOption {
+    id: string
+    name: string
+}
+
 export interface Person {
     id: string
     lastname: string
     firstname: string
-    birthYear: number | null
+    birthday: string | null
     rankId: number
+    clubId: string | null
     created?: Impression
     updated?: Impression
 }
@@ -82,8 +88,10 @@ export interface ClubSearchQuery {
 }
 
 export interface PersonSearchQuery {
+    name?: string
     clubId?: number
     rankId?: number
+    birthYear?: number
     page?: number
     perPage?: number
 }

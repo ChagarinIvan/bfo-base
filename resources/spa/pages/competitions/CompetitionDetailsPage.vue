@@ -283,7 +283,14 @@ async function deleteCurrentCompetition(): Promise<void> {
         <ConfirmDeleteDialog
             v-if="auth.isAuthenticated"
             :visible="deleteDialogVisible"
-            :competition-name="competition.name"
+            :title="t('spa.competition.delete.title')"
+            :confirmation="
+                t('spa.competition.delete.confirm', {
+                    name: competition.name,
+                })
+            "
+            :cancel-label="t('spa.competition.delete.cancel')"
+            :action-label="t('spa.competition.delete.action')"
             :pending="deleting"
             @cancel="deleteDialogVisible = false"
             @confirm="deleteCurrentCompetition"

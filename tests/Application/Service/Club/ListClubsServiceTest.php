@@ -57,7 +57,7 @@ final class ListClubsServiceTest extends TestCase
         ;
 
         $result = $this->service->execute(
-            new ListClubs(new SearchClubDto(name: '  Minsk Orienteering  ')),
+            new ListClubs($this->normalisedSearch('  Minsk Orienteering  ')),
         );
 
         $this->assertInstanceOf(Slice::class, $result);
@@ -76,7 +76,7 @@ final class ListClubsServiceTest extends TestCase
             ->willReturn(new Slice(new ArrayAdapter([])))
         ;
 
-        $result = $this->service->execute(new ListClubs(new SearchClubDto(name: '  ')));
+        $result = $this->service->execute(new ListClubs($this->normalisedSearch('  ')));
 
         $this->assertCount(0, $result);
     }
@@ -84,5 +84,12 @@ final class ListClubsServiceTest extends TestCase
     private function impressionValue(): Impression
     {
         return new Impression(new Carbon('2026-01-01'), 1);
+    }
+
+    private function normalisedSearch(string $name): SearchClubDto
+    {
+        return (new SearchClubDto)->fromArray(
+            SearchClubDto::normaliseRequestData(['name' => $name]),
+        );
     }
 }

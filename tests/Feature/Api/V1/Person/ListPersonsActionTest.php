@@ -40,7 +40,12 @@ final class ListPersonsActionTest extends TestCase
     {
         $activeClub = $this->createClub(['id' => 1]);
         $inactiveClub = $this->createClub(['id' => 2, 'active' => false]);
-        $this->createPerson(['id' => 1, 'club_id' => $activeClub->id, 'lastname' => 'Alpha']);
+        $this->createPerson([
+            'id' => 1,
+            'club_id' => $activeClub->id,
+            'lastname' => 'Alpha',
+            'birthday' => '2001-01-01',
+        ]);
         $this->createPerson(['id' => 2, 'club_id' => $inactiveClub->id, 'lastname' => 'Beta']);
         $this->createPerson(['id' => 3, 'active' => false, 'lastname' => 'Gamma']);
 
@@ -49,9 +54,9 @@ final class ListPersonsActionTest extends TestCase
             ->assertJsonCount(2)
             ->assertJsonPath('0.id', '1')
             ->assertJsonPath('1.id', '2')
-            ->assertJsonMissingPath('0.birthday')
+            ->assertJsonPath('0.birthday', '2001-01-01')
             ->assertJsonMissingPath('0.citizenship')
-            ->assertJsonMissingPath('0.clubId')
+            ->assertJsonPath('0.clubId', '1')
             ->assertJsonMissingPath('0.created')
         ;
     }
@@ -71,6 +76,58 @@ final class ListPersonsActionTest extends TestCase
             ->assertJsonCount(1)
             ->assertJsonPath('0.id', '1')
             ->assertJsonPath('0.rankId', 6)
+        ;
+    }
+
+    #[Test]
+    public function it_filters_persons_by_name_and_birth_year_cumulatively(): void
+    {
+        $this->createPerson([
+            'id' => 1,
+            'lastname' => 'Ivanov',
+            'firstname' => 'Alex',
+            'birthday' => '2001-06-04',
+        ]);
+        $this->createPerson([
+            'id' => 2,
+            'lastname' => 'Petrov',
+            'firstname' => 'Ivan',
+            'birthday' => '2001-06-04',
+        ]);
+        $this->createPerson([
+            'id' => 3,
+            'lastname' => 'Ivanov',
+            'firstname' => 'Alex',
+            'birthday' => '2002-06-04',
+        ]);
+
+        $this->getJson('/api/v1/persons?name=%20%20iVaN%20&birthYear=2001')
+            ->assertOk()
+            ->assertJsonCount(2)
+            ->assertJsonPath('0.id', '1')
+            ->assertJsonPath('1.id', '2')
+        ;
+    }
+
+    #[Test]
+    public function it_treats_sql_like_wildcards_in_a_name_as_literal_text(): void
+    {
+        $this->createPerson(['id' => 1, 'lastname' => 'A%_']);
+        $this->createPerson(['id' => 2, 'lastname' => 'Axx']);
+
+        $this->getJson('/api/v1/persons?name=A%25_')
+            ->assertOk()
+            ->assertJsonCount(1)
+            ->assertJsonPath('0.id', '1')
+        ;
+    }
+
+    #[Test]
+    public function it_rejects_a_person_name_shorter_than_three_characters(): void
+    {
+        $this->getJson('/api/v1/persons?name=ab')
+            ->assertUnprocessable()
+            ->assertJsonPath('errors.0.field', 'name')
         ;
     }
 
@@ -144,7 +201,7 @@ final class ListPersonsActionTest extends TestCase
 
         $this->getJson('/api/v1/persons')
             ->assertOk()
-            ->assertJsonPath('0.birthYear', 2001)
+            ->assertJsonPath('0.birthday', '2001-06-04')
             ->assertJsonStructure([['created', 'updated']])
         ;
     }

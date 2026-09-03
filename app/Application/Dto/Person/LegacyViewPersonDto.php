@@ -15,7 +15,6 @@ final readonly class LegacyViewPersonDto
         public ?string $birthday,
         public string $citizenship,
         public ?string $clubId,
-        public int $eventsCount,
         public ImpressionDto $created,
         public ImpressionDto $updated,
         // TODO remove

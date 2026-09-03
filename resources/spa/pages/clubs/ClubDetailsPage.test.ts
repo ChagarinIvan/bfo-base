@@ -1,7 +1,9 @@
 // @vitest-environment happy-dom
 
 import { flushPromises, mount } from '@vue/test-utils'
+import PrimeVue from 'primevue/config'
 import { describe, expect, it, vi } from 'vitest'
+import PersonFilters from '../../components/PersonFilters.vue'
 import ClubDetailsPage from './ClubDetailsPage.vue'
 
 const { getClub, getPersons } = vi.hoisted(() => ({
@@ -12,6 +14,7 @@ const { getClub, getPersons } = vi.hoisted(() => ({
 vi.mock('../../api/clubs', () => ({ getClub }))
 vi.mock('../../api/persons', () => ({ getPersons }))
 vi.mock('../../api/users', () => ({ getUsers: vi.fn().mockResolvedValue([]) }))
+vi.mock('../../api/ranks', () => ({ getRanks: vi.fn().mockResolvedValue([]) }))
 vi.mock('../../stores/auth', () => ({
     useAuthStore: () => ({ isAuthenticated: false }),
 }))
@@ -29,13 +32,20 @@ describe('club details page', () => {
                     id: '7',
                     lastname: 'Іваноў',
                     firstname: 'Ян',
-                    birthYear: 2001,
+                    birthday: '2001-06-04',
                 },
             ],
             headers: {},
         })
 
-        const wrapper = mount(ClubDetailsPage)
+        const wrapper = mount(ClubDetailsPage, {
+            global: {
+                plugins: [PrimeVue],
+                stubs: {
+                    RouterLink: { template: '<a><slot /></a>' },
+                },
+            },
+        })
         await flushPromises()
 
         expect(getPersons).toHaveBeenCalledWith({
@@ -43,6 +53,26 @@ describe('club details page', () => {
             page: 1,
             perPage: 20,
         })
+        expect(wrapper.find('#club-person-name-filter').exists()).toBe(true)
+        expect(wrapper.find('#club-person-rank-filter').exists()).toBe(true)
+        expect(wrapper.find('#club-person-birth-year-filter').exists()).toBe(
+            true,
+        )
+        expect(wrapper.find('#club-person-club-filter').exists()).toBe(false)
         expect(wrapper.findAll('a[href="/persons/7/show"]')).toHaveLength(2)
+
+        const filters = wrapper.findComponent(PersonFilters)
+        filters.vm.$emit('update:rankId', 6)
+        filters.vm.$emit('update:birthYear', 2001)
+        filters.vm.$emit('filter-change')
+        await flushPromises()
+
+        expect(getPersons).toHaveBeenLastCalledWith({
+            clubId: 42,
+            rankId: 6,
+            birthYear: 2001,
+            page: 1,
+            perPage: 20,
+        })
     })
 })

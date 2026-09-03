@@ -41,7 +41,7 @@ final class DeletePersonActionTest extends TestCase
 
         $this->get('/persons/101/delete')
             ->assertStatus(Response::HTTP_FOUND)
-            ->assertRedirect('/persons')
+            ->assertRedirect('/app/persons')
         ;
 
         $this->assertDatabaseHas('person', [

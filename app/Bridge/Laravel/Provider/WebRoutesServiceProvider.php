@@ -58,7 +58,6 @@ use App\Bridge\Laravel\Http\Controllers\Person\SetProtocolLinePersonAction;
 use App\Bridge\Laravel\Http\Controllers\Person\ShowCreatePersonAction;
 use App\Bridge\Laravel\Http\Controllers\Person\ShowEditPersonAction;
 use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonAction;
-use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonsListAction;
 use App\Bridge\Laravel\Http\Controllers\Person\ShowSetPersonToProtocolLineAction;
 use App\Bridge\Laravel\Http\Controllers\Person\StorePersonAction;
 use App\Bridge\Laravel\Http\Controllers\Person\UpdatePersonAction;
@@ -121,7 +120,6 @@ class WebRoutesServiceProvider extends ServiceProvider
 
                 //persons
                 $this->routeRegistrar->prefix('persons')->group(function (): void {
-                    $this->route->get('', ShowPersonsListAction::class);
                     $this->route->get('{person}/show', ShowPersonAction::class);
 
                     $this->middleware(['auth'])->group(function (): void {

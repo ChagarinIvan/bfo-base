@@ -47,6 +47,18 @@ final class EloquentClubRepository implements ClubRepository
         return Club::where('active', true)->where('normalize_name', $normalizedName)->first();
     }
 
+    /** @return Collection<int, Club> */
+    public function all(): Collection
+    {
+        return Club::query()
+            ->where('active', true)
+            ->select(['id', 'name'])
+            ->orderBy('name')
+            ->orderBy('id')
+            ->get()
+        ;
+    }
+
     public function byCriteria(Criteria $criteria): Collection
     {
         return $this->buildQuery($criteria)->get();
@@ -87,7 +99,7 @@ final class EloquentClubRepository implements ClubRepository
 
     private function buildQuery(Criteria $criteria): Builder
     {
-        $query = Club::where('active', true)->orderBy('name');
+        $query = Club::where('active', true)->orderBy('name')->orderBy('id');
 
         if ($criteria->hasParam('withPersonsCount')) {
             $query->withCount('persons');

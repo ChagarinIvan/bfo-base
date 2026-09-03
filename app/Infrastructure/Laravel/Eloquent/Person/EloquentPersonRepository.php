@@ -16,6 +16,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
+use function mb_strtolower;
+use function strtr;
 
 final class EloquentPersonRepository implements PersonRepository
 {
@@ -148,6 +150,10 @@ final class EloquentPersonRepository implements PersonRepository
     {
         return new Slice(new EloquentQueryAdapter($this->createPaginatedQuery($criteria)));
     }
+    private function escapeLikePattern(string $value): string
+    {
+        return strtr($value, ['!' => '!!', '%' => '!%', '_' => '!_']);
+    }
 
     /** @return Builder<Person> */
     private function createPaginatedQuery(Criteria $criteria): Builder
@@ -159,6 +165,10 @@ final class EloquentPersonRepository implements PersonRepository
             ->orderBy('person.firstname')
             ->orderBy('person.id');
 
+        if ($criteria->hasParam('ids')) {
+            $query->whereIn('person.id', $criteria->param('ids'));
+        }
+
         if ($criteria->hasParam('clubId')) {
             $query
                 ->join('club', 'club.id', '=', 'person.club_id')
@@ -169,6 +179,31 @@ final class EloquentPersonRepository implements PersonRepository
 
         if ($criteria->hasParam('rankId')) {
             $query->where('person.current_rank', $criteria->param('rankId'));
+        }
+
+        if ($criteria->hasParam('name')) {
+            $name = $this->escapeLikePattern(mb_strtolower((string) $criteria->param('name')));
+
+            $pattern = '%' . $name . '%';
+            $query->where(static function (Builder $query) use ($pattern): void {
+                $query
+                    ->whereRaw("LOWER(person.lastname) LIKE ? ESCAPE '!'", [$pattern])
+                    ->orWhereRaw("LOWER(person.firstname) LIKE ? ESCAPE '!'", [$pattern])
+                ;
+            });
+        }
+
+        if ($criteria->hasParam('birthYear')) {
+            $query->whereYear('person.birthday', (int) $criteria->param('birthYear'));
+        }
+
+        if ($criteria->hasParam('withoutLinesAndPayments')) {
+            $query
+                ->leftJoin('protocol_lines', 'protocol_lines.person_id', '=', 'person.id')
+                ->whereNull('protocol_lines.id')
+                ->leftJoin('persons_payments', 'persons_payments.person_id', '=', 'person.id')
+                ->whereNull('persons_payments.id')
+            ;
         }
 
         return $query;

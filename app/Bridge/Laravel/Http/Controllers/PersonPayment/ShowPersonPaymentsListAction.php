@@ -11,7 +11,6 @@ use App\Application\Service\Person\ViewPersonService;
 use App\Application\Service\PersonPayment\ListPersonsPayments;
 use App\Application\Service\PersonPayment\ListPersonsPaymentsService;
 use App\Bridge\Laravel\Http\Controllers\Person\PersonAction;
-use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonsListAction;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller as BaseController;
@@ -28,7 +27,7 @@ final class ShowPersonPaymentsListAction extends BaseController
         try {
             $person = $personService->execute(new ViewPerson($personId));
         } catch (PersonNotFound) {
-            return $this->redirector->action(ShowPersonsListAction::class);
+            return $this->redirector->to('/app/persons');
         }
 
         $payments = $personPaymentsService->execute(new ListPersonsPayments(new SearchPersonPaymentsDto($personId)));

@@ -2,7 +2,6 @@
 import { onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
-import Card from 'primevue/card'
 import InputText from 'primevue/inputtext'
 import Message from 'primevue/message'
 import Paginator, { type PageState } from 'primevue/paginator'
@@ -13,6 +12,7 @@ import { getClubs } from '../../api/clubs'
 import { getUsers } from '../../api/users'
 import type { Club, PaginationHeaders, User } from '../../api/types'
 import ImpressionDetails from '../../components/ImpressionDetails.vue'
+import FilterPanel from '../../components/FilterPanel.vue'
 import EditActionButton from '../../components/actions/EditActionButton.vue'
 import { t } from '../../i18n'
 import { useAuthStore } from '../../stores/auth'
@@ -131,31 +131,27 @@ onBeforeUnmount(() => {
         </template>
     </Toolbar>
 
-    <Card class="filter-card">
-        <template #content>
-            <div class="filter-panel">
-                <div class="filter-field">
-                    <label for="club-name-filter">{{
-                        t('spa.clubs.name_filter')
-                    }}</label>
-                    <InputText
-                        id="club-name-filter"
-                        v-model="name"
-                        :invalid="Boolean(fieldErrors.name)"
-                        @update:model-value="onNameChange"
-                    />
-                    <small v-if="fieldErrors.name" class="p-error">{{
-                        fieldErrors.name
-                    }}</small>
-                    <small
-                        v-else-if="hasTooShortNameSearch(name)"
-                        class="filter-hint"
-                        >{{ t('spa.clubs.name_hint') }}</small
-                    >
-                </div>
-            </div>
-        </template>
-    </Card>
+    <FilterPanel>
+        <div class="filter-field">
+            <label for="club-name-filter">{{
+                t('spa.clubs.name_filter')
+            }}</label>
+            <InputText
+                id="club-name-filter"
+                v-model="name"
+                :invalid="Boolean(fieldErrors.name)"
+                @update:model-value="onNameChange"
+            />
+            <small v-if="fieldErrors.name" class="p-error">{{
+                fieldErrors.name
+            }}</small>
+            <small
+                v-else-if="hasTooShortNameSearch(name)"
+                class="filter-hint"
+                >{{ t('spa.clubs.name_hint') }}</small
+            >
+        </div>
+    </FilterPanel>
 
     <Message v-if="loading" severity="info" :closable="false">{{
         t('spa.clubs.loading')
@@ -193,7 +189,7 @@ onBeforeUnmount(() => {
                 />
             </template>
         </Column>
-        <Column v-if="auth.isAuthenticated" :header="t('spa.club.edit.action')">
+        <Column v-if="auth.isAuthenticated" :header="t('spa.club.actions')">
             <template #body="{ data }">
                 <EditActionButton
                     :to="`/app/clubs/${data.id}/edit`"

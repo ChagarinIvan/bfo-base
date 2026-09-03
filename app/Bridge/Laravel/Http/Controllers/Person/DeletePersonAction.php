@@ -23,6 +23,6 @@ class DeletePersonAction extends BaseController
     ): RedirectResponse {
         $service->execute(new DisablePerson($id, $userId));
 
-        return $this->redirector->action(ShowPersonsListAction::class);
+        return $this->redirector->to('/app/persons');
     }
 }
