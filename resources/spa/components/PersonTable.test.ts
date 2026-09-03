@@ -1,6 +1,7 @@
 // @vitest-environment happy-dom
 
 import { mount } from '@vue/test-utils'
+import PrimeVue from 'primevue/config'
 import { describe, expect, it } from 'vitest'
 import PersonTable from './PersonTable.vue'
 
@@ -36,7 +37,7 @@ describe('person table', () => {
         expect(wrapper.text()).toContain('I')
     })
 
-    it('renders edit and delete icon buttons in one authenticated actions column', () => {
+    it('shows a delete confirmation before following the legacy delete route', async () => {
         const wrapper = mount(PersonTable, {
             props: {
                 persons: [
@@ -53,6 +54,7 @@ describe('person table', () => {
                 authenticated: true,
             },
             global: {
+                plugins: [PrimeVue],
                 stubs: {
                     RouterLink: { template: '<a><slot /></a>' },
                     ImpressionDetails: true,
@@ -69,6 +71,13 @@ describe('person table', () => {
         ).toBe(true)
         expect(
             wrapper.find('.action-menu a[href="/persons/7/delete"]').exists(),
-        ).toBe(true)
+        ).toBe(false)
+
+        await wrapper.findAll('.action-menu .p-button')[1].trigger('click')
+
+        expect(document.body.textContent).toContain(
+            'Сапраўды выдаліць «Іваноў Ян»?',
+        )
+        expect(document.body.querySelector('.p-dialog')).not.toBeNull()
     })
 })

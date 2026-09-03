@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
-import Button from 'primevue/button'
 import ImpressionDetails from './ImpressionDetails.vue'
+import PersonActionMenu from './actions/PersonActionMenu.vue'
+import ConfirmDeleteDialog from './actions/ConfirmDeleteDialog.vue'
 import type { ClubOption, Person, User } from '../api/types'
 import { t } from '../i18n'
 
@@ -18,9 +19,22 @@ const props = withDefaults(
     { clubs: () => [], authenticated: false, rankLabels: () => ({}) },
 )
 
+const selectedPerson = ref<Person | null>(null)
+
 const clubLabels = computed(() =>
     Object.fromEntries(props.clubs.map((club) => [club.id, club.name])),
 )
+const selectedPersonName = computed(() => {
+    if (!selectedPerson.value) return ''
+
+    return `${selectedPerson.value.lastname} ${selectedPerson.value.firstname}`
+})
+
+function deleteSelectedPerson(): void {
+    if (!selectedPerson.value) return
+
+    globalThis.location.assign(`/persons/${selectedPerson.value.id}/delete`)
+}
 
 function birthYear(birthday: string | null): string {
     return birthday?.slice(0, 4) ?? '—'
@@ -80,25 +94,23 @@ function birthYear(birthday: string | null): string {
         </Column>
         <Column v-if="authenticated" :header="t('spa.person.actions')">
             <template #body="{ data }">
-                <span class="action-menu">
-                    <Button
-                        as="a"
-                        :href="`/persons/${data.id}/edit`"
-                        icon="pi pi-pencil"
-                        :label="t('spa.person.edit')"
-                        severity="secondary"
-                        text
-                    />
-                    <Button
-                        as="a"
-                        :href="`/persons/${data.id}/delete`"
-                        icon="pi pi-trash"
-                        :label="t('spa.person.delete')"
-                        severity="danger"
-                        text
-                    />
-                </span>
+                <PersonActionMenu
+                    :person-id="data.id"
+                    @delete="selectedPerson = data"
+                />
             </template>
         </Column>
     </DataTable>
+    <ConfirmDeleteDialog
+        v-if="authenticated && selectedPerson"
+        :visible="Boolean(selectedPerson)"
+        :title="t('spa.person.delete.title')"
+        :confirmation="
+            t('spa.person.delete.confirm', { name: selectedPersonName })
+        "
+        :cancel-label="t('spa.person.delete.cancel')"
+        :action-label="t('spa.person.delete')"
+        @cancel="selectedPerson = null"
+        @confirm="deleteSelectedPerson"
+    />
 </template>

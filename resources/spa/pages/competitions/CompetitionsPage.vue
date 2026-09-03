@@ -335,7 +335,14 @@ onBeforeUnmount(() => {
     <ConfirmDeleteDialog
         v-if="auth.isAuthenticated && selectedCompetition"
         :visible="Boolean(selectedCompetition)"
-        :competition-name="selectedCompetition.name"
+        :title="t('spa.competition.delete.title')"
+        :confirmation="
+            t('spa.competition.delete.confirm', {
+                name: selectedCompetition.name,
+            })
+        "
+        :cancel-label="t('spa.competition.delete.cancel')"
+        :action-label="t('spa.competition.delete.action')"
         :pending="deleting"
         @cancel="selectedCompetition = null"
         @confirm="deleteSelectedCompetition"
