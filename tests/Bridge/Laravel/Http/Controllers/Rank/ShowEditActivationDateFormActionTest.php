@@ -58,7 +58,7 @@ final class ShowEditActivationDateFormActionTest extends TestCase
             'complete_rank' => 'КМС',
             'activate_rank' => '1992-11-10',
         ]);
-        $rank = PersonRankHistory::query()->create([
+        PersonRankHistory::query()->create([
             'person_id' => $person->id,
             'protocol_line_id' => (int) $protocolLine->getKey(),
             'distance_id' => (int) $distance->getKey(),

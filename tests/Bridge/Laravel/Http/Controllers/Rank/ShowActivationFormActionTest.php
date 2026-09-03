@@ -53,7 +53,7 @@ final class ShowActivationFormActionTest extends TestCase
         $distance = Distance::factory()->createOne(['event_id' => $event->id]);
         /** @var ProtocolLine $protocolLine */
         $protocolLine = ProtocolLine::factory()->createOne(['distance_id' => (int) $distance->getKey(), 'person_id' => $person->id, 'complete_rank' => 'КМС']);
-        $rank = PersonRankHistory::query()->create([
+        PersonRankHistory::query()->create([
             'person_id' => $person->id,
             'protocol_line_id' => (int) $protocolLine->getKey(),
             'distance_id' => (int) $distance->getKey(),
