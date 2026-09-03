@@ -16,7 +16,7 @@ description: "Задачи реализации актуального разр�
 **Цель**: описать заменяемый путь и защитить спортивные правила от архитектурного рефакторинга.
 
 - [X] T001 Составить исходную инвентаризацию legacy-точек разрядов и их замен в `specs/009-rank-projection/legacy-inventory.md` по usages `app/Services/RankService.php`, `app/Repositories/RanksRepository.php`, `app/Domain/Rank/Rank.php`, actions, commands, jobs, providers, routes, Blade, переводам и тестам.
-- [X] T002 [P] Перенести все наблюдаемые ветви текущего расчёта в чистые характеризационные тесты без Eloquent в `tests/Domain/Rank/RankCalculationCharacterizationTest.php`: отсутствие выполнения, автоматическая и ручная активация, продление, повышение, понижение, возраст и IIIю.
+- [X] T002 [P] Зафиксировать правила целевого калькулятора в чистых тестах без Eloquent в `tests/Domain/Rank/RankCalculatorRulesTest.php`: отсутствие выполнения, автоматическая и ручная активация, продление, повышение, понижение, возраст и IIIю.
 - [X] T003 [P] Зафиксировать интеграционными регрессионными сценариями поведение `protocol_lines.activate_rank`, отвязки/перепривязки строки и полного refill в `tests/Feature/Rank/RebuildRanksAfterProtocolProcessingTest.php`, `tests/Bridge/Laravel/Http/Controllers/Rank/UpdateRankActivationDateActionTest.php` и `tests/Feature/Rank/RefillPersonRanksTest.php`.
 - [X] T004 [P] Зафиксировать, что `OrientBy` не создаёт и не меняет разряд без protocol line, в `tests/Infrastructure/Integration/OrientBy/OrientBySyncServiceTest.php`.
 
@@ -31,7 +31,7 @@ description: "Задачи реализации актуального разр�
 - [X] T005 Атомарно переключить usages с прежнего Eloquent aggregate/repository на целевую модель, удалив legacy-контракт из `app/Domain/Rank/RankRepository.php` и заменив прежний `app/Domain/Rank/Rank.php` новым enum без промежуточного рабочего состояния с двумя типами `Rank`.
 - [X] T006 Реализовать integer-backed enum, нормализацию обозначений из protocol line, порядок силы, labels и признаки спортивных правил в `app/Domain/Rank/Rank.php` и покрыть cases/invalid input в `tests/Domain/Rank/RankTest.php`.
 - [X] T007 [P] Ввести чистые входные и выходные объекты расчёта в `app/Domain/Rank/RankFact.php`, `app/Domain/Person/PersonRank.php`, `app/Domain/Rank/PersonRankState.php` и `app/Domain/Rank/PersonRankHistory.php`.
-- [X] T008 Реализовать чистый калькулятор, перенеся в него подтверждённое T002 поведение, в `app/Domain/Rank/RankCalculator.php` и адаптировать `tests/Domain/Rank/RankCalculationCharacterizationTest.php` к новому входу.
+- [X] T008 Реализовать чистый калькулятор, перенеся в него подтверждённое T002 поведение, в `app/Domain/Rank/RankCalculator.php` и адаптировать `tests/Domain/Rank/RankCalculatorRulesTest.php` к новому входу.
 - [X] T009 Расширить aggregate `Person` операцией атомарной замены materialized rank state и owned history в `app/Domain/Person/Person.php`, не загружая историю при обычном чтении человека.
 - [X] T010 Добавить обратимую миграцию `database/migrations/*_add_current_rank_projection_to_persons.php` для `persons.current_rank`, дат актуального периода и lean-индексов `(current_rank, active)` и `current_rank_finished_on`.
 - [X] T011 Добавить обратимую миграцию `database/migrations/*_create_person_rank_histories_table.php` с protocol line, прямыми `distance_id`/`event_id`/`competition_id`, датами, типом изменения и индексами из `specs/009-rank-projection/data-model.md`.
