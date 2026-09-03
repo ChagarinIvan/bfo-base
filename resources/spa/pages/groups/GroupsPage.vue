@@ -1,16 +1,13 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref } from 'vue'
-import Column from 'primevue/column'
-import DataTable from 'primevue/datatable'
-import InputText from 'primevue/inputtext'
-import Message from 'primevue/message'
-import Paginator, { type PageState } from 'primevue/paginator'
+import type { PageState } from 'primevue/paginator'
 import Toolbar from 'primevue/toolbar'
 import { useRouter } from 'vue-router'
-import { getGroups } from '../../api/groups'
+import { deleteGroup, getGroups } from '../../api/groups'
 import type { Group, PaginationHeaders } from '../../api/types'
-import FilterPanel from '../../components/FilterPanel.vue'
 import GroupActionMenu from '../../components/actions/GroupActionMenu.vue'
+import ConfirmDeleteDialog from '../../components/actions/ConfirmDeleteDialog.vue'
+import GroupListingTable from '../../components/GroupListingTable.vue'
 import { t } from '../../i18n'
 import { useAuthStore } from '../../stores/auth'
 import {
@@ -24,6 +21,8 @@ const groups = ref<Group[]>([])
 const name = ref('')
 const loading = ref(false)
 const error = ref('')
+const selectedGroup = ref<Group | null>(null)
+const deleting = ref(false)
 const pagination = ref<PaginationHeaders>({
     currentPage: 1,
     perPage: 20,
@@ -69,6 +68,20 @@ function onNameChange(): void {
 function onPage(event: PageState): void {
     void load(event.page + 1, event.rows)
 }
+async function remove(): Promise<void> {
+    if (!selectedGroup.value) return
+
+    deleting.value = true
+    try {
+        await deleteGroup(selectedGroup.value.id)
+        await load(pagination.value.currentPage, pagination.value.perPage)
+    } catch {
+        error.value = t('spa.group.delete.error')
+    } finally {
+        deleting.value = false
+        selectedGroup.value = null
+    }
+}
 onMounted(() => void load())
 onBeforeUnmount(() => debouncedSearch.cancel())
 </script>
@@ -79,55 +92,34 @@ onBeforeUnmount(() => debouncedSearch.cancel())
             ><h1 class="page-title">{{ t('spa.groups.title') }}</h1></template
         ></Toolbar
     >
-    <FilterPanel
-        ><div class="filter-field">
-            <label for="group-name-filter">{{ t('spa.groups.name') }}</label
-            ><InputText
-                id="group-name-filter"
-                v-model="name"
-                @update:model-value="onNameChange"
-            /></div
-    ></FilterPanel>
-    <Message v-if="loading" severity="info" :closable="false">{{
-        t('spa.groups.loading')
-    }}</Message>
-    <Message v-else-if="error" severity="error" :closable="false">{{
-        error
-    }}</Message>
-    <Message
-        v-else-if="!groups.length"
-        severity="secondary"
-        :closable="false"
-        >{{ t('spa.groups.empty') }}</Message
-    >
-    <DataTable v-else :value="groups" striped-rows>
-        <Column field="name" :header="t('spa.groups.name')"
-            ><template #body="{ data }"
-                ><RouterLink :to="`/app/groups/${data.id}`">{{
-                    data.name
-                }}</RouterLink></template
-            ></Column
-        >
-        <Column
-            field="distancesCount"
-            :header="t('spa.groups.distances_count')"
-        />
-        <Column v-if="auth.isAuthenticated" :header="t('spa.group.actions')"
-            ><template #body="{ data }"
-                ><GroupActionMenu
-                    :group-id="data.id"
-                    @merge="router.push(`/app/groups/${data.id}/merge`)"
-                    @delete="
-                        router.push(`/app/groups/${data.id}/edit?delete=1`)
-                    " /></template
-        ></Column>
-    </DataTable>
-    <Paginator
-        v-if="pagination.total"
-        :first="(pagination.currentPage - 1) * pagination.perPage"
-        :rows="pagination.perPage"
-        :total-records="pagination.total"
-        :rows-per-page-options="[10, 20, 50]"
+    <GroupListingTable
+        :groups="groups"
+        :name="name"
+        :loading="loading"
+        :error="error"
+        :pagination="pagination"
+        :show-actions="auth.isAuthenticated"
+        @update:name="name = $event"
+        @search="onNameChange"
         @page="onPage"
+    >
+        <template #actions="{ group }">
+            <GroupActionMenu
+                v-if="auth.isAuthenticated"
+                :group-id="group.id"
+                @merge="router.push(`/app/groups/${group.id}/merge`)"
+                @delete="selectedGroup = group"
+            />
+        </template>
+    </GroupListingTable>
+    <ConfirmDeleteDialog
+        :visible="selectedGroup !== null"
+        :title="t('spa.group.delete')"
+        :confirmation="t('spa.group.delete.confirm')"
+        :cancel-label="t('spa.common.cancel')"
+        :action-label="t('spa.group.delete')"
+        :pending="deleting"
+        @cancel="selectedGroup = null"
+        @confirm="remove"
     />
 </template>

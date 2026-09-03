@@ -5,16 +5,20 @@ declare(strict_types=1);
 namespace App\Infrastructure\Laravel\Eloquent\Group;
 
 use App\Domain\Group\Group;
+use App\Domain\Group\GroupNameNormalizer;
 use App\Domain\Group\GroupRepository;
 use App\Domain\Shared\Criteria;
 use App\Domain\Shared\Pagination\Slice;
 use App\Infrastructure\Laravel\Eloquent\Pagination\EloquentQueryAdapter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
-use function mb_strtolower;
 
 final class EloquentGroupRepository implements GroupRepository
 {
+    public function __construct(private readonly GroupNameNormalizer $normalizer)
+    {
+    }
+
     public function byId(int $id): ?Group
     {
         return $this->baseQuery()->find($id);
@@ -52,7 +56,7 @@ final class EloquentGroupRepository implements GroupRepository
         }
 
         if ($criteria->hasParam('names')) {
-            $query->whereIn('name', $criteria->param('names'));
+            $query->whereIn('normalize_name', $criteria->param('names'));
         }
 
         return $query->get();
@@ -62,7 +66,8 @@ final class EloquentGroupRepository implements GroupRepository
     {
         $query = $this->baseQuery()->orderByDesc('distances_count')->orderBy('groups.id');
         if ($criteria->hasParam('name')) {
-            $query->whereRaw('LOWER(groups.name) LIKE ?', ['%' . mb_strtolower((string) $criteria->param('name')) . '%']);
+            $normalizedName = $this->normalizer->normalize((string) $criteria->param('name'));
+            $query->where('groups.normalize_name', 'LIKE', '%' . $normalizedName . '%');
         }
         if ($criteria->hasParam('excludeId')) {
             $query->where('groups.id', '!=', $criteria->param('excludeId'));

@@ -107,7 +107,7 @@ export interface GroupEventsQuery {
     groupId: string
     withCompetition: 1
     competitionName?: string
-    year?: string
+    year?: number
     date?: string
     page?: number
     perPage?: number

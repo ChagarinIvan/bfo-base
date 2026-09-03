@@ -229,6 +229,11 @@ body {
     box-shadow: 0 0.25rem 0.75rem rgb(33 37 41 / 7%);
 }
 
+.group-details-card {
+    margin-bottom: 1.5rem;
+    box-shadow: 0 0.25rem 0.75rem rgb(33 37 41 / 7%);
+}
+
 .competition-details-info {
     width: 100%;
     border-collapse: collapse;
@@ -239,6 +244,11 @@ body {
     width: 100%;
     margin-bottom: 1rem;
     border-collapse: collapse;
+}
+
+.group-details-info {
+    border-collapse: collapse;
+    width: 100%;
 }
 
 .competition-details-info th,
@@ -257,6 +267,13 @@ body {
     vertical-align: top;
 }
 
+.group-details-info th,
+.group-details-info td {
+    border-bottom: 1px solid var(--p-content-border-color);
+    padding: 0.5rem;
+    text-align: left;
+}
+
 .competition-details-info th {
     width: 12rem;
     color: #6c757d;
@@ -267,6 +284,10 @@ body {
     width: 12rem;
     color: #6c757d;
     font-weight: 600;
+}
+
+.group-details-info th {
+    width: 15rem;
 }
 
 .competition-legacy-actions {
@@ -295,6 +316,16 @@ body {
     overflow: hidden;
     border-radius: 0.5rem;
     box-shadow: 0 0.25rem 0.75rem rgb(33 37 41 / 7%);
+}
+
+.groups-table {
+    overflow: hidden;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.25rem 0.75rem rgb(33 37 41 / 7%);
+}
+
+.groups-paginator {
+    margin-top: 0.75rem;
 }
 
 .action-menu {
