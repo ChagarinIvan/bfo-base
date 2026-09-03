@@ -21,10 +21,6 @@ use function strtr;
 
 final class EloquentPersonRepository implements PersonRepository
 {
-    private static function escapeLikePattern(string $value): string
-    {
-        return strtr($value, ['!' => '!!', '%' => '!%', '_' => '!_']);
-    }
     public function byId(int $id, PersonResources $resources = new PersonResources()): ?Person
     {
         $query = Person::where('active', true);
@@ -154,6 +150,10 @@ final class EloquentPersonRepository implements PersonRepository
     {
         return new Slice(new EloquentQueryAdapter($this->createPaginatedQuery($criteria)));
     }
+    private function escapeLikePattern(string $value): string
+    {
+        return strtr($value, ['!' => '!!', '%' => '!%', '_' => '!_']);
+    }
 
     /** @return Builder<Person> */
     private function createPaginatedQuery(Criteria $criteria): Builder
@@ -182,7 +182,7 @@ final class EloquentPersonRepository implements PersonRepository
         }
 
         if ($criteria->hasParam('name')) {
-            $name = self::escapeLikePattern(mb_strtolower((string) $criteria->param('name')));
+            $name = $this->escapeLikePattern(mb_strtolower((string) $criteria->param('name')));
 
             $pattern = '%' . $name . '%';
             $query->where(static function (Builder $query) use ($pattern): void {

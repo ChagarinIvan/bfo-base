@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import Button from 'primevue/button'
-import InputText from 'primevue/inputtext'
 import Message from 'primevue/message'
 import Paginator, { type PageState } from 'primevue/paginator'
-import Select from 'primevue/select'
 import Toolbar from 'primevue/toolbar'
 import { getClubOptions } from '../../api/clubs'
 import { getPersons } from '../../api/persons'
@@ -16,13 +14,12 @@ import type {
     Person,
     User,
 } from '../../api/types'
+import PersonFilters from '../../components/PersonFilters.vue'
 import PersonTable from '../../components/PersonTable.vue'
-import FilterPanel from '../../components/FilterPanel.vue'
 import { t } from '../../i18n'
 import { useAuthStore } from '../../stores/auth'
 import {
     applyFieldErrors,
-    birthYearOptions,
     debounce,
     hasTooShortNameSearch,
     isApiValidationError,
@@ -52,16 +49,9 @@ const fieldErrors = reactive<Record<string, string>>({})
 const auth = useAuthStore()
 let latestRequest = 0
 
-const yearOptions = computed(() =>
-    birthYearOptions().map((year) => ({ label: String(year), value: year })),
-)
 const rankLabels = computed(() =>
     Object.fromEntries(ranks.value.map((rank) => [rank.id, rank.label])),
 )
-const clubOptions = computed(() => [
-    { id: '', name: t('spa.person.all_options') },
-    ...clubs.value,
-])
 
 const debouncedNameSearch = debounce(() => {
     void load(resetPageOnFilterChange(pagination.value.currentPage))
@@ -167,69 +157,18 @@ onBeforeUnmount(() => debouncedNameSearch.cancel())
         </template>
     </Toolbar>
 
-    <FilterPanel>
-        <div class="filter-field">
-            <label for="person-name-filter">{{ t('spa.person.search') }}</label>
-            <InputText
-                id="person-name-filter"
-                v-model="name"
-                :invalid="Boolean(fieldErrors.name)"
-                @update:model-value="onNameChange"
-            />
-            <small v-if="fieldErrors.name" class="p-error">{{
-                fieldErrors.name
-            }}</small>
-            <small v-else-if="hasTooShortNameSearch(name)" class="filter-hint">
-                {{ t('spa.person.search_hint') }}
-            </small>
-        </div>
-        <div class="filter-field">
-            <label for="person-club-filter">{{
-                t('spa.person.club_filter')
-            }}</label>
-            <Select
-                id="person-club-filter"
-                v-model="clubId"
-                :options="clubOptions"
-                option-label="name"
-                option-value="id"
-                @update:model-value="onFilterChange"
-            />
-        </div>
-        <div class="filter-field">
-            <label for="person-rank-filter">{{
-                t('spa.person.rank_filter')
-            }}</label>
-            <Select
-                id="person-rank-filter"
-                v-model="rankId"
-                :options="[
-                    { id: null, label: t('spa.person.all_options') },
-                    ...ranks,
-                ]"
-                option-label="label"
-                option-value="id"
-                @update:model-value="onFilterChange"
-            />
-        </div>
-        <div class="filter-field">
-            <label for="person-birth-year-filter">{{
-                t('spa.person.birth_year_filter')
-            }}</label>
-            <Select
-                id="person-birth-year-filter"
-                v-model="birthYear"
-                :options="[
-                    { label: t('spa.person.all_options'), value: null },
-                    ...yearOptions,
-                ]"
-                option-label="label"
-                option-value="value"
-                filter
-                @update:model-value="onFilterChange"
-            />
-        </div>
-    </FilterPanel>
+    <PersonFilters
+        v-model:name="name"
+        v-model:club-id="clubId"
+        v-model:rank-id="rankId"
+        v-model:birth-year="birthYear"
+        :clubs="clubs"
+        :ranks="ranks"
+        :field-errors="fieldErrors"
+        show-club
+        @name-change="onNameChange"
+        @filter-change="onFilterChange"
+    />
 
     <Message v-if="loading" severity="info" :closable="false">{{
         t('spa.person.loading')
