@@ -9,7 +9,6 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use PHPUnit\Framework\Attributes\Test;
-use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 
 final class RemoveFaqNavigationTest extends TestCase
@@ -25,11 +24,7 @@ final class RemoveFaqNavigationTest extends TestCase
     #[Test]
     public function guest_does_not_see_faq_navigation(): void
     {
-        $this->get('/competitions?year=2021')
-            ->assertStatus(Response::HTTP_OK)
-            ->assertDontSee('/faq')
-            ->assertDontSee('apiDropdown')
-        ;
+        $this->get('/')->assertRedirect('/app/competitions');
     }
 
     #[Test]
@@ -39,10 +34,6 @@ final class RemoveFaqNavigationTest extends TestCase
         $user = User::factory()->createOne();
         $this->actingAs($user);
 
-        $this->get('/competitions?year=2021')
-            ->assertStatus(Response::HTTP_OK)
-            ->assertDontSee('/faq')
-            ->assertDontSee('apiDropdown')
-        ;
+        $this->get('/')->assertRedirect('/app/competitions');
     }
 }

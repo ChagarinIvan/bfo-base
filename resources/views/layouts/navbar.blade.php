@@ -1,5 +1,4 @@
 @php
-    use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionsListAction;
     use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupsListAction;
     use App\Bridge\Laravel\Http\Controllers\Flags\ShowFlagsListAction;
     use App\Bridge\Laravel\Http\Controllers\Groups\ShowGroupsListAction;
@@ -41,7 +40,7 @@
                     <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="competitionsDropdown">
                         <li>
                             <a class="dropdown-item {{ $isCompetitionsRoute ? 'active' : '' }}"
-                               href="{{ action(ShowCompetitionsListAction::class, ['year' => (string) Year::actualYear()->value]) }}"
+                               href="/app/competitions"
                             >{{ __('app.navbar.competitions') }}</a>
                         </li>
                         <li>

@@ -2,7 +2,6 @@
     use App\Application\Dto\Club\ViewClubDto;
     use App\Application\Dto\Event\ViewEventDto;
     use App\Application\Dto\Person\LegacyViewPersonDto;
-    use App\Bridge\Laravel\Http\Controllers\Competition\ShowCompetitionAction;
     use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupAction;
     use App\Bridge\Laravel\Http\Controllers\Event\ShowEditEventFormAction;
     use App\Bridge\Laravel\Http\Controllers\Event\ShowEventDistanceAction;
@@ -33,7 +32,7 @@
     <div class="row mb-3">
         <div class="col-12">
             <h4>
-                <a href="{{ action(ShowCompetitionAction::class, ['competitionId' => $event->competitionId]) }}">{{ $event->competitionName }}</a>
+                <a href="/app/competitions/{{ $event->competitionId }}">{{ $event->competitionName }}</a>
             </h4>
         </div>
     </div>
