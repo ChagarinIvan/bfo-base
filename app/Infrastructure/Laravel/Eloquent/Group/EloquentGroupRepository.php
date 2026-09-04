@@ -12,6 +12,7 @@ use App\Domain\Shared\Pagination\Slice;
 use App\Infrastructure\Laravel\Eloquent\Pagination\EloquentQueryAdapter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use function array_map;
 
 final class EloquentGroupRepository implements GroupRepository
 {
@@ -56,7 +57,11 @@ final class EloquentGroupRepository implements GroupRepository
         }
 
         if ($criteria->hasParam('names')) {
-            $query->whereIn('normalize_name', $criteria->param('names'));
+            $names = array_map(
+                fn (string $name): string => $this->normalizer->normalize($name),
+                $criteria->param('names'),
+            );
+            $query->whereIn('normalize_name', $names);
         }
 
         return $query->get();

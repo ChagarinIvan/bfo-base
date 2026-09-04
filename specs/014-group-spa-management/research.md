@@ -3,7 +3,7 @@
 ## Источники в репозитории
 
 - `specs/007-club-spa-management`: принятый pattern для list/detail, `Slice`, pagination headers,
-  auth-aware impressions, debounce, duplicate conflict, Vue Router и legacy redirects.
+  auth-aware impressions, debounce, duplicate conflict и Vue Router.
 - `resources/views/groups/index.blade.php`: текущие колонки name и count distances; auth-only
   edit/delete и переход на объединение.
 - `resources/views/groups/show.blade.php`: текущая таблица competition, event и competitors.
@@ -39,6 +39,12 @@
    reversible migration `created_at/created_by/updated_at/updated_by` с backfill; DTO использует
    тот же `ImpressionCast`/`AuthAssembler`, что остальные aggregate models.
 9. `distances.group_id` уже имеет индекс в миграции создания таблицы; добавочный индекс не нужен.
+10. Общий `GroupListingTable` используется списком групп и merge-страницей; merge передаёт только
+    другой action slot. Исходная группа на merge-странице отображается отдельной info table с
+    impressions.
+11. После базового backfill добавлена миграция `2026_09_04_000001_normalize_existing_group_names.php`,
+    которая пересчитывает исторические значения через `GroupNameNormalizer`; это устраняет различия
+    между старыми латинскими и новыми нормализованными значениями.
 
 ## Не выбранные альтернативы
 

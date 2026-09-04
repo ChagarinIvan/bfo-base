@@ -3,11 +3,13 @@
 ## Полнота
 
 - [ ] Описаны публичный список групп и страница группы.
-- [ ] Зафиксированы pagination, поиск от одного символа и debounce.
+- [ ] Зафиксированы pagination, поиск от одного символа, нормализация `normalize_name` и debounce.
 - [ ] Зафиксированы поля `ViewGroupDto` и auth-only `created`/`updated`.
 - [ ] Описаны фильтры списка стартов и отсутствие действий в его таблице.
 - [ ] Описаны edit, duplicate prevention, delete popup и merge workflow.
-- [ ] Описаны redirect-совместимость и удаление legacy после аудита usages.
+- [ ] Описано полное удаление legacy-маршрутов и страниц после аудита usages.
+- [ ] Описан единый `GroupListingTable` для обычного списка и merge-страницы с разными actions.
+- [ ] Описаны info table исходной группы и popup подтверждения merge с названиями source/target.
 
 ## Проверяемость
 

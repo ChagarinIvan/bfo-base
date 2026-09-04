@@ -44,7 +44,7 @@ Vitest/Vue Test Utils.
 | Application / Domain / Bridge / Infrastructure | ✅ | Use cases и DTO в Application, чистые критерии/порты в Domain, API actions и SPA bridge, Eloquent в Infrastructure. |
 | Без фасадов и новых legacy-слоёв | ✅ | Зависимости через constructor injection; `app/Services` и `app/Repositories` не расширяются. |
 | Unit + API/frontend tests | ✅ | Unit без Eloquent в Application/Domain; request-тесты для БД/HTTP; Vitest для debounce, filters и routes. |
-| SPA-first | ✅ | Новые страницы и API — основной интерфейс; старые GET только redirect-совместимость. |
+| SPA-first | ✅ | Новые страницы и API — основной интерфейс; старые group-only GET удалены. |
 | N+1 / quality gates | ✅ | `withCount`, SQL-фильтры, query-count tests и финальные CS/STAN/Rector/test/CI. |
 | PHP 8.5 / import style | ✅ | Новые PHP-классы используют актуальный синтаксис и `use` imports. |
 
@@ -63,8 +63,8 @@ Vitest/Vue Test Utils.
    переносит distances и удаляет source.
 5. SPA router добавляет `/app/groups`, `/app/groups/:id`, `/app/groups/:id/edit`,
    `/app/groups/:id/merge`; list/detail public, edit/merge auth guard, delete через dialog.
-6. После миграции web routes оставляют только redirect destinations для legacy GET и удаляют старые
-   render/mutation actions после аудита usages.
+6. После миграции web routes удаляют group-only GET, render/mutation actions и Blade views после
+   аудита usages.
 
 ## Структура проекта
 
@@ -106,6 +106,7 @@ resources/spa/api/groups.ts
 resources/spa/api/events.ts
 resources/spa/api/types.ts
 resources/spa/pages/groups/
+resources/spa/components/GroupListingTable.vue
 resources/spa/components/actions/
 resources/spa/router/index.ts
 resources/spa/components/navigationModels.ts
@@ -122,7 +123,7 @@ tests/Domain/Group/
 tests/Feature/Group/
 resources/spa/pages/groups/*.test.ts
 resources/spa/api/groups.test.ts
-resources/views/groups/{index,show,unit}.blade.php          # удалить после redirect-аудита
+resources/views/groups/{index,show,unit}.blade.php          # удалить после аудита usages
 app/Bridge/Laravel/Http/Controllers/Groups/                   # удалить group-only actions
 ```
 
@@ -145,7 +146,7 @@ SQL-план сортировки `distances_count`; не добавлять и�
 - P1: backend group list/view + events group filter, затем SPA list/detail и pagination/filter tests.
 - P2: update/delete API and SPA form/dialog; duplicate handling and atomic delete tests.
 - P2: merge API/use case and separate paginated merge page; source/target/error tests.
-- P3: navbar/legacy redirects, internal-link audit and deletion of obsolete artifacts.
+- P3: navbar/internal-link audit and deletion of obsolete artifacts.
 
 ### Phase 3 — финальная проверка
 
@@ -164,8 +165,8 @@ usages and migration scope.
 - **Pagination instability**: explicit secondary id ordering and server-side count/order.
 - **Index uncertainty**: compare generated SQL and EXPLAIN against existing indexes; record decision
   in implementation/plan, add migration only with measurable rationale.
-- **Missing historical impressions**: backfill existing group rows using the project’s established
-  default actor and migration timestamp, then record the limitation in DTO/request tests.
+- **Inconsistent historical normalization**: a follow-up migration recalculates all existing
+  `normalize_name` values with `GroupNameNormalizer`, matching the current search/parser flow.
 
 ## Complexity tracking
 

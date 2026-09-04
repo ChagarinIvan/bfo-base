@@ -5,7 +5,8 @@
 1. Открыть `/app/groups` без сессии.
 2. Убедиться, что таблица пагинирована, отсортирована по `distancesCount DESC, id ASC`, а
    `created`/`updated` не видны.
-3. Ввести `A`, дождаться debounce около 300 мс и проверить filtered list; очистить input и
+3. Ввести фрагмент названия, дождаться debounce около 300 мс и проверить поиск через `normalize_name`;
+   очистить input и
    убедиться, что вернулся полный список.
 4. Открыть `/app/groups/{id}` и проверить info table, starts table и paginator.
 5. Применить competition name, year и exact date filters совместно; проверить empty state.
@@ -15,9 +16,11 @@
 1. Войти и открыть `/app/groups/{id}/edit`.
 2. Сохранить новое уникальное имя; проверить redirect на detail и видимые impressions.
 3. Отправить duplicate/empty/too-long name; проверить 409/422 и отсутствие изменения.
-4. Открыть `/app/groups/{id}/merge`, найти target через search/pagination, подтвердить merge и
-   проверить перенос distances и исчезновение source.
-5. Открыть delete dialog, отменить, затем подтвердить; проверить удаление group-owned data.
+4. Открыть `/app/groups/{id}/merge`, проверить info table исходной группы с impressions, найти target
+   через тот же listing/filter/pagination, нажать зелёную кнопку и проверить popup с названиями обеих
+   групп; подтвердить merge и проверить перенос distances и исчезновение source.
+5. Открыть delete dialog, отменить, затем подтвердить; проверить `active=false`, исчезновение группы
+   из read-моделей и сохранение distances/protocol lines.
 
 ## Legacy safety
 
@@ -39,6 +42,8 @@
 ### Последний запуск
 
 - `npm run ci` — успешно: 29 файлов / 77 frontend-тестов, lint, typecheck и production build.
+- Добавлена миграция `2026_09_04_000001_normalize_existing_group_names.php` для пересчёта исторических
+  `normalize_name` тем же доменным нормализатором, который используется в поиске.
 - `composer cs`, `composer stan`, `composer rector` — успешно.
 - `ParserServiceTest` — успешно.
 - PHP request-тесты и полный `composer test` требуют отдельной чистой MySQL test-схемы: в текущем

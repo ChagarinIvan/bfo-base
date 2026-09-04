@@ -11,7 +11,8 @@
 - `distancesCount: int` — вычисляемый count связанных `distances`, не отдельное поле.
 - `created: ImpressionDto`, `updated: ImpressionDto` — auth-only projection, хранимый через
   `created_at/created_by/updated_at/updated_by`; DB defaults — `CURRENT_TIMESTAMP` и system user
-  ID `10`, существующие строки получают `normalize_name` backfill.
+  ID `10`, существующие строки получают `normalize_name` backfill и повторный пересчёт через
+  `GroupNameNormalizer` для устранения расхождений старых значений.
 
 Связь: `Group 1 — N Distance` через `distances.group_id`.
 
@@ -35,7 +36,8 @@
 
 ### GroupSearchCriteria
 
-- optional `name: string`, trim, min 1 значимый символ;
+- optional `name: string`, trim, min 1 значимый символ; перед SQL-поиском значение нормализуется
+  `GroupNameNormalizer` и сравнивается с `normalize_name`;
 - `page: positive int`;
 - `perPage: positive int` из существующего pagination contract;
 - fixed sorting `distancesCount DESC, id ASC`.

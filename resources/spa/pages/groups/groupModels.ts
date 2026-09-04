@@ -1,7 +1,6 @@
 import type { GroupEventsQuery, GroupSearchQuery } from '../../api/types'
 import {
     NAME_SEARCH_MINIMUM_LENGTH,
-    hasTooShortNameSearch,
     normaliseNameSearch,
 } from '../listingModels'
 

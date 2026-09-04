@@ -22,7 +22,7 @@ description: "Задачи реализации управления групп�
 
 **Цель**: подготовить блокирующие контракты и целевую архитектуру до вертикальных срезов.
 
-- [X] T004 [P] Добавить обратимую миграцию audit columns `created_at`, `created_by`, `updated_at`, `updated_by` для `groups` с backfill существующих строк в `database/migrations/*_add_group_impression.php`.
+- [X] T004 [P] Добавить обратимую миграцию audit columns `created_at`, `created_by`, `updated_at`, `updated_by` для `groups` с backfill существующих строк в `database/migrations/*_add_group_impression.php`; отдельной миграцией `database/migrations/2026_09_04_000001_normalize_existing_group_names.php` пересчитать исторические `normalize_name` через `GroupNameNormalizer`.
 - [X] T005 [P] Создать чистый group read/write contract и criteria types в `app/Domain/Group/GroupRepository.php` и связанных `app/Domain/Group/*`, не добавляя Eloquent в новые Domain value objects.
 - [X] T006 Реализовать Eloquent group adapter с pagination, `withCount('distances')`, stable order, escaped name search и lock methods в `app/Infrastructure/Laravel/Eloquent/Group/EloquentGroupRepository.php`.
 - [X] T007 [P] Добавить `created`/`updated` casts, fillable/aggregate behavior и normalized-name support для `app/Domain/Group/Group.php` через существующие `Impression`/`ImpressionCast` patterns.
@@ -51,7 +51,7 @@ description: "Задачи реализации управления групп�
 - [X] T015 [US1] Создать `ViewGroupDto`, group assembler и paginated list use case в `app/Application/Dto/Group/ViewGroupDto.php`, `app/Application/Dto/Group/GroupAssembler.php`, `app/Application/Service/Group/ListGroups.php` и `app/Application/Service/Group/ListGroupsService.php`.
 - [X] T016 [US1] Создать public list API action в `app/Bridge/Laravel/Http/Controllers/Api/V1/Group/ListGroupsAction.php` с `Slice`/serializer behavior проекта; detail action создаётся в T023.
 - [X] T017 [US1] Создать `resources/spa/api/groups.ts`, `resources/spa/pages/groups/groupModels.ts` и типы `Group`/`GroupSearchQuery` в `resources/spa/api/types.ts`.
-- [X] T018 [US1] Создать публичную таблицу `resources/spa/pages/groups/GroupsPage.vue` с FilterPanel, 300ms debounce, paginator, loading/error/empty states и auth-only impressions/actions.
+- [X] T018 [US1] Создать публичный listing групп в `resources/spa/components/GroupListingTable.vue` и подключить его в `resources/spa/pages/groups/GroupsPage.vue` с FilterPanel, debounce, paginator, loading/error/empty states и auth-only actions.
 - [X] T019 [P] [US1] Добавить public `/app/groups` route и navigation item в `resources/spa/router/index.ts` и `resources/spa/components/navigationModels.ts`; обновить i18n keys в `resources/lang/ru.json`, `resources/lang/by.json`, `resources/lang/en.json`.
 
 **Checkpoint**: US1 демонстрирует поиск и открытие группы без legacy Blade page.
@@ -117,7 +117,7 @@ all distances, deletes source and returns to current group list.
 
 - [X] T039 [US4] Создать merge command, invariants и transactional Application service в `app/Application/Service/Group/MergeGroups.php` и `MergeGroupsService.php`; использовать Domain port и существующий transaction abstraction.
 - [X] T040 [US4] Создать `MergeGroupsAction` с validated `sourceGroupId`/`targetGroupId` payload и error mapping в `app/Bridge/Laravel/Http/Controllers/Api/V1/Group/MergeGroupsAction.php`.
-- [X] T041 [US4] Создать `resources/spa/pages/groups/MergeGroupsPage.vue` с source info, переиспользованным paginated group table, excluded source, target action and confirmation dialog.
+- [X] T041 [US4] Создать `resources/spa/pages/groups/MergeGroupsPage.vue` с source info table и impressions, переиспользованным `resources/spa/components/GroupListingTable.vue`, excluded source, зелёным target action и popup с названиями source/target.
 - [X] T042 [P] [US4] Добавить merge route/action menu, API function and i18n messages в `resources/spa/router/index.ts`, `resources/spa/api/groups.ts`, `resources/spa/components/actions/` и `resources/lang/{ru,by,en}.json`.
 
 **Checkpoint**: edit/delete/merge полностью заменяют действия старой group UI.
@@ -137,10 +137,10 @@ all distances, deletes source and returns to current group list.
 ### Implementation for User Story 5
 
 - [ ] T045 [US5] Перевести navbar и найденные внутренние group links на SPA в `resources/spa/components/navigationModels.ts`, `resources/views/layouts/`, `resources/views/` и связанных Bridge actions.
-- [ ] T046 [US5] Добавить redirect-only legacy GET handling в `app/Bridge/Laravel/Provider/WebRoutesServiceProvider.php` для `/groups`, `/groups/{id}` и `/groups/{id}/unit`; удалить legacy mutation routes.
-- [ ] T047 [US5] Мигрировать оставшиеся shared usages с `app/Repositories/GroupsRepository.php`/`app/Services/GroupsService.php` на target Domain/Infrastructure contracts; обновить `app/Domain/Cup/`, parser и bindings.
-- [ ] T048 [P] [US5] Удалить после `rg`-аудита заменённые `resources/views/groups/index.blade.php`, `show.blade.php`, `unit.blade.php` и group-only `app/Bridge/Laravel/Http/Controllers/Groups/*`; удалить только неиспользуемые переводы/компоненты.
-- [ ] T049 [US5] Проверить `rg`-отчётом отсутствие ссылок на удалённые group-only artifacts и отсутствие новых N+1/неограниченных выборок; обновить `specs/014-group-spa-management/research.md` и `quickstart.md`.
+- [X] T046 [US5] Удалить group-only web GET и mutation routes в `app/Bridge/Laravel/Provider/WebRoutesServiceProvider.php` для `/groups`, `/groups/{id}` и `/groups/{id}/unit`.
+- [X] T047 [US5] Мигрировать shared usages с legacy GroupsRepository/GroupsService на target Domain/Infrastructure contracts; обновить `app/Domain/Cup/`, parser и bindings.
+- [X] T048 [P] [US5] Удалить заменённые `resources/views/groups/index.blade.php`, `show.blade.php`, `unit.blade.php` и group-only `app/Bridge/Laravel/Http/Controllers/Groups/*` после аудита usages.
+- [X] T049 [US5] Проверить отсутствие ссылок на удалённые group-only artifacts и обновить `specs/014-group-spa-management/research.md` и `quickstart.md`.
 
 ## Phase 8: Polish & cross-cutting validation
 

@@ -12,7 +12,9 @@ headers (фактические project names для `X-Current-Page`, `X-Per-Pa
 - Public item: `{ id, name, distancesCount }`.
 - Authenticated item additionally has `{ created, updated }`, assembled from group audit columns.
 - Order: `distancesCount DESC, id ASC`.
-- Invalid non-empty short `name`, page or perPage: `422` with field errors.
+- Search uses normalized `name` against `normalize_name`; invalid `page` or `perPage`: `422` with
+  field errors. Group search accepts one significant character; event competition-name search accepts
+  at least three characters.
 
 ## View group
 
@@ -58,3 +60,4 @@ headers (фактические project names для `X-Current-Page`, `X-Per-Pa
 - `401` unauthenticated, `404` source/target missing, `422` invalid payload,
   `409` `cannot_merge_same_group` for equal ids.
 - Operation is atomic and idempotently rejects source == target without data changes.
+- SPA confirmation displays source and target names; merge actions use the success visual style.
