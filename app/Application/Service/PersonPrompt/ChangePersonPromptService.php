@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Application\Service\PersonPrompt;
 
-use App\Application\Dto\Auth\UserId;
 use App\Domain\Auth\Impression;
 use App\Domain\PersonPrompt\Factory\PersonPromptFactory;
 use App\Domain\PersonPrompt\Factory\PersonPromptInput;
@@ -17,7 +16,6 @@ final readonly class ChangePersonPromptService
     public function __construct(
         private PersonPromptRepository $prompts,
         private PersonPromptFactory $factory,
-        private DeletePersonPromptService $deleter,
         private Clock $clock,
     ) {
     }
@@ -44,13 +42,6 @@ final readonly class ChangePersonPromptService
                 $command->personId,
             );
             $this->prompts->update($prompt);
-        }
-    }
-
-    public function delete(string $prompt, int $userId): void
-    {
-        foreach ($this->prompts->byCriteria(new Criteria(['prompts' => [$prompt]])) as $personPrompt) {
-            $this->deleter->execute(new DeletePersonPrompt((string) $personPrompt->id, new UserId($userId)));
         }
     }
 }

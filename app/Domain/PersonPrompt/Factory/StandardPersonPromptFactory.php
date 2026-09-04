@@ -6,14 +6,14 @@ namespace App\Domain\PersonPrompt\Factory;
 
 use App\Domain\Auth\Impression;
 use App\Domain\PersonPrompt\PersonPrompt;
-use App\Domain\PersonPrompt\TranslitPersonPromptMetaphone;
+use App\Domain\PersonPrompt\PersonPromptMetaphone;
 use App\Domain\Shared\Clock;
 
 final readonly class StandardPersonPromptFactory implements PersonPromptFactory
 {
     public function __construct(
-        private Clock                         $clock,
-        private TranslitPersonPromptMetaphone $metaphone,
+        private Clock $clock,
+        private PersonPromptMetaphone $metaphone,
     ) {
     }
 

@@ -4,18 +4,14 @@ declare(strict_types=1);
 
 namespace Tests\Application\Service\PersonPrompt;
 
-use App\Application\Dto\Auth\AuthAssembler;
 use App\Application\Dto\Auth\UserId;
-use App\Application\Dto\PersonPrompt\PersonPromptAssembler;
 use App\Application\Service\PersonPrompt\ChangePersonPrompt;
 use App\Application\Service\PersonPrompt\ChangePersonPromptService;
-use App\Application\Service\PersonPrompt\DeletePersonPromptService;
 use App\Domain\Auth\Impression;
 use App\Domain\PersonPrompt\Factory\PersonPromptFactory;
 use App\Domain\PersonPrompt\PersonPrompt;
 use App\Domain\PersonPrompt\PersonPromptRepository;
 use App\Domain\Shared\Clock;
-use App\Domain\Shared\DummyTransactional;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use PHPUnit\Framework\Attributes\Test;
@@ -71,13 +67,7 @@ final class ChangePersonPromptServiceTest extends TestCase
         $this->prompts = $this->createMock(PersonPromptRepository::class);
         $this->factory = $this->createMock(PersonPromptFactory::class);
         $this->clock = $this->createMock(Clock::class);
-        $deleter = new DeletePersonPromptService(
-            $this->prompts,
-            new PersonPromptAssembler(new AuthAssembler),
-            $this->clock,
-            new DummyTransactional,
-        );
 
-        return new ChangePersonPromptService($this->prompts, $this->factory, $deleter, $this->clock);
+        return new ChangePersonPromptService($this->prompts, $this->factory, $this->clock);
     }
 }
