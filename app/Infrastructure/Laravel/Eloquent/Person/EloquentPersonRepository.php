@@ -118,6 +118,14 @@ final class EloquentPersonRepository implements PersonRepository
             ;
         }
 
+        if ($criteria->hasParam('firstname')) {
+            $query->where('person.firstname', $criteria->param('firstname'));
+        }
+
+        if ($criteria->hasParam('lastname')) {
+            $query->where('person.lastname', $criteria->param('lastname'));
+        }
+
         return $query->get();
     }
 

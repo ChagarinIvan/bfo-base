@@ -14,6 +14,9 @@ import ClubDetailsPage from '../pages/clubs/ClubDetailsPage.vue'
 import CreateClubPage from '../pages/clubs/CreateClubPage.vue'
 import EditClubPage from '../pages/clubs/EditClubPage.vue'
 import PersonsPage from '../pages/persons/PersonsPage.vue'
+import PersonPromptsPage from '../pages/persons/PersonPromptsPage.vue'
+import CreatePersonPromptPage from '../pages/persons/CreatePersonPromptPage.vue'
+import EditPersonPromptPage from '../pages/persons/EditPersonPromptPage.vue'
 import LoginPage from '../pages/auth/LoginPage.vue'
 import GroupsPage from '../pages/groups/GroupsPage.vue'
 import GroupDetailsPage from '../pages/groups/GroupDetailsPage.vue'
@@ -34,6 +37,21 @@ export function createAppRouter(
             { path: '/app/groups', component: GroupsPage },
             { path: '/app/groups/:id', component: GroupDetailsPage },
             { path: '/app/persons', component: PersonsPage },
+            {
+                path: '/app/persons/:personId/prompts',
+                component: PersonPromptsPage,
+                meta: { requiresAuth: true },
+            },
+            {
+                path: '/app/persons/:personId/prompts/create',
+                component: CreatePersonPromptPage,
+                meta: { requiresAuth: true },
+            },
+            {
+                path: '/app/persons/:personId/prompts/:promptId/edit',
+                component: EditPersonPromptPage,
+                meta: { requiresAuth: true },
+            },
             {
                 path: '/app/clubs/create',
                 component: CreateClubPage,

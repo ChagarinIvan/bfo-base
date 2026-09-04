@@ -6,10 +6,10 @@ namespace Tests\Application\Handler\PersonPrompt;
 
 use App\Application\Handler\PersonPrompt\DeletePersonPromptsOnDisablePersonHandler;
 use App\Application\Service\PersonPrompt\DeletePersonPromptService;
-use App\Application\Service\PersonPrompt\ListPersonsPromptsService;
 use App\Domain\Person\Event\PersonDisabled;
 use App\Domain\Person\Person;
 use App\Domain\PersonPrompt\PersonPrompt;
+use App\Domain\PersonPrompt\PersonPromptRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use PHPUnit\Framework\Attributes\Test;
@@ -38,7 +38,7 @@ final class DeletePersonPromptsOnDisablePersonHandlerTest extends TestCase
         PersonPrompt::factory(state: ['id' => 201, 'person_id' => 2])->createOne();
 
         $handler = new DeletePersonPromptsOnDisablePersonHandler(
-            $this->app->get(ListPersonsPromptsService::class),
+            $this->app->get(PersonPromptRepository::class),
             $this->app->get(DeletePersonPromptService::class),
         );
 

@@ -24,7 +24,6 @@ class PersonsIdentService
         return implode('_', $data);
     }
     public function __construct(
-        private readonly PersonPromptService $promptService,
         private readonly ProtocolLineIdentService $protocolLineIdentService
     ) {
     }
@@ -38,7 +37,7 @@ class PersonsIdentService
     public function identLines(array $lines): array
     {
         //ищем людей по прямому совпадению подготовленный имён
-        $linePersons = $this->promptService->identPersonsByPrompts($lines);
+        $linePersons = $this->protocolLineIdentService->identLinesByPrompts($lines);
 
         //определяем у кого нет совпадения и прогоняем их через identPerson
         foreach ($lines as $preparedLine) {

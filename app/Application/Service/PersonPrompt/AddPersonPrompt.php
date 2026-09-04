@@ -25,4 +25,9 @@ final readonly class AddPersonPrompt
             userId: $this->userId->id
         );
     }
+
+    public function personId(): int
+    {
+        return (int) $this->personId;
+    }
 }

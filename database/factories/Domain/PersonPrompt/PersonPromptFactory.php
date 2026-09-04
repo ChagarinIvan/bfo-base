@@ -17,6 +17,7 @@ class PersonPromptFactory extends Factory
             'person_id' => $this->faker->numberBetween(1, 100),
             'prompt' => $this->faker->name,
             'metaphone' => $this->faker->name,
+            'active' => true,
             'created_at' => $this->faker->date,
             'created_by' => $this->faker->numberBetween(1, 100),
             'updated_at' => $this->faker->date,

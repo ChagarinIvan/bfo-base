@@ -11,15 +11,15 @@ use App\Domain\Distance\Distance;
 use App\Domain\Event\Event;
 use App\Domain\Group\Group;
 use App\Domain\Person\Person;
+use App\Domain\PersonPrompt\PersonPromptRepository;
+use App\Domain\PersonPrompt\TranslitPersonPromptMetaphone;
 use App\Domain\ProtocolLine\ProtocolLine;
-use App\Services\PersonPromptService;
 use App\Services\ProtocolLineIdentService;
 use App\Services\ProtocolLineService;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Queue;
-use Mav\Slovo\Phonetics;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -46,7 +46,11 @@ final class ProtocolLineRankRebuildDispatchTest extends TestCase
         $protocolLines->expects($this->once())->method('getProtocolLinesInListWithoutPerson')->willReturn(Collection::empty());
         Queue::fake();
 
-        new ProtocolLineIdentService($protocolLines, new PersonPromptService(), new Phonetics())
+        new ProtocolLineIdentService(
+            $protocolLines,
+            $this->app->get(PersonPromptRepository::class),
+            $this->app->get(TranslitPersonPromptMetaphone::class),
+        )
             ->identPersons(collect([$firstLine, $secondLine]), new Impression(Carbon::parse('2026-01-01'), 1));
 
         Queue::assertPushed(RebuildPersonRanksJob::class, static fn(RebuildPersonRanksJob $job): bool => $job->personIds === [7]);

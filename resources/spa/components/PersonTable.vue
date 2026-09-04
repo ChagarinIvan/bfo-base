@@ -15,8 +15,14 @@ const props = withDefaults(
         clubs?: ClubOption[]
         authenticated?: boolean
         rankLabels?: Record<number, string>
+        hideClub?: boolean
     }>(),
-    { clubs: () => [], authenticated: false, rankLabels: () => ({}) },
+    {
+        clubs: () => [],
+        authenticated: false,
+        rankLabels: () => ({}),
+        hideClub: false,
+    },
 )
 
 const selectedPerson = ref<Person | null>(null)
@@ -53,7 +59,7 @@ function birthYear(birthday: string | null): string {
                 <a :href="`/persons/${data.id}/show`">{{ data.firstname }}</a>
             </template>
         </Column>
-        <Column :header="t('spa.person.club')">
+        <Column v-if="!hideClub" :header="t('spa.person.club')">
             <template #body="{ data }">
                 <RouterLink
                     v-if="data.clubId && clubLabels[data.clubId]"
