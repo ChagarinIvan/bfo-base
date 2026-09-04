@@ -5,17 +5,28 @@ declare(strict_types=1);
 namespace Database\Factories\Domain\Group;
 
 use App\Domain\Group\Group;
+use App\Domain\Group\GroupNameNormalizer;
+use App\Domain\Shared\SymbolNormalizer;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class GroupFactory extends Factory
 {
     protected $model = Group::class;
 
+    public function configure(): static
+    {
+        return $this->afterMaking(static function (Group $group): void {
+            $group->normalize_name = (new GroupNameNormalizer(new SymbolNormalizer()))
+                ->normalize($group->name);
+        });
+    }
+
     public function definition(): array
     {
         return [
             'id' => $this->faker->numberBetween(1, 100),
             'name' => $this->faker->name,
+            'normalize_name' => $this->faker->unique()->slug,
         ];
     }
 }

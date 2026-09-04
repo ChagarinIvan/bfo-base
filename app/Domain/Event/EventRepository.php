@@ -19,7 +19,7 @@ interface EventRepository
     public function byCriteria(Criteria $criteria): Collection;
 
     /** @return Slice<Event> */
-    public function paginate(Criteria $criteria): Slice;
+    public function paginate(Criteria $criteria, EventResources $resources = new EventResources()): Slice;
 
     public function oneByCriteria(Criteria $criteria): ?Event;
 

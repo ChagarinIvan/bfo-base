@@ -28,6 +28,7 @@ export interface Event {
     description: string
     date: string
     participantsCount: number
+    competitionName?: string | null
     created?: Impression
     updated?: Impression
 }
@@ -36,6 +37,14 @@ export interface Club {
     id: string
     name: string
     personsCount: number
+    created?: Impression
+    updated?: Impression
+}
+
+export interface Group {
+    id: string
+    name: string
+    distancesCount: number
     created?: Impression
     updated?: Impression
 }
@@ -85,6 +94,27 @@ export interface ClubSearchQuery {
     name?: string
     page?: number
     perPage?: number
+}
+
+export interface GroupSearchQuery {
+    name?: string
+    excludeId?: string
+    page?: number
+    perPage?: number
+}
+
+export interface GroupEventsQuery {
+    groupId: string
+    withCompetition: 1
+    competitionName?: string
+    year?: number
+    date?: string
+    page?: number
+    perPage?: number
+}
+
+export interface UpdateGroupRequest {
+    name: string
 }
 
 export interface PersonSearchQuery {

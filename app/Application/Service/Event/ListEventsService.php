@@ -21,7 +21,7 @@ final readonly class ListEventsService
     public function execute(ListEvents $command): Slice
     {
         return $this->events
-            ->paginate($command->criteria())
+            ->paginate($command->criteria(), $command->resources())
             ->map($this->assembler->toViewEventDto(...))
         ;
     }

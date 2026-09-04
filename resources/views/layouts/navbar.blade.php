@@ -1,7 +1,6 @@
 @php
     use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupsListAction;
     use App\Bridge\Laravel\Http\Controllers\Flags\ShowFlagsListAction;
-    use App\Bridge\Laravel\Http\Controllers\Groups\ShowGroupsListAction;
     use App\Bridge\Laravel\Http\Controllers\Login\ShowLoginFormAction;
     use App\Bridge\Laravel\Http\Controllers\Login\SignOutAction;
     use App\Bridge\Laravel\Http\Controllers\Registration\ShowRegistrationFormAction;
@@ -47,12 +46,12 @@
                                href="{{ action(ShowCupsListAction::class, ['year' => (string)Year::actualYear()->value, 'visible' => true]) }}"
                             >{{ __('app.navbar.cups') }}</a>
                         </li>
+                        <li>
+                            <a class="dropdown-item {{ $isGroupsRoute ? 'active' : '' }}"
+                               href="/app/groups"
+                            >{{ __('app.common.groups') }}</a>
+                        </li>
                         @auth
-                            <li>
-                                <a class="dropdown-item {{ $isGroupsRoute ? 'active' : '' }}"
-                                   href="{{ action(ShowGroupsListAction::class) }}"
-                                >{{ __('app.common.groups') }}</a>
-                            </li>
                             <li>
                                 <a class="dropdown-item {{ $isFlagsRoute ? 'active' : '' }}"
                                    href="{{ action(ShowFlagsListAction::class) }}"

@@ -15,6 +15,10 @@ import CreateClubPage from '../pages/clubs/CreateClubPage.vue'
 import EditClubPage from '../pages/clubs/EditClubPage.vue'
 import PersonsPage from '../pages/persons/PersonsPage.vue'
 import LoginPage from '../pages/auth/LoginPage.vue'
+import GroupsPage from '../pages/groups/GroupsPage.vue'
+import GroupDetailsPage from '../pages/groups/GroupDetailsPage.vue'
+import EditGroupPage from '../pages/groups/EditGroupPage.vue'
+import MergeGroupsPage from '../pages/groups/MergeGroupsPage.vue'
 
 export function createAppRouter(
     history: RouterHistory = typeof window === 'undefined'
@@ -27,6 +31,8 @@ export function createAppRouter(
             { path: '/app/competitions', component: CompetitionsPage },
             { path: '/app/clubs', component: ClubsPage },
             { path: '/app/clubs/:id', component: ClubDetailsPage },
+            { path: '/app/groups', component: GroupsPage },
+            { path: '/app/groups/:id', component: GroupDetailsPage },
             { path: '/app/persons', component: PersonsPage },
             {
                 path: '/app/clubs/create',
@@ -36,6 +42,16 @@ export function createAppRouter(
             {
                 path: '/app/clubs/:id/edit',
                 component: EditClubPage,
+                meta: { requiresAuth: true },
+            },
+            {
+                path: '/app/groups/:id/edit',
+                component: EditGroupPage,
+                meta: { requiresAuth: true },
+            },
+            {
+                path: '/app/groups/:id/merge',
+                component: MergeGroupsPage,
                 meta: { requiresAuth: true },
             },
             {

@@ -12,6 +12,7 @@ use App\Domain\Cup\Group\GroupAge;
 use App\Domain\Cup\Group\GroupMale;
 use App\Domain\Distance\Distance;
 use App\Domain\ProtocolLine\ProtocolLine;
+use App\Domain\Shared\Criteria;
 use Illuminate\Support\Collection;
 use function array_merge;
 use function array_unique;
@@ -82,7 +83,7 @@ class MasterCupType extends AbstractCupType
         $validGroups = $eventGroupsId->flip();
         /** @var Collection<string, mixed> $validGroups */
         $cupEventProtocolLines = $cupEventProtocolLines->intersectByKeys($validGroups);
-        $groups = $this->groupsRepository->getEventGroups($cupEvent->event_id);
+        $groups = $this->groupsRepository->byCriteria(new Criteria(['eventId' => $cupEvent->event_id]));
 
         $mainGroupExist = $groups
             ->pluck('name')
@@ -189,6 +190,6 @@ class MasterCupType extends AbstractCupType
 
         $groupNames = array_unique($groupNames);
 
-        return $this->groupsRepository->searchGroups($groupNames);
+        return $this->groupsRepository->byCriteria(new Criteria(['names' => $groupNames]));
     }
 }

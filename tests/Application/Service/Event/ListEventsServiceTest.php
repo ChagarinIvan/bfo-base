@@ -11,6 +11,7 @@ use App\Application\Service\Event\ListEvents;
 use App\Application\Service\Event\ListEventsService;
 use App\Domain\Event\Event;
 use App\Domain\Event\EventRepository;
+use App\Domain\Event\EventResources;
 use App\Domain\Shared\Criteria;
 use App\Domain\Shared\Pagination\Slice;
 use Pagerfanta\Adapter\ArrayAdapter;
@@ -45,7 +46,7 @@ final class ListEventsServiceTest extends TestCase
         $this->events
             ->expects($this->once())
             ->method('paginate')
-            ->with(new Criteria(['competitionId' => '1']))
+            ->with(new Criteria(['competitionId' => '1']), new EventResources())
             ->willReturn(new Slice(new ArrayAdapter($events)))
         ;
 

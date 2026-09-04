@@ -6,11 +6,13 @@ namespace App\Infrastructure\Laravel\Eloquent\Event;
 
 use App\Domain\Event\Event;
 use App\Domain\Event\EventRepository;
+use App\Domain\Event\EventResources;
 use App\Domain\Shared\Criteria;
 use App\Domain\Shared\Pagination\Slice;
 use App\Infrastructure\Laravel\Eloquent\Pagination\EloquentQueryAdapter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use function mb_strtolower;
 
 final class EloquentEventRepository implements EventRepository
 {
@@ -42,11 +44,15 @@ final class EloquentEventRepository implements EventRepository
     }
 
     /** @return Slice<Event> */
-    public function paginate(Criteria $criteria): Slice
+    public function paginate(Criteria $criteria, EventResources $resources = new EventResources()): Slice
     {
-        return new Slice(new EloquentQueryAdapter(
-            $this->buildQuery($criteria)->withCount('protocolLines'),
-        ));
+        $query = $this->buildQuery($criteria)->withCount('protocolLines');
+
+        if ($resources->competitionName) {
+            $query->with('competition:id,name');
+        }
+
+        return new Slice(new EloquentQueryAdapter($query));
     }
 
     public function oneByCriteria(Criteria $criteria): ?Event
@@ -65,12 +71,29 @@ final class EloquentEventRepository implements EventRepository
             ->where('events.active', true)
         ;
 
+        if ($criteria->hasParam('competitionId')) {
+            $query->where('competition_id', $criteria->param('competitionId'));
+        }
+
+        if ($criteria->hasParam('groupId')) {
+            $query->join('distances', 'distances.event_id', '=', 'events.id')
+                ->where('distances.group_id', $criteria->param('groupId'));
+        }
+
+        if ($criteria->hasParam('competitionName')) {
+            $query->join('competitions', 'competitions.id', '=', 'events.competition_id');
+        }
+
+        if ($criteria->hasParam('competitionName')) {
+            $query->whereRaw('LOWER(competitions.name) LIKE ?', ['%' . mb_strtolower((string) $criteria->param('competitionName')) . '%']);
+        }
+
         if ($criteria->hasParam('year')) {
             $query->where('events.date', 'LIKE', "{$criteria->param('year')}-%");
         }
 
-        if ($criteria->hasParam('competitionId')) {
-            $query->where('competition_id', $criteria->param('competitionId'));
+        if ($criteria->hasParam('date')) {
+            $query->whereDate('events.date', $criteria->param('date'));
         }
 
         if ($criteria->hasParam('flagId')) {
@@ -108,7 +131,7 @@ final class EloquentEventRepository implements EventRepository
                 $query->orderBy($key, $order);
             }
         } else {
-            $query->orderBy('date', 'asc');
+            $query->orderBy('events.date', 'asc')->orderBy('events.id');
         }
 
         return $query;

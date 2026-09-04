@@ -14,7 +14,6 @@ class ClubFactory extends Factory
     public function definition(): array
     {
         return [
-            'id' => $this->faker->numberBetween(1, 100),
             'name' => $this->faker->name,
             'normalize_name' => $this->faker->name,
             'active' => true,

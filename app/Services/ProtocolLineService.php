@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Domain\Auth\Impression;
 use App\Domain\Distance\Distance;
 use App\Domain\Event\Event;
 use App\Domain\Group\Group;
+use App\Domain\Group\GroupNameNormalizer;
+use App\Domain\Group\GroupRepository;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\Rank\RankNormalizer;
-use App\Repositories\GroupsRepository;
+use App\Domain\Shared\Clock;
+use App\Domain\Shared\Criteria;
 use App\Repositories\ProtocolLinesRepository;
 use Illuminate\Support\Collection;
 use RuntimeException;
@@ -19,8 +23,10 @@ class ProtocolLineService
 {
     public function __construct(
         private readonly ProtocolLinesRepository $protocolLinesRepository,
-        private readonly GroupsRepository $groupsRepository,
+        private readonly GroupRepository $groupsRepository,
         private readonly RankNormalizer $rankNormalizer,
+        private readonly Clock $clock,
+        private readonly GroupNameNormalizer $groupNameNormalizer,
     ) {
     }
 
@@ -37,12 +43,17 @@ class ProtocolLineService
             $protocolLine = new ProtocolLine($lineData);
 
             $groupName = str_replace(' ', '', $lineData['group']);
-            $group = $this->groupsRepository->searchGroup($groupName);
+            $normalizedName = $this->groupNameNormalizer->normalize($groupName);
+            $group = $this->groupsRepository->oneByCriteria(new Criteria(['normalizedName' => $normalizedName]));
 
             if ($group === null) {
                 $group = new Group();
                 $group->name = $groupName;
-                $group = $this->groupsRepository->storeGroup($group);
+                $group->normalize_name = $normalizedName;
+                $group->created = new Impression($this->clock->now(), 1);
+                $group->updated = new Impression($this->clock->now(), 1);
+
+                $this->groupsRepository->add($group);
             }
 
             $distance = $this->findDistance($group->id, $eventId, (int)($lineData['distance']['length'] ?? 0), (int)($lineData['distance']['points'] ?? 0));
