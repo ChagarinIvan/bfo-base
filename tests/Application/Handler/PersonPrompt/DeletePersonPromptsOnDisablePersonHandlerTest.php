@@ -27,7 +27,7 @@ final class DeletePersonPromptsOnDisablePersonHandlerTest extends TestCase
     }
 
     #[Test]
-    public function it_deletes_prompts_for_disabled_person(): void
+    public function it_disables_prompts_for_disabled_person(): void
     {
         /** @var Person $disabledPerson */
         $disabledPerson = Person::factory(state: ['id' => 1, 'active' => false])->createOne();
@@ -44,8 +44,8 @@ final class DeletePersonPromptsOnDisablePersonHandlerTest extends TestCase
 
         $handler->handle(new PersonDisabled($disabledPerson));
 
-        $this->assertDatabaseMissing('persons_prompt', ['id' => 101]);
-        $this->assertDatabaseMissing('persons_prompt', ['id' => 102]);
+        $this->assertDatabaseHas('persons_prompt', ['id' => 101, 'active' => false]);
+        $this->assertDatabaseHas('persons_prompt', ['id' => 102, 'active' => false]);
         $this->assertDatabaseHas('persons_prompt', ['id' => 201, 'person_id' => 2]);
     }
 }
