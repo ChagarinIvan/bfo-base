@@ -14,9 +14,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use function array_map;
 
-final class EloquentGroupRepository implements GroupRepository
+final readonly class EloquentGroupRepository implements GroupRepository
 {
-    public function __construct(private readonly GroupNameNormalizer $normalizer)
+    public function __construct(private GroupNameNormalizer $normalizer)
     {
     }
 
@@ -58,7 +58,7 @@ final class EloquentGroupRepository implements GroupRepository
 
         if ($criteria->hasParam('names')) {
             $names = array_map(
-                fn (string $name): string => $this->normalizer->normalize($name),
+                $this->normalizer->normalize(...),
                 $criteria->param('names'),
             );
             $query->whereIn('normalize_name', $names);
