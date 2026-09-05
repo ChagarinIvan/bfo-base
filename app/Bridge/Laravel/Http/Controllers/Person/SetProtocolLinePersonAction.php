@@ -9,9 +9,10 @@ use App\Application\Service\Person\DisablePerson;
 use App\Application\Service\Person\DisablePersonService;
 use App\Application\Service\Person\RebuildPersonRanks;
 use App\Application\Service\Person\RebuildPersonRanksService;
+use App\Application\Service\PersonPrompt\ChangePersonPrompt;
+use App\Application\Service\PersonPrompt\ChangePersonPromptService;
 use App\Domain\Person\Person;
 use App\Domain\ProtocolLine\ProtocolLine;
-use App\Services\PersonPromptService;
 use App\Services\ProtocolLineService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller as BaseController;
@@ -25,7 +26,7 @@ class SetProtocolLinePersonAction extends BaseController
         string $protocolLineId,
         UserId $userId,
         ProtocolLineService $protocolLineService,
-        PersonPromptService $personPromptService,
+        ChangePersonPromptService $personPromptService,
         RebuildPersonRanksService $rebuildPersonRanksService,
         DisablePersonService $disablePersonService,
     ): RedirectResponse {
@@ -43,7 +44,7 @@ class SetProtocolLinePersonAction extends BaseController
         ;
 
         $protocolLineService->reSetPerson($protocolLinesToUpdate, $person->id);
-        $personPromptService->changePromptForLine($preparedLine, $person->id);
+        $personPromptService->execute(new ChangePersonPrompt($preparedLine, $person->id, $userId));
 
         $rebuildPersonRanksService->execute(new RebuildPersonRanks($person->id, $userId));
         $oldPersons->each(static fn (int $personId) => $rebuildPersonRanksService->execute(new RebuildPersonRanks($personId, $userId)));

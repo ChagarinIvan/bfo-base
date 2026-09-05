@@ -8,7 +8,7 @@ use App\Application\Dto\AbstractDto;
 
 final class SearchPersonPromptDto extends AbstractDto
 {
-    public static function parametersValidationRules(): array
+    public static function requestValidationRules(): array
     {
         return [
             'personId' => 'numeric',

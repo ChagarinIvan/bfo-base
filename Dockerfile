@@ -27,6 +27,7 @@ RUN apt-get update && apt-get install -y \
     libonig-dev \
     libjpeg62-turbo-dev \
     libfreetype6-dev \
+    libicu-dev \
     locales \
     zip \
     jpegoptim optipng pngquant gifsicle \
@@ -36,7 +37,7 @@ RUN apt-get update && apt-get install -y \
     curl \
     && docker-php-ext-configure gd \
     && docker-php-ext-install -j$(nproc) gd \
-    && docker-php-ext-install pdo_mysql mbstring zip exif pcntl
+    && docker-php-ext-install pdo_mysql mbstring zip exif pcntl intl
 
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*

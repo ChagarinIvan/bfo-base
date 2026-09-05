@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Application\Service\PersonPrompt\Exception;
 
-use RuntimeException;
+use App\Application\Exception\ApplicationException;
+use App\Application\Exception\HttpError;
 
-final class PersonPromptNotFound extends RuntimeException
+#[HttpError(404, 'person_prompt_not_found')]
+final class PersonPromptNotFound extends ApplicationException
 {
 }

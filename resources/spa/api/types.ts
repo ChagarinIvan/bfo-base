@@ -65,6 +65,25 @@ export interface Person {
     updated?: Impression
 }
 
+export interface PersonPrompt {
+    id: string
+    personId: string
+    prompt: string
+    metaphone: string
+    created?: Impression
+    updated?: Impression
+}
+
+export interface PersonPromptSearchQuery {
+    personId: string
+    page?: number
+    perPage?: number
+}
+
+export interface PersonPromptRequest {
+    prompt: string
+}
+
 export interface AuthToken {
     token: string
     token_type: string

@@ -6,12 +6,13 @@ namespace App\Services;
 
 use App\Bridge\Laravel\Jobs\RebuildPersonRanksJob;
 use App\Domain\Auth\Impression;
-use App\Domain\PersonPrompt\PersonPrompt;
+use App\Domain\PersonPrompt\PersonPromptRepository;
+use App\Domain\PersonPrompt\TranslitPersonPromptMetaphone;
 use App\Domain\ProtocolLine\ProtocolLine;
+use App\Domain\Shared\Criteria;
 use App\Models\IdentLine;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
-use Mav\Slovo\Phonetics;
 use function levenshtein;
 use function sprintf;
 use function str_replace;
@@ -62,6 +63,8 @@ class ProtocolLineIdentService
 
     /**
      * Процесс нормализации фамилии имени (везде идёт замена неверных символов, заменяются формы имени)
+     *
+     * TODO: удалить static API и использовать NameNormalizer в потребителях.
      */
     public static function prepareLine(string $line): string
     {
@@ -94,9 +97,9 @@ class ProtocolLineIdentService
     }
 
     public function __construct(
-        private readonly ProtocolLineService $protocolLineService,
-        private readonly PersonPromptService $personPromptService,
-        private readonly Phonetics $phonetics,
+        private readonly ProtocolLineService           $protocolLineService,
+        private readonly PersonPromptRepository        $personPrompts,
+        private readonly TranslitPersonPromptMetaphone $metaphone,
     ) {
     }
 
@@ -150,9 +153,9 @@ class ProtocolLineIdentService
     {
         Log::info(sprintf('Ident person %s.', $searchLine));
 
-        self::$prompts ??= $this->personPromptService->all();
+        self::$prompts ??= $this->personPrompts->byCriteria(Criteria::empty());
 
-        $metaphone = $this->phonetics->metaphour($searchLine);
+        $metaphone = $this->metaphone->calculate($searchLine);
         $ranks = new Collection();
 
         foreach (self::$prompts->pluck('metaphone') as $prompt) {
@@ -193,6 +196,16 @@ class ProtocolLineIdentService
         }
     }
 
+    /** @return array<string, int> */
+    public function identLinesByPrompts(array $lines): array
+    {
+        return $this->personPrompts
+            ->byCriteria(new Criteria(['prompts' => $lines]))
+            ->pluck('person_id', 'prompt')
+            ->toArray()
+        ;
+    }
+
     /**
      * Определяем людей по идентификаторам с использованием расстояния левенштайна.
      */
@@ -211,7 +224,6 @@ class ProtocolLineIdentService
         /** @var Collection $minRank */
         $minRank = $ranks->sortBy('rank')->first();
         if ($minRank['rank'] <= 5) {
-            /** @var PersonPrompt $prompt */
             $prompt = $prompts->where('prompt', $minRank['prompt'])->first();
 
             return $prompt->person_id;

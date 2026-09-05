@@ -59,12 +59,6 @@ use App\Bridge\Laravel\Http\Controllers\Person\UpdatePersonAction;
 use App\Bridge\Laravel\Http\Controllers\PersonPayment\ShowCreatePersonPaymentAction;
 use App\Bridge\Laravel\Http\Controllers\PersonPayment\ShowPersonPaymentsListAction;
 use App\Bridge\Laravel\Http\Controllers\PersonPayment\StorePersonPaymentAction;
-use App\Bridge\Laravel\Http\Controllers\PersonPrompt\DeletePromptAction;
-use App\Bridge\Laravel\Http\Controllers\PersonPrompt\ShowCreatePromptAction;
-use App\Bridge\Laravel\Http\Controllers\PersonPrompt\ShowEditPromptAction;
-use App\Bridge\Laravel\Http\Controllers\PersonPrompt\ShowPersonPromptsListAction;
-use App\Bridge\Laravel\Http\Controllers\PersonPrompt\StorePersonPromptAction;
-use App\Bridge\Laravel\Http\Controllers\PersonPrompt\UpdatePersonPromptAction;
 use App\Bridge\Laravel\Http\Controllers\Rank\ActivatePersonRankAction;
 use App\Bridge\Laravel\Http\Controllers\Rank\ShowActivationFormAction;
 use App\Bridge\Laravel\Http\Controllers\Rank\ShowEditActivationDateFormAction;
@@ -124,24 +118,12 @@ class WebRoutesServiceProvider extends ServiceProvider
                         $this->route->post('/{person}/update', UpdatePersonAction::class);
                         $this->route->get('/{person}/delete', DeletePersonAction::class);
 
-                        $this->route->get('{personId}/prompts', ShowPersonPromptsListAction::class);
                         $this->route->get('{personId}/payments', ShowPersonPaymentsListAction::class);
                         $this->route->get('{personId}/payments/create', ShowCreatePersonPaymentAction::class);
                         $this->route->post('{personId}/payments/store', StorePersonPaymentAction::class);
                         $this->route->get('person/{protocol}/show', ShowSetPersonToProtocolLineAction::class);
                         $this->route->get('{person}/{protocol}/set', SetProtocolLinePersonAction::class);
                         $this->route->get('extract/{protocol}/', ExtractPersonAction::class);
-
-                        //person prompts
-                        $this->routeRegistrar
-                            ->prefix('prompt')
-                            ->group(function (): void {
-                                $this->route->get('{personId}/create', ShowCreatePromptAction::class);
-                                $this->route->post('{personId}/store', StorePersonPromptAction::class);
-                                $this->route->get('{promptId}/edit', ShowEditPromptAction::class);
-                                $this->route->post('{promptId}/update', UpdatePersonPromptAction::class);
-                                $this->route->get('{promptId}/delete', DeletePromptAction::class);
-                            });
                     });
                 });
 
