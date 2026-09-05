@@ -22,7 +22,7 @@
         "phpoffice/phpspreadsheet": "^5.0",
         "predis/predis": "^2.3 || ^3.0",
         "sentry/sentry-laravel": "^4.27",
-      "ext-intl": "*"
+        "ext-intl": "*"
     },
     "config": {
         "optimize-autoloader": true,
