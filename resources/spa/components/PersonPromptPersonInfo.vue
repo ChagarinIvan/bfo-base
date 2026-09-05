@@ -59,10 +59,10 @@ onMounted(() => void load())
     >
         {{ error || t('spa.person_prompt.person_loading') }}
     </Message>
-    <Card v-else-if="person" class="person-prompt-person-info">
+    <Card v-else-if="person" class="club-details-card">
         <template #title>{{ t('spa.person_prompt.person_info') }}</template>
         <template #content>
-            <table>
+            <table class="club-details-info">
                 <tbody>
                     <tr>
                         <th>{{ t('spa.person.lastname') }}</th>
