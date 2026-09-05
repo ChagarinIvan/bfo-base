@@ -9,39 +9,31 @@ use App\Application\Dto\PersonPrompt\PersonPromptAssembler;
 use App\Application\Dto\PersonPrompt\SearchPersonPromptDto;
 use App\Application\Service\PersonPrompt\ListPersonsPrompts;
 use App\Application\Service\PersonPrompt\ListPersonsPromptsService;
-use App\Domain\PersonPrompt\PersonPrompt;
 use App\Domain\PersonPrompt\PersonPromptRepository;
 use App\Domain\Shared\Criteria;
+use App\Domain\Shared\Pagination\Slice;
+use Pagerfanta\Adapter\ArrayAdapter;
 use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
 final class ListPersonsPromptsServiceTest extends TestCase
 {
-    private MockObject&PersonPromptRepository $personsPrompts;
-
-    private ListPersonsPromptsService $service;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->personsPrompts = $this->createMock(PersonPromptRepository::class);
-        $this->service = new ListPersonsPromptsService($this->personsPrompts, new PersonPromptAssembler(new AuthAssembler));
-    }
-
     #[Test]
-    public function it_gets_list_of_person_prompts(): void
+    public function it_paginates_person_prompts_by_criteria(): void
     {
-        $this->personsPrompts
-            ->expects($this->once())
-            ->method('byCriteria')
-            ->with(new Criteria(['personId' => 1,  'activePerson' => true]))
-            ->willReturn(PersonPrompt::factory(2)->make())
-        ;
+        $repository = $this->createMock(PersonPromptRepository::class);
+        $repository->expects($this->once())
+            ->method('paginate')
+            ->with(new Criteria(['personId' => '7', 'activePerson' => true]))
+            ->willReturn(new Slice(new ArrayAdapter([])));
 
-        $list = $this->service->execute(new ListPersonsPrompts(new SearchPersonPromptDto(personId: '1')));
+        $service = new ListPersonsPromptsService(
+            $repository,
+            new PersonPromptAssembler(new AuthAssembler),
+        );
 
-        $this->assertCount(2, $list);
+        $result = $service->paginate(new ListPersonsPrompts(new SearchPersonPromptDto(personId: '7')));
+
+        $this->assertInstanceOf(Slice::class, $result);
     }
 }

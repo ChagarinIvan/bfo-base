@@ -239,6 +239,7 @@ onBeforeUnmount(() => debouncedNameSearch.cancel())
             :clubs="[{ id: club.id, name: club.name }]"
             :authenticated="auth.isAuthenticated"
             :rank-labels="rankLabels"
+            :hide-club="true"
         />
         <Paginator
             v-if="personPagination.total > 0"

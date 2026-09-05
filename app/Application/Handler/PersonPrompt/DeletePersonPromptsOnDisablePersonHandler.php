@@ -4,26 +4,29 @@ declare(strict_types=1);
 
 namespace App\Application\Handler\PersonPrompt;
 
-use App\Application\Dto\PersonPrompt\SearchPersonPromptDto;
+use App\Application\Dto\Auth\UserId;
 use App\Application\Service\PersonPrompt\DeletePersonPrompt;
 use App\Application\Service\PersonPrompt\DeletePersonPromptService;
-use App\Application\Service\PersonPrompt\ListPersonsPrompts;
-use App\Application\Service\PersonPrompt\ListPersonsPromptsService;
 use App\Domain\Person\Event\PersonDisabled;
+use App\Domain\PersonPrompt\PersonPromptRepository;
+use App\Domain\Shared\Criteria;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 final readonly class DeletePersonPromptsOnDisablePersonHandler implements ShouldQueue
 {
-    public function __construct(private ListPersonsPromptsService $prompts, private DeletePersonPromptService $service)
+    public function __construct(private PersonPromptRepository $prompts, private DeletePersonPromptService $service)
     {
     }
 
     public function handle(PersonDisabled $event): void
     {
-        $prompts = $this->prompts->execute(new ListPersonsPrompts(new SearchPersonPromptDto((string) $event->person->id, false)));
+        $prompts = $this->prompts->byCriteria(new Criteria([
+            'personId' => $event->person->id,
+            'activePerson' => false,
+        ]));
 
         foreach ($prompts as $prompt) {
-            $this->service->execute(new DeletePersonPrompt($prompt->id));
+            $this->service->execute(new DeletePersonPrompt((string) $prompt->id, new UserId($event->person->updated->by)));
         }
     }
 }

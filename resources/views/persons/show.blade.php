@@ -3,7 +3,6 @@
     use App\Bridge\Laravel\Http\Controllers\Person\ExtractPersonAction;
     use App\Bridge\Laravel\Http\Controllers\Person\ShowEditPersonAction;
     use App\Bridge\Laravel\Http\Controllers\PersonPayment\ShowPersonPaymentsListAction;
-    use App\Bridge\Laravel\Http\Controllers\PersonPrompt\ShowPersonPromptsListAction;
     use App\Bridge\Laravel\Http\Controllers\Rank\ShowPersonRanksAction;
     use App\Application\Dto\Person\LegacyViewPersonDto;
     use App\Domain\Person\Citizenship;
@@ -66,7 +65,7 @@
                 <x-button text="app.common.prompts"
                           color="success"
                           icon="bi-terminal"
-                          url="{{ action(ShowPersonPromptsListAction::class, [$person->id]) }}"
+                          url="/app/persons/{{ $person->id }}/prompts"
                 />
                 <x-button text="app.common.payments"
                           color="warning"

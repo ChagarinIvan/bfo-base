@@ -7,7 +7,7 @@ namespace App\Application\Service\PersonPrompt;
 use App\Application\Dto\PersonPrompt\PersonPromptAssembler;
 use App\Application\Dto\PersonPrompt\ViewPersonPromptDto;
 use App\Domain\PersonPrompt\PersonPromptRepository;
-use function array_map;
+use App\Domain\Shared\Pagination\Slice;
 
 final readonly class ListPersonsPromptsService
 {
@@ -17,14 +17,12 @@ final readonly class ListPersonsPromptsService
     ) {
     }
 
-    /**
-     * @return ViewPersonPromptDto[]
-     */
-    public function execute(ListPersonsPrompts $command): array
+    /** @return Slice<ViewPersonPromptDto> */
+    public function paginate(ListPersonsPrompts $command): Slice
     {
-        return array_map(
-            $this->assembler->toViewPersonPromptDto(...),
-            $this->personsPrompts->byCriteria($command->criteria())->all(),
-        );
+        return $this->personsPrompts
+            ->paginate($command->criteria())
+            ->map($this->assembler->toViewPersonPromptDto(...))
+        ;
     }
 }

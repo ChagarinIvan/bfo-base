@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Console\Commands;
 
-use App\Application\Dto\PersonPrompt\SearchPersonPromptDto;
+use App\Application\Dto\Auth\UserId;
 use App\Application\Service\PersonPrompt\DeletePersonPrompt;
 use App\Application\Service\PersonPrompt\DeletePersonPromptService;
-use App\Application\Service\PersonPrompt\ListPersonsPrompts;
-use App\Application\Service\PersonPrompt\ListPersonsPromptsService;
+use App\Domain\PersonPrompt\PersonPromptRepository;
+use App\Domain\Shared\Criteria;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
@@ -23,7 +23,7 @@ use function count;
 class DeleteInactivePersonsPromptsCommand extends Command
 {
     public function __construct(
-        private readonly ListPersonsPromptsService $listPromptsService,
+        private readonly PersonPromptRepository $prompts,
         private readonly DeletePersonPromptService $deletePromptService,
     ) {
         parent::__construct();
@@ -34,9 +34,7 @@ class DeleteInactivePersonsPromptsCommand extends Command
         $this->info('Starting deletion of prompts for inactive persons...');
 
         // Получаем все промпты неактивных персон
-        $prompts = $this->listPromptsService->execute(
-            new ListPersonsPrompts(new SearchPersonPromptDto(activePerson: false))
-        );
+        $prompts = $this->prompts->byCriteria(new Criteria(['activePerson' => false]));
 
         $totalCount = count($prompts);
 
@@ -55,7 +53,7 @@ class DeleteInactivePersonsPromptsCommand extends Command
 
         foreach ($prompts as $prompt) {
             try {
-                $this->deletePromptService->execute(new DeletePersonPrompt($prompt->id));
+                $this->deletePromptService->execute(new DeletePersonPrompt((string) $prompt->id, new UserId(0)));
                 $deletedCount++;
             } catch (Throwable $e) {
                 $failedCount++;
@@ -70,7 +68,7 @@ class DeleteInactivePersonsPromptsCommand extends Command
 
         $this->info("Deletion completed:");
         $this->info("  - Successfully deleted: {$deletedCount}");
-        
+
         if ($failedCount > 0) {
             $this->warn("  - Failed: {$failedCount}");
         }

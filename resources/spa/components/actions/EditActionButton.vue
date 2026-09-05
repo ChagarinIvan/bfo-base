@@ -2,10 +2,14 @@
 import Button from 'primevue/button'
 import { useRouter } from 'vue-router'
 
-const props = defineProps<{
-    to: string
-    label: string
-}>()
+const props = withDefaults(
+    defineProps<{
+        to: string
+        label: string
+        iconOnly?: boolean
+    }>(),
+    { iconOnly: false },
+)
 
 const router = useRouter()
 </script>
@@ -13,7 +17,8 @@ const router = useRouter()
 <template>
     <Button
         icon="pi pi-pencil"
-        :label="props.label"
+        :label="props.iconOnly ? undefined : props.label"
+        :aria-label="props.iconOnly ? props.label : undefined"
         severity="secondary"
         text
         @click="router.push(props.to)"

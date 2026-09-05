@@ -6,10 +6,10 @@ namespace Tests\Application\Handler\PersonPrompt;
 
 use App\Application\Handler\PersonPrompt\DeletePersonPromptsOnDisablePersonHandler;
 use App\Application\Service\PersonPrompt\DeletePersonPromptService;
-use App\Application\Service\PersonPrompt\ListPersonsPromptsService;
 use App\Domain\Person\Event\PersonDisabled;
 use App\Domain\Person\Person;
 use App\Domain\PersonPrompt\PersonPrompt;
+use App\Domain\PersonPrompt\PersonPromptRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use PHPUnit\Framework\Attributes\Test;
@@ -27,7 +27,7 @@ final class DeletePersonPromptsOnDisablePersonHandlerTest extends TestCase
     }
 
     #[Test]
-    public function it_deletes_prompts_for_disabled_person(): void
+    public function it_disables_prompts_for_disabled_person(): void
     {
         /** @var Person $disabledPerson */
         $disabledPerson = Person::factory(state: ['id' => 1, 'active' => false])->createOne();
@@ -38,14 +38,14 @@ final class DeletePersonPromptsOnDisablePersonHandlerTest extends TestCase
         PersonPrompt::factory(state: ['id' => 201, 'person_id' => 2])->createOne();
 
         $handler = new DeletePersonPromptsOnDisablePersonHandler(
-            $this->app->get(ListPersonsPromptsService::class),
+            $this->app->get(PersonPromptRepository::class),
             $this->app->get(DeletePersonPromptService::class),
         );
 
         $handler->handle(new PersonDisabled($disabledPerson));
 
-        $this->assertDatabaseMissing('persons_prompt', ['id' => 101]);
-        $this->assertDatabaseMissing('persons_prompt', ['id' => 102]);
+        $this->assertDatabaseHas('persons_prompt', ['id' => 101, 'active' => false]);
+        $this->assertDatabaseHas('persons_prompt', ['id' => 102, 'active' => false]);
         $this->assertDatabaseHas('persons_prompt', ['id' => 201, 'person_id' => 2]);
     }
 }
