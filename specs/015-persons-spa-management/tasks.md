@@ -86,3 +86,11 @@
 2. Add authenticated create/edit, then delete for complete prompt CRUD.
 3. Apply club-context correction and audited legacy cleanup.
 4. Run the complete quality gate and acceptance scenarios once at the end.
+
+## Phase 8: Convergence
+
+- [X] T026 Add Vitest coverage for prompt list/create/edit/delete states, pagination, anonymous action visibility, validation retention, pending state and error handling per FR-013 (missing)
+- [X] T027 Add API/request coverage for unauthenticated access, unknown/inactive person, invalid personId and prompt validation, plus query-count assertions for the paginated list per FR-013 and FR-015
+- [X] T028 Make the prompt list distinguish an unknown or inactive person from an existing person with no prompts and expose the specified not-found state per US1/AC3
+- [ ] T029 Run and record the complete quickstart quality gates (`composer test`, `npm run ci`, `composer cs`, `composer stan`, `composer rector`) and the final acceptance/usages/N+1 audit per T025 (partial; blocked by local MySQL configuration)
+- [X] T030 Document the merged person-information endpoint and historical metaphone backfill migration in the feature artifacts, or explicitly justify them as accepted scope extensions for future similar tasks (unrequested)

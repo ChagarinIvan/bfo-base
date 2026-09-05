@@ -8,10 +8,13 @@ use App\Domain\Person\Person;
 use App\Domain\PersonPrompt\PersonPrompt;
 use App\Infrastructure\Sanctum\SanctumUser;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\Sanctum;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+use function array_filter;
+use function str_contains;
 
 final class PersonPromptApiTest extends TestCase
 {
@@ -54,6 +57,62 @@ final class PersonPromptApiTest extends TestCase
                 'created',
                 'updated',
             ]);
+    }
+
+    #[Test]
+    public function it_requires_authentication_for_prompt_listing(): void
+    {
+        $this->getJson('/api/v1/person-prompts?personId=62465')
+            ->assertUnauthorized();
+    }
+
+    #[Test]
+    public function it_rejects_an_invalid_person_filter(): void
+    {
+        $this->authenticate();
+
+        $this->getJson('/api/v1/person-prompts?personId=not-a-number')
+            ->assertUnprocessable()
+            ->assertJsonPath('errors.0.field', 'personId');
+    }
+
+    #[Test]
+    public function it_validates_prompt_mutation_input(): void
+    {
+        $this->authenticate();
+        $person = $this->createPerson();
+
+        $this->postJson("/api/v1/persons/{$person->id}/prompts", ['prompt' => ''])
+            ->assertUnprocessable()
+            ->assertJsonPath('errors.0.field', 'prompt');
+    }
+
+    #[Test]
+    public function it_returns_not_found_for_an_unknown_person(): void
+    {
+        $this->authenticate();
+
+        $this->getJson('/api/v1/person-prompts?personId=62465')
+            ->assertNotFound();
+    }
+
+    #[Test]
+    public function it_uses_only_count_and_page_queries_for_a_prompt_page(): void
+    {
+        $this->authenticate();
+        $person = $this->createPerson();
+        PersonPrompt::factory()->createOne(['person_id' => $person->id]);
+        DB::enableQueryLog();
+
+        $this->getJson("/api/v1/person-prompts?personId={$person->id}&perPage=1")
+            ->assertOk();
+
+        $promptQueries = array_filter(
+            DB::getQueryLog(),
+            static fn (array $query): bool => str_contains($query['query'], 'persons_prompt'),
+        );
+
+        $this->assertCount(2, $promptQueries);
     }
 
     #[Test]

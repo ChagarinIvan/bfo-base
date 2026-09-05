@@ -22,10 +22,12 @@ final class ListPersonsPromptsServiceTest extends TestCase
     public function it_paginates_person_prompts_by_criteria(): void
     {
         $repository = $this->createMock(PersonPromptRepository::class);
+
         $repository->expects($this->once())
             ->method('paginate')
             ->with(new Criteria(['personId' => '7', 'activePerson' => true]))
-            ->willReturn(new Slice(new ArrayAdapter([])));
+            ->willReturn(new Slice(new ArrayAdapter([])))
+        ;
 
         $service = new ListPersonsPromptsService(
             $repository,

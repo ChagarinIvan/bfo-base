@@ -18,7 +18,7 @@ php artisan test tests/Feature/Api/V1/PersonPrompt tests/Application/Service/Per
 ## Проверка frontend
 
 ```bash
-npm run test -- resources/spa/pages/personPrompts resources/spa/api/personPrompts.test.ts resources/spa/router/index.test.ts
+npm run test -- resources/spa/pages/persons resources/spa/api/personPrompts.test.ts resources/spa/router/index.test.ts
 ```
 
 Ожидается: deep link `/app/persons/{personId}/prompts`, loading/error/empty states, pagination,
