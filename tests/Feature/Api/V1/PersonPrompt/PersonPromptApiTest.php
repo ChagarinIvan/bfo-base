@@ -36,6 +36,27 @@ final class PersonPromptApiTest extends TestCase
     }
 
     #[Test]
+    public function it_returns_person_information_for_prompt_pages(): void
+    {
+        $this->authenticate();
+        $person = $this->createPerson();
+
+        $this->getJson("/api/v1/persons/{$person->id}")
+            ->assertOk()
+            ->assertJsonPath('id', (string) $person->id)
+            ->assertJsonStructure([
+                'id',
+                'lastname',
+                'firstname',
+                'birthday',
+                'rankId',
+                'clubId',
+                'created',
+                'updated',
+            ]);
+    }
+
+    #[Test]
     public function it_supports_authenticated_create_update_and_delete(): void
     {
         $this->authenticate();

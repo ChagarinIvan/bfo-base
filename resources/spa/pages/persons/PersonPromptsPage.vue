@@ -10,6 +10,7 @@ import { deletePersonPrompt, getPersonPrompts } from '../../api/personPrompts'
 import type { PersonPrompt, PaginationHeaders } from '../../api/types'
 import ConfirmDeleteDialog from '../../components/actions/ConfirmDeleteDialog.vue'
 import PersonPromptActionMenu from '../../components/actions/PersonPromptActionMenu.vue'
+import PersonPromptPersonInfo from '../../components/PersonPromptPersonInfo.vue'
 import { t } from '../../i18n'
 import { useAuthStore } from '../../stores/auth'
 import { paginationFromHeaders } from '../listingModels'
@@ -80,6 +81,7 @@ watch(
 </script>
 
 <template>
+    <PersonPromptPersonInfo :person-id="String(route.params.personId)" />
     <div class="page-toolbar">
         <h1 class="page-title">{{ t('spa.person_prompt.title') }}</h1>
         <Button

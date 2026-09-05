@@ -1,6 +1,10 @@
 import { api } from './client'
 import type { PaginatedApiResponse, Person, PersonSearchQuery } from './types'
 
+export async function getPerson(id: string): Promise<Person> {
+    return (await api.get<Person>(`/persons/${id}`)).data
+}
+
 export async function getPersons(
     query: PersonSearchQuery = {},
 ): Promise<PaginatedApiResponse<Person>> {

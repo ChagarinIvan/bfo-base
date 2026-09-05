@@ -7,6 +7,7 @@ import { getPersonPrompt, updatePersonPrompt } from '../../api/personPrompts'
 import type { PersonPrompt, PersonPromptRequest } from '../../api/types'
 import { applyFieldErrors, isApiValidationError } from '../listingModels'
 import PersonPromptForm from './PersonPromptForm.vue'
+import PersonPromptPersonInfo from '../../components/PersonPromptPersonInfo.vue'
 import { t } from '../../i18n'
 const route = useRoute()
 const router = useRouter()
@@ -41,6 +42,7 @@ async function submit(value: PersonPromptRequest): Promise<void> {
 onMounted(() => void load())
 </script>
 <template>
+    <PersonPromptPersonInfo :person-id="String(route.params.personId)" />
     <Message
         v-if="loading || error"
         :severity="error ? 'error' : 'info'"

@@ -24,6 +24,7 @@ use App\Bridge\Laravel\Http\Controllers\Api\V1\Group\MergeGroupsAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Group\UpdateGroupAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Group\ViewGroupAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\ListPersonsAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\ViewPersonAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\PersonPrompt\CreatePersonPromptAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\PersonPrompt\DeletePersonPromptAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\PersonPrompt\ListPersonPromptsAction;
@@ -55,6 +56,7 @@ final class ApiV1RoutesServiceProvider extends ServiceProvider
                 $router->get('groups/{groupId}', ViewGroupAction::class);
                 $router->get('events', ListEventsAction::class);
                 $router->get('persons', ListPersonsAction::class);
+                $router->get('persons/{personId}', ViewPersonAction::class);
             });
 
             $router->prefix('api/v1')->get('ranks', ListRanksAction::class);

@@ -16,11 +16,10 @@ const emit = defineEmits<{ delete: [] }>()
         <EditActionButton
             :to="`/app/persons/${props.personId}/prompts/${props.promptId}/edit`"
             :label="t('spa.person_prompt.edit')"
-            icon-only
         />
         <Button
             icon="pi pi-trash"
-            :aria-label="t('spa.person_prompt.delete')"
+            :label="t('spa.person_prompt.delete')"
             severity="danger"
             text
             @click="emit('delete')"
