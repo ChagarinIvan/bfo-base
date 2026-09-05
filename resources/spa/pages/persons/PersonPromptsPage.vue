@@ -9,6 +9,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { deletePersonPrompt, getPersonPrompts } from '../../api/personPrompts'
 import type { PersonPrompt, PaginationHeaders } from '../../api/types'
 import ConfirmDeleteDialog from '../../components/actions/ConfirmDeleteDialog.vue'
+import PersonPromptActionMenu from '../../components/actions/PersonPromptActionMenu.vue'
 import { t } from '../../i18n'
 import { useAuthStore } from '../../stores/auth'
 import { paginationFromHeaders } from '../listingModels'
@@ -112,18 +113,10 @@ watch(
             v-if="auth.isAuthenticated"
             :header="t('spa.person_prompt.actions')"
             ><template #body="{ data }"
-                ><Button
-                    icon="pi pi-pencil"
-                    text
-                    @click="
-                        router.push(
-                            `/app/persons/${data.personId}/prompts/${data.id}/edit`,
-                        )
-                    " /><Button
-                    icon="pi pi-trash"
-                    severity="danger"
-                    text
-                    @click="selected = data" /></template
+                ><PersonPromptActionMenu
+                    :person-id="data.personId"
+                    :prompt-id="data.id"
+                    @delete="selected = data" /></template
         ></Column>
     </DataTable>
     <Paginator

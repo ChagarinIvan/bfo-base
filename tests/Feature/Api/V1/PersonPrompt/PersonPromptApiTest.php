@@ -22,14 +22,17 @@ final class PersonPromptApiTest extends TestCase
     {
         $this->authenticate();
         $person = $this->createPerson();
+        $otherPerson = $this->createPerson();
         PersonPrompt::factory()->createOne(['person_id' => $person->id, 'prompt' => 'first']);
         PersonPrompt::factory()->createOne(['person_id' => $person->id, 'prompt' => 'second']);
+        PersonPrompt::factory()->createOne(['person_id' => $otherPerson->id, 'prompt' => 'other']);
 
         $this->getJson("/api/v1/person-prompts?personId={$person->id}&perPage=1")
             ->assertOk()
             ->assertJsonCount(1)
             ->assertJsonStructure(['0' => ['id', 'personId', 'prompt', 'metaphone']])
-            ->assertHeader('X-Pagination-Total', '2');
+            ->assertHeader('X-Pagination-Total', '2')
+            ->assertJsonPath('0.personId', (string) $person->id);
     }
 
     #[Test]
