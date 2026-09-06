@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Message from 'primevue/message'
@@ -7,8 +7,10 @@ import Paginator, { type PageState } from 'primevue/paginator'
 import Button from 'primevue/button'
 import { useRoute, useRouter } from 'vue-router'
 import { deletePersonPrompt, getPersonPrompts } from '../../api/personPrompts'
-import type { PersonPrompt, PaginationHeaders } from '../../api/types'
+import { getUsers } from '../../api/users'
+import type { PersonPrompt, PaginationHeaders, User } from '../../api/types'
 import ConfirmDeleteDialog from '../../components/actions/ConfirmDeleteDialog.vue'
+import ImpressionDetails from '../../components/ImpressionDetails.vue'
 import PersonPromptActionMenu from '../../components/actions/PersonPromptActionMenu.vue'
 import { t } from '../../i18n'
 import { useAuthStore } from '../../stores/auth'
@@ -18,6 +20,7 @@ const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
 const prompts = ref<PersonPrompt[]>([])
+const users = ref<User[]>([])
 const loading = ref(true)
 const error = ref('')
 const selected = ref<PersonPrompt | null>(null)
@@ -77,6 +80,16 @@ watch(
     () => void load(),
     { immediate: true },
 )
+
+onMounted(async () => {
+    if (!auth.isAuthenticated) return
+
+    try {
+        users.value = await getUsers()
+    } catch {
+        users.value = []
+    }
+})
 </script>
 
 <template>
@@ -109,6 +122,24 @@ watch(
     <DataTable v-else :value="prompts" striped-rows>
         <Column field="prompt" :header="t('spa.person_prompt.prompt')" />
         <Column field="metaphone" :header="t('spa.person_prompt.metaphone')" />
+        <Column v-if="auth.isAuthenticated" :header="t('spa.person.created')">
+            <template #body="{ data }">
+                <ImpressionDetails
+                    :impression="data.created"
+                    :users="users"
+                    :label="t('spa.person.created')"
+                />
+            </template>
+        </Column>
+        <Column v-if="auth.isAuthenticated" :header="t('spa.person.updated')">
+            <template #body="{ data }">
+                <ImpressionDetails
+                    :impression="data.updated"
+                    :users="users"
+                    :label="t('spa.person.updated')"
+                />
+            </template>
+        </Column>
         <Column
             v-if="auth.isAuthenticated"
             :header="t('spa.person_prompt.actions')"

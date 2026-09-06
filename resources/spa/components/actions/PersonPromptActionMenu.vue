@@ -15,7 +15,7 @@ const emit = defineEmits<{ delete: [] }>()
     <span class="action-menu">
         <EditActionButton
             :to="`/app/persons/${props.personId}/prompts/${props.promptId}/edit`"
-            :label="t('spa.person_prompt.edit')"
+            :label="t('app.common.edit')"
         />
         <ActionButton
             icon="pi pi-trash"

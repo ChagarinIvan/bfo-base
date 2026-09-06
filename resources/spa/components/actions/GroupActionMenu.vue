@@ -21,6 +21,7 @@ const emit = defineEmits<{ delete: []; merge: [] }>()
         />
         <ActionButton
             icon="pi pi-objects-column"
+            severity="success"
             :label="t('spa.group.merge')"
             @click="emit('merge')"
         />

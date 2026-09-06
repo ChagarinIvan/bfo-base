@@ -44,8 +44,6 @@ Each item contains:
       "completeRank": "II"
     }
 
-Authenticated items additionally expose nullable `created` and `updated` impression fields.
-
 The repository query loads the requested event and competition resources before the slice is serialized. Query-count coverage must prove that relation loading does not create one query per returned line.
 
 ## SPA route

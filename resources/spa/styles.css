@@ -301,6 +301,10 @@ body {
     text-decoration: none;
 }
 
+.competition-card-actions > .details-actions {
+    margin-top: 0;
+}
+
 .section-title {
     margin: 0 0 0.75rem;
     font-size: 1.35rem;

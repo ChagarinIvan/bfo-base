@@ -4,20 +4,14 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import PersonViewPage from './PersonViewPage.vue'
 
-const { auth, getPersonProtocolLines, getUsers, getYears, push } = vi.hoisted(
-    () => ({
-        auth: { isAuthenticated: true },
-        getPersonProtocolLines: vi.fn(),
-        getUsers: vi.fn(),
-        getYears: vi.fn(),
-        push: vi.fn(),
-    }),
-)
+const { getPersonProtocolLines, getYears, push } = vi.hoisted(() => ({
+    getPersonProtocolLines: vi.fn(),
+    getYears: vi.fn(),
+    push: vi.fn(),
+}))
 
 vi.mock('../../api/protocolLines', () => ({ getPersonProtocolLines }))
-vi.mock('../../api/users', () => ({ getUsers }))
 vi.mock('../../api/years', () => ({ getYears }))
-vi.mock('../../stores/auth', () => ({ useAuthStore: () => auth }))
 vi.mock('vue-router', () => ({
     useRoute: () => ({ params: { personId: '7' } }),
     useRouter: () => ({ push }),
@@ -26,8 +20,6 @@ vi.mock('vue-router', () => ({
 describe('person view page', () => {
     beforeEach(() => {
         vi.resetAllMocks()
-        auth.isAuthenticated = true
-        getUsers.mockResolvedValue([])
     })
 
     it('loads participation with both related resources', async () => {
@@ -70,7 +62,6 @@ describe('person view page', () => {
                     DateFilter: true,
                     FilterPanel: { template: '<div><slot /></div>' },
                     InputText: true,
-                    ImpressionDetails: true,
                     Message: { template: '<div><slot /></div>' },
                     Paginator: true,
                     PersonPromptPersonInfo: true,
@@ -89,7 +80,7 @@ describe('person view page', () => {
             perPage: 20,
         })
         expect(wrapper.text()).toContain('Удзел у спаборніцтвах')
-        expect(wrapper.findAll('.column')).toHaveLength(11)
+        expect(wrapper.findAll('.column')).toHaveLength(9)
     })
 
     it('shows an empty state', async () => {

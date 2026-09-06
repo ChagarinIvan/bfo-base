@@ -110,8 +110,6 @@ export interface ProtocolLine {
     time: string | null
     place: string | null
     completeRank: string | null
-    created?: Impression | null
-    updated?: Impression | null
 }
 
 export interface ProtocolLineSearchQuery {

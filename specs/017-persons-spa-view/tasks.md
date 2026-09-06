@@ -67,7 +67,7 @@
 ### Implementation
 
 - [x] T022 [US3] Implement getProtocolLines and ProtocolLine TypeScript types for the paginated API in resources/spa/api/protocolLines.ts and resources/spa/api/types.ts
-- [x] T023 [US3] Add participation table with nine Blade-equivalent columns plus authenticated created/updated columns, competition/event links and shared paginator to resources/spa/pages/persons/PersonViewPage.vue
+- [x] T023 [US3] Add participation table with nine Blade-equivalent columns, competition/event links and shared paginator to resources/spa/pages/persons/PersonViewPage.vue
 
 ## Phase 6: User Story 4 - Participation filters (Priority: P1)
 

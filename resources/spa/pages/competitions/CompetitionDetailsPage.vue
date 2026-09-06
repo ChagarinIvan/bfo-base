@@ -180,35 +180,34 @@ async function deleteCurrentCompetition(): Promise<void> {
                         </tr>
                     </tbody>
                 </table>
-                <CompetitionActionMenu
+                <div
                     v-if="auth.isAuthenticated"
-                    :competition-id="competition.id"
-                    layout="row"
-                    @delete="deleteDialogVisible = true"
-                />
-                <span
-                    v-if="auth.isAuthenticated"
-                    class="competition-legacy-actions"
+                    class="details-actions competition-card-actions"
                 >
-                    <ActionButton
-                        as="a"
-                        :href="`/events/${competition.id}/create`"
-                        icon="pi pi-plus"
-                        :label="t('app.competition.add_event')"
-                        severity="success"
-                        text
-                        class="competition-legacy-action"
+                    <CompetitionActionMenu
+                        :competition-id="competition.id"
+                        layout="row"
+                        @delete="deleteDialogVisible = true"
                     />
-                    <ActionButton
-                        as="a"
-                        :href="`/events/${competition.id}/sum`"
-                        icon="pi pi-clone"
-                        :label="t('app.competition.sum')"
-                        severity="info"
-                        text
-                        class="competition-legacy-action"
-                    />
-                </span>
+                    <span class="competition-legacy-actions">
+                        <ActionButton
+                            as="a"
+                            :href="`/events/${competition.id}/create`"
+                            icon="pi pi-plus"
+                            :label="t('app.competition.add_event')"
+                            severity="success"
+                            class="competition-legacy-action"
+                        />
+                        <ActionButton
+                            as="a"
+                            :href="`/events/${competition.id}/sum`"
+                            icon="pi pi-clone"
+                            :label="t('app.competition.sum')"
+                            severity="info"
+                            class="competition-legacy-action"
+                        />
+                    </span>
+                </div>
             </template>
         </Card>
 
