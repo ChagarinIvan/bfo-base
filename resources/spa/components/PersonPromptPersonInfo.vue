@@ -56,6 +56,10 @@ function clubLabel(clubId: string | null): string {
     return clubs.value.find((club) => club.id === clubId)?.name ?? '—'
 }
 
+function birthYear(birthday: string | null): string {
+    return birthday?.slice(0, 4) ?? '—'
+}
+
 watch(
     () => props.personId,
     () => {
@@ -90,8 +94,8 @@ watch(
                         <td>{{ person.firstname }}</td>
                     </tr>
                     <tr>
-                        <th>{{ t('spa.person_prompt.birthday') }}</th>
-                        <td>{{ person.birthday ?? '—' }}</td>
+                        <th>{{ t('spa.person.birth_year') }}</th>
+                        <td>{{ birthYear(person.birthday) }}</td>
                     </tr>
                     <tr>
                         <th>{{ t('spa.person.rank') }}</th>

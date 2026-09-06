@@ -2,23 +2,28 @@
 import { t } from '../../i18n'
 import { competitionActionRoute } from './actionModels'
 import EditActionButton from './EditActionButton.vue'
-import Button from 'primevue/button'
+import ActionButton from './ActionButton.vue'
 
-const props = defineProps<{ competitionId: string }>()
+const props = withDefaults(
+    defineProps<{ competitionId: string; layout?: 'row' | 'column' }>(),
+    { layout: 'column' },
+)
 const emit = defineEmits<{ delete: [] }>()
 </script>
 
 <template>
-    <span class="action-menu details-actions">
+    <span
+        class="action-menu"
+        :class="{ 'details-actions': props.layout === 'row' }"
+    >
         <EditActionButton
             :to="competitionActionRoute(props.competitionId)"
             :label="t('spa.competition.edit.action')"
         />
-        <Button
+        <ActionButton
             icon="pi pi-trash"
             :label="t('spa.competition.delete.action')"
             severity="danger"
-            text
             @click="emit('delete')"
         />
     </span>

@@ -35,12 +35,16 @@ function deferred<T>(): {
     return { promise, resolve }
 }
 
-function person(id: string, lastname: string): Person {
+function person(
+    id: string,
+    lastname: string,
+    birthday: string | null = null,
+): Person {
     return {
         id,
         lastname,
         firstname: 'Runner',
-        birthday: null,
+        birthday,
         rankId: 1,
         clubId: null,
     }
@@ -118,6 +122,29 @@ describe('person prompt person info', () => {
 
         expect(wrapper.text()).not.toContain('Створана')
         expect(wrapper.text()).not.toContain('Зменена')
+    })
+
+    it('shows only the person birth year', async () => {
+        getPerson.mockResolvedValue(person('1', 'Runner', '2001-06-04'))
+
+        const wrapper = mount(PersonPromptPersonInfo, {
+            props: { personId: '1' },
+            global: {
+                stubs: {
+                    Card: {
+                        template:
+                            '<div><slot name="title" /><slot name="content" /></div>',
+                    },
+                    ImpressionDetails: true,
+                    Message: { template: '<div><slot /></div>' },
+                    RouterLink: routerLinkStub,
+                },
+            },
+        })
+        await flushPromises()
+
+        expect(wrapper.text()).toContain('2001')
+        expect(wrapper.text()).not.toContain('2001-06-04')
     })
 
     it('links the person club to its details page', async () => {

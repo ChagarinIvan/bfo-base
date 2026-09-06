@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import Button from 'primevue/button'
 import { useAuthStore } from '../stores/auth'
 import { t } from '../i18n'
+import ActionButton from './actions/ActionButton.vue'
 
 const props = defineProps<{ personId: string }>()
 const auth = useAuthStore()
@@ -9,15 +9,13 @@ const auth = useAuthStore()
 
 <template>
     <div class="details-actions">
-        <Button
+        <ActionButton
             v-if="auth.isAuthenticated"
             as="a"
             :href="`/persons/${props.personId}/edit`"
             :label="t('spa.person.edit')"
             icon="pi pi-pencil"
             severity="secondary"
-            text
-            class="action-link-button"
         />
         <RouterLink
             v-if="auth.isAuthenticated"
@@ -25,7 +23,7 @@ const auth = useAuthStore()
             :to="`/app/persons/${props.personId}/prompts`"
             custom
         >
-            <Button
+            <ActionButton
                 type="button"
                 :class="{ 'person-info-tab-active': isActive }"
                 :label="t('spa.person.prompts')"
@@ -40,7 +38,7 @@ const auth = useAuthStore()
             :to="`/app/persons/${props.personId}/payments`"
             custom
         >
-            <Button
+            <ActionButton
                 type="button"
                 :class="{ 'person-info-tab-active': isActive }"
                 :label="t('spa.person.payments')"
@@ -49,20 +47,19 @@ const auth = useAuthStore()
                 @click="navigate"
             />
         </RouterLink>
-        <Button
+        <ActionButton
             as="a"
             :href="`/ranks/person/${props.personId}`"
             :label="t('spa.person.ranks')"
             icon="pi pi-stopwatch"
             severity="info"
-            class="action-link-button"
         />
         <RouterLink
             v-slot="{ navigate, isExactActive }"
             :to="`/app/persons/${props.personId}`"
             custom
         >
-            <Button
+            <ActionButton
                 type="button"
                 :class="{ 'person-info-tab-active': isExactActive }"
                 :label="t('spa.person.events_count')"

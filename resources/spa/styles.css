@@ -347,17 +347,20 @@ body {
 }
 
 .action-menu {
-    display: inline-flex;
-    align-items: center;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
     gap: 0.25rem;
 }
 
 .action-menu.details-actions {
     display: flex;
+    flex-direction: row;
+    align-items: center;
     gap: 0.5rem;
 }
 
-.action-link-button {
+.action-button {
     text-decoration: none;
 }
 

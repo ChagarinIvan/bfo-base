@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import Button from 'primevue/button'
 import { useRouter } from 'vue-router'
+import ActionButton from './ActionButton.vue'
 
 const props = withDefaults(
     defineProps<{
@@ -15,12 +15,11 @@ const router = useRouter()
 </script>
 
 <template>
-    <Button
+    <ActionButton
         icon="pi pi-pencil"
         :label="props.iconOnly ? undefined : props.label"
         :aria-label="props.iconOnly ? props.label : undefined"
         severity="secondary"
-        text
         @click="router.push(props.to)"
     />
 </template>

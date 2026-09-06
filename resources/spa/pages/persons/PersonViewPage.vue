@@ -8,12 +8,15 @@ import Message from 'primevue/message'
 import Paginator, { type PageState } from 'primevue/paginator'
 import { useRoute, useRouter } from 'vue-router'
 import { getPersonProtocolLines } from '../../api/protocolLines'
+import { getUsers } from '../../api/users'
 import { getYears } from '../../api/years'
-import type { PaginationHeaders, ProtocolLine } from '../../api/types'
+import type { PaginationHeaders, ProtocolLine, User } from '../../api/types'
 import DateFilter from '../../components/DateFilter.vue'
 import FilterPanel from '../../components/FilterPanel.vue'
 import YearFilter from '../../components/YearFilter.vue'
+import ImpressionDetails from '../../components/ImpressionDetails.vue'
 import { t } from '../../i18n'
+import { useAuthStore } from '../../stores/auth'
 import {
     applyFieldErrors,
     debounce,
@@ -26,8 +29,10 @@ import {
 
 const route = useRoute()
 const router = useRouter()
+const auth = useAuthStore()
 const lines = ref<ProtocolLine[]>([])
 const years = ref<number[]>([])
+const users = ref<User[]>([])
 const year = ref<number | null>(null)
 const competitionName = ref('')
 const date = ref('')
@@ -96,7 +101,12 @@ async function load(
 
 async function initialize(): Promise<void> {
     try {
-        years.value = await getYears()
+        const [loadedYears, loadedUsers] = await Promise.all([
+            getYears(),
+            auth.isAuthenticated ? getUsers() : Promise.resolve([]),
+        ])
+        years.value = loadedYears
+        users.value = loadedUsers
         await load()
     } catch {
         error.value = t('spa.person_view.error')
@@ -252,6 +262,24 @@ onBeforeUnmount(() => debouncedCompetitionSearch.cancel())
             <template #body="{ data }">{{
                 display(data.completeRank)
             }}</template>
+        </Column>
+        <Column v-if="auth.isAuthenticated" :header="t('spa.person.created')">
+            <template #body="{ data }">
+                <ImpressionDetails
+                    :impression="data.created"
+                    :users="users"
+                    :label="t('spa.person.created')"
+                />
+            </template>
+        </Column>
+        <Column v-if="auth.isAuthenticated" :header="t('spa.person.updated')">
+            <template #body="{ data }">
+                <ImpressionDetails
+                    :impression="data.updated"
+                    :users="users"
+                    :label="t('spa.person.updated')"
+                />
+            </template>
         </Column>
     </DataTable>
     <Paginator

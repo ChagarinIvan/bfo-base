@@ -77,7 +77,7 @@ describe('person table', () => {
         ).toBe(true)
         expect(
             wrapper.find('.action-menu a[href="/persons/7/edit"]').classes(),
-        ).toContain('action-link-button')
+        ).toContain('action-button')
         expect(
             wrapper.find('.action-menu a[href="/persons/7/delete"]').exists(),
         ).toBe(false)

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import Button from 'primevue/button'
 import { t } from '../../i18n'
+import ActionButton from './ActionButton.vue'
 
 const props = defineProps<{ personId: string }>()
 const emit = defineEmits<{ delete: [] }>()
@@ -8,20 +8,17 @@ const emit = defineEmits<{ delete: [] }>()
 
 <template>
     <span class="action-menu">
-        <Button
+        <ActionButton
             as="a"
             :href="`/persons/${props.personId}/edit`"
             icon="pi pi-pencil"
             :label="t('spa.person.edit')"
             severity="secondary"
-            text
-            class="action-link-button"
         />
-        <Button
+        <ActionButton
             icon="pi pi-trash"
             :label="t('spa.person.delete')"
             severity="danger"
-            text
             @click="emit('delete')"
         />
     </span>
