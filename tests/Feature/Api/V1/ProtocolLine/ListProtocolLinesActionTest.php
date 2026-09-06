@@ -15,6 +15,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+use function array_filter;
 use function str_contains;
 use function strtolower;
 
@@ -153,15 +154,23 @@ final class ListProtocolLinesActionTest extends TestCase
         $queries = [];
 
         DB::listen(static function (QueryExecuted $query) use (&$queries): void {
-            if (str_contains(strtolower($query->sql), 'protocol_lines')) {
-                $queries[] = $query->sql;
-            }
+            $queries[] = strtolower($query->sql);
         });
 
         $this->getJson("/api/v1/protocol-lines?personId={$person->id}&withEvent=1&withCompetition=1")
             ->assertOk();
 
-        $this->assertCount(2, $queries);
+        $this->assertCount(2, array_filter(
+            $queries,
+            static fn (string $query): bool => str_contains($query, 'from `protocol_lines`'),
+        ));
+
+        foreach (['distances', 'events', 'groups', 'competitions'] as $table) {
+            $this->assertCount(1, array_filter(
+                $queries,
+                static fn (string $query): bool => str_contains($query, "from `{$table}`"),
+            ));
+        }
     }
 
     /** @param array<string, mixed> $attributes */

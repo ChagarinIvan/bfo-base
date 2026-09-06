@@ -27,7 +27,7 @@ final class RebuildPersonRanksServiceTest extends TestCase
         $persons = $this->createMock(PersonRepository::class);
         $facts = $this->createMock(RankFactsCollector::class);
         $calculator = new RankCalculator();
-        $clock = $this->createMock(Clock::class);
+        $clock = $this->createStub(Clock::class);
         $transactional = $this->createMock(TransactionManager::class);
         $clock->method('now')->willReturn(Carbon::parse('2026-07-01'));
         $persons->expects($this->once())->method('lockById')->with(42)->willReturn($person);

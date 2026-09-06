@@ -86,11 +86,15 @@ final readonly class ProtocolLineService implements ProtocolLineOperations
         throw new RuntimeException('Wrong protocolLine id.');
     }
 
-    public function getProtocolLinesInListWithoutPerson(Collection $linesIds): Collection
+    /** @param list<int> $linesIds
+     * @return list<ProtocolLine>
+     */
+    public function getProtocolLinesInListWithoutPerson(array $linesIds): array
     {
         return ProtocolLine::whereIn('id', $linesIds)
             ->whereNull('person_id')
-            ->get();
+            ->get()
+            ->all();
     }
 
     public function deleteEventLines(Event $event): void
@@ -109,10 +113,12 @@ final readonly class ProtocolLineService implements ProtocolLineOperations
             ->all();
     }
 
-    public function fastIdent(Collection $linesIds): void
+    /** @param list<int> $linesIds */
+    public function fastIdent(array $linesIds): void
     {
-        $this->protocolLinesRepository->identByEqualPreparedLine($linesIds);
-        $this->protocolLinesRepository->identByEqualPersonPrompt($linesIds);
+        $lineIds = new Collection($linesIds);
+        $this->protocolLinesRepository->identByEqualPreparedLine($lineIds);
+        $this->protocolLinesRepository->identByEqualPersonPrompt($lineIds);
     }
 
     public function getEqualLines(string $line): Collection

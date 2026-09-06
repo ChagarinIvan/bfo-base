@@ -141,9 +141,9 @@ class ProtocolLineIdentService
     public function simpleIdent(Collection $protocolLines): Collection
     {
         $linesIds = $protocolLines->pluck('id');
-        $this->protocolLineService->fastIdent($linesIds);
+        $this->protocolLineService->fastIdent($linesIds->all());
 
-        return $this->protocolLineService->getProtocolLinesInListWithoutPerson($linesIds);
+        return new Collection($this->protocolLineService->getProtocolLinesInListWithoutPerson($linesIds->all()));
     }
 
     /**

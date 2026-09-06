@@ -7,7 +7,6 @@ namespace App\Application\Service\ProtocolLine;
 use App\Application\Dto\ProtocolLine\SearchProtocolLineDto;
 use App\Domain\ProtocolLine\ProtocolLineResources;
 use App\Domain\Shared\Criteria;
-use array_filter;
 use function array_filter;
 
 final readonly class ListProtocolLines

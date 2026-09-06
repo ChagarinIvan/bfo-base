@@ -18,7 +18,6 @@ use App\Domain\ProtocolLine\ProtocolLineOperations;
 use App\Services\ProtocolLineIdentService;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Queue;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -43,7 +42,7 @@ final class ProtocolLineRankRebuildDispatchTest extends TestCase
         $secondLine = ProtocolLine::factory()->createOne(['id' => 2, 'distance_id' => $distance->id, 'person_id' => $person->id]);
         $protocolLines = $this->createMock(ProtocolLineOperations::class);
         $protocolLines->expects($this->once())->method('fastIdent');
-        $protocolLines->expects($this->once())->method('getProtocolLinesInListWithoutPerson')->willReturn(Collection::empty());
+        $protocolLines->expects($this->once())->method('getProtocolLinesInListWithoutPerson')->willReturn([]);
         Queue::fake();
 
         new ProtocolLineIdentService(

@@ -25,7 +25,10 @@ describe('person table', () => {
             },
             global: {
                 stubs: {
-                    RouterLink: { template: '<a><slot /></a>' },
+                    RouterLink: {
+                        props: ['to'],
+                        template: '<a :href="to"><slot /></a>',
+                    },
                     ImpressionDetails: true,
                 },
             },
@@ -56,7 +59,10 @@ describe('person table', () => {
             global: {
                 plugins: [PrimeVue],
                 stubs: {
-                    RouterLink: { template: '<a><slot /></a>' },
+                    RouterLink: {
+                        props: ['to'],
+                        template: '<a :href="to"><slot /></a>',
+                    },
                     ImpressionDetails: true,
                 },
             },

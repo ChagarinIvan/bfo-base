@@ -48,8 +48,8 @@
 
 ### Implementation
 
-- [x] T016 [US1] Add PersonViewPage with PersonPromptPersonInfo, preserved edit/payments/prompts/ranks links, loading/error/not-found state and route-param request guard in resources/spa/pages/persons/PersonViewPage.vue
-- [x] T017 [US1] Register /app/persons/:personId in resources/spa/router/index.ts before the catch-all route
+- [x] T016 [US1] Add persistent PersonLayoutPage with PersonPromptPersonInfo, shared edit/payments/prompts/ranks navigation and nested RouterView; keep participation content in PersonViewPage in resources/spa/pages/persons/PersonLayoutPage.vue, resources/spa/components/PersonInfoNavigation.vue and resources/spa/pages/persons/PersonViewPage.vue
+- [x] T017 [US1] Register /app/persons/:personId as the parent route and nest view, payments and prompts sections under it in resources/spa/router/index.ts
 - [x] T018 [US1] Update the existing person list/detail navigation to point to /app/persons/:personId where the View Person destination is exposed in resources/spa/components/PersonTable.vue and related components
 - [x] T019 [US1] Add page/action and not-found/loading translations in resources/lang/by.json
 
@@ -92,6 +92,12 @@
 - [x] T030 [P] Update specs/017-persons-spa-view/quickstart.md if implementation paths or commands changed
 - [x] T031 Run focused PHPUnit/Vitest tests, then composer cs, composer stan, composer rector -- --dry-run, npm run ci and git diff --check
 - [x] T032 Verify route order, API query count and acceptance scenarios against specs/017-persons-spa-view/spec.md, plan.md and contracts/api.md
+
+## Phase 8: Review fixes
+
+- [x] T033 [US1] Keep the shared Person Info card mounted while switching between person SPA tabs and cover the parent/child route structure in resources/spa/router/index.test.ts and resources/spa/components/PersonInfoNavigation.test.ts
+- [x] T034 [US4] Prevent short competition-name input from sending validation requests, disabling the field or losing focus; cover the behavior in resources/spa/pages/persons/PersonViewPage.test.ts
+- [x] T035 [US1] Hide created/updated impression rows for anonymous visitors and guard stale Person Info responses in resources/spa/components/PersonPromptPersonInfo.vue and resources/spa/components/PersonPromptPersonInfo.test.ts
 
 ## Dependencies and execution order
 

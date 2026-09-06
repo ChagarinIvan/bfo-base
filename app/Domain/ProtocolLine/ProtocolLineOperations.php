@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Domain\ProtocolLine;
 
 use App\Domain\Event\Event;
-use Illuminate\Support\Collection;
 
 interface ProtocolLineOperations
 {
@@ -13,7 +12,11 @@ interface ProtocolLineOperations
 
     public function deleteEventLines(Event $event): void;
 
-    public function fastIdent(Collection $linesIds): void;
+    /** @param list<int> $linesIds */
+    public function fastIdent(array $linesIds): void;
 
-    public function getProtocolLinesInListWithoutPerson(Collection $linesIds): Collection;
+    /** @param list<int> $linesIds
+     * @return list<ProtocolLine>
+     */
+    public function getProtocolLinesInListWithoutPerson(array $linesIds): array;
 }

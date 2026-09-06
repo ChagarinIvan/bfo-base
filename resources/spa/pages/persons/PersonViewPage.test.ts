@@ -4,8 +4,7 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import PersonViewPage from './PersonViewPage.vue'
 
-const { auth, getPersonProtocolLines, getYears, push } = vi.hoisted(() => ({
-    auth: { isAuthenticated: true },
+const { getPersonProtocolLines, getYears, push } = vi.hoisted(() => ({
     getPersonProtocolLines: vi.fn(),
     getYears: vi.fn(),
     push: vi.fn(),
@@ -13,9 +12,6 @@ const { auth, getPersonProtocolLines, getYears, push } = vi.hoisted(() => ({
 
 vi.mock('../../api/protocolLines', () => ({ getPersonProtocolLines }))
 vi.mock('../../api/years', () => ({ getYears }))
-vi.mock('../../stores/auth', () => ({
-    useAuthStore: () => auth,
-}))
 vi.mock('vue-router', () => ({
     useRoute: () => ({ params: { personId: '7' } }),
     useRouter: () => ({ push }),
@@ -24,10 +20,9 @@ vi.mock('vue-router', () => ({
 describe('person view page', () => {
     beforeEach(() => {
         vi.resetAllMocks()
-        auth.isAuthenticated = true
     })
 
-    it('loads participation with both related resources and renders actions', async () => {
+    it('loads participation with both related resources', async () => {
         getYears.mockResolvedValue([2026, 2025])
         getPersonProtocolLines.mockResolvedValue({
             data: [
@@ -82,10 +77,6 @@ describe('person view page', () => {
             perPage: 20,
         })
         expect(wrapper.text()).toContain('Удзел у спаборніцтвах')
-        expect(wrapper.text()).toContain('Рэдагаваць')
-        expect(wrapper.text()).toContain('Промпты')
-        expect(wrapper.text()).toContain('Аплаты')
-        expect(wrapper.text()).toContain('Разрады')
     })
 
     it('shows an empty state', async () => {
@@ -99,7 +90,7 @@ describe('person view page', () => {
                     Column: true,
                     DataTable: true,
                     DateFilter: true,
-                    FilterPanel: true,
+                    FilterPanel: { template: '<div><slot /></div>' },
                     InputText: true,
                     Message: { template: '<div><slot /></div>' },
                     Paginator: true,
@@ -114,36 +105,37 @@ describe('person view page', () => {
         expect(wrapper.text()).toContain('Удзелы не знойдзены.')
     })
 
-    it('keeps only the public ranks action for anonymous visitors', async () => {
-        auth.isAuthenticated = false
+    it('keeps a short competition search in the input without requesting it', async () => {
         getYears.mockResolvedValue([])
         getPersonProtocolLines.mockResolvedValue({ data: [], headers: {} })
 
         const wrapper = mount(PersonViewPage, {
             global: {
                 stubs: {
-                    Button: {
-                        props: ['label'],
-                        template: '<button>{{ label }}</button>',
-                    },
+                    Button: true,
                     Column: true,
                     DataTable: true,
                     DateFilter: true,
-                    FilterPanel: true,
-                    InputText: true,
+                    FilterPanel: { template: '<div><slot /></div>' },
+                    InputText: {
+                        props: ['modelValue'],
+                        emits: ['update:modelValue'],
+                        template:
+                            '<input :value="modelValue" @input="$emit(\'update:modelValue\', $event.target.value)" />',
+                    },
                     Message: { template: '<div><slot /></div>' },
                     Paginator: true,
                     PersonPromptPersonInfo: true,
-                    RouterLink: { template: '<a><slot /></a>' },
+                    RouterLink: true,
                     YearFilter: true,
                 },
             },
         })
         await flushPromises()
 
-        expect(wrapper.text()).toContain('Разрады')
-        expect(wrapper.text()).not.toContain('Рэдагаваць')
-        expect(wrapper.text()).not.toContain('Промпты')
-        expect(wrapper.text()).not.toContain('Аплаты')
+        await wrapper.find('input').setValue('a')
+
+        expect(wrapper.find('input').element).toHaveProperty('value', 'a')
+        expect(getPersonProtocolLines).toHaveBeenCalledTimes(1)
     })
 })

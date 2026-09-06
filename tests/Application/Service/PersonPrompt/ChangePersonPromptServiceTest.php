@@ -36,6 +36,7 @@ final class ChangePersonPromptServiceTest extends TestCase
                 && $input->userId === 11,
         ))->willReturn($created);
         $this->prompts->expects($this->once())->method('add')->with($created);
+        $this->clock->expects($this->never())->method('now');
 
         $service->execute(new ChangePersonPrompt('petrov_ivan', 7, new UserId(11)));
     }
@@ -50,6 +51,7 @@ final class ChangePersonPromptServiceTest extends TestCase
             ['metaphone', 'PET'],
         ]);
         $this->prompts->expects($this->once())->method('byCriteria')->willReturn(new Collection([$prompt]));
+        $this->factory->expects($this->never())->method('create');
         $this->clock->expects($this->once())->method('now')->willReturn(Carbon::now());
         $prompt->expects($this->once())->method('updateData')->with(
             'petrov_ivan',

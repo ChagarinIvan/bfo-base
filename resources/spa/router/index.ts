@@ -14,6 +14,7 @@ import ClubDetailsPage from '../pages/clubs/ClubDetailsPage.vue'
 import CreateClubPage from '../pages/clubs/CreateClubPage.vue'
 import EditClubPage from '../pages/clubs/EditClubPage.vue'
 import PersonsPage from '../pages/persons/PersonsPage.vue'
+import PersonLayoutPage from '../pages/persons/PersonLayoutPage.vue'
 import PersonViewPage from '../pages/persons/PersonViewPage.vue'
 import PersonPaymentsPage from '../pages/persons/PersonPaymentsPage.vue'
 import CreatePersonPaymentPage from '../pages/persons/CreatePersonPaymentPage.vue'
@@ -40,31 +41,37 @@ export function createAppRouter(
             { path: '/app/groups', component: GroupsPage },
             { path: '/app/groups/:id', component: GroupDetailsPage },
             { path: '/app/persons', component: PersonsPage },
-            { path: '/app/persons/:personId', component: PersonViewPage },
             {
-                path: '/app/persons/:personId/payments',
-                component: PersonPaymentsPage,
-                meta: { requiresAuth: true },
-            },
-            {
-                path: '/app/persons/:personId/payments/create',
-                component: CreatePersonPaymentPage,
-                meta: { requiresAuth: true },
-            },
-            {
-                path: '/app/persons/:personId/prompts',
-                component: PersonPromptsPage,
-                meta: { requiresAuth: true },
-            },
-            {
-                path: '/app/persons/:personId/prompts/create',
-                component: CreatePersonPromptPage,
-                meta: { requiresAuth: true },
-            },
-            {
-                path: '/app/persons/:personId/prompts/:promptId/edit',
-                component: EditPersonPromptPage,
-                meta: { requiresAuth: true },
+                path: '/app/persons/:personId',
+                component: PersonLayoutPage,
+                children: [
+                    { path: '', component: PersonViewPage },
+                    {
+                        path: 'payments',
+                        component: PersonPaymentsPage,
+                        meta: { requiresAuth: true },
+                    },
+                    {
+                        path: 'payments/create',
+                        component: CreatePersonPaymentPage,
+                        meta: { requiresAuth: true },
+                    },
+                    {
+                        path: 'prompts',
+                        component: PersonPromptsPage,
+                        meta: { requiresAuth: true },
+                    },
+                    {
+                        path: 'prompts/create',
+                        component: CreatePersonPromptPage,
+                        meta: { requiresAuth: true },
+                    },
+                    {
+                        path: 'prompts/:promptId/edit',
+                        component: EditPersonPromptPage,
+                        meta: { requiresAuth: true },
+                    },
+                ],
             },
             {
                 path: '/app/clubs/create',

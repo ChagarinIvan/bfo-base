@@ -42,7 +42,10 @@ describe('club details page', () => {
             global: {
                 plugins: [PrimeVue],
                 stubs: {
-                    RouterLink: { template: '<a><slot /></a>' },
+                    RouterLink: {
+                        props: ['to'],
+                        template: '<a :href="to"><slot /></a>',
+                    },
                 },
             },
         })

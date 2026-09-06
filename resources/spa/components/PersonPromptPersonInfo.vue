@@ -19,24 +19,30 @@ const clubs = ref<ClubOption[]>([])
 const users = ref<User[]>([])
 const loading = ref(true)
 const error = ref('')
+let latestRequest = 0
 
 async function load(): Promise<void> {
+    const requestId = ++latestRequest
+    const personId = props.personId
+
     try {
         const [loadedPerson, loadedRanks, loadedClubs, loadedUsers] =
             await Promise.all([
-                getPerson(props.personId),
+                getPerson(personId),
                 getRanks(),
                 getClubOptions(),
                 auth.isAuthenticated ? getUsers() : Promise.resolve([]),
             ])
+        if (requestId !== latestRequest) return
         person.value = loadedPerson
         ranks.value = loadedRanks
         clubs.value = loadedClubs
         users.value = loadedUsers
     } catch {
+        if (requestId !== latestRequest) return
         error.value = t('spa.person_prompt.person_error')
     } finally {
-        loading.value = false
+        if (requestId === latestRequest) loading.value = false
     }
 }
 
@@ -95,7 +101,7 @@ watch(
                         <th>{{ t('spa.person.club') }}</th>
                         <td>{{ clubLabel(person.clubId) }}</td>
                     </tr>
-                    <tr>
+                    <tr v-if="auth.isAuthenticated">
                         <th>{{ t('spa.person.created') }}</th>
                         <td>
                             <ImpressionDetails
@@ -105,7 +111,7 @@ watch(
                             />
                         </td>
                     </tr>
-                    <tr>
+                    <tr v-if="auth.isAuthenticated">
                         <th>{{ t('spa.person.updated') }}</th>
                         <td>
                             <ImpressionDetails
@@ -117,6 +123,7 @@ watch(
                     </tr>
                 </tbody>
             </table>
+            <slot name="actions" />
         </template>
     </Card>
 </template>

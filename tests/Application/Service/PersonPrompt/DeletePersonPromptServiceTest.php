@@ -47,6 +47,7 @@ final class DeletePersonPromptServiceTest extends TestCase
 
         $this->prompts->expects($this->once())->method('lockById')->with(5)->willReturn(null);
         $this->prompts->expects($this->never())->method('update');
+        $this->clock->expects($this->never())->method('now');
 
         $this->service->execute(new DeletePersonPrompt('5', new UserId(1)));
     }

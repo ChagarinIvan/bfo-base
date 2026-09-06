@@ -24,7 +24,7 @@ final class CreatePersonPromptsServiceTest extends TestCase
     private MockObject&PersonPromptRepository $prompts;
     private MockObject&PersonPromptGenerator $generator;
     private MockObject&PersonPromptFactory $factory;
-    private Clock&MockObject $clock;
+    private Clock $clock;
 
     #[Test]
     public function it_creates_only_missing_generated_prompts_without_relations(): void
@@ -54,7 +54,7 @@ final class CreatePersonPromptsServiceTest extends TestCase
         $this->prompts = $this->createMock(PersonPromptRepository::class);
         $this->generator = $this->createMock(PersonPromptGenerator::class);
         $this->factory = $this->createMock(PersonPromptFactory::class);
-        $this->clock = $this->createMock(Clock::class);
+        $this->clock = $this->createStub(Clock::class);
     }
 
     private function service(): CreatePersonPromptsService

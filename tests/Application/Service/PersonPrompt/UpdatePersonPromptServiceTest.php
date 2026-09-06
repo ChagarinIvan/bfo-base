@@ -58,6 +58,9 @@ final class UpdatePersonPromptServiceTest extends TestCase
 
         $this->prompts->expects($this->once())->method('lockById')->with(5)->willReturn(null);
         $this->prompts->expects($this->never())->method('update');
+        $this->persons->expects($this->never())->method('byId');
+        $this->metaphone->expects($this->never())->method('calculate');
+        $this->clock->expects($this->never())->method('now');
 
         $this->service->execute($this->command());
     }
@@ -89,6 +92,7 @@ final class UpdatePersonPromptServiceTest extends TestCase
         $this->prompts->expects($this->once())->method('lockById')->with(5)->willReturn($prompt);
         $this->persons->expects($this->once())->method('byId')->with(1)->willReturn(null);
         $this->metaphone->expects($this->never())->method('calculate');
+        $this->clock->expects($this->never())->method('now');
         $this->prompts->expects($this->never())->method('update');
 
         $this->expectException(PersonNotFound::class);

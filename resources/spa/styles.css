@@ -306,11 +306,15 @@ body {
     font-size: 1.35rem;
 }
 
-.person-view-actions {
+.person-info-actions {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
-    margin-bottom: 1.5rem;
+    margin-top: 1rem;
+}
+
+.person-info-tab-active {
+    box-shadow: 0 0 0 2px var(--p-primary-color);
 }
 
 .person-view-table {

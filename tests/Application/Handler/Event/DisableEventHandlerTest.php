@@ -50,7 +50,7 @@ final class DisableEventHandlerTest extends TestCase
         $persons->expects($this->exactly(2))->method('update');
         $facts = $this->createMock(RankFactsCollector::class);
         $facts->expects($this->exactly(2))->method('collect')->willReturn([]);
-        $clock = $this->createMock(Clock::class);
+        $clock = $this->createStub(Clock::class);
         $clock->method('now')->willReturn(Carbon::parse('2026-09-02 12:00:00'));
         $transaction = $this->createMock(TransactionManager::class);
         $transaction->expects($this->exactly(2))->method('run')->willReturnCallback(static fn (Closure $callback): mixed => $callback());

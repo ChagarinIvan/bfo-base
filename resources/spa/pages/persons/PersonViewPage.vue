@@ -12,10 +12,8 @@ import { getYears } from '../../api/years'
 import type { PaginationHeaders, ProtocolLine } from '../../api/types'
 import DateFilter from '../../components/DateFilter.vue'
 import FilterPanel from '../../components/FilterPanel.vue'
-import PersonPromptPersonInfo from '../../components/PersonPromptPersonInfo.vue'
 import YearFilter from '../../components/YearFilter.vue'
 import { t } from '../../i18n'
-import { useAuthStore } from '../../stores/auth'
 import {
     applyFieldErrors,
     debounce,
@@ -28,7 +26,6 @@ import {
 
 const route = useRoute()
 const router = useRouter()
-const auth = useAuthStore()
 const lines = ref<ProtocolLine[]>([])
 const years = ref<number[]>([])
 const year = ref<number | null>(null)
@@ -114,10 +111,10 @@ async function onYearChange(value: number | null): Promise<void> {
 
 function onCompetitionNameChange(value: string | undefined): void {
     competitionName.value = value ?? ''
+    delete fieldErrors.competitionName
 
     if (hasTooShortNameSearch(competitionName.value)) {
         debouncedCompetitionSearch.cancel()
-        void load(resetPageOnFilterChange(pagination.value.currentPage))
         return
     }
 
@@ -158,40 +155,6 @@ onBeforeUnmount(() => debouncedCompetitionSearch.cancel())
 </script>
 
 <template>
-    <PersonPromptPersonInfo :person-id="personId()" />
-
-    <div class="person-view-actions">
-        <Button
-            v-if="auth.isAuthenticated"
-            as="a"
-            :href="'/persons/' + personId() + '/edit'"
-            :label="t('spa.person.edit')"
-            icon="pi pi-pencil"
-            severity="secondary"
-        />
-        <Button
-            v-if="auth.isAuthenticated"
-            :label="t('spa.person.prompts')"
-            icon="pi pi-terminal"
-            severity="success"
-            @click="router.push('/app/persons/' + personId() + '/prompts')"
-        />
-        <Button
-            v-if="auth.isAuthenticated"
-            :label="t('spa.person.payments')"
-            icon="pi pi-dollar"
-            severity="warn"
-            @click="router.push('/app/persons/' + personId() + '/payments')"
-        />
-        <Button
-            as="a"
-            :href="'/ranks/person/' + personId()"
-            :label="t('spa.person.ranks')"
-            icon="pi pi-stopwatch"
-            severity="info"
-        />
-    </div>
-
     <h2 class="section-title">{{ t('spa.person_view.participation') }}</h2>
     <FilterPanel>
         <YearFilter
@@ -209,7 +172,6 @@ onBeforeUnmount(() => debouncedCompetitionSearch.cancel())
             <InputText
                 id="person-view-competition-name-filter"
                 v-model="competitionName"
-                :disabled="loading"
                 @update:model-value="onCompetitionNameChange"
             />
             <small v-if="fieldErrors.competitionName" class="field-error">{{
