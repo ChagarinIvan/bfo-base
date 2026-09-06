@@ -33,7 +33,7 @@ final readonly class PersonAssembler
     {
         return new ViewPersonRankHistoryDto(
             id: (string) $history->id,
-            personId: $history->person_id ? (string) $history->person_id : null,
+            personId: (string) $history->person_id,
             protocolLineId: (string) $history->protocol_line_id,
             distanceId: (string) $history->distance_id,
             eventId: (string) $history->event_id,

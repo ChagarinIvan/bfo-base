@@ -7,6 +7,7 @@ namespace Tests\Application\Service\Person;
 use App\Application\Dto\Auth\UserId;
 use App\Application\Dto\Person\UpdatePersonRankActivationDateDto;
 use App\Application\Dto\ProtocolLine\ProtocolLineAssembler;
+use App\Application\Dto\ProtocolLine\ViewProtocolLineDto;
 use App\Application\Service\Person\Exception\ProtocolLineNotFound;
 use App\Application\Service\Person\UpdatePersonRankActivationDate;
 use App\Application\Service\Person\UpdatePersonRankActivationDateService;
@@ -39,11 +40,22 @@ final class UpdatePersonRankActivationDateServiceTest extends TestCase
     }
 
     #[Test]
-    public function it_updates_activation_date_and_returns_person_id(): void
+    public function it_updates_activation_date_and_returns_protocol_line(): void
     {
         /** @var ProtocolLine&MockObject $line */
         $line = $this->createMock(ProtocolLine::class);
-        $line->expects($this->once())->method('__get')->with('person_id')->willReturn(42);
+        $line->expects($this->atLeast(9))->method('__get')->willReturnMap([
+            ['id', 7],
+            ['person_id', 42],
+            ['firstname', 'Jane'],
+            ['lastname', 'Doe'],
+            ['distance_id', 11],
+            ['year', null],
+            ['time', null],
+            ['place', null],
+            ['complete_rank', null],
+        ]);
+        $line->method('relationLoaded')->willReturn(false);
         $line->expects($this->once())
             ->method('activateRank')
             ->with(
@@ -66,7 +78,10 @@ final class UpdatePersonRankActivationDateServiceTest extends TestCase
             new ProtocolLineAssembler(),
         );
 
-        $this->assertSame(42, $service->execute($this->command('2026-09-10')));
+        $result = $service->execute($this->command('2026-09-10'));
+
+        $this->assertInstanceOf(ViewProtocolLineDto::class, $result);
+        $this->assertSame('42', $result->personId);
     }
 
     private function command(?string $date): UpdatePersonRankActivationDate

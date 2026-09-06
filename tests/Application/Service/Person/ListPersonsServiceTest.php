@@ -10,6 +10,7 @@ use App\Application\Dto\Person\SearchPersonDto;
 use App\Application\Service\Person\ListPersons;
 use App\Application\Service\Person\ListPersonsService;
 use App\Domain\Auth\Impression;
+use App\Domain\Person\Citizenship;
 use App\Domain\Person\Person;
 use App\Domain\Person\PersonRank;
 use App\Domain\Person\PersonRepository;
@@ -47,6 +48,7 @@ final class ListPersonsServiceTest extends TestCase
             ['lastname', 'Ivanov'],
             ['firstname', 'Ivan'],
             ['birthday', new Carbon('2001-06-04')],
+            ['citizenship', Citizenship::BELARUS],
             ['created', $this->impressionValue()],
             ['updated', $this->impressionValue()],
         ]);
@@ -65,7 +67,7 @@ final class ListPersonsServiceTest extends TestCase
         $items = $result->items();
         $this->assertSame('42', $items[0]->id);
         $this->assertSame('2001-06-04', $items[0]->birthday);
-        $this->assertObjectNotHasProperty('citizenship', $items[0]);
+        $this->assertSame(Citizenship::BELARUS->value, $items[0]->citizenship);
         $this->assertNull($items[0]->clubId);
     }
 

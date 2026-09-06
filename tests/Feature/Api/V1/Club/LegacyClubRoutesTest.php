@@ -10,11 +10,11 @@ use Tests\TestCase;
 final class LegacyClubRoutesTest extends TestCase
 {
     #[Test]
-    public function legacy_get_routes_redirect_to_spa(): void
+    public function legacy_get_routes_are_removed(): void
     {
-        $this->get('/clubs')->assertMovedPermanently()->assertRedirect('/app/clubs');
-        $this->get('/clubs/create')->assertMovedPermanently()->assertRedirect('/app/clubs/create');
-        $this->get('/clubs/42/show')->assertMovedPermanently()->assertRedirect('/app/clubs/42');
+        $this->get('/clubs')->assertNotFound();
+        $this->get('/clubs/create')->assertNotFound();
+        $this->get('/clubs/42/show')->assertNotFound();
     }
 
     #[Test]

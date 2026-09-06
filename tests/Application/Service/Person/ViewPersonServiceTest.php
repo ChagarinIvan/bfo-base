@@ -11,6 +11,7 @@ use App\Application\Service\Person\Exception\PersonNotFound;
 use App\Application\Service\Person\ViewPerson;
 use App\Application\Service\Person\ViewPersonService;
 use App\Domain\Auth\Impression;
+use App\Domain\Person\Citizenship;
 use App\Domain\Person\Person;
 use App\Domain\Person\PersonRank;
 use App\Domain\Person\PersonRepository;
@@ -61,6 +62,7 @@ final class ViewPersonServiceTest extends TestCase
         $person->lastname = 'Doe';
         $person->firstname = 'Jane';
         $person->birthday = null;
+        $person->citizenship = Citizenship::BELARUS;
         $person->club_id = null;
         $person->created = new Impression(Carbon::parse('2026-01-01'), 1);
         $person->updated = new Impression(Carbon::parse('2026-01-02'), 1);

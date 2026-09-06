@@ -46,6 +46,7 @@ function person(
         firstname: 'Runner',
         birthday,
         rankId: 1,
+        citizenship: 'belarus',
         clubId: null,
     }
 }

@@ -99,6 +99,9 @@ final class EloquentPersonRepository implements PersonRepository
         $query = Person::query()
             ->where('person.active', true)
             ->select('person.*')
+            ->orderBy('person.lastname')
+            ->orderBy('person.firstname')
+            ->orderBy('person.id')
         ;
 
         if ($criteria->hasParam('info')) {

@@ -55,7 +55,7 @@ final class ListPersonsActionTest extends TestCase
             ->assertJsonPath('0.id', '1')
             ->assertJsonPath('1.id', '2')
             ->assertJsonPath('0.birthday', '2001-01-01')
-            ->assertJsonMissingPath('0.citizenship')
+            ->assertJsonPath('0.citizenship', 'belarus')
             ->assertJsonPath('0.clubId', '1')
             ->assertJsonMissingPath('0.created')
         ;
