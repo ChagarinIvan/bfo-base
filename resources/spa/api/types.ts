@@ -94,6 +94,37 @@ export interface PersonPaymentRequest {
     date: string
 }
 
+export interface ProtocolLine {
+    id: string
+    personId: string
+    firstname: string
+    lastname: string
+    distanceId: string
+    eventId: string | null
+    competitionId: string | null
+    competitionName: string | null
+    eventName: string | null
+    eventDate: string | null
+    groupName: string | null
+    year: string | null
+    time: string | null
+    place: string | null
+    completeRank: string | null
+    created?: Impression | null
+    updated?: Impression | null
+}
+
+export interface ProtocolLineSearchQuery {
+    personId: string
+    withEvent: 1
+    withCompetition: 1
+    year?: number
+    competitionName?: string
+    date?: string
+    page?: number
+    perPage?: number
+}
+
 export interface PersonPromptSearchQuery {
     personId: string
     page?: number

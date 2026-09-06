@@ -24,7 +24,7 @@ vi.mock('vue-router', () => ({
 }))
 
 describe('club details page', () => {
-    it('loads persons and links both person names to the legacy page', async () => {
+    it('loads persons and links both person names to the SPA page', async () => {
         getClub.mockResolvedValue({ id: '42', name: 'Клуб', personsCount: 1 })
         getPersons.mockResolvedValue({
             data: [
@@ -59,7 +59,7 @@ describe('club details page', () => {
             true,
         )
         expect(wrapper.find('#club-person-club-filter').exists()).toBe(false)
-        expect(wrapper.findAll('a[href="/persons/7/show"]')).toHaveLength(2)
+        expect(wrapper.findAll('a[href="/app/persons/7"]')).toHaveLength(2)
 
         const filters = wrapper.findComponent(PersonFilters)
         filters.vm.$emit('update:rankId', 6)

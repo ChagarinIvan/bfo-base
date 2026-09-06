@@ -51,12 +51,12 @@ function birthYear(birthday: string | null): string {
     <DataTable :value="persons" striped-rows class="persons-table">
         <Column field="lastname" :header="t('spa.person.lastname')">
             <template #body="{ data }">
-                <a :href="`/persons/${data.id}/show`">{{ data.lastname }}</a>
+                <a :href="`/app/persons/${data.id}`">{{ data.lastname }}</a>
             </template>
         </Column>
         <Column field="firstname" :header="t('spa.person.firstname')">
             <template #body="{ data }">
-                <a :href="`/persons/${data.id}/show`">{{ data.firstname }}</a>
+                <a :href="`/app/persons/${data.id}`">{{ data.firstname }}</a>
             </template>
         </Column>
         <Column v-if="!hideClub" :header="t('spa.person.club')">

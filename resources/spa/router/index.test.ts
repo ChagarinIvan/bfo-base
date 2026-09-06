@@ -68,6 +68,14 @@ describe('SPA navigation guard', () => {
         expect(router.currentRoute.value.path).toBe('/app/competitions/42')
     })
 
+    it('resolves the public person details route', async () => {
+        const router = createAppRouter(createMemoryHistory())
+
+        await router.push('/app/persons/42')
+
+        expect(router.currentRoute.value.path).toBe('/app/persons/42')
+    })
+
     it('resolves the public clubs listing route', async () => {
         const router = createAppRouter(createMemoryHistory())
 

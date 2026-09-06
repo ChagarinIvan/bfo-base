@@ -7,54 +7,28 @@ namespace App\Repositories;
 use App\Domain\Cup\CupEvent\CupEvent;
 use App\Domain\Person\Citizenship;
 use App\Domain\ProtocolLine\ProtocolLine;
-use App\Domain\ProtocolLine\ProtocolLineRepository;
 use App\Domain\Shared\Criteria;
+use App\Infrastructure\Laravel\Eloquent\ProtocolLine\EloquentProtocolLinesRepository;
 use Illuminate\Database\ConnectionInterface;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Collection;
-use function array_key_exists;
-use function count;
 
-// TODO replace me in integration
-final readonly class ProtocolLinesRepository implements ProtocolLineRepository
+/**
+ * Temporary legacy adapter for protocol-line operations that are not part of
+ * the ProtocolLineRepository port yet.
+ */
+final readonly class ProtocolLinesRepository
 {
+    private EloquentProtocolLinesRepository $repository;
+
     public function __construct(private ConnectionInterface $db)
     {
-    }
-
-    public function byId(int $id, array $with = []): ?ProtocolLine
-    {
-        $protocolLineQuery = ProtocolLine::where('id', $id);
-
-        if (count($with) > 0) {
-            $protocolLineQuery->with($with);
-        }
-        return $protocolLineQuery->first();
-    }
-
-    public function lockById(int $id): ?ProtocolLine
-    {
-        /** @var ProtocolLine|null $protocolLine */
-        $protocolLine = ProtocolLine::query()->lockForUpdate()->find($id);
-
-        return $protocolLine;
-    }
-
-    public function getLineForPersonOnEvent(int $personId, int $eventId): int
-    {
-        return (int)$this->db
-            ->table('protocol_lines', 'pl')
-            ->join('distances AS d', 'd.id', '=', 'pl.distance_id')
-            ->where('pl.person_id', $personId)
-            ->where('d.event_id', $eventId)
-            ->value('pl.id')
-        ;
+        $this->repository = new EloquentProtocolLinesRepository();
     }
 
     public function byCriteria(Criteria $criteria): Collection
     {
-        return $this->buildQuery($criteria)->get();
+        return $this->repository->byCriteria($criteria);
     }
 
     public function getCupEventProtocolLinesForPersonsCertainAge(
@@ -148,142 +122,5 @@ final readonly class ProtocolLinesRepository implements ProtocolLineRepository
             ->whereIn('pl.id', $linesIds)
             ->update(['pl.person_id' => new Expression('pp.person_id')])
         ;
-    }
-
-    public function getProtocolLines(int $personId): Collection
-    {
-        $query = ProtocolLine::selectRaw('protocol_lines.*')
-            ->join('distances', 'distances.id', '=', 'protocol_lines.distance_id')
-            ->join('events', 'events.id', '=', 'distances.event_id')
-            ->where('protocol_lines.person_id', $personId)
-            ->orderBy('events.date')
-            ->orderBy('distance_id')
-        ;
-
-        return $query->get();
-    }
-
-    public function lockOneByCriteria(Criteria $criteria): ?ProtocolLine
-    {
-        /** @var ProtocolLine|null $protocolLine */
-        $protocolLine = $this
-            ->buildQuery($criteria)
-            ->lockForUpdate()
-            ->first()
-        ;
-
-        return $protocolLine;
-    }
-
-    public function oneByCriteria(Criteria $criteria): ?ProtocolLine
-    {
-        /** @var ProtocolLine|null $protocolLine */
-        $protocolLine = $this
-            ->buildQuery($criteria)
-            ->first()
-        ;
-
-        return $protocolLine;
-    }
-
-    public function update(ProtocolLine $protocolLine): void
-    {
-        $protocolLine->save();
-    }
-
-    private function buildQuery(Criteria $criteria): Builder
-    {
-        $query = ProtocolLine::select('protocol_lines.*')->with(['person.club']);
-
-        if (array_key_exists('completedRank', $criteria->sorting())) {
-            $query->orderByRaw("
-        CASE complete_rank
-            WHEN 'МСМК' THEN 1
-            WHEN 'МС' THEN 2
-            WHEN 'КМС' THEN 3
-            WHEN 'I' THEN 4
-            WHEN 'II' THEN 5
-            WHEN 'III' THEN 6
-            WHEN 'Iю' THEN 7
-            WHEN 'IIю' THEN 8
-            WHEN 'IIIю' THEN 9
-            ELSE 10
-        END ASC
-    ");
-        }
-
-        if ($criteria->hasParam('personId')) {
-            $query->where('person_id', $criteria->param('personId'));
-        }
-
-        if (
-            $criteria->hasOneParam(['dateFrom', 'dateTo', 'year', 'eventId', 'eventIds', 'massCompetition'])
-            || array_key_exists('eventDate', $criteria->sorting())
-        ) {
-            $query
-                ->join('distances', 'distances.id', '=', 'protocol_lines.distance_id')
-                ->join('events', 'events.id', '=', 'distances.event_id')
-                ->join('competitions', 'competitions.id', '=', 'events.competition_id')
-            ;
-        }
-
-        if ($criteria->hasParam('eventIds')) {
-            $query
-                ->whereIn('distances.event_id', $criteria->param('eventIds'))
-                ->addSelect('distances.event_id')
-            ;
-        }
-
-        if ($criteria->hasParam('massCompetition')) {
-            $query->where('competitions.mass', $criteria->param('massCompetition'));
-        }
-
-        if (array_key_exists('eventDate', $criteria->sorting())) {
-            $query->orderBy('events.date', $criteria->sorting()['eventDate']);
-        }
-
-        if ($criteria->hasParam('dateFrom')) {
-            $query->where('events.date', '>', $criteria->param('dateFrom'));
-        }
-
-        if ($criteria->hasParam('completedRank')) {
-            if ($criteria->param('completedRank')) {
-                $query->whereNotNull('complete_rank')->where('complete_rank', '!=', '');
-            } else {
-                $query->whereNull('complete_rank')->orWhere('complete_rank', '');
-            }
-        }
-
-        if ($criteria->hasParam('dateTo')) {
-            $query->where('events.date', '<=', $criteria->param('dateTo'));
-        }
-
-        if ($criteria->hasParam('year')) {
-            $query->where('events.date', 'LIKE', $criteria->param('year')->value . '-%');
-        }
-
-        if ($criteria->hasParam('eventId')) {
-            $query->where('distances.event_id', $criteria->param('eventId'));
-        }
-
-        if ($criteria->hasParam('distances')) {
-            $query
-                ->selectRaw('protocol_lines.*, max(persons_payments.date)')
-                ->join('person', 'person.id', '=', 'protocol_lines.person_id')
-                ->leftJoin('persons_payments', 'person.id', '=', 'persons_payments.person_id')
-                ->where('protocol_lines.vk', false)
-                ->whereIn('distance_id', $criteria->param('distances'))
-                ->groupBy('protocol_lines.id')
-            ;
-        }
-
-        if ($criteria->hasParam('paymentYear')) {
-            $query
-                ->where('persons_payments.year', '>=', $criteria->param('paymentYear'))
-                ->where('persons_payments.date', '<=', $criteria->param('eventDate'))
-            ;
-        }
-
-        return $query;
     }
 }

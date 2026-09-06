@@ -31,7 +31,7 @@ describe('person table', () => {
             },
         })
 
-        expect(wrapper.findAll('a[href="/persons/7/show"]')).toHaveLength(2)
+        expect(wrapper.findAll('a[href="/app/persons/7"]')).toHaveLength(2)
         expect(wrapper.text()).toContain('Клуб')
         expect(wrapper.text()).toContain('2001')
         expect(wrapper.text()).toContain('I')

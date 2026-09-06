@@ -12,6 +12,7 @@ use App\Domain\Person\Person;
 use App\Domain\PersonPrompt\PersonPrompt;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\Shared\Criteria;
+use App\Infrastructure\Laravel\Eloquent\ProtocolLine\EloquentProtocolLinesRepository;
 use App\Repositories\ProtocolLinesRepository;
 use Database\Seeders\ProtocolLinesSeeder;
 use Illuminate\Database\ConnectionInterface;
@@ -26,7 +27,8 @@ final class ProtocolLinesRepositoryTest extends TestCase
 {
     use RefreshDatabase;
 
-    private ProtocolLinesRepository $repository;
+    private EloquentProtocolLinesRepository $repository;
+    private ProtocolLinesRepository $legacyRepository;
 
     public static function criteriaDataProvider(): Iterator
     {
@@ -41,7 +43,8 @@ final class ProtocolLinesRepositoryTest extends TestCase
         parent::setUp();
         $app = $this->createApplication();
         RefreshDatabaseState::$migrated = false;
-        $this->repository = new ProtocolLinesRepository($app->get(ConnectionInterface::class));
+        $this->repository = new EloquentProtocolLinesRepository();
+        $this->legacyRepository = new ProtocolLinesRepository($app->get(ConnectionInterface::class));
     }
 
     #[Test]
@@ -70,13 +73,13 @@ final class ProtocolLinesRepositoryTest extends TestCase
 
         $this->createProtocolLine(id: 101, preparedLine: 'same prompt');
 
-        $this->repository->identByEqualPersonPrompt(collect([101]));
+        $this->legacyRepository->identByEqualPersonPrompt(collect([101]));
 
         $this->assertNull(ProtocolLine::find(101)->person_id);
 
         PersonPrompt::factory(state: ['person_id' => 2, 'prompt' => 'same prompt'])->createOne();
 
-        $this->repository->identByEqualPersonPrompt(collect([101]));
+        $this->legacyRepository->identByEqualPersonPrompt(collect([101]));
 
         $this->assertSame(2, ProtocolLine::find(101)->person_id);
     }
