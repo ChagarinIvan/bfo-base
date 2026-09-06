@@ -4,7 +4,7 @@
 
 ## Summary
 
-Migrate the public Blade View Person entry point to /app/persons/:personId. Reuse the existing PersonPromptPersonInfo component as a persistent parent layout, preserve the four legacy destinations, and add a paginated protocol-line API/query for the participation table. The query will support person ownership, year, competition name and event date filters, while typed ProtocolLineResources make event and competition loading explicit. Standard protocol-line reads use EloquentProtocolLinesRepository; cup/identification-specific operations remain in the legacy adapter until a later refactoring.
+Migrate the public Blade View Person entry point to /app/persons/:personId. Reuse the existing PersonPromptPersonInfo component as a persistent parent layout, preserve the five person destinations, and add a paginated protocol-line API/query for the participation table. The query will support person ownership, year, competition name and event date filters, while typed ProtocolLineResources make event and competition loading explicit. Standard protocol-line reads use EloquentProtocolLinesRepository; cup/identification-specific operations remain in the legacy adapter until a later refactoring.
 
 ## Technical Context
 
@@ -48,7 +48,7 @@ Migrate the public Blade View Person entry point to /app/persons/:personId. Reus
 ### Frontend
 
 1. Add protocolLines API helper and TypeScript types.
-2. Add PersonLayoutPage with PersonPromptPersonInfo and a shared four-destination navigation block; render the selected person section through a nested RouterView.
+2. Add PersonLayoutPage with PersonPromptPersonInfo and a shared five-destination navigation block; render the selected person section through a nested RouterView.
 3. Add PersonViewPage as the participation child page, and nest payments/prompts (including their forms) under /app/persons/:personId so the Person Info card is not remounted during tab navigation.
 4. Reuse shared loading/error/empty, pagination, debounce and stale-request patterns from CompetitionsPage and GroupDetailsPage.
 5. Add translations for page title, actions, filters, table columns and states.

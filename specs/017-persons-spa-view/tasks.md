@@ -37,13 +37,13 @@
 
 ## Phase 4: User Story 1 - Person page and actions (Priority: P1)
 
-**Goal**: Render the public SPA View Person page with the shared Person Info module and four preserved destinations.
+**Goal**: Render the public SPA View Person page with the shared Person Info module and five preserved destinations.
 
-**Independent Test**: Vitest mounts an existing and unknown-person page, verifies Person Info placement, four destinations, auth visibility and loading/error states.
+**Independent Test**: Vitest mounts an existing and unknown-person page, verifies Person Info placement, five destinations, auth visibility and loading/error states.
 
 ### Tests first
 
-- [x] T014 [P] [US1] Add PersonViewPage component tests for person context, four action destinations, anonymous visibility, loading/error/empty states and stale person requests in resources/spa/pages/persons/PersonViewPage.test.ts
+- [x] T014 [P] [US1] Add PersonViewPage component tests for person context, five action destinations, anonymous visibility, loading/error/empty states and stale person requests in resources/spa/pages/persons/PersonViewPage.test.ts
 - [x] T015 [P] [US1] Add router coverage for /app/persons/:personId and its public access policy in resources/spa/router/index.test.ts
 
 ### Implementation
@@ -98,6 +98,7 @@
 - [x] T033 [US1] Keep the shared Person Info card mounted while switching between person SPA tabs and cover the parent/child route structure in resources/spa/router/index.test.ts and resources/spa/components/PersonInfoNavigation.test.ts
 - [x] T034 [US4] Prevent short competition-name input from sending validation requests, disabling the field or losing focus; cover the behavior in resources/spa/pages/persons/PersonViewPage.test.ts
 - [x] T035 [US1] Hide created/updated impression rows for anonymous visitors and guard stale Person Info responses in resources/spa/components/PersonPromptPersonInfo.vue and resources/spa/components/PersonPromptPersonInfo.test.ts
+- [x] T036 [US1] Add the competitions tab to shared Person Info navigation, returning to the person participation page, with SPA coverage and updated acceptance documentation
 
 ## Dependencies and execution order
 
@@ -119,4 +120,4 @@
 
 ## MVP
 
-The MVP is T001-T023: public person page, shared Person Info, four preserved actions, protocol-line API, table, links and pagination. Filters and race-condition hardening complete the MVP acceptance quality in T024-T028.
+The MVP is T001-T023: public person page, shared Person Info, five preserved actions, protocol-line API, table, links and pagination. Filters and race-condition hardening complete the MVP acceptance quality in T024-T028.

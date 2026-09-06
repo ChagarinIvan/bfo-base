@@ -99,7 +99,14 @@ watch(
                     </tr>
                     <tr>
                         <th>{{ t('spa.person.club') }}</th>
-                        <td>{{ clubLabel(person.clubId) }}</td>
+                        <td>
+                            <RouterLink
+                                v-if="person.clubId"
+                                :to="`/app/clubs/${person.clubId}`"
+                                >{{ clubLabel(person.clubId) }}</RouterLink
+                            >
+                            <span v-else>—</span>
+                        </td>
                     </tr>
                     <tr v-if="auth.isAuthenticated">
                         <th>{{ t('spa.person.created') }}</th>

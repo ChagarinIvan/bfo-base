@@ -29,7 +29,7 @@ Expected coverage:
 Expected UI behavior:
 
 1. Open /app/persons/{personId}.
-2. Confirm the common Person Info module appears above the four actions.
+2. Confirm the common Person Info module appears above the five actions.
 3. Confirm the participation table and all three filters.
 4. Change filters and pagination; only the current result remains visible.
 5. Confirm empty, API error and unknown-person states.

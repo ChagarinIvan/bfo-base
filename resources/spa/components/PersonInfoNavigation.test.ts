@@ -27,7 +27,7 @@ describe('person info navigation', () => {
         auth.isAuthenticated = true
     })
 
-    it('keeps the four person destinations in one navigation block', async () => {
+    it('keeps the five person destinations in one navigation block', async () => {
         const appRouter = router()
         await appRouter.push('/app/persons/7')
 
@@ -46,7 +46,7 @@ describe('person info navigation', () => {
             },
         })
 
-        expect(wrapper.findAll('button')).toHaveLength(4)
+        expect(wrapper.findAll('button')).toHaveLength(5)
 
         await wrapper.findAll('button')[1].trigger('click')
         await flushPromises()
@@ -57,5 +57,9 @@ describe('person info navigation', () => {
         expect(appRouter.currentRoute.value.path).toBe(
             '/app/persons/7/payments',
         )
+
+        await wrapper.findAll('button')[4].trigger('click')
+        await flushPromises()
+        expect(appRouter.currentRoute.value.path).toBe('/app/persons/7')
     })
 })

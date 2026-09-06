@@ -46,6 +46,15 @@ function person(id: string, lastname: string): Person {
     }
 }
 
+function clubOption(id: string, name: string) {
+    return { id, name }
+}
+
+const routerLinkStub = {
+    props: ['to'],
+    template: '<a :href="to"><slot /></a>',
+}
+
 describe('person prompt person info', () => {
     beforeEach(() => {
         vi.resetAllMocks()
@@ -72,6 +81,7 @@ describe('person prompt person info', () => {
                     },
                     ImpressionDetails: true,
                     Message: { template: '<div><slot /></div>' },
+                    RouterLink: routerLinkStub,
                 },
             },
         })
@@ -100,6 +110,7 @@ describe('person prompt person info', () => {
                     },
                     ImpressionDetails: true,
                     Message: { template: '<div><slot /></div>' },
+                    RouterLink: routerLinkStub,
                 },
             },
         })
@@ -107,5 +118,29 @@ describe('person prompt person info', () => {
 
         expect(wrapper.text()).not.toContain('Створана')
         expect(wrapper.text()).not.toContain('Зменена')
+    })
+
+    it('links the person club to its details page', async () => {
+        getPerson.mockResolvedValue({ ...person('1', 'Member'), clubId: '7' })
+        getClubOptions.mockResolvedValue([clubOption('7', 'Orienteering Club')])
+
+        const wrapper = mount(PersonPromptPersonInfo, {
+            props: { personId: '1' },
+            global: {
+                stubs: {
+                    Card: {
+                        template:
+                            '<div><slot name="title" /><slot name="content" /></div>',
+                    },
+                    ImpressionDetails: true,
+                    Message: { template: '<div><slot /></div>' },
+                    RouterLink: routerLinkStub,
+                },
+            },
+        })
+        await flushPromises()
+
+        expect(wrapper.get('a').attributes('href')).toBe('/app/clubs/7')
+        expect(wrapper.get('a').text()).toBe('Orienteering Club')
     })
 })

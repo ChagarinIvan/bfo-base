@@ -54,5 +54,19 @@ const auth = useAuthStore()
             icon="pi pi-stopwatch"
             severity="info"
         />
+        <RouterLink
+            v-slot="{ navigate, isExactActive }"
+            :to="`/app/persons/${props.personId}`"
+            custom
+        >
+            <Button
+                type="button"
+                :class="{ 'person-info-tab-active': isExactActive }"
+                :label="t('spa.person.events_count')"
+                icon="pi pi-trophy"
+                severity="contrast"
+                @click="navigate"
+            />
+        </RouterLink>
     </div>
 </template>
