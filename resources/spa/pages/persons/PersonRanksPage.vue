@@ -18,13 +18,6 @@ import ActionButton from '../../components/actions/ActionButton.vue'
 import { t } from '../../i18n'
 import { useAuthStore } from '../../stores/auth'
 
-interface RankHistoryGroup {
-    rankId: number
-    rank: string
-    items: PersonRankHistory[]
-    startedOn: string
-}
-
 const route = useRoute()
 const auth = useAuthStore()
 const history = ref<PersonRankHistory[]>([])
@@ -36,45 +29,15 @@ const selected = ref<PersonRankHistory | null>(null)
 const editDate = ref('')
 const dateError = ref('')
 const saving = ref(false)
-const expandedRankIds = ref<Set<number>>(new Set())
 let latestRequest = 0
 
-const groupedHistory = computed<RankHistoryGroup[]>(() => {
-    const groups = new Map<number, RankHistoryGroup>()
-
-    for (const item of history.value) {
-        const group = groups.get(item.rankId)
-        if (group) {
-            group.items.push(item)
-            if (item.startedOn < group.startedOn) {
-                group.startedOn = item.startedOn
-            }
-            continue
-        }
-
-        groups.set(item.rankId, {
-            rankId: item.rankId,
-            rank: rankLabel(item.rankId),
-            items: [item],
-            startedOn: item.startedOn,
-        })
-    }
-
-    return [...groups.values()]
-})
-
-function groupFinishedOn(group: RankHistoryGroup): string | null {
-    if (group.items.some((item) => item.finishedOn === null)) return null
-
-    const finishedDates = group.items
-        .map((item) => item.finishedOn)
-        .filter((finishedOn): finishedOn is string => finishedOn !== null)
-
-    return finishedDates.reduce(
-        (latest, finishedOn) => (finishedOn > latest ? finishedOn : latest),
-        finishedDates[0]!,
-    )
-}
+const timeline = computed(() =>
+    [...history.value].sort(
+        (left, right) =>
+            right.achievedOn.localeCompare(left.achievedOn) ||
+            Number(right.id) - Number(left.id),
+    ),
+)
 
 const dialogVisible = computed({
     get: () => selected.value !== null,
@@ -89,6 +52,21 @@ function personId(): string {
 
 function rankLabel(id: number): string {
     return ranks.value.find((rank) => rank.id === id)?.label ?? String(id)
+}
+
+function changeTypeLabel(changeType: string): string {
+    switch (changeType) {
+        case 'completion':
+            return t('spa.person_rank.change_completion')
+        case 'extension':
+            return t('spa.person_rank.change_extension')
+        case 'promotion':
+            return t('spa.person_rank.change_promotion')
+        case 'downgrade':
+            return t('spa.person_rank.change_downgrade')
+        default:
+            return '—'
+    }
 }
 
 function eventFor(item: PersonRankHistory): Event | undefined {
@@ -134,20 +112,6 @@ async function initialize(): Promise<void> {
         error.value = t('spa.person_rank.error')
         loading.value = false
     }
-}
-
-function isRankExpanded(rankId: number): boolean {
-    return expandedRankIds.value.has(rankId)
-}
-
-function toggleRank(rankId: number): void {
-    const next = new Set(expandedRankIds.value)
-    if (next.has(rankId)) {
-        next.delete(rankId)
-    } else {
-        next.add(rankId)
-    }
-    expandedRankIds.value = next
 }
 
 function eventUrl(item: PersonRankHistory): string {
@@ -226,105 +190,66 @@ onBeforeUnmount(() => {
         />
     </Message>
     <Message
-        v-else-if="!groupedHistory.length"
+        v-else-if="!timeline.length"
         severity="secondary"
         :closable="false"
     >
         {{ t('spa.person_rank.empty') }}
     </Message>
-    <div v-else class="rank-history-groups">
-        <div class="rank-history-group-header" aria-hidden="true">
-            <span />
-            <span>{{ t('spa.person_rank.rank') }}</span>
-            <span>{{ t('spa.person_rank.confirmations') }}</span>
-            <span>{{ t('spa.person_rank.started') }}</span>
-            <span>{{ t('spa.person_rank.finished') }}</span>
-        </div>
-        <section v-for="group in groupedHistory" :key="group.rankId">
-            <button
-                class="rank-history-group"
-                type="button"
-                :aria-expanded="isRankExpanded(group.rankId)"
-                @click="toggleRank(group.rankId)"
-            >
-                <i
-                    :class="
-                        isRankExpanded(group.rankId)
-                            ? 'pi pi-chevron-down'
-                            : 'pi pi-chevron-right'
-                    "
-                    aria-hidden="true"
-                />
-                <span>{{ group.rank }}</span>
-                <span class="rank-history-group-count">
-                    {{ group.items.length }}
-                </span>
-                <span>{{ group.startedOn }}</span>
-                <span>{{
-                    groupFinishedOn(group) ?? t('spa.person_rank.current')
-                }}</span>
-            </button>
-            <DataTable
-                v-if="isRankExpanded(group.rankId)"
-                :value="group.items"
-                striped-rows
-            >
-                <Column :header="t('spa.person_rank.rank')">
-                    <template #body="{ data }">{{
-                        rankLabel(data.rankId)
-                    }}</template>
-                </Column>
-                <Column
-                    field="achievedOn"
-                    :header="t('spa.person_rank.completed')"
-                />
-                <Column :header="t('spa.person_rank.activated')">
-                    <template #body="{ data }">{{
-                        display(data.activatedOn)
-                    }}</template>
-                </Column>
-                <Column :header="t('spa.person_rank.finished')">
-                    <template #body="{ data }">{{
-                        display(data.finishedOn)
-                    }}</template>
-                </Column>
-                <Column :header="t('spa.person_rank.competition')">
-                    <template #body="{ data }">
-                        <RouterLink
-                            v-if="data.competitionId"
-                            :to="`/app/competitions/${data.competitionId}`"
-                            >{{ display(competitionName(data)) }}</RouterLink
-                        >
-                        <span v-else>{{ display(competitionName(data)) }}</span>
-                    </template>
-                </Column>
-                <Column :header="t('spa.person_rank.event')">
-                    <template #body="{ data }">
-                        <a :href="eventUrl(data)">{{
-                            display(eventName(data))
-                        }}</a>
-                    </template>
-                </Column>
-                <Column
-                    v-if="auth.isAuthenticated"
-                    :header="t('spa.person.actions')"
+    <DataTable
+        v-else
+        :value="timeline"
+        striped-rows
+        class="rank-history-timeline"
+    >
+        <Column field="achievedOn" :header="t('spa.person_rank.completed')" />
+        <Column :header="t('spa.person_rank.rank')">
+            <template #body="{ data }">{{ rankLabel(data.rankId) }}</template>
+        </Column>
+        <Column :header="t('spa.person_rank.change_type')">
+            <template #body="{ data }">{{
+                changeTypeLabel(data.changeType)
+            }}</template>
+        </Column>
+        <Column :header="t('spa.person_rank.activated')">
+            <template #body="{ data }">{{
+                display(data.activatedOn)
+            }}</template>
+        </Column>
+        <Column field="startedOn" :header="t('spa.person_rank.started')" />
+        <Column :header="t('spa.person_rank.finished')">
+            <template #body="{ data }">{{ display(data.finishedOn) }}</template>
+        </Column>
+        <Column :header="t('spa.person_rank.competition')">
+            <template #body="{ data }">
+                <RouterLink
+                    v-if="data.competitionId"
+                    :to="`/app/competitions/${data.competitionId}`"
+                    >{{ display(competitionName(data)) }}</RouterLink
                 >
-                    <template #body="{ data }">
-                        <ActionButton
-                            :label="
-                                data.activatedOn
-                                    ? t('spa.person_rank.edit_activation')
-                                    : t('spa.person_rank.activate')
-                            "
-                            icon="pi pi-calendar"
-                            severity="info"
-                            @click="openActivation(data)"
-                        />
-                    </template>
-                </Column>
-            </DataTable>
-        </section>
-    </div>
+                <span v-else>{{ display(competitionName(data)) }}</span>
+            </template>
+        </Column>
+        <Column :header="t('spa.person_rank.event')">
+            <template #body="{ data }">
+                <a :href="eventUrl(data)">{{ display(eventName(data)) }}</a>
+            </template>
+        </Column>
+        <Column v-if="auth.isAuthenticated" :header="t('spa.person.actions')">
+            <template #body="{ data }">
+                <ActionButton
+                    :label="
+                        data.activatedOn
+                            ? t('spa.person_rank.edit_activation')
+                            : t('spa.person_rank.activate')
+                    "
+                    icon="pi pi-calendar"
+                    severity="info"
+                    @click="openActivation(data)"
+                />
+            </template>
+        </Column>
+    </DataTable>
 
     <Dialog
         v-model:visible="dialogVisible"

@@ -21,7 +21,7 @@
 
 1. Keep ranks as a child of the Person Info layout.
 2. Request rank history separately and request referenced events with `withCompetition=1&ids[]=...`.
-3. Group all history rows by rank. Render a collapsed summary row with confirmation count and an expandable detail table with links and activation actions.
+3. Return histories in descending achievement-date order and render a flat reverse-chronological timeline with links and activation actions.
 4. Keep anonymous/authenticated behavior.
 
 ### Cleanup

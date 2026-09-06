@@ -85,11 +85,10 @@ describe('person ranks page', () => {
         expect(wrapper.find('#person-rank-year-filter').exists()).toBe(false)
         expect(wrapper.find('#person-rank-filter').exists()).toBe(false)
         expect(wrapper.text()).toContain('Гісторыя разрадаў')
-        expect(wrapper.find('.rank-history-group-count').text()).toBe('1')
-        expect(wrapper.text()).toContain('2024-06-15')
-        expect(wrapper.text()).toContain('2026-06-15')
-        await wrapper.find('.rank-history-group').trigger('click')
-        expect(wrapper.findAll('.column')).toHaveLength(7)
+        expect(wrapper.find('.rank-history-group').exists()).toBe(false)
+        expect(wrapper.find('.rank-history-timeline').exists()).toBe(true)
+        expect(wrapper.findAll('.column')).toHaveLength(9)
+        expect(wrapper.text()).toContain('Тып змены')
     })
 
     it('hides the mutation column for anonymous users', async () => {

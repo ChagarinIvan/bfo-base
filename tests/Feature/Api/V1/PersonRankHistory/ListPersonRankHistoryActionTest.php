@@ -25,7 +25,7 @@ final class ListPersonRankHistoryActionTest extends TestCase
     {
         $person = $this->createPerson();
         $line = $this->createProtocolLine($person);
-        $history = PersonRankHistory::query()->create([
+        $olderHistory = PersonRankHistory::query()->create([
             'person_id' => $person->id,
             'protocol_line_id' => $line->id,
             'distance_id' => $line->distance_id,
@@ -38,6 +38,20 @@ final class ListPersonRankHistoryActionTest extends TestCase
             'started_on' => '2024-06-15',
             'finished_on' => '2026-06-15',
         ]);
+        $newerLine = $this->createProtocolLine($person);
+        $newerHistory = PersonRankHistory::query()->create([
+            'person_id' => $person->id,
+            'protocol_line_id' => $newerLine->id,
+            'distance_id' => $newerLine->distance_id,
+            'event_id' => $newerLine->distance->event_id,
+            'competition_id' => $newerLine->distance->event->competition_id,
+            'rank' => Rank::FirstRank,
+            'change_type' => 'downgrade',
+            'achieved_on' => '2024-06-02',
+            'activated_on' => '2024-06-02',
+            'started_on' => '2024-06-02',
+            'finished_on' => '2026-06-02',
+        ]);
 
         $this->getJson("/api/v1/persons/{$person->id}/rank-histories")
             ->assertOk()
@@ -48,11 +62,12 @@ final class ListPersonRankHistoryActionTest extends TestCase
                     'activatedOn', 'startedOn', 'finishedOn',
                 ],
             ])
-            ->assertJsonPath('0.id', (string) $history->id)
+            ->assertJsonPath('0.id', (string) $newerHistory->id)
             ->assertJsonPath('0.personId', (string) $person->id)
-            ->assertJsonPath('0.protocolLineId', (string) $line->id)
+            ->assertJsonPath('0.protocolLineId', (string) $newerLine->id)
             ->assertJsonMissingPath('0.eventName')
-            ->assertJsonMissingPath('0.competitionName');
+            ->assertJsonMissingPath('0.competitionName')
+            ->assertJsonPath('1.id', (string) $olderHistory->id);
     }
 
     #[Test]

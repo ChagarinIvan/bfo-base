@@ -6,21 +6,21 @@ Base path: /api/v1.
 
 GET /persons/{personId}/rank-histories is public.
 
-The response contains all history records for the active person without pagination. Unknown or inactive persons return `[]`. Each item contains only its own persisted fields:
+The response contains all history records for the active person without pagination, ordered by `achievedOn` descending and then ID descending. Unknown or inactive persons return `[]`. Each item contains only its own persisted fields:
 
 {
-  "id": "501",
-  "personId": "42",
-  "protocolLineId": "901",
-  "distanceId": "77",
-  "eventId": "12",
-  "competitionId": "3",
-  "rankId": 7,
-  "changeType": "completion",
-  "achievedOn": "2024-06-01",
-  "activatedOn": "2024-06-15",
-  "startedOn": "2024-06-15",
-  "finishedOn": "2026-06-15"
+"id": "501",
+"personId": "42",
+"protocolLineId": "901",
+"distanceId": "77",
+"eventId": "12",
+"competitionId": "3",
+"rankId": 7,
+"changeType": "completion",
+"achievedOn": "2024-06-01",
+"activatedOn": "2024-06-15",
+"startedOn": "2024-06-15",
+"finishedOn": "2026-06-15"
 }
 
 The SPA resolves rank labels from `GET /ranks` and event/competition labels from `GET /events?withCompetition=1&ids[]=...`.

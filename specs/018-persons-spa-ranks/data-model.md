@@ -22,13 +22,11 @@ The list query is scoped through the active person and eager-loads only the rela
 
 GET /api/v1/events?withCompetition=1&ids[]=...
 
-## Frontend group model
+## Frontend timeline model
 
-- all rows are grouped by rankId;
-- the rank catalog provides the label for each group;
-- a group summary displays the rank and confirmation count;
-- a group summary displays the earliest startedOn and the latest finishedOn; an unfinished item marks the group as current;
-- expanded groups display the detailed history table.
+- API returns rows ordered by achievedOn descending and ID descending as a stable tie-breaker;
+- the SPA preserves this order and renders a flat timeline table;
+- each row shows the rank label, localized changeType, dates and links to its event and competition.
 
 ## Mutations and catalog
 

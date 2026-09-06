@@ -65,7 +65,10 @@ class Person extends AggregatedModel
     /** @return HasMany<PersonRankHistory, $this> */
     public function rankHistories(): HasMany
     {
-        return $this->hasMany(PersonRankHistory::class);
+        return $this->hasMany(PersonRankHistory::class)
+            ->orderByDesc('achieved_on')
+            ->orderByDesc('id')
+        ;
     }
 
     public function club(): HasOne
