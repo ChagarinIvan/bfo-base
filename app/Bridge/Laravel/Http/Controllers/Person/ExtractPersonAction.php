@@ -41,6 +41,6 @@ class ExtractPersonAction extends BaseController
         $rebuildPersonRanksService->execute(new RebuildPersonRanks($person->id, $userId));
         $oldPersons->filter()->each(static fn (int $personId) => $rebuildPersonRanksService->execute(new RebuildPersonRanks($personId, $userId)));
 
-        return $this->redirector->action(ShowPersonAction::class, [$person->id]);
+        return $this->redirector->to('/app/persons/' . $person->id);
     }
 }

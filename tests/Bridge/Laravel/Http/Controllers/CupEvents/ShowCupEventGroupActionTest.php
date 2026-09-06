@@ -64,13 +64,13 @@ final class ShowCupEventGroupActionTest extends TestCase
             ->assertSee('<a href="http://localhost/events/d/101">Спринт - 2024-04-12</a>', false)
             ->assertSee('<a href="http://localhost/cups/101/101/M_0_/show" class="text-decoration-none nav-link active">', false)
             ->assertSee('<a href="http://localhost/cups/101/101/W_0_/show" class="text-decoration-none nav-link ">', false)
-            ->assertSee('<a href="http://localhost/persons/101/show">Миссюревич Алексей</a>', false)
+            ->assertSee('<a href="/app/persons/101">Миссюревич Алексей</a>', false)
             ->assertSee('<td><b class="text-info">1000</b></td>', false)
-            ->assertSee('<a href="http://localhost/persons/103/show">Воробьев Дмитрий</a>', false)
+            ->assertSee('<a href="/app/persons/103">Воробьев Дмитрий</a>', false)
             ->assertSee('<td>660</td>', false)
-            ->assertSee('<a href="http://localhost/persons/102/show">Волчкевич Ярослав</a>', false)
+            ->assertSee('<a href="/app/persons/102">Волчкевич Ярослав</a>', false)
             ->assertSee('<td>621</td>', false)
-            ->assertSee('<a href="http://localhost/persons/104/show">Виненко Александр</a>', false)
+            ->assertSee('<a href="/app/persons/104">Виненко Александр</a>', false)
             ->assertSee('<td>598</td>', false)
         ;
     }
@@ -94,10 +94,10 @@ final class ShowCupEventGroupActionTest extends TestCase
             ->assertSee('<a href="/app/competitions/101">Grodno cup</a>', false)
             ->assertSee('<a href="http://localhost/events/d/101">Спринт - 2024-04-12</a>', false)
             ->assertSee('<a href="http://localhost/cups/101/101/M_12_/show" class="text-decoration-none nav-link ">', false)
-            ->assertSee('<a href="http://localhost/persons/102/show">Волчкевич Ярослав</a>', false)
+            ->assertSee('<a href="/app/persons/102">Волчкевич Ярослав</a>', false)
             ->assertSee('<td>900</td>', false)
             ->assertDontSee('Миссюревич', false)
-            ->assertSee('<a href="http://localhost/persons/103/show">Виненко Александр</a>', false)
+            ->assertSee('<a href="/app/persons/103">Виненко Александр</a>', false)
             ->assertSee('<td>880</td>', false)
         ;
     }
@@ -121,10 +121,10 @@ final class ShowCupEventGroupActionTest extends TestCase
             ->assertSee('<a href="/app/competitions/101">Grodno cup</a>', false)
             ->assertSee('<a href="http://localhost/events/d/101">Спринт - 2024-04-12</a>', false)
             ->assertSee('<a href="http://localhost/cups/101/101/M_12_/show" class="text-decoration-none nav-link ">', false)
-            ->assertSee('<a href="http://localhost/persons/103/show">Колядко Полина</a>', false)
+            ->assertSee('<a href="/app/persons/103">Колядко Полина</a>', false)
             ->assertSee('<td>850</td>', false)
             ->assertDontSee('Журомская', false)
-            ->assertSee('<a href="http://localhost/persons/102/show">Холод Ирина</a>', false)
+            ->assertSee('<a href="/app/persons/102">Холод Ирина</a>', false)
             ->assertSee('<td>781</td>', false)
         ;
     }
@@ -148,14 +148,14 @@ final class ShowCupEventGroupActionTest extends TestCase
             ->assertSee('<a href="/app/competitions/101">Grodno cup</a>', false)
             ->assertSee('<a href="http://localhost/events/d/101">Спринт - 2024-04-12</a>', false)
             ->assertSee('<a href="http://localhost/cups/101/101/M_20_/show" class="text-decoration-none nav-link active">', false)
-            ->assertSee('<a href="http://localhost/persons/101/show">Миссюревич Алексей</a>', false)
+            ->assertSee('<a href="/app/persons/101">Миссюревич Алексей</a>', false)
             ->assertSee('<td><b class="text-info">1000</b></td>', false)
             ->assertDontSee('Волчкевич', false)
             ->assertDontSee('Test2', false)
             ->assertDontSee('Test4', false)
-            ->assertSee('<a href="http://localhost/persons/105/show">Test3 Test3</a>', false)
+            ->assertSee('<a href="/app/persons/105">Test3 Test3</a>', false)
             ->assertSee('<td>404</td>', false)
-            ->assertSee('<a href="http://localhost/persons/103/show">Test1 Test1</a>', false)
+            ->assertSee('<a href="/app/persons/103">Test1 Test1</a>', false)
             ->assertSee('<td>252</td>', false)
         ;
     }
@@ -179,15 +179,15 @@ final class ShowCupEventGroupActionTest extends TestCase
             ->assertSee('<a href="/app/competitions/101">Grodno cup</a>', false)
             ->assertSee('<a href="http://localhost/events/d/102">Спринт - 2024-04-12</a>', false)
             ->assertSee('<a href="http://localhost/cups/101/101/M_20_/show" class="text-decoration-none nav-link active">', false)
-            ->assertSee('<a href="http://localhost/persons/101/show">Миссюревич Алексей</a>', false)
+            ->assertSee('<a href="/app/persons/101">Миссюревич Алексей</a>', false)
             ->assertSee('<td><b class="text-info">1000</b></td>', false)
-            ->assertSee('<a href="http://localhost/persons/102/show">Волчкевич Ярослав</a>', false)
+            ->assertSee('<a href="/app/persons/102">Волчкевич Ярослав</a>', false)
             ->assertSee('<td>621</td>', false)
             ->assertDontSee('Test2', false)
             ->assertDontSee('Test4', false)
-            ->assertSee('<a href="http://localhost/persons/105/show">Test3 Test3</a>', false)
+            ->assertSee('<a href="/app/persons/105">Test3 Test3</a>', false)
             ->assertSee('<td>404</td>', false)
-            ->assertSee('<a href="http://localhost/persons/103/show">Test1 Test1</a>', false)
+            ->assertSee('<a href="/app/persons/103">Test1 Test1</a>', false)
             ->assertSee('<td>252</td>', false)
         ;
     }
@@ -212,7 +212,7 @@ final class ShowCupEventGroupActionTest extends TestCase
             ->assertSee('<a href="http://localhost/events/d/101">Спринт - 2024-04-12</a>', false)
             ->assertSee('<a href="http://localhost/cups/101/101/M_35_/show" class="text-decoration-none nav-link ">', false)
             ->assertSee('<a href="http://localhost/cups/101/101/M_55_/show" class="text-decoration-none nav-link active">', false)
-            ->assertSee('<a href="http://localhost/persons/103/show">Сияльский Владислав</a>', false)
+            ->assertSee('<a href="/app/persons/103">Сияльский Владислав</a>', false)
             ->assertSee('<td><b class="text-info">1000</b></td>', false)
         ;
     }
@@ -237,8 +237,8 @@ final class ShowCupEventGroupActionTest extends TestCase
             ->assertSee('<a href="http://localhost/events/d/101">Спринт - 2024-04-12</a>', false)
             ->assertSee('<a href="http://localhost/cups/101/101/M_35_/show" class="text-decoration-none nav-link ">', false)
             ->assertSee('<a href="http://localhost/cups/101/101/M_60_/show" class="text-decoration-none nav-link active">', false)
-            ->assertDontSee('<a href="http://localhost/persons/101/show">Триденский Генадий</a>', false)
-            ->assertSee('<a href="http://localhost/persons/102/show">Макаревич Иосиф</a>', false)
+            ->assertDontSee('<a href="/app/persons/101">Триденский Генадий</a>', false)
+            ->assertSee('<a href="/app/persons/102">Макаревич Иосиф</a>', false)
             ->assertSee('<td>891</td>', false)
         ;
     }
@@ -263,9 +263,9 @@ final class ShowCupEventGroupActionTest extends TestCase
             ->assertSee('<a href="http://localhost/events/d/101">Спринт - 2024-04-12</a>', false)
             ->assertSee('<a href="http://localhost/cups/101/101/M_35_/show" class="text-decoration-none nav-link ">', false)
             ->assertSee('<a href="http://localhost/cups/101/101/M_65_/show" class="text-decoration-none nav-link active">', false)
-            ->assertSee('<a href="http://localhost/persons/104/show">Колядко Иван</a>', false)
+            ->assertSee('<a href="/app/persons/104">Колядко Иван</a>', false)
             ->assertSee('<td><b class="text-info">1000</b></td>', false)
-            ->assertSee('<a href="http://localhost/persons/101/show">Триденский Генадий</a>', false)
+            ->assertSee('<a href="/app/persons/101">Триденский Генадий</a>', false)
             ->assertSee('<td><b class="text-info">1000</b></td>', false)
         ;
     }
@@ -290,9 +290,9 @@ final class ShowCupEventGroupActionTest extends TestCase
             ->assertSee('<a href="http://localhost/events/d/101">Спринт - 2024-04-12</a>', false)
             ->assertSee('<a href="http://localhost/cups/101/101/M_35_/show" class="text-decoration-none nav-link ">', false)
             ->assertSee('<a href="http://localhost/cups/101/101/M_65_/show" class="text-decoration-none nav-link active">', false)
-            ->assertSee('<a href="http://localhost/persons/101/show">Триденский Генадий</a>', false)
+            ->assertSee('<a href="/app/persons/101">Триденский Генадий</a>', false)
             ->assertSee('<td><b class="text-info">1000</b></td>', false)
-            ->assertDontSee('<a href="http://localhost/persons/101/show">Колядко Иван</a>', false)
+            ->assertDontSee('<a href="/app/persons/101">Колядко Иван</a>', false)
         ;
     }
 
@@ -318,9 +318,9 @@ final class ShowCupEventGroupActionTest extends TestCase
             ->assertSee('<a href="http://localhost/events/d/101">Спринт - 2025-04-12</a>', false)
             ->assertSee('<a href="http://localhost/cups/101/101/W_35_/show" class="text-decoration-none nav-link ">', false)
             ->assertSee('<a href="http://localhost/cups/101/101/W_65_/show" class="text-decoration-none nav-link active">', false)
-            ->assertSee('<a href="http://localhost/persons/101/show">Варыгина Светлана</a>', false)
+            ->assertSee('<a href="/app/persons/101">Варыгина Светлана</a>', false)
             ->assertSee('<td><b class="text-info">1000</b></td>', false)
-            ->assertDontSee('<a href="http://localhost/persons/103/show">Авраменко Лариса</a>', false)
+            ->assertDontSee('<a href="/app/persons/103">Авраменко Лариса</a>', false)
         ;
     }
 
@@ -344,9 +344,9 @@ final class ShowCupEventGroupActionTest extends TestCase
             ->assertSee('<a href="http://localhost/events/d/101">Спринт - 2025-04-12</a>', false)
             ->assertSee('<a href="http://localhost/cups/101/101/M_35_/show" class="text-decoration-none nav-link ">', false)
             ->assertSee('<a href="http://localhost/cups/101/101/M_70_/show" class="text-decoration-none nav-link active">', false)
-            ->assertSee('<a href="http://localhost/persons/102/show">Печерный Валентин</a>', false)
+            ->assertSee('<a href="/app/persons/102">Печерный Валентин</a>', false)
             ->assertSee('<td><b class="text-info">1000</b></td>', false)
-            ->assertSee('<a href="http://localhost/persons/101/show">Триденский Генадий</a>', false)
+            ->assertSee('<a href="/app/persons/101">Триденский Генадий</a>', false)
             ->assertSee('<td>277</td>', false)
         ;
     }
@@ -373,7 +373,7 @@ final class ShowCupEventGroupActionTest extends TestCase
             ->assertSee('<a href="http://localhost/events/d/101">Спринт - 2025-04-12</a>', false)
             ->assertSee('<a href="http://localhost/cups/101/101/M_35_/show" class="text-decoration-none nav-link ">', false)
             ->assertSee('<a href="http://localhost/cups/101/101/M_65_/show" class="text-decoration-none nav-link active">', false)
-            ->assertSee('<a href="http://localhost/persons/102/show">Карась Олег</a>', false)
+            ->assertSee('<a href="/app/persons/102">Карась Олег</a>', false)
             ->assertSee('<td><b class="text-info">1000</b></td>', false)
         ;
     }
@@ -399,9 +399,9 @@ final class ShowCupEventGroupActionTest extends TestCase
             ->assertSee('<a href="http://localhost/events/d/101">Спринт - 2025-04-12</a>', false)
             ->assertSee('<a href="http://localhost/cups/101/101/M_35_/show" class="text-decoration-none nav-link ">', false)
             ->assertSee('<a href="http://localhost/cups/101/101/M_80_/show" class="text-decoration-none nav-link active">', false)
-            ->assertSee('<a href="http://localhost/persons/102/show">Карась Олег</a>', false)
+            ->assertSee('<a href="/app/persons/102">Карась Олег</a>', false)
             ->assertSee('<td><b class="text-info">1000</b></td>', false)
-            ->assertSee('<a href="http://localhost/persons/101/show">Триденский Генадий</a>', false)
+            ->assertSee('<a href="/app/persons/101">Триденский Генадий</a>', false)
             ->assertSee('<td>898</td>', false)
         ;
     }
@@ -425,10 +425,10 @@ final class ShowCupEventGroupActionTest extends TestCase
             ->assertSee('<a href="/app/competitions/101">Grodno cup</a>', false)
             ->assertSee('<a href="http://localhost/events/d/101">Спринт - 2025-04-12</a>', false)
             ->assertSee('<a href="http://localhost/cups/101/101/M_12_/show" class="text-decoration-none nav-link active">', false)
-            ->assertSee('<a href="http://localhost/persons/101/show">Миссюревич Алексей</a>', false)
+            ->assertSee('<a href="/app/persons/101">Миссюревич Алексей</a>', false)
             ->assertSee('<td><b class="text-info">1000</b></td>', false)
             ->assertDontSee('Балабанов Александр', false)
-            ->assertSee('<a href="http://localhost/persons/102/show">Волчкевич Ярослав</a>', false)
+            ->assertSee('<a href="/app/persons/102">Волчкевич Ярослав</a>', false)
             ->assertSee('<td>773</td>', false)
         ;
     }
@@ -452,10 +452,10 @@ final class ShowCupEventGroupActionTest extends TestCase
             ->assertSee('<a href="/app/competitions/101">Grodno cup</a>', false)
             ->assertSee('<a href="http://localhost/events/d/101">Спринт - 2025-04-12</a>', false)
             ->assertSee('<a href="http://localhost/cups/101/101/M_12_/show" class="text-decoration-none nav-link ">', false)
-            ->assertSee('<a href="http://localhost/persons/101/show">Журомская Вероника</a>', false)
+            ->assertSee('<a href="/app/persons/101">Журомская Вероника</a>', false)
             ->assertSee('<td><b class="text-info">1000</b></td>', false)
             ->assertDontSee('Колядко', false)
-            ->assertSee('<a href="http://localhost/persons/102/show">Холод Ирина</a>', false)
+            ->assertSee('<a href="/app/persons/102">Холод Ирина</a>', false)
             ->assertSee('<td>891</td>', false)
         ;
     }
@@ -479,11 +479,11 @@ final class ShowCupEventGroupActionTest extends TestCase
             ->assertSee('<a href="/app/competitions/101">Grodno cup</a>', false)
             ->assertSee('<a href="http://localhost/events/d/101">Спринт - 2025-04-12</a>', false)
             ->assertSee('<a href="http://localhost/cups/101/101/M_12_/show" class="text-decoration-none nav-link ">', false)
-            ->assertSee('<a href="http://localhost/persons/101/show">Михалкин Игорь</a>', false)
+            ->assertSee('<a href="/app/persons/101">Михалкин Игорь</a>', false)
             ->assertSee('<td><b class="text-info">1000</b></td>', false)
-            ->assertSee('<a href="http://localhost/persons/102/show">Ильин Роман</a>', false)
+            ->assertSee('<a href="/app/persons/102">Ильин Роман</a>', false)
             ->assertSee('<td><b class="text-info">1000</b></td>', false)
-            ->assertSee('<a href="http://localhost/persons/103/show">Лабкович Иван</a>', false)
+            ->assertSee('<a href="/app/persons/103">Лабкович Иван</a>', false)
             ->assertSee('<td>665</td>', false)
             ->assertDontSee('Марков')
         ;

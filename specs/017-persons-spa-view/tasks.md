@@ -101,6 +101,7 @@
 - [x] T036 [US1] Add the competitions tab to shared Person Info navigation, returning to the person participation page, with SPA coverage and updated acceptance documentation
 - [x] T037 [US3] Add mismatch detection for populated protocol-line name and birth-year fields, row highlighting, and authenticated extraction-action coverage in resources/spa/pages/persons/personViewModels.test.ts and resources/spa/pages/persons/PersonViewPage.test.ts
 - [x] T038 [US3] Restore the existing authenticated person-extraction action in the SPA participation table and pass the current person context from the persistent Person Info module in resources/spa/pages/persons/PersonViewPage.vue, resources/spa/pages/persons/PersonLayoutPage.vue and resources/spa/components/PersonPromptPersonInfo.vue
+- [x] T039 [US1] Remove the legacy View Person Blade page, controller and web route; migrate Blade links and person mutation redirects to `/app/persons/{personId}` and cover the removed route in tests/Feature/PersonsRoutesTest.php
 
 ## Dependencies and execution order
 

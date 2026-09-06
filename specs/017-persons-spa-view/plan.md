@@ -22,7 +22,7 @@ Migrate the public Blade View Person entry point to /app/persons/:personId. Reus
 
 **Performance Goals**: One count query and one page query for the protocol-line list, plus bounded eager-loading queries for requested event/competition resources; no query per returned row
 
-**Constraints**: Preserve current public read/auth behavior and legacy link destinations; do not add new legacy services or repositories
+**Constraints**: Preserve current public read/auth behavior while moving person-detail links to the SPA; do not add new legacy services or repositories
 
 **Scale/Scope**: One person context and one paginated page of protocol lines per request; existing shared pagination maximums apply
 
@@ -55,7 +55,8 @@ Migrate the public Blade View Person entry point to /app/persons/:personId. Reus
 
 ### Compatibility
 
-- Keep Blade View Person and its web route until a separate cleanup/audit.
+- Remove the Blade View Person and `/persons/{person}/show` route after migrating all known links and redirects to `/app/persons/{person}`.
+- Keep legacy person create/edit forms, rank history and extract action because they remain outside this SPA migration or are still used by authenticated workflows.
 - Keep LegacyViewPersonDto and its protocol-line mapping for existing consumers.
 - New API DTOs are separate from legacy grouped-by-year DTOs to avoid transport coupling.
 

@@ -51,21 +51,21 @@ describe('person info navigation', () => {
             wrapper.findAll('button')[0].attributes('data-text'),
         ).toBeDefined()
         expect(wrapper.findAll('button')[1].attributes('data-icon')).toBe(
-            'pi pi-comments',
+            'pi pi-trophy',
         )
 
         await wrapper.findAll('button')[1].trigger('click')
         await flushPromises()
-        expect(appRouter.currentRoute.value.path).toBe('/app/persons/7/prompts')
+        expect(appRouter.currentRoute.value.path).toBe('/app/persons/7')
 
         await wrapper.findAll('button')[2].trigger('click')
+        await flushPromises()
+        expect(appRouter.currentRoute.value.path).toBe('/app/persons/7/prompts')
+
+        await wrapper.findAll('button')[3].trigger('click')
         await flushPromises()
         expect(appRouter.currentRoute.value.path).toBe(
             '/app/persons/7/payments',
         )
-
-        await wrapper.findAll('button')[4].trigger('click')
-        await flushPromises()
-        expect(appRouter.currentRoute.value.path).toBe('/app/persons/7')
     })
 })

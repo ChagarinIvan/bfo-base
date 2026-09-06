@@ -33,6 +33,7 @@ Expected UI behavior:
 3. Confirm the participation table and all three filters.
 4. Change filters and pagination; only the current result remains visible.
 5. Confirm empty, API error and unknown-person states.
+6. Confirm `/persons/{personId}/show` no longer resolves and known person links open `/app/persons/{personId}`.
 
 ## Final checks
 
