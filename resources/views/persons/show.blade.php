@@ -2,7 +2,6 @@
     use App\Bridge\Laravel\Http\Controllers\Event\ShowEventDistanceAction;
     use App\Bridge\Laravel\Http\Controllers\Person\ExtractPersonAction;
     use App\Bridge\Laravel\Http\Controllers\Person\ShowEditPersonAction;
-    use App\Bridge\Laravel\Http\Controllers\PersonPayment\ShowPersonPaymentsListAction;
     use App\Bridge\Laravel\Http\Controllers\Rank\ShowPersonRanksAction;
     use App\Application\Dto\Person\LegacyViewPersonDto;
     use App\Domain\Person\Citizenship;
@@ -70,7 +69,7 @@
                 <x-button text="app.common.payments"
                           color="warning"
                           icon="bi-currency-dollar"
-                          url="{{ action(ShowPersonPaymentsListAction::class, [$person->id]) }}"
+                          url="/app/persons/{{ $person->id }}/payments"
                 />
             @endauth
             <x-button text="app.ranks"

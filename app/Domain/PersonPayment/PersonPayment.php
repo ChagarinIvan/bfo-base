@@ -6,12 +6,14 @@ namespace App\Domain\PersonPayment;
 
 use App\Domain\Auth\Impression;
 use App\Domain\Person\Person;
+use App\Domain\PersonPayment\Event\PersonPaymentCreated;
+use App\Domain\PersonPayment\Event\PersonPaymentUpdated;
+use App\Domain\Shared\AggregatedModel;
 use App\Infrastructure\Laravel\Eloquent\Auth\ImpressionCast;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
@@ -25,7 +27,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  */
 #[Table(name: 'persons_payments')]
 #[WithoutTimestamps]
-class PersonPayment extends Model
+class PersonPayment extends AggregatedModel
 {
     use HasFactory;
 
@@ -38,7 +40,22 @@ class PersonPayment extends Model
     {
         $this->date = $date;
         $this->updated = $impression;
+
+        $this->recordThat(new PersonPaymentUpdated($this));
     }
+
+    public function sameDate(Carbon $date): bool
+    {
+        return $this->date->isSameDay($date);
+    }
+
+    public function create(): void
+    {
+        $this->recordThat(new PersonPaymentCreated($this));
+
+        $this->save();
+    }
+
     protected function casts(): array
     {
         return [

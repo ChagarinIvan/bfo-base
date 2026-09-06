@@ -105,6 +105,19 @@ describe('SPA navigation guard', () => {
         expect(router.currentRoute.value.path).toBe('/app/login')
     })
 
+    it('protects person payment list and create routes', async () => {
+        const router = createAppRouter(createMemoryHistory())
+
+        await router.push('/app/persons/42/payments')
+        expect(router.currentRoute.value.path).toBe('/app/login')
+        expect(router.currentRoute.value.query.return).toBe(
+            '/app/persons/42/payments',
+        )
+
+        await router.push('/app/persons/42/payments/create')
+        expect(router.currentRoute.value.path).toBe('/app/login')
+    })
+
     it('keeps legacy navigation destinations outside the SPA router', () => {
         const router = createAppRouter(createMemoryHistory())
         const registeredPaths = router.getRoutes().map((route) => route.path)

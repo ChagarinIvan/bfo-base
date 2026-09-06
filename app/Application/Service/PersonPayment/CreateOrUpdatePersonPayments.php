@@ -6,9 +6,7 @@ namespace App\Application\Service\PersonPayment;
 
 use App\Application\Dto\Auth\UserId;
 use App\Application\Dto\PersonPayment\PersonPaymentDto;
-use App\Domain\Auth\Impression;
 use App\Domain\PersonPayment\Factory\PersonPaymentInput;
-use App\Domain\Shared\Clock;
 use App\Domain\Shared\Criteria;
 use Carbon\Carbon;
 
@@ -28,6 +26,11 @@ final readonly class CreateOrUpdatePersonPayments
         ]);
     }
 
+    public function personId(): int
+    {
+        return (int) $this->dto->personId;
+    }
+
     public function input(): PersonPaymentInput
     {
         return new PersonPaymentInput(
@@ -43,8 +46,8 @@ final readonly class CreateOrUpdatePersonPayments
         return Carbon::createFromFormat('Y-m-d', $this->dto->date);
     }
 
-    public function impression(Clock $clock): Impression
+    public function userId(): int
     {
-        return new Impression($clock->now(), $this->userId->id);
+        return $this->userId->id;
     }
 }

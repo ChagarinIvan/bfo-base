@@ -18,6 +18,9 @@ final readonly class ListPersonsPayments
 
     public function criteria(): Criteria
     {
-        return new Criteria(array_filter(get_object_vars($this->search)));
+        return new Criteria(array_filter(
+            get_object_vars($this->search),
+            static fn ($value): bool => $value !== null,
+        ));
     }
 }

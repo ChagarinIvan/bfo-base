@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
+import { onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
 import Message from 'primevue/message'
 import Paginator, { type PageState } from 'primevue/paginator'
-import Select from 'primevue/select'
 import Toolbar from 'primevue/toolbar'
 import { useRouter } from 'vue-router'
 import { api } from '../../api/client'
@@ -18,6 +17,7 @@ import { t } from '../../i18n'
 import ImpressionDetails from '../../components/ImpressionDetails.vue'
 import DateFilter from '../../components/DateFilter.vue'
 import FilterPanel from '../../components/FilterPanel.vue'
+import YearFilter from '../../components/YearFilter.vue'
 import CompetitionActionMenu from '../../components/actions/CompetitionActionMenu.vue'
 import ConfirmDeleteDialog from '../../components/actions/ConfirmDeleteDialog.vue'
 import { useToast } from 'primevue/usetoast'
@@ -31,14 +31,12 @@ import {
     paginationFromHeaders,
     resetPageOnFilterChange,
     applyFieldErrors,
-    yearSelectOptions,
 } from './competitionModels'
 import type { Competition, PaginationHeaders, User } from '../../api/types'
 
 const competitions = ref<Competition[]>([])
 const users = ref<User[]>([])
 const years = ref<number[]>([])
-const yearOptions = computed(() => yearSelectOptions(years.value))
 const year = ref<number | null>(null)
 const name = ref('')
 const date = ref('')
@@ -193,24 +191,13 @@ onBeforeUnmount(() => {
     </Toolbar>
 
     <FilterPanel>
-        <div class="filter-field">
-            <label for="competition-year">{{
-                t('spa.competitions.year')
-            }}</label>
-            <Select
-                id="competition-year"
-                v-model="year"
-                :options="yearOptions"
-                option-label="label"
-                option-value="value"
-                :placeholder="t('spa.competitions.year_placeholder')"
-                filter
-                filter-match-mode="contains"
-                :filter-placeholder="t('spa.competitions.year_filter')"
-                :disabled="loading"
-                @update:model-value="onYearChange"
-            />
-        </div>
+        <YearFilter
+            v-model="year"
+            input-id="competition-year"
+            :years="years"
+            :disabled="loading"
+            @update:model-value="onYearChange"
+        />
         <div class="filter-field">
             <label for="competition-name-filter">{{
                 t('spa.competitions.name_filter')

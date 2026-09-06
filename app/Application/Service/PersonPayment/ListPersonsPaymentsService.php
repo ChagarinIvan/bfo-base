@@ -7,7 +7,7 @@ namespace App\Application\Service\PersonPayment;
 use App\Application\Dto\PersonPayment\PersonPaymentAssembler;
 use App\Application\Dto\PersonPayment\ViewPersonPaymentDto;
 use App\Domain\PersonPayment\PersonPaymentRepository;
-use function array_map;
+use App\Domain\Shared\Pagination\Slice;
 
 final readonly class ListPersonsPaymentsService
 {
@@ -17,14 +17,12 @@ final readonly class ListPersonsPaymentsService
     ) {
     }
 
-    /**
-     * @return ViewPersonPaymentDto[]
-     */
-    public function execute(ListPersonsPayments $command): array
+    /** @return Slice<ViewPersonPaymentDto> */
+    public function paginate(ListPersonsPayments $command): Slice
     {
-        return array_map(
-            $this->assembler->toViewPersonPaymentDto(...),
-            $this->payments->byCriteria($command->criteria())->all(),
-        );
+        return $this->payments
+            ->paginate($command->criteria())
+            ->map($this->assembler->toViewPersonPaymentDto(...))
+        ;
     }
 }

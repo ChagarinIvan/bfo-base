@@ -56,9 +56,6 @@ use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonAction;
 use App\Bridge\Laravel\Http\Controllers\Person\ShowSetPersonToProtocolLineAction;
 use App\Bridge\Laravel\Http\Controllers\Person\StorePersonAction;
 use App\Bridge\Laravel\Http\Controllers\Person\UpdatePersonAction;
-use App\Bridge\Laravel\Http\Controllers\PersonPayment\ShowCreatePersonPaymentAction;
-use App\Bridge\Laravel\Http\Controllers\PersonPayment\ShowPersonPaymentsListAction;
-use App\Bridge\Laravel\Http\Controllers\PersonPayment\StorePersonPaymentAction;
 use App\Bridge\Laravel\Http\Controllers\Rank\ActivatePersonRankAction;
 use App\Bridge\Laravel\Http\Controllers\Rank\ShowActivationFormAction;
 use App\Bridge\Laravel\Http\Controllers\Rank\ShowEditActivationDateFormAction;
@@ -118,9 +115,6 @@ class WebRoutesServiceProvider extends ServiceProvider
                         $this->route->post('/{person}/update', UpdatePersonAction::class);
                         $this->route->get('/{person}/delete', DeletePersonAction::class);
 
-                        $this->route->get('{personId}/payments', ShowPersonPaymentsListAction::class);
-                        $this->route->get('{personId}/payments/create', ShowCreatePersonPaymentAction::class);
-                        $this->route->post('{personId}/payments/store', StorePersonPaymentAction::class);
                         $this->route->get('person/{protocol}/show', ShowSetPersonToProtocolLineAction::class);
                         $this->route->get('{person}/{protocol}/set', SetProtocolLinePersonAction::class);
                         $this->route->get('extract/{protocol}/', ExtractPersonAction::class);
