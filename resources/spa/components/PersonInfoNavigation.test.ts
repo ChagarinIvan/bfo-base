@@ -18,6 +18,7 @@ function router(): Router {
             { path: '/app/persons/:personId', component: {} },
             { path: '/app/persons/:personId/prompts', component: {} },
             { path: '/app/persons/:personId/payments', component: {} },
+            { path: '/app/persons/:personId/ranks', component: {} },
         ],
     })
 }
@@ -67,5 +68,9 @@ describe('person info navigation', () => {
         expect(appRouter.currentRoute.value.path).toBe(
             '/app/persons/7/payments',
         )
+
+        await wrapper.findAll('button')[4].trigger('click')
+        await flushPromises()
+        expect(appRouter.currentRoute.value.path).toBe('/app/persons/7/ranks')
     })
 })

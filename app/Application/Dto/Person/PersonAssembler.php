@@ -7,52 +7,11 @@ namespace App\Application\Dto\Person;
 use App\Application\Dto\Auth\AuthAssembler;
 use App\Domain\Person\Person;
 use App\Domain\Person\PersonRankHistory;
-use App\Domain\Person\PersonResources;
-use App\Domain\PersonPayment\PersonPayment;
-use App\Domain\ProtocolLine\ProtocolLine;
-use Illuminate\Support\Collection;
-use function array_map;
 
 final readonly class PersonAssembler
 {
     public function __construct(private AuthAssembler $authAssembler)
     {
-    }
-
-    public function toLegacyViewPersonDto(Person $person, PersonResources $resources = new PersonResources()): LegacyViewPersonDto
-    {
-        $currentRank = $person->currentRank();
-
-        if ($resources->protocolLines) {
-            $groupedProtocolLines = $person->protocolLines->groupBy(static fn (ProtocolLine $line) => $line->distance->event->date->format('Y'));
-            $groupedProtocolLines->transform(static fn(Collection $protocolLines) => $protocolLines->sortByDesc(static fn (ProtocolLine $line) => $line->distance->event->date));
-            $groupedProtocolLines = $groupedProtocolLines->sortKeysDesc();
-        }
-
-        return new LegacyViewPersonDto(
-            id: (string) $person->id,
-            lastname: $person->lastname,
-            firstname: $person->firstname,
-            birthday: $person->birthday?->format('Y-m-d'),
-            citizenship: $person->citizenship->value,
-            clubId: $person->club_id ? (string) $person->club_id : null,
-            created: $this->authAssembler->toImpressionDto($person->created),
-            updated: $this->authAssembler->toImpressionDto($person->updated),
-            // TODO remove
-            lastPaymentDate: $person->payments->sortByDesc(static fn (PersonPayment $payment) => $payment->date)->first()?->date?->format('Y-m-d'),
-            groupedByYearProtocolLines: $resources->protocolLines
-                ? array_map(fn (Collection $c) => $c->map($this->toViewPersonProtocolLineDto(...))->all(), $groupedProtocolLines->all())
-                : [],
-            currentRankId: $currentRank->rank->value,
-            currentRankFinishedOn: $currentRank->finishedOn?->format('Y-m-d'),
-            rankHistory: $resources->rankHistory
-                ? $person->rankHistories->map(fn (PersonRankHistory $history): PersonRankHistoryDto => $this->toPersonRankHistoryDto(
-                    $history,
-                    (int) $person->id,
-                    $history->protocolLine,
-                ))->all()
-                : [],
-        );
     }
 
     public function toViewPersonDto(Person $person): ViewPersonDto
@@ -63,38 +22,18 @@ final readonly class PersonAssembler
             firstname: $person->firstname,
             birthday: $person->birthday?->format('Y-m-d'),
             rankId: $person->currentRank()->rank->value,
+            citizenship: $person->citizenship->value,
             clubId: $person->club_id ? (string) $person->club_id : null,
             created: $this->authAssembler->toImpressionDto($person->created),
             updated: $this->authAssembler->toImpressionDto($person->updated),
         );
     }
 
-    public function toViewPersonProtocolLineDto(ProtocolLine $line): ViewPersonProtocolLineDto
+    public function toViewPersonRankHistoryDto(PersonRankHistory $history): ViewPersonRankHistoryDto
     {
-        return new ViewPersonProtocolLineDto(
-            id: (string) $line->id,
-            firstname: $line->firstname,
-            lastname: $line->lastname,
-            distanceId: (string) $line->distance_id,
-            competitionId: (string) $line->distance->event->competition_id,
-            competitionName: $line->distance->event->competition->name,
-            eventName: $line->distance->event->name,
-            eventDate: $line->distance->event->date->format('Y-m-d'),
-            groupName: $line->distance->group->name,
-            year: $line->year ? (string) $line->year : null,
-            time: $line->time?->format('H:i:s'),
-            place: $line->place ? (string) $line->place : null,
-            completeRank: $line->complete_rank,
-        );
-    }
-
-    private function toPersonRankHistoryDto(PersonRankHistory $history, int $personId, ?ProtocolLine $protocolLine = null): PersonRankHistoryDto
-    {
-        $event = $protocolLine?->distance?->event;
-
-        return new PersonRankHistoryDto(
-            id: (string) $history->protocol_line_id,
-            personId: (string) $personId,
+        return new ViewPersonRankHistoryDto(
+            id: (string) $history->id,
+            personId: $history->person_id ? (string) $history->person_id : null,
             protocolLineId: (string) $history->protocol_line_id,
             distanceId: (string) $history->distance_id,
             eventId: (string) $history->event_id,
@@ -105,10 +44,6 @@ final readonly class PersonAssembler
             activatedOn: $history->activated_on?->format('Y-m-d'),
             startedOn: $history->started_on->format('Y-m-d'),
             finishedOn: $history->finished_on?->format('Y-m-d'),
-            rank: $history->rank->label(),
-            eventDate: $event?->date?->format('Y-m-d'),
-            competitionName: $event?->competition?->name,
-            eventName: $event?->name,
         );
     }
 }

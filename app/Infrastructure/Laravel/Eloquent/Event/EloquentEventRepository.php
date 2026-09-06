@@ -24,7 +24,7 @@ final class EloquentEventRepository implements EventRepository
     public function byId(int $id): ?Event
     {
         return Event::where('active', true)
-            ->with(['competition', 'cups.cup', 'distances.group', 'flags'])
+            ->with(['competition', 'cups.cup', 'distances.group'])
             ->find($id);
     }
 
@@ -75,6 +75,10 @@ final class EloquentEventRepository implements EventRepository
             $query->where('competition_id', $criteria->param('competitionId'));
         }
 
+        if ($criteria->hasParam('ids')) {
+            $query->whereIn('events.id', $criteria->param('ids'));
+        }
+
         if ($criteria->hasParam('groupId')) {
             $query->join('distances', 'distances.event_id', '=', 'events.id')
                 ->where('distances.group_id', $criteria->param('groupId'));
@@ -94,13 +98,6 @@ final class EloquentEventRepository implements EventRepository
 
         if ($criteria->hasParam('date')) {
             $query->whereDate('events.date', $criteria->param('date'));
-        }
-
-        if ($criteria->hasParam('flagId')) {
-            $query
-                ->leftjoin('event_flags', 'events.id', '=', 'event_flags.event_id')
-                ->where('event_flags.flag_id', $criteria->param('flagId'));
-            ;
         }
 
         if ($criteria->hasParam('notRelatedToCup')) {

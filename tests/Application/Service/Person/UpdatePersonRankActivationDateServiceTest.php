@@ -6,6 +6,7 @@ namespace Tests\Application\Service\Person;
 
 use App\Application\Dto\Auth\UserId;
 use App\Application\Dto\Person\UpdatePersonRankActivationDateDto;
+use App\Application\Dto\ProtocolLine\ProtocolLineAssembler;
 use App\Application\Service\Person\Exception\ProtocolLineNotFound;
 use App\Application\Service\Person\UpdatePersonRankActivationDate;
 use App\Application\Service\Person\UpdatePersonRankActivationDateService;
@@ -30,6 +31,7 @@ final class UpdatePersonRankActivationDateServiceTest extends TestCase
             $repository,
             new FrozenClock(Carbon::parse('2026-09-03')),
             new DummyTransactional(),
+            new ProtocolLineAssembler(),
         );
 
         $this->expectException(ProtocolLineNotFound::class);
@@ -61,6 +63,7 @@ final class UpdatePersonRankActivationDateServiceTest extends TestCase
             $repository,
             new FrozenClock(Carbon::parse('2026-09-03')),
             new DummyTransactional(),
+            new ProtocolLineAssembler(),
         );
 
         $this->assertSame(42, $service->execute($this->command('2026-09-10')));

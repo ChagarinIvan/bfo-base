@@ -1,10 +1,10 @@
 @php
     use App\Bridge\Laravel\Http\Controllers\Person\UpdatePersonAction;
-    use App\Application\Dto\Person\LegacyViewPersonDto;
+    use App\Application\Dto\Person\ViewPersonDto;
     use App\Application\Dto\Club\ViewClubDto;
     use App\Domain\Person\Citizenship;
     /**
-     * @var LegacyViewPersonDto $person
+     * @var ViewPersonDto $person
      * @var ViewClubDto[] $clubs
      */
 @endphp

@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Application\Service\Person\Exception;
 
-use RuntimeException;
+use App\Application\Exception\ApplicationException;
+use App\Application\Exception\HttpError;
 
-final class ProtocolLineNotFound extends RuntimeException
+#[HttpError(status: 404, code: 'protocol_line_not_found')]
+final class ProtocolLineNotFound extends ApplicationException
 {
 }

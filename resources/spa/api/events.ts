@@ -1,6 +1,20 @@
 import { api } from './client'
 import type { Event, GroupEventsQuery, PaginatedApiResponse } from './types'
 
+export async function getEventsByIds(ids: string[]): Promise<Event[]> {
+    if (!ids.length) return []
+
+    const response = await api.get<Event[]>('/events', {
+        params: {
+            ids,
+            withCompetition: 1,
+            perPage: ids.length,
+        },
+    })
+
+    return response.data
+}
+
 export async function getCompetitionEvents(
     competitionId: string,
     page = 1,

@@ -21,6 +21,7 @@ import CreatePersonPaymentPage from '../pages/persons/CreatePersonPaymentPage.vu
 import PersonPromptsPage from '../pages/persons/PersonPromptsPage.vue'
 import CreatePersonPromptPage from '../pages/persons/CreatePersonPromptPage.vue'
 import EditPersonPromptPage from '../pages/persons/EditPersonPromptPage.vue'
+import PersonRanksPage from '../pages/persons/PersonRanksPage.vue'
 import LoginPage from '../pages/auth/LoginPage.vue'
 import GroupsPage from '../pages/groups/GroupsPage.vue'
 import GroupDetailsPage from '../pages/groups/GroupDetailsPage.vue'
@@ -71,6 +72,7 @@ export function createAppRouter(
                         component: EditPersonPromptPage,
                         meta: { requiresAuth: true },
                     },
+                    { path: 'ranks', component: PersonRanksPage },
                 ],
             },
             {

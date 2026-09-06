@@ -23,11 +23,8 @@ use App\Bridge\Laravel\Http\Controllers\CupEvents\StoreCupEventAction;
 use App\Bridge\Laravel\Http\Controllers\CupEvents\UpdateCupEventAction;
 use App\Bridge\Laravel\Http\Controllers\Error\Show404ErrorAction;
 use App\Bridge\Laravel\Http\Controllers\Error\ShowUnexpectedErrorAction;
-use App\Bridge\Laravel\Http\Controllers\Event\AddFlagToEventAction;
 use App\Bridge\Laravel\Http\Controllers\Event\DeleteEventAction;
-use App\Bridge\Laravel\Http\Controllers\Event\DeleteEventFlagAction;
 use App\Bridge\Laravel\Http\Controllers\Event\DownloadEventProtocolAction;
-use App\Bridge\Laravel\Http\Controllers\Event\ShowAddFlagToEventFormAction;
 use App\Bridge\Laravel\Http\Controllers\Event\ShowCreateEventFormAction;
 use App\Bridge\Laravel\Http\Controllers\Event\ShowEditEventFormAction;
 use App\Bridge\Laravel\Http\Controllers\Event\ShowEventAction;
@@ -36,13 +33,6 @@ use App\Bridge\Laravel\Http\Controllers\Event\ShowUnitEventsFormAction;
 use App\Bridge\Laravel\Http\Controllers\Event\StoreEventAction;
 use App\Bridge\Laravel\Http\Controllers\Event\UnitEventsAction;
 use App\Bridge\Laravel\Http\Controllers\Event\UpdateEventAction;
-use App\Bridge\Laravel\Http\Controllers\Flags\DeleteFlagAction;
-use App\Bridge\Laravel\Http\Controllers\Flags\ShowCreateFlagFormAction;
-use App\Bridge\Laravel\Http\Controllers\Flags\ShowEditFlagFormAction;
-use App\Bridge\Laravel\Http\Controllers\Flags\ShowFlagEventsAction;
-use App\Bridge\Laravel\Http\Controllers\Flags\ShowFlagsListAction;
-use App\Bridge\Laravel\Http\Controllers\Flags\StoreFlagAction;
-use App\Bridge\Laravel\Http\Controllers\Flags\UpdateFlagAction;
 use App\Bridge\Laravel\Http\Controllers\Login\MakeNewPasswordByTokenAction;
 use App\Bridge\Laravel\Http\Controllers\Login\ShowLoginFormAction;
 use App\Bridge\Laravel\Http\Controllers\Login\SignInAction;
@@ -55,11 +45,6 @@ use App\Bridge\Laravel\Http\Controllers\Person\ShowEditPersonAction;
 use App\Bridge\Laravel\Http\Controllers\Person\ShowSetPersonToProtocolLineAction;
 use App\Bridge\Laravel\Http\Controllers\Person\StorePersonAction;
 use App\Bridge\Laravel\Http\Controllers\Person\UpdatePersonAction;
-use App\Bridge\Laravel\Http\Controllers\Rank\ActivatePersonRankAction;
-use App\Bridge\Laravel\Http\Controllers\Rank\ShowActivationFormAction;
-use App\Bridge\Laravel\Http\Controllers\Rank\ShowEditActivationDateFormAction;
-use App\Bridge\Laravel\Http\Controllers\Rank\ShowPersonRanksAction;
-use App\Bridge\Laravel\Http\Controllers\Rank\UpdateRankActivationDateAction;
 use App\Bridge\Laravel\Http\Controllers\Registration\SendRegistrationDataAction;
 use App\Bridge\Laravel\Http\Controllers\Registration\ShowRegistrationFormAction;
 use Illuminate\Contracts\Routing\Registrar;
@@ -97,9 +82,6 @@ class WebRoutesServiceProvider extends ServiceProvider
                         $this->route->get('{event}/edit', ShowEditEventFormAction::class);
                         $this->route->get('{event}/download', DownloadEventProtocolAction::class);
                         $this->route->post('{eventId}/update', UpdateEventAction::class);
-                        $this->route->get('{event}/add-flags', ShowAddFlagToEventFormAction::class);
-                        $this->route->get('{event}/{flag}/set', AddFlagToEventAction::class);
-                        $this->route->get('{event}/{flag}/delete', DeleteEventFlagAction::class);
                     });
                 });
 
@@ -115,41 +97,6 @@ class WebRoutesServiceProvider extends ServiceProvider
                         $this->route->get('person/{protocol}/show', ShowSetPersonToProtocolLineAction::class);
                         $this->route->get('{person}/{protocol}/set', SetProtocolLinePersonAction::class);
                         $this->route->get('extract/{protocol}/', ExtractPersonAction::class);
-                    });
-                });
-
-                //ranks
-                $this->routeRegistrar->prefix('ranks')->group(function (): void {
-                    $this->route->get('person/{personId}', ShowPersonRanksAction::class);
-
-                    $this->middleware(['auth'])->group(function (): void {
-                        $this->route->get('{protocolLineId}/activate', ShowActivationFormAction::class);
-                        $this->route->get('{protocolLineId}/update-activation', ShowEditActivationDateFormAction::class);
-                        $this->route->post('{protocolLineId}/activate', ActivatePersonRankAction::class);
-                        $this->route->post('{protocolLineId}/update-activation', UpdateRankActivationDateAction::class);
-                    });
-                });
-
-                //clubs legacy bookmarks
-                $this->route->get('clubs', fn () => $this->redirector->to('/app/clubs', 301));
-                $this->route->get('clubs/create', fn () => $this->redirector->to('/app/clubs/create', 301));
-                $this->route->get('clubs/{clubId}/show', fn (string $clubId) => $this->redirector->to("/app/clubs/{$clubId}", 301));
-
-                //localization
-                //only by locale
-                // $this->route->get('/localization/{code}', Localization\ChangeLanguageAction::class);
-
-                //flags
-                $this->routeRegistrar->prefix('flags')->group(function (): void {
-                    $this->route->get('{flag}/show', ShowFlagEventsAction::class);
-
-                    $this->middleware(['auth'])->group(function (): void {
-                        $this->route->get('', ShowFlagsListAction::class);
-                        $this->route->get('create', ShowCreateFlagFormAction::class);
-                        $this->route->post('store', StoreFlagAction::class);
-                        $this->route->get('{flag}/edit', ShowEditFlagFormAction::class);
-                        $this->route->post('{flag}/update', UpdateFlagAction::class);
-                        $this->route->get('{flag}/delete', DeleteFlagAction::class);
                     });
                 });
 

@@ -24,7 +24,7 @@ final class EloquentCupEventRepository implements CupEventRepository
     public function byCriteria(Criteria $criteria): Collection
     {
         $query = CupEvent::where('active', true)
-            ->with(['event.competition', 'event.protocolLines', 'event.distances', 'event.cups', 'event.flags'])
+            ->with(['event.competition', 'event.protocolLines', 'event.distances', 'event.cups'])
             ->orderByDesc('id')
         ;
 

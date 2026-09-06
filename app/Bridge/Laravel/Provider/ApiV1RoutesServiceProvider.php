@@ -24,6 +24,9 @@ use App\Bridge\Laravel\Http\Controllers\Api\V1\Group\MergeGroupsAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Group\UpdateGroupAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Group\ViewGroupAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\ListPersonsAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\PersonRankHistory\ActivatePersonRankAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\PersonRankHistory\ListPersonRankHistoryAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\PersonRankHistory\UpdatePersonRankActivationAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\ViewPersonAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\PersonPayment\CreateOrUpdatePersonPaymentAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\PersonPayment\ListPersonPaymentsAction;
@@ -65,6 +68,7 @@ final class ApiV1RoutesServiceProvider extends ServiceProvider
                 $router->get('events', ListEventsAction::class);
                 $router->get('persons', ListPersonsAction::class);
                 $router->get('persons/{personId}', ViewPersonAction::class);
+                $router->get('persons/{personId}/rank-histories', ListPersonRankHistoryAction::class);
                 $router->get('protocol-lines', ListProtocolLinesAction::class);
             });
 
@@ -83,6 +87,8 @@ final class ApiV1RoutesServiceProvider extends ServiceProvider
                 $router->post('persons/{personId}/prompts', CreatePersonPromptAction::class);
                 $router->put('person-prompts/{promptId}', UpdatePersonPromptAction::class);
                 $router->delete('person-prompts/{promptId}', DeletePersonPromptAction::class);
+                $router->post('person-rank-history/{protocolLineId}/activation', ActivatePersonRankAction::class);
+                $router->put('person-rank-history/{protocolLineId}/activation', UpdatePersonRankActivationAction::class);
                 $router->post('groups/{sourceGroupId}/merge', MergeGroupsAction::class);
                 $router->post('competitions', CreateCompetitionAction::class);
                 $router->put('competitions/{competitionId}', UpdateCompetitionAction::class);

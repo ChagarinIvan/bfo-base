@@ -8,12 +8,10 @@ use App\Domain\Person\Person;
 use App\Domain\Person\PersonInfo;
 use App\Domain\Person\PersonRankHistory;
 use App\Domain\Person\PersonRepository;
-use App\Domain\Person\PersonResources;
 use App\Domain\Shared\Criteria;
 use App\Domain\Shared\Pagination\Slice;
 use App\Infrastructure\Laravel\Eloquent\Pagination\EloquentQueryAdapter;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
 use function mb_strtolower;
@@ -21,23 +19,9 @@ use function strtr;
 
 final class EloquentPersonRepository implements PersonRepository
 {
-    public function byId(int $id, PersonResources $resources = new PersonResources()): ?Person
+    public function byId(int $id): ?Person
     {
         $query = Person::where('active', true);
-
-        if ($resources->protocolLines) {
-            $query->with('protocolLines.distance.event.competition', 'protocolLines.distance.group');
-        }
-
-        if ($resources->rankHistory) {
-            $query->with(['rankHistories' => static function (Relation $relation): void {
-                $relation->getQuery()
-                    ->with('protocolLine.distance.event.competition')
-                    ->orderBy('achieved_on')
-                    ->orderBy('id')
-                ;
-            }]);
-        }
 
         return $query->find($id);
     }
@@ -71,62 +55,7 @@ final class EloquentPersonRepository implements PersonRepository
 
     public function byCriteria(Criteria $criteria): Collection
     {
-        $query = Person::where('person.active', true)
-            ->select('person.*')
-            ->with('payments')
-            ->orderBy('person.lastname')
-        ;
-
-        if ($criteria->hasParam('ids')) {
-            $query->whereIn('person.id', $criteria->param('ids'));
-        }
-
-        if ($criteria->hasParam('clubId')) {
-            $query->where('person.club_id', $criteria->param('clubId'));
-        }
-
-        if ($criteria->hasParam('rankId')) {
-            $query->where('person.current_rank', $criteria->param('rankId'));
-        }
-
-        if ($criteria->hasParam('rankFinishedBefore')) {
-            $query->where('person.current_rank_finished_on', '<', $criteria->param('rankFinishedBefore'));
-        }
-
-        if ($criteria->hasParam('year')) {
-            $query->where('person.birthday', 'LIKE', $criteria->param('year') . '%');
-        }
-
-        if ($criteria->hasParam('withoutLinesAndPayments')) {
-            $query
-                ->leftjoin('protocol_lines', 'protocol_lines.person_id', '=', 'person.id')
-                ->whereNull('protocol_lines.id')
-                ->leftjoin('persons_payments', 'persons_payments.person_id', '=', 'person.id')
-                ->whereNull('persons_payments.id')
-            ;
-        }
-
-        if ($criteria->hasParam('info')) {
-            /** @var PersonInfo $info */
-            $info = $criteria->param('info');
-
-            $query
-                ->where('person.lastname', $info->lastname)
-                ->where('person.firstname', $info->firstname)
-                ->where('person.birthday', $info->birthday)
-                ->where('person.citizenship', $info->citizenship)
-            ;
-        }
-
-        if ($criteria->hasParam('firstname')) {
-            $query->where('person.firstname', $criteria->param('firstname'));
-        }
-
-        if ($criteria->hasParam('lastname')) {
-            $query->where('person.lastname', $criteria->param('lastname'));
-        }
-
-        return $query->get();
+        return $this->createCriteriaQuery($criteria)->get();
     }
 
     /** @return LazyCollection<int, int> */
@@ -148,7 +77,7 @@ final class EloquentPersonRepository implements PersonRepository
     public function oneByCriteria(Criteria $criteria): ?Person
     {
         /** @var Person|null $first */
-        $first = $this->byCriteria($criteria)->first();
+        $first = $this->createCriteriaQuery($criteria)->first();
 
         return $first;
     }
@@ -158,9 +87,41 @@ final class EloquentPersonRepository implements PersonRepository
     {
         return new Slice(new EloquentQueryAdapter($this->createPaginatedQuery($criteria)));
     }
+
     private function escapeLikePattern(string $value): string
     {
         return strtr($value, ['!' => '!!', '%' => '!%', '_' => '!_']);
+    }
+
+    /** @return Builder<Person> */
+    private function createCriteriaQuery(Criteria $criteria): Builder
+    {
+        $query = Person::query()
+            ->where('person.active', true)
+            ->select('person.*')
+        ;
+
+        if ($criteria->hasParam('info')) {
+            /** @var PersonInfo $info */
+            $info = $criteria->param('info');
+
+            $query
+                ->where('person.lastname', $info->lastname)
+                ->where('person.firstname', $info->firstname)
+                ->where('person.birthday', $info->birthday)
+                ->where('person.citizenship', $info->citizenship)
+            ;
+        }
+
+        if ($criteria->hasParam('firstname')) {
+            $query->where('person.firstname', $criteria->param('firstname'));
+        }
+
+        if ($criteria->hasParam('lastname')) {
+            $query->where('person.lastname', $criteria->param('lastname'));
+        }
+
+        return $query;
     }
 
     /** @return Builder<Person> */

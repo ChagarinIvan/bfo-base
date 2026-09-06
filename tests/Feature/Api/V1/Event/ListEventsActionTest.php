@@ -51,7 +51,6 @@ final class ListEventsActionTest extends TestCase
             ->assertJsonPath('0.id', (string) $event->id)
             ->assertJsonPath('0.competitionId', (string) $competition->id)
             ->assertJsonPath('0.participantsCount', 2)
-            ->assertJsonMissingPath('0.flags')
             ->assertJsonMissingPath('0.cups')
         ;
     }
@@ -96,6 +95,19 @@ final class ListEventsActionTest extends TestCase
             ->assertOk()
             ->assertExactJson([])
         ;
+    }
+
+    #[Test]
+    public function it_lists_events_by_ids_with_competition_names(): void
+    {
+        $competition = $this->createCompetition(['name' => 'Spring Cup']);
+        $event = $this->createEvent($competition);
+
+        $this->getJson("/api/v1/events?ids[]={$event->id}&withCompetition=1")
+            ->assertOk()
+            ->assertJsonCount(1)
+            ->assertJsonPath('0.id', (string) $event->id)
+            ->assertJsonPath('0.competitionName', 'Spring Cup');
     }
 
     #[Test]

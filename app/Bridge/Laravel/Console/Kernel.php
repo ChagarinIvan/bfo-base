@@ -6,7 +6,6 @@ namespace App\Bridge\Laravel\Console;
 
 use App\Bridge\Laravel\Console\Commands\DeleteInactivePersonsPromptsCommand;
 use App\Bridge\Laravel\Console\Commands\FixInactivePersonsProtocolLinesCommand;
-use App\Bridge\Laravel\Console\Commands\FixYearCommand;
 use App\Bridge\Laravel\Console\Commands\IdentProtocolLineCommand;
 use App\Bridge\Laravel\Console\Commands\PruneInactivePersonsCommand;
 use App\Bridge\Laravel\Console\Commands\RebuildExpiredPersonRanksCommand;
@@ -33,7 +32,6 @@ class Kernel extends ConsoleKernel
         StartBigIdentCommand::class,
         SyncPersonsCommand::class,
         SyncStoredPersonsCommand::class,
-        FixYearCommand::class,
         RefillPersonRanksCommand::class,
         RebuildExpiredPersonRanksCommand::class,
         PruneInactivePersonsCommand::class,

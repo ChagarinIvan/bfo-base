@@ -56,7 +56,18 @@ final class PersonPromptApiTest extends TestCase
                 'clubId',
                 'created',
                 'updated',
-            ]);
+        ]);
+    }
+
+    #[Test]
+    public function it_does_not_include_rank_histories_in_person_view(): void
+    {
+        $this->authenticate();
+        $person = $this->createPerson();
+
+        $this->getJson("/api/v1/persons/{$person->id}")
+            ->assertOk()
+            ->assertJsonMissingPath('rankHistories');
     }
 
     #[Test]
