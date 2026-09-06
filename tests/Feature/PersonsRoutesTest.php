@@ -17,4 +17,12 @@ final class PersonsRoutesTest extends TestCase
         $this->getJson('/api/person')->assertStatus(Response::HTTP_NOT_FOUND);
         $this->getJson('/api/persons')->assertStatus(Response::HTTP_NOT_FOUND);
     }
+
+    #[Test]
+    public function it_removes_legacy_person_payment_routes(): void
+    {
+        $this->get('/persons/101/payments')->assertNotFound();
+        $this->get('/persons/101/payments/create')->assertNotFound();
+        $this->post('/persons/101/payments/store')->assertNotFound();
+    }
 }

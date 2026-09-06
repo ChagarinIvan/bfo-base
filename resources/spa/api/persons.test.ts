@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { api } from './client'
-import { getPersons } from './persons'
+import { getPerson, getPersons } from './persons'
 
 vi.mock('./client', () => ({
     api: { get: vi.fn() },
@@ -8,6 +8,13 @@ vi.mock('./client', () => ({
 
 describe('persons api', () => {
     beforeEach(() => vi.clearAllMocks())
+
+    it('loads one person for prompt page context', async () => {
+        vi.mocked(api.get).mockResolvedValue({ data: { id: '62465' } })
+
+        await expect(getPerson('62465')).resolves.toEqual({ id: '62465' })
+        expect(api.get).toHaveBeenCalledWith('/persons/62465')
+    })
 
     it('requests paginated compact persons with the optional camelCase club filter', async () => {
         const headers = { 'x-pagination-total': '1' }

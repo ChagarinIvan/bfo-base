@@ -15,7 +15,8 @@ Shared parser/rank/import consumers сохранить.
 
 **Зависимости**: Laravel 13, Eloquent/MySQL 8.4, Axios, Vue Router, Pinia, PrimeVue, Vitest/Vue Test Utils
 
-**Хранение**: существующие таблицы `person`, `persons_prompt`; миграция не предполагается
+**Хранение**: существующие таблицы `person`, `persons_prompt`; schema migration adds the prompt active
+flag and a one-way data migration recalculates persisted metaphone values.
 
 **Тестирование**: PHPUnit через `composer test`, API/request tests, frontend Vitest; финально CS/STAN/Rector/CI
 
@@ -59,7 +60,7 @@ app/Bridge/Laravel/Http/Controllers/Api/V1/PersonPrompt/
 app/Application/Service/PersonPrompt/  app/Application/Dto/PersonPrompt/
 app/Domain/PersonPrompt/  app/Infrastructure/Laravel/Eloquent/PersonPrompt/
 app/Bridge/Laravel/Provider/{ApiV1RoutesServiceProvider,WebRoutesServiceProvider}.php
-resources/spa/api/{personPrompts,types}.ts  resources/spa/pages/personPrompts/
+resources/spa/api/{personPrompts,persons,types}.ts  resources/spa/pages/persons/
 resources/spa/router/index.ts  resources/spa/components/PersonTable.vue
 tests/Feature/Api/V1/PersonPrompt/  tests/Application/Service/PersonPrompt/
 resources/spa/pages/personPrompts/*.test.ts

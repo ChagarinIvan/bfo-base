@@ -2,11 +2,21 @@
 
 Все пути находятся под `/api/v1` и используют существующий JSON serializer и pagination headers.
 
+## View person context
+
+`GET /persons/{personId}`
+
+- Auth: follows the existing optional API read middleware; prompt pages call it after their auth
+  route guard.
+- `200`: `{ id, lastname, firstname, birthday, rankId, clubId }` plus authenticated `created` and
+  `updated` impression projections.
+- `404`: unknown or inactive person.
+
 ## List person prompts
 
 `GET /person-prompts?personId={int}&page={int}&perPage={int}`
 
-- Auth: required; `401` для неаутентифицированного запроса. Неактивная персона даёт пустой filtered result.
+- Auth: required; `401` для неаутентифицированного запроса. Unknown or inactive `personId` returns `404`.
 - `200`: paginated array of `{ id, personId, prompt, metaphone }`; audit fields доступны в
   authenticated projection.
 - Order: `id DESC`; загружается только текущая страница.

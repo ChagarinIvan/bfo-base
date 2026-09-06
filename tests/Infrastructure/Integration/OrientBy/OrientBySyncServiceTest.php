@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace Tests\Infrastructure\Integration\OrientBy;
 
+use App\Application\Dto\Auth\AuthAssembler;
 use App\Application\Dto\Auth\UserId;
+use App\Application\Dto\PersonPayment\PersonPaymentAssembler;
 use App\Application\Service\PersonPayment\CreateOrUpdatePersonPaymentsService;
 use App\Domain\Club\ClubNameNormalizer;
 use App\Domain\Club\ClubRepository;
 use App\Domain\Person\Person;
+use App\Domain\Person\PersonRepository;
 use App\Domain\PersonPayment\Factory\PersonPaymentFactory;
 use App\Domain\PersonPayment\PersonPaymentRepository;
 use App\Domain\Rank\Rank;
@@ -76,6 +79,8 @@ final class OrientBySyncServiceTest extends TestCase
             new CreateOrUpdatePersonPaymentsService(
                 $this->createStub(PersonPaymentRepository::class),
                 $this->createStub(PersonPaymentFactory::class),
+                new PersonPaymentAssembler(new AuthAssembler),
+                $this->createStub(PersonRepository::class),
                 $this->createStub(TransactionManager::class),
                 $clock,
             ),

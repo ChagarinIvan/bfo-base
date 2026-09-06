@@ -13,6 +13,16 @@
 
 Связь: `Person 1 — N PersonPrompt`; inactive/unknown person не является публичным владельцем списка.
 
+## Prompt page person context
+
+Prompt SPA pages additionally load `GET /api/v1/persons/{personId}` and render the person projection
+above the prompt list/form. It includes the person's name, birthday, current rank, club and authenticated
+`created`/`updated` impression data.
+
+The migration `2026_09_05_000000_recalculate_person_prompt_metaphones` recalculates persisted metaphone
+values for historical prompts using the current transliteration implementation. It is a one-way data
+migration because the previous derived values cannot be reconstructed reliably.
+
 ## Search criteria
 
 `PersonPromptSearchCriteria`/существующий criteria payload:

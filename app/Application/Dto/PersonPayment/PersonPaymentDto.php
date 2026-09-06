@@ -27,7 +27,7 @@ final class PersonPaymentDto extends AbstractDto
 
     public function fromArray(array $data): self
     {
-        $this->personId = $data['personId'];
+        $this->personId = (string) $data['personId'];
         $this->date = $data['date'];
 
         return $this;

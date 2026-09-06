@@ -25,6 +25,8 @@ use App\Bridge\Laravel\Http\Controllers\Api\V1\Group\UpdateGroupAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Group\ViewGroupAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\ListPersonsAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\ViewPersonAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\PersonPayment\CreateOrUpdatePersonPaymentAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\PersonPayment\ListPersonPaymentsAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\PersonPrompt\CreatePersonPromptAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\PersonPrompt\DeletePersonPromptAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\PersonPrompt\ListPersonPromptsAction;
@@ -45,6 +47,11 @@ final class ApiV1RoutesServiceProvider extends ServiceProvider
 
         $this->routes(static function () use ($router): void {
             $router->prefix('api/v1')->middleware('throttle:10,1')->post('auth/login', LoginAction::class);
+
+            $router->prefix('api/v1')->middleware(AuthenticateApiV1::class)->group(static function () use ($router): void {
+                $router->get('persons/payments', ListPersonPaymentsAction::class);
+                $router->post('persons/payments', CreateOrUpdatePersonPaymentAction::class);
+            });
 
             $router->prefix('api/v1')->middleware(OptionalAuthenticateApiV1::class)->group(static function () use ($router): void {
                 $router->get('competitions', ListCompetitionsAction::class);

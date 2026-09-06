@@ -74,6 +74,26 @@ export interface PersonPrompt {
     updated?: Impression
 }
 
+export interface PersonPayment {
+    id: string
+    personId: string
+    year: string
+    date: string
+    created?: Impression
+    updated?: Impression
+}
+
+export interface PersonPaymentSearchQuery {
+    personId: string
+    year?: number
+    page?: number
+    perPage?: number
+}
+
+export interface PersonPaymentRequest {
+    date: string
+}
+
 export interface PersonPromptSearchQuery {
     personId: string
     page?: number

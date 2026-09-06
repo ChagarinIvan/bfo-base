@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, ref, watch } from 'vue'
+import { onBeforeUnmount, ref, watch } from 'vue'
 import Card from 'primevue/card'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import InputText from 'primevue/inputtext'
 import Message from 'primevue/message'
 import Paginator, { type PageState } from 'primevue/paginator'
-import Select from 'primevue/select'
 import { useRoute, useRouter } from 'vue-router'
 import { deleteGroup, getGroup } from '../../api/groups'
 import { getUsers } from '../../api/users'
@@ -16,6 +15,7 @@ import type { Event, Group, PaginationHeaders, User } from '../../api/types'
 import FilterPanel from '../../components/FilterPanel.vue'
 import ImpressionDetails from '../../components/ImpressionDetails.vue'
 import DateFilter from '../../components/DateFilter.vue'
+import YearFilter from '../../components/YearFilter.vue'
 import ConfirmDeleteDialog from '../../components/actions/ConfirmDeleteDialog.vue'
 import GroupActionMenu from '../../components/actions/GroupActionMenu.vue'
 import { t } from '../../i18n'
@@ -27,7 +27,6 @@ import {
     paginationFromHeaders,
     resetPageOnFilterChange,
 } from './groupModels'
-import { yearSelectOptions } from '../competitions/competitionModels'
 
 const route = useRoute()
 const router = useRouter()
@@ -35,7 +34,6 @@ const group = ref<Group | null>(null)
 const events = ref<Event[]>([])
 const users = ref<User[]>([])
 const years = ref<number[]>([])
-const yearOptions = computed(() => yearSelectOptions(years.value))
 const competitionName = ref('')
 const year = ref<number | null>(null)
 const date = ref('')
@@ -205,23 +203,12 @@ onBeforeUnmount(() => debouncedFilter.cancel())
                     >{{ t('spa.competitions.name_hint') }}</small
                 >
             </div>
-            <div class="filter-field">
-                <label for="group-event-year-filter">{{
-                    t('spa.competitions.year')
-                }}</label>
-                <Select
-                    id="group-event-year-filter"
-                    v-model="year"
-                    :options="yearOptions"
-                    option-label="label"
-                    option-value="value"
-                    :placeholder="t('spa.competitions.year_placeholder')"
-                    filter
-                    filter-match-mode="contains"
-                    :filter-placeholder="t('spa.competitions.year_filter')"
-                    @update:model-value="onYearChange"
-                />
-            </div>
+            <YearFilter
+                v-model="year"
+                input-id="group-event-year-filter"
+                :years="years"
+                @update:model-value="onYearChange"
+            />
             <DateFilter
                 v-model="date"
                 input-id="group-event-date-filter"

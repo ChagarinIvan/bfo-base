@@ -14,6 +14,8 @@ import ClubDetailsPage from '../pages/clubs/ClubDetailsPage.vue'
 import CreateClubPage from '../pages/clubs/CreateClubPage.vue'
 import EditClubPage from '../pages/clubs/EditClubPage.vue'
 import PersonsPage from '../pages/persons/PersonsPage.vue'
+import PersonPaymentsPage from '../pages/persons/PersonPaymentsPage.vue'
+import CreatePersonPaymentPage from '../pages/persons/CreatePersonPaymentPage.vue'
 import PersonPromptsPage from '../pages/persons/PersonPromptsPage.vue'
 import CreatePersonPromptPage from '../pages/persons/CreatePersonPromptPage.vue'
 import EditPersonPromptPage from '../pages/persons/EditPersonPromptPage.vue'
@@ -37,6 +39,16 @@ export function createAppRouter(
             { path: '/app/groups', component: GroupsPage },
             { path: '/app/groups/:id', component: GroupDetailsPage },
             { path: '/app/persons', component: PersonsPage },
+            {
+                path: '/app/persons/:personId/payments',
+                component: PersonPaymentsPage,
+                meta: { requiresAuth: true },
+            },
+            {
+                path: '/app/persons/:personId/payments/create',
+                component: CreatePersonPaymentPage,
+                meta: { requiresAuth: true },
+            },
             {
                 path: '/app/persons/:personId/prompts',
                 component: PersonPromptsPage,
