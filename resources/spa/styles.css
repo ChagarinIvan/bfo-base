@@ -319,11 +319,25 @@ body {
     gap: 0.75rem;
 }
 
+.rank-history-group-header,
 .rank-history-group {
-    display: flex;
-    width: 100%;
-    align-items: center;
+    display: grid;
+    grid-template-columns:
+        auto minmax(8rem, 1fr) minmax(7rem, 0.7fr) minmax(8rem, 0.8fr)
+        minmax(8rem, 0.8fr);
     gap: 0.65rem;
+    align-items: center;
+}
+
+.rank-history-group-header {
+    padding: 0 1rem;
+    color: #6c757d;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.rank-history-group {
+    width: 100%;
     padding: 0.75rem 1rem;
     border: 1px solid rgb(33 37 41 / 10%);
     border-radius: 0.5rem;
@@ -339,9 +353,24 @@ body {
 }
 
 .rank-history-group-count {
-    margin-left: auto;
     color: #6c757d;
     font-size: 0.9rem;
+}
+
+@media (width <= 700px) {
+    .rank-history-group-header {
+        display: none;
+    }
+
+    .rank-history-group {
+        grid-template-columns: auto minmax(6rem, 1fr) auto;
+    }
+
+    .rank-history-group > span:nth-last-child(-n + 2) {
+        grid-column: 2 / -1;
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
 }
 
 .person-view-mismatch-row > td {

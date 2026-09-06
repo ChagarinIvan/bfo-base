@@ -10,7 +10,7 @@ Verify that View Person remains compact, `/persons/{personId}/rank-histories` re
 
 npm run ci
 
-Verify the nested ranks tab, local year/date/rank filters, collapsed rank groups, detail tables, anonymous read-only state and authenticated activation actions.
+Verify the nested ranks tab, collapsed rank groups, detail tables, anonymous read-only state and authenticated activation actions.
 
 ## Quality gates
 

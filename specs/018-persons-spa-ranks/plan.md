@@ -21,9 +21,8 @@
 
 1. Keep ranks as a child of the Person Info layout.
 2. Request rank history separately and request referenced events with `withCompetition=1&ids[]=...`.
-3. Apply year, activation date and rank filters locally to the complete history response.
-4. Group filtered rows by rank. Render a collapsed summary row with confirmation count and an expandable detail table with links and activation actions.
-5. Keep the shared filter components and anonymous/authenticated behavior.
+3. Group all history rows by rank. Render a collapsed summary row with confirmation count and an expandable detail table with links and activation actions.
+4. Keep anonymous/authenticated behavior.
 
 ### Cleanup
 

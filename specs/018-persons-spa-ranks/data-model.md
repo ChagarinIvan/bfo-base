@@ -22,13 +22,12 @@ The list query is scoped through the active person and eager-loads only the rela
 
 GET /api/v1/events?withCompetition=1&ids[]=...
 
-## Frontend filter/group model
+## Frontend group model
 
-- year compares the first four characters of achievedOn;
-- activationDate compares exact activatedOn;
-- rankId compares the stored rank identifier and uses the rank catalog for its label;
-- filtered rows are grouped by rankId;
+- all rows are grouped by rankId;
+- the rank catalog provides the label for each group;
 - a group summary displays the rank and confirmation count;
+- a group summary displays the earliest startedOn and the latest finishedOn; an unfinished item marks the group as current;
 - expanded groups display the detailed history table.
 
 ## Mutations and catalog

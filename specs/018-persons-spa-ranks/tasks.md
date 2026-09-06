@@ -15,8 +15,8 @@ All tasks are complete after the final refactor to the separate rank-history que
 
 - [x] T007 Request rank histories separately from the ranks tab.
 - [x] T008 Batch-load referenced events and competitions by IDs.
-- [x] T009 Implement local year, activation-date and rank filters.
-- [x] T010 Group filtered history by rank with collapsed summaries and confirmation counts.
+- [x] T009 Remove rank-history filters and the unused year-catalog request.
+- [x] T010 Group all history by rank with collapsed summaries, confirmation counts and the validity period.
 - [x] T011 Render expandable detail tables, links, anonymous read-only state and authenticated activation controls.
 - [x] T012 Cover the API helper, nested route, loading state, grouping and mutation UI with Vitest.
 

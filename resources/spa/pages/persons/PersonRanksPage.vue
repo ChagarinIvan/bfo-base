@@ -5,7 +5,6 @@ import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Dialog from 'primevue/dialog'
 import Message from 'primevue/message'
-import Select from 'primevue/select'
 import { useRoute } from 'vue-router'
 import {
     activatePersonRank,
@@ -14,11 +13,7 @@ import {
 } from '../../api/personRankHistory'
 import { getEventsByIds } from '../../api/events'
 import { getRanks, type RankOption } from '../../api/ranks'
-import { getYears } from '../../api/years'
 import type { Event, PersonRankHistory } from '../../api/types'
-import DateFilter from '../../components/DateFilter.vue'
-import FilterPanel from '../../components/FilterPanel.vue'
-import YearFilter from '../../components/YearFilter.vue'
 import ActionButton from '../../components/actions/ActionButton.vue'
 import { t } from '../../i18n'
 import { useAuthStore } from '../../stores/auth'
@@ -27,17 +22,14 @@ interface RankHistoryGroup {
     rankId: number
     rank: string
     items: PersonRankHistory[]
+    startedOn: string
 }
 
 const route = useRoute()
 const auth = useAuthStore()
 const history = ref<PersonRankHistory[]>([])
 const events = ref<Record<string, Event>>({})
-const years = ref<number[]>([])
 const ranks = ref<RankOption[]>([])
-const year = ref<number | null>(null)
-const activationDate = ref('')
-const rankId = ref<number | null>(null)
 const loading = ref(true)
 const error = ref('')
 const selected = ref<PersonRankHistory | null>(null)
@@ -47,28 +39,16 @@ const saving = ref(false)
 const expandedRankIds = ref<Set<number>>(new Set())
 let latestRequest = 0
 
-const filteredHistory = computed(() =>
-    history.value.filter((item) => {
-        if (
-            year.value !== null &&
-            !item.achievedOn.startsWith(String(year.value))
-        ) {
-            return false
-        }
-        if (activationDate.value && item.activatedOn !== activationDate.value) {
-            return false
-        }
-        return rankId.value === null || item.rankId === rankId.value
-    }),
-)
-
 const groupedHistory = computed<RankHistoryGroup[]>(() => {
     const groups = new Map<number, RankHistoryGroup>()
 
-    for (const item of filteredHistory.value) {
+    for (const item of history.value) {
         const group = groups.get(item.rankId)
         if (group) {
             group.items.push(item)
+            if (item.startedOn < group.startedOn) {
+                group.startedOn = item.startedOn
+            }
             continue
         }
 
@@ -76,11 +56,25 @@ const groupedHistory = computed<RankHistoryGroup[]>(() => {
             rankId: item.rankId,
             rank: rankLabel(item.rankId),
             items: [item],
+            startedOn: item.startedOn,
         })
     }
 
     return [...groups.values()]
 })
+
+function groupFinishedOn(group: RankHistoryGroup): string | null {
+    if (group.items.some((item) => item.finishedOn === null)) return null
+
+    const finishedDates = group.items
+        .map((item) => item.finishedOn)
+        .filter((finishedOn): finishedOn is string => finishedOn !== null)
+
+    return finishedDates.reduce(
+        (latest, finishedOn) => (finishedOn > latest ? finishedOn : latest),
+        finishedDates[0]!,
+    )
+}
 
 const dialogVisible = computed({
     get: () => selected.value !== null,
@@ -134,29 +128,12 @@ async function loadHistory(): Promise<void> {
 
 async function initialize(): Promise<void> {
     try {
-        const [loadedYears, loadedRanks] = await Promise.all([
-            getYears(),
-            getRanks(),
-        ])
-        years.value = loadedYears
-        ranks.value = loadedRanks
+        ranks.value = await getRanks()
         await loadHistory()
     } catch {
         error.value = t('spa.person_rank.error')
         loading.value = false
     }
-}
-
-function onYearChange(value: number | null): void {
-    year.value = value
-}
-
-function onActivationDateChange(value: string): void {
-    activationDate.value = value
-}
-
-function onRankChange(value: number | null): void {
-    rankId.value = value
 }
 
 function isRankExpanded(rankId: number): boolean {
@@ -237,39 +214,6 @@ onBeforeUnmount(() => {
     <div class="page-toolbar">
         <h1 class="page-title">{{ t('spa.person_rank.title') }}</h1>
     </div>
-    <FilterPanel>
-        <YearFilter
-            v-model="year"
-            class="col-3"
-            input-id="person-rank-year-filter"
-            :years="years"
-            :disabled="loading"
-            @update:model-value="onYearChange"
-        />
-        <DateFilter
-            v-model="activationDate"
-            input-id="person-rank-activation-date-filter"
-            :label="t('spa.person_rank.activation_date_filter')"
-            :disabled="loading"
-            @update:model-value="onActivationDateChange"
-        />
-        <div class="filter-field col-3">
-            <label for="person-rank-filter">{{
-                t('spa.person.rank_filter')
-            }}</label>
-            <Select
-                id="person-rank-filter"
-                v-model="rankId"
-                :options="ranks"
-                option-label="label"
-                option-value="id"
-                :placeholder="t('spa.person.all_options')"
-                :disabled="loading"
-                @update:model-value="onRankChange"
-            />
-        </div>
-    </FilterPanel>
-
     <Message v-if="loading" severity="info" :closable="false">
         {{ t('spa.person_rank.loading') }}
     </Message>
@@ -289,6 +233,13 @@ onBeforeUnmount(() => {
         {{ t('spa.person_rank.empty') }}
     </Message>
     <div v-else class="rank-history-groups">
+        <div class="rank-history-group-header" aria-hidden="true">
+            <span />
+            <span>{{ t('spa.person_rank.rank') }}</span>
+            <span>{{ t('spa.person_rank.confirmations') }}</span>
+            <span>{{ t('spa.person_rank.started') }}</span>
+            <span>{{ t('spa.person_rank.finished') }}</span>
+        </div>
         <section v-for="group in groupedHistory" :key="group.rankId">
             <button
                 class="rank-history-group"
@@ -307,8 +258,11 @@ onBeforeUnmount(() => {
                 <span>{{ group.rank }}</span>
                 <span class="rank-history-group-count">
                     {{ group.items.length }}
-                    {{ t('spa.person_rank.confirmations') }}
                 </span>
+                <span>{{ group.startedOn }}</span>
+                <span>{{
+                    groupFinishedOn(group) ?? t('spa.person_rank.current')
+                }}</span>
             </button>
             <DataTable
                 v-if="isRankExpanded(group.rankId)"
