@@ -22,11 +22,11 @@ The list query is scoped through the active person and eager-loads only the rela
 
 GET /api/v1/events?withCompetition=1&ids[]=...
 
-## Frontend timeline model
+## Frontend group model
 
 - API returns rows ordered by achievedOn descending and ID descending as a stable tie-breaker;
-- the SPA preserves this order and renders a flat timeline table;
-- each row shows the rank label, localized changeType, dates and links to its event and competition.
+- the SPA groups rows by rankId in the order of their latest row;
+- expanded groups preserve reverse chronology and show the rank label, localized qualification type, dates and links to events and competitions.
 
 ## Mutations and catalog
 

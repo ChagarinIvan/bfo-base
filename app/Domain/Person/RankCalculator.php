@@ -111,7 +111,7 @@ final class RankCalculator
         return match (true) {
             $previous === null => RankChangeType::Completion,
             $previous->rank === $fact->rank => RankChangeType::Extension,
-            $previous->rank->value > $fact->rank->value => RankChangeType::Downgrade,
+            $previous->rank->value > $fact->rank->value => RankChangeType::LowerQualification,
             default => RankChangeType::Promotion,
         };
     }

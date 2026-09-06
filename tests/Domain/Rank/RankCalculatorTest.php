@@ -130,14 +130,14 @@ final class RankCalculatorTest extends TestCase
     }
 
     #[Test]
-    public function it_records_a_lower_following_achievement_as_downgrade(): void
+    public function it_records_a_lower_following_achievement_as_lower_qualification(): void
     {
         $result = $this->calculate([
             $this->achievement(Rank::FirstRank, '2025-01-10', 1),
             $this->achievement(Rank::SecondRank, '2026-01-10', 2),
         ]);
 
-        $this->assertSame(RankChangeType::Downgrade, $result->history[1]->change_type);
+        $this->assertSame(RankChangeType::LowerQualification, $result->history[1]->change_type);
     }
 
     #[Test]

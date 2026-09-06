@@ -46,7 +46,7 @@ final class ListPersonRankHistoryActionTest extends TestCase
             'event_id' => $newerLine->distance->event_id,
             'competition_id' => $newerLine->distance->event->competition_id,
             'rank' => Rank::FirstRank,
-            'change_type' => 'downgrade',
+            'change_type' => 'lower_qualification',
             'achieved_on' => '2024-06-02',
             'activated_on' => '2024-06-02',
             'started_on' => '2024-06-02',

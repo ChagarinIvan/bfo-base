@@ -16,10 +16,10 @@ All tasks are complete after the final refactor to the separate rank-history que
 - [x] T007 Request rank histories separately from the ranks tab.
 - [x] T008 Batch-load referenced events and competitions by IDs.
 - [x] T009 Remove rank-history filters and the unused year-catalog request.
-- [x] T010 Render all rank-history facts as a reverse-chronological timeline with validity dates.
-- [x] T011 Render timeline links, anonymous read-only state and authenticated activation controls.
-- [x] T011a Display the localized rank-history change type in the timeline.
-- [x] T012 Cover the API helper, nested route, loading state, timeline and mutation UI with Vitest.
+- [x] T010 Render rank groups with validity dates and reverse-chronological details.
+- [x] T011 Render detail links, anonymous read-only state and authenticated activation controls.
+- [x] T011a Display the localized qualification type without labelling lower qualifications as downgrades.
+- [x] T012 Cover the API helper, nested route, loading state, grouped details and mutation UI with Vitest.
 
 ## Cleanup and verification
 
