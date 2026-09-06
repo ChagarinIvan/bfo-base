@@ -9,6 +9,8 @@ use App\Application\Dto\PersonPrompt\PersonPromptAssembler;
 use App\Application\Dto\PersonPrompt\SearchPersonPromptDto;
 use App\Application\Service\PersonPrompt\ListPersonsPrompts;
 use App\Application\Service\PersonPrompt\ListPersonsPromptsService;
+use App\Domain\Person\Person;
+use App\Domain\Person\PersonRepository;
 use App\Domain\PersonPrompt\PersonPromptRepository;
 use App\Domain\Shared\Criteria;
 use App\Domain\Shared\Pagination\Slice;
@@ -22,6 +24,13 @@ final class ListPersonsPromptsServiceTest extends TestCase
     public function it_paginates_person_prompts_by_criteria(): void
     {
         $repository = $this->createMock(PersonPromptRepository::class);
+        $persons = $this->createMock(PersonRepository::class);
+
+        $persons->expects($this->once())
+            ->method('byId')
+            ->with(7)
+            ->willReturn($this->createStub(Person::class))
+        ;
 
         $repository->expects($this->once())
             ->method('paginate')
@@ -32,6 +41,7 @@ final class ListPersonsPromptsServiceTest extends TestCase
         $service = new ListPersonsPromptsService(
             $repository,
             new PersonPromptAssembler(new AuthAssembler),
+            $persons,
         );
 
         $result = $service->paginate(new ListPersonsPrompts(new SearchPersonPromptDto(personId: '7')));

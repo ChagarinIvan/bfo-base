@@ -7,9 +7,12 @@ import Message from 'primevue/message'
 import Paginator, { type PageState } from 'primevue/paginator'
 import { useRoute, useRouter } from 'vue-router'
 import { getPersonPayments } from '../../api/personPayments'
+import { getUsers } from '../../api/users'
 import { getYears } from '../../api/years'
-import type { PersonPayment } from '../../api/types'
-import type { PaginationHeaders } from '../../api/types'
+import type { PaginationHeaders, PersonPayment, User } from '../../api/types'
+import FilterPanel from '../../components/FilterPanel.vue'
+import ImpressionDetails from '../../components/ImpressionDetails.vue'
+import PersonPromptPersonInfo from '../../components/PersonPromptPersonInfo.vue'
 import YearFilter from '../../components/YearFilter.vue'
 import { t } from '../../i18n'
 import { useAuthStore } from '../../stores/auth'
@@ -22,6 +25,7 @@ const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
 const payments = ref<PersonPayment[]>([])
+const users = ref<User[]>([])
 const years = ref<number[]>([])
 const year = ref<number | null>(null)
 const pagination = ref<PaginationHeaders>({
@@ -70,7 +74,12 @@ async function load(
 
 async function initialize(): Promise<void> {
     try {
-        years.value = await getYears()
+        const [loadedYears, loadedUsers] = await Promise.all([
+            getYears(),
+            getUsers(),
+        ])
+        years.value = loadedYears
+        users.value = loadedUsers
         await load()
         initialized = true
     } catch {
@@ -99,6 +108,7 @@ onMounted(() => void initialize())
 </script>
 
 <template>
+    <PersonPromptPersonInfo :person-id="String(route.params.personId)" />
     <div class="page-toolbar">
         <h1 class="page-title">{{ t('spa.person_payment.title') }}</h1>
         <Button
@@ -115,13 +125,16 @@ onMounted(() => void initialize())
             "
         />
     </div>
-    <YearFilter
-        v-model="year"
-        input-id="person-payment-year-filter"
-        :years="years"
-        :disabled="loading"
-        @update:model-value="onYearChange"
-    />
+    <FilterPanel>
+        <YearFilter
+            v-model="year"
+            class="col-3"
+            input-id="person-payment-year-filter"
+            :years="years"
+            :disabled="loading"
+            @update:model-value="onYearChange"
+        />
+    </FilterPanel>
     <Message v-if="loading" severity="info" :closable="false">{{
         t('spa.person_payment.loading')
     }}</Message>
@@ -150,10 +163,22 @@ onMounted(() => void initialize())
         <Column field="year" :header="t('spa.person_payment.year')" />
         <Column field="date" :header="t('spa.person_payment.date')" />
         <Column :header="t('spa.person_payment.created')">
-            <template #body="{ data }">{{ data.created?.at ?? '—' }}</template>
+            <template #body="{ data }">
+                <ImpressionDetails
+                    :impression="data.created"
+                    :users="users"
+                    :label="t('spa.person_payment.created')"
+                />
+            </template>
         </Column>
         <Column :header="t('spa.person_payment.updated')">
-            <template #body="{ data }">{{ data.updated?.at ?? '—' }}</template>
+            <template #body="{ data }">
+                <ImpressionDetails
+                    :impression="data.updated"
+                    :users="users"
+                    :label="t('spa.person_payment.updated')"
+                />
+            </template>
         </Column>
     </DataTable>
     <Paginator

@@ -4,13 +4,15 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import PersonPaymentsPage from './PersonPaymentsPage.vue'
 
-const { getPersonPayments, getYears, push } = vi.hoisted(() => ({
+const { getPersonPayments, getUsers, getYears, push } = vi.hoisted(() => ({
     getPersonPayments: vi.fn(),
+    getUsers: vi.fn(),
     getYears: vi.fn(),
     push: vi.fn(),
 }))
 
 vi.mock('../../api/personPayments', () => ({ getPersonPayments }))
+vi.mock('../../api/users', () => ({ getUsers }))
 vi.mock('../../api/years', () => ({ getYears }))
 vi.mock('../../stores/auth', () => ({
     useAuthStore: () => ({ isAuthenticated: true }),
@@ -25,6 +27,7 @@ describe('person payments page', () => {
 
     it('loads the list and exposes the authenticated create action', async () => {
         getYears.mockResolvedValue([2025, 2024])
+        getUsers.mockResolvedValue([])
         getPersonPayments.mockResolvedValue({
             data: [
                 {
@@ -48,6 +51,9 @@ describe('person payments page', () => {
                     DataTable: { template: '<div><slot /></div>' },
                     Message: { template: '<div><slot /></div>' },
                     Paginator: true,
+                    FilterPanel: true,
+                    ImpressionDetails: true,
+                    PersonPromptPersonInfo: true,
                     YearFilter: true,
                 },
             },
@@ -66,6 +72,7 @@ describe('person payments page', () => {
 
     it('shows an empty state', async () => {
         getYears.mockResolvedValue([2025, 2024])
+        getUsers.mockResolvedValue([])
         getPersonPayments.mockResolvedValue({ data: [], headers: {} })
 
         const wrapper = mount(PersonPaymentsPage, {
@@ -76,6 +83,9 @@ describe('person payments page', () => {
                     DataTable: true,
                     Message: { template: '<div><slot /></div>' },
                     Paginator: true,
+                    FilterPanel: true,
+                    ImpressionDetails: true,
+                    PersonPromptPersonInfo: true,
                     YearFilter: true,
                 },
             },
