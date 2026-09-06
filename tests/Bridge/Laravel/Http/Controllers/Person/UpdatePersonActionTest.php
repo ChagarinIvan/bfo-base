@@ -46,7 +46,7 @@ final class UpdatePersonActionTest extends TestCase
             'birthday' => '1988-01-01',
         ])
             ->assertStatus(Response::HTTP_FOUND)
-            ->assertRedirect('/persons/1/show')
+            ->assertRedirect('/app/persons/1')
         ;
 
         $this->assertDatabaseHas('person', [

@@ -1,28 +1,33 @@
 <script setup lang="ts">
-import Button from 'primevue/button'
 import EditActionButton from './EditActionButton.vue'
+import ActionButton from './ActionButton.vue'
 import { t } from '../../i18n'
 
-defineProps<{ groupId: string }>()
+const props = withDefaults(
+    defineProps<{ groupId: string; layout?: 'row' | 'column' }>(),
+    { layout: 'column' },
+)
 const emit = defineEmits<{ delete: []; merge: [] }>()
 </script>
 
 <template>
-    <span class="action-menu">
+    <span
+        class="action-menu"
+        :class="{ 'details-actions': props.layout === 'row' }"
+    >
         <EditActionButton
-            :to="`/app/groups/${groupId}/edit`"
-            :label="t('spa.group.edit')"
+            :to="`/app/groups/${props.groupId}/edit`"
+            :label="t('spa.group.edit.action')"
         />
-        <Button
+        <ActionButton
             icon="pi pi-objects-column"
-            text
+            severity="success"
             :label="t('spa.group.merge')"
             @click="emit('merge')"
         />
-        <Button
+        <ActionButton
             icon="pi pi-trash"
             severity="danger"
-            text
             :label="t('spa.group.delete')"
             @click="emit('delete')"
         />

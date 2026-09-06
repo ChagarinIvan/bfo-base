@@ -68,6 +68,7 @@ final class AddPersonPromptServiceTest extends TestCase
     {
         $this->persons->expects($this->once())->method('byId')->with(1)->willReturn(null);
         $this->factory->expects($this->never())->method('create');
+        $this->prompts->expects($this->never())->method('add');
 
         $dto = new PersonPromptDto();
         $dto->prompt = 'Иван Иванов';

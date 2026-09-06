@@ -45,7 +45,7 @@ final class StorePersonActionTest extends TestCase
             'clubId' => '1',
         ])
             ->assertStatus(Response::HTTP_FOUND)
-            ->assertRedirect('/persons/1/show')
+            ->assertRedirect('/app/persons/1')
         ;
 
         $this->assertDatabaseHas('person', [

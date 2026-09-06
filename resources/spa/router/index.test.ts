@@ -68,6 +68,32 @@ describe('SPA navigation guard', () => {
         expect(router.currentRoute.value.path).toBe('/app/competitions/42')
     })
 
+    it('resolves the public person details route', async () => {
+        const router = createAppRouter(createMemoryHistory())
+
+        await router.push('/app/persons/42')
+
+        expect(router.currentRoute.value.path).toBe('/app/persons/42')
+    })
+
+    it('keeps the person info layout while switching person tabs', async () => {
+        localStorage.setItem('auth_token', 'test-token')
+        const router = createAppRouter(createMemoryHistory())
+
+        await router.push('/app/persons/42')
+        expect(router.currentRoute.value.matched[0]?.path).toBe(
+            '/app/persons/:personId',
+        )
+
+        await router.push('/app/persons/42/payments')
+        expect(router.currentRoute.value.matched[0]?.path).toBe(
+            '/app/persons/:personId',
+        )
+        expect(router.currentRoute.value.matched[1]?.path).toBe(
+            '/app/persons/:personId/payments',
+        )
+    })
+
     it('resolves the public clubs listing route', async () => {
         const router = createAppRouter(createMemoryHistory())
 

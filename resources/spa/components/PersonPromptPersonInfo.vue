@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { ref, watch } from 'vue'
 import Card from 'primevue/card'
 import Message from 'primevue/message'
 import { getClubOptions } from '../api/clubs'
@@ -9,32 +9,46 @@ import { getUsers } from '../api/users'
 import type { ClubOption, Person, User } from '../api/types'
 import ImpressionDetails from './ImpressionDetails.vue'
 import { t } from '../i18n'
+import { useAuthStore } from '../stores/auth'
 
 const props = defineProps<{ personId: string }>()
+const emit = defineEmits<{
+    personLoaded: [person: Person | null]
+}>()
+const auth = useAuthStore()
 const person = ref<Person | null>(null)
 const ranks = ref<RankOption[]>([])
 const clubs = ref<ClubOption[]>([])
 const users = ref<User[]>([])
 const loading = ref(true)
 const error = ref('')
+let latestRequest = 0
 
 async function load(): Promise<void> {
+    const requestId = ++latestRequest
+    const personId = props.personId
+
     try {
         const [loadedPerson, loadedRanks, loadedClubs, loadedUsers] =
             await Promise.all([
-                getPerson(props.personId),
+                getPerson(personId),
                 getRanks(),
                 getClubOptions(),
-                getUsers(),
+                auth.isAuthenticated ? getUsers() : Promise.resolve([]),
             ])
+        if (requestId !== latestRequest) return
         person.value = loadedPerson
+        emit('personLoaded', loadedPerson)
         ranks.value = loadedRanks
         clubs.value = loadedClubs
         users.value = loadedUsers
     } catch {
+        if (requestId !== latestRequest) return
+        person.value = null
+        emit('personLoaded', null)
         error.value = t('spa.person_prompt.person_error')
     } finally {
-        loading.value = false
+        if (requestId === latestRequest) loading.value = false
     }
 }
 
@@ -48,7 +62,21 @@ function clubLabel(clubId: string | null): string {
     return clubs.value.find((club) => club.id === clubId)?.name ?? '—'
 }
 
-onMounted(() => void load())
+function birthYear(birthday: string | null): string {
+    return birthday?.slice(0, 4) ?? '—'
+}
+
+watch(
+    () => props.personId,
+    () => {
+        person.value = null
+        emit('personLoaded', null)
+        loading.value = true
+        error.value = ''
+        void load()
+    },
+    { immediate: true },
+)
 </script>
 
 <template>
@@ -73,8 +101,8 @@ onMounted(() => void load())
                         <td>{{ person.firstname }}</td>
                     </tr>
                     <tr>
-                        <th>{{ t('spa.person_prompt.birthday') }}</th>
-                        <td>{{ person.birthday ?? '—' }}</td>
+                        <th>{{ t('spa.person.birth_year') }}</th>
+                        <td>{{ birthYear(person.birthday) }}</td>
                     </tr>
                     <tr>
                         <th>{{ t('spa.person.rank') }}</th>
@@ -82,9 +110,16 @@ onMounted(() => void load())
                     </tr>
                     <tr>
                         <th>{{ t('spa.person.club') }}</th>
-                        <td>{{ clubLabel(person.clubId) }}</td>
+                        <td>
+                            <RouterLink
+                                v-if="person.clubId"
+                                :to="`/app/clubs/${person.clubId}`"
+                                >{{ clubLabel(person.clubId) }}</RouterLink
+                            >
+                            <span v-else>—</span>
+                        </td>
                     </tr>
-                    <tr>
+                    <tr v-if="auth.isAuthenticated">
                         <th>{{ t('spa.person.created') }}</th>
                         <td>
                             <ImpressionDetails
@@ -94,7 +129,7 @@ onMounted(() => void load())
                             />
                         </td>
                     </tr>
-                    <tr>
+                    <tr v-if="auth.isAuthenticated">
                         <th>{{ t('spa.person.updated') }}</th>
                         <td>
                             <ImpressionDetails
@@ -106,6 +141,7 @@ onMounted(() => void load())
                     </tr>
                 </tbody>
             </table>
+            <slot name="actions" />
         </template>
     </Card>
 </template>

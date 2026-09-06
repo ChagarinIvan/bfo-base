@@ -12,7 +12,6 @@ import { getYears } from '../../api/years'
 import type { PaginationHeaders, PersonPayment, User } from '../../api/types'
 import FilterPanel from '../../components/FilterPanel.vue'
 import ImpressionDetails from '../../components/ImpressionDetails.vue'
-import PersonPromptPersonInfo from '../../components/PersonPromptPersonInfo.vue'
 import YearFilter from '../../components/YearFilter.vue'
 import { t } from '../../i18n'
 import { useAuthStore } from '../../stores/auth'
@@ -108,7 +107,6 @@ onMounted(() => void initialize())
 </script>
 
 <template>
-    <PersonPromptPersonInfo :person-id="String(route.params.personId)" />
     <div class="page-toolbar">
         <h1 class="page-title">{{ t('spa.person_payment.title') }}</h1>
         <Button

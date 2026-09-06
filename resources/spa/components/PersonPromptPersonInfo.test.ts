@@ -1,0 +1,173 @@
+// @vitest-environment happy-dom
+
+import { flushPromises, mount } from '@vue/test-utils'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import PersonPromptPersonInfo from './PersonPromptPersonInfo.vue'
+import type { Person } from '../api/types'
+
+const { auth, getClubOptions, getPerson, getRanks, getUsers } = vi.hoisted(
+    () => ({
+        auth: { isAuthenticated: true },
+        getClubOptions: vi.fn(),
+        getPerson: vi.fn(),
+        getRanks: vi.fn(),
+        getUsers: vi.fn(),
+    }),
+)
+
+vi.mock('../api/clubs', () => ({ getClubOptions }))
+vi.mock('../api/persons', () => ({ getPerson }))
+vi.mock('../api/ranks', () => ({ getRanks }))
+vi.mock('../api/users', () => ({ getUsers }))
+vi.mock('../stores/auth', () => ({
+    useAuthStore: () => auth,
+}))
+
+function deferred<T>(): {
+    promise: Promise<T>
+    resolve: (value: T) => void
+} {
+    let resolve!: (value: T) => void
+    const promise = new Promise<T>((nextResolve) => {
+        resolve = nextResolve
+    })
+
+    return { promise, resolve }
+}
+
+function person(
+    id: string,
+    lastname: string,
+    birthday: string | null = null,
+): Person {
+    return {
+        id,
+        lastname,
+        firstname: 'Runner',
+        birthday,
+        rankId: 1,
+        clubId: null,
+    }
+}
+
+function clubOption(id: string, name: string) {
+    return { id, name }
+}
+
+const routerLinkStub = {
+    props: ['to'],
+    template: '<a :href="to"><slot /></a>',
+}
+
+describe('person prompt person info', () => {
+    beforeEach(() => {
+        vi.resetAllMocks()
+        auth.isAuthenticated = true
+        getRanks.mockResolvedValue([])
+        getClubOptions.mockResolvedValue([])
+        getUsers.mockResolvedValue([])
+    })
+
+    it('does not let an older person response overwrite the current one', async () => {
+        const first = deferred<Person>()
+        const second = deferred<Person>()
+        getPerson.mockImplementation((id: string) =>
+            id === '1' ? first.promise : second.promise,
+        )
+
+        const wrapper = mount(PersonPromptPersonInfo, {
+            props: { personId: '1' },
+            global: {
+                stubs: {
+                    Card: {
+                        template:
+                            '<div><slot name="title" /><slot name="content" /></div>',
+                    },
+                    ImpressionDetails: true,
+                    Message: { template: '<div><slot /></div>' },
+                    RouterLink: routerLinkStub,
+                },
+            },
+        })
+
+        await wrapper.setProps({ personId: '2' })
+        second.resolve(person('2', 'Current'))
+        await flushPromises()
+        first.resolve(person('1', 'Stale'))
+        await flushPromises()
+
+        expect(wrapper.text()).toContain('Current')
+        expect(wrapper.text()).not.toContain('Stale')
+    })
+
+    it('hides impression rows for anonymous visitors', async () => {
+        auth.isAuthenticated = false
+        getPerson.mockResolvedValue(person('1', 'Public'))
+
+        const wrapper = mount(PersonPromptPersonInfo, {
+            props: { personId: '1' },
+            global: {
+                stubs: {
+                    Card: {
+                        template:
+                            '<div><slot name="title" /><slot name="content" /></div>',
+                    },
+                    ImpressionDetails: true,
+                    Message: { template: '<div><slot /></div>' },
+                    RouterLink: routerLinkStub,
+                },
+            },
+        })
+        await flushPromises()
+
+        expect(wrapper.text()).not.toContain('Створана')
+        expect(wrapper.text()).not.toContain('Зменена')
+    })
+
+    it('shows only the person birth year', async () => {
+        getPerson.mockResolvedValue(person('1', 'Runner', '2001-06-04'))
+
+        const wrapper = mount(PersonPromptPersonInfo, {
+            props: { personId: '1' },
+            global: {
+                stubs: {
+                    Card: {
+                        template:
+                            '<div><slot name="title" /><slot name="content" /></div>',
+                    },
+                    ImpressionDetails: true,
+                    Message: { template: '<div><slot /></div>' },
+                    RouterLink: routerLinkStub,
+                },
+            },
+        })
+        await flushPromises()
+
+        expect(wrapper.text()).toContain('2001')
+        expect(wrapper.text()).not.toContain('2001-06-04')
+    })
+
+    it('links the person club to its details page', async () => {
+        getPerson.mockResolvedValue({ ...person('1', 'Member'), clubId: '7' })
+        getClubOptions.mockResolvedValue([clubOption('7', 'Orienteering Club')])
+
+        const wrapper = mount(PersonPromptPersonInfo, {
+            props: { personId: '1' },
+            global: {
+                stubs: {
+                    Card: {
+                        template:
+                            '<div><slot name="title" /><slot name="content" /></div>',
+                    },
+                    ImpressionDetails: true,
+                    Message: { template: '<div><slot /></div>' },
+                    RouterLink: routerLinkStub,
+                },
+            },
+        })
+        await flushPromises()
+
+        expect(wrapper.get('a').attributes('href')).toBe('/app/clubs/7')
+        expect(wrapper.get('a').text()).toBe('Orienteering Club')
+    })
+})

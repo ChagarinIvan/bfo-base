@@ -3,7 +3,6 @@
     use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupEventGroupAction;
     use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupTableAction;
     use App\Bridge\Laravel\Http\Controllers\Event\ShowEventDistanceAction;
-    use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonAction;
     use App\Application\Dto\Club\ViewClubDto;
     use App\Application\Dto\Person\ViewPersonDto;
     use App\Domain\Cup\Cup;
@@ -104,7 +103,7 @@
                             <td>{{ $place }}</td>
                             <td>
                                 <b>
-                                    <a href="{{ action(ShowPersonAction::class, [$person->id]) }}">{{ $person->lastname.' '.$person->firstname }}</a>
+                                    <a href="/app/persons/{{ $person->id }}">{{ $person->lastname.' '.$person->firstname }}</a>
                                 </b>
                             </td>
                             <td>{{ $person->birthday ? substr($person->birthday, 0, 4) : '' }}</td>

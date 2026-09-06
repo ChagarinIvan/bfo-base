@@ -19,6 +19,12 @@ final class PersonsRoutesTest extends TestCase
     }
 
     #[Test]
+    public function it_removes_the_legacy_person_view_route(): void
+    {
+        $this->get('/persons/101/show')->assertStatus(Response::HTTP_NOT_FOUND);
+    }
+
+    #[Test]
     public function it_removes_legacy_person_payment_routes(): void
     {
         $this->get('/persons/101/payments')->assertNotFound();

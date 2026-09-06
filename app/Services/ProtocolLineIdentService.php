@@ -9,6 +9,7 @@ use App\Domain\Auth\Impression;
 use App\Domain\PersonPrompt\PersonPromptRepository;
 use App\Domain\PersonPrompt\TranslitPersonPromptMetaphone;
 use App\Domain\ProtocolLine\ProtocolLine;
+use App\Domain\ProtocolLine\ProtocolLineOperations;
 use App\Domain\Shared\Criteria;
 use App\Models\IdentLine;
 use Illuminate\Support\Collection;
@@ -97,7 +98,7 @@ class ProtocolLineIdentService
     }
 
     public function __construct(
-        private readonly ProtocolLineService           $protocolLineService,
+        private readonly ProtocolLineOperations         $protocolLineService,
         private readonly PersonPromptRepository        $personPrompts,
         private readonly TranslitPersonPromptMetaphone $metaphone,
     ) {
@@ -140,9 +141,9 @@ class ProtocolLineIdentService
     public function simpleIdent(Collection $protocolLines): Collection
     {
         $linesIds = $protocolLines->pluck('id');
-        $this->protocolLineService->fastIdent($linesIds);
+        $this->protocolLineService->fastIdent($linesIds->all());
 
-        return $this->protocolLineService->getProtocolLinesInListWithoutPerson($linesIds);
+        return new Collection($this->protocolLineService->getProtocolLinesInListWithoutPerson($linesIds->all()));
     }
 
     /**

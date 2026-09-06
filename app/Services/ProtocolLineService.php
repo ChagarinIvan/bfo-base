@@ -11,22 +11,25 @@ use App\Domain\Group\Group;
 use App\Domain\Group\GroupNameNormalizer;
 use App\Domain\Group\GroupRepository;
 use App\Domain\ProtocolLine\ProtocolLine;
+use App\Domain\ProtocolLine\ProtocolLineOperations;
+use App\Domain\ProtocolLine\ProtocolLineRepository;
 use App\Domain\Rank\RankNormalizer;
 use App\Domain\Shared\Clock;
 use App\Domain\Shared\Criteria;
-use App\Repositories\ProtocolLinesRepository;
+use App\Repositories\ProtocolLinesRepository as LegacyProtocolLinesRepository;
 use Illuminate\Support\Collection;
 use RuntimeException;
 use function str_replace;
 
-class ProtocolLineService
+final readonly class ProtocolLineService implements ProtocolLineOperations
 {
     public function __construct(
-        private readonly ProtocolLinesRepository $protocolLinesRepository,
-        private readonly GroupRepository $groupsRepository,
-        private readonly RankNormalizer $rankNormalizer,
-        private readonly Clock $clock,
-        private readonly GroupNameNormalizer $groupNameNormalizer,
+        private LegacyProtocolLinesRepository $protocolLinesRepository,
+        private ProtocolLineRepository $protocolLines,
+        private GroupRepository $groupsRepository,
+        private RankNormalizer $rankNormalizer,
+        private Clock $clock,
+        private GroupNameNormalizer $groupNameNormalizer,
     ) {
     }
 
@@ -76,23 +79,22 @@ class ProtocolLineService
 
     public function getProtocolLine(int $id): ProtocolLine
     {
-        $protocolLine = $this->protocolLinesRepository->byId($id);
+        $protocolLine = $this->protocolLines->byId($id);
         if ($protocolLine instanceof ProtocolLine) {
             return $protocolLine;
         }
         throw new RuntimeException('Wrong protocolLine id.');
     }
 
-    public function getPersonProtocolLines(int $personId): Collection
-    {
-        return $this->protocolLinesRepository->getProtocolLines($personId);
-    }
-
-    public function getProtocolLinesInListWithoutPerson(Collection $linesIds): Collection
+    /** @param list<int> $linesIds
+     * @return list<ProtocolLine>
+     */
+    public function getProtocolLinesInListWithoutPerson(array $linesIds): array
     {
         return ProtocolLine::whereIn('id', $linesIds)
             ->whereNull('person_id')
-            ->get();
+            ->get()
+            ->all();
     }
 
     public function deleteEventLines(Event $event): void
@@ -111,10 +113,12 @@ class ProtocolLineService
             ->all();
     }
 
-    public function fastIdent(Collection $linesIds): void
+    /** @param list<int> $linesIds */
+    public function fastIdent(array $linesIds): void
     {
-        $this->protocolLinesRepository->identByEqualPreparedLine($linesIds);
-        $this->protocolLinesRepository->identByEqualPersonPrompt($linesIds);
+        $lineIds = new Collection($linesIds);
+        $this->protocolLinesRepository->identByEqualPreparedLine($lineIds);
+        $this->protocolLinesRepository->identByEqualPersonPrompt($lineIds);
     }
 
     public function getEqualLines(string $line): Collection

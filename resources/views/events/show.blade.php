@@ -6,7 +6,6 @@
     use App\Bridge\Laravel\Http\Controllers\Event\ShowEditEventFormAction;
     use App\Bridge\Laravel\Http\Controllers\Event\ShowEventDistanceAction;
     use App\Bridge\Laravel\Http\Controllers\Flags\ShowFlagEventsAction;
-    use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonAction;
     use App\Bridge\Laravel\Http\Controllers\Person\ShowSetPersonToProtocolLineAction;
     use App\Domain\Distance\Distance;
     use App\Domain\Event\Event;
@@ -140,7 +139,7 @@
                             <td>{{ $line->serial_number }}</td>
                             @if($hasPerson)
                                 @php
-                                    $link = action(ShowPersonAction::class, [$line->person_id]);
+                                    $link = '/app/persons/' . $line->person_id;
                                     $isDeletedPerson = !isset($persons[$line->person_id]);
                                 @endphp
                                 <td><a href="{{ $link }}">{{ $line->lastname }}</a>&nbsp;

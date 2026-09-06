@@ -7,8 +7,8 @@ namespace App\Application\Handler\Event;
 use App\Application\Service\Cup\ClearCupCacheService;
 use App\Application\Service\Person\RebuildPersonRanksService;
 use App\Domain\Event\Event\EventDisabled;
+use App\Domain\ProtocolLine\ProtocolLineOperations;
 use App\Services\DistanceService;
-use App\Services\ProtocolLineService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 final readonly class DisableEventHandler implements ShouldQueue
@@ -16,7 +16,7 @@ final readonly class DisableEventHandler implements ShouldQueue
     use DisableEventHandlerTrait;
 
     public function __construct(
-        private ProtocolLineService $protocolLineService,
+        private ProtocolLineOperations $protocolLineService,
         private DistanceService $distanceService,
         private ClearCupCacheService $clearCupCacheService,
         private RebuildPersonRanksService $rebuildPersonRanksService,

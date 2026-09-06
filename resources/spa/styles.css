@@ -306,6 +306,32 @@ body {
     font-size: 1.35rem;
 }
 
+.details-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.person-view-mismatch-row > td {
+    background: color-mix(
+        in srgb,
+        var(--p-yellow-100) 70%,
+        transparent
+    ) !important;
+}
+
+.person-info-tab-active {
+    box-shadow: 0 0 0 2px var(--p-primary-color);
+}
+
+.person-view-table {
+    overflow: hidden;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.25rem 0.75rem rgb(33 37 41 / 7%);
+}
+
 .events-table {
     overflow: hidden;
     border-radius: 0.5rem;
@@ -329,9 +355,21 @@ body {
 }
 
 .action-menu {
-    display: inline-flex;
-    align-items: center;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
     gap: 0.25rem;
+}
+
+.action-menu.details-actions {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.action-button {
+    text-decoration: none;
 }
 
 .mass-icon {

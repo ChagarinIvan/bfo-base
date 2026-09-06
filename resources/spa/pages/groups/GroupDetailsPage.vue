@@ -182,6 +182,7 @@ onBeforeUnmount(() => debouncedFilter.cancel())
                 <GroupActionMenu
                     v-if="auth.isAuthenticated"
                     :group-id="group.id"
+                    layout="row"
                     @merge="router.push(`/app/groups/${group.id}/merge`)"
                     @delete="deleteDialogVisible = true"
                 /> </template

@@ -32,6 +32,7 @@ use App\Bridge\Laravel\Http\Controllers\Api\V1\PersonPrompt\DeletePersonPromptAc
 use App\Bridge\Laravel\Http\Controllers\Api\V1\PersonPrompt\ListPersonPromptsAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\PersonPrompt\UpdatePersonPromptAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\PersonPrompt\ViewPersonPromptAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\ProtocolLine\ListProtocolLinesAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Rank\ListRanksAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Year\ListYearsAction;
 use App\Bridge\Laravel\Http\Middleware\AuthenticateApiV1;
@@ -64,6 +65,7 @@ final class ApiV1RoutesServiceProvider extends ServiceProvider
                 $router->get('events', ListEventsAction::class);
                 $router->get('persons', ListPersonsAction::class);
                 $router->get('persons/{personId}', ViewPersonAction::class);
+                $router->get('protocol-lines', ListProtocolLinesAction::class);
             });
 
             $router->prefix('api/v1')->get('ranks', ListRanksAction::class);

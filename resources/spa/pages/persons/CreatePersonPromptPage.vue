@@ -6,7 +6,6 @@ import { createPersonPrompt } from '../../api/personPrompts'
 import type { ApiErrorResponse, PersonPromptRequest } from '../../api/types'
 import { isApiValidationError, applyFieldErrors } from '../listingModels'
 import PersonPromptForm from './PersonPromptForm.vue'
-import PersonPromptPersonInfo from '../../components/PersonPromptPersonInfo.vue'
 import { t } from '../../i18n'
 const route = useRoute()
 const router = useRouter()
@@ -34,7 +33,6 @@ async function submit(value: PersonPromptRequest): Promise<void> {
 }
 </script>
 <template>
-    <PersonPromptPersonInfo :person-id="String(route.params.personId)" />
     <Card class="form-card"
         ><template #title>{{ t('spa.person_prompt.create_title') }}</template
         ><template #content

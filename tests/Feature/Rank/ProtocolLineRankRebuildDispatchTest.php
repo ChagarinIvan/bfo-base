@@ -14,11 +14,10 @@ use App\Domain\Person\Person;
 use App\Domain\PersonPrompt\PersonPromptRepository;
 use App\Domain\PersonPrompt\TranslitPersonPromptMetaphone;
 use App\Domain\ProtocolLine\ProtocolLine;
+use App\Domain\ProtocolLine\ProtocolLineOperations;
 use App\Services\ProtocolLineIdentService;
-use App\Services\ProtocolLineService;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Queue;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -41,9 +40,9 @@ final class ProtocolLineRankRebuildDispatchTest extends TestCase
         $distance = Distance::factory()->createOne(['id' => 1, 'event_id' => $event->id, 'group_id' => 1]);
         $firstLine = ProtocolLine::factory()->createOne(['id' => 1, 'distance_id' => $distance->id, 'person_id' => $person->id]);
         $secondLine = ProtocolLine::factory()->createOne(['id' => 2, 'distance_id' => $distance->id, 'person_id' => $person->id]);
-        $protocolLines = $this->createMock(ProtocolLineService::class);
+        $protocolLines = $this->createMock(ProtocolLineOperations::class);
         $protocolLines->expects($this->once())->method('fastIdent');
-        $protocolLines->expects($this->once())->method('getProtocolLinesInListWithoutPerson')->willReturn(Collection::empty());
+        $protocolLines->expects($this->once())->method('getProtocolLinesInListWithoutPerson')->willReturn([]);
         Queue::fake();
 
         new ProtocolLineIdentService(

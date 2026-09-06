@@ -23,6 +23,6 @@ class UpdatePersonAction extends BaseController
     ): RedirectResponse {
         $person = $service->execute(new UpdatePersonInfo($personId, $info, $userId));
 
-        return $this->redirector->action(ShowPersonAction::class, [$person->id]);
+        return $this->redirector->to('/app/persons/' . $person->id);
     }
 }

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import type { AxiosError } from 'axios'
-import Button from 'primevue/button'
 import Card from 'primevue/card'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
@@ -24,6 +23,7 @@ import { useAuthStore } from '../../stores/auth'
 import CompetitionActionMenu from '../../components/actions/CompetitionActionMenu.vue'
 import ConfirmDeleteDialog from '../../components/actions/ConfirmDeleteDialog.vue'
 import ImpressionDetails from '../../components/ImpressionDetails.vue'
+import ActionButton from '../../components/actions/ActionButton.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -183,31 +183,30 @@ async function deleteCurrentCompetition(): Promise<void> {
                 <CompetitionActionMenu
                     v-if="auth.isAuthenticated"
                     :competition-id="competition.id"
+                    layout="row"
                     @delete="deleteDialogVisible = true"
-                />
-                <span
-                    v-if="auth.isAuthenticated"
-                    class="competition-legacy-actions"
                 >
-                    <Button
-                        as="a"
-                        :href="`/events/${competition.id}/create`"
-                        icon="pi pi-plus"
-                        :label="t('app.competition.add_event')"
-                        severity="success"
-                        text
-                        class="competition-legacy-action"
-                    />
-                    <Button
-                        as="a"
-                        :href="`/events/${competition.id}/sum`"
-                        icon="pi pi-clone"
-                        :label="t('app.competition.sum')"
-                        severity="info"
-                        text
-                        class="competition-legacy-action"
-                    />
-                </span>
+                    <template #between>
+                        <span class="competition-legacy-actions">
+                            <ActionButton
+                                as="a"
+                                :href="`/events/${competition.id}/create`"
+                                icon="pi pi-plus"
+                                :label="t('app.competition.add_event')"
+                                severity="success"
+                                class="competition-legacy-action"
+                            />
+                            <ActionButton
+                                as="a"
+                                :href="`/events/${competition.id}/sum`"
+                                icon="pi pi-clone"
+                                :label="t('app.competition.sum')"
+                                severity="info"
+                                class="competition-legacy-action"
+                            />
+                        </span>
+                    </template>
+                </CompetitionActionMenu>
             </template>
         </Card>
 
@@ -259,7 +258,7 @@ async function deleteCurrentCompetition(): Promise<void> {
                 :header="t('spa.competition.edit.action')"
             >
                 <template #body="{ data }">
-                    <Button
+                    <ActionButton
                         as="a"
                         :href="`/events/${data.id}/edit`"
                         icon="pi pi-pencil"

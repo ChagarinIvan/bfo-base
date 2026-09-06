@@ -25,13 +25,16 @@ describe('person table', () => {
             },
             global: {
                 stubs: {
-                    RouterLink: { template: '<a><slot /></a>' },
+                    RouterLink: {
+                        props: ['to'],
+                        template: '<a :href="to"><slot /></a>',
+                    },
                     ImpressionDetails: true,
                 },
             },
         })
 
-        expect(wrapper.findAll('a[href="/persons/7/show"]')).toHaveLength(2)
+        expect(wrapper.findAll('a[href="/app/persons/7"]')).toHaveLength(2)
         expect(wrapper.text()).toContain('Клуб')
         expect(wrapper.text()).toContain('2001')
         expect(wrapper.text()).toContain('I')
@@ -56,7 +59,10 @@ describe('person table', () => {
             global: {
                 plugins: [PrimeVue],
                 stubs: {
-                    RouterLink: { template: '<a><slot /></a>' },
+                    RouterLink: {
+                        props: ['to'],
+                        template: '<a :href="to"><slot /></a>',
+                    },
                     ImpressionDetails: true,
                 },
             },
@@ -69,6 +75,9 @@ describe('person table', () => {
         expect(
             wrapper.find('.action-menu a[href="/persons/7/edit"]').exists(),
         ).toBe(true)
+        expect(
+            wrapper.find('.action-menu a[href="/persons/7/edit"]').classes(),
+        ).toContain('action-button')
         expect(
             wrapper.find('.action-menu a[href="/persons/7/delete"]').exists(),
         ).toBe(false)

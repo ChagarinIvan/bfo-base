@@ -1,7 +1,6 @@
 @php
     use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupEventGroupAction;
     use App\Bridge\Laravel\Http\Controllers\Event\ShowEventDistanceAction;
-    use App\Bridge\Laravel\Http\Controllers\Person\ShowPersonAction;
     use App\Application\Dto\Cup\ViewCalculatedCupEventDto;
 
     /**
@@ -68,7 +67,7 @@
                         <tr>
                             <td>{{ ++$index }}</td>
                             <td>
-                                <a href="{{ action(ShowPersonAction::class, [$point->personId]) }}">{{ $point->personName }}</a>
+                                <a href="/app/persons/{{ $point->personId }}">{{ $point->personName }}</a>
                             </td>
                             <td>{{ $point->personYear }}</td>
                             <td>

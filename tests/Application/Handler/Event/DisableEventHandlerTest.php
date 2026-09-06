@@ -15,10 +15,10 @@ use App\Domain\Person\Person;
 use App\Domain\Person\PersonRepository;
 use App\Domain\Person\RankCalculator;
 use App\Domain\Person\RankFactsCollector;
+use App\Domain\ProtocolLine\ProtocolLineOperations;
 use App\Domain\Shared\Clock;
 use App\Domain\Shared\TransactionManager;
 use App\Services\DistanceService;
-use App\Services\ProtocolLineService;
 use Carbon\Carbon;
 use Closure;
 use PHPUnit\Framework\Attributes\Test;
@@ -34,7 +34,7 @@ final class DisableEventHandlerTest extends TestCase
         $event->updated = $impression = new Impression(Carbon::parse('2026-09-02 12:00:00'), 7);
         $event->setRelation('cups', collect());
 
-        $protocolLines = $this->createMock(ProtocolLineService::class);
+        $protocolLines = $this->createMock(ProtocolLineOperations::class);
         $protocolLines->expects($this->once())->method('personIdsForEvent')->with($event)->willReturn([12, 18]);
         $protocolLines->expects($this->once())->method('deleteEventLines')->with($event);
 
@@ -50,7 +50,7 @@ final class DisableEventHandlerTest extends TestCase
         $persons->expects($this->exactly(2))->method('update');
         $facts = $this->createMock(RankFactsCollector::class);
         $facts->expects($this->exactly(2))->method('collect')->willReturn([]);
-        $clock = $this->createMock(Clock::class);
+        $clock = $this->createStub(Clock::class);
         $clock->method('now')->willReturn(Carbon::parse('2026-09-02 12:00:00'));
         $transaction = $this->createMock(TransactionManager::class);
         $transaction->expects($this->exactly(2))->method('run')->willReturnCallback(static fn (Closure $callback): mixed => $callback());
