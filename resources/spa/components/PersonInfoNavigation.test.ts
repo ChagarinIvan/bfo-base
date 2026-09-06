@@ -38,15 +38,21 @@ describe('person info navigation', () => {
                 stubs: {
                     Button: {
                         emits: ['click'],
-                        props: ['label'],
+                        props: ['label', 'icon', 'text'],
                         template:
-                            '<button @click="$emit(\'click\')">{{ label }}</button>',
+                            '<button :data-icon="icon" :data-text="text" @click="$emit(\'click\')">{{ label }}</button>',
                     },
                 },
             },
         })
 
         expect(wrapper.findAll('button')).toHaveLength(5)
+        expect(
+            wrapper.findAll('button')[0].attributes('data-text'),
+        ).toBeDefined()
+        expect(wrapper.findAll('button')[1].attributes('data-icon')).toBe(
+            'pi pi-comments',
+        )
 
         await wrapper.findAll('button')[1].trigger('click')
         await flushPromises()

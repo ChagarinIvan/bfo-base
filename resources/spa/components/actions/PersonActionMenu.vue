@@ -15,6 +15,7 @@ const emit = defineEmits<{ delete: [] }>()
             :label="t('spa.person.edit')"
             severity="secondary"
             text
+            class="action-link-button"
         />
         <Button
             icon="pi pi-trash"

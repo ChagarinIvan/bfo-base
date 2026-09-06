@@ -8,7 +8,7 @@ const auth = useAuthStore()
 </script>
 
 <template>
-    <div class="person-info-actions">
+    <div class="details-actions">
         <Button
             v-if="auth.isAuthenticated"
             as="a"
@@ -16,6 +16,8 @@ const auth = useAuthStore()
             :label="t('spa.person.edit')"
             icon="pi pi-pencil"
             severity="secondary"
+            text
+            class="action-link-button"
         />
         <RouterLink
             v-if="auth.isAuthenticated"
@@ -27,7 +29,7 @@ const auth = useAuthStore()
                 type="button"
                 :class="{ 'person-info-tab-active': isActive }"
                 :label="t('spa.person.prompts')"
-                icon="pi pi-terminal"
+                icon="pi pi-comments"
                 severity="success"
                 @click="navigate"
             />
@@ -53,6 +55,7 @@ const auth = useAuthStore()
             :label="t('spa.person.ranks')"
             icon="pi pi-stopwatch"
             severity="info"
+            class="action-link-button"
         />
         <RouterLink
             v-slot="{ navigate, isExactActive }"

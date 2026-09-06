@@ -8,7 +8,7 @@ const emit = defineEmits<{ delete: []; merge: [] }>()
 </script>
 
 <template>
-    <span class="action-menu">
+    <span class="action-menu details-actions">
         <EditActionButton
             :to="`/app/groups/${groupId}/edit`"
             :label="t('spa.group.edit')"

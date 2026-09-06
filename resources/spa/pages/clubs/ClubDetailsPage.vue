@@ -210,11 +210,12 @@ onBeforeUnmount(() => debouncedNameSearch.cancel())
                         </tr>
                     </tbody>
                 </table>
-                <EditActionButton
-                    v-if="auth.isAuthenticated"
-                    :to="`/app/clubs/${club.id}/edit`"
-                    :label="t('spa.club.edit.action')"
-                />
+                <div v-if="auth.isAuthenticated" class="details-actions">
+                    <EditActionButton
+                        :to="`/app/clubs/${club.id}/edit`"
+                        :label="t('spa.club.edit.action')"
+                    />
+                </div>
             </template>
         </Card>
 

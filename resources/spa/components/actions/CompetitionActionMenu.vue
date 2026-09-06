@@ -9,7 +9,7 @@ const emit = defineEmits<{ delete: [] }>()
 </script>
 
 <template>
-    <span class="action-menu">
+    <span class="action-menu details-actions">
         <EditActionButton
             :to="competitionActionRoute(props.competitionId)"
             :label="t('spa.competition.edit.action')"

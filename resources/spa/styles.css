@@ -306,9 +306,10 @@ body {
     font-size: 1.35rem;
 }
 
-.person-info-actions {
+.details-actions {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
     gap: 0.5rem;
     margin-top: 1rem;
 }
@@ -349,6 +350,15 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 0.25rem;
+}
+
+.action-menu.details-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.action-link-button {
+    text-decoration: none;
 }
 
 .mass-icon {
