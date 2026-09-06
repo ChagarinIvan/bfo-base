@@ -99,6 +99,8 @@
 - [x] T034 [US4] Prevent short competition-name input from sending validation requests, disabling the field or losing focus; cover the behavior in resources/spa/pages/persons/PersonViewPage.test.ts
 - [x] T035 [US1] Hide created/updated impression rows for anonymous visitors and guard stale Person Info responses in resources/spa/components/PersonPromptPersonInfo.vue and resources/spa/components/PersonPromptPersonInfo.test.ts
 - [x] T036 [US1] Add the competitions tab to shared Person Info navigation, returning to the person participation page, with SPA coverage and updated acceptance documentation
+- [x] T037 [US3] Add mismatch detection for populated protocol-line name and birth-year fields, row highlighting, and authenticated extraction-action coverage in resources/spa/pages/persons/personViewModels.test.ts and resources/spa/pages/persons/PersonViewPage.test.ts
+- [x] T038 [US3] Restore the existing authenticated person-extraction action in the SPA participation table and pass the current person context from the persistent Person Info module in resources/spa/pages/persons/PersonViewPage.vue, resources/spa/pages/persons/PersonLayoutPage.vue and resources/spa/components/PersonPromptPersonInfo.vue
 
 ## Dependencies and execution order
 

@@ -68,11 +68,6 @@ class ProtocolLine extends AggregatedModel
     /** @see ProtocolLineFactory */
     use HasFactory;
 
-//    public function getDateFormat(): string
-//    {
-//        return 'H:i:s';
-//    }
-
     public function distance(): BelongsTo
     {
         return $this->belongsTo(Distance::class, 'distance_id', 'id');

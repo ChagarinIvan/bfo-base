@@ -1,4 +1,8 @@
-import type { ProtocolLineSearchQuery } from '../../api/types'
+import type {
+    Person,
+    ProtocolLine,
+    ProtocolLineSearchQuery,
+} from '../../api/types'
 import {
     NAME_SEARCH_MINIMUM_LENGTH,
     normaliseNameSearch,
@@ -32,4 +36,24 @@ export function personProtocolLinesQuery(
     if (filters.perPage !== undefined) query.perPage = filters.perPage
 
     return query
+}
+
+function differsWhenPresent(
+    first: string | null,
+    second: string | null,
+): boolean {
+    return Boolean(first && second) && first !== second
+}
+
+export function hasPersonMismatch(
+    line: ProtocolLine,
+    person: Person | null,
+): boolean {
+    if (!person) return false
+
+    return (
+        differsWhenPresent(line.lastname, person.lastname) ||
+        differsWhenPresent(line.firstname, person.firstname) ||
+        differsWhenPresent(line.year, person.birthday?.slice(0, 4) ?? null)
+    )
 }

@@ -12,6 +12,9 @@ import { t } from '../i18n'
 import { useAuthStore } from '../stores/auth'
 
 const props = defineProps<{ personId: string }>()
+const emit = defineEmits<{
+    personLoaded: [person: Person | null]
+}>()
 const auth = useAuthStore()
 const person = ref<Person | null>(null)
 const ranks = ref<RankOption[]>([])
@@ -35,11 +38,14 @@ async function load(): Promise<void> {
             ])
         if (requestId !== latestRequest) return
         person.value = loadedPerson
+        emit('personLoaded', loadedPerson)
         ranks.value = loadedRanks
         clubs.value = loadedClubs
         users.value = loadedUsers
     } catch {
         if (requestId !== latestRequest) return
+        person.value = null
+        emit('personLoaded', null)
         error.value = t('spa.person_prompt.person_error')
     } finally {
         if (requestId === latestRequest) loading.value = false
@@ -64,6 +70,7 @@ watch(
     () => props.personId,
     () => {
         person.value = null
+        emit('personLoaded', null)
         loading.value = true
         error.value = ''
         void load()

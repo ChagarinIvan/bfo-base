@@ -301,10 +301,6 @@ body {
     text-decoration: none;
 }
 
-.competition-card-actions > .details-actions {
-    margin-top: 0;
-}
-
 .section-title {
     margin: 0 0 0.75rem;
     font-size: 1.35rem;
@@ -316,6 +312,14 @@ body {
     align-items: center;
     gap: 0.5rem;
     margin-top: 1rem;
+}
+
+.person-view-mismatch-row > td {
+    background: color-mix(
+        in srgb,
+        var(--p-yellow-100) 70%,
+        transparent
+    ) !important;
 }
 
 .person-info-tab-active {

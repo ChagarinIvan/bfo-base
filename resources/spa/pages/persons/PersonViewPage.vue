@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
+import { inject, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import Button from 'primevue/button'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
@@ -13,10 +13,14 @@ import type { PaginationHeaders, ProtocolLine } from '../../api/types'
 import DateFilter from '../../components/DateFilter.vue'
 import FilterPanel from '../../components/FilterPanel.vue'
 import YearFilter from '../../components/YearFilter.vue'
+import ActionButton from '../../components/actions/ActionButton.vue'
+import { useAuthStore } from '../../stores/auth'
 import { t } from '../../i18n'
+import { personContextKey } from './personContext'
 import {
     applyFieldErrors,
     debounce,
+    hasPersonMismatch,
     hasTooShortNameSearch,
     isApiValidationError,
     paginationFromHeaders,
@@ -26,6 +30,8 @@ import {
 
 const route = useRoute()
 const router = useRouter()
+const auth = useAuthStore()
+const person = inject(personContextKey, ref(null))
 const lines = ref<ProtocolLine[]>([])
 const years = ref<number[]>([])
 const year = ref<number | null>(null)
@@ -138,6 +144,16 @@ function display(value: string | null): string {
     return value || '—'
 }
 
+function rowClass(line: ProtocolLine): string | undefined {
+    return hasPersonMismatch(line, person.value)
+        ? 'person-view-mismatch-row'
+        : undefined
+}
+
+function extractPersonUrl(line: ProtocolLine): string {
+    return `/persons/extract/${line.id}`
+}
+
 let initialized = false
 
 watch(
@@ -214,7 +230,13 @@ onBeforeUnmount(() => debouncedCompetitionSearch.cancel())
     <Message v-else-if="!lines.length" severity="secondary" :closable="false">{{
         t('spa.person_view.empty')
     }}</Message>
-    <DataTable v-else :value="lines" striped-rows class="person-view-table">
+    <DataTable
+        v-else
+        :value="lines"
+        :row-class="rowClass"
+        striped-rows
+        class="person-view-table"
+    >
         <Column :header="t('spa.person_view.competition')">
             <template #body="{ data }">
                 <RouterLink
@@ -252,6 +274,21 @@ onBeforeUnmount(() => debouncedCompetitionSearch.cancel())
             <template #body="{ data }">{{
                 display(data.completeRank)
             }}</template>
+        </Column>
+        <Column
+            v-if="auth.isAuthenticated"
+            :header="t('spa.person_view.actions')"
+        >
+            <template #body="{ data }">
+                <ActionButton
+                    v-if="hasPersonMismatch(data, person)"
+                    as="a"
+                    :href="extractPersonUrl(data)"
+                    icon="pi pi-user-plus"
+                    :label="t('spa.person_view.extract_person')"
+                    severity="warn"
+                />
+            </template>
         </Column>
     </DataTable>
     <Paginator

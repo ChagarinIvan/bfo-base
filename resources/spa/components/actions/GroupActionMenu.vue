@@ -17,7 +17,7 @@ const emit = defineEmits<{ delete: []; merge: [] }>()
     >
         <EditActionButton
             :to="`/app/groups/${props.groupId}/edit`"
-            :label="t('spa.group.edit')"
+            :label="t('spa.group.edit.action')"
         />
         <ActionButton
             icon="pi pi-objects-column"

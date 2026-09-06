@@ -20,6 +20,7 @@ const emit = defineEmits<{ delete: [] }>()
             :to="competitionActionRoute(props.competitionId)"
             :label="t('spa.competition.edit.action')"
         />
+        <slot name="between" />
         <ActionButton
             icon="pi pi-trash"
             :label="t('spa.competition.delete.action')"

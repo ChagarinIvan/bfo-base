@@ -2,9 +2,12 @@
 
 import { flushPromises, mount } from '@vue/test-utils'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { ref } from 'vue'
 import PersonViewPage from './PersonViewPage.vue'
+import { personContextKey } from './personContext'
 
-const { getPersonProtocolLines, getYears, push } = vi.hoisted(() => ({
+const { auth, getPersonProtocolLines, getYears, push } = vi.hoisted(() => ({
+    auth: { isAuthenticated: true },
     getPersonProtocolLines: vi.fn(),
     getYears: vi.fn(),
     push: vi.fn(),
@@ -16,10 +19,18 @@ vi.mock('vue-router', () => ({
     useRoute: () => ({ params: { personId: '7' } }),
     useRouter: () => ({ push }),
 }))
+vi.mock('../../stores/auth', () => ({ useAuthStore: () => auth }))
+
+const DataTableStub = {
+    name: 'DataTableStub',
+    props: ['value', 'rowClass'],
+    template: '<div><slot /></div>',
+}
 
 describe('person view page', () => {
     beforeEach(() => {
         vi.resetAllMocks()
+        auth.isAuthenticated = true
     })
 
     it('loads participation with both related resources', async () => {
@@ -54,6 +65,7 @@ describe('person view page', () => {
                         props: ['label'],
                         template: '<button>{{ label }}</button>',
                     },
+                    ActionButton: true,
                     Column: {
                         props: ['header'],
                         template: '<div class="column">{{ header }}</div>',
@@ -68,6 +80,16 @@ describe('person view page', () => {
                     RouterLink: { template: '<a><slot /></a>' },
                     YearFilter: true,
                 },
+                provide: {
+                    [personContextKey as symbol]: ref({
+                        id: '7',
+                        lastname: 'Test',
+                        firstname: 'Ivan',
+                        birthday: '1990-01-01',
+                        rankId: 0,
+                        clubId: null,
+                    }),
+                },
             },
         })
         await flushPromises()
@@ -80,7 +102,7 @@ describe('person view page', () => {
             perPage: 20,
         })
         expect(wrapper.text()).toContain('Удзел у спаборніцтвах')
-        expect(wrapper.findAll('.column')).toHaveLength(9)
+        expect(wrapper.findAll('.column')).toHaveLength(10)
     })
 
     it('shows an empty state', async () => {
@@ -91,6 +113,7 @@ describe('person view page', () => {
             global: {
                 stubs: {
                     Button: true,
+                    ActionButton: true,
                     Column: true,
                     DataTable: true,
                     DateFilter: true,
@@ -109,6 +132,70 @@ describe('person view page', () => {
         expect(wrapper.text()).toContain('Удзелы не знойдзены.')
     })
 
+    it('highlights mismatched protocol lines and adds the actions column', async () => {
+        getYears.mockResolvedValue([])
+        const mismatchedLine = {
+            id: '11',
+            personId: '7',
+            firstname: 'John',
+            lastname: 'Test',
+            distanceId: '12',
+            eventId: '13',
+            competitionId: '14',
+            competitionName: 'Spring Cup',
+            eventName: 'Long',
+            eventDate: '2026-05-10',
+            groupName: 'M21',
+            year: '1989',
+            time: '01:02:03',
+            place: '1',
+            completeRank: 'II',
+        }
+        getPersonProtocolLines.mockResolvedValue({
+            data: [mismatchedLine],
+            headers: { 'x-pagination-total': '1' },
+        })
+
+        const wrapper = mount(PersonViewPage, {
+            global: {
+                stubs: {
+                    ActionButton: true,
+                    Button: true,
+                    Column: {
+                        props: ['header'],
+                        template: '<div class="column">{{ header }}</div>',
+                    },
+                    DataTable: DataTableStub,
+                    DateFilter: true,
+                    FilterPanel: { template: '<div><slot /></div>' },
+                    InputText: true,
+                    Message: { template: '<div><slot /></div>' },
+                    Paginator: true,
+                    RouterLink: true,
+                    YearFilter: true,
+                },
+                provide: {
+                    [personContextKey as symbol]: ref({
+                        id: '7',
+                        lastname: 'Test',
+                        firstname: 'Ivan',
+                        birthday: '1990-01-01',
+                        rankId: 0,
+                        clubId: null,
+                    }),
+                },
+            },
+        })
+        await flushPromises()
+
+        const rowClass = wrapper
+            .findComponent(DataTableStub)
+            .props('rowClass') as (line: typeof mismatchedLine) => string
+
+        expect(rowClass(mismatchedLine)).toBe('person-view-mismatch-row')
+        expect(wrapper.text()).toContain('Дзеянні')
+    })
+
     it('keeps a short competition search in the input without requesting it', async () => {
         getYears.mockResolvedValue([])
         getPersonProtocolLines.mockResolvedValue({ data: [], headers: {} })
@@ -117,6 +204,7 @@ describe('person view page', () => {
             global: {
                 stubs: {
                     Button: true,
+                    ActionButton: true,
                     Column: true,
                     DataTable: true,
                     DateFilter: true,
