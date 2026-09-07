@@ -29,7 +29,7 @@ const options = computed(() => [
 </script>
 
 <template>
-    <div>
+    <div class="club-select">
         <label :for="inputId">{{ label }}</label>
         <Select
             :id="inputId"
