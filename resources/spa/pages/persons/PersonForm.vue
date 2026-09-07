@@ -4,6 +4,8 @@ import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
 import Select from 'primevue/select'
 import type { ClubOption, PersonFormRequest } from '../../api/types'
+import ClubSelect from '../../components/ClubSelect.vue'
+import DateFilter from '../../components/DateFilter.vue'
 import { t } from '../../i18n'
 
 const props = withDefaults(
@@ -69,26 +71,21 @@ watch(
                 errors.firstname
             }}</small>
         </div>
+        <DateFilter
+            class="form-field"
+            input-id="person-birthday"
+            :model-value="form.birthday ?? ''"
+            :label="t('app.common.birthday')"
+            :error="errors.birthday"
+            @update:model-value="form.birthday = $event || null"
+        />
         <div class="form-field">
-            <label for="person-birthday">{{ t('app.common.birthday') }}</label
-            ><input
-                id="person-birthday"
-                v-model="form.birthday"
-                type="date"
-                class="form-control"
-            /><small v-if="errors.birthday" class="field-error">{{
-                errors.birthday
-            }}</small>
-        </div>
-        <div class="form-field">
-            <label for="person-club">{{ t('spa.person.club') }}</label
-            ><Select
-                id="person-club"
+            <ClubSelect
                 v-model="form.clubId"
-                :options="clubs"
-                option-label="name"
-                option-value="id"
-                show-clear
+                input-id="person-club"
+                :clubs="clubs"
+                :label="t('spa.person.club')"
+                clearable
             /><small v-if="errors.clubId" class="field-error">{{
                 errors.clubId
             }}</small>

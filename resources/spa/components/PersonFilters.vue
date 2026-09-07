@@ -10,6 +10,7 @@ import {
     hasTooShortNameSearch,
 } from '../pages/persons/personsModels'
 import FilterPanel from './FilterPanel.vue'
+import ClubSelect from './ClubSelect.vue'
 
 const props = withDefaults(
     defineProps<{
@@ -44,10 +45,6 @@ const emit = defineEmits<{
 const yearOptions = computed(() =>
     birthYearOptions().map((year) => ({ label: String(year), value: year })),
 )
-const clubOptions = computed(() => [
-    { id: '', name: t('spa.person.all_options') },
-    ...props.clubs,
-])
 const rankOptions = computed(() => [
     { id: null, label: t('spa.person.all_options') },
     ...props.ranks,
@@ -58,8 +55,8 @@ function onNameChange(value: string | undefined): void {
     emit('name-change', value)
 }
 
-function onClubChange(value: string): void {
-    emit('update:clubId', value)
+function onClubChange(value: string | null): void {
+    emit('update:clubId', value ?? '')
     emit('filter-change')
 }
 
@@ -93,19 +90,16 @@ function onBirthYearChange(value: number | null): void {
                 {{ t('spa.person.search_hint') }}
             </small>
         </div>
-        <div v-if="showClub" class="filter-field">
-            <label :for="`${idPrefix}-club-filter`">{{
-                t('spa.person.club_filter')
-            }}</label>
-            <Select
-                :id="`${idPrefix}-club-filter`"
-                :model-value="clubId"
-                :options="clubOptions"
-                option-label="name"
-                option-value="id"
-                @update:model-value="onClubChange"
-            />
-        </div>
+        <ClubSelect
+            v-if="showClub"
+            class="filter-field"
+            :input-id="`${idPrefix}-club-filter`"
+            :model-value="clubId"
+            :clubs="clubs"
+            :label="t('spa.person.club_filter')"
+            include-all
+            @update:model-value="onClubChange"
+        />
         <div class="filter-field">
             <label :for="`${idPrefix}-rank-filter`">{{
                 t('spa.person.rank_filter')

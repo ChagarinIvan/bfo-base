@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
 import Card from 'primevue/card'
+import Message from 'primevue/message'
 import { useRouter } from 'vue-router'
 import { getClubOptions } from '../../api/clubs'
 import { createPerson } from '../../api/persons'
@@ -12,10 +13,20 @@ const router = useRouter()
 const clubs = ref<ClubOption[]>([])
 const errors = reactive<Record<string, string>>({})
 const error = ref('')
+const loading = ref(true)
 const pending = ref(false)
-onMounted(async () => {
-    clubs.value = await getClubOptions()
-})
+
+async function load(): Promise<void> {
+    try {
+        clubs.value = await getClubOptions()
+    } catch {
+        error.value = t('spa.person.error')
+    } finally {
+        loading.value = false
+    }
+}
+
+onMounted(() => void load())
 async function submit(value: PersonFormRequest): Promise<void> {
     pending.value = true
     error.value = ''
@@ -35,17 +46,19 @@ async function submit(value: PersonFormRequest): Promise<void> {
 }
 </script>
 <template>
-    <Card class="form-card"
+    <Message
+        v-if="loading || error"
+        :severity="error ? 'error' : 'info'"
+        :closable="false"
+        >{{ error || t('spa.person.loading') }}</Message
+    >
+    <Card v-else class="form-card"
         ><template #title>{{ t('spa.person.create') }}</template
         ><template #content
             ><PersonForm
                 :clubs="clubs"
                 :errors="errors"
                 :pending="pending"
-                @submit="submit"
-            /><small v-if="error" class="field-error">{{
-                error
-            }}</small></template
-        ></Card
-    >
+                @submit="submit" /></template
+    ></Card>
 </template>

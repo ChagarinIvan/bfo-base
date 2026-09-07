@@ -36,4 +36,18 @@ describe('create person page', () => {
         })
         expect(push).toHaveBeenCalledWith('/app/persons/42')
     })
+
+    it('shows an error instead of an unhandled rejection when club options fail to load', async () => {
+        getClubOptions.mockRejectedValue(new Error('unavailable'))
+
+        const wrapper = mount(CreatePersonPage, {
+            global: { plugins: [PrimeVue] },
+        })
+        await flushPromises()
+
+        expect(wrapper.find('.p-message').text()).toBe(
+            'Не атрымалася загрузіць удзельнікаў.',
+        )
+        expect(wrapper.find('form').exists()).toBe(false)
+    })
 })

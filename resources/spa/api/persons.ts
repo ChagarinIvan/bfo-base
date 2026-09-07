@@ -6,8 +6,17 @@ import type {
     PersonSearchQuery,
 } from './types'
 
-export async function getPerson(id: string): Promise<Person> {
-    return (await api.get<Person>(`/persons/${id}`)).data
+export async function getPerson(
+    id: string,
+    refreshKey?: string,
+): Promise<Person> {
+    const response = refreshKey
+        ? await api.get<Person>(`/persons/${id}`, {
+              params: { refresh: refreshKey },
+          })
+        : await api.get<Person>(`/persons/${id}`)
+
+    return response.data
 }
 
 export async function createPerson(value: PersonFormRequest): Promise<Person> {

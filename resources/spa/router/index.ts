@@ -50,6 +50,11 @@ export function createAppRouter(
                 meta: { requiresAuth: true },
             },
             {
+                path: '/app/persons/:personId/edit',
+                component: EditPersonPage,
+                meta: { requiresAuth: true },
+            },
+            {
                 path: '/app/persons/:personId',
                 component: PersonLayoutPage,
                 children: [
@@ -80,11 +85,6 @@ export function createAppRouter(
                         meta: { requiresAuth: true },
                     },
                     { path: 'ranks', component: PersonRanksPage },
-                    {
-                        path: 'edit',
-                        component: EditPersonPage,
-                        meta: { requiresAuth: true },
-                    },
                 ],
             },
             {

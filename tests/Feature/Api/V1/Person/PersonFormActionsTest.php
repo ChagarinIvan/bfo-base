@@ -31,7 +31,7 @@ final class PersonFormActionsTest extends TestCase
     {
         Sanctum::actingAs($this->createUser());
 
-        $this->postJson('/api/v1/persons', $this->personPayload())
+        $this->postJson('/api/v1/persons', [...$this->personPayload(), 'fromBase' => true])
             ->assertCreated()
             ->assertJsonPath('lastname', 'Іваноў')
             ->assertJsonPath('firstname', 'Ян')
@@ -70,6 +70,15 @@ final class PersonFormActionsTest extends TestCase
             'firstname' => 'Ян',
             'citizenship' => Citizenship::BELARUS->value,
         ]);
+    }
+
+    #[Test]
+    public function it_returns_not_found_when_updating_a_missing_person(): void
+    {
+        Sanctum::actingAs($this->createUser());
+
+        $this->putJson('/api/v1/persons/999999', $this->personPayload())
+            ->assertNotFound();
     }
 
     /** @return array<string, string|null> */

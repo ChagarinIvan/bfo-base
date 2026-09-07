@@ -15,28 +15,45 @@ const person = ref<Person | null>(null)
 const clubs = ref<ClubOption[]>([])
 const errors = reactive<Record<string, string>>({})
 const pending = ref(false)
-const error = ref('')
-onMounted(async () => {
+const loading = ref(true)
+const loadError = ref('')
+const submitError = ref('')
+
+async function load(): Promise<void> {
     try {
         ;[person.value, clubs.value] = await Promise.all([
             getPerson(String(route.params.personId)),
             getClubOptions(),
         ])
-    } catch {
-        error.value = t('spa.person_view.not_found')
+    } catch (exception: unknown) {
+        const status = (exception as { response?: { status?: number } })
+            .response?.status
+        loadError.value =
+            status === 404
+                ? t('spa.person_view.not_found')
+                : t('spa.person.error')
+    } finally {
+        loading.value = false
     }
-})
+}
+
+onMounted(() => void load())
+
 async function submit(value: PersonFormRequest): Promise<void> {
     pending.value = true
+    submitError.value = ''
     Object.keys(errors).forEach((key) => delete errors[key])
     try {
         const updated = await updatePerson(String(route.params.personId), value)
-        await router.push(`/app/persons/${updated.id}`)
+        await router.push({
+            path: `/app/persons/${updated.id}`,
+            query: { refresh: String(Date.now()) },
+        })
     } catch (exception: unknown) {
         if (isApiValidationError(exception)) {
             applyFieldErrors(exception.response.data.errors, errors)
         } else {
-            error.value = t('spa.person.error')
+            submitError.value = t('spa.person.error')
         }
     } finally {
         pending.value = false
@@ -44,9 +61,11 @@ async function submit(value: PersonFormRequest): Promise<void> {
 }
 </script>
 <template>
-    <Message v-if="error" severity="error" :closable="false">{{
-        error
-    }}</Message
+    <Message
+        v-if="loading || loadError"
+        :severity="loadError ? 'error' : 'info'"
+        :closable="false"
+        >{{ loadError || t('spa.person.loading') }}</Message
     ><Card v-else-if="person" class="form-card"
         ><template #title>{{ t('spa.person.edit') }}</template
         ><template #content
@@ -55,6 +74,10 @@ async function submit(value: PersonFormRequest): Promise<void> {
                 :clubs="clubs"
                 :errors="errors"
                 :pending="pending"
-                @submit="submit" /></template
-    ></Card>
+                @submit="submit"
+            /><Message v-if="submitError" severity="error" :closable="false">{{
+                submitError
+            }}</Message></template
+        ></Card
+    >
 </template>

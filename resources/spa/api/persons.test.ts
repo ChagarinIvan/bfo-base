@@ -16,6 +16,17 @@ describe('persons api', () => {
         expect(api.get).toHaveBeenCalledWith('/persons/62465')
     })
 
+    it('can bypass a stale person response after an update', async () => {
+        vi.mocked(api.get).mockResolvedValue({ data: { id: '62465' } })
+
+        await expect(getPerson('62465', 'updated')).resolves.toEqual({
+            id: '62465',
+        })
+        expect(api.get).toHaveBeenCalledWith('/persons/62465', {
+            params: { refresh: 'updated' },
+        })
+    })
+
     it('requests paginated compact persons with the optional camelCase club filter', async () => {
         const headers = { 'x-pagination-total': '1' }
         vi.mocked(api.get).mockResolvedValue({
