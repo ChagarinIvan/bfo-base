@@ -130,14 +130,32 @@ final class RankCalculatorTest extends TestCase
     }
 
     #[Test]
-    public function it_records_a_lower_following_achievement_as_downgrade(): void
+    public function it_records_a_lower_achievement_during_a_higher_rank_as_lower_qualification(): void
     {
         $result = $this->calculate([
             $this->achievement(Rank::FirstRank, '2025-01-10', 1),
             $this->achievement(Rank::SecondRank, '2026-01-10', 2),
         ]);
 
-        $this->assertSame(RankChangeType::Downgrade, $result->history[1]->change_type);
+        $this->assertSame(RankChangeType::LowerQualification, $result->history[1]->change_type);
+    }
+
+    #[Test]
+    public function it_ends_a_lower_rank_period_when_a_higher_rank_is_achieved(): void
+    {
+        $result = new RankCalculator()->calculate([
+            $this->achievement(Rank::FirstRank, '2019-03-07', 1),
+            $this->achievement(Rank::CandidateMaster, '2019-10-27', 2, '2019-10-27'),
+            $this->achievement(Rank::FirstRank, '2019-11-07', 3),
+            $this->achievement(Rank::FirstRank, '2020-03-15', 4),
+        ], $this->person(null), Carbon::parse('2021-11-01'));
+
+        $this->assertSame('2019-10-27', $result->history[0]->finished_on?->format('Y-m-d'));
+        $this->assertSame('2021-10-27', $result->history[2]->started_on->format('Y-m-d'));
+        $this->assertSame(RankChangeType::LowerQualification, $result->history[2]->change_type);
+        $this->assertSame(Rank::FirstRank, $result->current->rank);
+        $this->assertSame('2021-10-27', $result->current->startedOn?->format('Y-m-d'));
+        $this->assertSame('2022-03-15', $result->current->finishedOn?->format('Y-m-d'));
     }
 
     #[Test]

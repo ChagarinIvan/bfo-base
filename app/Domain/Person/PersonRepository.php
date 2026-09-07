@@ -11,7 +11,7 @@ use Illuminate\Support\LazyCollection;
 
 interface PersonRepository
 {
-    public function byId(int $id, PersonResources $resources = new PersonResources()): ?Person;
+    public function byId(int $id): ?Person;
 
     public function lockById(int $id): ?Person;
 

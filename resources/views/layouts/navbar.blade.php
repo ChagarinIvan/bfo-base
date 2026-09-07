@@ -1,6 +1,5 @@
 @php
     use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupsListAction;
-    use App\Bridge\Laravel\Http\Controllers\Flags\ShowFlagsListAction;
     use App\Bridge\Laravel\Http\Controllers\Login\ShowLoginFormAction;
     use App\Bridge\Laravel\Http\Controllers\Login\SignOutAction;
     use App\Bridge\Laravel\Http\Controllers\Registration\ShowRegistrationFormAction;
@@ -13,7 +12,6 @@
      * @var bool $isCupsRoute;
      * @var bool $isPersonsRoute;
      * @var bool $isClubsRoute;
-     * @var bool $isFlagsRoute;
      * @var bool $isGroupsRoute;
      */
 @endphp
@@ -28,7 +26,7 @@
         <div class="collapse navbar-collapse" id="navbarContent">
             <ul class="navbar-nav me-auto my-1">
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle {{ ($isCompetitionsRoute || $isCupsRoute || $isGroupsRoute || $isFlagsRoute) ? 'active' : '' }}"
+                    <a class="nav-link dropdown-toggle {{ ($isCompetitionsRoute || $isCupsRoute || $isGroupsRoute) ? 'active' : '' }}"
                        href="#"
                        id="competitionsDropdown"
                        role="button"
@@ -51,13 +49,6 @@
                                href="/app/groups"
                             >{{ __('app.common.groups') }}</a>
                         </li>
-                        @auth
-                            <li>
-                                <a class="dropdown-item {{ $isFlagsRoute ? 'active' : '' }}"
-                                   href="{{ action(ShowFlagsListAction::class) }}"
-                                >{{ __('app.navbar.flags') }}</a>
-                            </li>
-                        @endauth
                     </ul>
                 </li>
                 <li class="nav-item dropdown">

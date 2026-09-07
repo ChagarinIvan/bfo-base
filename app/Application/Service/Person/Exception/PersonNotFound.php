@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Application\Service\Person\Exception;
 
-use RuntimeException;
+use App\Application\Exception\ApplicationException;
+use App\Application\Exception\HttpError;
 
-final class PersonNotFound extends RuntimeException
+#[HttpError(status: 404, code: 'person_not_found')]
+final class PersonNotFound extends ApplicationException
 {
 }

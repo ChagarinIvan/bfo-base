@@ -92,11 +92,6 @@ trait Action
         return false;
     }
 
-    protected function isFlagsRoute(): bool
-    {
-        return false;
-    }
-
     protected function isGroupsRoute(): bool
     {
         return false;
@@ -118,7 +113,6 @@ trait Action
             'isPersonsRoute' => $this->isPersonsRoute(),
             'isClubsRoute' => $this->isClubsRoute(),
             'isRanksRoute' => $this->isRanksRoute(),
-            'isFlagsRoute' => $this->isFlagsRoute(),
             'isGroupsRoute' => $this->isGroupsRoute(),
         ];
     }

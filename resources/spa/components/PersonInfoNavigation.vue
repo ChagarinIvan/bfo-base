@@ -61,12 +61,19 @@ const auth = useAuthStore()
                 @click="navigate"
             />
         </RouterLink>
-        <ActionButton
-            as="a"
-            :href="`/ranks/person/${props.personId}`"
-            :label="t('spa.person.ranks')"
-            icon="pi pi-stopwatch"
-            severity="info"
-        />
+        <RouterLink
+            v-slot="{ navigate, isActive }"
+            :to="`/app/persons/${props.personId}/ranks`"
+            custom
+        >
+            <ActionButton
+                type="button"
+                :class="{ 'person-info-tab-active': isActive }"
+                :label="t('spa.person.ranks')"
+                icon="pi pi-stopwatch"
+                severity="info"
+                @click="navigate"
+            />
+        </RouterLink>
     </div>
 </template>

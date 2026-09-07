@@ -14,13 +14,11 @@ use App\Domain\Event\Event\EventUpdated;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\Shared\AggregatedModel;
 use App\Infrastructure\Laravel\Eloquent\Auth\ImpressionCast;
-use App\Models\Flag;
 use Carbon\Carbon;
 use Database\Factories\Domain\Event\EventFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -44,7 +42,6 @@ use Illuminate\Support\Collection;
  * @property-read Collection|ProtocolLine[] $protocolLines
  * @property-read Collection|Distance[] $distances
  * @property-read Collection|CupEvent[] $cups
- * @property-read Collection|Flag[] $flags
  */
 #[Fillable([
     'name', 'description', 'date'
@@ -73,11 +70,6 @@ class Event extends AggregatedModel
     public function cups(): HasMany
     {
         return $this->hasMany(CupEvent::class);
-    }
-
-    public function flags(): BelongsToMany
-    {
-        return $this->belongsToMany(Flag::class, 'event_flags');
     }
 
     public function disable(Impression $impression): void

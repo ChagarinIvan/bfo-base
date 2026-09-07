@@ -8,6 +8,7 @@ const person: Person = {
     firstname: 'Ivan',
     birthday: '1990-06-04',
     rankId: 0,
+    citizenship: 'belarus',
     clubId: null,
 }
 

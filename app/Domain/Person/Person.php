@@ -10,8 +10,6 @@ use App\Domain\Person\Event\PersonCreated;
 use App\Domain\Person\Event\PersonDisabled;
 use App\Domain\Person\Event\PersonInfoUpdated;
 use App\Domain\Person\Event\PersonRanksUpdated;
-use App\Domain\PersonPayment\PersonPayment;
-use App\Domain\PersonPrompt\PersonPrompt;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\Rank\Rank;
 use App\Domain\Shared\AggregatedModel;
@@ -46,8 +44,6 @@ use Illuminate\Support\Collection;
  *
  * @property-read ProtocolLine[]|Collection $protocolLines
  * @property-read null|Club $club
- * @property-read PersonPrompt[]|Collection $prompts
- * @property-read PersonPayment[]|Collection $payments
  *
  * @see PersonFactory
  */
@@ -66,20 +62,13 @@ class Person extends AggregatedModel
         return $this->hasMany(ProtocolLine::class);
     }
 
-    public function prompts(): HasMany
-    {
-        return $this->hasMany(PersonPrompt::class);
-    }
-
-    public function payments(): HasMany
-    {
-        return $this->hasMany(PersonPayment::class);
-    }
-
     /** @return HasMany<PersonRankHistory, $this> */
     public function rankHistories(): HasMany
     {
-        return $this->hasMany(PersonRankHistory::class);
+        return $this->hasMany(PersonRankHistory::class)
+            ->orderByDesc('achieved_on')
+            ->orderByDesc('id')
+        ;
     }
 
     public function club(): HasOne

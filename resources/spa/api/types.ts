@@ -60,6 +60,7 @@ export interface Person {
     firstname: string
     birthday: string | null
     rankId: number
+    citizenship: string
     clubId: string | null
     created?: Impression
     updated?: Impression
@@ -92,6 +93,25 @@ export interface PersonPaymentSearchQuery {
 
 export interface PersonPaymentRequest {
     date: string
+}
+
+export interface PersonRankHistory {
+    id: string
+    personId: string
+    protocolLineId: string
+    distanceId: string
+    eventId: string
+    competitionId: string
+    rankId: number
+    changeType: string
+    achievedOn: string
+    activatedOn: string | null
+    startedOn: string
+    finishedOn: string | null
+}
+
+export interface PersonRankActivationRequest {
+    date: string | null
 }
 
 export interface ProtocolLine {

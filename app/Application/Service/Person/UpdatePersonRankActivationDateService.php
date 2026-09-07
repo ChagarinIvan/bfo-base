@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Application\Service\Person;
 
+use App\Application\Dto\ProtocolLine\ProtocolLineAssembler;
+use App\Application\Dto\ProtocolLine\ViewProtocolLineDto;
 use App\Application\Service\Person\Exception\ProtocolLineNotFound;
 use App\Domain\Auth\Impression;
 use App\Domain\ProtocolLine\ProtocolLineRepository;
@@ -16,17 +18,18 @@ final readonly class UpdatePersonRankActivationDateService
         private ProtocolLineRepository $protocolLines,
         private Clock $clock,
         private TransactionManager $transaction,
+        private ProtocolLineAssembler $assembler,
     ) {
     }
 
-    public function execute(UpdatePersonRankActivationDate $command): int
+    public function execute(UpdatePersonRankActivationDate $command): ViewProtocolLineDto
     {
-        return $this->transaction->run(function () use ($command): int {
+        return $this->transaction->run(function () use ($command): ViewProtocolLineDto {
             $line = $this->protocolLines->lockById($command->protocolLine()) ?? throw new ProtocolLineNotFound();
             $line->activateRank($command->date(), new Impression($this->clock->now(), $command->userId()));
             $this->protocolLines->update($line);
 
-            return (int) $line->person_id;
+            return $this->assembler->toViewProtocolLineDto($line);
         });
     }
 }

@@ -9,5 +9,5 @@ enum RankChangeType: string
     case Completion = 'completion';
     case Extension = 'extension';
     case Promotion = 'promotion';
-    case Downgrade = 'downgrade';
+    case LowerQualification = 'lower_qualification';
 }

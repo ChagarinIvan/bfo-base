@@ -5,7 +5,6 @@
     use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupAction;
     use App\Bridge\Laravel\Http\Controllers\Event\ShowEditEventFormAction;
     use App\Bridge\Laravel\Http\Controllers\Event\ShowEventDistanceAction;
-    use App\Bridge\Laravel\Http\Controllers\Flags\ShowFlagEventsAction;
     use App\Bridge\Laravel\Http\Controllers\Person\ShowSetPersonToProtocolLineAction;
     use App\Domain\Distance\Distance;
     use App\Domain\Event\Event;
@@ -40,12 +39,6 @@
             @foreach($event->cups as $cupEvent)
                 <x-badge name="{{ $cupEvent->cup->name }} {{ $cupEvent->cup->year }}"
                          url="{{ action(ShowCupAction::class, [$cupEvent->cup]) }}"
-                />
-            @endforeach
-            @foreach($event->flags as $flag)
-                <x-badge color="{{ $flag->color }}"
-                         name="{{ $flag->name }}"
-                         url="{{ action(ShowFlagEventsAction::class, [$flag]) }}"
                 />
             @endforeach
         </div>

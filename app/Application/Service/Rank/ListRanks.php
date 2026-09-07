@@ -12,6 +12,9 @@ final readonly class ListRanks
     /** @return list<array{id: int, label: string}> */
     public function execute(): array
     {
-        return array_map(static fn (Rank $rank): array => ['id' => $rank->value, 'label' => $rank->label()], Rank::cases());
+        return array_map(
+            static fn (Rank $rank): array => ['id' => $rank->value, 'label' => $rank->label()],
+            Rank::cases(),
+        );
     }
 }

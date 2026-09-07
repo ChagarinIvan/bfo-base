@@ -7,7 +7,6 @@ namespace App\Application\Dto\Event;
 use App\Application\Dto\Auth\ImpressionDto;
 use App\Domain\Cup\CupEvent\CupEvent;
 use App\Domain\Distance\Distance;
-use App\Models\Flag;
 
 final readonly class LegacyViewEventDto
 {
@@ -24,9 +23,7 @@ final readonly class LegacyViewEventDto
         public ?Distance $firstDistance,
         /** @var CupEvent[] $cups */
         public array $cups,
-        /** @var Flag[] $flags */
-        public array $flags,
-        /** @var Distance[] $flags */
+        /** @var Distance[] $distances */
         public array $distances,
         public ImpressionDto $created,
         public ImpressionDto $updated,

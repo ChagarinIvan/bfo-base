@@ -92,6 +92,14 @@ describe('SPA navigation guard', () => {
         expect(router.currentRoute.value.matched[1]?.path).toBe(
             '/app/persons/:personId/payments',
         )
+
+        await router.push('/app/persons/42/ranks')
+        expect(router.currentRoute.value.matched[0]?.path).toBe(
+            '/app/persons/:personId',
+        )
+        expect(router.currentRoute.value.matched[1]?.path).toBe(
+            '/app/persons/:personId/ranks',
+        )
     })
 
     it('resolves the public clubs listing route', async () => {

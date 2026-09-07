@@ -196,6 +196,66 @@ describe('person view page', () => {
         expect(wrapper.text()).toContain('Дзеянні')
     })
 
+    it('hides mismatched protocol lines from anonymous visitors', async () => {
+        auth.isAuthenticated = false
+        getYears.mockResolvedValue([])
+        const matchingLine = {
+            id: '11',
+            personId: '7',
+            firstname: 'Ivan',
+            lastname: 'Test',
+            distanceId: '12',
+            eventId: '13',
+            competitionId: '14',
+            competitionName: 'Spring Cup',
+            eventName: 'Long',
+            eventDate: '2026-05-10',
+            groupName: 'M21',
+            year: '1990',
+            time: '01:02:03',
+            place: '1',
+            completeRank: 'II',
+        }
+        const mismatchedLine = { ...matchingLine, id: '12', firstname: 'John' }
+        getPersonProtocolLines.mockResolvedValue({
+            data: [matchingLine, mismatchedLine],
+            headers: { 'x-pagination-total': '2' },
+        })
+
+        const wrapper = mount(PersonViewPage, {
+            global: {
+                stubs: {
+                    ActionButton: true,
+                    Button: true,
+                    Column: true,
+                    DataTable: DataTableStub,
+                    DateFilter: true,
+                    FilterPanel: { template: '<div><slot /></div>' },
+                    InputText: true,
+                    Message: { template: '<div><slot /></div>' },
+                    Paginator: true,
+                    RouterLink: true,
+                    YearFilter: true,
+                },
+                provide: {
+                    [personContextKey as symbol]: ref({
+                        id: '7',
+                        lastname: 'Test',
+                        firstname: 'Ivan',
+                        birthday: '1990-01-01',
+                        rankId: 0,
+                        clubId: null,
+                    }),
+                },
+            },
+        })
+        await flushPromises()
+
+        expect(wrapper.findComponent(DataTableStub).props('value')).toEqual([
+            matchingLine,
+        ])
+    })
+
     it('keeps a short competition search in the input without requesting it', async () => {
         getYears.mockResolvedValue([])
         getPersonProtocolLines.mockResolvedValue({ data: [], headers: {} })
