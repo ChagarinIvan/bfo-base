@@ -21,7 +21,7 @@
 
 1. Keep ranks as a child of the Person Info layout.
 2. Request rank history separately and request referenced events with `withCompetition=1&ids[]=...`.
-3. Return histories in descending achievement-date order and render collapsed rank periods with reverse-chronological details, links and activation actions; lower-rank confirmations during a higher period appear only under that higher period while their deferred lower period remains separate.
+3. Return histories in descending achievement-date order and render collapsed rank periods with reverse-chronological details, links and activation actions; every row remains in the group of its own rank while deferred lower periods remain separate.
 4. Keep anonymous/authenticated behavior.
 
 ### Cleanup

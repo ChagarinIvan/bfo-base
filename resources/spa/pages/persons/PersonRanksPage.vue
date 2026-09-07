@@ -89,8 +89,7 @@ const groupedHistory = computed<RankHistoryGroup[]>(() => {
     }
 
     for (const item of timeline.value) {
-        const contextRank = activeHigherRankOn(item)
-        const groupId = periodIds.get(contextRank?.id ?? item.id)
+        const groupId = periodIds.get(item.id)
         if (groupId !== undefined) groups.get(groupId)?.items.push(item)
     }
 
@@ -98,21 +97,6 @@ const groupedHistory = computed<RankHistoryGroup[]>(() => {
         right.startedOn.localeCompare(left.startedOn),
     )
 })
-
-function activeHigherRankOn(
-    item: PersonRankHistory,
-): PersonRankHistory | undefined {
-    return history.value
-        .filter(
-            (candidate) =>
-                candidate.rankId > item.rankId &&
-                candidate.activatedOn !== null &&
-                candidate.startedOn <= item.achievedOn &&
-                (candidate.finishedOn === null ||
-                    candidate.finishedOn >= item.achievedOn),
-        )
-        .sort((left, right) => right.rankId - left.rankId)[0]
-}
 
 const dialogVisible = computed({
     get: () => selected.value !== null,
@@ -140,8 +124,6 @@ function changeTypeLabel(changeType: string): string {
         case 'lower_qualification':
         case 'downgrade':
             return t('spa.person_rank.change_lower_qualification')
-        case 'lower_rank_confirmation':
-            return t('spa.person_rank.change_lower_rank_confirmation')
         default:
             return '—'
     }
@@ -341,15 +323,6 @@ onBeforeUnmount(() => {
                 <Column :header="t('spa.person_rank.activated')">
                     <template #body="{ data }">{{
                         display(data.activatedOn)
-                    }}</template>
-                </Column>
-                <Column
-                    field="startedOn"
-                    :header="t('spa.person_rank.started')"
-                />
-                <Column :header="t('spa.person_rank.finished')">
-                    <template #body="{ data }">{{
-                        display(data.finishedOn)
                     }}</template>
                 </Column>
                 <Column :header="t('spa.person_rank.competition')">

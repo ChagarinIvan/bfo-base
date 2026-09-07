@@ -10,5 +10,4 @@ enum RankChangeType: string
     case Extension = 'extension';
     case Promotion = 'promotion';
     case LowerQualification = 'lower_qualification';
-    case LowerRankConfirmation = 'lower_rank_confirmation';
 }

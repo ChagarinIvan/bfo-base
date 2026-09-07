@@ -24,7 +24,6 @@ The response contains all history records for the active person without paginati
 }
 
 The SPA resolves rank labels from `GET /ranks` and event/competition labels from `GET /events?withCompetition=1&ids[]=...`.
-`changeType` may be `lower_rank_confirmation` when a lower rank is completed while a higher rank remains active.
 
 ## Events by IDs
 

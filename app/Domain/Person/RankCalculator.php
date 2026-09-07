@@ -102,7 +102,7 @@ final class RankCalculator
             eventId: $fact->eventId,
             competitionId: $fact->competitionId,
             rank: $fact->rank,
-            changeType: $this->changeType($fact, $previous, $strongerRank),
+            changeType: $this->changeType($fact, $previous),
             achievedOn: $fact->achievedOn,
             activatedOn: $activatedOn,
             startedOn: $startedOn,
@@ -112,15 +112,10 @@ final class RankCalculator
         return $history;
     }
 
-    private function changeType(
-        RankFact $fact,
-        ?PersonRankHistory $previous,
-        ?PersonRankHistory $strongerRank,
-    ): RankChangeType
+    private function changeType(RankFact $fact, ?PersonRankHistory $previous): RankChangeType
     {
         return match (true) {
             $previous === null => RankChangeType::Completion,
-            $strongerRank !== null => RankChangeType::LowerRankConfirmation,
             $previous->rank === $fact->rank => RankChangeType::Extension,
             $previous->rank->value > $fact->rank->value => RankChangeType::LowerQualification,
             default => RankChangeType::Promotion,

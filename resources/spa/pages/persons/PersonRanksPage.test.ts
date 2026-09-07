@@ -95,7 +95,7 @@ describe('person ranks page', () => {
         expect(wrapper.find('.rank-history-timeline').exists()).toBe(false)
         await wrapper.find('.rank-history-group').trigger('click')
         expect(wrapper.find('.rank-history-timeline').exists()).toBe(true)
-        expect(wrapper.findAll('.column')).toHaveLength(9)
+        expect(wrapper.findAll('.column')).toHaveLength(7)
         expect(wrapper.text()).toContain('Тып выканання')
     })
 
@@ -119,7 +119,7 @@ describe('person ranks page', () => {
         expect(wrapper.text()).not.toContain('Актываваць разрад')
     })
 
-    it('groups lower-rank confirmations under the active higher rank', async () => {
+    it('keeps lower-rank achievements in their own rank period', async () => {
         getRanks.mockResolvedValue([
             { id: 7, label: 'КМС' },
             { id: 6, label: 'I' },
@@ -147,7 +147,7 @@ describe('person ranks page', () => {
         const lowerConfirmation = {
             ...firstRank,
             id: '3',
-            changeType: 'lower_rank_confirmation',
+            changeType: 'lower_qualification',
             achievedOn: '2019-11-07',
             startedOn: '2021-10-27',
             finishedOn: '2022-03-15',
@@ -176,12 +176,15 @@ describe('person ranks page', () => {
         const groups = wrapper.findAll('.rank-history-group')
         expect(groups).toHaveLength(3)
         await groups
-            .find((group) => group.text().includes('КМС'))!
+            .find(
+                (group) =>
+                    group.text().includes('I') &&
+                    group.text().includes('2021-10-27'),
+            )!
             .trigger('click')
 
         expect(wrapper.findComponent(DataTableStub).props('value')).toEqual([
             lowerConfirmation,
-            candidateMaster,
         ])
     })
 })

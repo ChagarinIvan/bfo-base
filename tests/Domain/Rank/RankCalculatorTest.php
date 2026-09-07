@@ -130,14 +130,14 @@ final class RankCalculatorTest extends TestCase
     }
 
     #[Test]
-    public function it_records_a_lower_achievement_during_a_higher_rank_as_confirmation(): void
+    public function it_records_a_lower_achievement_during_a_higher_rank_as_lower_qualification(): void
     {
         $result = $this->calculate([
             $this->achievement(Rank::FirstRank, '2025-01-10', 1),
             $this->achievement(Rank::SecondRank, '2026-01-10', 2),
         ]);
 
-        $this->assertSame(RankChangeType::LowerRankConfirmation, $result->history[1]->change_type);
+        $this->assertSame(RankChangeType::LowerQualification, $result->history[1]->change_type);
     }
 
     #[Test]
@@ -152,7 +152,7 @@ final class RankCalculatorTest extends TestCase
 
         $this->assertSame('2019-10-27', $result->history[0]->finished_on?->format('Y-m-d'));
         $this->assertSame('2021-10-27', $result->history[2]->started_on->format('Y-m-d'));
-        $this->assertSame(RankChangeType::LowerRankConfirmation, $result->history[2]->change_type);
+        $this->assertSame(RankChangeType::LowerQualification, $result->history[2]->change_type);
         $this->assertSame(Rank::FirstRank, $result->current->rank);
         $this->assertSame('2021-10-27', $result->current->startedOn?->format('Y-m-d'));
         $this->assertSame('2022-03-15', $result->current->finishedOn?->format('Y-m-d'));
