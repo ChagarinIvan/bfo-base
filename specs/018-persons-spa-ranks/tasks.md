@@ -26,3 +26,4 @@ All tasks are complete after the final refactor to the separate rank-history que
 - [x] T013 Remove old rank Blade controllers, templates, routes and obsolete tests.
 - [x] T014 Update spec, data model, research, contract and quickstart to the separate-query design.
 - [x] T015 Run focused tests, full backend/frontend checks, static analysis, Rector dry-run and diff check.
+- [x] T016 Render distinct rank periods and place `lower_rank_confirmation` entries only in the active higher-rank group, with SPA regression coverage in `resources/spa/pages/persons/PersonRanksPage.vue` and `resources/spa/pages/persons/PersonRanksPage.test.ts`.

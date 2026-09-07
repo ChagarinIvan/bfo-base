@@ -19,10 +19,12 @@ import { t } from '../../i18n'
 import { useAuthStore } from '../../stores/auth'
 
 interface RankHistoryGroup {
+    id: string
     rankId: number
     rank: string
     items: PersonRankHistory[]
     startedOn: string
+    finishedOn: string | null
 }
 
 const route = useRoute()
@@ -36,7 +38,7 @@ const selected = ref<PersonRankHistory | null>(null)
 const editDate = ref('')
 const dateError = ref('')
 const saving = ref(false)
-const expandedRankIds = ref<Set<number>>(new Set())
+const expandedRankIds = ref<Set<string>>(new Set())
 let latestRequest = 0
 
 const timeline = computed(() =>
@@ -48,40 +50,68 @@ const timeline = computed(() =>
 )
 
 const groupedHistory = computed<RankHistoryGroup[]>(() => {
-    const groups = new Map<number, RankHistoryGroup>()
+    const groups = new Map<string, RankHistoryGroup>()
+    const periodIds = new Map<string, string>()
 
-    for (const item of timeline.value) {
-        const group = groups.get(item.rankId)
-        if (group) {
-            group.items.push(item)
-            if (item.startedOn < group.startedOn) {
-                group.startedOn = item.startedOn
+    for (const rankId of new Set(history.value.map((item) => item.rankId))) {
+        const rankHistory = history.value
+            .filter((item) => item.rankId === rankId)
+            .sort((left, right) =>
+                left.startedOn.localeCompare(right.startedOn),
+            )
+        let period: RankHistoryGroup | null = null
+
+        for (const item of rankHistory) {
+            if (
+                period === null ||
+                (period.finishedOn !== null &&
+                    item.startedOn > period.finishedOn)
+            ) {
+                period = {
+                    id: `${rankId}:${item.startedOn}`,
+                    rankId,
+                    rank: rankLabel(rankId),
+                    items: [],
+                    startedOn: item.startedOn,
+                    finishedOn: item.finishedOn,
+                }
+                groups.set(period.id, period)
+            } else if (
+                period.finishedOn === null ||
+                (item.finishedOn !== null &&
+                    item.finishedOn > period.finishedOn)
+            ) {
+                period.finishedOn = item.finishedOn
             }
-            continue
-        }
 
-        groups.set(item.rankId, {
-            rankId: item.rankId,
-            rank: rankLabel(item.rankId),
-            items: [item],
-            startedOn: item.startedOn,
-        })
+            periodIds.set(item.id, period.id)
+        }
     }
 
-    return [...groups.values()]
+    for (const item of timeline.value) {
+        const contextRank = activeHigherRankOn(item)
+        const groupId = periodIds.get(contextRank?.id ?? item.id)
+        if (groupId !== undefined) groups.get(groupId)?.items.push(item)
+    }
+
+    return [...groups.values()].sort((left, right) =>
+        right.startedOn.localeCompare(left.startedOn),
+    )
 })
 
-function groupFinishedOn(group: RankHistoryGroup): string | null {
-    if (group.items.some((item) => item.finishedOn === null)) return null
-
-    const finishedDates = group.items
-        .map((item) => item.finishedOn)
-        .filter((finishedOn): finishedOn is string => finishedOn !== null)
-
-    return finishedDates.reduce(
-        (latest, finishedOn) => (finishedOn > latest ? finishedOn : latest),
-        finishedDates[0]!,
-    )
+function activeHigherRankOn(
+    item: PersonRankHistory,
+): PersonRankHistory | undefined {
+    return history.value
+        .filter(
+            (candidate) =>
+                candidate.rankId > item.rankId &&
+                candidate.activatedOn !== null &&
+                candidate.startedOn <= item.achievedOn &&
+                (candidate.finishedOn === null ||
+                    candidate.finishedOn >= item.achievedOn),
+        )
+        .sort((left, right) => right.rankId - left.rankId)[0]
 }
 
 const dialogVisible = computed({
@@ -110,6 +140,8 @@ function changeTypeLabel(changeType: string): string {
         case 'lower_qualification':
         case 'downgrade':
             return t('spa.person_rank.change_lower_qualification')
+        case 'lower_rank_confirmation':
+            return t('spa.person_rank.change_lower_rank_confirmation')
         default:
             return '—'
     }
@@ -160,16 +192,16 @@ async function initialize(): Promise<void> {
     }
 }
 
-function isRankExpanded(rankId: number): boolean {
-    return expandedRankIds.value.has(rankId)
+function isRankExpanded(groupId: string): boolean {
+    return expandedRankIds.value.has(groupId)
 }
 
-function toggleRank(rankId: number): void {
+function toggleRank(groupId: string): void {
     const next = new Set(expandedRankIds.value)
-    if (next.has(rankId)) {
-        next.delete(rankId)
+    if (next.has(groupId)) {
+        next.delete(groupId)
     } else {
-        next.add(rankId)
+        next.add(groupId)
     }
     expandedRankIds.value = next
 }
@@ -264,16 +296,16 @@ onBeforeUnmount(() => {
             <span>{{ t('spa.person_rank.started') }}</span>
             <span>{{ t('spa.person_rank.finished') }}</span>
         </div>
-        <section v-for="group in groupedHistory" :key="group.rankId">
+        <section v-for="group in groupedHistory" :key="group.id">
             <button
                 class="rank-history-group"
                 type="button"
-                :aria-expanded="isRankExpanded(group.rankId)"
-                @click="toggleRank(group.rankId)"
+                :aria-expanded="isRankExpanded(group.id)"
+                @click="toggleRank(group.id)"
             >
                 <i
                     :class="
-                        isRankExpanded(group.rankId)
+                        isRankExpanded(group.id)
                             ? 'pi pi-chevron-down'
                             : 'pi pi-chevron-right'
                     "
@@ -284,10 +316,10 @@ onBeforeUnmount(() => {
                     group.items.length
                 }}</span>
                 <span>{{ group.startedOn }}</span>
-                <span>{{ display(groupFinishedOn(group)) }}</span>
+                <span>{{ display(group.finishedOn) }}</span>
             </button>
             <DataTable
-                v-if="isRankExpanded(group.rankId)"
+                v-if="isRankExpanded(group.id) && group.items.length"
                 :value="group.items"
                 striped-rows
                 class="rank-history-timeline"

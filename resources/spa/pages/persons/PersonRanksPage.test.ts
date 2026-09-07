@@ -40,6 +40,12 @@ const history = {
     finishedOn: '2026-06-15',
 }
 
+const DataTableStub = {
+    name: 'DataTableStub',
+    props: ['value'],
+    template: '<div><slot /></div>',
+}
+
 describe('person ranks page', () => {
     beforeEach(() => {
         vi.resetAllMocks()
@@ -111,5 +117,71 @@ describe('person ranks page', () => {
         await flushPromises()
 
         expect(wrapper.text()).not.toContain('Актываваць разрад')
+    })
+
+    it('groups lower-rank confirmations under the active higher rank', async () => {
+        getRanks.mockResolvedValue([
+            { id: 7, label: 'КМС' },
+            { id: 6, label: 'I' },
+        ])
+        const firstRank = {
+            ...history,
+            id: '1',
+            rankId: 6,
+            changeType: 'completion',
+            achievedOn: '2019-03-07',
+            activatedOn: '2019-03-07',
+            startedOn: '2019-03-07',
+            finishedOn: '2019-10-27',
+        }
+        const candidateMaster = {
+            ...history,
+            id: '2',
+            rankId: 7,
+            changeType: 'promotion',
+            achievedOn: '2019-10-27',
+            activatedOn: '2019-10-27',
+            startedOn: '2019-10-27',
+            finishedOn: '2021-10-27',
+        }
+        const lowerConfirmation = {
+            ...firstRank,
+            id: '3',
+            changeType: 'lower_rank_confirmation',
+            achievedOn: '2019-11-07',
+            startedOn: '2021-10-27',
+            finishedOn: '2022-03-15',
+        }
+        getPersonRankHistories.mockResolvedValue([
+            lowerConfirmation,
+            candidateMaster,
+            firstRank,
+        ])
+
+        const wrapper = mount(PersonRanksPage, {
+            global: {
+                stubs: {
+                    ActionButton: true,
+                    Button: true,
+                    Column: true,
+                    DataTable: DataTableStub,
+                    Dialog: true,
+                    Message: { template: '<div><slot /></div>' },
+                    RouterLink: true,
+                },
+            },
+        })
+        await flushPromises()
+
+        const groups = wrapper.findAll('.rank-history-group')
+        expect(groups).toHaveLength(3)
+        await groups
+            .find((group) => group.text().includes('КМС'))!
+            .trigger('click')
+
+        expect(wrapper.findComponent(DataTableStub).props('value')).toEqual([
+            lowerConfirmation,
+            candidateMaster,
+        ])
     })
 })

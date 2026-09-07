@@ -77,6 +77,10 @@ rebuild-команда `persons:ranks:refill {userId}`, batch job и ежедн�
 веб-refill entry point; сохранены только history и ручная активация. Повторная
 идентификация protocol lines отправляет одну batch-задачу на уникальных людей.
 
+После выкладки правила закрытия периодов при повышении запустить идемпотентный полный refill:
+`php artisan persons:ranks:refill {userId}`. Он пересоберёт уже сохранённые истории из строк
+протоколов с типом `lower_rank_confirmation` и корректными границами периодов.
+
 ## Ретроспективная сверка после PR review (2026-09-02)
 
 По замечаниям Copilot дополнительно зафиксированы и реализованы: `ShouldQueueAfterCommit`

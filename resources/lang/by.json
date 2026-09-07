@@ -253,6 +253,7 @@
     "spa.person_rank.change_extension": "Паўторнае выкананне",
     "spa.person_rank.change_promotion": "Выканаў вышэйшы разрад",
     "spa.person_rank.change_lower_qualification": "Выканаў ніжэйшы разрад",
+    "spa.person_rank.change_lower_rank_confirmation": "Пацвярджэнне больш нізкага разраду",
     "spa.person_rank.confirmations": "пацверджанняў",
     "spa.person_rank.completed": "Дата выканання",
     "spa.person_rank.started": "Дата пачатку",

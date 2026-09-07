@@ -87,6 +87,12 @@ final class RankCalculator
         $startedOn = $activatedOn ?? $fact->achievedOn;
         $finishedOn = $activatedOn?->copy()->addYears(2);
         $previous = $history === [] ? null : array_last($history);
+        $strongerRank = $this->strongerRankActiveOn($history, $fact, $startedOn);
+        if ($strongerRank !== null) {
+            $startedOn = $strongerRank->finished_on;
+        }
+
+        $history = $this->endLowerRankPeriods($history, $fact, $startedOn, $personId);
         $history = $this->extendActivePeriods($history, $fact, $startedOn, $finishedOn, $personId);
 
         $history[] = PersonRankHistory::fromValues(
@@ -96,7 +102,7 @@ final class RankCalculator
             eventId: $fact->eventId,
             competitionId: $fact->competitionId,
             rank: $fact->rank,
-            changeType: $this->changeType($fact, $previous),
+            changeType: $this->changeType($fact, $previous, $strongerRank),
             achievedOn: $fact->achievedOn,
             activatedOn: $activatedOn,
             startedOn: $startedOn,
@@ -106,14 +112,36 @@ final class RankCalculator
         return $history;
     }
 
-    private function changeType(RankFact $fact, ?PersonRankHistory $previous): RankChangeType
+    private function changeType(
+        RankFact $fact,
+        ?PersonRankHistory $previous,
+        ?PersonRankHistory $strongerRank,
+    ): RankChangeType
     {
         return match (true) {
             $previous === null => RankChangeType::Completion,
+            $strongerRank !== null => RankChangeType::LowerRankConfirmation,
             $previous->rank === $fact->rank => RankChangeType::Extension,
             $previous->rank->value > $fact->rank->value => RankChangeType::LowerQualification,
             default => RankChangeType::Promotion,
         };
+    }
+
+    /** @param list<PersonRankHistory> $history */
+    private function strongerRankActiveOn(array $history, RankFact $fact, Carbon $on): ?PersonRankHistory
+    {
+        $strongerRank = null;
+        foreach ($history as $entry) {
+            if ($entry->rank->value <= $fact->rank->value || !$this->isActiveOn($entry, $on)) {
+                continue;
+            }
+
+            if ($strongerRank === null || $entry->finished_on > $strongerRank->finished_on) {
+                $strongerRank = $entry;
+            }
+        }
+
+        return $strongerRank;
     }
 
     /** @param list<PersonRankHistory> $history */
@@ -183,6 +211,46 @@ final class RankCalculator
                     activatedOn: $entry->activated_on,
                     startedOn: $entry->started_on,
                     finishedOn: $finishedOn,
+                );
+            },
+            $history,
+        );
+    }
+
+    /**
+     * A promotion supersedes every still-active lower rank on its effective
+     * date. The lower qualification remains in history but cannot overlap the
+     * stronger rank period.
+     *
+     * @param list<PersonRankHistory> $history
+     * @return list<PersonRankHistory>
+     */
+    private function endLowerRankPeriods(array $history, RankFact $achievement, Carbon $startedOn, ?int $personId): array
+    {
+        return array_map(
+            static function (PersonRankHistory $entry) use ($achievement, $startedOn, $personId): PersonRankHistory {
+                if (
+                    $entry->rank->value >= $achievement->rank->value
+                    || $entry->activated_on === null
+                    || $entry->started_on > $startedOn
+                    || $entry->finished_on === null
+                    || $entry->finished_on <= $startedOn
+                ) {
+                    return $entry;
+                }
+
+                return PersonRankHistory::fromValues(
+                    personId: $personId,
+                    protocolLineId: $entry->protocol_line_id,
+                    distanceId: $entry->distance_id,
+                    eventId: $entry->event_id,
+                    competitionId: $entry->competition_id,
+                    rank: $entry->rank,
+                    changeType: $entry->change_type,
+                    achievedOn: $entry->achieved_on,
+                    activatedOn: $entry->activated_on,
+                    startedOn: $entry->started_on,
+                    finishedOn: $startedOn,
                 );
             },
             $history,
