@@ -8,7 +8,7 @@ import router from './router'
 import 'primeicons/primeicons.css'
 import './styles.css'
 
-document.title = 'bfo base'
+document.title = 'OrientBase'
 
 createApp(App)
     .use(createPinia())
