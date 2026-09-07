@@ -23,10 +23,12 @@ use App\Bridge\Laravel\Http\Controllers\Api\V1\Group\ListGroupsAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Group\MergeGroupsAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Group\UpdateGroupAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Group\ViewGroupAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\CreatePersonAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\ListPersonsAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\PersonRankHistory\ActivatePersonRankAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\PersonRankHistory\ListPersonRankHistoryAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\PersonRankHistory\UpdatePersonRankActivationAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\UpdatePersonAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\ViewPersonAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\PersonPayment\CreateOrUpdatePersonPaymentAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\PersonPayment\ListPersonPaymentsAction;
@@ -78,6 +80,8 @@ final class ApiV1RoutesServiceProvider extends ServiceProvider
             $router->prefix('api/v1')->middleware(AuthenticateApiV1::class)->group(static function () use ($router): void {
                 $router->delete('auth/logout', LogoutAction::class);
                 $router->get('users', ListUsersAction::class);
+                $router->post('persons', CreatePersonAction::class);
+                $router->put('persons/{personId}', UpdatePersonAction::class);
                 $router->post('clubs', CreateClubAction::class);
                 $router->put('clubs/{clubId}', UpdateClubAction::class);
                 $router->put('groups/{groupId}', UpdateGroupAction::class);

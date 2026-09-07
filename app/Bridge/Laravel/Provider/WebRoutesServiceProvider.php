@@ -40,11 +40,7 @@ use App\Bridge\Laravel\Http\Controllers\Login\SignOutAction;
 use App\Bridge\Laravel\Http\Controllers\Person\DeletePersonAction;
 use App\Bridge\Laravel\Http\Controllers\Person\ExtractPersonAction;
 use App\Bridge\Laravel\Http\Controllers\Person\SetProtocolLinePersonAction;
-use App\Bridge\Laravel\Http\Controllers\Person\ShowCreatePersonAction;
-use App\Bridge\Laravel\Http\Controllers\Person\ShowEditPersonAction;
 use App\Bridge\Laravel\Http\Controllers\Person\ShowSetPersonToProtocolLineAction;
-use App\Bridge\Laravel\Http\Controllers\Person\StorePersonAction;
-use App\Bridge\Laravel\Http\Controllers\Person\UpdatePersonAction;
 use App\Bridge\Laravel\Http\Controllers\Registration\SendRegistrationDataAction;
 use App\Bridge\Laravel\Http\Controllers\Registration\ShowRegistrationFormAction;
 use Illuminate\Contracts\Routing\Registrar;
@@ -88,10 +84,6 @@ class WebRoutesServiceProvider extends ServiceProvider
                 //persons
                 $this->routeRegistrar->prefix('persons')->group(function (): void {
                     $this->middleware(['auth'])->group(function (): void {
-                        $this->route->get('create', ShowCreatePersonAction::class);
-                        $this->route->post('store', StorePersonAction::class);
-                        $this->route->get('/{person}/edit', ShowEditPersonAction::class);
-                        $this->route->post('/{person}/update', UpdatePersonAction::class);
                         $this->route->get('/{person}/delete', DeletePersonAction::class);
 
                         $this->route->get('person/{protocol}/show', ShowSetPersonToProtocolLineAction::class);

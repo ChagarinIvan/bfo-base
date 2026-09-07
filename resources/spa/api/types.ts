@@ -66,6 +66,14 @@ export interface Person {
     updated?: Impression
 }
 
+export interface PersonFormRequest {
+    lastname: string
+    firstname: string
+    birthday: string | null
+    clubId: string | null
+    citizenship: string
+}
+
 export interface PersonPrompt {
     id: string
     personId: string

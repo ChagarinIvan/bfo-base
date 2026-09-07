@@ -1,0 +1,126 @@
+<script setup lang="ts">
+import { reactive, watch } from 'vue'
+import Button from 'primevue/button'
+import InputText from 'primevue/inputtext'
+import Select from 'primevue/select'
+import type { ClubOption, PersonFormRequest } from '../../api/types'
+import { t } from '../../i18n'
+
+const props = withDefaults(
+    defineProps<{
+        initialValue?: Partial<PersonFormRequest>
+        clubs: ClubOption[]
+        errors?: Record<string, string>
+        pending?: boolean
+    }>(),
+    { initialValue: () => ({}), errors: () => ({}), pending: false },
+)
+const emit = defineEmits<{ submit: [value: PersonFormRequest] }>()
+const form = reactive<PersonFormRequest>({
+    lastname: '',
+    firstname: '',
+    birthday: null,
+    clubId: null,
+    citizenship: 'belarus',
+})
+watch(
+    () => props.initialValue,
+    (value) =>
+        Object.assign(form, {
+            lastname: value.lastname ?? '',
+            firstname: value.firstname ?? '',
+            birthday: value.birthday ?? null,
+            clubId: value.clubId ?? null,
+            citizenship: value.citizenship ?? 'belarus',
+        }),
+    { immediate: true },
+)
+</script>
+<template>
+    <form
+        class="spa-form"
+        @submit.prevent="
+            emit('submit', {
+                ...form,
+                lastname: form.lastname.trim(),
+                firstname: form.firstname.trim(),
+            })
+        "
+    >
+        <div class="form-field">
+            <label for="person-lastname">{{ t('spa.person.lastname') }}</label
+            ><InputText
+                id="person-lastname"
+                v-model="form.lastname"
+                required
+                :invalid="Boolean(errors.lastname)"
+            /><small v-if="errors.lastname" class="field-error">{{
+                errors.lastname
+            }}</small>
+        </div>
+        <div class="form-field">
+            <label for="person-firstname">{{ t('spa.person.firstname') }}</label
+            ><InputText
+                id="person-firstname"
+                v-model="form.firstname"
+                required
+                :invalid="Boolean(errors.firstname)"
+            /><small v-if="errors.firstname" class="field-error">{{
+                errors.firstname
+            }}</small>
+        </div>
+        <div class="form-field">
+            <label for="person-birthday">{{ t('app.common.birthday') }}</label
+            ><input
+                id="person-birthday"
+                v-model="form.birthday"
+                type="date"
+                class="form-control"
+            /><small v-if="errors.birthday" class="field-error">{{
+                errors.birthday
+            }}</small>
+        </div>
+        <div class="form-field">
+            <label for="person-club">{{ t('spa.person.club') }}</label
+            ><Select
+                id="person-club"
+                v-model="form.clubId"
+                :options="clubs"
+                option-label="name"
+                option-value="id"
+                show-clear
+            /><small v-if="errors.clubId" class="field-error">{{
+                errors.clubId
+            }}</small>
+        </div>
+        <div class="form-field">
+            <label for="person-citizenship">{{
+                t('app.common.citizenship')
+            }}</label
+            ><Select
+                id="person-citizenship"
+                v-model="form.citizenship"
+                :options="[
+                    {
+                        label: t('app.common.citizenship.belarus'),
+                        value: 'belarus',
+                    },
+                    {
+                        label: t('app.common.citizenship.other'),
+                        value: 'other',
+                    },
+                ]"
+                option-label="label"
+                option-value="value"
+            /><small v-if="errors.citizenship" class="field-error">{{
+                errors.citizenship
+            }}</small>
+        </div>
+        <Button
+            type="submit"
+            :label="t('app.common.save')"
+            severity="success"
+            :loading="pending"
+        />
+    </form>
+</template>

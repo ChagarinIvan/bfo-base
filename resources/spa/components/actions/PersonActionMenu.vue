@@ -10,7 +10,7 @@ const emit = defineEmits<{ delete: [] }>()
     <span class="action-menu">
         <ActionButton
             as="a"
-            :href="`/persons/${props.personId}/edit`"
+            :href="`/app/persons/${props.personId}/edit`"
             icon="pi pi-pencil"
             :label="t('spa.person.edit')"
             severity="secondary"

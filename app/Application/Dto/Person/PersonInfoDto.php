@@ -26,8 +26,8 @@ final class PersonInfoDto extends AbstractDto
             'firstname' => 'required|max:255',
             'lastname' => 'required|max:255',
             'citizenship' => ['required', new Enum(Citizenship::class)],
-            'birthday' => 'date',
-            'clubId' => 'numeric',
+            'birthday' => 'nullable|date',
+            'clubId' => 'nullable|numeric',
         ];
     }
 

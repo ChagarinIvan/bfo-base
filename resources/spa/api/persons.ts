@@ -1,8 +1,24 @@
 import { api } from './client'
-import type { PaginatedApiResponse, Person, PersonSearchQuery } from './types'
+import type {
+    PaginatedApiResponse,
+    Person,
+    PersonFormRequest,
+    PersonSearchQuery,
+} from './types'
 
 export async function getPerson(id: string): Promise<Person> {
     return (await api.get<Person>(`/persons/${id}`)).data
+}
+
+export async function createPerson(value: PersonFormRequest): Promise<Person> {
+    return (await api.post<Person>('/persons', value)).data
+}
+
+export async function updatePerson(
+    id: string,
+    value: PersonFormRequest,
+): Promise<Person> {
+    return (await api.put<Person>(`/persons/${id}`, value)).data
 }
 
 export async function getPersons(
