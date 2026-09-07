@@ -22,6 +22,8 @@ import PersonPromptsPage from '../pages/persons/PersonPromptsPage.vue'
 import CreatePersonPromptPage from '../pages/persons/CreatePersonPromptPage.vue'
 import EditPersonPromptPage from '../pages/persons/EditPersonPromptPage.vue'
 import PersonRanksPage from '../pages/persons/PersonRanksPage.vue'
+import CreatePersonPage from '../pages/persons/CreatePersonPage.vue'
+import EditPersonPage from '../pages/persons/EditPersonPage.vue'
 import LoginPage from '../pages/auth/LoginPage.vue'
 import GroupsPage from '../pages/groups/GroupsPage.vue'
 import GroupDetailsPage from '../pages/groups/GroupDetailsPage.vue'
@@ -42,6 +44,16 @@ export function createAppRouter(
             { path: '/app/groups', component: GroupsPage },
             { path: '/app/groups/:id', component: GroupDetailsPage },
             { path: '/app/persons', component: PersonsPage },
+            {
+                path: '/app/persons/create',
+                component: CreatePersonPage,
+                meta: { requiresAuth: true },
+            },
+            {
+                path: '/app/persons/:personId/edit',
+                component: EditPersonPage,
+                meta: { requiresAuth: true },
+            },
             {
                 path: '/app/persons/:personId',
                 component: PersonLayoutPage,

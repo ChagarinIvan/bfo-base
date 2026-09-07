@@ -51,6 +51,10 @@ describe('persons page', () => {
                     Message: true,
                     Paginator: true,
                     PersonTable: true,
+                    RouterLink: {
+                        props: ['to'],
+                        template: '<a :href="to"><slot /></a>',
+                    },
                     Select: true,
                     Toolbar: { template: '<div><slot name="end" /></div>' },
                 },
@@ -62,7 +66,9 @@ describe('persons page', () => {
             page: 1,
             perPage: 20,
         })
-        expect(wrapper.find('a[href="/persons/create"]').exists()).toBe(true)
+        expect(wrapper.find('a[href="/app/persons/create"]').exists()).toBe(
+            true,
+        )
     })
 
     it('retries the complete initialization when loading options fails', async () => {
@@ -85,6 +91,10 @@ describe('persons page', () => {
                     Message: { template: '<div><slot /></div>' },
                     Paginator: true,
                     PersonTable: true,
+                    RouterLink: {
+                        props: ['to'],
+                        template: '<a :href="to"><slot /></a>',
+                    },
                     Select: true,
                     Toolbar: { template: '<div><slot name="end" /></div>' },
                 },

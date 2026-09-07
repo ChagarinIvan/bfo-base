@@ -75,10 +75,12 @@ describe('person table', () => {
         expect(wrapper.find('.action-menu .pi-pencil').exists()).toBe(true)
         expect(wrapper.find('.action-menu .pi-trash').exists()).toBe(true)
         expect(
-            wrapper.find('.action-menu a[href="/persons/7/edit"]').exists(),
+            wrapper.find('.action-menu a[href="/app/persons/7/edit"]').exists(),
         ).toBe(true)
         expect(
-            wrapper.find('.action-menu a[href="/persons/7/edit"]').classes(),
+            wrapper
+                .find('.action-menu a[href="/app/persons/7/edit"]')
+                .classes(),
         ).toContain('action-button')
         expect(
             wrapper.find('.action-menu a[href="/persons/7/delete"]').exists(),

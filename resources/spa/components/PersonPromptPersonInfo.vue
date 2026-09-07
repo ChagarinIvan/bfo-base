@@ -11,7 +11,7 @@ import ImpressionDetails from './ImpressionDetails.vue'
 import { t } from '../i18n'
 import { useAuthStore } from '../stores/auth'
 
-const props = defineProps<{ personId: string }>()
+const props = defineProps<{ personId: string; refreshKey?: string }>()
 const emit = defineEmits<{
     personLoaded: [person: Person | null]
 }>()
@@ -31,7 +31,7 @@ async function load(): Promise<void> {
     try {
         const [loadedPerson, loadedRanks, loadedClubs, loadedUsers] =
             await Promise.all([
-                getPerson(personId),
+                getPerson(personId, props.refreshKey),
                 getRanks(),
                 getClubOptions(),
                 auth.isAuthenticated ? getUsers() : Promise.resolve([]),
@@ -67,7 +67,7 @@ function birthYear(birthday: string | null): string {
 }
 
 watch(
-    () => props.personId,
+    [() => props.personId, () => props.refreshKey],
     () => {
         person.value = null
         emit('personLoaded', null)

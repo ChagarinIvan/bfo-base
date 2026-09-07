@@ -12,7 +12,7 @@ const auth = useAuthStore()
         <ActionButton
             v-if="auth.isAuthenticated"
             as="a"
-            :href="`/persons/${props.personId}/edit`"
+            :href="`/app/persons/${props.personId}/edit`"
             :label="t('spa.person.edit')"
             icon="pi pi-pencil"
             severity="secondary"

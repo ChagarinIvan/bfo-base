@@ -147,13 +147,13 @@ onBeforeUnmount(() => debouncedNameSearch.cancel())
             <h1 class="page-title">{{ t('spa.nav.persons') }}</h1>
         </template>
         <template #end>
-            <a v-if="auth.isAuthenticated" href="/persons/create">
+            <RouterLink v-if="auth.isAuthenticated" to="/app/persons/create">
                 <Button
                     :label="t('spa.person.create')"
                     icon="pi pi-plus"
                     severity="success"
                 />
-            </a>
+            </RouterLink>
         </template>
     </Toolbar>
 

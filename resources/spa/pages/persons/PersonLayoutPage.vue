@@ -15,6 +15,7 @@ provide(personContextKey, person)
 <template>
     <PersonPromptPersonInfo
         :person-id="String(route.params.personId)"
+        :refresh-key="String(route.query.refresh ?? '')"
         @person-loaded="person = $event"
     >
         <template #actions>
