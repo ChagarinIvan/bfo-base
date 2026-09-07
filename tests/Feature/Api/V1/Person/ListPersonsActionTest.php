@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature\Api\V1\Person;
 
 use App\Domain\Club\Club;
+use App\Domain\Person\Citizenship;
 use App\Domain\Person\Person;
 use App\Domain\Rank\Rank;
 use App\Infrastructure\Sanctum\SanctumUser;
@@ -45,6 +46,7 @@ final class ListPersonsActionTest extends TestCase
             'club_id' => $activeClub->id,
             'lastname' => 'Alpha',
             'birthday' => '2001-01-01',
+            'citizenship' => Citizenship::BELARUS,
         ]);
         $this->createPerson(['id' => 2, 'club_id' => $inactiveClub->id, 'lastname' => 'Beta']);
         $this->createPerson(['id' => 3, 'active' => false, 'lastname' => 'Gamma']);
