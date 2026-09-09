@@ -49,6 +49,7 @@ final class ExtractPersonActionTest extends TestCase
         ]);
         $this->assertDatabaseHas('protocol_lines', ['id' => $line->id, 'person_id' => $personId]);
         $this->assertDatabaseHas('protocol_lines', ['id' => $equalLine->id, 'person_id' => $personId]);
+        $this->assertDatabaseHas('persons_prompt', ['person_id' => $personId, 'prompt' => $line->prepared_line]);
     }
 
     #[Test]
@@ -65,6 +66,7 @@ final class ExtractPersonActionTest extends TestCase
 
         $this->assertDatabaseHas('protocol_lines', ['id' => $line->id, 'person_id' => $person->id]);
         $this->assertDatabaseHas('protocol_lines', ['id' => $equalLine->id, 'person_id' => $person->id]);
+        $this->assertDatabaseHas('persons_prompt', ['person_id' => $person->id, 'prompt' => $line->prepared_line]);
     }
 
     /** @param array<string, mixed> $attributes */

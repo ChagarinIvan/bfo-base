@@ -43,6 +43,12 @@ async function searchPeople(event: { value: string }): Promise<void> {
     }
 }
 
+function personLabel(person: Person): string {
+    const birthYear = person.birthday?.slice(0, 4) ?? '—'
+
+    return `${person.lastname} ${person.firstname} (${birthYear})`
+}
+
 async function submit(): Promise<void> {
     if (!person.value) return
     pending.value = true
@@ -74,10 +80,7 @@ async function submit(): Promise<void> {
                         id="protocol-line-person"
                         v-model="person"
                         :options="people"
-                        :option-label="
-                            (person: Person) =>
-                                `${person.lastname} ${person.firstname}`
-                        "
+                        :option-label="personLabel"
                         filter
                         :loading="searching"
                         :placeholder="t('spa.protocol_line_person.placeholder')"

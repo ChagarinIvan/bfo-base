@@ -70,6 +70,10 @@ final class PersonFormActionsTest extends TestCase
             'firstname' => 'Ян',
             'citizenship' => Citizenship::BELARUS->value,
         ]);
+        $this->assertDatabaseHas('persons_prompt', [
+            'person_id' => $person->id,
+            'prompt' => 'іваноў_ян',
+        ]);
     }
 
     #[Test]
