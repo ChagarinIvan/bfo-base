@@ -140,6 +140,11 @@ export function createAppRouter(
                 path: '/app/registration/activate/:token',
                 component: ActivateRegistrationPage,
             },
+            {
+                path: '/app/not-found',
+                name: 'not-found',
+                component: NotFoundPage,
+            },
             { path: '/app/:pathMatch(.*)*', component: NotFoundPage },
         ],
     })

@@ -150,12 +150,6 @@ function rowClass(line: ProtocolLine): string | undefined {
         : undefined
 }
 
-function visibleLines(): ProtocolLine[] {
-    if (auth.isAuthenticated) return lines.value
-
-    return lines.value.filter((line) => !hasPersonMismatch(line, person.value))
-}
-
 async function extract(line: ProtocolLine): Promise<void> {
     const extracted = await extractPerson(line.id)
     await router.push(`/app/persons/${extracted.id}`)
@@ -234,15 +228,12 @@ onBeforeUnmount(() => debouncedCompetitionSearch.cancel())
             @click="void load()"
         />
     </Message>
-    <Message
-        v-else-if="!visibleLines().length"
-        severity="secondary"
-        :closable="false"
-        >{{ t('spa.person_view.empty') }}</Message
-    >
+    <Message v-else-if="!lines.length" severity="secondary" :closable="false">{{
+        t('spa.person_view.empty')
+    }}</Message>
     <DataTable
         v-else
-        :value="visibleLines()"
+        :value="lines"
         :row-class="rowClass"
         striped-rows
         class="person-view-table"

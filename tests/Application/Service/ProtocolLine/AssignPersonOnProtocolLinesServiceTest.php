@@ -9,6 +9,7 @@ use App\Application\Service\Person\RebuildPersonRanksService;
 use App\Application\Service\PersonPrompt\ChangePersonPromptService;
 use App\Application\Service\ProtocolLine\SetPersonToProtocolLines;
 use App\Application\Service\ProtocolLine\SetPersonToProtocolLinesService;
+use App\Domain\Auth\Impression;
 use App\Domain\Person\PersonRepository;
 use App\Domain\Person\RankCalculator;
 use App\Domain\Person\RankFactsCollector;
@@ -37,8 +38,8 @@ final class AssignPersonOnProtocolLinesServiceTest extends TestCase
         $lines = $this->createMock(ProtocolLineRepository::class);
         $lines->expects($this->once())->method('byCriteria')->willReturn(new Collection([$source, $equal]));
         $lines->expects($this->exactly(2))->method('update');
-        $source->expects($this->once())->method('assignPerson')->with(42);
-        $equal->expects($this->once())->method('assignPerson')->with(42);
+        $source->expects($this->once())->method('setPerson')->with(42, $this->isInstanceOf(Impression::class));
+        $equal->expects($this->once())->method('setPerson')->with(42, $this->isInstanceOf(Impression::class));
 
         $promptRepository = $this->createMock(PersonPromptRepository::class);
         $promptRepository->expects($this->once())->method('byCriteria')->willReturn(new Collection());
@@ -53,6 +54,7 @@ final class AssignPersonOnProtocolLinesServiceTest extends TestCase
             $lines,
             new ChangePersonPromptService($promptRepository, $promptFactory, $clock),
             new RebuildPersonRanksService($persons, $this->createStub(RankFactsCollector::class), new RankCalculator(), $clock, new DummyTransactional()),
+            $clock,
         ))->execute(new SetPersonToProtocolLines(
             'ivanou-jan-2001',
             42,

@@ -5,15 +5,15 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import PersonPromptPersonInfo from './PersonPromptPersonInfo.vue'
 import type { Person } from '../api/types'
 
-const { auth, getClubOptions, getPerson, getRanks, getUsers } = vi.hoisted(
-    () => ({
+const { auth, getClubOptions, getPerson, getRanks, getUsers, replace } =
+    vi.hoisted(() => ({
         auth: { isAuthenticated: true },
         getClubOptions: vi.fn(),
         getPerson: vi.fn(),
         getRanks: vi.fn(),
         getUsers: vi.fn(),
-    }),
-)
+        replace: vi.fn(),
+    }))
 
 vi.mock('../api/clubs', () => ({ getClubOptions }))
 vi.mock('../api/persons', () => ({ getPerson }))
@@ -21,6 +21,9 @@ vi.mock('../api/ranks', () => ({ getRanks }))
 vi.mock('../api/users', () => ({ getUsers }))
 vi.mock('../stores/auth', () => ({
     useAuthStore: () => auth,
+}))
+vi.mock('vue-router', () => ({
+    useRouter: () => ({ replace }),
 }))
 
 function deferred<T>(): {
@@ -170,5 +173,24 @@ describe('person prompt person info', () => {
 
         expect(wrapper.get('a').attributes('href')).toBe('/app/clubs/7')
         expect(wrapper.get('a').text()).toBe('Orienteering Club')
+    })
+
+    it('shows the standard not-found page when the person does not exist', async () => {
+        getPerson.mockRejectedValue({ response: { status: 404 } })
+
+        mount(PersonPromptPersonInfo, {
+            props: { personId: 'missing' },
+            global: {
+                stubs: {
+                    Card: true,
+                    ImpressionDetails: true,
+                    Message: true,
+                    RouterLink: routerLinkStub,
+                },
+            },
+        })
+        await flushPromises()
+
+        expect(replace).toHaveBeenCalledWith({ name: 'not-found' })
     })
 })

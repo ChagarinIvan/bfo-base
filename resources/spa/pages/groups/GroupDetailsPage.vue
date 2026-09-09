@@ -109,8 +109,16 @@ async function load(id: string): Promise<void> {
             years.value[0] ??
             null
         await loadEvents()
-    } catch {
+    } catch (exception: unknown) {
         group.value = null
+
+        const status = (exception as { response?: { status?: number } })
+            .response?.status
+        if (status === 404) {
+            await router.replace({ name: 'not-found' })
+            return
+        }
+
         error.value = t('spa.group.details.error')
     } finally {
         loading.value = false

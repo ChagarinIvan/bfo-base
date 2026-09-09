@@ -74,9 +74,12 @@ async function load(id: string): Promise<void> {
     } catch (exception: unknown) {
         competition.value = null
         events.value = []
-        error.value = isNotFound(exception)
-            ? t('spa.competition.details.not_found')
-            : t('spa.competition.details.error')
+        if (isNotFound(exception)) {
+            await router.replace({ name: 'not-found' })
+            return
+        }
+
+        error.value = t('spa.competition.details.error')
     } finally {
         loading.value = false
     }

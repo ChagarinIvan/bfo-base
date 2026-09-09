@@ -4,7 +4,7 @@ import type { AxiosError } from 'axios'
 import Card from 'primevue/card'
 import Message from 'primevue/message'
 import Paginator, { type PageState } from 'primevue/paginator'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { getClub } from '../../api/clubs'
 import { getPersons } from '../../api/persons'
 import { getRanks, type RankOption } from '../../api/ranks'
@@ -27,6 +27,7 @@ import {
 } from '../persons/personsModels'
 
 const route = useRoute()
+const router = useRouter()
 const auth = useAuthStore()
 const club = ref<Club | null>(null)
 const persons = ref<Person[]>([])
@@ -146,9 +147,12 @@ async function load(id: string): Promise<void> {
     } catch (exception: unknown) {
         club.value = null
         persons.value = []
-        error.value = isNotFound(exception)
-            ? t('spa.club.details.not_found')
-            : t('spa.club.details.error')
+        if (isNotFound(exception)) {
+            await router.replace({ name: 'not-found' })
+            return
+        }
+
+        error.value = t('spa.club.details.error')
     } finally {
         loading.value = false
     }
