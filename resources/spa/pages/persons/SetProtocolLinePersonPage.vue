@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
@@ -13,29 +13,44 @@ import { t } from '../../i18n'
 const route = useRoute()
 const router = useRouter()
 const people = ref<Person[]>([])
-const personId = ref<string | null>(null)
-const loading = ref(true)
+const person = ref<Person | null>(null)
+const searching = ref(false)
 const pending = ref(false)
 const error = ref('')
+let latestSearch = 0
 
-onMounted(async () => {
-    try {
-        people.value = (await getPersons({ perPage: 1000 })).data
-    } catch {
-        error.value = t('spa.protocol_line_person.error')
-    } finally {
-        loading.value = false
+async function searchPeople(event: { value: string }): Promise<void> {
+    const name = event.value.trim()
+    const requestId = ++latestSearch
+
+    if (name.length < 3) {
+        people.value = []
+        return
     }
-})
+
+    searching.value = true
+    error.value = ''
+    try {
+        const result = await getPersons({ name, perPage: 20 })
+        if (requestId !== latestSearch) return
+        people.value = result.data
+    } catch {
+        if (requestId === latestSearch) {
+            error.value = t('spa.protocol_line_person.error')
+        }
+    } finally {
+        if (requestId === latestSearch) searching.value = false
+    }
+}
 
 async function submit(): Promise<void> {
-    if (!personId.value) return
+    if (!person.value) return
     pending.value = true
     error.value = ''
     try {
         await setProtocolLinePerson(
             String(route.params.protocolLineId),
-            personId.value,
+            person.value.id,
         )
         await router.back()
     } catch {
@@ -50,30 +65,28 @@ async function submit(): Promise<void> {
     <Card class="form-card">
         <template #title>{{ t('spa.protocol_line_person.title') }}</template>
         <template #content>
-            <Message v-if="loading" severity="info" :closable="false">
-                {{ t('spa.protocol_line_person.loading') }}
-            </Message>
-            <form v-else class="spa-form" @submit.prevent="submit">
+            <form class="spa-form" @submit.prevent="submit">
                 <div class="form-field">
                     <label for="protocol-line-person">{{
                         t('spa.protocol_line_person.person')
                     }}</label>
                     <Select
                         id="protocol-line-person"
-                        v-model="personId"
+                        v-model="person"
                         :options="people"
-                        option-value="id"
                         :option-label="
                             (person: Person) =>
                                 `${person.lastname} ${person.firstname}`
                         "
                         filter
+                        :loading="searching"
                         :placeholder="t('spa.protocol_line_person.placeholder')"
+                        @filter="searchPeople"
                     />
                 </div>
                 <Button
                     type="submit"
-                    :disabled="!personId || pending"
+                    :disabled="!person || pending"
                     :label="t('spa.protocol_line_person.save')"
                 />
                 <Message v-if="error" severity="error" :closable="false">

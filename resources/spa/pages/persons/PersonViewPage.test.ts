@@ -258,6 +258,11 @@ describe('person view page', () => {
         expect(
             wrapper.findAllComponents({ name: 'ActionButton' }),
         ).toHaveLength(0)
+
+        const rowClass = wrapper
+            .findComponent(DataTableStub)
+            .props('rowClass') as (line: typeof mismatchedLine) => string
+        expect(rowClass(mismatchedLine)).toBeUndefined()
     })
 
     it('keeps a short competition search in the input without requesting it', async () => {

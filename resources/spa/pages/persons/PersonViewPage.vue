@@ -145,7 +145,7 @@ function display(value: string | null): string {
 }
 
 function rowClass(line: ProtocolLine): string | undefined {
-    return hasPersonMismatch(line, person.value)
+    return auth.isAuthenticated && hasPersonMismatch(line, person.value)
         ? 'person-view-mismatch-row'
         : undefined
 }
