@@ -30,6 +30,10 @@ export async function updatePerson(
     return (await api.put<Person>(`/persons/${id}`, value)).data
 }
 
+export async function deletePerson(id: string): Promise<void> {
+    await api.delete(`/persons/${id}`)
+}
+
 export async function getPersons(
     query: PersonSearchQuery = {},
 ): Promise<PaginatedApiResponse<Person>> {

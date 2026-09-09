@@ -31,4 +31,25 @@ final class PersonsRoutesTest extends TestCase
         $this->get('/persons/101/payments/create')->assertNotFound();
         $this->post('/persons/101/payments/store')->assertNotFound();
     }
+
+    #[Test]
+    public function it_removes_the_remaining_legacy_person_routes(): void
+    {
+        $this->get('/persons/101/delete')->assertNotFound();
+        $this->get('/persons/person/101/show')->assertNotFound();
+        $this->get('/persons/1/101/set')->assertNotFound();
+        $this->get('/persons/extract/101')->assertNotFound();
+    }
+
+    #[Test]
+    public function it_removes_the_legacy_authentication_and_registration_routes(): void
+    {
+        $this->get('/login')->assertNotFound();
+        $this->get('/login/auth/token')->assertNotFound();
+        $this->post('/sign-in')->assertNotFound();
+        $this->get('/sign-out')->assertNotFound();
+        $this->get('/registration')->assertNotFound();
+        $this->post('/registration/data')->assertNotFound();
+        $this->get('/500')->assertNotFound();
+    }
 }

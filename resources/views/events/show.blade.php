@@ -5,7 +5,6 @@
     use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupAction;
     use App\Bridge\Laravel\Http\Controllers\Event\ShowEditEventFormAction;
     use App\Bridge\Laravel\Http\Controllers\Event\ShowEventDistanceAction;
-    use App\Bridge\Laravel\Http\Controllers\Person\ShowSetPersonToProtocolLineAction;
     use App\Domain\Distance\Distance;
     use App\Domain\Event\Event;
     use App\Domain\Rank\Rank;
@@ -137,7 +136,7 @@
                                 @endphp
                                 <td><a href="{{ $link }}">{{ $line->lastname }}</a>&nbsp;
                                     @auth
-                                        <a href="{{ action(ShowSetPersonToProtocolLineAction::class, [$line]) }}">
+                                        <a href="{{ '/app/protocol-lines/' . $line->id . '/person' }}">
                                             <span class="badge rounded-pill bg-warning">{{ __('app.common.edit') }}</span>
                                         </a>
                                         @if($isDeletedPerson)
@@ -149,7 +148,7 @@
                             @else
                                 <td>{{ $line->lastname }}&nbsp;
                                     @auth
-                                        <a href="{{ action(ShowSetPersonToProtocolLineAction::class, [$line]) }}">
+                                        <a href="{{ '/app/protocol-lines/' . $line->id . '/person' }}">
                                             <span class="badge rounded-pill bg-danger">{{ __('app.common.new') }}</span>
                                         </a>
                                     @endauth

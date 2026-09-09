@@ -138,14 +138,21 @@ async function logout(): Promise<void> {
                     <i class="pi pi-sign-in" /> {{ t('spa.nav.login') }}
                 </RouterLink>
                 <template v-else>
-                    <a
+                    <template
                         v-for="item in authenticatedAccountNavigation"
                         :key="item.href"
-                        class="app-nav-link"
-                        :href="item.href"
                     >
-                        <i class="pi pi-user-plus" /> {{ t(item.label) }}
-                    </a>
+                        <RouterLink
+                            v-if="item.spa"
+                            class="app-nav-link"
+                            :to="item.href"
+                        >
+                            <i class="pi pi-user-plus" /> {{ t(item.label) }}
+                        </RouterLink>
+                        <a v-else class="app-nav-link" :href="item.href">
+                            <i class="pi pi-user-plus" /> {{ t(item.label) }}
+                        </a>
+                    </template>
                     <button
                         class="app-logout-button"
                         type="button"

@@ -24,5 +24,5 @@ export const personsNavigation: NavigationItem[] = [
 export const authenticatedCompetitionNavigation: NavigationItem[] = []
 
 export const authenticatedAccountNavigation: NavigationItem[] = [
-    { label: 'spa.nav.registration', href: '/registration' },
+    { label: 'spa.nav.registration', href: '/app/registration', spa: true },
 ]

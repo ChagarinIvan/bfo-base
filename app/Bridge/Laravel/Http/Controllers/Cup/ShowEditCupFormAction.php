@@ -28,9 +28,4 @@ class ShowEditCupFormAction extends BaseController
         /** @see /resources/views/cup/edit.blade.php */
         return $this->view('cup.edit', ['cup' => $cup]);
     }
-
-    protected function isNavbarRoute(): bool
-    {
-        return true;
-    }
 }

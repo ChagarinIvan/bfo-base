@@ -19,9 +19,4 @@ class ShowCreateCupFormAction extends BaseController
         /** @see /resources/views/cup/create.blade.php */
         return $this->view('cup.create');
     }
-
-    protected function isNavbarRoute(): bool
-    {
-        return true;
-    }
 }

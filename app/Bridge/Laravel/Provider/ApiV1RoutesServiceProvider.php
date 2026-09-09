@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Provider;
 
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Auth\ActivateRegistrationInvitationAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Auth\ListUsersAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Auth\LoginAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Auth\LogoutAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Auth\SendRegistrationInvitationAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Club\CreateClubAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Club\ListAllClubAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Club\ListClubsAction;
@@ -24,6 +26,7 @@ use App\Bridge\Laravel\Http\Controllers\Api\V1\Group\MergeGroupsAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Group\UpdateGroupAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Group\ViewGroupAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\CreatePersonAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\DeletePersonAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\ListPersonsAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\PersonRankHistory\ActivatePersonRankAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\PersonRankHistory\ListPersonRankHistoryAction;
@@ -37,6 +40,8 @@ use App\Bridge\Laravel\Http\Controllers\Api\V1\PersonPrompt\DeletePersonPromptAc
 use App\Bridge\Laravel\Http\Controllers\Api\V1\PersonPrompt\ListPersonPromptsAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\PersonPrompt\UpdatePersonPromptAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\PersonPrompt\ViewPersonPromptAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\ProtocolLine\AssignPersonToProtocolLineAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\ProtocolLine\ExtractPersonAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\ProtocolLine\ListProtocolLinesAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Rank\ListRanksAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Year\ListYearsAction;
@@ -53,6 +58,7 @@ final class ApiV1RoutesServiceProvider extends ServiceProvider
 
         $this->routes(static function () use ($router): void {
             $router->prefix('api/v1')->middleware('throttle:10,1')->post('auth/login', LoginAction::class);
+            $router->prefix('api/v1')->middleware('throttle:10,1')->post('auth/registration-activation/{token}', ActivateRegistrationInvitationAction::class);
 
             $router->prefix('api/v1')->middleware(AuthenticateApiV1::class)->group(static function () use ($router): void {
                 $router->get('persons/payments', ListPersonPaymentsAction::class);
@@ -79,9 +85,13 @@ final class ApiV1RoutesServiceProvider extends ServiceProvider
 
             $router->prefix('api/v1')->middleware(AuthenticateApiV1::class)->group(static function () use ($router): void {
                 $router->delete('auth/logout', LogoutAction::class);
+                $router->post('auth/registration-invitations', SendRegistrationInvitationAction::class);
                 $router->get('users', ListUsersAction::class);
                 $router->post('persons', CreatePersonAction::class);
                 $router->put('persons/{personId}', UpdatePersonAction::class);
+                $router->delete('persons/{personId}', DeletePersonAction::class);
+                $router->post('protocol-lines/{protocolLineId}/extract-person', ExtractPersonAction::class);
+                $router->put('protocol-lines/{protocolLineId}/person', AssignPersonToProtocolLineAction::class);
                 $router->post('clubs', CreateClubAction::class);
                 $router->put('clubs/{clubId}', UpdateClubAction::class);
                 $router->put('groups/{groupId}', UpdateGroupAction::class);

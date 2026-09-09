@@ -7,7 +7,7 @@ import InputText from 'primevue/inputtext'
 import Message from 'primevue/message'
 import Paginator, { type PageState } from 'primevue/paginator'
 import { useRoute, useRouter } from 'vue-router'
-import { getPersonProtocolLines } from '../../api/protocolLines'
+import { extractPerson, getPersonProtocolLines } from '../../api/protocolLines'
 import { getYears } from '../../api/years'
 import type { PaginationHeaders, ProtocolLine } from '../../api/types'
 import DateFilter from '../../components/DateFilter.vue'
@@ -156,8 +156,9 @@ function visibleLines(): ProtocolLine[] {
     return lines.value.filter((line) => !hasPersonMismatch(line, person.value))
 }
 
-function extractPersonUrl(line: ProtocolLine): string {
-    return `/persons/extract/${line.id}`
+async function extract(line: ProtocolLine): Promise<void> {
+    const extracted = await extractPerson(line.id)
+    await router.push(`/app/persons/${extracted.id}`)
 }
 
 let initialized = false
@@ -291,11 +292,10 @@ onBeforeUnmount(() => debouncedCompetitionSearch.cancel())
             <template #body="{ data }">
                 <ActionButton
                     v-if="hasPersonMismatch(data, person)"
-                    as="a"
-                    :href="extractPersonUrl(data)"
                     icon="pi pi-user-plus"
                     :label="t('spa.person_view.extract_person')"
                     severity="warn"
+                    @click="extract(data)"
                 />
             </template>
         </Column>

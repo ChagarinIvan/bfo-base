@@ -8,7 +8,6 @@ use App\Bridge\Laravel\Http\Middleware\Authenticate;
 use App\Bridge\Laravel\Http\Middleware\EncryptCookies;
 use App\Bridge\Laravel\Http\Middleware\Language;
 use App\Bridge\Laravel\Http\Middleware\PreventRequestsDuringMaintenance;
-use App\Bridge\Laravel\Http\Middleware\RedirectIfAuthenticated;
 use App\Bridge\Laravel\Http\Middleware\TrimStrings;
 use App\Bridge\Laravel\Http\Middleware\UserIdMiddleware;
 use App\Bridge\Laravel\Http\Middleware\VerifyCsrfToken;
@@ -73,7 +72,6 @@ class Kernel extends HttpKernel
         'auth.basic' => AuthenticateWithBasicAuth::class,
         'cache.headers' => SetCacheHeaders::class,
         'can' => Authorize::class,
-        'guest' => RedirectIfAuthenticated::class,
         'password.confirm' => RequirePassword::class,
         'signed' => ValidateSignature::class,
         'throttle' => ThrottleRequests::class,

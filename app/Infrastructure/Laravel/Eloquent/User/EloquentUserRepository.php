@@ -18,4 +18,14 @@ final class EloquentUserRepository implements UserRepository
     {
         return User::find($id);
     }
+
+    public function byEmail(string $email): ?User
+    {
+        return User::query()->where('email', $email)->first();
+    }
+
+    public function add(User $user): void
+    {
+        $user->save();
+    }
 }

@@ -10,4 +10,8 @@ interface UserRepository
     public function all(): array;
 
     public function byId(int $id): ?User;
+
+    public function byEmail(string $email): ?User;
+
+    public function add(User $user): void;
 }

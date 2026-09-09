@@ -41,9 +41,4 @@ class ShowCreateCupEventFormAction extends BaseController
             'events' => $events,
         ]);
     }
-
-    protected function isNavbarRoute(): bool
-    {
-        return true;
-    }
 }

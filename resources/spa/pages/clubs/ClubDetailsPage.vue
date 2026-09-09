@@ -241,6 +241,7 @@ onBeforeUnmount(() => debouncedNameSearch.cancel())
             :authenticated="auth.isAuthenticated"
             :rank-labels="rankLabels"
             :hide-club="true"
+            @deleted="reloadPersons()"
         />
         <Paginator
             v-if="personPagination.total > 0"

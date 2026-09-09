@@ -8,6 +8,10 @@ use App\Domain\Auth\Impression;
 use App\Domain\Distance\Distance;
 use App\Domain\Event\Event;
 use App\Domain\Person\Person;
+use App\Domain\Person\PersonExtractor;
+use App\Domain\ProtocolLine\Event\PersonFromProtocolLineExtracted;
+use App\Domain\ProtocolLine\Event\ProtocolLinePersonAssigned;
+use App\Domain\ProtocolLine\Event\ProtocolLinePersonSet;
 use App\Domain\ProtocolLine\Event\ProtocolLineRankActivated;
 use App\Domain\Shared\AggregatedModel;
 use App\Services\PersonsIdentService;
@@ -98,6 +102,31 @@ class ProtocolLine extends AggregatedModel
         $this->activate_rank = $date;
 
         $this->recordThat(new ProtocolLineRankActivated($this, $impression));
+    }
+
+    public function assignPerson(int $personId, Impression $impression): void
+    {
+        $oldPersonId = $this->person_id;
+        $this->person_id = $personId;
+//        $this->updated = $impression;
+
+        $this->recordThat(new ProtocolLinePersonAssigned($this, $oldPersonId, $impression));
+    }
+
+    public function setPerson(int $personId, Impression $impression): void
+    {
+        $this->person_id = $personId;
+//        $this->updated = $impression;
+
+        $this->recordThat(new ProtocolLinePersonSet($this, $impression));
+    }
+
+    public function extractPerson(PersonExtractor $extractor, Impression $impression): Person
+    {
+        $person = $extractor->extract($this, $impression);
+        $this->recordThat(new PersonFromProtocolLineExtracted($this, $person, $impression));
+
+        return $person;
     }
     protected function casts(): array
     {

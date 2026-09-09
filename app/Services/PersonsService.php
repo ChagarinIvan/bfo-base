@@ -4,14 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Domain\Auth\Impression;
-use App\Domain\Club\ClubNameNormalizer;
-use App\Domain\Club\ClubRepository;
 use App\Domain\Person\Person;
-use App\Domain\ProtocolLine\ProtocolLine;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
 use function in_array;
@@ -25,20 +19,9 @@ class PersonsService
         'birthday',
     ];
 
-    public function __construct(
-        private readonly ClubRepository $clubs,
-        private readonly ClubNameNormalizer $clubNameNormalizer,
-    ) {
-    }
-
     public function getPerson(int $personId): Person
     {
         return Person::where('active', true)->find($personId) ?? throw new RuntimeException('Wrong person id.');
-    }
-
-    public function getPersons(Collection $personsIds): Collection
-    {
-        return Person::where('active', true)->whereIn('id', $personsIds)->get();
     }
 
     /**
@@ -71,19 +54,5 @@ class PersonsService
         }
 
         return $persons;
-    }
-
-    public function extractPersonFromLine(ProtocolLine $protocolLine, Impression $impression): Person
-    {
-        $person = new Person();
-        $person->lastname = $protocolLine->lastname;
-        $person->firstname = $protocolLine->firstname;
-        $person->birthday = $protocolLine->year ? Carbon::createFromFormat('Y', (string)$protocolLine->year) : null;
-        $club = $this->clubs->oneByNormalizedName($this->clubNameNormalizer->normalize($protocolLine->club));
-        $person->club_id = $club?->id;
-        $person->from_base = false;
-        $person->created = $person->updated = $impression;
-
-        return $person;
     }
 }
