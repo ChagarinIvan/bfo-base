@@ -14,9 +14,10 @@
 - Для новой функциональности сохраняем цикл `specify → review → plan → review →
   tasks → implement` и обновляем соответствующие артефакты в `specs/`.
 - Новый код следует слоям `Application / Domain / Bridge / Infrastructure`.
-  Новые сценарии оформляем Application-сервисами; `app/Services` — legacy-слой,
-  его не расширяем. Новые репозитории не создаём, фасады Laravel не используем;
-  зависимости передаём через конструктор и интерфейсы.
+  Новые сценарии оформляем Application-сервисами; `app/Services` и
+  `app/Repositories` — legacy-слои, их не расширяем. Для нового persistence/query-кода создаём
+  repository port в `Domain` и Eloquent implementation в `Infrastructure`; зависимости передаём
+  через конструктор и интерфейсы, фасады Laravel не используем.
 - Bridge actions формируют command; Application service принимает только command в `execute()`.
   Command не возвращает transport DTO: только primitive либо domain input/value object. Повторяемые
   mutation-правила живут в Domain `*Updater`/`*Factory`; aggregate `create`/`disable` фиксируют

@@ -28,9 +28,18 @@ export interface Event {
     description: string
     date: string
     participantsCount: number
-    competitionName?: string | null
     created?: Impression
     updated?: Impression
+    cups?: { id: string; name: string; year: number }[]
+}
+
+export interface Distance {
+    id: string
+    eventId: string
+    groupName: string
+    length: number
+    points: number
+    disqual: boolean
 }
 
 export interface Club {
@@ -124,7 +133,8 @@ export interface PersonRankActivationRequest {
 
 export interface ProtocolLine {
     id: string
-    personId: string
+    personId: string | null
+    serialNumber?: string
     firstname: string
     lastname: string
     distanceId: string
@@ -138,12 +148,20 @@ export interface ProtocolLine {
     time: string | null
     place: string | null
     completeRank: string | null
+    club?: string
+    rank?: string | null
+    points?: number | null
+    vk?: boolean
+    activateRank?: string | null
 }
 
 export interface ProtocolLineSearchQuery {
-    personId: string
-    withEvent: 1
-    withCompetition: 1
+    personId?: string
+    distanceId?: string
+    name?: string
+    withClub?: 1
+    withEvent?: 1
+    withCompetition?: 1
     year?: number
     competitionName?: string
     date?: string

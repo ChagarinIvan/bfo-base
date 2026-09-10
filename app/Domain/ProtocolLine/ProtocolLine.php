@@ -134,6 +134,7 @@ class ProtocolLine extends AggregatedModel
         return [
             'time' => 'datetime',
             'activate_rank' => 'datetime:Y-m-d',
+            'vk' => 'boolean',
         ];
     }
 }

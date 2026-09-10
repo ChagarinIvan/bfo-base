@@ -6,7 +6,11 @@ namespace App\Domain\Event;
 
 final readonly class EventResources
 {
-    public function __construct(public bool $competitionName = false)
+    public function __construct(
+        public bool $competitionName = false,
+        public bool $withCups = false,
+        public bool $withDistances = false,
+    )
     {
     }
 }

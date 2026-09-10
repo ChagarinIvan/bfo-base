@@ -33,6 +33,7 @@ import GroupDetailsPage from '../pages/groups/GroupDetailsPage.vue'
 import EditGroupPage from '../pages/groups/EditGroupPage.vue'
 import MergeGroupsPage from '../pages/groups/MergeGroupsPage.vue'
 import NotFoundPage from '../pages/NotFoundPage.vue'
+import EventViewPage from '../pages/events/EventViewPage.vue'
 
 export function createAppRouter(
     history: RouterHistory = typeof window === 'undefined'
@@ -43,6 +44,7 @@ export function createAppRouter(
         history,
         routes: [
             { path: '/app/competitions', component: CompetitionsPage },
+            { path: '/app/events/:eventId', component: EventViewPage },
             { path: '/app/clubs', component: ClubsPage },
             { path: '/app/clubs/:id', component: ClubDetailsPage },
             { path: '/app/groups', component: GroupsPage },

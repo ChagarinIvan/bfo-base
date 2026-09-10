@@ -1,6 +1,10 @@
 import { api } from './client'
 import type { Event, GroupEventsQuery, PaginatedApiResponse } from './types'
 
+export async function getEvent(id: string): Promise<Event> {
+    return (await api.get<Event>(`/events/${id}`)).data
+}
+
 export async function getEventsByIds(ids: string[]): Promise<Event[]> {
     if (!ids.length) return []
 

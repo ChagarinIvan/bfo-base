@@ -25,8 +25,6 @@ use App\Bridge\Laravel\Http\Controllers\Event\DeleteEventAction;
 use App\Bridge\Laravel\Http\Controllers\Event\DownloadEventProtocolAction;
 use App\Bridge\Laravel\Http\Controllers\Event\ShowCreateEventFormAction;
 use App\Bridge\Laravel\Http\Controllers\Event\ShowEditEventFormAction;
-use App\Bridge\Laravel\Http\Controllers\Event\ShowEventAction;
-use App\Bridge\Laravel\Http\Controllers\Event\ShowEventDistanceAction;
 use App\Bridge\Laravel\Http\Controllers\Event\ShowUnitEventsFormAction;
 use App\Bridge\Laravel\Http\Controllers\Event\StoreEventAction;
 use App\Bridge\Laravel\Http\Controllers\Event\UnitEventsAction;
@@ -54,9 +52,6 @@ class WebRoutesServiceProvider extends ServiceProvider
 
                 //event
                 $this->routeRegistrar->prefix('events')->group(function (): void {
-                    $this->route->get('{eventId}', ShowEventAction::class);
-                    $this->route->get('d/{distance}', ShowEventDistanceAction::class);
-
                     $this->middleware(['auth'])->group(function (): void {
                         $this->route->get('{competitionId}/create', ShowCreateEventFormAction::class);
                         $this->route->post('{competitionId}/store', StoreEventAction::class);

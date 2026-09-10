@@ -17,7 +17,8 @@ final readonly class ProtocolLineAssembler
 
         return new ViewProtocolLineDto(
             id: (string) $line->id,
-            personId: (string) $line->person_id,
+            personId: $line->person_id === null ? null : (string) $line->person_id,
+            serialNumber: (string) $line->serial_number,
             firstname: $line->firstname,
             lastname: $line->lastname,
             distanceId: (string) $line->distance_id,
@@ -31,6 +32,11 @@ final readonly class ProtocolLineAssembler
             time: $line->time?->format('H:i:s'),
             place: $line->place === null ? null : (string) $line->place,
             completeRank: $line->complete_rank ?: null,
+            club: $line->club,
+            rank: $line->rank,
+            points: $line->points,
+            vk: $line->vk,
+            activateRank: $line->activate_rank?->format('Y-m-d'),
         );
     }
 }

@@ -19,6 +19,8 @@ final readonly class ListProtocolLines
     {
         return new Criteria(array_filter([
             'personId' => $this->search->personId,
+            'distanceId' => $this->search->distanceId,
+            'name' => $this->search->name,
             'year' => $this->search->year,
             'competitionName' => $this->search->competitionName,
             'date' => $this->search->date,
@@ -30,6 +32,7 @@ final readonly class ListProtocolLines
         return new ProtocolLineResources(
             withEvent: $this->search->withEvent === '1',
             withCompetition: $this->search->withCompetition === '1',
+            withClub: $this->search->withClub === '1',
         );
     }
 }

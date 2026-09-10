@@ -184,6 +184,18 @@ final readonly class EloquentProtocolLinesRepository implements ProtocolLineRepo
             $query->where('distances.event_id', $criteria->param('eventId'));
         }
 
+        if ($criteria->hasParam('distanceId')) {
+            $query->where('protocol_lines.distance_id', $criteria->param('distanceId'));
+        }
+
+        if ($criteria->hasParam('name')) {
+            $pattern = '%' . mb_strtolower((string) $criteria->param('name')) . '%';
+            $query->where(static function (Builder $query) use ($pattern): void {
+                $query->whereRaw('LOWER(protocol_lines.lastname) LIKE ?', [$pattern])
+                    ->orWhereRaw('LOWER(protocol_lines.firstname) LIKE ?', [$pattern]);
+            });
+        }
+
         if ($criteria->hasParam('preparedLine')) {
             $query->where('protocol_lines.prepared_line', $criteria->param('preparedLine'));
         }
