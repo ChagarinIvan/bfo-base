@@ -12,20 +12,17 @@ use App\Domain\Group\GroupNameNormalizer;
 use App\Domain\Group\GroupRepository;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\ProtocolLine\ProtocolLineOperations;
-use App\Domain\ProtocolLine\ProtocolLineRepository;
 use App\Domain\Rank\RankNormalizer;
 use App\Domain\Shared\Clock;
 use App\Domain\Shared\Criteria;
 use App\Repositories\ProtocolLinesRepository as LegacyProtocolLinesRepository;
 use Illuminate\Support\Collection;
-use RuntimeException;
 use function str_replace;
 
 final readonly class ProtocolLineService implements ProtocolLineOperations
 {
     public function __construct(
         private LegacyProtocolLinesRepository $protocolLinesRepository,
-        private ProtocolLineRepository $protocolLines,
         private GroupRepository $groupsRepository,
         private RankNormalizer $rankNormalizer,
         private Clock $clock,
@@ -77,15 +74,6 @@ final readonly class ProtocolLineService implements ProtocolLineOperations
         });
     }
 
-    public function getProtocolLine(int $id): ProtocolLine
-    {
-        $protocolLine = $this->protocolLines->byId($id);
-        if ($protocolLine instanceof ProtocolLine) {
-            return $protocolLine;
-        }
-        throw new RuntimeException('Wrong protocolLine id.');
-    }
-
     /** @param list<int> $linesIds
      * @return list<ProtocolLine>
      */
@@ -124,15 +112,6 @@ final readonly class ProtocolLineService implements ProtocolLineOperations
     public function getEqualLines(string $line): Collection
     {
         return ProtocolLine::wherePreparedLine($line)->get();
-    }
-
-    public function reSetPerson(Collection $lines, int $personId): void
-    {
-        foreach ($lines as $line) {
-            /** @var ProtocolLine $line */
-            $line->person_id = $personId;
-            $line->save();
-        }
     }
 
     private function findDistance(int $groupId, int $eventId, int $length, int $points): Distance

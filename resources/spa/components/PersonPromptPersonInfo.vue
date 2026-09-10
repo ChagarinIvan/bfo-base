@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import Card from 'primevue/card'
 import Message from 'primevue/message'
 import { getClubOptions } from '../api/clubs'
@@ -16,6 +17,7 @@ const emit = defineEmits<{
     personLoaded: [person: Person | null]
 }>()
 const auth = useAuthStore()
+const router = useRouter()
 const person = ref<Person | null>(null)
 const ranks = ref<RankOption[]>([])
 const clubs = ref<ClubOption[]>([])
@@ -42,10 +44,18 @@ async function load(): Promise<void> {
         ranks.value = loadedRanks
         clubs.value = loadedClubs
         users.value = loadedUsers
-    } catch {
+    } catch (exception: unknown) {
         if (requestId !== latestRequest) return
         person.value = null
         emit('personLoaded', null)
+
+        const status = (exception as { response?: { status?: number } })
+            .response?.status
+        if (status === 404) {
+            await router.replace({ name: 'not-found' })
+            return
+        }
+
         error.value = t('spa.person_prompt.person_error')
     } finally {
         if (requestId === latestRequest) loading.value = false

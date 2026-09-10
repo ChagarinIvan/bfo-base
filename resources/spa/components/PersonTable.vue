@@ -6,6 +6,7 @@ import ImpressionDetails from './ImpressionDetails.vue'
 import PersonActionMenu from './actions/PersonActionMenu.vue'
 import ConfirmDeleteDialog from './actions/ConfirmDeleteDialog.vue'
 import type { ClubOption, Person, User } from '../api/types'
+import { deletePerson } from '../api/persons'
 import { t } from '../i18n'
 
 const props = withDefaults(
@@ -26,6 +27,7 @@ const props = withDefaults(
 )
 
 const selectedPerson = ref<Person | null>(null)
+const emit = defineEmits<{ deleted: [] }>()
 
 const clubLabels = computed(() =>
     Object.fromEntries(props.clubs.map((club) => [club.id, club.name])),
@@ -36,10 +38,11 @@ const selectedPersonName = computed(() => {
     return `${selectedPerson.value.lastname} ${selectedPerson.value.firstname}`
 })
 
-function deleteSelectedPerson(): void {
+async function deleteSelectedPerson(): Promise<void> {
     if (!selectedPerson.value) return
-
-    globalThis.location.assign(`/persons/${selectedPerson.value.id}/delete`)
+    await deletePerson(selectedPerson.value.id)
+    selectedPerson.value = null
+    emit('deleted')
 }
 
 function birthYear(birthday: string | null): string {

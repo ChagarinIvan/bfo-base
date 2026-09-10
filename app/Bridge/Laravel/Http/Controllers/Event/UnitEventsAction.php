@@ -14,10 +14,16 @@ use App\Services\DistanceService;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
+use Illuminate\Routing\Redirector;
 use Illuminate\Support\Collection;
 
-class UnitEventsAction extends AbstractEventAction
+class UnitEventsAction extends Controller
 {
+    public function __construct(private readonly Redirector $redirector)
+    {
+    }
+
     public function __invoke(
         string $competitionId,
         Request $request,

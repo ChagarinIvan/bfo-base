@@ -76,6 +76,26 @@ describe('SPA navigation guard', () => {
         expect(router.currentRoute.value.path).toBe('/app/persons/42')
     })
 
+    it('shows an SPA not-found route for an unknown application path', async () => {
+        const router = createAppRouter(createMemoryHistory())
+
+        await router.push('/app/missing')
+
+        expect(router.currentRoute.value.path).toBe('/app/missing')
+    })
+
+    it('protects registration and keeps activation public', async () => {
+        const router = createAppRouter(createMemoryHistory())
+
+        await router.push('/app/registration')
+        expect(router.currentRoute.value.path).toBe('/app/login')
+
+        await router.push('/app/registration/activate/token')
+        expect(router.currentRoute.value.path).toBe(
+            '/app/registration/activate/token',
+        )
+    })
+
     it('keeps the person info layout while switching person tabs', async () => {
         localStorage.setItem('auth_token', 'test-token')
         const router = createAppRouter(createMemoryHistory())

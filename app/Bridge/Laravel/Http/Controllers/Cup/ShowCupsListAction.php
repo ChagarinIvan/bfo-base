@@ -27,9 +27,4 @@ class ShowCupsListAction extends BaseController
             'cups' => $cups,
         ]);
     }
-
-    protected function isNavbarRoute(): bool
-    {
-        return true;
-    }
 }

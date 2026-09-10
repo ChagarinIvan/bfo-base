@@ -13,7 +13,6 @@ final readonly class ProtocolLineRankActivated extends AggregatedEvent
     public function __construct(
         public ProtocolLine $protocolLine,
         public Impression $impression,
-    )
-    {
+    ) {
     }
 }

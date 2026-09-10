@@ -80,9 +80,4 @@ class ShowCupTableAction extends BaseController
             'activeGroup' => $cupGroup,
         ]);
     }
-
-    protected function isNavbarRoute(): bool
-    {
-        return true;
-    }
 }

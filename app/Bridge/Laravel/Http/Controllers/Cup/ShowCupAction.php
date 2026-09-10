@@ -37,9 +37,4 @@ class ShowCupAction extends BaseController
         /** @see /resources/views/cup/show.blade.php */
         return $this->view('cup.show', ['cup' => $cup, 'events' => $events]);
     }
-
-    protected function isNavbarRoute(): bool
-    {
-        return true;
-    }
 }

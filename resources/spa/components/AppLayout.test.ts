@@ -33,7 +33,7 @@ describe('hybrid SPA navbar', () => {
             authenticatedCompetitionNavigation.map((item) => item.href),
         ).toEqual([])
         expect(authenticatedAccountNavigation.map((item) => item.href)).toEqual(
-            ['/registration'],
+            ['/app/registration'],
         )
         expect(
             [

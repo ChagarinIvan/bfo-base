@@ -1,18 +1,10 @@
 @php
     use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupsListAction;
-    use App\Bridge\Laravel\Http\Controllers\Login\ShowLoginFormAction;
-    use App\Bridge\Laravel\Http\Controllers\Login\SignOutAction;
-    use App\Bridge\Laravel\Http\Controllers\Registration\ShowRegistrationFormAction;
     use App\Models\Year;
     /**
      * @var bool $isAuth;
-     * @var bool $isByLocale;
-     * @var bool $isRuLocale;
      * @var bool $isCompetitionsRoute;
      * @var bool $isCupsRoute;
-     * @var bool $isPersonsRoute;
-     * @var bool $isClubsRoute;
-     * @var bool $isGroupsRoute;
      */
 @endphp
 
@@ -26,7 +18,7 @@
         <div class="collapse navbar-collapse" id="navbarContent">
             <ul class="navbar-nav me-auto my-1">
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle {{ ($isCompetitionsRoute || $isCupsRoute || $isGroupsRoute) ? 'active' : '' }}"
+                    <a class="nav-link dropdown-toggle {{ ($isCompetitionsRoute || $isCupsRoute) ? 'active' : '' }}"
                        href="#"
                        id="competitionsDropdown"
                        role="button"
@@ -45,14 +37,14 @@
                             >{{ __('app.navbar.cups') }}</a>
                         </li>
                         <li>
-                            <a class="dropdown-item {{ $isGroupsRoute ? 'active' : '' }}"
+                            <a class="dropdown-item"
                                href="/app/groups"
                             >{{ __('app.common.groups') }}</a>
                         </li>
                     </ul>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle {{ ($isPersonsRoute || $isClubsRoute) ? 'active' : '' }}"
+                    <a class="nav-link dropdown-toggle"
                        href="#"
                        id="personsDropdown"
                        role="button"
@@ -61,45 +53,32 @@
                     >{{ __('app.navbar.persons') }}</a>
                     <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="personsDropdown">
                         <li>
-                            <a class="dropdown-item {{ $isPersonsRoute ? 'active' : '' }}"
+                            <a class="dropdown-item"
                                href="/app/persons"
                             >{{ __('app.navbar.persons') }}</a>
                         </li>
                         <li>
-                            <a class="dropdown-item {{ $isClubsRoute ? 'active' : '' }}"
+                            <a class="dropdown-item"
                                href="/app/clubs"
                             >{{ __('app.navbar.clubs') }}</a>
                         </li>
                     </ul>
                 </li>
             </ul>
-            {{--            <div class="d-flex mx-auto my-1">--}}
-            {{--                <div class="btn-group btn-group-sm" role="group" aria-label="Select locale">--}}
-            {{--                    <a type="button"--}}
-            {{--                       class="btn {{ $isByLocale ? 'btn-outline-danger' : 'btn-outline-secondary' }}"--}}
-            {{--                       href="{{ action(ChangeLanguageAction::class, [UserService::BY_LOCALE]) }}"--}}
-            {{--                    >{{ __('app.lang.by') }}</a>--}}
-            {{--                    <a type="button"--}}
-            {{--                       class="btn btn-sm {{ $isRuLocale ? 'btn-outline-danger' : 'btn-outline-secondary' }}"--}}
-            {{--                       href="{{ action(ChangeLanguageAction::class, [UserService::RU_LOCALE]) }}"--}}
-            {{--                    >{{ __('app.lang.ru') }}</a>--}}
-            {{--                </div>--}}
-            {{--            </div>--}}
-
             <div class="d-flex ms-auto my-1">
                 @if($isAuth)
                     <a class="btn btn-outline-secondary btn-sm me-2"
                        type="button"
-                       href="{{ action(ShowRegistrationFormAction::class) }}"
+                       href="/app/registration"
                     >{{ __('app.common.registration') }}</a>
                     <a class="btn btn-outline-danger btn-sm me-2"
                        type="button"
-                       href="{{ action(SignOutAction::class) }}"
+                       href="/app/competitions"
                     >{{ __('app.common.sign-out') }}</a>
                 @else
                     <a class="btn btn-outline-info btn-sm me-2"
                        type="button"
-                       href="{{ action(ShowLoginFormAction::class) }}"
+                       href="/app/login"
                     >{{ __('app.common.login') }}</a>
                 @endif
             </div>

@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace App\Bridge\Laravel\Http\Controllers;
 
 use App\Application\Dto\AbstractDto;
-use App\Bridge\Laravel\Http\Controllers\Error\Show404ErrorAction;
-use App\Bridge\Laravel\Http\Controllers\Error\ShowUnexpectedErrorAction;
 use App\Services\ViewActionsService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -59,12 +57,7 @@ trait Action
 
     protected function redirectTo404Error(): RedirectResponse
     {
-        return $this->redirector->action(Show404ErrorAction::class);
-    }
-
-    protected function redirectToError(): RedirectResponse
-    {
-        return $this->redirector->action(ShowUnexpectedErrorAction::class);
+        return $this->redirector->to('/app/not-found');
     }
 
     protected function isCompetitionsRoute(): bool
@@ -77,43 +70,12 @@ trait Action
         return false;
     }
 
-    protected function isPersonsRoute(): bool
-    {
-        return false;
-    }
-
-    protected function isClubsRoute(): bool
-    {
-        return false;
-    }
-
-    protected function isRanksRoute(): bool
-    {
-        return false;
-    }
-
-    protected function isGroupsRoute(): bool
-    {
-        return false;
-    }
-
-    protected function isNavbarRoute(): bool
-    {
-        return false;
-    }
-
     private function navbarData(): array
     {
         return [
             'isAuth' => $this->viewService->isAuth(),
-            'isByLocale' => $this->viewService->isByLocale(),
-            'isRuLocale' => $this->viewService->isRuLocale(),
             'isCompetitionsRoute' => $this->isCompetitionsRoute(),
             'isCupsRoute' => $this->isCupsRoute(),
-            'isPersonsRoute' => $this->isPersonsRoute(),
-            'isClubsRoute' => $this->isClubsRoute(),
-            'isRanksRoute' => $this->isRanksRoute(),
-            'isGroupsRoute' => $this->isGroupsRoute(),
         ];
     }
 }

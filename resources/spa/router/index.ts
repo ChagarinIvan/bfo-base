@@ -24,11 +24,15 @@ import EditPersonPromptPage from '../pages/persons/EditPersonPromptPage.vue'
 import PersonRanksPage from '../pages/persons/PersonRanksPage.vue'
 import CreatePersonPage from '../pages/persons/CreatePersonPage.vue'
 import EditPersonPage from '../pages/persons/EditPersonPage.vue'
+import SetProtocolLinePersonPage from '../pages/persons/SetProtocolLinePersonPage.vue'
 import LoginPage from '../pages/auth/LoginPage.vue'
+import RegistrationPage from '../pages/auth/RegistrationPage.vue'
+import ActivateRegistrationPage from '../pages/auth/ActivateRegistrationPage.vue'
 import GroupsPage from '../pages/groups/GroupsPage.vue'
 import GroupDetailsPage from '../pages/groups/GroupDetailsPage.vue'
 import EditGroupPage from '../pages/groups/EditGroupPage.vue'
 import MergeGroupsPage from '../pages/groups/MergeGroupsPage.vue'
+import NotFoundPage from '../pages/NotFoundPage.vue'
 
 export function createAppRouter(
     history: RouterHistory = typeof window === 'undefined'
@@ -52,6 +56,11 @@ export function createAppRouter(
             {
                 path: '/app/persons/:personId/edit',
                 component: EditPersonPage,
+                meta: { requiresAuth: true },
+            },
+            {
+                path: '/app/protocol-lines/:protocolLineId/person',
+                component: SetProtocolLinePersonPage,
                 meta: { requiresAuth: true },
             },
             {
@@ -122,7 +131,21 @@ export function createAppRouter(
                 meta: { requiresAuth: true },
             },
             { path: '/app/login', component: LoginPage },
-            { path: '/app/:pathMatch(.*)*', redirect: '/app/competitions' },
+            {
+                path: '/app/registration',
+                component: RegistrationPage,
+                meta: { requiresAuth: true },
+            },
+            {
+                path: '/app/registration/activate/:token',
+                component: ActivateRegistrationPage,
+            },
+            {
+                path: '/app/not-found',
+                name: 'not-found',
+                component: NotFoundPage,
+            },
+            { path: '/app/:pathMatch(.*)*', component: NotFoundPage },
         ],
     })
 

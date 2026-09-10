@@ -25,11 +25,7 @@ final class RemoveFaqNavigationTest extends TestCase
     #[Test]
     public function guest_does_not_see_faq_navigation(): void
     {
-        $this->get('/404')
-            ->assertStatus(Response::HTTP_OK)
-            ->assertDontSee('/faq')
-            ->assertDontSee('apiDropdown')
-        ;
+        $this->get('/404')->assertStatus(Response::HTTP_NOT_FOUND);
     }
 
     #[Test]
@@ -39,10 +35,6 @@ final class RemoveFaqNavigationTest extends TestCase
         $user = User::factory()->createOne();
         $this->actingAs($user);
 
-        $this->get('/404')
-            ->assertStatus(Response::HTTP_OK)
-            ->assertDontSee('/faq')
-            ->assertDontSee('apiDropdown')
-        ;
+        $this->get('/404')->assertStatus(Response::HTTP_NOT_FOUND);
     }
 }

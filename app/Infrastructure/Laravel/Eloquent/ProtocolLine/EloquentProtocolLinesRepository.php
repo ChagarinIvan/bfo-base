@@ -184,6 +184,10 @@ final readonly class EloquentProtocolLinesRepository implements ProtocolLineRepo
             $query->where('distances.event_id', $criteria->param('eventId'));
         }
 
+        if ($criteria->hasParam('preparedLine')) {
+            $query->where('protocol_lines.prepared_line', $criteria->param('preparedLine'));
+        }
+
         if ($criteria->hasParam('distances')) {
             $query
                 ->selectRaw('protocol_lines.*, max(persons_payments.date)')
