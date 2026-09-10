@@ -100,6 +100,7 @@ class ProtocolLine extends AggregatedModel
     public function activateRank(?Carbon $date, Impression $impression): void
     {
         $this->activate_rank = $date;
+//        $this->updated = $impression;
 
         $this->recordThat(new ProtocolLineRankActivated($this, $impression));
     }
