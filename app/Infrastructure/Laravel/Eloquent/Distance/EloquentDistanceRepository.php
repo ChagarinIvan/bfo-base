@@ -59,7 +59,7 @@ final readonly class EloquentDistanceRepository implements DistanceRepository
         if ($criteria->hasParam('groupNames')) {
             $groupNames = $criteria->param('groupNames');
 
-            if (str_contains((string) implode('', $groupNames), '%')) {
+            if (str_contains(implode('', $groupNames), '%')) {
                 $query->where(static function (Builder $query) use ($groupNames): void {
                     foreach ($groupNames as $name) {
                         $query->orWhere('groups.name', 'like', $name);

@@ -24,6 +24,8 @@ final readonly class ViewProtocolLineDto
         public ?string $place,
         public ?string $completeRank,
         public string $club,
+        public ?string $clubId,
+        public ?string $clubName,
         public string $rank,
         public ?int $points,
         public bool $vk,

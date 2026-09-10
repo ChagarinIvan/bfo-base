@@ -47,10 +47,13 @@ final readonly class EloquentProtocolLinesRepository implements ProtocolLineRepo
         Criteria $criteria,
         ProtocolLineResources $resources = new ProtocolLineResources(),
     ): Slice {
-        $query = $this->buildQuery($criteria)
-            ->orderByDesc('events.date')
-            ->orderByDesc('protocol_lines.id')
-        ;
+        $query = $this->buildQuery($criteria);
+
+        if ($criteria->hasParam('distanceId')) {
+            $query->orderByDesc('protocol_lines.id');
+        } else {
+            $query->orderByDesc('events.date')->orderByDesc('protocol_lines.id');
+        }
 
         if ($resources->withEvent) {
             $query->with(['distance.event', 'distance.group']);
@@ -94,7 +97,7 @@ final readonly class EloquentProtocolLinesRepository implements ProtocolLineRepo
     /** @return Builder<ProtocolLine> */
     private function buildQuery(Criteria $criteria): Builder
     {
-        $query = ProtocolLine::select('protocol_lines.*')->with(['person.club']);
+        $query = ProtocolLine::select('protocol_lines.*');
 
         if (array_key_exists('completedRank', $criteria->sorting())) {
             $query->orderByRaw("

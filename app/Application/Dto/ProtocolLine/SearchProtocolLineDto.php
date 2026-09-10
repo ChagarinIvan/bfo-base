@@ -39,6 +39,14 @@ final class SearchProtocolLineDto extends AbstractDto
             }
         }
 
+        if (array_key_exists('name', $data) && is_string($data['name'])) {
+            $data['name'] = trim($data['name']);
+
+            if ($data['name'] === '') {
+                unset($data['name']);
+            }
+        }
+
         return $data;
     }
 

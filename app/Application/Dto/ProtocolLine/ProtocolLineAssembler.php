@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace App\Application\Dto\ProtocolLine;
 
+use App\Domain\Club\Club;
 use App\Domain\ProtocolLine\ProtocolLine;
 
 final readonly class ProtocolLineAssembler
 {
-    public function toViewProtocolLineDto(ProtocolLine $line): ViewProtocolLineDto
+    public function toViewProtocolLineDto(ProtocolLine $line, ?Club $club = null): ViewProtocolLineDto
     {
         $distance = $line->relationLoaded('distance') ? $line->distance : null;
         $event = $distance?->relationLoaded('event') ? $distance->event : null;
@@ -33,6 +34,8 @@ final readonly class ProtocolLineAssembler
             place: $line->place === null ? null : (string) $line->place,
             completeRank: $line->complete_rank ?: null,
             club: $line->club,
+            clubId: $club === null ? null : (string) $club->id,
+            clubName: $club?->name,
             rank: $line->rank,
             points: $line->points,
             vk: $line->vk,

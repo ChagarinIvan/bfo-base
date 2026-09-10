@@ -76,6 +76,9 @@ A visitor can narrow an event's selected-distance results by an athlete's first 
 - **FR-009**: Guests MUST NOT see the staff-only controls or audit information.
 - **FR-010**: The legacy event show route, controller, Blade view, unique distance-show route/action, and tests made obsolete by the SPA event view MUST be removed; legacy event create, edit, update, delete, protocol-download, unit-event, and cup workflows remain.
 - **FR-011**: The new and changed JSON and SPA behaviour MUST have regression coverage, including authorization, event/distance scoping, normalized club resolution, name filters, and no per-line relation loading.
+- **FR-012**: The feature MUST migrate distance querying from the legacy repository to the target
+  Domain repository port and Infrastructure Eloquent implementation, without changing existing
+  distance-dependent workflows.
 
 ### Key Entities
 
@@ -98,6 +101,8 @@ A visitor can narrow an event's selected-distance results by an athlete's first 
 - The existing SPA authentication state is the source of staff-only rendering decisions.
 - The existing legacy edit page remains the edit destination until event editing is migrated separately.
 - The existing protocol-line list response and pagination conventions are extended rather than replaced.
+- Migrating the existing distance repository and its callers is in scope because the event-distance
+  list needs the target persistence path; existing distance workflows retain their observable behaviour.
 - "Actions" means the existing Assign person flow; extraction and other protocol-line mutations are out of scope.
 
 ## Out of Scope

@@ -61,7 +61,7 @@ final readonly class EventAssembler
         return new ViewEventCupDto(
             id: (string) $cupEvent->cup_id,
             name: $cupEvent->cup->name,
-            year: $cupEvent->cup->year,
+            year: $cupEvent->cup->year->value,
         );
     }
 

@@ -28,6 +28,7 @@ export interface Event {
     description: string
     date: string
     participantsCount: number
+    competitionName?: string | null
     created?: Impression
     updated?: Impression
     cups?: { id: string; name: string; year: number }[]
@@ -149,6 +150,8 @@ export interface ProtocolLine {
     place: string | null
     completeRank: string | null
     club?: string
+    clubId?: string | null
+    clubName?: string | null
     rank?: string | null
     points?: number | null
     vk?: boolean

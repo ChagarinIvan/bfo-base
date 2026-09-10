@@ -8,10 +8,13 @@ use App\Application\Dto\ProtocolLine\ProtocolLineAssembler;
 use App\Application\Dto\ProtocolLine\SearchProtocolLineDto;
 use App\Application\Service\ProtocolLine\ListProtocolLines;
 use App\Application\Service\ProtocolLine\ListProtocolLinesService;
+use App\Domain\Club\ClubNameNormalizer;
+use App\Domain\Club\ClubRepository;
 use App\Domain\ProtocolLine\ProtocolLineRepository;
 use App\Domain\ProtocolLine\ProtocolLineResources;
 use App\Domain\Shared\Criteria;
 use App\Domain\Shared\Pagination\Slice;
+use App\Domain\Shared\SymbolNormalizer;
 use Pagerfanta\Adapter\ArrayAdapter;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -38,6 +41,8 @@ final class ListProtocolLinesServiceTest extends TestCase
 
         $service = new ListProtocolLinesService(
             $lines,
+            $this->createStub(ClubRepository::class),
+            new ClubNameNormalizer(new SymbolNormalizer()),
             new ProtocolLineAssembler(),
         );
 
@@ -65,6 +70,8 @@ final class ListProtocolLinesServiceTest extends TestCase
 
         $service = new ListProtocolLinesService(
             $lines,
+            $this->createStub(ClubRepository::class),
+            new ClubNameNormalizer(new SymbolNormalizer()),
             new ProtocolLineAssembler(),
         );
 
