@@ -12,7 +12,6 @@ use App\Domain\Group\GroupNameNormalizer;
 use App\Domain\Group\GroupRepository;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\ProtocolLine\ProtocolLineOperations;
-use App\Domain\ProtocolLine\ProtocolLineRepository;
 use App\Domain\Rank\RankNormalizer;
 use App\Domain\Shared\Clock;
 use App\Domain\Shared\Criteria;

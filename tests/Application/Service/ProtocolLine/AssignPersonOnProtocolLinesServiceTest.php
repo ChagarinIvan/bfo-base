@@ -50,12 +50,12 @@ final class AssignPersonOnProtocolLinesServiceTest extends TestCase
         $persons->expects($this->atLeastOnce())->method('lockById')->willReturn(null);
         $clock = new FrozenClock(Carbon::parse('2026-09-09'));
 
-        (new SetPersonToProtocolLinesService(
+        new SetPersonToProtocolLinesService(
             $lines,
             new ChangePersonPromptService($promptRepository, $promptFactory, $clock),
             new RebuildPersonRanksService($persons, $this->createStub(RankFactsCollector::class), new RankCalculator(), $clock, new DummyTransactional()),
             $clock,
-        ))->execute(new SetPersonToProtocolLines(
+        )->execute(new SetPersonToProtocolLines(
             'ivanou-jan-2001',
             42,
             new UserId(7),

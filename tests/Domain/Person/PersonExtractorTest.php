@@ -24,7 +24,7 @@ final class PersonExtractorTest extends TestCase
         $clubs = $this->createMock(ClubRepository::class);
         $clubs->expects($this->once())->method('oneByNormalizedName')->with('тэставы клуб')->willReturn($this->clubStub(42));
 
-        $person = (new PersonExtractor($clubs, new ClubNameNormalizer(new SymbolNormalizer())))->extract(
+        $person = new PersonExtractor($clubs, new ClubNameNormalizer(new SymbolNormalizer()))->extract(
             $this->protocolLineStub(),
             new Impression(Carbon::parse('2026-09-09 10:00:00'), 7),
         );

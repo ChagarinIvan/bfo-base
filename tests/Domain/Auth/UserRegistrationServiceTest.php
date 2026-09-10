@@ -31,7 +31,7 @@ final class UserRegistrationServiceTest extends TestCase
         $hashes = $this->createMock(PasswordHasher::class);
         $hashes->expects($this->once())->method('hash')->with('plain-password')->willReturn('hashed-password');
 
-        $password = (new UserRegistrationService($users, $factory, $passwords, $hashes))->register('new@example.com');
+        $password = new UserRegistrationService($users, $factory, $passwords, $hashes)->register('new@example.com');
 
         $this->assertSame('plain-password', $password);
     }
