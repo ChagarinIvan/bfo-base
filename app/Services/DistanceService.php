@@ -8,10 +8,11 @@ use App\Domain\Cup\CupEvent\CupEvent;
 use App\Domain\Distance\Distance;
 use App\Domain\Distance\DistanceRepository;
 use App\Domain\Event\Event;
+use App\Domain\Group\Group;
 use App\Domain\Shared\Criteria;
 use Illuminate\Support\Collection;
 
-final readonly class DistanceService
+readonly class DistanceService
 {
     public function __construct(private DistanceRepository $distances)
     {
@@ -19,9 +20,14 @@ final readonly class DistanceService
 
     public function getCupEventDistancesByGroups(CupEvent $cupEvent, Collection $groups, bool $withEquals = false): Collection
     {
+        $groupIds = $groups
+            ->map(static fn (mixed $group): int => $group instanceof Group ? $group->id : (int) $group)
+            ->all()
+        ;
+
         $distances = $this->distances->byCriteria(new Criteria([
             'eventId' => $cupEvent->event_id,
-            'groupIds' => $groups->pluck('id')->all(),
+            'groupIds' => $groupIds,
         ]));
 
         if (!$withEquals) {

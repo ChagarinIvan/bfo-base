@@ -1,6 +1,5 @@
 @php
     use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupEventGroupAction;
-    use App\Bridge\Laravel\Http\Controllers\Event\ShowEventDistanceAction;
     use App\Application\Dto\Cup\ViewCalculatedCupEventDto;
 
     /**
@@ -23,7 +22,7 @@
     @if($calculatedCupEvent->cupEvent->event->firstDistance)
         <div class="row mb-3">
             <h5>
-                <a href="{{ action(ShowEventDistanceAction::class, [$calculatedCupEvent->cupEvent->event->firstDistance]) }}">{{ $calculatedCupEvent->cupEvent->event->name }} - {{ $calculatedCupEvent->cupEvent->event->date }}</a>
+                <a href="/app/events/{{ $calculatedCupEvent->cupEvent->event->id }}">{{ $calculatedCupEvent->cupEvent->event->name }} - {{ $calculatedCupEvent->cupEvent->event->date }}</a>
             </h5>
         </div>
     @endif

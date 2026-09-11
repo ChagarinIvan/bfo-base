@@ -40,7 +40,7 @@ final readonly class ListProtocolLinesService
         $clubsByNormalizedName = $this->clubs
             ->byCriteria(new Criteria([
                 'normalizedNames' => array_map(static fn(ProtocolLine $line): string => $line->club, $lines->items())
-                        |> (fn($x) => array_map($this->clubNameNormalizer->normalize(...), $x,))
+                        |> (fn($x): array => array_map($this->clubNameNormalizer->normalize(...), $x, ))
                         |> array_unique(...),
             ]))
             ->keyBy('normalize_name')

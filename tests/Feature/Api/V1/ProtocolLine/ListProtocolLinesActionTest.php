@@ -233,6 +233,7 @@ final class ListProtocolLinesActionTest extends TestCase
     {
         /** @var Competition $competition */
         $competition = Competition::factory()->createOne([
+            'id' => null,
             'name' => $competitionName,
             'from' => $date,
             'to' => $date,
@@ -245,14 +246,19 @@ final class ListProtocolLinesActionTest extends TestCase
             'active' => true,
         ]);
         /** @var Group $group */
-        $group = Group::factory()->createOne(['name' => 'M21']);
+        $group = Group::factory()->createOne([
+            'id' => null,
+            'name' => 'M21',
+        ]);
         /** @var Distance $distance */
         $distance = Distance::factory()->createOne([
+            'id' => null,
             'event_id' => $event->id,
             'group_id' => $group->id,
         ]);
         /** @var ProtocolLine $line */
         $line = ProtocolLine::factory()->createOne([
+            'id' => null,
             'distance_id' => $distance->id,
             'person_id' => $person->id,
             ...$lineAttributes,

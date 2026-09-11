@@ -33,12 +33,12 @@ final readonly class ProtocolLineAssembler
             time: $line->time?->format('H:i:s'),
             place: $line->place === null ? null : (string) $line->place,
             completeRank: $line->complete_rank ?: null,
-            club: $line->club,
+            club: $line->club ?? '',
             clubId: $club === null ? null : (string) $club->id,
             clubName: $club?->name,
-            rank: $line->rank,
+            rank: $line->rank ?? '',
             points: $line->points,
-            vk: $line->vk,
+            vk: (bool) $line->vk,
             activateRank: $line->activate_rank?->format('Y-m-d'),
         );
     }
