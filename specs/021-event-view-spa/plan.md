@@ -30,7 +30,7 @@ Replace the public Blade event-result page with an SPA event view. Add read APIs
 
 ## Design
 
-1. Add a public `GET /api/v1/events/{eventId}` detail action backed by an Event Application query. Its DTO contains event information, competition display data, cup badges, and impressions protected by the existing authenticated serialization group.
+1. Add a public `GET /api/v1/events/{eventId}` detail action backed by an Event Application query. Its DTO contains event information, competition display data, and impressions protected by the existing authenticated serialization group. Cup data is deferred to dedicated Cup and CupEvent APIs.
 2. Add public `GET /api/v1/distances?eventId={eventId}`. A `ListEventDistances` Application query loads the active event through the existing Event port, maps its already-loaded distances/groups to small distance DTOs, and returns the full list (not a `Slice`). A missing/inactive event is a 404.
 3. Extend the existing protocol-line search DTO/command/criteria/resources with `distanceId`, case-insensitive athlete-name filter, and `withClub`. `distanceId` becomes a supported bounded listing selector alongside the current person listing. It does not enable `withEvent` or `withCompetition` for the event page.
 4. Keep a raw `club` field on every `ViewProtocolLineDto`. When `withClub=1`, `ListProtocolLinesService` collects distinct normalized raw names for the page, asks the existing Club port for matching active clubs in one query, and maps optional club ID/name into each DTO. No club resolution is performed when the resource is off.

@@ -7,7 +7,7 @@
 
 ## Validation
 
-1. Open the competition SPA and follow an event link. Confirm the URL is `/app/events/{eventId}`, event information and cup badges render, and the first distance is selected.
+1. Open the competition SPA and follow an event link. Confirm the URL is `/app/events/{eventId}`, event information renders, and the first distance is selected.
 2. Change the distance. Confirm all selector options came from the event, only that distance's lines render, and empty distance results show an empty state.
 3. Filter by a first-name fragment and then a last-name fragment. Confirm pagination resets and results remain within the selected distance.
 4. Confirm a normalized club match links while an unmatched raw club name remains plain text.

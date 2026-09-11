@@ -6,7 +6,7 @@ All endpoints are under `/api/v1` and use the existing optional API authenticati
 
 Returns an active event detail model. Guests receive public fields; authenticated users additionally receive `created` and `updated` impressions.
 
-- `200`: event detail with competition display data and cup badges.
+- `200`: event detail with competition display data. Cup associations are not included.
 - `404`: no active event exists.
 
 ## `GET /distances?eventId={eventId}`

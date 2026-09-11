@@ -35,7 +35,6 @@ describe('event view page', () => {
             description: 'Апісанне',
             date: '2026-05-10',
             participantsCount: 1,
-            cups: [{ id: '3', name: 'Кубак', year: 2026 }],
         })
         getEventDistances.mockResolvedValue([
             {
@@ -95,9 +94,9 @@ describe('event view page', () => {
             page: 1,
             perPage: 20,
         })
-        expect(wrapper.text()).toContain('Кубак 2026')
         expect(wrapper.find('a[href="/app/persons/5"]').exists()).toBe(true)
         expect(wrapper.find('a[href="/app/clubs/8"]').exists()).toBe(true)
+        expect(wrapper.text()).not.toContain('Кубкі')
         expect(wrapper.text()).not.toContain('Рэдагаваць')
     })
 })

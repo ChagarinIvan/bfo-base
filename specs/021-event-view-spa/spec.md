@@ -17,7 +17,7 @@ A visitor opens an event from the competition SPA and sees the event information
 
 **Acceptance Scenarios**:
 
-1. **Given** an event exists, **When** a visitor opens its SPA URL, **Then** they see its name, date, competition link, cup badges, and a distance selector populated with every event distance.
+1. **Given** an event exists, **When** a visitor opens its SPA URL, **Then** they see its name, date, competition link, and a distance selector populated with every event distance.
 2. **Given** a visitor selects a distance, **When** its result list loads, **Then** the table shows that distance's protocol lines with the public columns and values that were visible on the retired event page.
 3. **Given** a distance has no protocol lines, **When** it is selected, **Then** the page shows an explicit empty state rather than stale results.
 4. **Given** an invalid or unavailable event or distance, **When** a visitor opens or selects it, **Then** they receive the existing SPA not-found or error state.
@@ -66,7 +66,7 @@ A visitor can narrow an event's selected-distance results by an athlete's first 
 ### Functional Requirements
 
 - **FR-001**: The system MUST provide an SPA event-view route and use it from event links in the competition SPA.
-- **FR-002**: The event view MUST show the event's public information, its competition link, and associated cup badges.
+- **FR-002**: The event view MUST show the event's public information and its competition link. Cup badges and cup-association data are deferred until a dedicated Cup and CupEvent API is available.
 - **FR-003**: The event view MUST obtain all distances belonging to the event in one unpaginated list and provide them through a distance selector.
 - **FR-004**: The event view MUST list only protocol lines for the selected event distance, without loading unrelated event or competition details for each line.
 - **FR-005**: The protocol-line list MUST preserve the legacy event table's public result information: serial number, athlete names and links where assigned, raw club name and known-club link, birth year, rank, time, place, complete rank, points, and out-of-competition status when applicable.
@@ -82,7 +82,7 @@ A visitor can narrow an event's selected-distance results by an athlete's first 
 
 ### Key Entities
 
-- **Event**: A dated competition stage with public information, audit impressions, cup associations, and distances.
+- **Event**: A dated competition stage with public information, audit impressions, and distances.
 - **Distance**: An event-owned result category selected before protocol lines are listed.
 - **Protocol line**: A raw result row with athlete, result, raw club-name, optional assigned person, and optional resolved club.
 - **Club**: A known organization linked only when its normalized name matches the protocol line's raw club name.
@@ -104,6 +104,7 @@ A visitor can narrow an event's selected-distance results by an athlete's first 
 - Migrating the existing distance repository and its callers is in scope because the event-distance
   list needs the target persistence path; existing distance workflows retain their observable behaviour.
 - "Actions" means the existing Assign person flow; extraction and other protocol-line mutations are out of scope.
+- Cup badges are deferred: a future feature will use dedicated Cup and CupEvent APIs to load and render them where needed.
 
 ## Out of Scope
 

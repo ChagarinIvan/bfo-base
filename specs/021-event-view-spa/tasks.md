@@ -7,7 +7,7 @@
 
 **Purpose**: Establish the read-model contracts and bounded query capabilities shared by the SPA page.
 
-- [ ] T001 Add Event detail and event-distance Application DTOs, commands, services, API actions, and V1 routes in `app/Application/{Dto,Service}/{Event,Distance}/`, `app/Bridge/Laravel/Http/Controllers/Api/V1/{Event,Distance}/`, and `app/Bridge/Laravel/Provider/ApiV1RoutesServiceProvider.php`.
+- [ ] T001 Add Event detail and event-distance Application DTOs, commands, services, API actions, and V1 routes in `app/Application/{Dto,Service}/{Event,Distance}/`, `app/Bridge/Laravel/Http/Controllers/Api/V1/{Event,Distance}/`, and `app/Bridge/Laravel/Provider/ApiV1RoutesServiceProvider.php`; defer cup-association data to future dedicated APIs.
 - [ ] T002 Add API request coverage for event detail and unpaginated event distances, including guest/authenticated serialization, invalid input, and missing event handling in `tests/Feature/Api/V1/{Event,Distance}/`.
 - [ ] T003 Extend the existing Club port and Eloquent adapter with batch lookup by normalized names in `app/Domain/Club/ClubRepository.php` and `app/Infrastructure/Laravel/Eloquent/Club/EloquentClubRepository.php`.
 - [ ] T004 Extend ProtocolLine search/resources/DTO/assembler/list service and Eloquent query for bounded `distanceId`, name filtering, raw result columns, opt-in batched club resolution, and no unnecessary Event/Competition resources in `app/Application/{Dto,Service}/ProtocolLine/`, `app/Domain/ProtocolLine/`, and `app/Infrastructure/Laravel/Eloquent/ProtocolLine/EloquentProtocolLinesRepository.php`.
@@ -25,7 +25,7 @@
 
 - [ ] T006 [P] [US1] Add SPA Event/Distance/ProtocolLine types and event/distance/protocol-line API-client methods with Vitest coverage in `resources/spa/api/{types,events,distances,protocolLines}.{ts,test.ts}`.
 - [ ] T007 [P] [US1] Add localized strings for event-view loading, error, empty, table, selector, and result labels in `resources/lang/by.json` and the SPA i18n tests if applicable.
-- [ ] T008 [US1] Implement `EventViewPage` with event card, competition/cup links, distance selector, result table, loading/error/empty states, and paginator in `resources/spa/pages/events/EventViewPage.vue` and `resources/spa/pages/events/EventViewPage.test.ts`.
+- [ ] T008 [US1] Implement `EventViewPage` with event card, competition link, distance selector, result table, loading/error/empty states, and paginator in `resources/spa/pages/events/EventViewPage.vue` and `resources/spa/pages/events/EventViewPage.test.ts`; defer cup rendering to a future dedicated API.
 - [ ] T009 [US1] Register `/app/events/:eventId` and change competition event links to the SPA route in `resources/spa/router/{index,index.test}.ts` and `resources/spa/pages/competitions/{CompetitionDetailsPage,CompetitionDetailsPage.test}.vue`.
 
 **Checkpoint**: Public event viewing is fully usable without Blade.

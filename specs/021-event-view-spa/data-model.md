@@ -8,7 +8,6 @@
 |---|---|---|
 | `id`, `competitionId`, `name`, `description`, `date` | Event | Public |
 | `competitionName` | Event competition | Public |
-| `cups[]` | Event cup associations | Public |
 | `created`, `updated` | Event impressions | Authenticated only |
 
 ### Distance list item

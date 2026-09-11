@@ -51,7 +51,7 @@ final class ListEventsActionTest extends TestCase
             ->assertJsonPath('0.id', (string) $event->id)
             ->assertJsonPath('0.competitionId', (string) $competition->id)
             ->assertJsonPath('0.participantsCount', 2)
-            ->assertJsonMissingPath('0.cups')
+            ->assertJsonPath('0.cups', null)
         ;
     }
 

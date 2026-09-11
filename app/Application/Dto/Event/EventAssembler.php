@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Application\Dto\Event;
 
 use App\Application\Dto\Auth\AuthAssembler;
-use App\Domain\Cup\CupEvent\CupEvent;
 use App\Domain\Event\Event;
 use App\Domain\Event\EventResources;
 use App\Domain\Event\Protocol;
@@ -50,18 +49,6 @@ final readonly class EventAssembler
             competitionName: $resources->competitionName && $event->relationLoaded('competition')
                 ? $event->competition?->name
                 : null,
-            cups: $resources->withCups
-                ? $event->cups->map($this->toViewEventCupDto(...))->all()
-                : null,
-        );
-    }
-
-    public function toViewEventCupDto(CupEvent $cupEvent): ViewEventCupDto
-    {
-        return new ViewEventCupDto(
-            id: (string) $cupEvent->cup_id,
-            name: $cupEvent->cup->name,
-            year: $cupEvent->cup->year->value,
         );
     }
 

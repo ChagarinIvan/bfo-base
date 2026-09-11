@@ -10,7 +10,6 @@ final readonly class ViewEvent
 {
     public function __construct(
         private string $id,
-        private bool $withCups = false,
     )
     {
     }
@@ -22,6 +21,6 @@ final readonly class ViewEvent
 
     public function resources(): EventResources
     {
-        return new EventResources(withCups: $this->withCups);
+        return new EventResources();
     }
 }

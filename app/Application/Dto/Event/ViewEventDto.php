@@ -21,8 +21,6 @@ final readonly class ViewEventDto
         public ImpressionDto $updated,
         public int $participantsCount = 0,
         public ?string $competitionName = null,
-        /** @var list<ViewEventCupDto>|null */
-        public ?array $cups = null,
     ) {
     }
 }

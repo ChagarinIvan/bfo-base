@@ -153,16 +153,6 @@ watch(
                                 >
                             </td>
                         </tr>
-                        <tr v-if="event.cups?.length">
-                            <th scope="row">Кубкі</th>
-                            <td>
-                                {{
-                                    event.cups
-                                        .map((cup) => `${cup.name} ${cup.year}`)
-                                        .join(', ')
-                                }}
-                            </td>
-                        </tr>
                         <tr v-if="auth.isAuthenticated">
                             <th scope="row">Створана</th>
                             <td>

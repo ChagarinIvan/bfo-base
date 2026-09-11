@@ -29,10 +29,6 @@ final class EloquentEventRepository implements EventRepository
             $query->with('competition:id,name');
         }
 
-        if ($resources->withCups) {
-            $query->with('cups.cup');
-        }
-
         if ($resources->withDistances) {
             $query->with('distances.group');
         }

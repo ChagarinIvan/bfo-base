@@ -31,7 +31,6 @@ export interface Event {
     competitionName?: string | null
     created?: Impression
     updated?: Impression
-    cups?: { id: string; name: string; year: number }[]
 }
 
 export interface Distance {
