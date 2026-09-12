@@ -2,7 +2,6 @@
     use App\Bridge\Laravel\Http\Controllers\Cup\ExportCupGroupTableAction;
     use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupEventGroupAction;
     use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupTableAction;
-    use App\Bridge\Laravel\Http\Controllers\Event\ShowEventDistanceAction;
     use App\Application\Dto\Club\ViewClubDto;
     use App\Application\Dto\Person\ViewPersonDto;
     use App\Domain\Cup\Cup;
@@ -143,13 +142,13 @@
                                             $count = $cupEventPoint->points === 0 ? $count : $count + 1;
                                         @endphp
                                         <td>
-                                            <a href="{{ action(ShowEventDistanceAction::class, [$cupEventPoint->protocolLine->distance_id]) }}#{{ $cupEventPoint->protocolLine->id }}">
+                                            <a href="/app/events/{{ $cupEventPoint->protocolLine->distance->event_id }}#{{ $cupEventPoint->protocolLine->id }}">
                                                 <b class="text-info">{{ $cupEventPoint->points }}</b>
                                             </a>
                                         </td>
                                     @else
                                         <td>
-                                            <a href="{{ action(ShowEventDistanceAction::class, [$cupEventPoint->protocolLine->distance_id]) }}#{{ $cupEventPoint->protocolLine->id }}">
+                                            <a href="/app/events/{{ $cupEventPoint->protocolLine->distance->event_id }}#{{ $cupEventPoint->protocolLine->id }}">
                                                 <b class="text-dark">{{ $cupEventPoint->points }}</b>
                                             </a>
                                         </td>

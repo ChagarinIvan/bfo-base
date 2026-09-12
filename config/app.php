@@ -7,6 +7,7 @@ use App\Bridge\Laravel\Provider\Club\ClubProvider;
 use App\Bridge\Laravel\Provider\Competition\CompetitionProvider;
 use App\Bridge\Laravel\Provider\Cup\CupProvider;
 use App\Bridge\Laravel\Provider\CupEvent\CupEventProvider;
+use App\Bridge\Laravel\Provider\Distance\DistanceProvider;
 use App\Bridge\Laravel\Provider\Event\EventProvider;
 use App\Bridge\Laravel\Provider\EventHandlerServiceProvider;
 use App\Bridge\Laravel\Provider\Group\GroupProvider;
@@ -212,6 +213,7 @@ return [
         CompetitionProvider::class,
         CupProvider::class,
         CupEventProvider::class,
+        DistanceProvider::class,
         EventProvider::class,
         GroupProvider::class,
         PersonProvider::class,

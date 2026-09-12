@@ -220,7 +220,7 @@ async function deleteCurrentCompetition(): Promise<void> {
         <DataTable v-else :value="events" striped-rows class="events-table">
             <Column field="name" :header="t('spa.competition.create.name')">
                 <template #body="{ data }">
-                    <a :href="`/events/${data.id}`">{{ data.name }}</a>
+                    <a :href="`/app/events/${data.id}`">{{ data.name }}</a>
                 </template>
             </Column>
             <Column field="date" :header="t('spa.competition.details.date')" />

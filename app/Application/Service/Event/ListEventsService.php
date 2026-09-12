@@ -6,6 +6,7 @@ namespace App\Application\Service\Event;
 
 use App\Application\Dto\Event\EventAssembler;
 use App\Application\Dto\Event\ViewEventDto;
+use App\Domain\Event\Event;
 use App\Domain\Event\EventRepository;
 use App\Domain\Shared\Pagination\Slice;
 
@@ -20,9 +21,11 @@ final readonly class ListEventsService
     /** @return Slice<ViewEventDto> */
     public function execute(ListEvents $command): Slice
     {
+        $resources = $command->resources();
+
         return $this->events
-            ->paginate($command->criteria(), $command->resources())
-            ->map($this->assembler->toViewEventDto(...))
+            ->paginate($command->criteria(), $resources)
+            ->map(fn (Event $event): ViewEventDto => $this->assembler->toViewEventDto($event, $resources))
         ;
     }
 }

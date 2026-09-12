@@ -8,7 +8,8 @@ final readonly class ViewProtocolLineDto
 {
     public function __construct(
         public string $id,
-        public string $personId,
+        public ?string $personId,
+        public string $serialNumber,
         public string $firstname,
         public string $lastname,
         public string $distanceId,
@@ -22,6 +23,13 @@ final readonly class ViewProtocolLineDto
         public ?string $time,
         public ?string $place,
         public ?string $completeRank,
+        public string $club,
+        public ?string $clubId,
+        public ?string $clubName,
+        public string $rank,
+        public ?int $points,
+        public bool $vk,
+        public ?string $activateRank,
     ) {
     }
 }

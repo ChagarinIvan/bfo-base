@@ -15,12 +15,12 @@ final readonly class ViewEventDto
         public string $name,
         public string $description,
         public string $date,
-        public int $participantsCount,
-        public ?string $competitionName,
         #[Groups(['authenticated'])]
         public ImpressionDto $created,
         #[Groups(['authenticated'])]
         public ImpressionDto $updated,
+        public int $participantsCount = 0,
+        public ?string $competitionName = null,
     ) {
     }
 }

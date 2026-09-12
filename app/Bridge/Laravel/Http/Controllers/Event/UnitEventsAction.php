@@ -155,6 +155,6 @@ class UnitEventsAction extends Controller
             }
         }
 
-        return $this->redirector->action(ShowEventDistanceAction::class, [$newEvent->distances->first()]);
+        return $this->redirector->to('/app/events/' . $newEvent->id);
     }
 }

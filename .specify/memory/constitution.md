@@ -1,14 +1,14 @@
 <!--
 Отчёт о синхронизации (Sync Impact Report)
 ===========================================
-Изменение версии: 2.2.3 → 2.3.0
-Обоснование бампа (MINOR): закреплены обязательные contracts для Application commands/use cases,
-criteria-based repositories, typed resources и доменных mutation services.
+Изменение версии: 2.3.0 → 2.4.0
+Обоснование бампа (MINOR): явно закреплён целевой паттерн Domain repository port +
+Infrastructure Eloquent implementation и разграничен с запрещёнными legacy-каталогами.
 
 Изменённые разделы:
-  - I. Слоистая архитектура и границы домена — добавлены правила Application command/use case.
-  - II. Без фасадов, зависимости через интерфейсы — добавлены criteria/resources/repository rules.
-  - VII. Commands, queries и mutation policies — новый обязательный принцип.
+  - I. Слоистая архитектура и границы домена — разрешены и предписаны новые Domain repository
+    ports, Infrastructure Eloquent implementations и Application services; запрещено только
+    расширение legacy `app/Repositories` и `app/Services`.
 
 Разделы, требующие сверки при следующей генерации:
   ✅ .specify/memory/constitution.md (этот файл)
@@ -20,7 +20,8 @@ criteria-based repositories, typed resources и доменных mutation servic
 2.1.0 (Services в легаси, раздел развёртывания) → 2.1.1 (PHP 8.4 по факту репозитория) →
 2.2.0 (принцип VI — импорт вместо FQCN) → 2.2.1 (синхронизация версий стека после апгрейда) →
 2.2.2 (разграничение legacy `app/Services` и Application-сервисов) → 2.2.3 (уточнения стека) →
-2.3.0 (commands, criteria/resources и domain mutation policies).
+2.3.0 (commands, criteria/resources и domain mutation policies) → 2.4.0 (явное разрешение
+целевых repository ports и Eloquent adapters).
 
 Отложенные TODO: нет. Дата ратификации сохранена (2026-08-18), дата последней правки — 2026-08-31.
 -->
@@ -45,14 +46,16 @@ BFO Base — бэкенд-платформа для белорусского с�
 - **Infrastructure** — детали хранения, интеграции, framework-специфика.
 
 Правила миграции:
-- **`app/Services` — legacy-слой.** Новый код НЕ ДОЛЖЕН добавлять туда сервисы или другие классы;
-  существующие классы постепенно мигрируют в целевые слои.
+- **`app/Services` и `app/Repositories` — legacy-слои.** Новый код НЕ ДОЛЖЕН добавлять туда
+  сервисы, репозитории или другие классы; существующие классы постепенно мигрируют в целевые слои.
 - **Application-сервисы/use cases разрешены и рекомендуются.** Классы в `app/Application/Service`
   реализуют оркестрацию сценариев использования и являются целевым слоем. Их создание не считается
   расширением legacy `app/Services`; например, `ListLegacyEventsService` в Application остаётся
   допустимым адаптером для сохранения существующего Blade-пути.
-- Новые репозитории не добавляем в legacy-слой; интерфейсы репозиториев принадлежат Domain, а их
-  реализации — Infrastructure, когда это требуется целевым сценарием.
+- **Новые target repositories создаём, когда они нужны сценарию.** Их interface (port) принадлежит
+  `Domain`, а Eloquent-реализация — `Infrastructure`; это единственный допустимый путь для нового
+  persistence/query-кода. Application-сервисы создаём в `app/Application/Service` для оркестрации
+  use case. Ни один из этих классов не размещается в legacy `app/Repositories` или `app/Services`.
 - Узкие контроллеры-экшены и Blade-фронтенд — переходные элементы. Новую логику размещаем в
   целевых слоях, а не наращиваем легаси.
 - Зависимости направлены внутрь: `Infrastructure`/`Bridge` могут зависеть от `Domain`, но не наоборот.
@@ -209,4 +212,4 @@ BFO Base — бэкенд-платформа для белорусского с�
   повторяемости — оформляются поправкой.
 - Сложность требует обоснования: предпочитаем простейшее решение, удовлетворяющее принципам.
 
-**Версия**: 2.3.0 | **Ратифицирована**: 2026-08-18 | **Последняя правка**: 2026-09-04
+**Версия**: 2.4.0 | **Ратифицирована**: 2026-08-18 | **Последняя правка**: 2026-09-10

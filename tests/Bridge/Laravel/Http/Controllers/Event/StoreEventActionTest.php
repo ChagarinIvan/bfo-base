@@ -57,7 +57,7 @@ final class StoreEventActionTest extends TestCase
             'protocol' => $file,
         ])
             ->assertStatus(Response::HTTP_FOUND)
-            ->assertRedirect('/events/105')
+            ->assertRedirect('/app/events/105')
         ;
 
         Storage::delete('2023/2023-01-01_test_event.text/html');

@@ -23,5 +23,5 @@ interface EventRepository
 
     public function oneByCriteria(Criteria $criteria): ?Event;
 
-    public function byId(int $id): ?Event;
+    public function byId(int $id, EventResources $resources = new EventResources()): ?Event;
 }

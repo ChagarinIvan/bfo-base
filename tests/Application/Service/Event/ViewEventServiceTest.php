@@ -6,7 +6,7 @@ namespace Tests\Application\Service\Event;
 
 use App\Application\Dto\Auth\AuthAssembler;
 use App\Application\Dto\Event\EventAssembler;
-use App\Application\Dto\Event\LegacyViewEventDto;
+use App\Application\Dto\Event\ViewEventDto;
 use App\Application\Service\Event\Exception\EventNotFound;
 use App\Application\Service\Event\ViewEvent;
 use App\Application\Service\Event\ViewEventService;
@@ -40,7 +40,7 @@ final class ViewEventServiceTest extends TestCase
         $this->events
             ->expects($this->once())
             ->method('byId')
-            ->with(1)
+            ->with(1, $this->anything())
             ->willReturn(null)
         ;
 
@@ -57,14 +57,14 @@ final class ViewEventServiceTest extends TestCase
         $this->events
             ->expects($this->once())
             ->method('byId')
-            ->with(1)
+            ->with(1, $this->anything())
             ->willReturn($event)
         ;
 
         $command = new ViewEvent('1');
         $result = $this->service->execute($command);
 
-        $this->assertInstanceOf(LegacyViewEventDto::class, $result);
+        $this->assertInstanceOf(ViewEventDto::class, $result);
         $this->assertEquals($event->id, $result->id);
     }
 }

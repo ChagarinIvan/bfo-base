@@ -21,11 +21,19 @@ final class EloquentEventRepository implements EventRepository
         $event->create();
     }
 
-    public function byId(int $id): ?Event
+    public function byId(int $id, EventResources $resources = new EventResources()): ?Event
     {
-        return Event::where('active', true)
-            ->with(['competition', 'cups.cup', 'distances.group'])
-            ->find($id);
+        $query = Event::where('active', true);
+
+        if ($resources->competitionName) {
+            $query->with('competition:id,name');
+        }
+
+        if ($resources->withDistances) {
+            $query->with('distances.group');
+        }
+
+        return $query->find($id);
     }
 
     public function lockById(int $id): ?Event

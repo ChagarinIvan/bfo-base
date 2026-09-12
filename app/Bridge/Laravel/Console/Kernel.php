@@ -18,7 +18,6 @@ use App\Domain\Auth\User;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Override;
-use function sleep;
 
 class Kernel extends ConsoleKernel
 {
@@ -50,12 +49,11 @@ class Kernel extends ConsoleKernel
         $schedule->command(RebuildExpiredPersonRanksCommand::class, ['userId' => User::SYSTEM_USER_ID])->dailyAt('00:10')->runInBackground();
         //        $schedule->command(SyncPersonsCommand::class)->weekly()->runInBackground();
 
-        for ($i = 0; $i < 4; $i++) {
-            $schedule->command(IdentProtocolLineCommand::class, ['userId' => User::SYSTEM_USER_ID])
-                ->everyMinute()
-                ->before(static function () use ($i): void {sleep($i * 15);})
-                ->runInBackground();
-        }
+        $schedule->command(IdentProtocolLineCommand::class, ['userId' => User::SYSTEM_USER_ID])
+            ->everyFifteenSeconds()
+            ->withoutOverlapping(5)
+            ->runInBackground()
+        ;
     }
 
     /**

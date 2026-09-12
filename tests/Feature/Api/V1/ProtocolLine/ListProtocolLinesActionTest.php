@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Api\V1\ProtocolLine;
 
+use App\Domain\Club\Club;
 use App\Domain\Competition\Competition;
 use App\Domain\Distance\Distance;
 use App\Domain\Event\Event;
@@ -130,6 +131,102 @@ final class ListProtocolLinesActionTest extends TestCase
     }
 
     #[Test]
+    public function it_scopes_bare_protocol_lines_to_the_selected_distance(): void
+    {
+        $person = $this->createPerson();
+        $selectedLine = $this->createProtocolLine($person, 'Spring Cup', '2026-05-10');
+        $this->createProtocolLine($person, 'Summer Cup', '2026-06-10');
+
+        $this->getJson("/api/v1/protocol-lines?distanceId={$selectedLine->distance_id}")
+            ->assertOk()
+            ->assertJsonCount(1)
+            ->assertJsonPath('0.id', (string) $selectedLine->id)
+            ->assertJsonPath('0.eventId', null)
+            ->assertJsonPath('0.competitionId', null)
+        ;
+    }
+
+    #[Test]
+    public function it_orders_selected_distance_protocol_lines_by_protocol_insert_order(): void
+    {
+        $person = $this->createPerson();
+        $firstPlace = $this->createProtocolLine($person, 'Spring Cup', '2026-05-10', [
+            'id' => 40,
+            'place' => 1,
+            'time' => '00:50:00',
+        ]);
+        ProtocolLine::factory()->createOne([
+            'id' => 10,
+            'distance_id' => $firstPlace->distance_id,
+            'person_id' => $person->id,
+            'place' => 1,
+            'time' => '01:00:00',
+        ]);
+        ProtocolLine::factory()->createOne([
+            'id' => 5,
+            'distance_id' => $firstPlace->distance_id,
+            'person_id' => $person->id,
+            'place' => 2,
+            'time' => '00:30:00',
+        ]);
+        ProtocolLine::factory()->createOne([
+            'id' => 30,
+            'distance_id' => $firstPlace->distance_id,
+            'person_id' => $person->id,
+            'place' => 2,
+            'time' => '00:30:00',
+        ]);
+        ProtocolLine::factory()->createOne([
+            'id' => 15,
+            'distance_id' => $firstPlace->distance_id,
+            'person_id' => $person->id,
+            'place' => 0,
+            'time' => null,
+        ]);
+        ProtocolLine::factory()->createOne([
+            'id' => 20,
+            'distance_id' => $firstPlace->distance_id,
+            'person_id' => $person->id,
+            'place' => null,
+            'time' => null,
+        ]);
+
+        $this->getJson("/api/v1/protocol-lines?distanceId={$firstPlace->distance_id}&withClub=1")
+            ->assertOk()
+            ->assertJsonPath('0.id', '5')
+            ->assertJsonPath('1.id', '10')
+            ->assertJsonPath('2.id', '15')
+            ->assertJsonPath('3.id', '20')
+            ->assertJsonPath('4.id', '30')
+            ->assertJsonPath('5.id', '40')
+        ;
+    }
+
+    #[Test]
+    public function it_resolves_a_normalized_raw_club_name_when_requested(): void
+    {
+        $person = $this->createPerson();
+        /** @var Club $club */
+        $club = Club::factory()->createOne([
+            'name' => 'КСА Мінск',
+            'normalize_name' => 'ксо мінск',
+        ]);
+        $line = $this->createProtocolLine(
+            $person,
+            'Spring Cup',
+            '2026-05-10',
+            ['club' => '  КСА   Мінск  '],
+        );
+
+        $this->getJson("/api/v1/protocol-lines?distanceId={$line->distance_id}&withClub=1")
+            ->assertOk()
+            ->assertJsonPath('0.club', '  КСА   Мінск  ')
+            ->assertJsonPath('0.clubId', (string) $club->id)
+            ->assertJsonPath('0.clubName', 'КСА Мінск')
+        ;
+    }
+
+    #[Test]
     public function it_returns_pagination_headers(): void
     {
         $person = $this->createPerson();
@@ -182,10 +279,17 @@ final class ListProtocolLinesActionTest extends TestCase
         return $person;
     }
 
-    private function createProtocolLine(Person $person, string $competitionName, string $date): ProtocolLine
+    /** @param array<string, mixed> $lineAttributes */
+    private function createProtocolLine(
+        Person $person,
+        string $competitionName,
+        string $date,
+        array $lineAttributes = [],
+    ): ProtocolLine
     {
         /** @var Competition $competition */
         $competition = Competition::factory()->createOne([
+            'id' => null,
             'name' => $competitionName,
             'from' => $date,
             'to' => $date,
@@ -198,16 +302,22 @@ final class ListProtocolLinesActionTest extends TestCase
             'active' => true,
         ]);
         /** @var Group $group */
-        $group = Group::factory()->createOne(['name' => 'M21']);
+        $group = Group::factory()->createOne([
+            'id' => null,
+            'name' => 'M21',
+        ]);
         /** @var Distance $distance */
         $distance = Distance::factory()->createOne([
+            'id' => null,
             'event_id' => $event->id,
             'group_id' => $group->id,
         ]);
         /** @var ProtocolLine $line */
         $line = ProtocolLine::factory()->createOne([
+            'id' => null,
             'distance_id' => $distance->id,
             'person_id' => $person->id,
+            ...$lineAttributes,
         ]);
 
         return $line;

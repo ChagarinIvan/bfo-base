@@ -189,7 +189,7 @@ function toggleRank(groupId: string): void {
 }
 
 function eventUrl(item: PersonRankHistory): string {
-    return `/events/d/${item.distanceId}#${item.protocolLineId}`
+    return `/app/events/${item.eventId}#${item.protocolLineId}`
 }
 
 function display(value: string | null): string {

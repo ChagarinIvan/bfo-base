@@ -47,10 +47,13 @@ final readonly class EloquentProtocolLinesRepository implements ProtocolLineRepo
         Criteria $criteria,
         ProtocolLineResources $resources = new ProtocolLineResources(),
     ): Slice {
-        $query = $this->buildQuery($criteria)
-            ->orderByDesc('events.date')
-            ->orderByDesc('protocol_lines.id')
-        ;
+        $query = $this->buildQuery($criteria);
+
+        if ($criteria->hasParam('distanceId')) {
+            $query->orderBy('protocol_lines.id');
+        } else {
+            $query->orderByDesc('events.date')->orderByDesc('protocol_lines.id');
+        }
 
         if ($resources->withEvent) {
             $query->with(['distance.event', 'distance.group']);
@@ -94,7 +97,7 @@ final readonly class EloquentProtocolLinesRepository implements ProtocolLineRepo
     /** @return Builder<ProtocolLine> */
     private function buildQuery(Criteria $criteria): Builder
     {
-        $query = ProtocolLine::select('protocol_lines.*')->with(['person.club']);
+        $query = ProtocolLine::select('protocol_lines.*');
 
         if (array_key_exists('completedRank', $criteria->sorting())) {
             $query->orderByRaw("
@@ -182,6 +185,18 @@ final readonly class EloquentProtocolLinesRepository implements ProtocolLineRepo
 
         if ($criteria->hasParam('eventId')) {
             $query->where('distances.event_id', $criteria->param('eventId'));
+        }
+
+        if ($criteria->hasParam('distanceId')) {
+            $query->where('protocol_lines.distance_id', $criteria->param('distanceId'));
+        }
+
+        if ($criteria->hasParam('name')) {
+            $pattern = '%' . mb_strtolower((string) $criteria->param('name')) . '%';
+            $query->where(static function (Builder $query) use ($pattern): void {
+                $query->whereRaw('LOWER(protocol_lines.lastname) LIKE ?', [$pattern])
+                    ->orWhereRaw('LOWER(protocol_lines.firstname) LIKE ?', [$pattern]);
+            });
         }
 
         if ($criteria->hasParam('preparedLine')) {

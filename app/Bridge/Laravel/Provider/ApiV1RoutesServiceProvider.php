@@ -19,7 +19,9 @@ use App\Bridge\Laravel\Http\Controllers\Api\V1\Competition\DeleteCompetitionActi
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Competition\ListCompetitionsAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Competition\UpdateCompetitionAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Competition\ViewCompetitionAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Distance\ListDistancesAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Event\ListEventsAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Event\ViewEventAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Group\DeleteGroupAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Group\ListGroupsAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Group\MergeGroupsAction;
@@ -74,6 +76,8 @@ final class ApiV1RoutesServiceProvider extends ServiceProvider
                 $router->get('groups', ListGroupsAction::class);
                 $router->get('groups/{groupId}', ViewGroupAction::class);
                 $router->get('events', ListEventsAction::class);
+                $router->get('events/{eventId}', ViewEventAction::class);
+                $router->get('distances', ListDistancesAction::class);
                 $router->get('persons', ListPersonsAction::class);
                 $router->get('persons/{personId}', ViewPersonAction::class);
                 $router->get('persons/{personId}/rank-histories', ListPersonRankHistoryAction::class);

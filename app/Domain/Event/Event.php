@@ -22,7 +22,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 
 /**
@@ -62,7 +61,7 @@ class Event extends AggregatedModel
         return $this->hasManyThrough(ProtocolLine::class, Distance::class, 'event_id', 'distance_id', 'id', 'id');
     }
 
-    public function distances(): Builder|HasMany
+    public function distances(): HasMany
     {
         return $this->hasMany(Distance::class, 'event_id', 'id');
     }
