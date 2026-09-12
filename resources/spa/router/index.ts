@@ -34,6 +34,9 @@ import EditGroupPage from '../pages/groups/EditGroupPage.vue'
 import MergeGroupsPage from '../pages/groups/MergeGroupsPage.vue'
 import NotFoundPage from '../pages/NotFoundPage.vue'
 import EventViewPage from '../pages/events/EventViewPage.vue'
+import CreateEventPage from '../pages/events/CreateEventPage.vue'
+import EditEventPage from '../pages/events/EditEventPage.vue'
+import UniteEventsPage from '../pages/events/UniteEventsPage.vue'
 
 export function createAppRouter(
     history: RouterHistory = typeof window === 'undefined'
@@ -45,6 +48,21 @@ export function createAppRouter(
         routes: [
             { path: '/app/competitions', component: CompetitionsPage },
             { path: '/app/events/:eventId', component: EventViewPage },
+            {
+                path: '/app/competitions/:competitionId/events/create',
+                component: CreateEventPage,
+                meta: { requiresAuth: true },
+            },
+            {
+                path: '/app/competitions/:competitionId/events/unite',
+                component: UniteEventsPage,
+                meta: { requiresAuth: true },
+            },
+            {
+                path: '/app/events/:eventId/edit',
+                component: EditEventPage,
+                meta: { requiresAuth: true },
+            },
             { path: '/app/clubs', component: ClubsPage },
             { path: '/app/clubs/:id', component: ClubDetailsPage },
             { path: '/app/groups', component: GroupsPage },

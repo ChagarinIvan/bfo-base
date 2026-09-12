@@ -13,6 +13,7 @@ use App\Domain\Cup\CupEvent\CupEvent;
 use App\Domain\Cup\CupEvent\CupEventPoint;
 use App\Domain\Cup\Group\CupGroup;
 use App\Domain\Event\EventRepository;
+use App\Domain\Event\EventResources;
 use App\Domain\Shared\Criteria;
 use function array_map;
 use function sprintf;
@@ -73,9 +74,10 @@ final readonly class CupAssembler
             points: (string) $cupEvent->points,
             created: $this->authAssembler->toImpressionDto($cupEvent->created),
             updated: $this->authAssembler->toImpressionDto($cupEvent->updated),
-
-            // TODO remove
-            event: $this->eventAssembler->toLegacyViewEventDto($cupEvent->event),
+            event: $this->eventAssembler->toViewEventDto(
+                $cupEvent->event,
+                new EventResources(withCompetitionName: true),
+            ),
         );
     }
 

@@ -19,13 +19,11 @@
             <a href="/app/competitions/{{ $calculatedCupEvent->cupEvent->event->competitionId }}">{{ $calculatedCupEvent->cupEvent->event->competitionName }}</a>
         </h4>
     </div>
-    @if($calculatedCupEvent->cupEvent->event->firstDistance)
-        <div class="row mb-3">
-            <h5>
-                <a href="/app/events/{{ $calculatedCupEvent->cupEvent->event->id }}">{{ $calculatedCupEvent->cupEvent->event->name }} - {{ $calculatedCupEvent->cupEvent->event->date }}</a>
-            </h5>
-        </div>
-    @endif
+    <div class="row mb-3">
+        <h5>
+            <a href="/app/events/{{ $calculatedCupEvent->cupEvent->event->id }}">{{ $calculatedCupEvent->cupEvent->event->name }} - {{ $calculatedCupEvent->cupEvent->event->date }}</a>
+        </h5>
+    </div>
     <div class="row">
         <ul class="nav nav-tabs">
             @foreach($calculatedCupEvent->cupGroups as $group)

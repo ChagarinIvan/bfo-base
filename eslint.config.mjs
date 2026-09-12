@@ -12,6 +12,13 @@ export default tseslint.config(
   {
     files: ['resources/spa/**/*.{ts,vue}'],
     languageOptions: {
+      globals: {
+        Blob: 'readonly',
+        document: 'readonly',
+        File: 'readonly',
+        URL: 'readonly',
+        window: 'readonly',
+      },
       parser: vueParser,
       parserOptions: {
         parser: tsParser,

@@ -1,9 +1,18 @@
+// @vitest-environment happy-dom
+
 import { describe, expect, it, vi } from 'vitest'
 import { api } from './client'
-import { getCompetitionEvents, getEventsByIds } from './events'
+import {
+    createEvent,
+    getCompetitionEvents,
+    getEventsByIds,
+    updateEvent,
+} from './events'
 
 vi.mock('./client', () => ({
     api: {
+        post: vi.fn(),
+        put: vi.fn(),
         get: vi.fn(),
     },
 }))
@@ -33,4 +42,25 @@ describe('events API', () => {
             params: { competitionId: '42', page: 1, perPage: 20 },
         })
     })
+
+    it('sends event creation and updates as multipart form data', async () => {
+        vi.mocked(api.post).mockResolvedValue({ data: { id: '5' } })
+        vi.mocked(api.put).mockResolvedValue({ data: { id: '5' } })
+        const payload = {
+            name: 'Stage',
+            description: 'Description',
+            date: '2026-05-10',
+            url: 'https://obelarus.net/protocol',
+        }
+
+        await createEvent('42', payload)
+        await updateEvent('5', payload)
+
+        const creation = vi.mocked(api.post).mock.calls[0]
+        expect(creation?.[0]).toBe('/competitions/42/events')
+        expect(creation?.[1]).toBeInstanceOf(FormData)
+        expect((creation?.[1] as FormData).get('url')).toBe(payload.url)
+        expect(api.put).toHaveBeenCalledWith('/events/5', expect.any(FormData))
+    })
+
 })

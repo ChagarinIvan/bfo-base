@@ -9,24 +9,27 @@ import EventViewPage from './EventViewPage.vue'
 
 const {
     auth,
+    deleteEvent,
     getCompetition,
     getEvent,
     getEventDistances,
     getPersonProtocolLines,
     route,
-} = vi.hoisted(
-    () => ({
-        auth: { isAuthenticated: false },
-        getCompetition: vi.fn(),
-        getEvent: vi.fn(),
-        getEventDistances: vi.fn(),
-        getPersonProtocolLines: vi.fn(),
-        route: { params: { eventId: '42' }, query: {}, hash: '' },
-    }),
-)
+} = vi.hoisted(() => ({
+    auth: { isAuthenticated: false },
+    deleteEvent: vi.fn(),
+    getCompetition: vi.fn(),
+    getEvent: vi.fn(),
+    getEventDistances: vi.fn(),
+    getPersonProtocolLines: vi.fn(),
+    route: { params: { eventId: '42' }, query: {}, hash: '' },
+}))
 
 vi.mock('../../api/competitions', () => ({ getCompetition }))
-vi.mock('../../api/events', () => ({ getEvent }))
+vi.mock('../../api/events', () => ({
+    getEvent,
+    deleteEvent,
+}))
 vi.mock('../../api/distances', () => ({ getEventDistances }))
 vi.mock('../../api/protocolLines', () => ({ getPersonProtocolLines }))
 vi.mock('../../api/users', () => ({ getUsers: vi.fn().mockResolvedValue([]) }))
@@ -157,6 +160,27 @@ describe('event view page', () => {
             severity: 'success',
         })
         expect(wrapper.text()).toContain('Актывацыя разраду')
+    })
+
+    it('shows a confirmed delete control for an authenticated user', async () => {
+        auth.isAuthenticated = true
+        deleteEvent.mockResolvedValue(undefined)
+
+        const wrapper = mount(EventViewPage, {
+            global: { plugins: [PrimeVue] },
+        })
+        await flushPromises()
+
+        const remove = wrapper
+            .findAllComponents(ActionButton)
+            .find((action) => action.props('label') === 'Выдаліць')
+
+        expect(remove?.props()).toMatchObject({
+            icon: 'pi pi-trash',
+            severity: 'danger',
+        })
+        await remove?.trigger('click')
+        expect(document.body.textContent).toContain('Выдаліць этап?')
     })
 
     it('filters protocol lines after three characters without requiring Enter', async () => {

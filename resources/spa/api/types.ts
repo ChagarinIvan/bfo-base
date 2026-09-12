@@ -33,6 +33,14 @@ export interface Event {
     updated?: Impression
 }
 
+export interface EventFormRequest {
+    name: string
+    description: string
+    date: string
+    protocol?: File | null
+    url?: string
+}
+
 export interface Distance {
     id: string
     eventId: string

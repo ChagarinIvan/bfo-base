@@ -25,7 +25,7 @@ final class EloquentEventRepository implements EventRepository
     {
         $query = Event::where('active', true);
 
-        if ($resources->competitionName) {
+        if ($resources->withCompetitionName) {
             $query->with('competition:id,name');
         }
 
@@ -41,14 +41,43 @@ final class EloquentEventRepository implements EventRepository
         return Event::where('active', true)->lockForUpdate()->find($id);
     }
 
+    public function lockByCriteria(Criteria $criteria, EventResources $resources = new EventResources()): Collection
+    {
+        $query = $this->buildQuery($criteria)->lockForUpdate();
+
+        if ($resources->withDistances) {
+            $query->with('distances.group');
+        }
+
+        if ($resources->withProtocolLines) {
+            $query->with('protocolLines.distance');
+        }
+
+        return $query->get();
+    }
+
     public function update(Event $event): void
     {
         $event->save();
     }
 
-    public function byCriteria(Criteria $criteria): Collection
+    public function byCriteria(Criteria $criteria, EventResources $resources = new EventResources()): Collection
     {
-        return $this->buildQuery($criteria)->get();
+        $query = $this->buildQuery($criteria);
+
+        if ($resources->withCompetitionName) {
+            $query->with('competition:id,name');
+        }
+
+        if ($resources->withDistances) {
+            $query->with('distances.group');
+        }
+
+        if ($resources->withProtocolLines) {
+            $query->with('protocolLines.distance');
+        }
+
+        return $query->get();
     }
 
     /** @return Slice<Event> */
@@ -56,7 +85,7 @@ final class EloquentEventRepository implements EventRepository
     {
         $query = $this->buildQuery($criteria)->withCount('protocolLines');
 
-        if ($resources->competitionName) {
+        if ($resources->withCompetitionName) {
             $query->with('competition:id,name');
         }
 

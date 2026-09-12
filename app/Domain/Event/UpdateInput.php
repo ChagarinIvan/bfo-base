@@ -8,7 +8,6 @@ final readonly class UpdateInput
 {
     public function __construct(
         public EventInfo $info,
-        public ?Protocol $protocol,
     ) {
     }
 }

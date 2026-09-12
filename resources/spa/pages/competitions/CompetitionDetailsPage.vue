@@ -193,7 +193,7 @@ async function deleteCurrentCompetition(): Promise<void> {
                         <span class="competition-legacy-actions">
                             <ActionButton
                                 as="a"
-                                :href="`/events/${competition.id}/create`"
+                                :href="`/app/competitions/${competition.id}/events/create`"
                                 icon="pi pi-plus"
                                 :label="t('app.competition.add_event')"
                                 severity="success"
@@ -201,7 +201,7 @@ async function deleteCurrentCompetition(): Promise<void> {
                             />
                             <ActionButton
                                 as="a"
-                                :href="`/events/${competition.id}/sum`"
+                                :href="`/app/competitions/${competition.id}/events/unite`"
                                 icon="pi pi-clone"
                                 :label="t('app.competition.sum')"
                                 severity="info"
@@ -263,7 +263,7 @@ async function deleteCurrentCompetition(): Promise<void> {
                 <template #body="{ data }">
                     <ActionButton
                         as="a"
-                        :href="`/events/${data.id}/edit`"
+                        :href="`/app/events/${data.id}/edit`"
                         icon="pi pi-pencil"
                         :label="t('spa.competition.edit.action')"
                         severity="secondary"

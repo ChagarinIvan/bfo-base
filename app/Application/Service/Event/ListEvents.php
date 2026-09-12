@@ -18,11 +18,15 @@ final readonly class ListEvents
 
     public function criteria(): Criteria
     {
-        return new Criteria(array_filter(get_object_vars($this->search), static fn (mixed $value): bool => $value !== null));
+        return new Criteria(array_filter(
+            get_object_vars($this->search),
+            static fn (mixed $value, string $key): bool => $key !== 'withCompetition' && $value !== null,
+            ARRAY_FILTER_USE_BOTH,
+        ));
     }
 
     public function resources(): EventResources
     {
-        return new EventResources(competitionName: $this->search->withCompetition === '1');
+        return new EventResources(withCompetitionName: $this->search->withCompetition === '1');
     }
 }
