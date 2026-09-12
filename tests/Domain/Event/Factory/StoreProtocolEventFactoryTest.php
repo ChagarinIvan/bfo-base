@@ -44,7 +44,6 @@ final class StoreProtocolEventFactoryTest extends TestCase
             new EventInfo('name', 'description', Carbon::parse('2023-04-01')),
             1,
             1,
-            $protocol
         );
 
         $this->protocols
@@ -59,10 +58,10 @@ final class StoreProtocolEventFactoryTest extends TestCase
         $this->decorated
             ->expects($this->once())
             ->method('create')
-            ->with($input->withFile('2023/2023-04-01_name@@xml'))
+            ->with($input->withFile('2023/2023-04-01_name@@xml'), $protocol)
             ->willReturn($event)
         ;
 
-        $this->factory->create($input);
+        $this->factory->create($input, $protocol);
     }
 }

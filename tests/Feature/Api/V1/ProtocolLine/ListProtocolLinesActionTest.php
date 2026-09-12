@@ -61,6 +61,25 @@ final class ListProtocolLinesActionTest extends TestCase
     }
 
     #[Test]
+    public function it_hides_lines_from_inactive_events_and_competitions(): void
+    {
+        $person = $this->createPerson();
+        $activeLine = $this->createProtocolLine($person, 'Active Cup', '2026-05-10');
+        $inactiveEventLine = $this->createProtocolLine($person, 'Deleted Event Cup', '2026-05-11');
+        $inactiveEventLine->distance->event->active = false;
+        $inactiveEventLine->distance->event->save();
+        $inactiveCompetitionLine = $this->createProtocolLine($person, 'Deleted Cup', '2026-05-12');
+        $inactiveCompetitionLine->distance->event->competition->active = false;
+        $inactiveCompetitionLine->distance->event->competition->save();
+
+        $this->getJson("/api/v1/protocol-lines?personId={$person->id}")
+            ->assertOk()
+            ->assertJsonCount(1)
+            ->assertJsonPath('0.id', (string) $activeLine->id)
+        ;
+    }
+
+    #[Test]
     public function it_filters_protocol_lines_by_year_name_and_date(): void
     {
         $person = $this->createPerson();

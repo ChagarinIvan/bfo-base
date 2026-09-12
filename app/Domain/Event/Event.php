@@ -10,7 +10,8 @@ use App\Domain\Cup\CupEvent\CupEvent;
 use App\Domain\Distance\Distance;
 use App\Domain\Event\Event\EventCreated;
 use App\Domain\Event\Event\EventDisabled;
-use App\Domain\Event\Event\EventUpdated;
+use App\Domain\Event\Event\EventInfoUpdated;
+use App\Domain\Event\Event\EventProtocolUpdated;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\Shared\AggregatedModel;
 use App\Infrastructure\Laravel\Eloquent\Auth\ImpressionCast;
@@ -79,15 +80,22 @@ class Event extends AggregatedModel
         $this->recordThat(new EventDisabled($this));
     }
 
-    public function updateData(ProtocolUpdater $updater, UpdateInput $input, Impression $impression): void
+    public function updateInfo(UpdateInput $input, Impression $impression): void
     {
         $this->name = $input->info->name;
         $this->description = $input->info->description;
         $this->date = $input->info->date;
-        $this->file = $input->protocol instanceof Protocol ? $updater->update($this, $input->protocol) : $this->file;
         $this->updated = $impression;
 
-        $this->recordThat(new EventUpdated($this, (bool) $input->protocol));
+        $this->recordThat(new EventInfoUpdated($this));
+    }
+
+    public function updateProtocol(ProtocolUpdater $updater, Protocol $protocol, Impression $impression): void
+    {
+        $this->file = $updater->update($this, $protocol);
+        $this->updated = $impression;
+
+        $this->recordThat(new EventProtocolUpdated($this));
     }
 
     public function create(): void

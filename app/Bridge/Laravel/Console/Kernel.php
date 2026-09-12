@@ -50,7 +50,7 @@ class Kernel extends ConsoleKernel
         //        $schedule->command(SyncPersonsCommand::class)->weekly()->runInBackground();
 
         $schedule->command(IdentProtocolLineCommand::class, ['userId' => User::SYSTEM_USER_ID])
-            ->everyFifteenSeconds()
+            ->everyThirtySeconds()
             ->withoutOverlapping(5)
             ->runInBackground()
         ;

@@ -1,5 +1,56 @@
 import { api } from './client'
-import type { Event, GroupEventsQuery, PaginatedApiResponse } from './types'
+import type {
+    Event,
+    EventFormRequest,
+    GroupEventsQuery,
+    PaginatedApiResponse,
+} from './types'
+
+function eventFormData(payload: EventFormRequest): FormData {
+    const data = new FormData()
+    data.set('name', payload.name)
+    data.set('description', payload.description)
+    data.set('date', payload.date)
+    if (payload.protocol) data.set('protocol', payload.protocol)
+    if (payload.url) data.set('url', payload.url)
+
+    return data
+}
+
+export async function createEvent(
+    competitionId: string,
+    payload: EventFormRequest,
+): Promise<Event> {
+    return (
+        await api.post<Event>(
+            `/competitions/${competitionId}/events`,
+            eventFormData(payload),
+        )
+    ).data
+}
+
+export async function updateEvent(
+    eventId: string,
+    payload: EventFormRequest,
+): Promise<Event> {
+    return (await api.put<Event>(`/events/${eventId}`, eventFormData(payload)))
+        .data
+}
+
+export async function deleteEvent(eventId: string): Promise<void> {
+    await api.delete(`/events/${eventId}`)
+}
+
+export async function uniteEvents(
+    competitionId: string,
+    eventIds: string[],
+): Promise<Event> {
+    return (
+        await api.post<Event>(`/competitions/${competitionId}/events/unite`, {
+            eventIds,
+        })
+    ).data
+}
 
 export async function getEvent(id: string): Promise<Event> {
     return (await api.get<Event>(`/events/${id}`)).data

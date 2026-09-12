@@ -16,8 +16,8 @@ final class UpdateEventDto extends AbstractDto
     {
         return [
             ...EventInfoDto::requestValidationRules(),
-            'protocol' => '',
-            'url' => '',
+            'protocol' => ['sometimes', 'file', 'prohibits:url'],
+            'url' => ['sometimes', 'url', 'prohibits:protocol'],
         ];
     }
 

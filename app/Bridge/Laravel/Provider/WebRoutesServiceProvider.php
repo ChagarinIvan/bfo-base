@@ -21,14 +21,6 @@ use App\Bridge\Laravel\Http\Controllers\CupEvents\ShowCreateCupEventFormAction;
 use App\Bridge\Laravel\Http\Controllers\CupEvents\ShowEditCupEventFormAction;
 use App\Bridge\Laravel\Http\Controllers\CupEvents\StoreCupEventAction;
 use App\Bridge\Laravel\Http\Controllers\CupEvents\UpdateCupEventAction;
-use App\Bridge\Laravel\Http\Controllers\Event\DeleteEventAction;
-use App\Bridge\Laravel\Http\Controllers\Event\DownloadEventProtocolAction;
-use App\Bridge\Laravel\Http\Controllers\Event\ShowCreateEventFormAction;
-use App\Bridge\Laravel\Http\Controllers\Event\ShowEditEventFormAction;
-use App\Bridge\Laravel\Http\Controllers\Event\ShowUnitEventsFormAction;
-use App\Bridge\Laravel\Http\Controllers\Event\StoreEventAction;
-use App\Bridge\Laravel\Http\Controllers\Event\UnitEventsAction;
-use App\Bridge\Laravel\Http\Controllers\Event\UpdateEventAction;
 use Illuminate\Contracts\Routing\Registrar;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Routing\Redirector;
@@ -49,20 +41,6 @@ class WebRoutesServiceProvider extends ServiceProvider
         $this->routes(function (): void {
             $this->routeRegistrar->middleware('web')->group(function (): void {
                 $this->route->get('', fn () => $this->redirector->to('/app/competitions'));
-
-                //event
-                $this->routeRegistrar->prefix('events')->group(function (): void {
-                    $this->middleware(['auth'])->group(function (): void {
-                        $this->route->get('{competitionId}/create', ShowCreateEventFormAction::class);
-                        $this->route->post('{competitionId}/store', StoreEventAction::class);
-                        $this->route->get('{competition}/sum', ShowUnitEventsFormAction::class);
-                        $this->route->post('{competition}/unit', UnitEventsAction::class);
-                        $this->route->get('{event}/delete', DeleteEventAction::class);
-                        $this->route->get('{event}/edit', ShowEditEventFormAction::class);
-                        $this->route->get('{event}/download', DownloadEventProtocolAction::class);
-                        $this->route->post('{eventId}/update', UpdateEventAction::class);
-                    });
-                });
 
                 //cups
                 $this->routeRegistrar->prefix('cups')->group(function (): void {

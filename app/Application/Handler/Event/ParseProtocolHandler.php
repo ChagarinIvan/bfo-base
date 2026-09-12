@@ -25,6 +25,10 @@ abstract class ParseProtocolHandler
 
     protected function parse(string $path, int $eventId, Impression $impression): void
     {
+        if ($path === '') {
+            return;
+        }
+
         Log::info('Parse protocol by path ' . $path);
 
         try {

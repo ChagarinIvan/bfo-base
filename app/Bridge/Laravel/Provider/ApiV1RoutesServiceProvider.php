@@ -20,7 +20,11 @@ use App\Bridge\Laravel\Http\Controllers\Api\V1\Competition\ListCompetitionsActio
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Competition\UpdateCompetitionAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Competition\ViewCompetitionAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Distance\ListDistancesAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Event\CreateEventAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Event\DeleteEventAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Event\ListEventsAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Event\UniteEventsAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Event\UpdateEventAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Event\ViewEventAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Group\DeleteGroupAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Group\ListGroupsAction;
@@ -111,6 +115,10 @@ final class ApiV1RoutesServiceProvider extends ServiceProvider
                 $router->post('competitions', CreateCompetitionAction::class);
                 $router->put('competitions/{competitionId}', UpdateCompetitionAction::class);
                 $router->delete('competitions/{competitionId}', DeleteCompetitionAction::class);
+                $router->post('competitions/{competitionId}/events', CreateEventAction::class);
+                $router->post('competitions/{competitionId}/events/unite', UniteEventsAction::class);
+                $router->put('events/{eventId}', UpdateEventAction::class);
+                $router->delete('events/{eventId}', DeleteEventAction::class);
             });
         });
     }

@@ -1,10 +1,5 @@
 <script setup lang="ts">
-import {
-    computed,
-    onBeforeUnmount,
-    ref,
-    watch,
-} from 'vue'
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import type { AxiosError } from 'axios'
 import Card from 'primevue/card'
 import Column from 'primevue/column'
@@ -19,7 +14,8 @@ import FilterPanel from '../../components/FilterPanel.vue'
 import ImpressionDetails from '../../components/ImpressionDetails.vue'
 import { getEventDistances } from '../../api/distances'
 import { getCompetition } from '../../api/competitions'
-import { getEvent } from '../../api/events'
+import { deleteEvent, getEvent } from '../../api/events'
+import ConfirmDeleteDialog from '../../components/actions/ConfirmDeleteDialog.vue'
 import { getPersonProtocolLines } from '../../api/protocolLines'
 import type {
     Distance,
@@ -62,6 +58,8 @@ const hasPoints = computed(() =>
     lines.value.some((line) => line.points !== null),
 )
 const hasVk = computed(() => lines.value.some((line) => line.vk))
+const deleting = ref(false)
+const deleteDialogVisible = ref(false)
 let targetScrolled = false
 let targetScrollTimer: number | undefined
 const debouncedNameSearch = debounce(() => {
@@ -210,6 +208,21 @@ async function onPage(page: PageState): Promise<void> {
     await loadLines(page.page + 1, page.rows)
 }
 
+async function deleteCurrentEvent(): Promise<void> {
+    if (!event.value) return
+    deleting.value = true
+    try {
+        const competitionId = event.value.competitionId
+        await deleteEvent(event.value.id)
+        await router.push(`/app/competitions/${competitionId}`)
+    } catch {
+        error.value = t('spa.event.delete.error')
+    } finally {
+        deleting.value = false
+        deleteDialogVisible.value = false
+    }
+}
+
 watch(
     () => String(route.params.eventId),
     (eventId) => void load(eventId),
@@ -250,7 +263,9 @@ onBeforeUnmount(() => {
                             <td>
                                 <RouterLink
                                     :to="`/app/competitions/${event.competitionId}`"
-                                    >{{ competition?.name ?? 'Спаборніцтва' }}</RouterLink
+                                    >{{
+                                        competition?.name ?? 'Спаборніцтва'
+                                    }}</RouterLink
                                 >
                             </td>
                         </tr>
@@ -279,10 +294,16 @@ onBeforeUnmount(() => {
                 <div v-if="auth.isAuthenticated" class="details-actions">
                     <ActionButton
                         as="a"
-                        :href="`/events/${event.id}/edit`"
+                        :href="`/app/events/${event.id}/edit`"
                         label="Рэдагаваць"
                         icon="pi pi-pencil"
                         severity="secondary"
+                    />
+                    <ActionButton
+                        icon="pi pi-trash"
+                        :label="t('spa.event.delete.action')"
+                        severity="danger"
+                        @click="deleteDialogVisible = true"
                     />
                 </div>
             </template>
@@ -343,10 +364,9 @@ onBeforeUnmount(() => {
                 <DataTable :value="lines" striped-rows class="events-table">
                     <Column field="serialNumber" header="#"
                         ><template #body="{ data }"
-                            ><span
-                                :id="data.id"
-                                >{{ data.serialNumber }}</span
-                            ></template
+                            ><span :id="data.id">{{
+                                data.serialNumber
+                            }}</span></template
                         ></Column
                     >
                     <Column field="lastname" header="Прозвішча"
@@ -417,5 +437,16 @@ onBeforeUnmount(() => {
                 />
             </template>
         </template>
+        <ConfirmDeleteDialog
+            v-if="auth.isAuthenticated"
+            :visible="deleteDialogVisible"
+            :title="t('spa.event.delete.title')"
+            :confirmation="t('spa.event.delete.confirm', { name: event.name })"
+            :cancel-label="t('spa.event.delete.cancel')"
+            :action-label="t('spa.event.delete.action')"
+            :pending="deleting"
+            @cancel="deleteDialogVisible = false"
+            @confirm="deleteCurrentEvent"
+        />
     </template>
 </template>

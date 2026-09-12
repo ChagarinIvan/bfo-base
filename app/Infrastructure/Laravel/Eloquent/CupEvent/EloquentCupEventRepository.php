@@ -13,7 +13,10 @@ final class EloquentCupEventRepository implements CupEventRepository
 {
     public function byId(int $id): ?CupEvent
     {
-        return CupEvent::where('active', true)->find($id);
+        return CupEvent::where('active', true)
+            ->with('event.competition')
+            ->find($id)
+        ;
     }
 
     public function lockById(int $id): ?CupEvent

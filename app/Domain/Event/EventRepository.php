@@ -14,9 +14,12 @@ interface EventRepository
 
     public function lockById(int $id): ?Event;
 
+    /** @return Collection<int, Event> */
+    public function lockByCriteria(Criteria $criteria, EventResources $resources = new EventResources()): Collection;
+
     public function update(Event $event): void;
 
-    public function byCriteria(Criteria $criteria): Collection;
+    public function byCriteria(Criteria $criteria, EventResources $resources = new EventResources()): Collection;
 
     /** @return Slice<Event> */
     public function paginate(Criteria $criteria, EventResources $resources = new EventResources()): Slice;

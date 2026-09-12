@@ -18,9 +18,11 @@ use App\Domain\Event\EventRepository;
 use App\Domain\Event\Factory\EventFactory;
 use App\Domain\Event\Factory\EventInput;
 use App\Domain\Event\Protocol;
+use App\Domain\Event\Protocol\ProtocolFactory;
 use Carbon\Carbon;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Tests\TestCase;
 
 final class AddEventServiceTest extends TestCase
@@ -39,6 +41,7 @@ final class AddEventServiceTest extends TestCase
             $this->factory = $this->createMock(EventFactory::class),
             $this->events = $this->createMock(EventRepository::class),
             new EventAssembler(new AuthAssembler),
+            new ProtocolFactory,
         );
     }
 
@@ -55,8 +58,8 @@ final class AddEventServiceTest extends TestCase
             $info,
             1,
             1,
-            new Protocol('content', 'html'),
         );
+        $eventProtocol = new Protocol('content', 'text/html');
 
         /** @var Event $event */
         $event = Event::factory()->makeOne();
@@ -64,7 +67,7 @@ final class AddEventServiceTest extends TestCase
         $this->factory
             ->expects($this->once())
             ->method('create')
-            ->with($input)
+            ->with($input, $eventProtocol)
             ->willReturn($event)
         ;
 
@@ -80,13 +83,14 @@ final class AddEventServiceTest extends TestCase
         $infoDto->description = 'test event description';
         $infoDto->date = '2023-01-01';
         $dto->info = $infoDto;
-        $dto->competitionId = '1';
+        $protocol = $this->createMock(UploadedFile::class);
+        $protocol->method('getContent')->willReturn('content');
+        $protocol->method('getMimeType')->willReturn('text/html');
 
-        $protocolDto = new EventProtocolDto();
-        $protocolDto->content = 'content';
-        $protocolDto->extension = 'html';
+        $protocolDto = new EventProtocolDto;
+        $protocolDto->protocol = $protocol;
 
-        $command = new AddEvent($dto, $protocolDto, new UserId(1));
+        $command = new AddEvent(1, $dto, $protocolDto, new UserId(1));
         $eventDto = $this->service->execute($command);
 
         $this->assertEquals($event->id, $eventDto->id);

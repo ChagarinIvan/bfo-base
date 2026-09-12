@@ -6,6 +6,7 @@ namespace App\Domain\Event\Factory;
 
 use App\Domain\Auth\Impression;
 use App\Domain\Event\Event;
+use App\Domain\Event\Protocol;
 use App\Domain\Shared\Clock;
 
 final readonly class StandardEventFactory implements EventFactory
@@ -14,7 +15,7 @@ final readonly class StandardEventFactory implements EventFactory
     {
     }
 
-    public function create(EventInput $input): Event
+    public function create(EventInput $input, ?Protocol $protocol = null): Event
     {
         $event = new Event;
         $event->competition_id = $input->competitionId;

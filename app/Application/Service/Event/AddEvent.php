@@ -9,12 +9,13 @@ use App\Application\Dto\Event\EventDto;
 use App\Application\Dto\Event\EventProtocolDto;
 use App\Domain\Event\EventInfo;
 use App\Domain\Event\Factory\EventInput;
-use App\Domain\Event\Protocol;
+use App\Domain\Event\Protocol\ProtocolSource;
 use Carbon\Carbon;
 
 final readonly class AddEvent
 {
     public function __construct(
+        private int $competitionId,
         private EventDto $event,
         private EventProtocolDto $protocol,
         private UserId $userId,
@@ -25,18 +26,14 @@ final readonly class AddEvent
     {
         return new EventInput(
             $this->info(),
-            (int) $this->event->competitionId,
+            $this->competitionId,
             $this->userId->id,
-            $this->protocol(),
         );
     }
 
-    public function protocol(): Protocol
+    public function protocolSource(): ProtocolSource
     {
-        return new Protocol(
-            $this->protocol->content,
-            $this->protocol->extension,
-        );
+        return new ProtocolSource($this->protocol->protocol, $this->protocol->url);
     }
 
     private function info(): EventInfo

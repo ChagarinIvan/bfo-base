@@ -9,7 +9,7 @@ import Paginator, { type PageState } from 'primevue/paginator'
 import { useRoute, useRouter } from 'vue-router'
 import { getCompetition } from '../../api/competitions'
 import { deleteCompetition } from '../../api/competitions'
-import { getCompetitionEvents } from '../../api/events'
+import { deleteEvent, getCompetitionEvents } from '../../api/events'
 import { getUsers } from '../../api/users'
 import { t } from '../../i18n'
 import { formatDateRange, paginationFromHeaders } from './competitionModels'
@@ -40,6 +40,8 @@ const loading = ref(true)
 const error = ref('')
 const deleting = ref(false)
 const deleteDialogVisible = ref(false)
+const selectedEvent = ref<Event | null>(null)
+const eventDeleting = ref(false)
 const auth = useAuthStore()
 
 function isNotFound(exception: unknown): boolean {
@@ -107,6 +109,25 @@ async function deleteCurrentCompetition(): Promise<void> {
     } finally {
         deleting.value = false
         deleteDialogVisible.value = false
+    }
+}
+
+async function deleteCurrentEvent(): Promise<void> {
+    if (!selectedEvent.value) return
+
+    eventDeleting.value = true
+    try {
+        await deleteEvent(selectedEvent.value.id)
+        await loadEvents(
+            String(route.params.id),
+            eventPagination.value.currentPage,
+            eventPagination.value.perPage,
+        )
+    } catch {
+        error.value = t('spa.event.delete.error')
+    } finally {
+        eventDeleting.value = false
+        selectedEvent.value = null
     }
 }
 </script>
@@ -193,7 +214,7 @@ async function deleteCurrentCompetition(): Promise<void> {
                         <span class="competition-legacy-actions">
                             <ActionButton
                                 as="a"
-                                :href="`/events/${competition.id}/create`"
+                                :href="`/app/competitions/${competition.id}/events/create`"
                                 icon="pi pi-plus"
                                 :label="t('app.competition.add_event')"
                                 severity="success"
@@ -201,7 +222,7 @@ async function deleteCurrentCompetition(): Promise<void> {
                             />
                             <ActionButton
                                 as="a"
-                                :href="`/events/${competition.id}/sum`"
+                                :href="`/app/competitions/${competition.id}/events/unite`"
                                 icon="pi pi-clone"
                                 :label="t('app.competition.sum')"
                                 severity="info"
@@ -258,17 +279,25 @@ async function deleteCurrentCompetition(): Promise<void> {
             </Column>
             <Column
                 v-if="auth.isAuthenticated"
-                :header="t('spa.competition.edit.action')"
+                :header="t('spa.competition.actions')"
             >
                 <template #body="{ data }">
                     <ActionButton
                         as="a"
-                        :href="`/events/${data.id}/edit`"
+                        :href="`/app/events/${data.id}/edit`"
                         icon="pi pi-pencil"
                         :label="t('spa.competition.edit.action')"
                         severity="secondary"
                         text
                         class="competition-legacy-action"
+                    />
+                    <ActionButton
+                        :label="t('spa.event.delete.action')"
+                        icon="pi pi-trash"
+                        severity="danger"
+                        text
+                        class="competition-legacy-action"
+                        @click="selectedEvent = data"
                     />
                 </template>
             </Column>
@@ -296,6 +325,21 @@ async function deleteCurrentCompetition(): Promise<void> {
             :pending="deleting"
             @cancel="deleteDialogVisible = false"
             @confirm="deleteCurrentCompetition"
+        />
+        <ConfirmDeleteDialog
+            v-if="auth.isAuthenticated"
+            :visible="selectedEvent !== null"
+            :title="t('spa.event.delete.title')"
+            :confirmation="
+                t('spa.event.delete.confirm', {
+                    name: selectedEvent?.name ?? '',
+                })
+            "
+            :cancel-label="t('spa.event.delete.cancel')"
+            :action-label="t('spa.event.delete.action')"
+            :pending="eventDeleting"
+            @cancel="selectedEvent = null"
+            @confirm="deleteCurrentEvent"
         />
     </template>
 </template>

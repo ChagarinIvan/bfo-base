@@ -15,8 +15,8 @@ final readonly class ProtocolPathResolver
         return "{$date->format('Y')}/{$date->format('Y-m-d')}_" . Str::snake($name) . "@@$extension";
     }
 
-    public function fromInput(EventInput $input): string
+    public function fromInput(EventInput $input, Protocol $protocol): string
     {
-        return $this->protocolPath($input->info->date, $input->info->name, $input->protocol->extension);
+        return $this->protocolPath($input->info->date, $input->info->name, $protocol->extension);
     }
 }

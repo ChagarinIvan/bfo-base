@@ -8,7 +8,7 @@ use App\Application\Dto\Auth\UserId;
 use App\Application\Dto\Event\EventProtocolDto;
 use App\Application\Dto\Event\UpdateEventDto;
 use App\Domain\Event\EventInfo;
-use App\Domain\Event\Protocol;
+use App\Domain\Event\Protocol\ProtocolSource;
 use App\Domain\Event\UpdateInput;
 use Carbon\Carbon;
 
@@ -33,19 +33,15 @@ final readonly class UpdateEvent
 
     public function input(): UpdateInput
     {
-        return new UpdateInput(
-            info: $this->info(),
-            protocol: $this->protocolInput(),
-        );
+        return new UpdateInput($this->info());
     }
 
-    private function protocolInput(): ?Protocol
+    public function protocolSource(): ?ProtocolSource
     {
-        return $this->dto->protocol instanceof EventProtocolDto
-            ? new Protocol(
-                $this->dto->protocol->content,
-                $this->dto->protocol->extension,
-            )
+        $protocol = $this->dto->protocol;
+
+        return $protocol instanceof EventProtocolDto
+            ? new ProtocolSource($protocol->protocol, $protocol->url)
             : null;
     }
 
