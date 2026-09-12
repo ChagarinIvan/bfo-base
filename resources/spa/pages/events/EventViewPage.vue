@@ -106,13 +106,22 @@ function scrollToTargetProtocolLine(
 function scheduleTargetProtocolLineScroll(): void {
     if (targetScrolled || !route.hash.startsWith('#protocol-line-')) return
 
-    window.setTimeout(() => {
+    let attempts = 0
+    const scrollWhenRendered = (): void => {
         const target = document.getElementById(route.hash.slice(1))
-        if (!target || targetScrolled) return
+        if (target && !targetScrolled) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'center' })
+            targetScrolled = true
+            return
+        }
 
-        target.scrollIntoView({ behavior: 'smooth', block: 'center' })
-        targetScrolled = true
-    })
+        attempts++
+        if (attempts < 20 && !targetScrolled) {
+            window.setTimeout(scrollWhenRendered, 50)
+        }
+    }
+
+    window.setTimeout(scrollWhenRendered)
 }
 
 async function loadLines(
