@@ -142,7 +142,7 @@ function eventUrl(line: ProtocolLine): string {
         line.eventId +
         '?distanceId=' +
         line.distanceId +
-        '#protocol-line-' +
+        '#' +
         line.id
     )
 }

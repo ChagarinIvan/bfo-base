@@ -204,7 +204,7 @@ describe('event view page', () => {
             value: scrollIntoView,
         })
         route.query = { distanceId: '7' }
-        route.hash = '#protocol-line-11'
+        route.hash = '#11'
 
         const wrapper = mount(EventViewPage, {
             attachTo: document.body,
@@ -219,9 +219,9 @@ describe('event view page', () => {
             page: 1,
             perPage: 100,
         })
-        expect(wrapper.find('#protocol-line-11').exists()).toBe(true)
-        expect(document.getElementById('protocol-line-11')).not.toBeNull()
-        expect(document.getElementById('protocol-line-11')?.scrollIntoView).toBe(
+        expect(wrapper.find('#11').exists()).toBe(true)
+        expect(document.getElementById('11')).not.toBeNull()
+        expect(document.getElementById('11')?.scrollIntoView).toBe(
             scrollIntoView,
         )
         expect(scrollIntoView).toHaveBeenCalledWith({
