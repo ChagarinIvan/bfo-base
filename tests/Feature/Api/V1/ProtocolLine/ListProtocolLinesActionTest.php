@@ -147,7 +147,7 @@ final class ListProtocolLinesActionTest extends TestCase
     }
 
     #[Test]
-    public function it_orders_selected_distance_protocol_lines_by_place_time_and_id(): void
+    public function it_orders_selected_distance_protocol_lines_by_protocol_insert_order(): void
     {
         $person = $this->createPerson();
         $firstPlace = $this->createProtocolLine($person, 'Spring Cup', '2026-05-10', [
@@ -177,6 +177,13 @@ final class ListProtocolLinesActionTest extends TestCase
             'time' => '00:30:00',
         ]);
         ProtocolLine::factory()->createOne([
+            'id' => 15,
+            'distance_id' => $firstPlace->distance_id,
+            'person_id' => $person->id,
+            'place' => 0,
+            'time' => null,
+        ]);
+        ProtocolLine::factory()->createOne([
             'id' => 20,
             'distance_id' => $firstPlace->distance_id,
             'person_id' => $person->id,
@@ -186,11 +193,12 @@ final class ListProtocolLinesActionTest extends TestCase
 
         $this->getJson("/api/v1/protocol-lines?distanceId={$firstPlace->distance_id}&withClub=1")
             ->assertOk()
-            ->assertJsonPath('0.id', '40')
+            ->assertJsonPath('0.id', '5')
             ->assertJsonPath('1.id', '10')
-            ->assertJsonPath('2.id', '5')
-            ->assertJsonPath('3.id', '30')
-            ->assertJsonPath('4.id', '20')
+            ->assertJsonPath('2.id', '15')
+            ->assertJsonPath('3.id', '20')
+            ->assertJsonPath('4.id', '30')
+            ->assertJsonPath('5.id', '40')
         ;
     }
 
