@@ -16,7 +16,7 @@ final readonly class DistanceAssembler
             groupName: $distance->group->name,
             length: $distance->length,
             points: $distance->points,
-            disqual: $distance->disqual,
+            disqual: (bool) $distance->disqual,
         );
     }
 }
