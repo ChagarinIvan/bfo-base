@@ -92,7 +92,7 @@ class ProtocolLine extends AggregatedModel
         $this->prepared_line = PersonsIdentService::makeIdentLine($this->lastname, $this->firstname, $this->year ? (int)$this->year : null);
 
         //чистим разряды
-        $this->rank = trim($this->rank);
+        $this->rank = trim((string) ($this->rank ?? ''));
         $this->complete_rank = $completeRank;
         $this->distance_id = $distanceId;
     }
