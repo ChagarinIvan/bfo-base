@@ -27,7 +27,7 @@ final readonly class UniteEvents
     {
         return new Criteria([
             'competitionId' => $this->competitionId,
-            'ids' => $this->eventIds(),
+            'ids' => $this->input->eventIds,
         ]);
     }
 

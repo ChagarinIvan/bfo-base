@@ -62,5 +62,4 @@ describe('events API', () => {
         expect((creation?.[1] as FormData).get('url')).toBe(payload.url)
         expect(api.put).toHaveBeenCalledWith('/events/5', expect.any(FormData))
     })
-
 })

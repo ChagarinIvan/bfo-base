@@ -52,7 +52,6 @@ export async function uniteEvents(
     ).data
 }
 
-
 export async function getEvent(id: string): Promise<Event> {
     return (await api.get<Event>(`/events/${id}`)).data
 }

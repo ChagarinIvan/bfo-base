@@ -7,6 +7,7 @@ namespace Tests\Domain\Event\Factory;
 use App\Domain\Auth\Impression;
 use App\Domain\Event\Event;
 use App\Domain\Event\Factory\EventFactory;
+use App\Domain\Event\Factory\EventInput;
 use App\Domain\Event\Factory\UniteFactory;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
@@ -21,16 +22,16 @@ final class UniteFactoryTest extends TestCase
         $first = $this->sourceEvent('First');
         $second = $this->sourceEvent('Second');
         $newEvent = new Event;
+        $input = null;
         $factory = $this->createMock(EventFactory::class);
         $factory->expects($this->once())
             ->method('create')
-            ->with($this->callback(
-                static fn ($input): bool =>
-                $input->info->name === 'First + Second'
-                && $input->competitionId === 9
-                && $input->userId === 4
-            ), null)
-            ->willReturn($newEvent);
+            ->with($this->isInstanceOf(EventInput::class), null)
+            ->willReturnCallback(static function (EventInput $eventInput) use (&$input, $newEvent): Event {
+                $input = $eventInput;
+
+                return $newEvent;
+            });
 
         $uniteFactory = new UniteFactory($factory);
 
@@ -41,6 +42,10 @@ final class UniteFactoryTest extends TestCase
         );
 
         $this->assertSame($newEvent, $result);
+        $this->assertInstanceOf(EventInput::class, $input);
+        $this->assertSame('First + Second', $input->info->name);
+        $this->assertSame(9, $input->competitionId);
+        $this->assertSame(4, $input->userId);
     }
 
     private function sourceEvent(string $name): Event

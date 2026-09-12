@@ -17,7 +17,6 @@ use App\Domain\Shared\Criteria;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
 final class AllEventsServiceTest extends TestCase
@@ -46,10 +45,10 @@ final class AllEventsServiceTest extends TestCase
             ->willReturn(new Collection([$event]))
         ;
 
-        $result = (new AllEventsService(
+        $result = new AllEventsService(
             $events,
             new EventAssembler(new AuthAssembler),
-        ))->execute(new AllEvents(new SearchEventDto(
+        )->execute(new AllEvents(new SearchEventDto(
             competitionId: '3',
             withCompetition: '1',
         )));

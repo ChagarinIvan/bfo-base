@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Application\Service\Event;
 
 use App\Application\Dto\Auth\AuthAssembler;
+use App\Application\Dto\Auth\UserId;
 use App\Application\Dto\Event\EventAssembler;
 use App\Application\Dto\Event\UniteEventsDto;
 use App\Application\Service\Event\UniteEvents;
@@ -19,6 +20,7 @@ use App\Domain\Event\Factory\UniteFactory;
 use App\Domain\Event\UniteEventDataService;
 use App\Domain\Shared\Criteria;
 use App\Domain\Shared\DummyTransactional;
+use App\Domain\Shared\FrozenClock;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use PHPUnit\Framework\Attributes\Test;
@@ -54,15 +56,15 @@ final class UniteEventsServiceTest extends TestCase
         $service = new UniteEventsService(
             $events,
             new UniteFactory($newEventFactory),
-            new UniteEventDataService($this->createMock(DistanceRepository::class)),
-            new \App\Domain\Shared\FrozenClock(Carbon::parse('2026-05-11')),
+            new UniteEventDataService($this->createStub(DistanceRepository::class)),
+            new FrozenClock(Carbon::parse('2026-05-11')),
             new EventAssembler(new AuthAssembler),
             new DummyTransactional,
         );
 
         $input = new UniteEventsDto;
         $input->eventIds = [1, 2];
-        $result = $service->execute(new UniteEvents(9, $input, new \App\Application\Dto\Auth\UserId(4)));
+        $result = $service->execute(new UniteEvents(9, $input, new UserId(4)));
 
         $this->assertSame('First + Second', $result->name);
     }
