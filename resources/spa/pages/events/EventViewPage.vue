@@ -64,6 +64,7 @@ const hasPoints = computed(() =>
 )
 const hasVk = computed(() => lines.value.some((line) => line.vk))
 let targetScrolled = false
+let targetScrollTimer: number | undefined
 const debouncedNameSearch = debounce(() => {
     void loadLines(1)
 })
@@ -88,14 +89,19 @@ function protocolLineAnchor(id: string): string {
     return 'protocol-line-' + id
 }
 
+function targetProtocolLineHash(): string {
+    return window.location.hash || route.hash
+}
+
 function scrollToTargetProtocolLine(
     element: Element | ComponentPublicInstance | null,
     id: string,
 ): void {
-    if (targetScrolled || !route.hash.startsWith('#protocol-line-')) return
+    const hash = targetProtocolLineHash()
+    if (targetScrolled || !hash.startsWith('#protocol-line-')) return
 
     const target = element instanceof Element ? element : element?.$el
-    if (route.hash.slice(1) !== protocolLineAnchor(id) || !(target instanceof Element)) {
+    if (hash.slice(1) !== protocolLineAnchor(id) || !(target instanceof Element)) {
         return
     }
 
@@ -104,24 +110,30 @@ function scrollToTargetProtocolLine(
 }
 
 function scheduleTargetProtocolLineScroll(): void {
-    if (targetScrolled || !route.hash.startsWith('#protocol-line-')) return
+    const hash = targetProtocolLineHash()
+    if (targetScrolled || !hash.startsWith('#protocol-line-')) return
+
+    if (targetScrollTimer !== undefined) {
+        window.clearInterval(targetScrollTimer)
+    }
 
     let attempts = 0
-    const scrollWhenRendered = (): void => {
-        const target = document.getElementById(route.hash.slice(1))
+    targetScrollTimer = window.setInterval(() => {
+        const target = document.getElementById(hash.slice(1))
         if (target && !targetScrolled) {
             target.scrollIntoView({ behavior: 'smooth', block: 'center' })
             targetScrolled = true
+            window.clearInterval(targetScrollTimer)
+            targetScrollTimer = undefined
             return
         }
 
         attempts++
-        if (attempts < 20 && !targetScrolled) {
-            window.setTimeout(scrollWhenRendered, 50)
+        if (attempts >= 100) {
+            window.clearInterval(targetScrollTimer)
+            targetScrollTimer = undefined
         }
-    }
-
-    window.setTimeout(scrollWhenRendered)
+    }, 50)
 }
 
 async function loadLines(
@@ -210,7 +222,12 @@ watch(
     { immediate: true },
 )
 
-onBeforeUnmount(() => debouncedNameSearch.cancel())
+onBeforeUnmount(() => {
+    debouncedNameSearch.cancel()
+    if (targetScrollTimer !== undefined) {
+        window.clearInterval(targetScrollTimer)
+    }
+})
 </script>
 
 <template>
