@@ -73,6 +73,35 @@ final class EventManagementActionTest extends TestCase
     }
 
     #[Test]
+    public function it_unites_events_without_a_protocol_file(): void
+    {
+        Sanctum::actingAs($this->createUser());
+        $competition = Competition::factory()->createOne();
+        /** @var Event $firstEvent */
+        $firstEvent = Event::factory()->createOne([
+            'competition_id' => $competition->getKey(),
+            'date' => '2026-05-10',
+        ]);
+        /** @var Event $secondEvent */
+        $secondEvent = Event::factory()->createOne([
+            'competition_id' => $competition->getKey(),
+            'date' => '2026-05-11',
+        ]);
+
+        $this->postJson("/api/v1/competitions/{$competition->getKey()}/events/unite", [
+            'eventIds' => [$firstEvent->getKey(), $secondEvent->getKey()],
+        ])
+            ->assertCreated()
+            ->assertJsonPath('competitionId', (string) $competition->getKey())
+        ;
+
+        $this->assertDatabaseHas('events', [
+            'name' => $firstEvent->name . ' + ' . $secondEvent->name,
+            'file' => '',
+        ]);
+    }
+
+    #[Test]
     public function it_requires_one_valid_replacement_protocol_source(): void
     {
         Sanctum::actingAs($this->createUser());

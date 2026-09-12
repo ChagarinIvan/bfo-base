@@ -13,6 +13,9 @@ document.title = 'OrientBase'
 createApp(App)
     .use(createPinia())
     .use(router)
-    .use(PrimeVue, { theme: { preset: Aura } })
+    .use(PrimeVue, {
+        locale: { firstDayOfWeek: 1 },
+        theme: { preset: Aura },
+    })
     .use(ToastService)
     .mount('#app')

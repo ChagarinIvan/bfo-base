@@ -46,6 +46,7 @@ final class UniteFactoryTest extends TestCase
         $this->assertSame('First + Second', $input->info->name);
         $this->assertSame(9, $input->competitionId);
         $this->assertSame(4, $input->userId);
+        $this->assertSame('', $input->file);
     }
 
     private function sourceEvent(string $name): Event

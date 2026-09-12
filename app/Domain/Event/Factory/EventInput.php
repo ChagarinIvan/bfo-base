@@ -12,7 +12,7 @@ final readonly class EventInput
         public EventInfo $info,
         public int $competitionId,
         public int $userId,
-        public ?string $file = null,
+        public string $file = '',
     ) {
     }
 

@@ -75,7 +75,6 @@ function onInput(
             :disabled="disabled"
             :required="required"
             date-format="yy-mm-dd"
-            :first-day-of-week="1"
             placeholder="YYYY-MM-DD"
             show-icon
             @update:model-value="onInput"
