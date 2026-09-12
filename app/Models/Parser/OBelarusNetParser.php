@@ -15,6 +15,7 @@ use function explode;
 use function implode;
 use function in_array;
 use function is_numeric;
+use function mb_check_encoding;
 use function mb_convert_encoding;
 use function mb_strtolower;
 use function preg_match;
@@ -22,6 +23,7 @@ use function preg_replace;
 use function preg_split;
 use function str_contains;
 use function str_replace;
+use function str_starts_with;
 use function strpos;
 use function substr;
 use function trim;
@@ -32,15 +34,17 @@ class OBelarusNetParser extends AbstractParser
     {
         $doc = new DOMDocument();
         $content = $file;
+        if (!mb_check_encoding($content, 'UTF-8')) {
+            $content = mb_convert_encoding($content, 'UTF-8', 'Windows-1251');
+        }
         $content = str_replace(["&nbsp;", " "], ' ', $content);
-        @$doc->loadHTML($content);
+        @$doc->loadHTML('<?xml encoding="UTF-8">' . $content);
         $xpath = new DOMXPath($doc);
         $preNodes = $xpath->query('//pre');
         $linesList = new Collection();
         foreach ($preNodes as $node) {
             $text = trim($node->nodeValue);
             $text = trim($text, '-');
-            $text = mb_convert_encoding($text, 'iso-8859-1', 'utf-8');
             $text = trim($text);
             if (!str_contains($text, 'амилия')) {
                 continue;
@@ -49,7 +53,6 @@ class OBelarusNetParser extends AbstractParser
             $distancePoints = 0;
             $groupNode = $xpath->query('preceding::h2[1]', $node);
             $groupName = $groupNode[0]->nodeValue;
-            $groupName = mb_convert_encoding($groupName, 'iso-8859-1', 'utf-8');
             if (str_contains($groupName, ',')) {
                 $groupName = substr($groupName, 0, strpos($groupName, ','));
             }
@@ -188,6 +191,9 @@ class OBelarusNetParser extends AbstractParser
         }
         if ($column === 'time') {
             $time = $lineData[$fieldsCount - $indent++];
+            if (str_starts_with($time, 'пп.')) {
+                return null;
+            }
             if (preg_match('#\w\.\w\.\d\d\.\d\d#u', $time)) {
                 return null;
             }
