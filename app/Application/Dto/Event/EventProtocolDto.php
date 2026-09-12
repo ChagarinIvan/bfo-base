@@ -15,8 +15,8 @@ final class EventProtocolDto extends AbstractDto
     public static function requestValidationRules(): array
     {
         return [
-            'protocol' => 'required_without_all:url',
-            'url' => 'required_without_all:protocol',
+            'protocol' => ['required_without_all:url', 'file', 'prohibits:url'],
+            'url' => ['required_without_all:protocol', 'url', 'prohibits:protocol'],
         ];
     }
 

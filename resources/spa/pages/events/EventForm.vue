@@ -6,6 +6,7 @@ import InputText from 'primevue/inputtext'
 import Message from 'primevue/message'
 import Textarea from 'primevue/textarea'
 import type { EventFormRequest } from '../../api/types'
+import { t } from '../../i18n'
 
 const props = withDefaults(
     defineProps<{
@@ -53,7 +54,7 @@ function selectProtocol(event: { files: File[] }): void {
 function submit(): void {
     localError.value = ''
     if (props.sourceRequired && !form.protocol && !form.url) {
-        localError.value = 'Дадайце файл пратаколу або спасылку.'
+        localError.value = t('spa.event.form.source_required')
         return
     }
     emit('submit', { ...form })
@@ -63,14 +64,16 @@ function submit(): void {
 <template>
     <form class="spa-form" @submit.prevent="submit">
         <div class="form-field">
-            <label for="event-name">Назва</label>
+            <label for="event-name">{{ t('spa.event.form.name') }}</label>
             <InputText id="event-name" v-model="form.name" required />
             <small v-if="fieldError('name')" class="field-error">{{
                 fieldError('name')
             }}</small>
         </div>
         <div class="form-field">
-            <label for="event-description">Апісанне</label>
+            <label for="event-description">{{
+                t('spa.event.form.description')
+            }}</label>
             <Textarea
                 id="event-description"
                 v-model="form.description"
@@ -82,7 +85,7 @@ function submit(): void {
             }}</small>
         </div>
         <div class="form-field">
-            <label for="event-date">Дата</label>
+            <label for="event-date">{{ t('spa.event.form.date') }}</label>
             <InputText
                 id="event-date"
                 v-model="form.date"
@@ -94,11 +97,11 @@ function submit(): void {
             }}</small>
         </div>
         <div class="form-field">
-            <label>Пратакол</label>
+            <label>{{ t('spa.event.form.protocol') }}</label>
             <FileUpload
                 mode="basic"
                 name="protocol"
-                choose-label="Выбраць файл"
+                :choose-label="t('spa.event.form.choose_file')"
                 :auto="false"
                 @select="selectProtocol"
             />
@@ -108,7 +111,7 @@ function submit(): void {
             }}</small>
         </div>
         <div class="form-field">
-            <label for="event-url">Спасылка OBelarus.net</label>
+            <label for="event-url">{{ t('spa.event.form.url') }}</label>
             <InputText
                 id="event-url"
                 v-model="form.url"

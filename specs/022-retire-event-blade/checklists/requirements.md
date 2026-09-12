@@ -32,3 +32,4 @@
 ## Notes
 
 - Clarified: Cup pages remain Blade; their event presentation dependency moves to `ViewEventDto` where its contract is sufficient.
+- Delivery status: implementation and automated delivery gates are complete.

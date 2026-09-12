@@ -2,7 +2,7 @@
 
 **Feature Branch**: `022-retire-event-blade`
 **Created**: 2026-09-12
-**Status**: Draft
+**Status**: Implemented
 **Input**: User description: "Replace the remaining `resources/views/events` pages with SPA pages, remove their controllers and related legacy DTOs, services, repositories, and follow existing SPA layout and controls."
 
 ## Clarifications

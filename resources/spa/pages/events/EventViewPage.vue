@@ -216,7 +216,7 @@ async function deleteCurrentEvent(): Promise<void> {
         await deleteEvent(event.value.id)
         await router.push(`/app/competitions/${competitionId}`)
     } catch {
-        error.value = 'Не атрымалася выдаліць этап.'
+        error.value = t('spa.event.delete.error')
     } finally {
         deleting.value = false
         deleteDialogVisible.value = false
@@ -301,7 +301,7 @@ onBeforeUnmount(() => {
                     />
                     <ActionButton
                         icon="pi pi-trash"
-                        label="Выдаліць"
+                        :label="t('spa.event.delete.action')"
                         severity="danger"
                         @click="deleteDialogVisible = true"
                     />
@@ -440,10 +440,10 @@ onBeforeUnmount(() => {
         <ConfirmDeleteDialog
             v-if="auth.isAuthenticated"
             :visible="deleteDialogVisible"
-            title="Выдаліць этап?"
-            :confirmation="`Сапраўды выдаліць «${event.name}»?`"
-            cancel-label="Скасаваць"
-            action-label="Выдаліць"
+            :title="t('spa.event.delete.title')"
+            :confirmation="t('spa.event.delete.confirm', { name: event.name })"
+            :cancel-label="t('spa.event.delete.cancel')"
+            :action-label="t('spa.event.delete.action')"
             :pending="deleting"
             @cancel="deleteDialogVisible = false"
             @confirm="deleteCurrentEvent"

@@ -7,8 +7,10 @@ import { useToast } from 'primevue/usetoast'
 import { useRoute, useRouter } from 'vue-router'
 import { getEvent, updateEvent } from '../../api/events'
 import type { ApiErrorResponse, Event, EventFormRequest } from '../../api/types'
+import { t } from '../../i18n'
 import { applyFieldErrors } from '../competitions/competitionModels'
 import EventForm from './EventForm.vue'
+import { eventErrorMessage } from './eventModels'
 
 const route = useRoute()
 const router = useRouter()
@@ -23,7 +25,7 @@ async function load(): Promise<void> {
     try {
         event.value = await getEvent(String(route.params.eventId))
     } catch {
-        error.value = 'Не атрымалася загрузіць этап.'
+        error.value = t('spa.event.edit.load_error')
     } finally {
         loading.value = false
     }
@@ -35,13 +37,17 @@ async function submit(form: EventFormRequest): Promise<void> {
     Object.keys(fieldErrors).forEach((field) => delete fieldErrors[field])
     try {
         const updated = await updateEvent(String(route.params.eventId), form)
-        toast.add({ severity: 'success', summary: 'Этап зменены.', life: 3000 })
+        toast.add({
+            severity: 'success',
+            summary: t('spa.event.edit.success'),
+            life: 3000,
+        })
         await router.push(`/app/events/${updated.id}`)
     } catch (exception: unknown) {
         const response = (exception as AxiosError<ApiErrorResponse>).response
         if (response?.status === 422)
             applyFieldErrors(response.data.errors, fieldErrors)
-        error.value = 'Не атрымалася змяніць этап.'
+        error.value = eventErrorMessage(exception, 'spa.event.edit.error')
     } finally {
         pending.value = false
     }
@@ -51,18 +57,18 @@ onMounted(load)
 </script>
 
 <template>
-    <Message v-if="loading" severity="info" :closable="false"
-        >Загрузка этапу…</Message
-    >
+    <Message v-if="loading" severity="info" :closable="false">{{
+        t('spa.competitions.loading')
+    }}</Message>
     <Message v-else-if="error && !event" severity="error" :closable="false">{{
         error
     }}</Message>
     <Card v-else-if="event" class="form-card">
-        <template #title>Рэдагаванне этапа</template>
+        <template #title>{{ t('spa.event.edit.title') }}</template>
         <template #content
             ><EventForm
                 :initial-value="event"
-                submit-label="Захаваць"
+                :submit-label="t('spa.event.edit.submit')"
                 :pending="pending"
                 :errors="fieldErrors"
                 :error="error"

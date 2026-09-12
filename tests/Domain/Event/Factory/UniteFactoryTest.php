@@ -21,7 +21,7 @@ final class UniteFactoryTest extends TestCase
     {
         $first = $this->sourceEvent('First');
         $second = $this->sourceEvent('Second');
-        $newEvent = new Event;
+        $newEvent = $this->createStub(Event::class);
         $input = null;
         $factory = $this->createMock(EventFactory::class);
         $factory->expects($this->once())
@@ -50,10 +50,18 @@ final class UniteFactoryTest extends TestCase
 
     private function sourceEvent(string $name): Event
     {
-        $event = new Event;
-        $event->name = $name;
-        $event->date = Carbon::parse('2026-05-10');
-        $event->setRelation('protocolLines', new Collection);
+        $event = $this->createMock(Event::class);
+        $attributes = [
+            'name' => $name,
+            'date' => Carbon::parse('2026-05-10'),
+        ];
+        $event->method('__get')->willReturnCallback(
+            static fn (string $key): mixed => $attributes[$key] ?? null,
+        );
+        $event->method('getAttribute')->willReturnCallback(
+            static fn (string $key): mixed => $attributes[$key] ?? null,
+        );
+        $event->method('__isset')->willReturn(true);
 
         return $event;
     }

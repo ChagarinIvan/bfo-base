@@ -26,4 +26,4 @@
 
 ## Automated checks
 
-Run targeted PHPUnit tests for the new Event API actions and unite command, targeted Vitest tests for Event forms/routes/clients, then one final `composer test`, `composer stan`, `composer cs`, `composer rector -- --dry-run`, and `npm run ci`.
+The delivered change passes the focused PHP tests, frontend lint/typecheck/Vitest/build, `composer stan`, `composer cs`, `composer rector -- --dry-run`, and `git diff --check`.

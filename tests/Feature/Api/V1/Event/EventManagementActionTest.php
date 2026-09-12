@@ -8,6 +8,7 @@ use App\Domain\Competition\Competition;
 use App\Domain\Event\Event;
 use App\Infrastructure\Sanctum\SanctumUser;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Laravel\Sanctum\Sanctum;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -69,6 +70,27 @@ final class EventManagementActionTest extends TestCase
             'active' => false,
             'updated_by' => $user->id,
         ]);
+    }
+
+    #[Test]
+    public function it_requires_one_valid_replacement_protocol_source(): void
+    {
+        Sanctum::actingAs($this->createUser());
+        $competition = Competition::factory()->createOne();
+        $event = Event::factory()->createOne(['competition_id' => $competition->getKey()]);
+        $data = [
+            'name' => 'Updated stage',
+            'description' => 'Updated description',
+            'date' => '2026-05-11',
+            'protocol' => UploadedFile::fake()->create('protocol.html', 10, 'text/html'),
+            'url' => 'https://obelarus.net/protocol/1',
+        ];
+
+        $this->put("/api/v1/events/{$event->getKey()}", $data)
+            ->assertUnprocessable()
+            ->assertJsonFragment(['field' => 'protocol'])
+            ->assertJsonFragment(['field' => 'url'])
+        ;
     }
 
     #[Test]

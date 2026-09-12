@@ -11,7 +11,6 @@ use App\Application\Dto\Event\UniteEventsDto;
 use App\Application\Service\Event\UniteEvents;
 use App\Application\Service\Event\UniteEventsService;
 use App\Domain\Auth\Impression;
-use App\Domain\Distance\DistanceRepository;
 use App\Domain\Event\Event;
 use App\Domain\Event\EventRepository;
 use App\Domain\Event\EventResources;
@@ -42,13 +41,16 @@ final class UniteEventsServiceTest extends TestCase
             )
             ->willReturn(new Collection([$first, $second]));
 
-        $newEvent = new Event;
-        $newEvent->name = 'First + Second';
-        $newEvent->description = "Аб'яднанне этапаў: First + Second";
-        $newEvent->competition_id = 9;
-        $newEvent->date = Carbon::parse('2026-05-10');
-        $newEvent->created = new Impression(Carbon::parse('2026-05-11'), 4);
-        $newEvent->updated = $newEvent->created;
+        $impression = new Impression(Carbon::parse('2026-05-11'), 4);
+        $newEvent = $this->mockEvent([
+            'name' => 'First + Second',
+            'description' => "Аб'яднанне этапаў: First + Second",
+            'competition_id' => 9,
+            'date' => Carbon::parse('2026-05-10'),
+            'created' => $impression,
+            'updated' => $impression,
+            'protocol_lines_count' => null,
+        ]);
         $newEventFactory = $this->createMock(EventFactory::class);
         $newEventFactory->method('create')->willReturn($newEvent);
         $events->expects($this->once())->method('add')->with($newEvent);
@@ -56,7 +58,7 @@ final class UniteEventsServiceTest extends TestCase
         $service = new UniteEventsService(
             $events,
             new UniteFactory($newEventFactory),
-            new UniteEventDataService($this->createStub(DistanceRepository::class)),
+            $this->createStub(UniteEventDataService::class),
             new FrozenClock(Carbon::parse('2026-05-11')),
             new EventAssembler(new AuthAssembler),
             new DummyTransactional,
@@ -71,12 +73,24 @@ final class UniteEventsServiceTest extends TestCase
 
     private function sourceEvent(int $id, string $name): Event
     {
-        $event = new Event;
-        $event->id = $id;
-        $event->name = $name;
-        $event->competition_id = 9;
-        $event->date = Carbon::parse('2026-05-10');
-        $event->setRelation('protocolLines', new Collection);
+        return $this->mockEvent([
+            'id' => $id,
+            'name' => $name,
+            'competition_id' => 9,
+            'date' => Carbon::parse('2026-05-10'),
+        ]);
+    }
+
+    /** @param array<string, mixed> $attributes */
+    private function mockEvent(array $attributes): Event
+    {
+        $event = $this->createMock(Event::class);
+        $event->method('getAttribute')->willReturnCallback(
+            static fn (string $key): mixed => $attributes[$key] ?? null,
+        );
+        $event->method('__get')->willReturnCallback(
+            static fn (string $key): mixed => $attributes[$key] ?? null,
+        );
 
         return $event;
     }

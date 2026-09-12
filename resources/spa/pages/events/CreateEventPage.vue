@@ -6,7 +6,9 @@ import { useToast } from 'primevue/usetoast'
 import { useRoute, useRouter } from 'vue-router'
 import { createEvent } from '../../api/events'
 import type { ApiErrorResponse, EventFormRequest } from '../../api/types'
+import { t } from '../../i18n'
 import { applyFieldErrors } from '../competitions/competitionModels'
+import { eventErrorMessage } from './eventModels'
 import EventForm from './EventForm.vue'
 
 const route = useRoute()
@@ -27,7 +29,7 @@ async function submit(form: EventFormRequest): Promise<void> {
         )
         toast.add({
             severity: 'success',
-            summary: 'Этап створаны.',
+            summary: t('spa.event.create.success'),
             life: 3000,
         })
         await router.push(`/app/events/${event.id}`)
@@ -35,7 +37,7 @@ async function submit(form: EventFormRequest): Promise<void> {
         const response = (exception as AxiosError<ApiErrorResponse>).response
         if (response?.status === 422)
             applyFieldErrors(response.data.errors, fieldErrors)
-        error.value = 'Не атрымалася стварыць этап.'
+        error.value = eventErrorMessage(exception, 'spa.event.create.error')
     } finally {
         pending.value = false
     }
@@ -44,10 +46,10 @@ async function submit(form: EventFormRequest): Promise<void> {
 
 <template>
     <Card class="form-card">
-        <template #title>Дадаць этап</template>
+        <template #title>{{ t('spa.event.create.title') }}</template>
         <template #content
             ><EventForm
-                submit-label="Стварыць"
+                :submit-label="t('spa.event.create.submit')"
                 :pending="pending"
                 :errors="fieldErrors"
                 :error="error"

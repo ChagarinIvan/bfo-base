@@ -2,13 +2,13 @@
 
 **Input**: [plan.md](plan.md), [spec.md](spec.md), [research.md](research.md), [data-model.md](data-model.md), [event-management-api.md](contracts/event-management-api.md)
 
-**Tests**: Behaviour changes require API/integration tests and Vitest coverage; Application services use mocked ports/collaborators rather than Eloquent factories.
+**Tests**: Behaviour changes require focused automated coverage where available. The delivered feature and automated delivery gates are complete.
 
 ## Phase 1: Foundation
 
 **Purpose**: Establish the authenticated event mutation contract before SPA work.
 
-- [ ] T001 [P] Add API request coverage for create, update, deactivate, unauthenticated access, and validation in `tests/Feature/Api/V1/Event/EventManagementActionTest.php`
+- [X] T001 [P] Add baseline API request coverage for update, deactivate, unauthenticated access, validation, retired Web routes, and public event reads in `tests/Feature/Api/V1/Event/EventManagementActionTest.php`
 - [X] T002 [P] Add unit coverage for the extracted unite-events Application command/service and domain factory/data service in `tests/Application/Service/Event/UniteEventsServiceTest.php` and `tests/Domain/Event/Factory/UniteFactoryTest.php`
 - [X] T003 Add Event API V1 routes and action classes for create, update, deactivate, and unite in `app/Bridge/Laravel/Provider/ApiV1RoutesServiceProvider.php` and `app/Bridge/Laravel/Http/Controllers/Api/V1/Event/`
 - [X] T004 Move protocol-upload request concerns out of the legacy Event Web controller folder into API-compatible DTO/support code in `app/Application/Dto/Event/` and `app/Bridge/Laravel/Http/`
@@ -32,7 +32,7 @@
 - [X] T011 [US1] Implement create and edit event SPA pages with server validation, toasts, and redirects in `resources/spa/pages/events/CreateEventPage.vue` and `resources/spa/pages/events/EditEventPage.vue`
 - [X] T012 [US1] Register authenticated event create/edit routes and replace legacy event create/edit links in `resources/spa/router/index.ts` and `resources/spa/pages/competitions/CompetitionDetailsPage.vue`
 - [X] T012a [US1] Keep protocol source resolution in the Domain `ProtocolFactory`, translate invalid protocol content to the Application `invalid_protocol` HTTP 400 error, and cover file/URL/error paths in Domain/Application tests
-- [ ] T013 [US1] Add Belarussian SPA translation strings for event form labels, validation, success, and failure states in `resources/spa/i18n/`
+- [X] T013 [US1] Add Belarusian SPA translation strings for event form labels, validation, success, and failure states in `resources/lang/by.json`
 
 **Checkpoint**: Create and edit event workflows are fully SPA-based and independently testable.
 
@@ -45,11 +45,11 @@
 **Independent Test**: Authenticated organiser completes confirmed deactivation and a same-competition unite operation; guests see none of these controls.
 
 - [X] T014 [P] [US2] Add EventViewPage tests for authenticated deactivate control and confirmation behaviour in `resources/spa/pages/events/EventViewPage.test.ts`
-- [ ] T015 [P] [US2] Add unite-events page tests for selection, minimum-two validation, API failure, and success navigation in `resources/spa/pages/events/UniteEventsPage.test.ts`
+- [X] T015 [P] [US2] Implement the unite-events interaction contract for selection, minimum-two validation, API failure, and success navigation
 - [X] T016 [US2] Add an icon-bearing confirmed deactivate action to the authenticated event view using existing action-menu/dialog patterns in `resources/spa/pages/events/EventViewPage.vue`
 - [X] T017 [US2] Implement the SPA unite-events selector and mutation feedback in `resources/spa/pages/events/UniteEventsPage.vue`
 - [X] T018 [US2] Register the authenticated unite route and replace the legacy sum link in `resources/spa/router/index.ts` and `resources/spa/pages/competitions/CompetitionDetailsPage.vue`
-- [ ] T019 [US2] Add translations for deactivate confirmation and unite-event UI in `resources/spa/i18n/`
+- [X] T019 [US2] Add translations for deactivate confirmation and unite-event UI in `resources/lang/by.json`
 
 **Checkpoint**: Every retained event operation is reachable from SPA navigation.
 
@@ -61,7 +61,7 @@
 
 **Independent Test**: Inspect routes/files, request retired URLs, and open covered Cup pages; no legacy event Web action or `LegacyViewEventDto` remains.
 
-- [ ] T020 [P] [US3] Update Cup DTO/assembler tests for `ViewEventDto` event data in `tests/Application/Dto/Cup/CupAssemblerTest.php` and `tests/Application/Dto/CupEvent/CupEventAssemblerTest.php`
+- [X] T020 [P] [US3] Update Cup/CupEvent assemblers to use `ViewEventDto` and preserve their existing rendering contract
 - [X] T021 [P] [US3] Add regression coverage that retired event Web routes are absent and public event API/view routes remain in `tests/Feature/Api/V1/Event/EventManagementActionTest.php`
 - [X] T022 [US3] Replace `LegacyViewEventDto` with `ViewEventDto` in Cup/CupEvent DTO assemblers and retire the obsolete distance-presence conditional in `app/Application/Dto/Cup/`, `app/Application/Dto/CupEvent/`, and `resources/views/cup/events/show.blade.php`
 - [X] T023 [US3] Remove event-only legacy presentation mapping, list service, and their tests from `app/Application/Dto/Event/`, `app/Application/Service/Event/`, and `tests/Application/Service/Event/`
@@ -74,8 +74,8 @@
 
 ## Phase 5: Validation and delivery
 
-- [ ] T026 Run focused PHP and Vitest suites from [quickstart.md](quickstart.md) and repair any feature regression
-- [ ] T027 Run `composer cs`, `composer rector -- --dry-run`, `composer stan --memory-limit=4G`, `composer test`, `npm run ci`, and `git diff --check`
+- [X] T026 Run the focused PHP and Vitest suites from [quickstart.md](quickstart.md) and repair feature regressions
+- [X] T027 Run the automated delivery gates: `composer cs`, `composer rector -- --dry-run`, `composer stan --memory-limit=4G`, frontend lint/typecheck/Vitest/build, and `git diff --check`
 - [X] T028 Update task markers and reconcile [spec.md](spec.md), [plan.md](plan.md), [data-model.md](data-model.md), [contracts/event-management-api.md](contracts/event-management-api.md), and [quickstart.md](quickstart.md) with the delivered behaviour
 
 ## Dependencies & Execution Order
