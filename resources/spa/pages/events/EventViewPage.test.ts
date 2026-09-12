@@ -105,7 +105,7 @@ describe('event view page', () => {
             ],
             headers: {
                 'x-pagination-current-page': '1',
-                'x-pagination-per-page': '20',
+                'x-pagination-per-page': '100',
                 'x-pagination-total': '1',
                 'x-pagination-last-page': '1',
             },
@@ -121,7 +121,7 @@ describe('event view page', () => {
             name: undefined,
             withClub: 1,
             page: 1,
-            perPage: 20,
+            perPage: 100,
         })
         expect(wrapper.find('a[href="/app/persons/5"]').exists()).toBe(true)
         expect(wrapper.find('a[href="/app/clubs/8"]').exists()).toBe(true)
@@ -176,7 +176,7 @@ describe('event view page', () => {
             name: undefined,
             withClub: 1,
             page: 1,
-            perPage: 20,
+            perPage: 100,
         })
 
         getPersonProtocolLines.mockClear()
@@ -193,7 +193,7 @@ describe('event view page', () => {
             name: 'Іва',
             withClub: 1,
             page: 1,
-            perPage: 20,
+            perPage: 100,
         })
     })
 
@@ -217,7 +217,7 @@ describe('event view page', () => {
             name: undefined,
             withClub: 1,
             page: 1,
-            perPage: 20,
+            perPage: 100,
         })
         expect(wrapper.find('#protocol-line-11').exists()).toBe(true)
         expect(document.getElementById('protocol-line-11')).not.toBeNull()

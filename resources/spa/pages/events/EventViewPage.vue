@@ -55,7 +55,7 @@ const error = ref('')
 const name = ref('')
 const pagination = ref<PaginationHeaders>({
     currentPage: 1,
-    perPage: 20,
+    perPage: 100,
     total: 0,
     lastPage: 1,
 })

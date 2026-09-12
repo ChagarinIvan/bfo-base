@@ -70,7 +70,8 @@ A visitor can narrow an event's selected-distance results by an athlete's first 
 - **FR-003**: The event view MUST obtain all distances belonging to the event in one unpaginated list and provide them through a distance selector.
 - **FR-004**: The event view MUST list only protocol lines for the selected event distance, without loading unrelated event or competition details for each line.
 - **FR-005**: The protocol-line list MUST preserve the legacy event table's public result information: serial number, athlete names and links where assigned, raw club name and known-club link, birth year, rank, time, place, complete rank, points, and out-of-competition status when applicable.
-- **FR-006**: The protocol-line list MUST support filtering by athlete first name or last name while retaining the selected distance.
+- **FR-006**: The protocol-line list MUST support a debounced, minimum-three-character filter by athlete first name or last name while retaining the selected distance.
+- **FR-013**: A participation link from the person page MUST open the SPA event view with its distance selected and scroll to the linked protocol-line row when that row is in the initial result page.
 - **FR-007**: A protocol-line response MUST include its raw club name and, when club resolution is requested, the matching club determined by normalized club name.
 - **FR-008**: Authenticated staff MUST see event impressions, an Edit action targeting the existing legacy event edit page, activation-date data where previously visible, and an Actions column linking each protocol line to the existing SPA person-assignment form.
 - **FR-009**: Guests MUST NOT see the staff-only controls or audit information.

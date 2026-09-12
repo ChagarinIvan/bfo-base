@@ -31,6 +31,8 @@
 
 - `eventId` identifies an active event for detail and distance reads.
 - `distanceId` restricts protocol lines to one distance; the SPA only offers IDs returned for its event.
+- Event-distance protocol lines are ordered by non-null place, then non-null time, then id, all ascending.
+- The event result view requests 100 rows initially and supports a distanceId query plus a protocol-line fragment for focused navigation.
 - `name` matches athlete first or last name case-insensitively; blank input is ignored.
 - Club matching normalizes both raw line name and persisted club name via the existing `ClubNameNormalizer`.
 - No lifecycle transition or schema migration is introduced.
