@@ -237,7 +237,9 @@ onBeforeUnmount(() => debouncedFilter.cancel())
                 </template> </Column
             ><Column :header="t('spa.group.details.start')">
                 <template #body="{ data }">
-                    <a :href="`/events/${data.id}`">{{ data.name }}</a>
+                    <RouterLink :to="`/app/events/${data.id}`">
+                        {{ data.name }}
+                    </RouterLink>
                 </template> </Column
             ><Column
                 field="date"

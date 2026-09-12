@@ -103,6 +103,18 @@ function scrollToTargetProtocolLine(
     targetScrolled = true
 }
 
+function scheduleTargetProtocolLineScroll(): void {
+    if (targetScrolled || !route.hash.startsWith('#protocol-line-')) return
+
+    window.setTimeout(() => {
+        const target = document.getElementById(route.hash.slice(1))
+        if (!target || targetScrolled) return
+
+        target.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        targetScrolled = true
+    })
+}
+
 async function loadLines(
     page = 1,
     perPage = pagination.value.perPage,
@@ -125,6 +137,7 @@ async function loadLines(
         })
         lines.value = response.data
         pagination.value = paginationFromHeaders(response.headers)
+        scheduleTargetProtocolLineScroll()
     } finally {
         linesLoading.value = false
     }
