@@ -8,17 +8,7 @@
 нормализовать Windows-1251 OBelarus.net HTML до разбора DOM. Это сохраняет текст заголовка
 каждой группы, поэтому обычные и снятые участники получают правильную группу.
 
-## Summary
-
-[Extract from feature spec: primary requirement + technical approach from research]
-
 ## Technical Context
-
-<!--
-  ACTION REQUIRED: Replace the content in this section with the technical details
-  for the project. The structure here is presented in advisory capacity to guide
-  the iteration process.
--->
 
 **Language/Version**: PHP 8.5, Laravel 13.
 
@@ -67,12 +57,6 @@ specs/023-obelarus-parser-groups/
 ```
 
 ### Source Code (repository root)
-<!--
-  ACTION REQUIRED: Replace the placeholder tree below with the concrete layout
-  for this feature. Delete unused options and expand the chosen structure with
-  real paths (e.g., apps/admin, packages/something). The delivered plan must
-  not include Option labels.
--->
 
 ```text
 app/Models/Parser/
@@ -87,5 +71,3 @@ tests/Models/Parser/
 
 **Structure Decision**: parser-only change in the existing OBelarus.net parser and its
 fixture-driven test suite.
-
-| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient] |

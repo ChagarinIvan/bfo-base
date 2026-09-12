@@ -23,12 +23,12 @@
 
 **Независимый тест**: полный набор parser-тестов проходит с неизменёнными прежними ожиданиями.
 
-- [ ] T006 [US2] Запустить `vendor/bin/phpunit tests/Models/Parser` и устранить только регрессии, связанные с кодировкой OBelarus.net в `app/Models/Parser/OBelarusNetParser.php`.
+- [X] T006 [US2] Запустить `vendor/bin/phpunit tests/Models/Parser` и устранить только регрессии, связанные с кодировкой OBelarus.net в `app/Models/Parser/OBelarusNetParser.php`.
 
 ## Phase 4: Полировка и гейты
 
-- [ ] T007 Выполнить проверки из `specs/023-obelarus-parser-groups/quickstart.md`: `composer stan`, `composer cs` и `git diff --check`.
-- [ ] T008 Сверить `spec.md`, `plan.md`, `tasks.md` и отметить выполненные задачи в `specs/023-obelarus-parser-groups/tasks.md`.
+- [X] T007 Выполнить проверки из `specs/023-obelarus-parser-groups/quickstart.md`: `composer stan`, `composer cs` и `git diff --check`.
+- [X] T008 Сверить `spec.md`, `plan.md`, `tasks.md` и отметить выполненные задачи в `specs/023-obelarus-parser-groups/tasks.md`.
 
 ## Зависимости и порядок
 
