@@ -3,7 +3,6 @@ import {
     computed,
     onBeforeUnmount,
     ref,
-    type ComponentPublicInstance,
     watch,
 } from 'vue'
 import type { AxiosError } from 'axios'
@@ -102,35 +101,10 @@ function targetProtocolLineId(): string | undefined {
         : hash
 }
 
-function scrollToTargetProtocolLine(
-    element: Element | ComponentPublicInstance | null,
-    id: string,
-): void {
-    const targetId = targetProtocolLineId()
-    if (targetScrolled || targetId === undefined) return
-
-    const target = element instanceof Element ? element : element?.$el
-    if (targetId !== id || !(target instanceof Element)) {
-        return
-    }
-
-    console.info('[event-anchor-debug] row ref matched target', {
-        hash: targetProtocolLineHash(),
-        targetId,
-        id,
-    })
-    target.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    targetScrolled = true
-}
-
 function scheduleTargetProtocolLineScroll(): void {
     const targetId = targetProtocolLineId()
     if (targetScrolled || targetId === undefined) return
 
-    console.info('[event-anchor-debug] schedule target search', {
-        hash: targetProtocolLineHash(),
-        targetId,
-    })
     if (targetScrollTimer !== undefined) {
         window.clearInterval(targetScrollTimer)
     }
@@ -141,10 +115,6 @@ function scheduleTargetProtocolLineScroll(): void {
             document.getElementById(targetId) ??
             document.getElementById(protocolLineAnchor(targetId))
         if (target && !targetScrolled) {
-            console.info('[event-anchor-debug] target found; scrolling', {
-                attempts,
-                targetId,
-            })
             target.scrollIntoView({ behavior: 'smooth', block: 'center' })
             targetScrolled = true
             window.clearInterval(targetScrollTimer)
@@ -154,9 +124,6 @@ function scheduleTargetProtocolLineScroll(): void {
 
         attempts++
         if (attempts >= 100) {
-            console.info('[event-anchor-debug] target was not rendered', {
-                targetId,
-            })
             window.clearInterval(targetScrollTimer)
             targetScrollTimer = undefined
         }
@@ -185,10 +152,6 @@ async function loadLines(
         })
         lines.value = response.data
         pagination.value = paginationFromHeaders(response.headers)
-        console.info('[event-anchor-debug] protocol lines loaded', {
-            hash: targetProtocolLineHash(),
-            lineIds: lines.value.map((line) => line.id),
-        })
         scheduleTargetProtocolLineScroll()
     } finally {
         linesLoading.value = false
@@ -382,7 +345,6 @@ onBeforeUnmount(() => {
                         ><template #body="{ data }"
                             ><span
                                 :id="data.id"
-                                :ref="(element) => scrollToTargetProtocolLine(element, data.id)"
                                 >{{ data.serialNumber }}</span
                             ></template
                         ></Column

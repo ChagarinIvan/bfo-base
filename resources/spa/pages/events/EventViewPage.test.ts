@@ -198,6 +198,7 @@ describe('event view page', () => {
     })
 
     it('selects the linked distance and scrolls to the protocol line anchor', async () => {
+        vi.useFakeTimers()
         const scrollIntoView = vi.fn()
         Object.defineProperty(Element.prototype, 'scrollIntoView', {
             configurable: true,
@@ -211,6 +212,7 @@ describe('event view page', () => {
             global: { plugins: [PrimeVue] },
         })
         await flushPromises()
+        await vi.advanceTimersByTimeAsync(50)
 
         expect(getPersonProtocolLines).toHaveBeenLastCalledWith({
             distanceId: '7',
@@ -219,7 +221,6 @@ describe('event view page', () => {
             page: 1,
             perPage: 100,
         })
-        expect(wrapper.find('#11').exists()).toBe(true)
         expect(document.getElementById('11')).not.toBeNull()
         expect(document.getElementById('11')?.scrollIntoView).toBe(
             scrollIntoView,
