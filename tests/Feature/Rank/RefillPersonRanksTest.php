@@ -74,6 +74,42 @@ final class RefillPersonRanksTest extends TestCase
         $this->assertSame($firstHistory, $secondHistory);
     }
 
+    #[Test]
+    public function it_ignores_protocol_lines_from_inactive_events_and_competitions(): void
+    {
+        /** @var Person $person */
+        $person = Person::factory()->createOne(['id' => 1, 'birthday' => '2000-01-01']);
+        /** @var Competition $inactiveCompetition */
+        $inactiveCompetition = Competition::factory()->createOne([
+            'id' => 1,
+            'active' => false,
+            'mass' => false,
+        ]);
+        /** @var Event $event */
+        $event = Event::factory()->createOne([
+            'id' => 1,
+            'competition_id' => $inactiveCompetition->id,
+            'active' => true,
+            'date' => '2026-01-10',
+        ]);
+        Group::factory()->createOne(['id' => 1, 'name' => 'M21']);
+        /** @var Distance $distance */
+        $distance = Distance::factory()->createOne(['id' => 1, 'event_id' => $event->id, 'group_id' => 1]);
+        ProtocolLine::factory()->createOne([
+            'id' => 1,
+            'distance_id' => $distance->id,
+            'person_id' => $person->id,
+            'complete_rank' => 'I',
+            'activate_rank' => null,
+        ]);
+
+        $this->rebuild($person->id);
+
+        $person->refresh();
+        $this->assertSame(Rank::WithoutRank, $person->current_rank);
+        self::assertDatabaseCount('person_rank_histories', 0);
+    }
+
     private function rebuild(int $personId): void
     {
         app(RebuildPersonRanksService::class)->execute(new RebuildPersonRanks($personId, new UserId(1)));

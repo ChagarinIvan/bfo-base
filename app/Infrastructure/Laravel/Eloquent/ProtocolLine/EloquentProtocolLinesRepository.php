@@ -125,13 +125,15 @@ final readonly class EloquentProtocolLinesRepository implements ProtocolLineRepo
         }
 
         if (
-            $criteria->hasOneParam(['dateFrom', 'dateTo', 'year', 'date', 'eventId', 'eventIds', 'massCompetition', 'competitionName', 'personId'])
+            $criteria->hasOneParam(['dateFrom', 'dateTo', 'year', 'date', 'eventId', 'eventIds', 'distanceId', 'distances', 'massCompetition', 'competitionName', 'personId'])
             || array_key_exists('eventDate', $criteria->sorting())
         ) {
             $query
                 ->join('distances', 'distances.id', '=', 'protocol_lines.distance_id')
                 ->join('events', 'events.id', '=', 'distances.event_id')
                 ->join('competitions', 'competitions.id', '=', 'events.competition_id')
+                ->where('events.active', true)
+                ->where('competitions.active', true)
             ;
         }
 

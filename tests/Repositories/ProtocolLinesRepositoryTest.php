@@ -84,6 +84,29 @@ final class ProtocolLinesRepositoryTest extends TestCase
         $this->assertSame(2, ProtocolLine::find(101)->person_id);
     }
 
+    #[Test]
+    public function it_excludes_lines_from_inactive_events_and_competitions(): void
+    {
+        /** @var Person $person */
+        $person = Person::factory()->createOne(['id' => 1, 'active' => true]);
+        Competition::factory()->createOne(['id' => 101, 'active' => true]);
+        Competition::factory()->createOne(['id' => 102, 'active' => false]);
+        Event::factory()->createOne(['id' => 101, 'competition_id' => 101, 'active' => true]);
+        Event::factory()->createOne(['id' => 102, 'competition_id' => 101, 'active' => false]);
+        Event::factory()->createOne(['id' => 103, 'competition_id' => 102, 'active' => true]);
+        Group::factory()->createOne(['id' => 101]);
+        Distance::factory()->createOne(['id' => 101, 'event_id' => 101, 'group_id' => 101]);
+        Distance::factory()->createOne(['id' => 102, 'event_id' => 102, 'group_id' => 101]);
+        Distance::factory()->createOne(['id' => 103, 'event_id' => 103, 'group_id' => 101]);
+        ProtocolLine::factory()->createOne(['id' => 101, 'distance_id' => 101, 'person_id' => $person->id]);
+        ProtocolLine::factory()->createOne(['id' => 102, 'distance_id' => 102, 'person_id' => $person->id]);
+        ProtocolLine::factory()->createOne(['id' => 103, 'distance_id' => 103, 'person_id' => $person->id]);
+
+        $lines = $this->repository->byCriteria(new Criteria(['personId' => $person->id]));
+
+        $this->assertSame([101], $lines->pluck('id')->all());
+    }
+
     private function createProtocolLine(int $id, string $preparedLine): void
     {
         Competition::factory(state: ['id' => 101])->createOne();

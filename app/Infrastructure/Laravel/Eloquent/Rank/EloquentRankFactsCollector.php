@@ -10,6 +10,7 @@ use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\Rank\Rank;
 use App\Domain\Rank\RankNormalizer;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 
 final readonly class EloquentRankFactsCollector implements RankFactsCollector
 {
@@ -22,6 +23,13 @@ final readonly class EloquentRankFactsCollector implements RankFactsCollector
         return ProtocolLine::query()
             ->with(['distance.event.competition'])
             ->where('person_id', $personId)
+            ->whereHas('distance.event', static function (Builder $query): void {
+                $query
+                    ->where('events.active', true)
+                    ->whereHas('competition', static function (Builder $query): void {
+                        $query->where('competitions.active', true);
+                    });
+            })
             ->get()
             ->map(function (ProtocolLine $line): ?RankFact {
                 $rank = $this->normalizer->normalize($line->complete_rank);
