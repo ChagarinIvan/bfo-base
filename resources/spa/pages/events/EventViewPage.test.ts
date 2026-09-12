@@ -3,10 +3,12 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import PrimeVue from 'primevue/config'
 import { describe, expect, it, vi } from 'vitest'
+import ActionButton from '../../components/actions/ActionButton.vue'
 import EventViewPage from './EventViewPage.vue'
 
-const { getEvent, getEventDistances, getPersonProtocolLines } = vi.hoisted(
+const { auth, getEvent, getEventDistances, getPersonProtocolLines } = vi.hoisted(
     () => ({
+        auth: { isAuthenticated: false },
         getEvent: vi.fn(),
         getEventDistances: vi.fn(),
         getPersonProtocolLines: vi.fn(),
@@ -18,7 +20,7 @@ vi.mock('../../api/distances', () => ({ getEventDistances }))
 vi.mock('../../api/protocolLines', () => ({ getPersonProtocolLines }))
 vi.mock('../../api/users', () => ({ getUsers: vi.fn().mockResolvedValue([]) }))
 vi.mock('../../stores/auth', () => ({
-    useAuthStore: () => ({ isAuthenticated: false }),
+    useAuthStore: () => auth,
 }))
 vi.mock('vue-router', () => ({
     RouterLink: { props: ['to'], template: '<a :href="to"><slot /></a>' },
@@ -96,7 +98,29 @@ describe('event view page', () => {
         })
         expect(wrapper.find('a[href="/app/persons/5"]').exists()).toBe(true)
         expect(wrapper.find('a[href="/app/clubs/8"]').exists()).toBe(true)
+        expect(wrapper.find('.competition-details-card').exists()).toBe(true)
+        expect(wrapper.find('.filter-card').exists()).toBe(true)
+        expect(wrapper.find('.events-table').exists()).toBe(true)
         expect(wrapper.text()).not.toContain('Кубкі')
         expect(wrapper.text()).not.toContain('Рэдагаваць')
+    })
+
+    it('uses the standard styled action for assigning a participant', async () => {
+        auth.isAuthenticated = true
+
+        const wrapper = mount(EventViewPage, {
+            global: { plugins: [PrimeVue] },
+        })
+        await flushPromises()
+
+        const assignAction = wrapper
+            .findAllComponents(ActionButton)
+            .find((action) => action.props('label') === 'Прызначыць удзельніка')
+
+        expect(assignAction?.props()).toMatchObject({
+            icon: 'pi pi-user-plus',
+            severity: 'success',
+        })
+        auth.isAuthenticated = false
     })
 })

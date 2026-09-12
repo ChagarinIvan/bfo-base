@@ -10,6 +10,7 @@ import Paginator, { type PageState } from 'primevue/paginator'
 import Select from 'primevue/select'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 import ActionButton from '../../components/actions/ActionButton.vue'
+import FilterPanel from '../../components/FilterPanel.vue'
 import ImpressionDetails from '../../components/ImpressionDetails.vue'
 import { getEventDistances } from '../../api/distances'
 import { getEvent } from '../../api/events'
@@ -131,10 +132,10 @@ watch(
         error
     }}</Message>
     <template v-else-if="event">
-        <Card class="event-details-card">
+        <Card class="competition-details-card">
             <template #title>{{ event.name }}</template>
             <template #content>
-                <table class="event-details-info">
+                <table class="competition-details-info">
                     <tbody>
                         <tr>
                             <th scope="row">Дата</th>
@@ -175,16 +176,19 @@ watch(
                         </tr>
                     </tbody>
                 </table>
-                <ActionButton
-                    v-if="auth.isAuthenticated"
-                    as="a"
-                    :href="`/events/${event.id}/edit`"
-                    label="Рэдагаваць"
-                    icon="pi pi-pencil"
-                />
+                <div v-if="auth.isAuthenticated" class="details-actions">
+                    <ActionButton
+                        as="a"
+                        :href="`/events/${event.id}/edit`"
+                        label="Рэдагаваць"
+                        icon="pi pi-pencil"
+                        severity="secondary"
+                    />
+                </div>
             </template>
         </Card>
 
+        <h2 class="section-title">Вынікі</h2>
         <Message
             v-if="!distances.length"
             severity="secondary"
@@ -193,21 +197,27 @@ watch(
             >Няма дыстанцый.</Message
         >
         <template v-else>
-            <div class="event-results-filters mt-3">
-                <Select
-                    v-model="distanceId"
-                    :options="distances"
-                    option-label="groupName"
-                    option-value="id"
-                    placeholder="Дыстанцыя"
-                    @change="onDistanceChange"
-                />
-                <InputText
-                    v-model="name"
-                    placeholder="Імя або прозвішча"
-                    @change="onNameChange"
-                />
-            </div>
+            <FilterPanel>
+                <div class="filter-field">
+                    <label for="event-distance-filter">Дыстанцыя</label>
+                    <Select
+                        id="event-distance-filter"
+                        v-model="distanceId"
+                        :options="distances"
+                        option-label="groupName"
+                        option-value="id"
+                        @change="onDistanceChange"
+                    />
+                </div>
+                <div class="filter-field">
+                    <label for="event-name-filter">Імя або прозвішча</label>
+                    <InputText
+                        id="event-name-filter"
+                        v-model="name"
+                        @change="onNameChange"
+                    />
+                </div>
+            </FilterPanel>
             <Message
                 v-if="linesLoading"
                 severity="info"
@@ -223,7 +233,7 @@ watch(
                 >Няма вынікаў.</Message
             >
             <template v-else>
-                <DataTable :value="lines" striped-rows class="mt-3">
+                <DataTable :value="lines" striped-rows class="events-table">
                     <Column field="serialNumber" header="#" />
                     <Column field="lastname" header="Прозвішча"
                         ><template #body="{ data }"
@@ -278,7 +288,9 @@ watch(
                             ><ActionButton
                                 as="a"
                                 :href="`/app/protocol-lines/${data.id}/person`"
-                                label="Прызначыць удзельніка" /></template
+                                label="Прызначыць удзельніка"
+                                icon="pi pi-user-plus"
+                                severity="success" /></template
                     ></Column>
                 </DataTable>
                 <Paginator
@@ -286,7 +298,7 @@ watch(
                     :rows="pagination.perPage"
                     :total-records="pagination.total"
                     :rows-per-page-options="[20, 50, 100]"
-                    class="mt-3"
+                    class="competitions-paginator"
                     @page="onPage"
                 />
             </template>
