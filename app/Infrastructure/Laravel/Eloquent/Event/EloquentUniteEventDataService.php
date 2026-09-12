@@ -80,7 +80,7 @@ final readonly class EloquentUniteEventDataService implements UniteEventDataServ
                 $line->time = $line->time === null ? null : Carbon::createFromFormat('H:i:s', $line->time->format('H:i:s'));
             }
             $place = 1;
-            foreach ($groupProtocolLines->sortBy(static fn (ProtocolLine $line): int => $line->time ? $line->time->secondsSinceMidnight() : 86400) as $line) {
+            foreach ($groupProtocolLines->sortBy(static fn (ProtocolLine $line): float => $line->time ? $line->time->secondsSinceMidnight() : 86400.0) as $line) {
                 $line->place = $line->time === null ? $place : $place++;
                 $line->points = null;
                 new ProtocolLine($line->toArray())->save();

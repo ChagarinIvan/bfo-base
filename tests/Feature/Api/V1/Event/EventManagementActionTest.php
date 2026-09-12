@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace Tests\Feature\Api\V1\Event;
 
 use App\Domain\Competition\Competition;
+use App\Domain\Distance\Distance;
 use App\Domain\Event\Event;
+use App\Domain\Group\Group;
+use App\Domain\ProtocolLine\ProtocolLine;
 use App\Infrastructure\Sanctum\SanctumUser;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -86,6 +89,26 @@ final class EventManagementActionTest extends TestCase
         $secondEvent = Event::factory()->createOne([
             'competition_id' => $competition->getKey(),
             'date' => '2026-05-11',
+        ]);
+        /** @var Group $group */
+        $group = Group::factory()->createOne();
+        /** @var Distance $firstDistance */
+        $firstDistance = Distance::factory()->createOne([
+            'event_id' => $firstEvent->getKey(),
+            'group_id' => $group->getKey(),
+        ]);
+        /** @var Distance $secondDistance */
+        $secondDistance = Distance::factory()->createOne([
+            'event_id' => $secondEvent->getKey(),
+            'group_id' => $group->getKey(),
+        ]);
+        ProtocolLine::factory()->createOne([
+            'distance_id' => $firstDistance->getKey(),
+            'time' => '00:10:00',
+        ]);
+        ProtocolLine::factory()->createOne([
+            'distance_id' => $secondDistance->getKey(),
+            'time' => '00:20:00',
         ]);
 
         $this->postJson("/api/v1/competitions/{$competition->getKey()}/events/unite", [
