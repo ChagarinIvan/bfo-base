@@ -50,7 +50,13 @@ final readonly class EloquentProtocolLinesRepository implements ProtocolLineRepo
         $query = $this->buildQuery($criteria);
 
         if ($criteria->hasParam('distanceId')) {
-            $query->orderByDesc('protocol_lines.id');
+            $query
+                ->orderByRaw('protocol_lines.place IS NULL')
+                ->orderBy('protocol_lines.place')
+                ->orderByRaw('protocol_lines.time IS NULL')
+                ->orderBy('protocol_lines.time')
+                ->orderBy('protocol_lines.id')
+            ;
         } else {
             $query->orderByDesc('events.date')->orderByDesc('protocol_lines.id');
         }

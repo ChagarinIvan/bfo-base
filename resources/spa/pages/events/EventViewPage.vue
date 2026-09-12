@@ -1,5 +1,11 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import {
+    computed,
+    onBeforeUnmount,
+    ref,
+    type ComponentPublicInstance,
+    watch,
+} from 'vue'
 import type { AxiosError } from 'axios'
 import Card from 'primevue/card'
 import Column from 'primevue/column'
@@ -13,23 +19,32 @@ import ActionButton from '../../components/actions/ActionButton.vue'
 import FilterPanel from '../../components/FilterPanel.vue'
 import ImpressionDetails from '../../components/ImpressionDetails.vue'
 import { getEventDistances } from '../../api/distances'
+import { getCompetition } from '../../api/competitions'
 import { getEvent } from '../../api/events'
 import { getPersonProtocolLines } from '../../api/protocolLines'
 import type {
     Distance,
+    Competition,
     Event,
     PaginationHeaders,
     ProtocolLine,
     User,
 } from '../../api/types'
 import { getUsers } from '../../api/users'
+import { t } from '../../i18n'
 import { paginationFromHeaders } from '../competitions/competitionModels'
+import {
+    debounce,
+    hasTooShortNameSearch,
+    normaliseNameSearch,
+} from '../listingModels'
 import { useAuthStore } from '../../stores/auth'
 
 const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
 const event = ref<Event | null>(null)
+const competition = ref<Competition | null>(null)
 const distances = ref<Distance[]>([])
 const distanceId = ref<string>()
 const lines = ref<ProtocolLine[]>([])
@@ -48,6 +63,10 @@ const hasPoints = computed(() =>
     lines.value.some((line) => line.points !== null),
 )
 const hasVk = computed(() => lines.value.some((line) => line.vk))
+let targetScrolled = false
+const debouncedNameSearch = debounce(() => {
+    void loadLines(1)
+})
 
 function isNotFound(exception: unknown): boolean {
     return (
@@ -57,6 +76,31 @@ function isNotFound(exception: unknown): boolean {
         exception.isAxiosError === true &&
         (exception as AxiosError).response?.status === 404
     )
+}
+
+function requestedDistanceId(): string | undefined {
+    const value = route.query.distanceId
+
+    return typeof value === 'string' ? value : undefined
+}
+
+function protocolLineAnchor(id: string): string {
+    return 'protocol-line-' + id
+}
+
+function scrollToTargetProtocolLine(
+    element: Element | ComponentPublicInstance | null,
+    id: string,
+): void {
+    if (targetScrolled || !route.hash.startsWith('#protocol-line-')) return
+
+    const target = element instanceof Element ? element : element?.$el
+    if (route.hash.slice(1) !== protocolLineAnchor(id) || !(target instanceof Element)) {
+        return
+    }
+
+    target.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    targetScrolled = true
 }
 
 async function loadLines(
@@ -72,7 +116,9 @@ async function loadLines(
     try {
         const response = await getPersonProtocolLines({
             distanceId: distanceId.value,
-            name: name.value || undefined,
+            name: hasTooShortNameSearch(name.value)
+                ? undefined
+                : normaliseNameSearch(name.value) || undefined,
             withClub: 1,
             page,
             perPage,
@@ -89,12 +135,23 @@ async function load(eventId: string): Promise<void> {
     error.value = ''
     try {
         event.value = await getEvent(eventId)
-        distances.value = await getEventDistances(eventId)
+        const [loadedCompetition, loadedDistances] = await Promise.all([
+            getCompetition(event.value.competitionId),
+            getEventDistances(eventId),
+        ])
+        competition.value = loadedCompetition
+        distances.value = loadedDistances
         users.value = auth.isAuthenticated ? await getUsers() : []
-        distanceId.value = distances.value[0]?.id
+        const requestedId = requestedDistanceId()
+        distanceId.value = distances.value.some(
+            (distance) => distance.id === requestedId,
+        )
+            ? requestedId
+            : distances.value[0]?.id
         await loadLines()
     } catch (exception: unknown) {
         event.value = null
+        competition.value = null
         distances.value = []
         lines.value = []
         if (isNotFound(exception)) {
@@ -110,8 +167,16 @@ async function load(eventId: string): Promise<void> {
 async function onDistanceChange(): Promise<void> {
     await loadLines(1)
 }
-async function onNameChange(): Promise<void> {
-    await loadLines(1)
+function onNameChange(value: string | undefined): void {
+    name.value = value ?? ''
+
+    if (hasTooShortNameSearch(name.value)) {
+        debouncedNameSearch.cancel()
+        void loadLines(1)
+        return
+    }
+
+    debouncedNameSearch()
 }
 async function onPage(page: PageState): Promise<void> {
     await loadLines(page.page + 1, page.rows)
@@ -122,6 +187,8 @@ watch(
     (eventId) => void load(eventId),
     { immediate: true },
 )
+
+onBeforeUnmount(() => debouncedNameSearch.cancel())
 </script>
 
 <template>
@@ -150,7 +217,7 @@ watch(
                             <td>
                                 <RouterLink
                                     :to="`/app/competitions/${event.competitionId}`"
-                                    >Спаборніцтва</RouterLink
+                                    >{{ competition?.name ?? 'Спаборніцтва' }}</RouterLink
                                 >
                             </td>
                         </tr>
@@ -206,6 +273,8 @@ watch(
                         :options="distances"
                         option-label="groupName"
                         option-value="id"
+                        filter
+                        filter-match-mode="contains"
                         @change="onDistanceChange"
                     />
                 </div>
@@ -214,8 +283,13 @@ watch(
                     <InputText
                         id="event-name-filter"
                         v-model="name"
-                        @change="onNameChange"
+                        @update:model-value="onNameChange"
                     />
+                    <small
+                        v-if="hasTooShortNameSearch(name)"
+                        class="filter-hint"
+                        >{{ t('spa.competitions.name_hint') }}</small
+                    >
                 </div>
             </FilterPanel>
             <Message
@@ -234,7 +308,15 @@ watch(
             >
             <template v-else>
                 <DataTable :value="lines" striped-rows class="events-table">
-                    <Column field="serialNumber" header="#" />
+                    <Column field="serialNumber" header="#"
+                        ><template #body="{ data }"
+                            ><span
+                                :id="protocolLineAnchor(data.id)"
+                                :ref="(element) => scrollToTargetProtocolLine(element, data.id)"
+                                >{{ data.serialNumber }}</span
+                            ></template
+                        ></Column
+                    >
                     <Column field="lastname" header="Прозвішча"
                         ><template #body="{ data }"
                             ><RouterLink
@@ -281,7 +363,7 @@ watch(
                     <Column
                         v-if="auth.isAuthenticated"
                         field="activateRank"
-                        header="Актывацыя"
+                        header="Актывацыя разраду"
                     />
                     <Column v-if="auth.isAuthenticated" header="Дзеянні"
                         ><template #body="{ data }"

@@ -2,19 +2,30 @@
 
 import { flushPromises, mount } from '@vue/test-utils'
 import PrimeVue from 'primevue/config'
-import { describe, expect, it, vi } from 'vitest'
+import Select from 'primevue/select'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import ActionButton from '../../components/actions/ActionButton.vue'
 import EventViewPage from './EventViewPage.vue'
 
-const { auth, getEvent, getEventDistances, getPersonProtocolLines } = vi.hoisted(
+const {
+    auth,
+    getCompetition,
+    getEvent,
+    getEventDistances,
+    getPersonProtocolLines,
+    route,
+} = vi.hoisted(
     () => ({
         auth: { isAuthenticated: false },
+        getCompetition: vi.fn(),
         getEvent: vi.fn(),
         getEventDistances: vi.fn(),
         getPersonProtocolLines: vi.fn(),
+        route: { params: { eventId: '42' }, query: {}, hash: '' },
     }),
 )
 
+vi.mock('../../api/competitions', () => ({ getCompetition }))
 vi.mock('../../api/events', () => ({ getEvent }))
 vi.mock('../../api/distances', () => ({ getEventDistances }))
 vi.mock('../../api/protocolLines', () => ({ getPersonProtocolLines }))
@@ -24,11 +35,18 @@ vi.mock('../../stores/auth', () => ({
 }))
 vi.mock('vue-router', () => ({
     RouterLink: { props: ['to'], template: '<a :href="to"><slot /></a>' },
-    useRoute: () => ({ params: { eventId: '42' } }),
+    useRoute: () => route,
     useRouter: () => ({ replace: vi.fn() }),
 }))
 
 describe('event view page', () => {
+    afterEach(() => {
+        auth.isAuthenticated = false
+        route.query = {}
+        route.hash = ''
+        vi.useRealTimers()
+    })
+
     it('loads the selected distance and renders public event result links', async () => {
         getEvent.mockResolvedValue({
             id: '42',
@@ -48,6 +66,15 @@ describe('event view page', () => {
                 disqual: false,
             },
         ])
+        getCompetition.mockResolvedValue({
+            id: '9',
+            name: 'Кубак Беларусі',
+            description: '',
+            from: '2026-05-10',
+            to: '2026-05-10',
+            year: 2026,
+            mass: false,
+        })
         getPersonProtocolLines.mockResolvedValue({
             data: [
                 {
@@ -98,11 +125,19 @@ describe('event view page', () => {
         })
         expect(wrapper.find('a[href="/app/persons/5"]').exists()).toBe(true)
         expect(wrapper.find('a[href="/app/clubs/8"]').exists()).toBe(true)
+        expect(wrapper.find('a[href="/app/competitions/9"]').text()).toBe(
+            'Кубак Беларусі',
+        )
         expect(wrapper.find('.competition-details-card').exists()).toBe(true)
         expect(wrapper.find('.filter-card').exists()).toBe(true)
         expect(wrapper.find('.events-table').exists()).toBe(true)
+        expect(wrapper.findComponent(Select).props()).toMatchObject({
+            filter: true,
+            filterMatchMode: 'contains',
+        })
         expect(wrapper.text()).not.toContain('Кубкі')
         expect(wrapper.text()).not.toContain('Рэдагаваць')
+        expect(wrapper.text()).not.toContain('Актывацыя разраду')
     })
 
     it('uses the standard styled action for assigning a participant', async () => {
@@ -121,6 +156,78 @@ describe('event view page', () => {
             icon: 'pi pi-user-plus',
             severity: 'success',
         })
-        auth.isAuthenticated = false
+        expect(wrapper.text()).toContain('Актывацыя разраду')
+    })
+
+    it('filters protocol lines after three characters without requiring Enter', async () => {
+        vi.useFakeTimers()
+
+        const wrapper = mount(EventViewPage, {
+            global: { plugins: [PrimeVue] },
+        })
+        await flushPromises()
+        getPersonProtocolLines.mockClear()
+
+        await wrapper.find('#event-name-filter').setValue('Ів')
+
+        expect(wrapper.text()).toContain('Увядзіце не менш за 3 сімвалы.')
+        expect(getPersonProtocolLines).toHaveBeenCalledWith({
+            distanceId: '7',
+            name: undefined,
+            withClub: 1,
+            page: 1,
+            perPage: 20,
+        })
+
+        getPersonProtocolLines.mockClear()
+
+        await wrapper.find('#event-name-filter').setValue('Іва')
+        await vi.advanceTimersByTimeAsync(299)
+        expect(getPersonProtocolLines).not.toHaveBeenCalled()
+
+        await vi.advanceTimersByTimeAsync(1)
+        await flushPromises()
+
+        expect(getPersonProtocolLines).toHaveBeenCalledWith({
+            distanceId: '7',
+            name: 'Іва',
+            withClub: 1,
+            page: 1,
+            perPage: 20,
+        })
+    })
+
+    it('selects the linked distance and scrolls to the protocol line anchor', async () => {
+        const scrollIntoView = vi.fn()
+        Object.defineProperty(Element.prototype, 'scrollIntoView', {
+            configurable: true,
+            value: scrollIntoView,
+        })
+        route.query = { distanceId: '7' }
+        route.hash = '#protocol-line-11'
+
+        const wrapper = mount(EventViewPage, {
+            attachTo: document.body,
+            global: { plugins: [PrimeVue] },
+        })
+        await flushPromises()
+
+        expect(getPersonProtocolLines).toHaveBeenLastCalledWith({
+            distanceId: '7',
+            name: undefined,
+            withClub: 1,
+            page: 1,
+            perPage: 20,
+        })
+        expect(wrapper.find('#protocol-line-11').exists()).toBe(true)
+        expect(document.getElementById('protocol-line-11')).not.toBeNull()
+        expect(document.getElementById('protocol-line-11')?.scrollIntoView).toBe(
+            scrollIntoView,
+        )
+        expect(scrollIntoView).toHaveBeenCalledWith({
+            behavior: 'smooth',
+            block: 'center',
+        })
+        wrapper.unmount()
     })
 })

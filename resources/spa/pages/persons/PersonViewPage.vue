@@ -137,7 +137,14 @@ function onPage(event: PageState): void {
 }
 
 function eventUrl(line: ProtocolLine): string {
-    return '/app/events/' + line.eventId + '#' + line.id
+    return (
+        '/app/events/' +
+        line.eventId +
+        '?distanceId=' +
+        line.distanceId +
+        '#protocol-line-' +
+        line.id
+    )
 }
 
 function display(value: string | null): string {

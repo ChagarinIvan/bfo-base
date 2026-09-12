@@ -147,6 +147,54 @@ final class ListProtocolLinesActionTest extends TestCase
     }
 
     #[Test]
+    public function it_orders_selected_distance_protocol_lines_by_place_time_and_id(): void
+    {
+        $person = $this->createPerson();
+        $firstPlace = $this->createProtocolLine($person, 'Spring Cup', '2026-05-10', [
+            'id' => 40,
+            'place' => 1,
+            'time' => '00:50:00',
+        ]);
+        ProtocolLine::factory()->createOne([
+            'id' => 10,
+            'distance_id' => $firstPlace->distance_id,
+            'person_id' => $person->id,
+            'place' => 1,
+            'time' => '01:00:00',
+        ]);
+        ProtocolLine::factory()->createOne([
+            'id' => 5,
+            'distance_id' => $firstPlace->distance_id,
+            'person_id' => $person->id,
+            'place' => 2,
+            'time' => '00:30:00',
+        ]);
+        ProtocolLine::factory()->createOne([
+            'id' => 30,
+            'distance_id' => $firstPlace->distance_id,
+            'person_id' => $person->id,
+            'place' => 2,
+            'time' => '00:30:00',
+        ]);
+        ProtocolLine::factory()->createOne([
+            'id' => 20,
+            'distance_id' => $firstPlace->distance_id,
+            'person_id' => $person->id,
+            'place' => null,
+            'time' => null,
+        ]);
+
+        $this->getJson("/api/v1/protocol-lines?distanceId={$firstPlace->distance_id}&withClub=1")
+            ->assertOk()
+            ->assertJsonPath('0.id', '40')
+            ->assertJsonPath('1.id', '10')
+            ->assertJsonPath('2.id', '5')
+            ->assertJsonPath('3.id', '30')
+            ->assertJsonPath('4.id', '20')
+        ;
+    }
+
+    #[Test]
     public function it_resolves_a_normalized_raw_club_name_when_requested(): void
     {
         $person = $this->createPerson();
