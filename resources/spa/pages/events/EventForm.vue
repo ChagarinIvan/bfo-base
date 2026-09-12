@@ -4,9 +4,11 @@ import Button from 'primevue/button'
 import FileUpload from 'primevue/fileupload'
 import InputText from 'primevue/inputtext'
 import Message from 'primevue/message'
+import SelectButton from 'primevue/selectbutton'
 import Textarea from 'primevue/textarea'
 import type { EventFormRequest } from '../../api/types'
 import { t } from '../../i18n'
+import DateFilter from '../../components/DateFilter.vue'
 
 const props = withDefaults(
     defineProps<{
@@ -27,6 +29,13 @@ const props = withDefaults(
 )
 
 const emit = defineEmits<{ submit: [value: EventFormRequest] }>()
+type ProtocolSource = 'file' | 'url'
+
+const protocolSource = ref<ProtocolSource>('file')
+const protocolSourceOptions = [
+    { label: t('spa.event.form.source_file'), value: 'file' as const },
+    { label: t('spa.event.form.source_url'), value: 'url' as const },
+]
 const form = reactive<EventFormRequest>({
     name: '',
     description: '',
@@ -38,7 +47,11 @@ const localError = ref('')
 
 watch(
     () => props.initialValue,
-    (value) => Object.assign(form, { protocol: null, url: '', ...value }),
+    (value) => {
+        Object.assign(form, { protocol: null, url: '', ...value })
+        if (value?.protocol) protocolSource.value = 'file'
+        else if (value?.url) protocolSource.value = 'url'
+    },
     { immediate: true },
 )
 
@@ -47,17 +60,23 @@ function fieldError(field: string): string | undefined {
 }
 
 function selectProtocol(event: { files: File[] }): void {
+    protocolSource.value = 'file'
     form.protocol = event.files[0] ?? null
-    if (form.protocol) form.url = ''
 }
 
 function submit(): void {
     localError.value = ''
-    if (props.sourceRequired && !form.protocol && !form.url) {
+    const sourceValue =
+        protocolSource.value === 'file' ? form.protocol : form.url
+    if (props.sourceRequired && !sourceValue) {
         localError.value = t('spa.event.form.source_required')
         return
     }
-    emit('submit', { ...form })
+    emit('submit', {
+        ...form,
+        protocol: protocolSource.value === 'file' ? form.protocol : null,
+        url: protocolSource.value === 'url' ? form.url : '',
+    })
 }
 </script>
 
@@ -84,19 +103,25 @@ function submit(): void {
                 fieldError('description')
             }}</small>
         </div>
+        <DateFilter
+            v-model="form.date"
+            class="form-field"
+            input-id="event-date"
+            :label="t('spa.event.form.date')"
+            :error="fieldError('date')"
+            required
+        />
         <div class="form-field">
-            <label for="event-date">{{ t('spa.event.form.date') }}</label>
-            <InputText
-                id="event-date"
-                v-model="form.date"
-                type="date"
-                required
+            <label>{{ t('spa.event.form.source') }}</label>
+            <SelectButton
+                v-model="protocolSource"
+                :options="protocolSourceOptions"
+                option-label="label"
+                option-value="value"
+                :allow-empty="false"
             />
-            <small v-if="fieldError('date')" class="field-error">{{
-                fieldError('date')
-            }}</small>
         </div>
-        <div class="form-field">
+        <div v-if="protocolSource === 'file'" class="form-field">
             <label>{{ t('spa.event.form.protocol') }}</label>
             <FileUpload
                 mode="basic"
@@ -110,13 +135,9 @@ function submit(): void {
                 fieldError('protocol')
             }}</small>
         </div>
-        <div class="form-field">
+        <div v-else class="form-field">
             <label for="event-url">{{ t('spa.event.form.url') }}</label>
-            <InputText
-                id="event-url"
-                v-model="form.url"
-                :disabled="Boolean(form.protocol)"
-            />
+            <InputText id="event-url" v-model="form.url" />
             <small v-if="fieldError('url')" class="field-error">{{
                 fieldError('url')
             }}</small>
