@@ -132,6 +132,11 @@ describe('event view page', () => {
             'Кубак Беларусі',
         )
         expect(wrapper.find('.competition-details-card').exists()).toBe(true)
+        expect(
+            wrapper
+                .find('.competition-details-info')
+                .classes('details-info--with-actions'),
+        ).toBe(false)
         expect(wrapper.find('.filter-card').exists()).toBe(true)
         expect(wrapper.find('.listing-table__filters--sticky').exists()).toBe(
             true,
@@ -163,6 +168,11 @@ describe('event view page', () => {
             severity: 'success',
         })
         expect(wrapper.text()).toContain('Актывацыя разраду')
+        expect(
+            wrapper
+                .find('.competition-details-info')
+                .classes('details-info--with-actions'),
+        ).toBe(true)
     })
 
     it('shows a confirmed delete control for an authenticated user', async () => {

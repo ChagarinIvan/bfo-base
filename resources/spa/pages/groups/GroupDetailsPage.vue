@@ -192,7 +192,10 @@ onBeforeUnmount(() => debouncedFilter.cancel())
         <Card class="group-details-card"
             ><template #title>{{ group.name }}</template
             ><template #content
-                ><table class="group-details-info">
+                ><table
+                    class="group-details-info"
+                    :class="{ 'details-info--with-actions': auth.isAuthenticated }"
+                >
                     <tbody>
                         <tr>
                             <th scope="row">

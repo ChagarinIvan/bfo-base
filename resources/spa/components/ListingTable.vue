@@ -82,7 +82,10 @@ watch(visible, (value) => {
 
 <template>
     <div class="filter-card listing-table__controls listing-table__filters--sticky">
-        <section class="listing-table__columns">
+        <section
+            class="listing-table__columns"
+            :class="{ 'listing-table__columns--with-filters': $slots.filters }"
+        >
             <div class="listing-table__column-options">
                 <label v-for="column in columns" :key="column.key">
                     <input

@@ -287,7 +287,10 @@ onBeforeUnmount(() => {
         <Card class="competition-details-card">
             <template #title>{{ event.name }}</template>
             <template #content>
-                <table class="competition-details-info">
+                <table
+                    class="competition-details-info"
+                    :class="{ 'details-info--with-actions': auth.isAuthenticated }"
+                >
                     <tbody>
                         <tr>
                             <th scope="row">Дата</th>

@@ -184,7 +184,10 @@ onBeforeUnmount(() => debouncedNameSearch.cancel())
                 {{ club.name }}
             </template>
             <template #content>
-                <table class="club-details-info">
+                <table
+                    class="club-details-info"
+                    :class="{ 'details-info--with-actions': auth.isAuthenticated }"
+                >
                     <tbody>
                         <tr>
                             <th scope="row">

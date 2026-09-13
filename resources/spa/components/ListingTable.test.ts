@@ -46,6 +46,11 @@ describe('listing table', () => {
             'filters',
         )
         expect(wrapper.find('.listing-table__controls').exists()).toBe(true)
+        expect(
+            wrapper
+                .find('.listing-table__columns')
+                .classes('listing-table__columns--with-filters'),
+        ).toBe(true)
     })
 
     it('keeps visible-column controls in the same block without filters', () => {
@@ -61,6 +66,11 @@ describe('listing table', () => {
         expect(wrapper.find('.listing-table__filters--sticky').exists()).toBe(
             true,
         )
+        expect(
+            wrapper
+                .find('.listing-table__columns')
+                .classes('listing-table__columns--with-filters'),
+        ).toBe(false)
     })
 
     it('renders declarative fields and delegates custom cells to named slots', () => {

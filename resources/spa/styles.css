@@ -170,7 +170,7 @@ body {
     border: 1px solid rgb(33 37 41 / 10%);
 }
 
-.listing-table__columns {
+.listing-table__columns--with-filters {
     padding-bottom: 0.75rem;
     border-bottom: 1px solid rgb(33 37 41 / 10%);
 }
@@ -322,6 +322,15 @@ body {
     border-bottom: 1px solid var(--p-content-border-color);
     padding: 0.5rem;
     text-align: left;
+}
+
+.competition-details-info:not(.details-info--with-actions) tr:last-child th,
+.competition-details-info:not(.details-info--with-actions) tr:last-child td,
+.club-details-info:not(.details-info--with-actions) tr:last-child th,
+.club-details-info:not(.details-info--with-actions) tr:last-child td,
+.group-details-info:not(.details-info--with-actions) tr:last-child th,
+.group-details-info:not(.details-info--with-actions) tr:last-child td {
+    border-bottom: 0;
 }
 
 .competition-details-info th {

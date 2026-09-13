@@ -17,12 +17,26 @@ describe('mass competition indicator', () => {
         )
     })
 
-    it('can render its label beside the icon for a competition card', () => {
+    it('renders only the icon while retaining its tooltip', () => {
         const wrapper = mount(MassCompetitionIndicator, {
-            props: { mass: false, showLabel: true },
-            global: { directives: { tooltip: {} } },
+            props: { mass: false },
+            global: {
+                directives: {
+                    tooltip: {
+                        mounted(element, binding) {
+                            element.setAttribute(
+                                'data-tooltip',
+                                String(binding.value),
+                            )
+                        },
+                    },
+                },
+            },
         })
 
-        expect(wrapper.text()).toContain('Звычайныя спаборніцтвы')
+        expect(wrapper.text()).toBe('')
+        expect(wrapper.get('[role="img"]').attributes('data-tooltip')).toBe(
+            'Звычайныя спаборніцтвы: разрады могуць прымяняцца.',
+        )
     })
 })

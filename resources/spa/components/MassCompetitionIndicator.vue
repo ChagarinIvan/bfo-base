@@ -3,10 +3,7 @@ import { computed } from 'vue'
 import { t } from '../i18n'
 import { massIconClass } from '../pages/competitions/competitionModels'
 
-const props = withDefaults(
-    defineProps<{ mass: boolean; showLabel?: boolean }>(),
-    { showLabel: false },
-)
+const props = defineProps<{ mass: boolean }>()
 
 const label = computed(() =>
     t(
@@ -40,7 +37,6 @@ const hint = computed(() =>
                 ]"
                 aria-hidden="true"
             />
-            <span v-if="showLabel">{{ label }}</span>
         </span>
     </span>
 </template>
