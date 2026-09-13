@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Application\Service\Event;
 
-use App\Application\Dto\Event\SearchEventDto;
 use App\Application\Dto\Auth\UserId;
+use App\Application\Dto\Event\SearchEventDto;
 use App\Domain\Event\EventResources;
 use App\Domain\Shared\Criteria;
 use function array_filter;

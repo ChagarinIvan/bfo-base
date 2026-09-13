@@ -21,6 +21,7 @@ return new class extends Migration
             $table->uuid('rank_batch_id')->nullable()->unique();
             $table->unsignedInteger('rank_jobs_total')->default(0);
             $table->unsignedInteger('rank_jobs_completed')->default(0);
+            $table->json('completed_rank_person_ids')->nullable();
             $table->timestamps();
             $table->unsignedBigInteger('created_by');
             $table->unsignedBigInteger('updated_by');

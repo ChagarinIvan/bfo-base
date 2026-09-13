@@ -27,17 +27,7 @@ trait ApiAction
         private readonly Container $container,
         private readonly ApiDtoSerializer $serializer,
         private readonly ApiErrorResponse $errorResponse,
-    ) {}
-
-    protected function currentUserId(): ?UserId
-    {
-        if (! $this->container->bound(UserId::class)) {
-            return null;
-        }
-
-        $userId = $this->container->make(UserId::class);
-
-        return $userId instanceof UserId ? $userId : null;
+    ) {
     }
 
     public function callAction($method, $parameters): mixed
@@ -105,5 +95,16 @@ trait ApiAction
         }
 
         return $response;
+    }
+
+    protected function currentUserId(): ?UserId
+    {
+        if (! $this->container->bound(UserId::class)) {
+            return null;
+        }
+
+        $userId = $this->container->make(UserId::class);
+
+        return $userId instanceof UserId ? $userId : null;
     }
 }

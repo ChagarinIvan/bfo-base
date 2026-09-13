@@ -11,7 +11,9 @@ use Illuminate\Contracts\Queue\ShouldQueueAfterCommit;
 
 final readonly class CreateProtocolHandler implements ShouldQueueAfterCommit
 {
-    public function __construct(private ParseEventProtocolService $parser) {}
+    public function __construct(private ParseEventProtocolService $parser)
+    {
+    }
 
     public function handle(EventCreated $systemEvent): void
     {

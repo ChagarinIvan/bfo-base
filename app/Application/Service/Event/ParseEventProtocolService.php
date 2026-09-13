@@ -6,6 +6,7 @@ namespace App\Application\Service\Event;
 
 use App\Domain\Event\EventProtocol;
 use App\Domain\Event\EventProtocolRepository;
+use App\Domain\Event\EventRepository;
 use App\Domain\Event\ProtocolStorage;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Services\ParserService;
@@ -21,6 +22,7 @@ final readonly class ParseEventProtocolService
         private ProtocolLineService $protocolLines,
         private ProtocolLineIdentService $identification,
         private EventProtocolRepository $protocolRuns,
+        private EventRepository $events,
         private StartEventProtocolRankRebuildService $rankRebuild,
     ) {
     }
@@ -29,11 +31,18 @@ final readonly class ParseEventProtocolService
     {
         $run = $this->protocolRuns->byId($command->eventProtocolId());
 
-        if (!$run instanceof EventProtocol) {
+        $event = $this->events->byId($command->eventId());
+
+        if (!$run instanceof EventProtocol || $event === null || $run->event_id !== $event->id || $event->active_event_protocol_id !== $run->id) {
             return;
         }
 
-        $run->startParsing($command->impression());
+        $parsingStarted = $run->startParsing($command->impression());
+        $this->protocolRuns->update($run);
+
+        if (! $parsingStarted) {
+            return;
+        }
 
         try {
             $lines = $this->protocolLines->fillProtocolLines(

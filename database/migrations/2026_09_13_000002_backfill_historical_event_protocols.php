@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Domain\Event\Event;
 use App\Domain\Event\EventProtocol;
 use App\Domain\Event\EventProtocolStatus;
+use App\Domain\ProtocolLine\ProtocolLine;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Str;
 
@@ -22,7 +23,14 @@ return new class extends Migration
                 $protocol->total_lines = $event->protocolLines()->count();
                 $protocol->identified_lines = $protocol->total_lines;
                 $protocol->identified_line_ids = $event->protocolLines()->pluck('protocol_lines.id')->map(static fn (int $id): int => $id)->all();
+                $protocol->completed_rank_person_ids = [];
+                $protocol->created = $event->created;
+                $protocol->updated = $event->updated;
                 $protocol->save();
+
+                ProtocolLine::query()
+                    ->whereHas('distance', static fn ($query) => $query->where('event_id', $event->id))
+                    ->update(['event_protocol_id' => $protocol->id]);
 
                 $event->active_event_protocol_id = $protocol->id;
                 $event->save();

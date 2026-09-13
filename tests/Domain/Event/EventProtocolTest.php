@@ -28,12 +28,14 @@ final class EventProtocolTest extends TestCase
         $this->assertFalse($protocol->startRankRebuild('batch-1', 2, $identificationImpression));
         $this->assertTrue($protocol->recordIdentifiedLine(101, $identificationImpression));
         $this->assertTrue($protocol->startRankRebuild('batch-1', 2, $identificationImpression));
-        $this->assertFalse($protocol->completeRankJob('other-batch', $identificationImpression));
+        $this->assertFalse($protocol->completeRankJob('other-batch', 100, $identificationImpression));
         $this->assertSame(EventProtocolStatus::REBUILDING_RANKS, $protocol->status);
-        $this->assertTrue($protocol->completeRankJob('batch-1', $identificationImpression));
+        $this->assertTrue($protocol->completeRankJob('batch-1', 100, $identificationImpression));
+        $this->assertFalse($protocol->completeRankJob('batch-1', 100, $identificationImpression));
         $this->assertSame(EventProtocolStatus::REBUILDING_RANKS, $protocol->status);
-        $this->assertTrue($protocol->completeRankJob('batch-1', $identificationImpression));
+        $this->assertTrue($protocol->completeRankJob('batch-1', 101, $identificationImpression));
         $this->assertSame(EventProtocolStatus::READY, $protocol->status);
+        $this->assertFalse($protocol->startParsing($identificationImpression));
     }
 
     #[Test]
@@ -47,6 +49,6 @@ final class EventProtocolTest extends TestCase
         $this->assertFalse($protocol->recordIdentifiedLine(100, $impression));
         $this->assertSame(1, $protocol->identified_lines);
         $this->assertTrue($protocol->startRankRebuild('batch-1', 1, $impression));
-        $this->assertFalse($protocol->completeRankJob('stale-batch', $impression));
+        $this->assertFalse($protocol->completeRankJob('stale-batch', 100, $impression));
     }
 }

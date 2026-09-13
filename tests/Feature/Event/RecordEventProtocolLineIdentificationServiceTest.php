@@ -34,6 +34,8 @@ final class RecordEventProtocolLineIdentificationServiceTest extends TestCase
         $protocol->created = $impression;
         $protocol->updated = $impression;
         $protocol->save();
+        $event->activateProtocolRun($protocol->id, $impression);
+        $event->save();
         $protocol->startParsing($impression);
         $protocol->startIdentifying(1, $impression);
         $this->app->get(EventProtocolRepository::class)->update($protocol);

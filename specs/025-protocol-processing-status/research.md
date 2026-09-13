@@ -6,7 +6,7 @@ Queued parsing and later scheduled identification are independent processes, so 
 
 ## Decision: status transitions follow existing jobs
 
-The create/update protocol handlers enter parsing and record failure on their `EventProtocol`. The identification command emits the `ProtocolLine` aggregate event after setting a person. An application handler records that line exactly once in the matching run and creates one rank batch when all lines are identified. Only completion of the stored batch identity can mark that run ready; duplicate or stale messages are ignored.
+The create/update protocol handlers enter parsing only from `queued` and record failure on their `EventProtocol`. The identification command emits the `ProtocolLine` aggregate event after setting a person. Application services accept parsing, identification and rank-start work only for the event's active run. They record a line exactly once in that run and create one rank batch when all lines are identified. Only completion of the stored batch identity and an uncounted `personId` can mark that referenced run ready; duplicate delivery is ignored and a stale run cannot change a newer one.
 
 ## Decision: public visibility requires ready
 
@@ -18,4 +18,4 @@ The schema migration creates a ready active `EventProtocol` only for historical 
 
 ## Decision: detail-page polling only
 
-The event detail page refreshes every five seconds during transition states and cancels the timer on terminal state/unmount. Listing shows the state returned by its normal load and does not create background polling per row.
+The event detail page refreshes both event state and visible protocol lines every five seconds during transition states and cancels the timer on terminal state/unmount. Listing shows the state returned by its normal load and does not create background polling per row.

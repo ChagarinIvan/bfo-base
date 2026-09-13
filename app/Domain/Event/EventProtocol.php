@@ -28,13 +28,14 @@ use function in_array;
  * @property string|null $rank_batch_id
  * @property int $rank_jobs_total
  * @property int $rank_jobs_completed
+ * @property list<int> $completed_rank_person_ids
  *
  * @property Impression $created
  * @property Impression $updated
  */
 #[Fillable([
     'event_id', 'run_token', 'status', 'total_lines', 'identified_lines',
-    'identified_line_ids', 'rank_batch_id',
+    'identified_line_ids', 'rank_batch_id', 'completed_rank_person_ids',
 ])]
 #[Table(name: 'event_protocols')]
 final class EventProtocol extends AggregatedModel
@@ -48,17 +49,24 @@ final class EventProtocol extends AggregatedModel
         $protocol->total_lines = 0;
         $protocol->identified_lines = 0;
         $protocol->identified_line_ids = [];
+        $protocol->completed_rank_person_ids = [];
         $protocol->recordThat(new EventProtocolStatusChanged($protocol));
 
         return $protocol;
     }
 
-    public function startParsing(Impression $impression): void
+    public function startParsing(Impression $impression): bool
     {
+        if ($this->status !== EventProtocolStatus::QUEUED) {
+            return false;
+        }
+
         $this->updated = $impression;
 
         $this->transitionTo(EventProtocolStatus::PARSING);
         $this->recordThat(new EventProtocolParsingStarted($this));
+
+        return true;
     }
 
     public function create(): void
@@ -102,6 +110,7 @@ final class EventProtocol extends AggregatedModel
         $this->rank_batch_id = $batchId;
         $this->rank_jobs_total = $jobsTotal;
         $this->rank_jobs_completed = 0;
+        $this->completed_rank_person_ids = [];
         $this->updated = $impression;
         $this->transitionTo(EventProtocolStatus::REBUILDING_RANKS);
 
@@ -112,18 +121,20 @@ final class EventProtocol extends AggregatedModel
         return true;
     }
 
-    public function completeRankJob(string $batchId, Impression $impression): bool
+    public function completeRankJob(string $batchId, int $personId, Impression $impression): bool
     {
         if ($this->status !== EventProtocolStatus::REBUILDING_RANKS || $this->rank_batch_id !== $batchId) {
             return false;
         }
 
-        if ($this->rank_jobs_completed >= $this->rank_jobs_total) {
+        if ($this->rank_jobs_completed >= $this->rank_jobs_total || in_array($personId, $this->completed_rank_person_ids, true)) {
             return false;
         }
 
+        $this->completed_rank_person_ids = [...$this->completed_rank_person_ids, $personId];
         $this->rank_jobs_completed++;
         $this->updated = $impression;
+
         if ($this->rank_jobs_completed < $this->rank_jobs_total) {
             $this->recordThat(new EventProtocolStatusChanged($this));
 
@@ -137,7 +148,7 @@ final class EventProtocol extends AggregatedModel
 
     public function fail(Impression $impression): void
     {
-        if (! $this->status->isTerminal()) {
+        if (!$this->status->isTerminal()) {
             $this->updated = $impression;
             $this->transitionTo(EventProtocolStatus::FAILED);
         }
@@ -148,6 +159,7 @@ final class EventProtocol extends AggregatedModel
         return [
             'status' => EventProtocolStatus::class,
             'identified_line_ids' => 'array',
+            'completed_rank_person_ids' => 'array',
             'created' => ImpressionCast::class,
             'updated' => ImpressionCast::class,
         ];

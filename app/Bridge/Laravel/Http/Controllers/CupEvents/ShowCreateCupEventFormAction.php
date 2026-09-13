@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Http\Controllers\CupEvents;
 
-use App\Application\Dto\Event\SearchEventDto;
 use App\Application\Dto\Auth\UserId;
+use App\Application\Dto\Event\SearchEventDto;
 use App\Application\Service\Cup\Exception\CupNotFound;
 use App\Application\Service\Cup\ViewCup;
 use App\Application\Service\Cup\ViewCupService;

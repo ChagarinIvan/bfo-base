@@ -117,9 +117,9 @@ async function refreshProcessing(): Promise<void> {
     try {
         event.value = await getEvent(event.value.id)
         processingRefreshError.value = false
+        await loadLines()
         if (!needsProcessingPolling(event.value.processingStatus)) {
             stopProcessingPolling()
-            await loadLines()
         }
     } catch {
         processingRefreshError.value = true

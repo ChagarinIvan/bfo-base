@@ -12,8 +12,10 @@ use App\Application\Dto\Event\EventInfoDto;
 use App\Application\Dto\Event\EventProtocolDto;
 use App\Application\Service\Event\AddEvent;
 use App\Application\Service\Event\AddEventService;
+use App\Domain\Auth\Impression;
 use App\Domain\Event\Event;
 use App\Domain\Event\EventInfo;
+use App\Domain\Event\EventProtocol;
 use App\Domain\Event\EventProtocolRepository;
 use App\Domain\Event\EventRepository;
 use App\Domain\Event\Factory\EventFactory;
@@ -35,6 +37,10 @@ final class AddEventServiceTest extends TestCase
 
     private EventRepository&MockObject $events;
 
+    private EventProtocolFactory&MockObject $eventProtocolsFactory;
+
+    private EventProtocolRepository&MockObject $eventProtocols;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -44,8 +50,8 @@ final class AddEventServiceTest extends TestCase
             $this->events = $this->createMock(EventRepository::class),
             new EventAssembler(new AuthAssembler),
             new ProtocolFactory,
-            $this->createStub(EventProtocolFactory::class),
-            $this->createStub(EventProtocolRepository::class),
+            $this->eventProtocolsFactory = $this->createMock(EventProtocolFactory::class),
+            $this->eventProtocols = $this->createMock(EventProtocolRepository::class),
         );
     }
 
@@ -67,6 +73,11 @@ final class AddEventServiceTest extends TestCase
 
         /** @var Event $event */
         $event = Event::factory()->makeOne();
+        $event->id = 10;
+        $event->file = '2023/protocol.xml';
+        $event->created = new Impression(Carbon::parse('2023-01-01'), 1);
+        $run = EventProtocol::queue($event->id, 'run-1');
+        $run->id = 20;
 
         $this->factory
             ->expects($this->once())
@@ -80,6 +91,15 @@ final class AddEventServiceTest extends TestCase
             ->method('add')
             ->with($this->identicalTo($event))
         ;
+
+        $this->eventProtocolsFactory
+            ->expects($this->once())
+            ->method('create')
+            ->with($event->id, $event->created)
+            ->willReturn($run)
+        ;
+        $this->eventProtocols->expects($this->once())->method('add')->with($run);
+        $this->events->expects($this->once())->method('update')->with($event);
 
         $dto = new EventDto();
         $infoDto = new EventInfoDto();

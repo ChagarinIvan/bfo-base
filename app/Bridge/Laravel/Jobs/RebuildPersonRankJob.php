@@ -36,9 +36,12 @@ final class RebuildPersonRankJob implements ShouldQueue
         if ($this->eventProtocolId !== null && $this->rankBatchId !== null) {
             $protocol = $protocolRuns->byId($this->eventProtocolId);
 
-            if ($protocol !== null && $protocol->completeRankJob($this->rankBatchId, $this->impression)) {
-                $protocolRuns->update($protocol);
+            if ($protocol === null) {
+                return;
             }
+
+            $protocol->completeRankJob($this->rankBatchId, $this->personId, $this->impression);
+            $protocolRuns->update($protocol);
         }
     }
 }
