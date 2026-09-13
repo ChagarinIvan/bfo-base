@@ -14,9 +14,11 @@ use App\Application\Service\Event\AddEvent;
 use App\Application\Service\Event\AddEventService;
 use App\Domain\Event\Event;
 use App\Domain\Event\EventInfo;
+use App\Domain\Event\EventProtocolRepository;
 use App\Domain\Event\EventRepository;
 use App\Domain\Event\Factory\EventFactory;
 use App\Domain\Event\Factory\EventInput;
+use App\Domain\Event\Factory\EventProtocolFactory;
 use App\Domain\Event\Protocol;
 use App\Domain\Event\Protocol\ProtocolFactory;
 use Carbon\Carbon;
@@ -42,6 +44,8 @@ final class AddEventServiceTest extends TestCase
             $this->events = $this->createMock(EventRepository::class),
             new EventAssembler(new AuthAssembler),
             new ProtocolFactory,
+            $this->createStub(EventProtocolFactory::class),
+            $this->createStub(EventProtocolRepository::class),
         );
     }
 

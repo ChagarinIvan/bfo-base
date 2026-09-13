@@ -7,6 +7,8 @@ namespace Tests\Feature\Api\V1\Event;
 use App\Domain\Competition\Competition;
 use App\Domain\Distance\Distance;
 use App\Domain\Event\Event;
+use App\Domain\Event\EventProtocol;
+use App\Domain\Event\EventProtocolStatus;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Infrastructure\Sanctum\SanctumUser;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -43,6 +45,7 @@ final class ListEventsActionTest extends TestCase
         $event = $this->createEvent($competition, ['date' => '2026-05-11']);
         $this->createProtocolLine($event);
         $this->createProtocolLine($event);
+        $this->makeProtocolReady($event);
         $this->createEvent($competition, ['active' => false]);
 
         $this->getJson("/api/v1/events?competitionId={$competition->id}")
@@ -59,8 +62,8 @@ final class ListEventsActionTest extends TestCase
     public function it_returns_pagination_headers(): void
     {
         $competition = $this->createCompetition();
-        $this->createEvent($competition, ['date' => '2026-05-10']);
-        $this->createEvent($competition, ['date' => '2026-05-11']);
+        $this->makeProtocolReady($this->createEvent($competition, ['date' => '2026-05-10']));
+        $this->makeProtocolReady($this->createEvent($competition, ['date' => '2026-05-11']));
 
         $this->getJson("/api/v1/events?competitionId={$competition->id}&perPage=1&page=2")
             ->assertOk()
@@ -102,6 +105,7 @@ final class ListEventsActionTest extends TestCase
     {
         $competition = $this->createCompetition(['name' => 'Spring Cup']);
         $event = $this->createEvent($competition);
+        $this->makeProtocolReady($event);
 
         $this->getJson("/api/v1/events?ids[]={$event->id}&withCompetition=1")
             ->assertOk()
@@ -114,13 +118,31 @@ final class ListEventsActionTest extends TestCase
     public function it_includes_impressions_for_an_authenticated_client(): void
     {
         $competition = $this->createCompetition();
-        $this->createEvent($competition);
+        $event = $this->createEvent($competition);
+        $this->makeProtocolReady($event);
         Sanctum::actingAs($this->createUser());
 
         $this->getJson("/api/v1/events?competitionId={$competition->id}")
             ->assertOk()
-            ->assertJsonStructure([['created', 'updated']])
+            ->assertJsonStructure([['created', 'updated', 'processingStatus']])
+            ->assertJsonPath('0.processingStatus', 'ready')
         ;
+    }
+
+    #[Test]
+    public function it_hides_events_without_a_ready_protocol_from_guests(): void
+    {
+        $competition = $this->createCompetition();
+        $event = $this->createEvent($competition);
+
+        $this->getJson("/api/v1/events?competitionId={$competition->id}")
+            ->assertOk()
+            ->assertExactJson([]);
+
+        Sanctum::actingAs($this->createUser());
+        $this->getJson("/api/v1/events?competitionId={$competition->id}")
+            ->assertOk()
+            ->assertJsonPath('0.id', (string) $event->id);
     }
 
     /** @param array<string, mixed> $attributes */
@@ -164,6 +186,17 @@ final class ListEventsActionTest extends TestCase
         ]);
 
         return $protocolLine;
+    }
+
+    private function makeProtocolReady(Event $event): void
+    {
+        $protocol = EventProtocol::queue($event->id, fake()->uuid());
+        $protocol->status = EventProtocolStatus::READY;
+        $protocol->created = $event->created;
+        $protocol->updated = $event->updated;
+        $protocol->save();
+        $event->active_event_protocol_id = $protocol->id;
+        $event->save();
     }
 
     private function createUser(): SanctumUser

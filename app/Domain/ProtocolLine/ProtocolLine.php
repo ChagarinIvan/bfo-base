@@ -7,6 +7,7 @@ namespace App\Domain\ProtocolLine;
 use App\Domain\Auth\Impression;
 use App\Domain\Distance\Distance;
 use App\Domain\Event\Event;
+use App\Domain\Event\EventProtocol;
 use App\Domain\Person\Person;
 use App\Domain\Person\PersonExtractor;
 use App\Domain\ProtocolLine\Event\PersonFromProtocolLineExtracted;
@@ -39,6 +40,7 @@ use function trim;
  * @property null|int $points
  * @property int $distance_id
  * @property null|int $person_id
+ * @property null|int $event_protocol_id
  * @property string $prepared_line
  * @property bool $vk
  * @property null|Carbon $activate_rank
@@ -46,6 +48,7 @@ use function trim;
  * @property-read Event $event
  * @property-read Distance $distance
  * @property-read Person|null $person
+ * @property-read EventProtocol|null $eventProtocol
  */
 #[Fillable([
     'serial_number',
@@ -64,6 +67,7 @@ use function trim;
     'prepared_line',
     'person_id',
     'activate_rank',
+    'event_protocol_id',
 ])]
 #[Table(name: 'protocol_lines')]
 #[WithoutTimestamps]
@@ -85,6 +89,11 @@ class ProtocolLine extends AggregatedModel
     public function person(): BelongsTo
     {
         return $this->BelongsTo(Person::class, 'person_id', 'id');
+    }
+
+    public function eventProtocol(): BelongsTo
+    {
+        return $this->belongsTo(EventProtocol::class, 'event_protocol_id', 'id');
     }
 
     public function fillProtocolLine(int $distanceId, string $completeRank): void

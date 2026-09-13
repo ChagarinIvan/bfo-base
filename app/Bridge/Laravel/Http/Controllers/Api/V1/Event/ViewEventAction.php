@@ -15,6 +15,6 @@ final class ViewEventAction extends BaseController
 
     public function __invoke(string $eventId, ViewEventService $events): mixed
     {
-        return $events->execute(new ViewEvent($eventId));
+        return $events->execute(new ViewEvent($eventId, $this->currentUserId()));
     }
 }

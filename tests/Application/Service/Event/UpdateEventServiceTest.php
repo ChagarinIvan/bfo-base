@@ -14,6 +14,7 @@ use App\Application\Service\Event\Exception\EventNotFound;
 use App\Application\Service\Event\Exception\InvalidProtocol;
 use App\Application\Service\Event\UpdateEvent;
 use App\Application\Service\Event\UpdateEventService;
+use App\Domain\Auth\Impression;
 use App\Domain\Event\Event;
 use App\Domain\Event\Event\EventInfoUpdated;
 use App\Domain\Event\Event\EventProtocolUpdated;
@@ -132,7 +133,7 @@ final class UpdateEventServiceTest extends TestCase
         $this->updater
             ->expects($this->once())
             ->method('update')
-            ->with($this->identicalTo($event), new Protocol('content', 'html'))
+            ->with($this->identicalTo($event), new Protocol('content', 'html'), $this->isInstanceOf(Impression::class))
             ->willReturn('2023/2023-01-01_test_event.text/html')
         ;
 
