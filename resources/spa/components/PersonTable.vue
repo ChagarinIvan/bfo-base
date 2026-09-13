@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import Column from 'primevue/column'
-import DataTable from 'primevue/datatable'
 import ImpressionDetails from './ImpressionDetails.vue'
 import PersonActionMenu from './actions/PersonActionMenu.vue'
 import ConfirmDeleteDialog from './actions/ConfirmDeleteDialog.vue'
@@ -92,103 +90,52 @@ function birthYear(birthday: string | null): string {
         table-id="persons"
         :columns="columns"
         :authenticated="authenticated"
+        :items="persons"
+        table-class="persons-table"
     >
         <template v-if="$slots.filters" #filters>
             <slot name="filters" />
         </template>
-        <template #default="{ isVisible }">
-            <DataTable
-                v-if="persons.length"
-                :value="persons"
-                striped-rows
-                class="persons-table"
-            >
-                <Column
-                    v-if="isVisible('lastname')"
-                    field="lastname"
-                    :header="t('spa.person.lastname')"
-                >
-                    <template #body="{ data }">
-                        <RouterLink :to="`/app/persons/${data.id}`">
-                            {{ data.lastname }}
-                        </RouterLink>
-                    </template>
-                </Column>
-                <Column
-                    v-if="isVisible('firstname')"
-                    field="firstname"
-                    :header="t('spa.person.firstname')"
-                >
-                    <template #body="{ data }">
-                        <RouterLink :to="`/app/persons/${data.id}`">
-                            {{ data.firstname }}
-                        </RouterLink>
-                    </template>
-                </Column>
-                <Column
-                    v-if="!hideClub && isVisible('club')"
-                    :header="t('spa.person.club')"
-                >
-                    <template #body="{ data }">
-                        <RouterLink
-                            v-if="data.clubId && clubLabels[data.clubId]"
-                            :to="`/app/clubs/${data.clubId}`"
-                        >
-                            {{ clubLabels[data.clubId] }}
-                        </RouterLink>
-                        <span v-else>—</span>
-                    </template>
-                </Column>
-                <Column
-                    v-if="isVisible('birthYear')"
-                    :header="t('spa.person.birth_year')"
-                >
-                    <template #body="{ data }">
-                        {{ birthYear(data.birthday) }}
-                    </template>
-                </Column>
-                <Column v-if="isVisible('rank')" :header="t('spa.person.rank')">
-                    <template #body="{ data }">
-                        {{ rankLabels[data.rankId] ?? data.rankId }}
-                    </template>
-                </Column>
-                <Column
-                    v-if="authenticated && isVisible('created')"
-                    :header="t('spa.person.created')"
-                >
-                    <template #body="{ data }">
-                        <ImpressionDetails
-                            :impression="data.created"
-                            :users="users"
-                            :label="t('spa.person.created')"
-                        />
-                    </template>
-                </Column>
-                <Column
-                    v-if="authenticated && isVisible('updated')"
-                    :header="t('spa.person.updated')"
-                >
-                    <template #body="{ data }">
-                        <ImpressionDetails
-                            :impression="data.updated"
-                            :users="users"
-                            :label="t('spa.person.updated')"
-                        />
-                    </template>
-                </Column>
-                <Column
-                    v-if="authenticated && isVisible('actions')"
-                    :header="t('spa.person.actions')"
-                >
-                    <template #body="{ data }">
-                        <PersonActionMenu
-                            :person-id="data.id"
-                            @delete="selectedPerson = data"
-                        />
-                    </template>
-                </Column>
-            </DataTable>
+        <template #cell-lastname="{ data }">
+            <RouterLink :to="`/app/persons/${data.id}`">{{
+                data.lastname
+            }}</RouterLink>
         </template>
+        <template #cell-firstname="{ data }">
+            <RouterLink :to="`/app/persons/${data.id}`">{{
+                data.firstname
+            }}</RouterLink>
+        </template>
+        <template #cell-club="{ data }">
+            <RouterLink
+                v-if="data.clubId && clubLabels[data.clubId]"
+                :to="`/app/clubs/${data.clubId}`"
+                >{{ clubLabels[data.clubId] }}</RouterLink
+            ><span v-else>—</span>
+        </template>
+        <template #cell-birthYear="{ data }">{{
+            birthYear(data.birthday)
+        }}</template>
+        <template #cell-rank="{ data }">{{
+            rankLabels[data.rankId] ?? data.rankId
+        }}</template>
+        <template #cell-created="{ data }"
+            ><ImpressionDetails
+                :impression="data.created"
+                :users="users"
+                :label="t('spa.person.created')"
+        /></template>
+        <template #cell-updated="{ data }"
+            ><ImpressionDetails
+                :impression="data.updated"
+                :users="users"
+                :label="t('spa.person.updated')"
+        /></template>
+        <template #cell-actions="{ data }"
+            ><PersonActionMenu
+                :person-id="data.id"
+                @delete="selectedPerson = data"
+        /></template>
     </ListingTable>
     <ConfirmDeleteDialog
         v-if="authenticated && selectedPerson"

@@ -10,12 +10,14 @@ const {
     getPersonRankHistories,
     getRanks,
     rebuildPersonRanks,
+    routerReplace,
 } = vi.hoisted(() => ({
     auth: { isAuthenticated: true },
     getEventsByIds: vi.fn(),
     getPersonRankHistories: vi.fn(),
     getRanks: vi.fn(),
     rebuildPersonRanks: vi.fn(),
+    routerReplace: vi.fn(),
 }))
 
 vi.mock('../../api/events', () => ({ getEventsByIds }))
@@ -29,6 +31,7 @@ vi.mock('../../api/persons', () => ({ rebuildPersonRanks }))
 vi.mock('../../stores/auth', () => ({ useAuthStore: () => auth }))
 vi.mock('vue-router', () => ({
     useRoute: () => ({ params: { personId: '7' } }),
+    useRouter: () => ({ replace: routerReplace }),
 }))
 
 const history = {
@@ -153,6 +156,9 @@ describe('person ranks page', () => {
         expect(getPersonRankHistories.mock.calls.length).toBeGreaterThanOrEqual(
             callsBeforeRebuild + 1,
         )
+        expect(routerReplace).toHaveBeenCalledWith({
+            query: { refresh: expect.any(String) },
+        })
     })
 
     it('keeps lower-rank achievements in their own rank period', async () => {

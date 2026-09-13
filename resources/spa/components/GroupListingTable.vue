@@ -38,6 +38,14 @@ const columns = [
         table-id="groups"
         :columns="showActions ? columns : columns.slice(0, 2)"
         :authenticated="showActions"
+        :items="groups"
+        :pagination="pagination"
+        :loading="loading"
+        :error="error"
+        :loading-label="t('spa.groups.loading')"
+        :empty-label="t('spa.groups.empty')"
+        table-class="groups-table"
+        @page="(event) => emit('page', event)"
     >
         <template #filters>
             <FilterPanel>
@@ -58,10 +66,6 @@ const columns = [
                 </div>
             </FilterPanel>
         </template>
-        :items="groups" :pagination="pagination" :loading="loading"
-        :error="error" :loading-label="t('spa.groups.loading')"
-        :empty-label="t('spa.groups.empty')" table-class="groups-table"
-        @page="(event) => emit('page', event)" >
         <template #cell-name="{ data }">
             <RouterLink :to="`/app/groups/${data.id}`">
                 {{ data.name }}

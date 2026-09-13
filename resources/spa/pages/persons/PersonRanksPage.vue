@@ -5,7 +5,7 @@ import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Dialog from 'primevue/dialog'
 import Message from 'primevue/message'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import {
     activatePersonRank,
     getPersonRankHistories,
@@ -31,6 +31,7 @@ interface RankHistoryGroup {
 }
 
 const route = useRoute()
+const router = useRouter()
 const auth = useAuthStore()
 const history = ref<PersonRankHistory[]>([])
 const events = ref<Record<string, Event>>({})
@@ -240,6 +241,9 @@ async function rebuild(): Promise<void> {
     try {
         await rebuildPersonRanks(personId())
         await loadHistory()
+        await router.replace({
+            query: { ...route.query, refresh: String(Date.now()) },
+        })
     } catch {
         rebuildError.value = t('spa.person_rank.rebuild_error')
     } finally {

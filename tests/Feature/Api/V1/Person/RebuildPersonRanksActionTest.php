@@ -7,7 +7,6 @@ namespace Tests\Feature\Api\V1\Person;
 use App\Domain\Person\Person;
 use App\Infrastructure\Sanctum\SanctumUser;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\Sanctum;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -48,7 +47,7 @@ final class RebuildPersonRanksActionTest extends TestCase
     {
         return SanctumUser::query()->create([
             'email' => fake()->unique()->safeEmail(),
-            'password' => Hash::make('secret'),
+            'password' => 'secret',
         ]);
     }
 }
