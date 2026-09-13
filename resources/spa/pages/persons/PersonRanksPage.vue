@@ -310,15 +310,15 @@ onBeforeUnmount(() => {
 <template>
     <div class="page-toolbar">
         <h1 class="page-title">{{ t('spa.person_rank.title') }}</h1>
+        <Button
+            v-if="auth.isAuthenticated"
+            :label="t('spa.person_rank.rebuild')"
+            icon="pi pi-refresh"
+            severity="success"
+            :loading="rebuilding"
+            @click="void rebuild()"
+        />
     </div>
-    <ActionButton
-        v-if="auth.isAuthenticated"
-        :label="t('spa.person_rank.rebuild')"
-        icon="pi pi-refresh"
-        severity="info"
-        :disabled="rebuilding"
-        @click="void rebuild()"
-    />
     <Message v-if="rebuildError" severity="error" :closable="false">{{
         rebuildError
     }}</Message>

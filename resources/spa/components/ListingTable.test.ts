@@ -27,6 +27,7 @@ describe('listing table', () => {
         expect(localStorage.getItem('bfo.table.test-table.guest')).toBe(
             JSON.stringify(['name']),
         )
+        expect(inputs[0].attributes('disabled')).toBeDefined()
     })
 
     it('renders an optional sticky filters slot', () => {
@@ -41,8 +42,24 @@ describe('listing table', () => {
             },
         })
 
-        expect(wrapper.find('.listing-table__filters--sticky').text()).toBe(
+        expect(wrapper.find('.listing-table__filters--sticky').text()).toContain(
             'filters',
+        )
+        expect(wrapper.find('.listing-table__controls').exists()).toBe(true)
+    })
+
+    it('keeps visible-column controls in the same block without filters', () => {
+        const wrapper = mount(ListingTable, {
+            props: {
+                tableId: 'test-table',
+                columns: [{ key: 'name', label: 'Name', defaultVisible: true }],
+            },
+            slots: { default: '<div>rows</div>' },
+        })
+
+        expect(wrapper.find('.listing-table__controls').text()).toContain('Name')
+        expect(wrapper.find('.listing-table__filters--sticky').exists()).toBe(
+            true,
         )
     })
 

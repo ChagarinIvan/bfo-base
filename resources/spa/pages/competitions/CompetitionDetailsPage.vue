@@ -23,6 +23,7 @@ import ConfirmDeleteDialog from '../../components/actions/ConfirmDeleteDialog.vu
 import ImpressionDetails from '../../components/ImpressionDetails.vue'
 import ActionButton from '../../components/actions/ActionButton.vue'
 import ListingTable from '../../components/ListingTable.vue'
+import MassCompetitionIndicator from '../../components/MassCompetitionIndicator.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -212,13 +213,10 @@ async function deleteCurrentEvent(): Promise<void> {
                                 {{ t('spa.competition.create.mass') }}
                             </th>
                             <td>
-                                {{
-                                    t(
-                                        competition.mass
-                                            ? 'spa.competitions.mass_yes'
-                                            : 'spa.competitions.mass_no',
-                                    )
-                                }}
+                                <MassCompetitionIndicator
+                                    :mass="competition.mass"
+                                    show-label
+                                />
                             </td>
                         </tr>
                         <tr v-if="auth.isAuthenticated">

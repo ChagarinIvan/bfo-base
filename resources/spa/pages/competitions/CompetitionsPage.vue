@@ -18,6 +18,7 @@ import YearFilter from '../../components/YearFilter.vue'
 import CompetitionActionMenu from '../../components/actions/CompetitionActionMenu.vue'
 import ConfirmDeleteDialog from '../../components/actions/ConfirmDeleteDialog.vue'
 import ListingTable from '../../components/ListingTable.vue'
+import MassCompetitionIndicator from '../../components/MassCompetitionIndicator.vue'
 import { useToast } from 'primevue/usetoast'
 import {
     competitionQuery,
@@ -25,7 +26,6 @@ import {
     formatDateRange,
     hasTooShortNameSearch,
     isApiValidationError,
-    massIconClass,
     paginationFromHeaders,
     resetPageOnFilterChange,
     applyFieldErrors,
@@ -278,21 +278,7 @@ onBeforeUnmount(() => {
             formatDateRange(data.from, data.to)
         }}</template>
         <template #cell-mass="{ data }">
-            <i
-                :class="[
-                    massIconClass(data.mass),
-                    'mass-icon',
-                    data.mass ? 'mass-icon--active' : 'mass-icon--inactive',
-                ]"
-                :aria-label="
-                    t(
-                        data.mass
-                            ? 'spa.competitions.mass_yes'
-                            : 'spa.competitions.mass_no',
-                    )
-                "
-                role="img"
-            />
+            <MassCompetitionIndicator :mass="data.mass" />
         </template>
         <template #cell-created="{ data }">
             <ImpressionDetails

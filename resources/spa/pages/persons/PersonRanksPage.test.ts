@@ -133,12 +133,13 @@ describe('person ranks page', () => {
         const wrapper = mount(PersonRanksPage, {
             global: {
                 stubs: {
-                    ActionButton: {
-                        props: ['label'],
+                    ActionButton: true,
+                    Button: {
+                        name: 'Button',
+                        props: ['label', 'severity', 'icon', 'loading'],
                         template:
                             '<button @click="$emit(\'click\')">{{ label }}</button>',
                     },
-                    Button: true,
                     Column: true,
                     DataTable: DataTableStub,
                     Dialog: true,
@@ -149,6 +150,10 @@ describe('person ranks page', () => {
         })
         await flushPromises()
         const callsBeforeRebuild = getPersonRankHistories.mock.calls.length
+        expect(wrapper.findComponent({ name: 'Button' }).props()).toMatchObject({
+            severity: 'success',
+            icon: 'pi pi-refresh',
+        })
         await wrapper.get('button').trigger('click')
         await flushPromises()
 

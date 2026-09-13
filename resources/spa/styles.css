@@ -171,8 +171,8 @@ body {
 }
 
 .listing-table__columns {
-    margin-bottom: 0.75rem;
-    border: 1px solid rgb(33 37 41 / 10%);
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgb(33 37 41 / 10%);
 }
 
 .listing-table__column-options {
@@ -194,8 +194,30 @@ body {
     z-index: 10;
 }
 
+.listing-table__controls {
+    display: grid;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: #fff;
+}
+
 [id^='protocol-line-'] {
     scroll-margin-top: 12rem;
+}
+
+.protocol-line-anchor-highlight {
+    animation: protocol-line-anchor-highlight 1.8s ease-out;
+}
+
+@keyframes protocol-line-anchor-highlight {
+    0%,
+    55% {
+        background-color: rgb(250 204 21 / 55%);
+    }
+
+    100% {
+        background-color: transparent;
+    }
 }
 
 .filter-panel {
@@ -476,6 +498,27 @@ body {
 .mass-icon--inactive {
     color: #dc3545;
     opacity: 0.78;
+}
+
+.mass-competition-indicator__button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.2rem;
+    border: 0;
+    border-radius: 0.25rem;
+    background: transparent;
+    cursor: pointer;
+}
+
+.mass-competition-indicator__button:hover,
+.mass-competition-indicator__button:focus-visible {
+    background: rgb(33 37 41 / 8%);
+}
+
+.mass-competition-indicator__popover {
+    max-width: 17rem;
+    margin: 0;
 }
 
 .impression-details {

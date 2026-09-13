@@ -125,6 +125,18 @@ function targetProtocolLineId(): string | undefined {
         : hash
 }
 
+function highlightProtocolLineTarget(target: HTMLElement): void {
+    const cell = target.closest('td')
+    if (cell === null) return
+
+    cell.classList.remove('protocol-line-anchor-highlight')
+    void cell.offsetWidth
+    cell.classList.add('protocol-line-anchor-highlight')
+    window.setTimeout(() => {
+        cell.classList.remove('protocol-line-anchor-highlight')
+    }, 1800)
+}
+
 function scheduleTargetProtocolLineScroll(): void {
     const targetId = targetProtocolLineId()
     if (targetScrolled || targetId === undefined) return
@@ -140,6 +152,7 @@ function scheduleTargetProtocolLineScroll(): void {
             document.getElementById(protocolLineAnchor(targetId))
         if (target && !targetScrolled) {
             target.scrollIntoView({ behavior: 'smooth', block: 'center' })
+            highlightProtocolLineTarget(target)
             targetScrolled = true
             window.clearInterval(targetScrollTimer)
             targetScrollTimer = undefined

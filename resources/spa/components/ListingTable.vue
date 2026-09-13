@@ -81,25 +81,28 @@ watch(visible, (value) => {
 </script>
 
 <template>
-    <section class="listing-table__columns">
-        <div class="listing-table__column-options">
-            <label v-for="column in columns" :key="column.key">
-                <input
-                    type="checkbox"
-                    :checked="isVisible(column.key)"
-                    @change="
-                        toggle(
-                            column.key,
-                            ($event.target as HTMLInputElement).checked,
-                        )
-                    "
-                />
-                {{ column.label }}
-            </label>
+    <div class="filter-card listing-table__controls listing-table__filters--sticky">
+        <section class="listing-table__columns">
+            <div class="listing-table__column-options">
+                <label v-for="column in columns" :key="column.key">
+                    <input
+                        type="checkbox"
+                        :checked="isVisible(column.key)"
+                        :disabled="visible.length === 1 && isVisible(column.key)"
+                        @change="
+                            toggle(
+                                column.key,
+                                ($event.target as HTMLInputElement).checked,
+                            )
+                        "
+                    />
+                    {{ column.label }}
+                </label>
+            </div>
+        </section>
+        <div v-if="$slots.filters">
+            <slot name="filters" />
         </div>
-    </section>
-    <div v-if="$slots.filters" class="listing-table__filters--sticky">
-        <slot name="filters" />
     </div>
     <template v-if="items !== undefined">
         <Message v-if="loading" severity="info" :closable="false">

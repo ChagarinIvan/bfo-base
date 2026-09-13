@@ -256,6 +256,20 @@ describe('event view page', () => {
             behavior: 'smooth',
             block: 'center',
         })
+        expect(
+            document
+                .getElementById('protocol-line-11')
+                ?.closest('td')
+                ?.classList.contains('protocol-line-anchor-highlight'),
+        ).toBe(true)
+
+        await vi.advanceTimersByTimeAsync(1800)
+        expect(
+            document
+                .getElementById('protocol-line-11')
+                ?.closest('td')
+                ?.classList.contains('protocol-line-anchor-highlight'),
+        ).toBe(false)
         wrapper.unmount()
     })
 })
