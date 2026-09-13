@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Bridge\Laravel\Jobs;
 
 use App\Domain\Auth\Impression;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Contracts\Queue\Queue;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use function array_unique;
 
