@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Application\Service\Rank;
 
 use App\Application\Dto\Auth\UserId;
+use App\Application\Service\Person\Exception\PersonNotFound;
 use App\Application\Service\Person\RebuildPersonRanks;
 use App\Application\Service\Person\RebuildPersonRanksService;
 use App\Domain\Person\Person;
@@ -37,5 +38,24 @@ final class RebuildPersonRanksServiceTest extends TestCase
 
         $service = new RebuildPersonRanksService($persons, $facts, $calculator, $clock, $transactional);
         $service->execute(new RebuildPersonRanks(42, new UserId(1)));
+    }
+
+    #[Test]
+    public function it_reports_a_missing_person(): void
+    {
+        $persons = $this->createMock(PersonRepository::class);
+        $persons->expects($this->once())->method('lockById')->with(42)->willReturn(null);
+        $transactional = $this->createStub(TransactionManager::class);
+        $transactional->method('run')->willReturnCallback(static fn (Closure $callback): mixed => $callback());
+
+        $this->expectException(PersonNotFound::class);
+
+        new RebuildPersonRanksService(
+            $persons,
+            $this->createStub(RankFactsCollector::class),
+            new RankCalculator(),
+            $this->createStub(Clock::class),
+            $transactional,
+        )->execute(new RebuildPersonRanks(42, new UserId(1)));
     }
 }

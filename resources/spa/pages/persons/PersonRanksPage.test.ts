@@ -4,14 +4,21 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import PersonRanksPage from './PersonRanksPage.vue'
 
-const { auth, getEventsByIds, getPersonRankHistories, getRanks } = vi.hoisted(
-    () => ({
-        auth: { isAuthenticated: true },
-        getEventsByIds: vi.fn(),
-        getPersonRankHistories: vi.fn(),
-        getRanks: vi.fn(),
-    }),
-)
+const {
+    auth,
+    getEventsByIds,
+    getPersonRankHistories,
+    getRanks,
+    rebuildPersonRanks,
+    routerReplace,
+} = vi.hoisted(() => ({
+    auth: { isAuthenticated: true },
+    getEventsByIds: vi.fn(),
+    getPersonRankHistories: vi.fn(),
+    getRanks: vi.fn(),
+    rebuildPersonRanks: vi.fn(),
+    routerReplace: vi.fn(),
+}))
 
 vi.mock('../../api/events', () => ({ getEventsByIds }))
 vi.mock('../../api/personRankHistory', async () => ({
@@ -20,9 +27,11 @@ vi.mock('../../api/personRankHistory', async () => ({
     updatePersonRankActivation: vi.fn(),
 }))
 vi.mock('../../api/ranks', () => ({ getRanks }))
+vi.mock('../../api/persons', () => ({ rebuildPersonRanks }))
 vi.mock('../../stores/auth', () => ({ useAuthStore: () => auth }))
 vi.mock('vue-router', () => ({
     useRoute: () => ({ params: { personId: '7' } }),
+    useRouter: () => ({ replace: routerReplace }),
 }))
 
 const history = {
@@ -117,6 +126,46 @@ describe('person ranks page', () => {
         await flushPromises()
 
         expect(wrapper.text()).not.toContain('Актываваць разрад')
+    })
+
+    it('rebuilds ranks and refreshes history for an authenticated user', async () => {
+        rebuildPersonRanks.mockResolvedValue(undefined)
+        const wrapper = mount(PersonRanksPage, {
+            global: {
+                stubs: {
+                    ActionButton: true,
+                    Button: {
+                        name: 'Button',
+                        props: ['label', 'severity', 'icon', 'loading'],
+                        template:
+                            '<button @click="$emit(\'click\')">{{ label }}</button>',
+                    },
+                    Column: true,
+                    DataTable: DataTableStub,
+                    Dialog: true,
+                    Message: { template: '<div><slot /></div>' },
+                    RouterLink: true,
+                },
+            },
+        })
+        await flushPromises()
+        const callsBeforeRebuild = getPersonRankHistories.mock.calls.length
+        expect(wrapper.findComponent({ name: 'Button' }).props()).toMatchObject(
+            {
+                severity: 'success',
+                icon: 'pi pi-refresh',
+            },
+        )
+        await wrapper.get('button').trigger('click')
+        await flushPromises()
+
+        expect(rebuildPersonRanks).toHaveBeenCalledWith('7')
+        expect(getPersonRankHistories.mock.calls.length).toBeGreaterThanOrEqual(
+            callsBeforeRebuild + 1,
+        )
+        expect(routerReplace).toHaveBeenCalledWith({
+            query: { refresh: expect.any(String) },
+        })
     })
 
     it('keeps lower-rank achievements in their own rank period', async () => {

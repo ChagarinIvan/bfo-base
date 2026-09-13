@@ -12,6 +12,7 @@ import { RouterLink, useRoute, useRouter } from 'vue-router'
 import ActionButton from '../../components/actions/ActionButton.vue'
 import FilterPanel from '../../components/FilterPanel.vue'
 import ImpressionDetails from '../../components/ImpressionDetails.vue'
+import ListingTable from '../../components/ListingTable.vue'
 import { getEventDistances } from '../../api/distances'
 import { getCompetition } from '../../api/competitions'
 import { deleteEvent, getEvent } from '../../api/events'
@@ -60,6 +61,31 @@ const hasPoints = computed(() =>
 const hasVk = computed(() => lines.value.some((line) => line.vk))
 const deleting = ref(false)
 const deleteDialogVisible = ref(false)
+const columns = computed(() => [
+    { key: 'number', label: '#', defaultVisible: true },
+    { key: 'lastname', label: 'Прозвішча', defaultVisible: true },
+    { key: 'firstname', label: 'Імя', defaultVisible: true },
+    { key: 'club', label: 'Клуб', defaultVisible: true },
+    { key: 'year', label: 'Год', defaultVisible: true },
+    { key: 'rank', label: 'Разрад', defaultVisible: true },
+    { key: 'time', label: 'Час', defaultVisible: true },
+    { key: 'place', label: 'Месца', defaultVisible: true },
+    { key: 'completeRank', label: 'Выкананне', defaultVisible: true },
+    ...(hasPoints.value
+        ? [{ key: 'points', label: 'Балы', defaultVisible: true }]
+        : []),
+    ...(hasVk.value ? [{ key: 'vk', label: 'ВК', defaultVisible: true }] : []),
+    ...(auth.isAuthenticated
+        ? [
+              {
+                  key: 'activateRank',
+                  label: 'Актывацыя разраду',
+                  defaultVisible: true,
+              },
+              { key: 'actions', label: 'Дзеянні', defaultVisible: true },
+          ]
+        : []),
+])
 let targetScrolled = false
 let targetScrollTimer: number | undefined
 const debouncedNameSearch = debounce(() => {
@@ -99,6 +125,18 @@ function targetProtocolLineId(): string | undefined {
         : hash
 }
 
+function highlightProtocolLineTarget(target: HTMLElement): void {
+    const cell = target.closest('td')
+    if (cell === null) return
+
+    cell.classList.remove('protocol-line-anchor-highlight')
+    void cell.offsetWidth
+    cell.classList.add('protocol-line-anchor-highlight')
+    window.setTimeout(() => {
+        cell.classList.remove('protocol-line-anchor-highlight')
+    }, 1800)
+}
+
 function scheduleTargetProtocolLineScroll(): void {
     const targetId = targetProtocolLineId()
     if (targetScrolled || targetId === undefined) return
@@ -114,6 +152,7 @@ function scheduleTargetProtocolLineScroll(): void {
             document.getElementById(protocolLineAnchor(targetId))
         if (target && !targetScrolled) {
             target.scrollIntoView({ behavior: 'smooth', block: 'center' })
+            highlightProtocolLineTarget(target)
             targetScrolled = true
             window.clearInterval(targetScrollTimer)
             targetScrollTimer = undefined
@@ -248,7 +287,12 @@ onBeforeUnmount(() => {
         <Card class="competition-details-card">
             <template #title>{{ event.name }}</template>
             <template #content>
-                <table class="competition-details-info">
+                <table
+                    class="competition-details-info"
+                    :class="{
+                        'details-info--with-actions': auth.isAuthenticated,
+                    }"
+                >
                     <tbody>
                         <tr>
                             <th scope="row">Дата</th>
@@ -318,124 +362,184 @@ onBeforeUnmount(() => {
             >Няма дыстанцый.</Message
         >
         <template v-else>
-            <FilterPanel>
-                <div class="filter-field">
-                    <label for="event-distance-filter">Дыстанцыя</label>
-                    <Select
-                        id="event-distance-filter"
-                        v-model="distanceId"
-                        :options="distances"
-                        option-label="groupName"
-                        option-value="id"
-                        filter
-                        filter-match-mode="contains"
-                        @change="onDistanceChange"
-                    />
-                </div>
-                <div class="filter-field">
-                    <label for="event-name-filter">Імя або прозвішча</label>
-                    <InputText
-                        id="event-name-filter"
-                        v-model="name"
-                        @update:model-value="onNameChange"
-                    />
-                    <small
-                        v-if="hasTooShortNameSearch(name)"
-                        class="filter-hint"
-                        >{{ t('spa.competitions.name_hint') }}</small
-                    >
-                </div>
-            </FilterPanel>
-            <Message
-                v-if="linesLoading"
-                severity="info"
-                :closable="false"
-                class="mt-3"
-                >Загрузка пратаколу…</Message
+            <ListingTable
+                table-id="event-protocol-lines"
+                :columns="columns"
+                :authenticated="auth.isAuthenticated"
             >
-            <Message
-                v-else-if="!lines.length"
-                severity="secondary"
-                :closable="false"
-                class="mt-3"
-                >Няма вынікаў.</Message
-            >
-            <template v-else>
-                <DataTable :value="lines" striped-rows class="events-table">
-                    <Column field="serialNumber" header="#"
-                        ><template #body="{ data }"
-                            ><span :id="data.id">{{
-                                data.serialNumber
-                            }}</span></template
-                        ></Column
+                <template #filters>
+                    <FilterPanel>
+                        <div class="filter-field">
+                            <label for="event-distance-filter">Дыстанцыя</label>
+                            <Select
+                                id="event-distance-filter"
+                                v-model="distanceId"
+                                :options="distances"
+                                option-label="groupName"
+                                option-value="id"
+                                filter
+                                filter-match-mode="contains"
+                                @change="onDistanceChange"
+                            />
+                        </div>
+                        <div class="filter-field">
+                            <label for="event-name-filter"
+                                >Імя або прозвішча</label
+                            >
+                            <InputText
+                                id="event-name-filter"
+                                v-model="name"
+                                @update:model-value="onNameChange"
+                            />
+                            <small
+                                v-if="hasTooShortNameSearch(name)"
+                                class="filter-hint"
+                                >{{ t('spa.competitions.name_hint') }}</small
+                            >
+                        </div>
+                    </FilterPanel>
+                </template>
+                <template #default="{ isVisible }">
+                    <Message
+                        v-if="linesLoading"
+                        severity="info"
+                        :closable="false"
+                        class="mt-3"
+                        >Загрузка пратаколу…</Message
                     >
-                    <Column field="lastname" header="Прозвішча"
-                        ><template #body="{ data }"
-                            ><RouterLink
-                                v-if="data.personId"
-                                :to="`/app/persons/${data.personId}`"
-                                >{{ data.lastname }}</RouterLink
-                            ><span v-else>{{ data.lastname }}</span></template
-                        ></Column
+                    <Message
+                        v-else-if="!lines.length"
+                        severity="secondary"
+                        :closable="false"
+                        class="mt-3"
+                        >Няма вынікаў.</Message
                     >
-                    <Column field="firstname" header="Імя"
-                        ><template #body="{ data }"
-                            ><RouterLink
-                                v-if="data.personId"
-                                :to="`/app/persons/${data.personId}`"
-                                >{{ data.firstname }}</RouterLink
-                            ><span v-else>{{ data.firstname }}</span></template
-                        ></Column
-                    >
-                    <Column field="club" header="Клуб"
-                        ><template #body="{ data }"
-                            ><RouterLink
-                                v-if="data.clubId"
-                                :to="`/app/clubs/${data.clubId}`"
-                                >{{ data.club }}</RouterLink
-                            ><span v-else>{{ data.club }}</span></template
-                        ></Column
-                    >
-                    <Column field="year" header="Год" /><Column
-                        field="rank"
-                        header="Разрад"
-                    /><Column field="time" header="Час" /><Column
-                        field="place"
-                        header="Месца"
-                    /><Column field="completeRank" header="Выкананне" />
-                    <Column
-                        v-if="hasPoints"
-                        field="points"
-                        header="Балы"
-                    /><Column v-if="hasVk" header="ВК"
-                        ><template #body="{ data }">{{
-                            data.vk ? 'ВК' : ''
-                        }}</template></Column
-                    >
-                    <Column
-                        v-if="auth.isAuthenticated"
-                        field="activateRank"
-                        header="Актывацыя разраду"
-                    />
-                    <Column v-if="auth.isAuthenticated" header="Дзеянні"
-                        ><template #body="{ data }"
-                            ><ActionButton
-                                as="a"
-                                :href="`/app/protocol-lines/${data.id}/person`"
-                                label="Прызначыць удзельніка"
-                                icon="pi pi-user-plus"
-                                severity="success" /></template
-                    ></Column>
-                </DataTable>
-                <Paginator
-                    :first="(pagination.currentPage - 1) * pagination.perPage"
-                    :rows="pagination.perPage"
-                    :total-records="pagination.total"
-                    :rows-per-page-options="[20, 50, 100]"
-                    class="competitions-paginator"
-                    @page="onPage"
-                />
-            </template>
+                    <template v-else>
+                        <DataTable
+                            :value="lines"
+                            striped-rows
+                            class="events-table"
+                        >
+                            <Column
+                                v-if="isVisible('number')"
+                                field="serialNumber"
+                                header="#"
+                                ><template #body="{ data }"
+                                    ><span :id="protocolLineAnchor(data.id)">{{
+                                        data.serialNumber
+                                    }}</span></template
+                                ></Column
+                            >
+                            <Column
+                                v-if="isVisible('lastname')"
+                                field="lastname"
+                                header="Прозвішча"
+                                ><template #body="{ data }"
+                                    ><RouterLink
+                                        v-if="data.personId"
+                                        :to="`/app/persons/${data.personId}`"
+                                        >{{ data.lastname }}</RouterLink
+                                    ><span v-else>{{
+                                        data.lastname
+                                    }}</span></template
+                                ></Column
+                            >
+                            <Column
+                                v-if="isVisible('firstname')"
+                                field="firstname"
+                                header="Імя"
+                                ><template #body="{ data }"
+                                    ><RouterLink
+                                        v-if="data.personId"
+                                        :to="`/app/persons/${data.personId}`"
+                                        >{{ data.firstname }}</RouterLink
+                                    ><span v-else>{{
+                                        data.firstname
+                                    }}</span></template
+                                ></Column
+                            >
+                            <Column
+                                v-if="isVisible('club')"
+                                field="club"
+                                header="Клуб"
+                                ><template #body="{ data }"
+                                    ><RouterLink
+                                        v-if="data.clubId"
+                                        :to="`/app/clubs/${data.clubId}`"
+                                        >{{ data.club }}</RouterLink
+                                    ><span v-else>{{
+                                        data.club
+                                    }}</span></template
+                                ></Column
+                            >
+                            <Column
+                                v-if="isVisible('year')"
+                                field="year"
+                                header="Год"
+                            /><Column
+                                v-if="isVisible('rank')"
+                                field="rank"
+                                header="Разрад"
+                            /><Column
+                                v-if="isVisible('time')"
+                                field="time"
+                                header="Час"
+                            /><Column
+                                v-if="isVisible('place')"
+                                field="place"
+                                header="Месца"
+                            /><Column
+                                v-if="isVisible('completeRank')"
+                                field="completeRank"
+                                header="Выкананне"
+                            />
+                            <Column
+                                v-if="hasPoints && isVisible('points')"
+                                field="points"
+                                header="Балы"
+                            /><Column
+                                v-if="hasVk && isVisible('vk')"
+                                header="ВК"
+                                ><template #body="{ data }">{{
+                                    data.vk ? 'ВК' : ''
+                                }}</template></Column
+                            >
+                            <Column
+                                v-if="
+                                    auth.isAuthenticated &&
+                                    isVisible('activateRank')
+                                "
+                                field="activateRank"
+                                header="Актывацыя разраду"
+                            />
+                            <Column
+                                v-if="
+                                    auth.isAuthenticated && isVisible('actions')
+                                "
+                                header="Дзеянні"
+                                ><template #body="{ data }"
+                                    ><ActionButton
+                                        as="a"
+                                        :href="`/app/protocol-lines/${data.id}/person`"
+                                        label="Прызначыць удзельніка"
+                                        icon="pi pi-user-plus"
+                                        severity="success" /></template
+                            ></Column>
+                        </DataTable>
+                        <Paginator
+                            :first="
+                                (pagination.currentPage - 1) *
+                                pagination.perPage
+                            "
+                            :rows="pagination.perPage"
+                            :total-records="pagination.total"
+                            :rows-per-page-options="[20, 50, 100]"
+                            class="competitions-paginator"
+                            @page="onPage"
+                        />
+                    </template>
+                </template>
+            </ListingTable>
         </template>
         <ConfirmDeleteDialog
             v-if="auth.isAuthenticated"

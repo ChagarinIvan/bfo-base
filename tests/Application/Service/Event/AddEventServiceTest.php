@@ -83,7 +83,7 @@ final class AddEventServiceTest extends TestCase
         $infoDto->description = 'test event description';
         $infoDto->date = '2023-01-01';
         $dto->info = $infoDto;
-        $protocol = $this->createMock(UploadedFile::class);
+        $protocol = $this->createStub(UploadedFile::class);
         $protocol->method('getContent')->willReturn('content');
         $protocol->method('getMimeType')->willReturn('text/html');
 

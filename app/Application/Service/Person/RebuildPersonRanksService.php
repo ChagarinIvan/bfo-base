@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Service\Person;
 
+use App\Application\Service\Person\Exception\PersonNotFound;
 use App\Domain\Auth\Impression;
 use App\Domain\Person\PersonRepository;
 use App\Domain\Person\RankCalculator;
@@ -22,14 +23,11 @@ final readonly class RebuildPersonRanksService
     ) {
     }
 
+    /** @throws PersonNotFound */
     public function execute(RebuildPersonRanks $command): void
     {
         $this->transactional->run(function () use ($command): void {
-            $person = $this->persons->lockById($command->personId);
-
-            if ($person === null) {
-                return;
-            }
+            $person = $this->persons->lockById($command->personId) ?? throw new PersonNotFound();
 
             $now = $this->clock->now();
             $rankFacts = $this->factsCollector->collect($command->personId);

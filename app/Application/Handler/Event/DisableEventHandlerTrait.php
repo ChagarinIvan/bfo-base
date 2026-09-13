@@ -6,6 +6,7 @@ namespace App\Application\Handler\Event;
 
 use App\Application\Dto\Auth\UserId;
 use App\Application\Service\Cup\ClearCupCache;
+use App\Application\Service\Person\Exception\PersonNotFound;
 use App\Application\Service\Person\RebuildPersonRanks;
 use App\Domain\Event\Event;
 
@@ -18,7 +19,11 @@ trait DisableEventHandlerTrait
         $this->protocolLineService->deleteEventLines($event);
 
         foreach ($personIds as $personId) {
-            $this->rebuildPersonRanksService->execute(new RebuildPersonRanks($personId, new UserId($event->updated->by)));
+            try {
+                $this->rebuildPersonRanksService->execute(new RebuildPersonRanks($personId, new UserId($event->updated->by)));
+            } catch (PersonNotFound) {
+                // A queued protocol update may outlive a deleted participant.
+            }
         }
 
         foreach ($event->cups as $cup) {

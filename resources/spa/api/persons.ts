@@ -34,6 +34,10 @@ export async function deletePerson(id: string): Promise<void> {
     await api.delete(`/persons/${id}`)
 }
 
+export async function rebuildPersonRanks(id: string): Promise<void> {
+    await api.post(`/persons/${id}/ranks/rebuild`)
+}
+
 export async function getPersons(
     query: PersonSearchQuery = {},
 ): Promise<PaginatedApiResponse<Person>> {

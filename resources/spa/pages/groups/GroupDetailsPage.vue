@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeUnmount, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import Card from 'primevue/card'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
@@ -18,6 +18,7 @@ import DateFilter from '../../components/DateFilter.vue'
 import YearFilter from '../../components/YearFilter.vue'
 import ConfirmDeleteDialog from '../../components/actions/ConfirmDeleteDialog.vue'
 import GroupActionMenu from '../../components/actions/GroupActionMenu.vue'
+import ListingTable from '../../components/ListingTable.vue'
 import { t } from '../../i18n'
 import { useAuthStore } from '../../stores/auth'
 import {
@@ -48,6 +49,40 @@ const pagination = ref<PaginationHeaders>({
     lastPage: 1,
 })
 const auth = useAuthStore()
+const columns = computed(() => [
+    {
+        key: 'competition',
+        label: t('spa.group.filters.competition'),
+        defaultVisible: true,
+    },
+    { key: 'event', label: t('spa.group.details.start'), defaultVisible: true },
+    {
+        key: 'date',
+        label: t('spa.group.filters.date'),
+        defaultVisible: true,
+        field: 'date',
+    },
+    {
+        key: 'participants',
+        label: t('spa.group.details.participants'),
+        defaultVisible: true,
+        field: 'participantsCount',
+    },
+    ...(auth.isAuthenticated
+        ? [
+              {
+                  key: 'created',
+                  label: t('spa.competitions.created'),
+                  defaultVisible: true,
+              },
+              {
+                  key: 'updated',
+                  label: t('spa.competitions.updated'),
+                  defaultVisible: true,
+              },
+          ]
+        : []),
+])
 let latestRequest = 0
 const debouncedFilter = debounce(
     () =>
@@ -157,7 +192,12 @@ onBeforeUnmount(() => debouncedFilter.cancel())
         <Card class="group-details-card"
             ><template #title>{{ group.name }}</template
             ><template #content
-                ><table class="group-details-info">
+                ><table
+                    class="group-details-info"
+                    :class="{
+                        'details-info--with-actions': auth.isAuthenticated,
+                    }"
+                >
                     <tbody>
                         <tr>
                             <th scope="row">
@@ -196,86 +236,109 @@ onBeforeUnmount(() => debouncedFilter.cancel())
                 /> </template
         ></Card>
         <h2 class="section-title">{{ t('spa.group.details.starts') }}</h2>
-        <FilterPanel>
-            <div class="filter-field">
-                <label for="group-competition-name-filter">{{
-                    t('spa.competitions.name_filter')
-                }}</label>
-                <InputText
-                    id="group-competition-name-filter"
-                    v-model="competitionName"
-                    @update:model-value="onCompetitionNameChange"
-                />
-                <small
-                    v-if="hasTooShortNameSearch(competitionName)"
-                    class="filter-hint"
-                    >{{ t('spa.competitions.name_hint') }}</small
+        <ListingTable
+            table-id="group-events"
+            :columns="columns"
+            :authenticated="auth.isAuthenticated"
+        >
+            <template #filters>
+                <FilterPanel>
+                    <div class="filter-field">
+                        <label for="group-competition-name-filter">{{
+                            t('spa.competitions.name_filter')
+                        }}</label>
+                        <InputText
+                            id="group-competition-name-filter"
+                            v-model="competitionName"
+                            @update:model-value="onCompetitionNameChange"
+                        />
+                        <small
+                            v-if="hasTooShortNameSearch(competitionName)"
+                            class="filter-hint"
+                            >{{ t('spa.competitions.name_hint') }}</small
+                        >
+                    </div>
+                    <YearFilter
+                        v-model="year"
+                        input-id="group-event-year-filter"
+                        :years="years"
+                        @update:model-value="onYearChange"
+                    />
+                    <DateFilter
+                        v-model="date"
+                        input-id="group-event-date-filter"
+                        :label="t('spa.competitions.date_filter')"
+                        @update:model-value="onDateChange"
+                    />
+                </FilterPanel>
+            </template>
+            <template #default="{ isVisible }">
+                <Message
+                    v-if="!events.length"
+                    severity="secondary"
+                    :closable="false"
+                    >{{ t('spa.group.details.empty') }}</Message
                 >
-            </div>
-            <YearFilter
-                v-model="year"
-                input-id="group-event-year-filter"
-                :years="years"
-                @update:model-value="onYearChange"
-            />
-            <DateFilter
-                v-model="date"
-                input-id="group-event-date-filter"
-                :label="t('spa.competitions.date_filter')"
-                @update:model-value="onDateChange"
-            />
-        </FilterPanel>
-        <Message v-if="!events.length" severity="secondary" :closable="false">{{
-            t('spa.group.details.empty')
-        }}</Message>
-        <DataTable v-else :value="events" striped-rows
-            ><Column :header="t('spa.group.filters.competition')">
-                <template #body="{ data }">
-                    <RouterLink :to="`/app/competitions/${data.competitionId}`">
-                        {{ data.competitionName }}
-                    </RouterLink>
-                </template> </Column
-            ><Column :header="t('spa.group.details.start')">
-                <template #body="{ data }">
-                    <RouterLink :to="`/app/events/${data.id}`">
-                        {{ data.name }}
-                    </RouterLink>
-                </template> </Column
-            ><Column
-                field="date"
-                :header="t('spa.group.filters.date')" /><Column
-                field="participantsCount"
-                :header="t('spa.group.details.participants')" /><Column
-                v-if="auth.isAuthenticated"
-                :header="t('spa.competitions.created')"
-            >
-                <template #body="{ data }">
-                    <ImpressionDetails
-                        :impression="data.created"
-                        :users="users"
-                        :label="t('spa.competitions.created')"
-                    />
-                </template> </Column
-            ><Column
-                v-if="auth.isAuthenticated"
-                :header="t('spa.competitions.updated')"
-            >
-                <template #body="{ data }">
-                    <ImpressionDetails
-                        :impression="data.updated"
-                        :users="users"
-                        :label="t('spa.competitions.updated')"
-                    />
-                </template> </Column
-        ></DataTable>
-        <Paginator
-            v-if="pagination.total"
-            :first="(pagination.currentPage - 1) * pagination.perPage"
-            :rows="pagination.perPage"
-            :total-records="pagination.total"
-            :rows-per-page-options="[10, 20, 50]"
-            @page="onPage"
-        />
+                <DataTable v-else :value="events" striped-rows
+                    ><Column
+                        v-if="isVisible('competition')"
+                        :header="t('spa.group.filters.competition')"
+                    >
+                        <template #body="{ data }">
+                            <RouterLink
+                                :to="`/app/competitions/${data.competitionId}`"
+                            >
+                                {{ data.competitionName }}
+                            </RouterLink>
+                        </template> </Column
+                    ><Column
+                        v-if="isVisible('event')"
+                        :header="t('spa.group.details.start')"
+                    >
+                        <template #body="{ data }">
+                            <RouterLink :to="`/app/events/${data.id}`">
+                                {{ data.name }}
+                            </RouterLink>
+                        </template> </Column
+                    ><Column
+                        v-if="isVisible('date')"
+                        field="date"
+                        :header="t('spa.group.filters.date')" /><Column
+                        v-if="isVisible('participants')"
+                        field="participantsCount"
+                        :header="t('spa.group.details.participants')" /><Column
+                        v-if="auth.isAuthenticated && isVisible('created')"
+                        :header="t('spa.competitions.created')"
+                    >
+                        <template #body="{ data }">
+                            <ImpressionDetails
+                                :impression="data.created"
+                                :users="users"
+                                :label="t('spa.competitions.created')"
+                            />
+                        </template> </Column
+                    ><Column
+                        v-if="auth.isAuthenticated && isVisible('updated')"
+                        :header="t('spa.competitions.updated')"
+                    >
+                        <template #body="{ data }">
+                            <ImpressionDetails
+                                :impression="data.updated"
+                                :users="users"
+                                :label="t('spa.competitions.updated')"
+                            />
+                        </template> </Column
+                ></DataTable>
+                <Paginator
+                    v-if="pagination.total"
+                    :first="(pagination.currentPage - 1) * pagination.perPage"
+                    :rows="pagination.perPage"
+                    :total-records="pagination.total"
+                    :rows-per-page-options="[10, 20, 50]"
+                    @page="onPage"
+                />
+            </template>
+        </ListingTable>
         <ConfirmDeleteDialog
             :visible="deleteDialogVisible"
             :title="t('spa.group.delete')"

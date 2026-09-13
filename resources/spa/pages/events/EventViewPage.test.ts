@@ -132,7 +132,15 @@ describe('event view page', () => {
             'Кубак Беларусі',
         )
         expect(wrapper.find('.competition-details-card').exists()).toBe(true)
+        expect(
+            wrapper
+                .find('.competition-details-info')
+                .classes('details-info--with-actions'),
+        ).toBe(false)
         expect(wrapper.find('.filter-card').exists()).toBe(true)
+        expect(wrapper.find('.listing-table__filters--sticky').exists()).toBe(
+            true,
+        )
         expect(wrapper.find('.events-table').exists()).toBe(true)
         expect(wrapper.findComponent(Select).props()).toMatchObject({
             filter: true,
@@ -160,6 +168,11 @@ describe('event view page', () => {
             severity: 'success',
         })
         expect(wrapper.text()).toContain('Актывацыя разраду')
+        expect(
+            wrapper
+                .find('.competition-details-info')
+                .classes('details-info--with-actions'),
+        ).toBe(true)
     })
 
     it('shows a confirmed delete control for an authenticated user', async () => {
@@ -245,14 +258,28 @@ describe('event view page', () => {
             page: 1,
             perPage: 100,
         })
-        expect(document.getElementById('11')).not.toBeNull()
-        expect(document.getElementById('11')?.scrollIntoView).toBe(
-            scrollIntoView,
-        )
+        expect(document.getElementById('protocol-line-11')).not.toBeNull()
+        expect(
+            document.getElementById('protocol-line-11')?.scrollIntoView,
+        ).toBe(scrollIntoView)
         expect(scrollIntoView).toHaveBeenCalledWith({
             behavior: 'smooth',
             block: 'center',
         })
+        expect(
+            document
+                .getElementById('protocol-line-11')
+                ?.closest('td')
+                ?.classList.contains('protocol-line-anchor-highlight'),
+        ).toBe(true)
+
+        await vi.advanceTimersByTimeAsync(1800)
+        expect(
+            document
+                .getElementById('protocol-line-11')
+                ?.closest('td')
+                ?.classList.contains('protocol-line-anchor-highlight'),
+        ).toBe(false)
         wrapper.unmount()
     })
 })

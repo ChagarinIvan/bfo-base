@@ -158,6 +158,15 @@ final class EventManagementActionTest extends TestCase
         ;
     }
 
+    #[Test]
+    public function it_returns_a_handled_json_not_found_response_for_a_missing_event(): void
+    {
+        $this->getJson('/api/v1/events/999999')
+            ->assertNotFound()
+            ->assertJsonPath('errors.0.code', 'event_not_found')
+        ;
+    }
+
     private function createUser(): SanctumUser
     {
         return SanctumUser::query()->create([

@@ -157,19 +157,29 @@ onBeforeUnmount(() => debouncedNameSearch.cancel())
         </template>
     </Toolbar>
 
-    <PersonFilters
-        v-model:name="name"
-        v-model:club-id="clubId"
-        v-model:rank-id="rankId"
-        v-model:birth-year="birthYear"
+    <PersonTable
+        :persons="persons"
+        :users="users"
         :clubs="clubs"
-        :ranks="ranks"
-        :field-errors="fieldErrors"
-        show-club
-        @name-change="onNameChange"
-        @filter-change="onFilterChange"
-    />
-
+        :authenticated="auth.isAuthenticated"
+        :rank-labels="rankLabels"
+        @deleted="load()"
+    >
+        <template #filters>
+            <PersonFilters
+                v-model:name="name"
+                v-model:club-id="clubId"
+                v-model:rank-id="rankId"
+                v-model:birth-year="birthYear"
+                :clubs="clubs"
+                :ranks="ranks"
+                :field-errors="fieldErrors"
+                show-club
+                @name-change="onNameChange"
+                @filter-change="onFilterChange"
+            />
+        </template>
+    </PersonTable>
     <Message v-if="loading" severity="info" :closable="false">{{
         t('spa.person.loading')
     }}</Message>
@@ -187,15 +197,6 @@ onBeforeUnmount(() => debouncedNameSearch.cancel())
         :closable="false"
         >{{ t('spa.person.empty') }}</Message
     >
-    <PersonTable
-        v-else
-        :persons="persons"
-        :users="users"
-        :clubs="clubs"
-        :authenticated="auth.isAuthenticated"
-        :rank-labels="rankLabels"
-        @deleted="load()"
-    />
     <Paginator
         v-if="pagination.total > 0"
         :first="(pagination.currentPage - 1) * pagination.perPage"

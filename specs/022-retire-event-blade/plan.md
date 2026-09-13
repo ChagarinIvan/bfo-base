@@ -8,7 +8,7 @@
 
 ## Summary
 
-Migrate the remaining event-management workflows to authenticated SPA routes and JSON endpoints, then remove the event Blade route group and presentation-only legacy code. Preserve the existing Event domain operations and protocol parsing semantics; move the unite-events logic out of its controller into an Application command/service and split its create/persist/relations phases. Keep HTTP DTOs at the Bridge/Application boundary, convert protocol sources to domain values in commands, and expose domain protocol failures as Application HTTP errors.
+Migrate the remaining event-management workflows to authenticated SPA routes and JSON endpoints, then remove the event Blade route group and presentation-only legacy code. Preserve the existing Event domain operations and protocol parsing semantics; queue parsing of a newly created event only after its database transaction commits. Move the unite-events logic out of its controller into an Application command/service and split its create/persist/relations phases. Keep HTTP DTOs at the Bridge/Application boundary, convert protocol sources to domain values in commands, and expose domain protocol failures as Application HTTP errors.
 
 ## Technical Context
 

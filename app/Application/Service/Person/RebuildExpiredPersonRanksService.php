@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Service\Person;
 
+use App\Application\Service\Person\Exception\PersonNotFound;
 use App\Domain\Person\PersonRepository;
 use App\Domain\Shared\Criteria;
 
@@ -19,8 +20,12 @@ final readonly class RebuildExpiredPersonRanksService
     {
         $count = 0;
         foreach ($this->persons->idsByCriteria(new Criteria($command->criteria)) as $personId) {
-            $this->rebuild->execute(new RebuildPersonRanks($personId, $command->userId));
-            $count++;
+            try {
+                $this->rebuild->execute(new RebuildPersonRanks($personId, $command->userId));
+                $count++;
+            } catch (PersonNotFound) {
+                // The projection can disappear between criteria lookup and locking.
+            }
         }
 
         return $count;

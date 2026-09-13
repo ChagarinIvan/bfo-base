@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Message from 'primevue/message'
@@ -12,6 +12,7 @@ import type { PersonPrompt, PaginationHeaders, User } from '../../api/types'
 import ConfirmDeleteDialog from '../../components/actions/ConfirmDeleteDialog.vue'
 import ImpressionDetails from '../../components/ImpressionDetails.vue'
 import PersonPromptActionMenu from '../../components/actions/PersonPromptActionMenu.vue'
+import ListingTable from '../../components/ListingTable.vue'
 import { t } from '../../i18n'
 import { useAuthStore } from '../../stores/auth'
 import { paginationFromHeaders } from '../listingModels'
@@ -32,6 +33,37 @@ const pagination = ref<PaginationHeaders>({
     lastPage: 1,
 })
 let latestRequest = 0
+const columns = computed(() => [
+    {
+        key: 'prompt',
+        label: t('spa.person_prompt.prompt'),
+        defaultVisible: true,
+    },
+    {
+        key: 'metaphone',
+        label: t('spa.person_prompt.metaphone'),
+        defaultVisible: true,
+    },
+    ...(auth.isAuthenticated
+        ? [
+              {
+                  key: 'created',
+                  label: t('spa.person.created'),
+                  defaultVisible: true,
+              },
+              {
+                  key: 'updated',
+                  label: t('spa.person.updated'),
+                  defaultVisible: true,
+              },
+              {
+                  key: 'actions',
+                  label: t('spa.person_prompt.actions'),
+                  defaultVisible: true,
+              },
+          ]
+        : []),
+])
 
 async function load(
     page = 1,
@@ -119,37 +151,60 @@ onMounted(async () => {
         :closable="false"
         >{{ t('spa.person_prompt.empty') }}</Message
     >
-    <DataTable v-else :value="prompts" striped-rows>
-        <Column field="prompt" :header="t('spa.person_prompt.prompt')" />
-        <Column field="metaphone" :header="t('spa.person_prompt.metaphone')" />
-        <Column v-if="auth.isAuthenticated" :header="t('spa.person.created')">
-            <template #body="{ data }">
-                <ImpressionDetails
-                    :impression="data.created"
-                    :users="users"
-                    :label="t('spa.person.created')"
+    <ListingTable
+        v-else
+        table-id="person-prompts"
+        :columns="columns"
+        :authenticated="auth.isAuthenticated"
+    >
+        <template #default="{ isVisible }">
+            <DataTable :value="prompts" striped-rows>
+                <Column
+                    v-if="isVisible('prompt')"
+                    field="prompt"
+                    :header="t('spa.person_prompt.prompt')"
                 />
-            </template>
-        </Column>
-        <Column v-if="auth.isAuthenticated" :header="t('spa.person.updated')">
-            <template #body="{ data }">
-                <ImpressionDetails
-                    :impression="data.updated"
-                    :users="users"
-                    :label="t('spa.person.updated')"
+                <Column
+                    v-if="isVisible('metaphone')"
+                    field="metaphone"
+                    :header="t('spa.person_prompt.metaphone')"
                 />
-            </template>
-        </Column>
-        <Column
-            v-if="auth.isAuthenticated"
-            :header="t('spa.person_prompt.actions')"
-            ><template #body="{ data }"
-                ><PersonPromptActionMenu
-                    :person-id="data.personId"
-                    :prompt-id="data.id"
-                    @delete="selected = data" /></template
-        ></Column>
-    </DataTable>
+                <Column
+                    v-if="auth.isAuthenticated && isVisible('created')"
+                    :header="t('spa.person.created')"
+                >
+                    <template #body="{ data }">
+                        <ImpressionDetails
+                            :impression="data.created"
+                            :users="users"
+                            :label="t('spa.person.created')"
+                        />
+                    </template>
+                </Column>
+                <Column
+                    v-if="auth.isAuthenticated && isVisible('updated')"
+                    :header="t('spa.person.updated')"
+                >
+                    <template #body="{ data }">
+                        <ImpressionDetails
+                            :impression="data.updated"
+                            :users="users"
+                            :label="t('spa.person.updated')"
+                        />
+                    </template>
+                </Column>
+                <Column
+                    v-if="auth.isAuthenticated && isVisible('actions')"
+                    :header="t('spa.person_prompt.actions')"
+                    ><template #body="{ data }"
+                        ><PersonPromptActionMenu
+                            :person-id="data.personId"
+                            :prompt-id="data.id"
+                            @delete="selected = data" /></template
+                ></Column>
+            </DataTable>
+        </template>
+    </ListingTable>
     <Paginator
         v-if="pagination.total > 0"
         :first="(pagination.currentPage - 1) * pagination.perPage"

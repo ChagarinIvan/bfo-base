@@ -1,5 +1,13 @@
 <script setup lang="ts">
-import { inject, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
+import {
+    computed,
+    inject,
+    onBeforeUnmount,
+    onMounted,
+    reactive,
+    ref,
+    watch,
+} from 'vue'
 import Button from 'primevue/button'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
@@ -12,6 +20,8 @@ import { getYears } from '../../api/years'
 import type { PaginationHeaders, ProtocolLine } from '../../api/types'
 import DateFilter from '../../components/DateFilter.vue'
 import FilterPanel from '../../components/FilterPanel.vue'
+import ListingTable from '../../components/ListingTable.vue'
+import { protocolLineEventUrl } from '../../components/tableModels'
 import YearFilter from '../../components/YearFilter.vue'
 import ActionButton from '../../components/actions/ActionButton.vue'
 import { useAuthStore } from '../../stores/auth'
@@ -41,6 +51,38 @@ const loading = ref(true)
 const error = ref('')
 const notFound = ref(false)
 const fieldErrors = reactive<Record<string, string>>({})
+const columns = computed(() => [
+    {
+        key: 'competition',
+        label: t('spa.person_view.competition'),
+        defaultVisible: true,
+    },
+    { key: 'event', label: t('spa.person_view.event'), defaultVisible: true },
+    { key: 'name', label: t('spa.person_view.name'), defaultVisible: true },
+    { key: 'date', label: t('spa.person_view.date'), defaultVisible: true },
+    { key: 'group', label: t('spa.person_view.group'), defaultVisible: true },
+    {
+        key: 'birthYear',
+        label: t('spa.person_view.birth_year'),
+        defaultVisible: true,
+    },
+    { key: 'result', label: t('spa.person_view.result'), defaultVisible: true },
+    { key: 'place', label: t('spa.person_view.place'), defaultVisible: true },
+    {
+        key: 'completeRank',
+        label: t('spa.person_view.complete_rank'),
+        defaultVisible: true,
+    },
+    ...(auth.isAuthenticated
+        ? [
+              {
+                  key: 'actions',
+                  label: t('spa.person_view.actions'),
+                  defaultVisible: true,
+              },
+          ]
+        : []),
+])
 const pagination = ref<PaginationHeaders>({
     currentPage: 1,
     perPage: 20,
@@ -137,14 +179,9 @@ function onPage(event: PageState): void {
 }
 
 function eventUrl(line: ProtocolLine): string {
-    return (
-        '/app/events/' +
-        line.eventId +
-        '?distanceId=' +
-        line.distanceId +
-        '#' +
-        line.id
-    )
+    return line.eventId === null
+        ? '#'
+        : protocolLineEventUrl(line.eventId, line.id, line.distanceId)
 }
 
 function display(value: string | null): string {
@@ -180,130 +217,183 @@ onBeforeUnmount(() => debouncedCompetitionSearch.cancel())
 
 <template>
     <h2 class="section-title">{{ t('spa.person_view.participation') }}</h2>
-    <FilterPanel>
-        <YearFilter
-            v-model="year"
-            class="col-3"
-            input-id="person-view-year-filter"
-            :years="years"
-            :disabled="loading"
-            @update:model-value="onYearChange"
-        />
-        <div class="filter-field">
-            <label for="person-view-competition-name-filter">{{
-                t('spa.competitions.name_filter')
-            }}</label>
-            <InputText
-                id="person-view-competition-name-filter"
-                v-model="competitionName"
-                @update:model-value="onCompetitionNameChange"
-            />
-            <small v-if="fieldErrors.competitionName" class="field-error">{{
-                fieldErrors.competitionName
-            }}</small>
-            <small
-                v-if="hasTooShortNameSearch(competitionName)"
-                class="filter-hint"
-                >{{ t('spa.competitions.name_hint') }}</small
-            >
-        </div>
-        <DateFilter
-            v-model="date"
-            input-id="person-view-date-filter"
-            :label="t('spa.competitions.date_filter')"
-            :disabled="loading"
-            :error="fieldErrors.date"
-            @update:model-value="onDateChange"
-        />
-    </FilterPanel>
-
-    <Message v-if="loading" severity="info" :closable="false">{{
-        t('spa.person_view.loading')
-    }}</Message>
-    <Message v-else-if="error" severity="error" :closable="false">
-        {{ error }}
-        <Button
-            v-if="notFound"
-            :label="t('spa.person_view.back')"
-            text
-            @click="router.push('/app/persons')"
-        />
-        <Button
-            v-else
-            :label="t('spa.person_view.retry')"
-            text
-            @click="void load()"
-        />
-    </Message>
-    <Message v-else-if="!lines.length" severity="secondary" :closable="false">{{
-        t('spa.person_view.empty')
-    }}</Message>
-    <DataTable
-        v-else
-        :value="lines"
-        :row-class="rowClass"
-        striped-rows
-        class="person-view-table"
+    <ListingTable
+        table-id="person-participation"
+        :columns="columns"
+        :authenticated="auth.isAuthenticated"
     >
-        <Column :header="t('spa.person_view.competition')">
-            <template #body="{ data }">
-                <RouterLink
-                    v-if="data.competitionId"
-                    :to="'/app/competitions/' + data.competitionId"
-                    >{{ display(data.competitionName) }}</RouterLink
-                >
-                <span v-else>{{ display(data.competitionName) }}</span>
-            </template>
-        </Column>
-        <Column :header="t('spa.person_view.event')">
-            <template #body="{ data }">
-                <a :href="eventUrl(data)">{{ display(data.eventName) }}</a>
-            </template>
-        </Column>
-        <Column :header="t('spa.person_view.name')">
-            <template #body="{ data }">{{
-                data.lastname + ' ' + data.firstname
-            }}</template>
-        </Column>
-        <Column :header="t('spa.person_view.date')" field="eventDate" />
-        <Column :header="t('spa.person_view.group')">
-            <template #body="{ data }">{{ display(data.groupName) }}</template>
-        </Column>
-        <Column :header="t('spa.person_view.birth_year')">
-            <template #body="{ data }">{{ display(data.year) }}</template>
-        </Column>
-        <Column :header="t('spa.person_view.result')">
-            <template #body="{ data }">{{ display(data.time) }}</template>
-        </Column>
-        <Column :header="t('spa.person_view.place')">
-            <template #body="{ data }">{{ display(data.place) }}</template>
-        </Column>
-        <Column :header="t('spa.person_view.complete_rank')">
-            <template #body="{ data }">{{
-                display(data.completeRank)
-            }}</template>
-        </Column>
-        <Column
-            v-if="auth.isAuthenticated"
-            :header="t('spa.person_view.actions')"
-        >
-            <template #body="{ data }">
-                <ActionButton
-                    v-if="hasPersonMismatch(data, person)"
-                    icon="pi pi-user-plus"
-                    :label="t('spa.person_view.extract_person')"
-                    severity="warn"
-                    @click="extract(data)"
+        <template #filters>
+            <FilterPanel>
+                <YearFilter
+                    v-model="year"
+                    class="col-3"
+                    input-id="person-view-year-filter"
+                    :years="years"
+                    :disabled="loading"
+                    @update:model-value="onYearChange"
                 />
-            </template>
-        </Column>
-    </DataTable>
-    <Paginator
-        v-if="pagination.total > 0"
-        :first="(pagination.currentPage - 1) * pagination.perPage"
-        :rows="pagination.perPage"
-        :total-records="pagination.total"
-        :rows-per-page-options="[10, 20, 50]"
-        @page="onPage"
-    />
+                <div class="filter-field">
+                    <label for="person-view-competition-name-filter">{{
+                        t('spa.competitions.name_filter')
+                    }}</label>
+                    <InputText
+                        id="person-view-competition-name-filter"
+                        v-model="competitionName"
+                        @update:model-value="onCompetitionNameChange"
+                    />
+                    <small
+                        v-if="fieldErrors.competitionName"
+                        class="field-error"
+                        >{{ fieldErrors.competitionName }}</small
+                    >
+                    <small
+                        v-if="hasTooShortNameSearch(competitionName)"
+                        class="filter-hint"
+                        >{{ t('spa.competitions.name_hint') }}</small
+                    >
+                </div>
+                <DateFilter
+                    v-model="date"
+                    input-id="person-view-date-filter"
+                    :label="t('spa.competitions.date_filter')"
+                    :disabled="loading"
+                    :error="fieldErrors.date"
+                    @update:model-value="onDateChange"
+                />
+            </FilterPanel>
+        </template>
+
+        <template #default="{ isVisible }">
+            <Message v-if="loading" severity="info" :closable="false">{{
+                t('spa.person_view.loading')
+            }}</Message>
+            <Message v-else-if="error" severity="error" :closable="false">
+                {{ error }}
+                <Button
+                    v-if="notFound"
+                    :label="t('spa.person_view.back')"
+                    text
+                    @click="router.push('/app/persons')"
+                />
+                <Button
+                    v-else
+                    :label="t('spa.person_view.retry')"
+                    text
+                    @click="void load()"
+                />
+            </Message>
+            <Message
+                v-else-if="!lines.length"
+                severity="secondary"
+                :closable="false"
+                >{{ t('spa.person_view.empty') }}</Message
+            >
+            <DataTable
+                v-else
+                :value="lines"
+                :row-class="rowClass"
+                striped-rows
+                class="person-view-table"
+            >
+                <Column
+                    v-if="isVisible('competition')"
+                    :header="t('spa.person_view.competition')"
+                >
+                    <template #body="{ data }">
+                        <RouterLink
+                            v-if="data.competitionId"
+                            :to="'/app/competitions/' + data.competitionId"
+                            >{{ display(data.competitionName) }}</RouterLink
+                        >
+                        <span v-else>{{ display(data.competitionName) }}</span>
+                    </template>
+                </Column>
+                <Column
+                    v-if="isVisible('event')"
+                    :header="t('spa.person_view.event')"
+                >
+                    <template #body="{ data }">
+                        <a :href="eventUrl(data)">{{
+                            display(data.eventName)
+                        }}</a>
+                    </template>
+                </Column>
+                <Column
+                    v-if="isVisible('name')"
+                    :header="t('spa.person_view.name')"
+                >
+                    <template #body="{ data }">{{
+                        data.lastname + ' ' + data.firstname
+                    }}</template>
+                </Column>
+                <Column
+                    v-if="isVisible('date')"
+                    :header="t('spa.person_view.date')"
+                    field="eventDate"
+                />
+                <Column
+                    v-if="isVisible('group')"
+                    :header="t('spa.person_view.group')"
+                >
+                    <template #body="{ data }">{{
+                        display(data.groupName)
+                    }}</template>
+                </Column>
+                <Column
+                    v-if="isVisible('birthYear')"
+                    :header="t('spa.person_view.birth_year')"
+                >
+                    <template #body="{ data }">{{
+                        display(data.year)
+                    }}</template>
+                </Column>
+                <Column
+                    v-if="isVisible('result')"
+                    :header="t('spa.person_view.result')"
+                >
+                    <template #body="{ data }">{{
+                        display(data.time)
+                    }}</template>
+                </Column>
+                <Column
+                    v-if="isVisible('place')"
+                    :header="t('spa.person_view.place')"
+                >
+                    <template #body="{ data }">{{
+                        display(data.place)
+                    }}</template>
+                </Column>
+                <Column
+                    v-if="isVisible('completeRank')"
+                    :header="t('spa.person_view.complete_rank')"
+                >
+                    <template #body="{ data }">{{
+                        display(data.completeRank)
+                    }}</template>
+                </Column>
+                <Column
+                    v-if="auth.isAuthenticated && isVisible('actions')"
+                    :header="t('spa.person_view.actions')"
+                >
+                    <template #body="{ data }">
+                        <ActionButton
+                            v-if="hasPersonMismatch(data, person)"
+                            icon="pi pi-user-plus"
+                            :label="t('spa.person_view.extract_person')"
+                            severity="warn"
+                            @click="extract(data)"
+                        />
+                    </template>
+                </Column>
+            </DataTable>
+            <Paginator
+                v-if="pagination.total > 0"
+                :first="(pagination.currentPage - 1) * pagination.perPage"
+                :rows="pagination.perPage"
+                :total-records="pagination.total"
+                :rows-per-page-options="[10, 20, 50]"
+                @page="onPage"
+            />
+        </template>
+    </ListingTable>
 </template>

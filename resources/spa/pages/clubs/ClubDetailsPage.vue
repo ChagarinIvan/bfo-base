@@ -184,7 +184,12 @@ onBeforeUnmount(() => debouncedNameSearch.cancel())
                 {{ club.name }}
             </template>
             <template #content>
-                <table class="club-details-info">
+                <table
+                    class="club-details-info"
+                    :class="{
+                        'details-info--with-actions': auth.isAuthenticated,
+                    }"
+                >
                     <tbody>
                         <tr>
                             <th scope="row">
@@ -224,21 +229,10 @@ onBeforeUnmount(() => debouncedNameSearch.cancel())
         </Card>
 
         <h2 class="section-title">{{ t('spa.club.details.persons') }}</h2>
-        <PersonFilters
-            v-model:name="name"
-            v-model:rank-id="rankId"
-            v-model:birth-year="birthYear"
-            :ranks="ranks"
-            :field-errors="fieldErrors"
-            id-prefix="club-person"
-            @name-change="onNameChange"
-            @filter-change="onFilterChange"
-        />
         <Message v-if="!persons.length" severity="secondary" :closable="false">
             {{ t('spa.club.details.empty') }}
         </Message>
         <PersonTable
-            v-else
             :persons="persons"
             :users="users"
             :clubs="[{ id: club.id, name: club.name }]"
@@ -246,7 +240,20 @@ onBeforeUnmount(() => debouncedNameSearch.cancel())
             :rank-labels="rankLabels"
             :hide-club="true"
             @deleted="reloadPersons()"
-        />
+        >
+            <template #filters>
+                <PersonFilters
+                    v-model:name="name"
+                    v-model:rank-id="rankId"
+                    v-model:birth-year="birthYear"
+                    :ranks="ranks"
+                    :field-errors="fieldErrors"
+                    id-prefix="club-person"
+                    @name-change="onNameChange"
+                    @filter-change="onFilterChange"
+                />
+            </template>
+        </PersonTable>
         <Paginator
             v-if="personPagination.total > 0"
             :first="

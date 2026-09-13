@@ -170,6 +170,56 @@ body {
     border: 1px solid rgb(33 37 41 / 10%);
 }
 
+.listing-table__columns--with-filters {
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgb(33 37 41 / 10%);
+}
+
+.listing-table__column-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1rem;
+}
+
+.listing-table__column-options label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    cursor: pointer;
+}
+
+.listing-table__filters--sticky {
+    position: sticky;
+    top: 4.75rem;
+    z-index: 10;
+}
+
+.listing-table__controls {
+    display: grid;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: #fff;
+}
+
+[id^='protocol-line-'] {
+    scroll-margin-top: 12rem;
+}
+
+.protocol-line-anchor-highlight {
+    animation: protocol-line-anchor-highlight 1.8s ease-out;
+}
+
+@keyframes protocol-line-anchor-highlight {
+    0%,
+    55% {
+        background-color: rgb(250 204 21 / 55%);
+    }
+
+    100% {
+        background-color: transparent;
+    }
+}
+
 .filter-panel {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -272,6 +322,15 @@ body {
     border-bottom: 1px solid var(--p-content-border-color);
     padding: 0.5rem;
     text-align: left;
+}
+
+.competition-details-info:not(.details-info--with-actions) tr:last-child th,
+.competition-details-info:not(.details-info--with-actions) tr:last-child td,
+.club-details-info:not(.details-info--with-actions) tr:last-child th,
+.club-details-info:not(.details-info--with-actions) tr:last-child td,
+.group-details-info:not(.details-info--with-actions) tr:last-child th,
+.group-details-info:not(.details-info--with-actions) tr:last-child td {
+    border-bottom: 0;
 }
 
 .competition-details-info th {
@@ -448,6 +507,12 @@ body {
 .mass-icon--inactive {
     color: #dc3545;
     opacity: 0.78;
+}
+
+.mass-competition-indicator__icon {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem;
 }
 
 .impression-details {

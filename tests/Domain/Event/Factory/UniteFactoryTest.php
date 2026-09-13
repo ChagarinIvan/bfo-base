@@ -51,7 +51,7 @@ final class UniteFactoryTest extends TestCase
 
     private function sourceEvent(string $name): Event
     {
-        $event = $this->createMock(Event::class);
+        $event = $this->createStub(Event::class);
         $attributes = [
             'name' => $name,
             'date' => Carbon::parse('2026-05-10'),

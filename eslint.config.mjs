@@ -16,6 +16,7 @@ export default tseslint.config(
         Blob: 'readonly',
         document: 'readonly',
         File: 'readonly',
+        HTMLElement: 'readonly',
         URL: 'readonly',
         window: 'readonly',
       },

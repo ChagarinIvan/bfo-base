@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { api } from './client'
-import { getPerson, getPersons } from './persons'
+import { getPerson, getPersons, rebuildPersonRanks } from './persons'
 
 vi.mock('./client', () => ({
-    api: { get: vi.fn() },
+    api: { get: vi.fn(), post: vi.fn() },
 }))
 
 describe('persons api', () => {
@@ -75,5 +75,13 @@ describe('persons api', () => {
                 perPage: 10,
             },
         })
+    })
+
+    it('requests a rank rebuild for one person', async () => {
+        vi.mocked(api.post).mockResolvedValue({})
+
+        await rebuildPersonRanks('42')
+
+        expect(api.post).toHaveBeenCalledWith('/persons/42/ranks/rebuild')
     })
 })

@@ -200,6 +200,7 @@ envelope, валидацию 422 и отказ без токена. Полный
 - [X] T072 [P] [US1] Вынести отображение created/updated в переиспользуемый `ImpressionDetails` с локализованными датой/временем и popup полной информации в `resources/spa/components/`
 - [X] T073 [P] [US1] Добавить часовой кэш списка пользователей и frontend-тесты в `resources/spa/api/users.ts` и `resources/spa/api/users.test.ts`
 - [X] T074 [US1] Обновить competition list: legacy links, контрастную mass-иконку, убрать subtitle и navbar create action в `resources/spa/pages/competitions/` и `resources/spa/components/AppLayout.vue`
+- [X] T075 Закрепить общий V1 API error-contract: ожидаемые HTTP-ошибки наследуют `ApplicationException` и несут `#[HttpError]`, поэтому `ApiAction` возвращает 4xx до глобального handler/Sentry; добавить request-регрессию для `event_not_found` в `tests/Feature/Api/V1/Event/EventManagementActionTest.php`.
 
 ## Dependencies & Execution Order
 
