@@ -8,19 +8,19 @@ describe('mass competition indicator', () => {
     it('explains that ranks do not apply to a mass competition', () => {
         const wrapper = mount(MassCompetitionIndicator, {
             props: { mass: true },
-            global: { stubs: { Popover: { template: '<div><slot /></div>' } } },
+            global: { directives: { tooltip: {} } },
         })
 
-        expect(wrapper.get('button').attributes('aria-label')).toBe(
+        expect(wrapper.find('button').exists()).toBe(false)
+        expect(wrapper.get('[role="img"]').attributes('aria-label')).toBe(
             'Масавыя спаборніцтвы',
         )
-        expect(wrapper.text()).toContain('разрады не прымяняюцца')
     })
 
     it('can render its label beside the icon for a competition card', () => {
         const wrapper = mount(MassCompetitionIndicator, {
             props: { mass: false, showLabel: true },
-            global: { stubs: { Popover: { template: '<div><slot /></div>' } } },
+            global: { directives: { tooltip: {} } },
         })
 
         expect(wrapper.text()).toContain('Звычайныя спаборніцтвы')

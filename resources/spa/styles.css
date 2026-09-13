@@ -500,25 +500,10 @@ body {
     opacity: 0.78;
 }
 
-.mass-competition-indicator__button {
+.mass-competition-indicator__icon {
     display: inline-flex;
     align-items: center;
-    gap: 0.45rem;
     padding: 0.2rem;
-    border: 0;
-    border-radius: 0.25rem;
-    background: transparent;
-    cursor: pointer;
-}
-
-.mass-competition-indicator__button:hover,
-.mass-competition-indicator__button:focus-visible {
-    background: rgb(33 37 41 / 8%);
-}
-
-.mass-competition-indicator__popover {
-    max-width: 17rem;
-    margin: 0;
 }
 
 .impression-details {

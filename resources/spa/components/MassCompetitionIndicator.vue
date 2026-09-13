@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import Popover from 'primevue/popover'
+import { computed } from 'vue'
 import { t } from '../i18n'
 import { massIconClass } from '../pages/competitions/competitionModels'
 
@@ -9,7 +8,6 @@ const props = withDefaults(
     { showLabel: false },
 )
 
-const popover = ref<{ toggle: (event: Event) => void } | null>(null)
 const label = computed(() =>
     t(
         props.mass
@@ -17,19 +15,22 @@ const label = computed(() =>
             : 'spa.competitions.mass_no',
     ),
 )
-
-function toggle(event: Event): void {
-    popover.value?.toggle(event)
-}
+const hint = computed(() =>
+    t(
+        props.mass
+            ? 'spa.competitions.mass_hint_yes'
+            : 'spa.competitions.mass_hint_no',
+    ),
+)
 </script>
 
 <template>
     <span class="mass-competition-indicator">
-        <button
-            type="button"
-            class="mass-competition-indicator__button"
+        <span
+            v-tooltip.top="hint"
+            class="mass-competition-indicator__icon"
             :aria-label="label"
-            @click="toggle"
+            role="img"
         >
             <i
                 :class="[
@@ -40,17 +41,6 @@ function toggle(event: Event): void {
                 aria-hidden="true"
             />
             <span v-if="showLabel">{{ label }}</span>
-        </button>
-        <Popover ref="popover">
-            <p class="mass-competition-indicator__popover">
-                {{
-                    t(
-                        mass
-                            ? 'spa.competitions.mass_hint_yes'
-                            : 'spa.competitions.mass_hint_no',
-                    )
-                }}
-            </p>
-        </Popover>
+        </span>
     </span>
 </template>
