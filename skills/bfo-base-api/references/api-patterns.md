@@ -82,3 +82,5 @@ Validation returns HTTP 422:
 ```
 
 Application failures use the same top-level `errors` array with their stable `HttpError` code. Domain exceptions do not contain HTTP status or transport codes.
+
+Expected HTTP failures must extend `ApplicationException`; `ApiAction` catches this base type before Laravel's global exception handler and Sentry. For each failure, add a request test asserting both the 4xx status and `errors.0.code`.

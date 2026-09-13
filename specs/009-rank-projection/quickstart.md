@@ -75,7 +75,9 @@ Projection, enum, history persistence, `/api/v1/ranks`, `rankId`-фильтр,
 rebuild-команда `persons:ranks:refill {userId}`, batch job и ежедневное истечение реализованы. Удалены
 устаревшие rank services/repositories/aggregate, старый список/check/export и
 веб-refill entry point; сохранены только history и ручная активация. Повторная
-идентификация protocol lines отправляет одну batch-задачу на уникальных людей.
+идентификация protocol lines отправляет одну входную batch-задачу на уникальных людей; она
+дедуплицирует IDs и ставит независимую атомарную job пересчёта для каждого спортсмена. Это
+не даёт большой загрузке протокола превысить timeout одного Horizon worker.
 
 После выкладки правила закрытия периодов при повышении запустить идемпотентный полный refill:
 `php artisan persons:ranks:refill {userId}`. Он пересоберёт уже сохранённые истории из строк

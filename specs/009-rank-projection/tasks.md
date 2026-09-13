@@ -83,10 +83,11 @@ description: "Задачи реализации актуального разр�
 ### Реализация пользовательской истории 2
 
 - [X] T027 [US2] Реализовать Application use case batch rebuild с блокировкой Person, чистым `RankCalculator` и транзакционным `PersonRepository` в `app/Application/Service/Rank/RebuildPersonRanksService.php` и `app/Application/Service/Rank/RebuildPersonRanks.php`.
-- [X] T028 [US2] Переключить orchestration идентификации на единственную идемпотентную batch-задачу `RebuildPersonRanksJob`: `ProtocolLineIdentService` собирает unique person IDs и передаёт их T027; отдельный rebuild на каждую строку удалён.
+- [X] T028 [US2] Переключить orchestration идентификации на идемпотентную batch-задачу `RebuildPersonRanksJob`: `ProtocolLineIdentService` собирает unique person IDs; batch-job дедуплицирует их и ставит атомарную `RebuildPersonRankJob` на каждого спортсмена, без отдельного rebuild на строку протокола.
 - [X] T029 [US2] Перевести изменение даты ручной активации на `ProtocolLine.activateRank()` и rebuild владельца строки в `app/Application/Service/Person/UpdatePersonRankActivationDateService.php`, `app/Application/Service/Person/ActivatePersonRankService.php` и соответствующих HTTP actions.
-- [X] T030 [US2] Добавить queued batch handler для rebuild в `app/Bridge/Laravel/Jobs/RebuildPersonRanksJob.php`; job дедуплицирует person IDs, а сервис разрешается стандартным DI и идемпотентен.
-- [X] T031 [US2] Выполнить узкие тесты T024–T026 в `tests/Application/Service/Rank/RebuildPersonRanksServiceTest.php`, `tests/Feature/Rank/RebuildRanksAfterProtocolProcessingTest.php` и `tests/Feature/Rank/ProtocolLineRankRebuildDispatchTest.php`; последний подтверждает одну job на уникальный person ID.
+- [X] T030 [US2] Добавить queued batch handler для rebuild в `app/Bridge/Laravel/Jobs/RebuildPersonRanksJob.php`; job дедуплицирует person IDs и fan-out'ит атомарные `RebuildPersonRankJob`, а сервис разрешается стандартным DI и идемпотентен.
+- [X] T031 [US2] Выполнить узкие тесты T024–T026 в `tests/Application/Service/Rank/RebuildPersonRanksServiceTest.php`, `tests/Feature/Rank/RebuildRanksAfterProtocolProcessingTest.php` и `tests/Feature/Rank/ProtocolLineRankRebuildDispatchTest.php`; последний подтверждает одну входную batch-job на уникальный person ID.
+- [X] T055 [US2] После production timeout разбить batch fan-out на атомарные `RebuildPersonRankJob`, покрыть дедупликацию и передачу `Impression` unit-тестом в `tests/Bridge/Laravel/Jobs/RebuildPersonRanksJobTest.php`.
 
 **Контрольная точка**: никакая идентифицированная protocol line не зависит от read-time расчёта; изменения источника запускают единственный batch rebuild.
 

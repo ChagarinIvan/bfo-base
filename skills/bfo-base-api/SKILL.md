@@ -55,6 +55,7 @@ Use this request path:
 - Let `ApiAction` serialize via `ApiDtoSerializer`; do not hand-build JSON for the new Application API style unless an existing contract requires it.
 - Hide authenticated-only DTO properties with `#[Groups(['authenticated'])]`.
 - Expected failures are Application exceptions annotated with `#[HttpError(status: ..., code: ...)]`. Domain exceptions contain no HTTP knowledge; Application translates them.
+- Every expected API HTTP failure must extend `ApplicationException`. `ApiAction` catches that base type and returns the annotated 4xx JSON response before Laravel's global handler/Sentry; never model an expected API failure as `RuntimeException` or another uncaught throwable.
 - Validation remains HTTP 422 in the existing field-error format. Use stable machine-readable codes for other failures (`*_not_found`, `invalid_protocol`, etc.).
 
 ## Tests and verification
@@ -73,6 +74,7 @@ Use this request path:
 - service accepts one command and returns the contract's view DTO/slice/void;
 - domain values are created in the command or Application service, not in the action;
 - expected domain failures map to Application HTTP errors;
+- each expected 4xx has a request test that asserts its status and stable error code, and is therefore not reported to Sentry;
 - criteria and resources are separate, and pagination is applied at the API boundary;
 - success/error/authentication/validation behaviour has focused tests;
 - feature spec, plan, contracts, and tasks reflect the delivered API behaviour.

@@ -15,6 +15,7 @@
 5. Unite two events from the same competition; verify `201`, a new event, and unchanged source events. Verify fewer than two IDs and an ID from another competition are rejected.
 6. Delete an event and verify `204` plus its absence from active event lists.
 7. Repeat a protected mutation as a guest and verify authentication rejection.
+8. Create an event inside a database transaction; verify protocol parsing is queued only after commit, so the worker can restore the new event model.
 
 ## SPA validation
 
@@ -27,3 +28,5 @@
 ## Automated checks
 
 The delivered change passes the focused PHP tests, frontend lint/typecheck/Vitest/build, `composer stan`, `composer cs`, `composer rector -- --dry-run`, and `git diff --check`.
+
+The post-delivery queue regression check is `tests/Application/Handler/Event/CreateProtocolHandlerTest.php`.

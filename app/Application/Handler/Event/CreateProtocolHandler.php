@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Application\Handler\Event;
 
 use App\Domain\Event\Event\EventCreated;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Contracts\Queue\ShouldQueueAfterCommit;
 
-final class CreateProtocolHandler extends ParseProtocolHandler implements ShouldQueue
+final class CreateProtocolHandler extends ParseProtocolHandler implements ShouldQueueAfterCommit
 {
     public function handle(EventCreated $systemEvent): void
     {

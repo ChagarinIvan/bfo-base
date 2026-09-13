@@ -77,6 +77,7 @@
 - [X] T026 Run the focused PHP and Vitest suites from [quickstart.md](quickstart.md) and repair feature regressions
 - [X] T027 Run the automated delivery gates: `composer cs`, `composer rector -- --dry-run`, `composer stan --memory-limit=4G`, frontend lint/typecheck/Vitest/build, and `git diff --check`
 - [X] T028 Update task markers and reconcile [spec.md](spec.md), [plan.md](plan.md), [data-model.md](data-model.md), [contracts/event-management-api.md](contracts/event-management-api.md), and [quickstart.md](quickstart.md) with the delivered behaviour
+- [X] T029 After a production stale-model failure, make `CreateProtocolHandler` implement `ShouldQueueAfterCommit` and add its queue-contract regression test in `tests/Application/Handler/Event/CreateProtocolHandlerTest.php`; missing-model deletion is intentionally not enabled.
 
 ## Dependencies & Execution Order
 

@@ -4,12 +4,9 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Jobs;
 
-use App\Application\Dto\Auth\UserId;
-use App\Application\Service\Person\Exception\PersonNotFound;
-use App\Application\Service\Person\RebuildPersonRanks;
-use App\Application\Service\Person\RebuildPersonRanksService;
 use App\Domain\Auth\Impression;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Contracts\Queue\Queue;
 use Illuminate\Foundation\Queue\Queueable;
 use function array_unique;
 
@@ -25,14 +22,10 @@ final class RebuildPersonRanksJob implements ShouldQueue
     {
     }
 
-    public function handle(RebuildPersonRanksService $rebuild): void
+    public function handle(Queue $queue): void
     {
         foreach (array_unique($this->personIds) as $personId) {
-            try {
-                $rebuild->execute(new RebuildPersonRanks($personId, new UserId($this->impression->by)));
-            } catch (PersonNotFound) {
-                // The person was removed after this asynchronous job was queued.
-            }
+            $queue->push(new RebuildPersonRankJob($personId, $this->impression));
         }
     }
 }
