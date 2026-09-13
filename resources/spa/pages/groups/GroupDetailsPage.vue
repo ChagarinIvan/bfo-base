@@ -194,7 +194,9 @@ onBeforeUnmount(() => debouncedFilter.cancel())
             ><template #content
                 ><table
                     class="group-details-info"
-                    :class="{ 'details-info--with-actions': auth.isAuthenticated }"
+                    :class="{
+                        'details-info--with-actions': auth.isAuthenticated,
+                    }"
                 >
                     <tbody>
                         <tr>

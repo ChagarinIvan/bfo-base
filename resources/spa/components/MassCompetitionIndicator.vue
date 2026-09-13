@@ -6,11 +6,7 @@ import { massIconClass } from '../pages/competitions/competitionModels'
 const props = defineProps<{ mass: boolean }>()
 
 const label = computed(() =>
-    t(
-        props.mass
-            ? 'spa.competitions.mass_yes'
-            : 'spa.competitions.mass_no',
-    ),
+    t(props.mass ? 'spa.competitions.mass_yes' : 'spa.competitions.mass_no'),
 )
 const hint = computed(() =>
     t(

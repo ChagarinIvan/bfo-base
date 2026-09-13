@@ -186,7 +186,9 @@ onBeforeUnmount(() => debouncedNameSearch.cancel())
             <template #content>
                 <table
                     class="club-details-info"
-                    :class="{ 'details-info--with-actions': auth.isAuthenticated }"
+                    :class="{
+                        'details-info--with-actions': auth.isAuthenticated,
+                    }"
                 >
                     <tbody>
                         <tr>

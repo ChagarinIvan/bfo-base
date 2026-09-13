@@ -289,7 +289,9 @@ onBeforeUnmount(() => {
             <template #content>
                 <table
                     class="competition-details-info"
-                    :class="{ 'details-info--with-actions': auth.isAuthenticated }"
+                    :class="{
+                        'details-info--with-actions': auth.isAuthenticated,
+                    }"
                 >
                     <tbody>
                         <tr>

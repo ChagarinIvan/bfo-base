@@ -81,7 +81,9 @@ watch(visible, (value) => {
 </script>
 
 <template>
-    <div class="filter-card listing-table__controls listing-table__filters--sticky">
+    <div
+        class="filter-card listing-table__controls listing-table__filters--sticky"
+    >
         <section
             class="listing-table__columns"
             :class="{ 'listing-table__columns--with-filters': $slots.filters }"
@@ -91,7 +93,9 @@ watch(visible, (value) => {
                     <input
                         type="checkbox"
                         :checked="isVisible(column.key)"
-                        :disabled="visible.length === 1 && isVisible(column.key)"
+                        :disabled="
+                            visible.length === 1 && isVisible(column.key)
+                        "
                         @change="
                             toggle(
                                 column.key,

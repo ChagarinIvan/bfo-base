@@ -150,10 +150,12 @@ describe('person ranks page', () => {
         })
         await flushPromises()
         const callsBeforeRebuild = getPersonRankHistories.mock.calls.length
-        expect(wrapper.findComponent({ name: 'Button' }).props()).toMatchObject({
-            severity: 'success',
-            icon: 'pi pi-refresh',
-        })
+        expect(wrapper.findComponent({ name: 'Button' }).props()).toMatchObject(
+            {
+                severity: 'success',
+                icon: 'pi pi-refresh',
+            },
+        )
         await wrapper.get('button').trigger('click')
         await flushPromises()
 

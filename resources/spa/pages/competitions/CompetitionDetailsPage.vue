@@ -189,7 +189,9 @@ async function deleteCurrentEvent(): Promise<void> {
             <template #content>
                 <table
                     class="competition-details-info"
-                    :class="{ 'details-info--with-actions': auth.isAuthenticated }"
+                    :class="{
+                        'details-info--with-actions': auth.isAuthenticated,
+                    }"
                 >
                     <tbody>
                         <tr>
@@ -216,7 +218,9 @@ async function deleteCurrentEvent(): Promise<void> {
                                 {{ t('spa.competition.create.mass') }}
                             </th>
                             <td>
-                                <MassCompetitionIndicator :mass="competition.mass" />
+                                <MassCompetitionIndicator
+                                    :mass="competition.mass"
+                                />
                             </td>
                         </tr>
                         <tr v-if="auth.isAuthenticated">

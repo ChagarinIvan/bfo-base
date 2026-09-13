@@ -42,9 +42,9 @@ describe('listing table', () => {
             },
         })
 
-        expect(wrapper.find('.listing-table__filters--sticky').text()).toContain(
-            'filters',
-        )
+        expect(
+            wrapper.find('.listing-table__filters--sticky').text(),
+        ).toContain('filters')
         expect(wrapper.find('.listing-table__controls').exists()).toBe(true)
         expect(
             wrapper
@@ -62,7 +62,9 @@ describe('listing table', () => {
             slots: { default: '<div>rows</div>' },
         })
 
-        expect(wrapper.find('.listing-table__controls').text()).toContain('Name')
+        expect(wrapper.find('.listing-table__controls').text()).toContain(
+            'Name',
+        )
         expect(wrapper.find('.listing-table__filters--sticky').exists()).toBe(
             true,
         )
