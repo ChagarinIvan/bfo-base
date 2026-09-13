@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Handler\Rank;
 
 use App\Application\Dto\Auth\UserId;
+use App\Application\Service\Person\Exception\PersonNotFound;
 use App\Application\Service\Person\RebuildPersonRanks;
 use App\Application\Service\Person\RebuildPersonRanksService;
 use App\Domain\ProtocolLine\Event\ProtocolLineRankActivated;
@@ -19,7 +20,11 @@ final readonly class ProtocolLineRankActivatedHandler implements ShouldQueueAfte
     public function handle(ProtocolLineRankActivated $event): void
     {
         if ($event->protocolLine->person_id) {
-            $this->service->execute(new RebuildPersonRanks($event->protocolLine->person_id, new UserId($event->impression->by)));
+            try {
+                $this->service->execute(new RebuildPersonRanks($event->protocolLine->person_id, new UserId($event->impression->by)));
+            } catch (PersonNotFound) {
+                // The queued activation no longer has a person to update.
+            }
         }
     }
 }

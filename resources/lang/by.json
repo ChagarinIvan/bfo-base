@@ -304,6 +304,8 @@
     "spa.person_rank.cancel": "Скасаваць",
     "spa.person_rank.date_required": "Пазначце дату актывацыі.",
     "spa.person_rank.save_error": "Не атрымалася захаваць актывацыю.",
+    "spa.person_rank.rebuild": "Пераразлічыць разрады",
+    "spa.person_rank.rebuild_error": "Не атрымалася пераразлічыць разрады.",
     "spa.person_view.participation": "Удзел у спаборніцтвах",
     "spa.person_view.competition": "Спаборніцтва",
     "spa.person_view.event": "Этап",

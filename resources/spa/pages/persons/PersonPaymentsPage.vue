@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import Button from 'primevue/button'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
@@ -12,6 +12,7 @@ import { getYears } from '../../api/years'
 import type { PaginationHeaders, PersonPayment, User } from '../../api/types'
 import FilterPanel from '../../components/FilterPanel.vue'
 import ImpressionDetails from '../../components/ImpressionDetails.vue'
+import ListingTable from '../../components/ListingTable.vue'
 import YearFilter from '../../components/YearFilter.vue'
 import { t } from '../../i18n'
 import { useAuthStore } from '../../stores/auth'
@@ -38,6 +39,20 @@ const error = ref('')
 const notFound = ref(false)
 let latestRequest = 0
 let initialized = false
+const columns = computed(() => [
+    { key: 'year', label: t('spa.person_payment.year'), defaultVisible: true },
+    { key: 'date', label: t('spa.person_payment.date'), defaultVisible: true },
+    {
+        key: 'created',
+        label: t('spa.person_payment.created'),
+        defaultVisible: true,
+    },
+    {
+        key: 'updated',
+        label: t('spa.person_payment.updated'),
+        defaultVisible: true,
+    },
+])
 
 async function load(
     page = 1,
@@ -123,68 +138,92 @@ onMounted(() => void initialize())
             "
         />
     </div>
-    <FilterPanel>
-        <YearFilter
-            v-model="year"
-            class="col-3"
-            input-id="person-payment-year-filter"
-            :years="years"
-            :disabled="loading"
-            @update:model-value="onYearChange"
-        />
-    </FilterPanel>
-    <Message v-if="loading" severity="info" :closable="false">{{
-        t('spa.person_payment.loading')
-    }}</Message>
-    <Message v-else-if="error" severity="error" :closable="false">
-        {{ error }}
-        <Button
-            v-if="notFound"
-            :label="t('spa.person_payment.back')"
-            text
-            @click="router.push('/app/persons')"
-        />
-        <Button
-            v-else
-            :label="t('spa.person_payment.retry')"
-            text
-            @click="void load()"
-        />
-    </Message>
-    <Message
-        v-else-if="!payments.length"
-        severity="secondary"
-        :closable="false"
-        >{{ t('spa.person_payment.empty') }}</Message
+    <ListingTable
+        table-id="person-payments"
+        :columns="columns"
+        :authenticated="auth.isAuthenticated"
     >
-    <DataTable v-else :value="payments" striped-rows>
-        <Column field="year" :header="t('spa.person_payment.year')" />
-        <Column field="date" :header="t('spa.person_payment.date')" />
-        <Column :header="t('spa.person_payment.created')">
-            <template #body="{ data }">
-                <ImpressionDetails
-                    :impression="data.created"
-                    :users="users"
-                    :label="t('spa.person_payment.created')"
+        <template #filters>
+            <FilterPanel>
+                <YearFilter
+                    v-model="year"
+                    class="col-3"
+                    input-id="person-payment-year-filter"
+                    :years="years"
+                    :disabled="loading"
+                    @update:model-value="onYearChange"
                 />
-            </template>
-        </Column>
-        <Column :header="t('spa.person_payment.updated')">
-            <template #body="{ data }">
-                <ImpressionDetails
-                    :impression="data.updated"
-                    :users="users"
-                    :label="t('spa.person_payment.updated')"
+            </FilterPanel>
+        </template>
+        <template #default="{ isVisible }">
+            <Message v-if="loading" severity="info" :closable="false">{{
+                t('spa.person_payment.loading')
+            }}</Message>
+            <Message v-else-if="error" severity="error" :closable="false">
+                {{ error }}
+                <Button
+                    v-if="notFound"
+                    :label="t('spa.person_payment.back')"
+                    text
+                    @click="router.push('/app/persons')"
                 />
-            </template>
-        </Column>
-    </DataTable>
-    <Paginator
-        v-if="pagination.total > 0"
-        :first="(pagination.currentPage - 1) * pagination.perPage"
-        :rows="pagination.perPage"
-        :total-records="pagination.total"
-        :rows-per-page-options="[10, 20, 50]"
-        @page="onPage"
-    />
+                <Button
+                    v-else
+                    :label="t('spa.person_payment.retry')"
+                    text
+                    @click="void load()"
+                />
+            </Message>
+            <Message
+                v-else-if="!payments.length"
+                severity="secondary"
+                :closable="false"
+                >{{ t('spa.person_payment.empty') }}</Message
+            >
+            <DataTable v-else :value="payments" striped-rows>
+                <Column
+                    v-if="isVisible('year')"
+                    field="year"
+                    :header="t('spa.person_payment.year')"
+                />
+                <Column
+                    v-if="isVisible('date')"
+                    field="date"
+                    :header="t('spa.person_payment.date')"
+                />
+                <Column
+                    v-if="isVisible('created')"
+                    :header="t('spa.person_payment.created')"
+                >
+                    <template #body="{ data }">
+                        <ImpressionDetails
+                            :impression="data.created"
+                            :users="users"
+                            :label="t('spa.person_payment.created')"
+                        />
+                    </template>
+                </Column>
+                <Column
+                    v-if="isVisible('updated')"
+                    :header="t('spa.person_payment.updated')"
+                >
+                    <template #body="{ data }">
+                        <ImpressionDetails
+                            :impression="data.updated"
+                            :users="users"
+                            :label="t('spa.person_payment.updated')"
+                        />
+                    </template>
+                </Column>
+            </DataTable>
+            <Paginator
+                v-if="pagination.total > 0"
+                :first="(pagination.currentPage - 1) * pagination.perPage"
+                :rows="pagination.perPage"
+                :total-records="pagination.total"
+                :rows-per-page-options="[10, 20, 50]"
+                @page="onPage"
+            />
+        </template>
+    </ListingTable>
 </template>

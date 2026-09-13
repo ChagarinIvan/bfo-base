@@ -142,13 +142,13 @@
                                             $count = $cupEventPoint->points === 0 ? $count : $count + 1;
                                         @endphp
                                         <td>
-                                            <a href="/app/events/{{ $cupEventPoint->protocolLine->distance->event_id }}#{{ $cupEventPoint->protocolLine->id }}">
+                                            <a href="/app/events/{{ $cupEventPoint->protocolLine->distance->event_id }}?distanceId={{ $cupEventPoint->protocolLine->distance_id }}#protocol-line-{{ $cupEventPoint->protocolLine->id }}">
                                                 <b class="text-info">{{ $cupEventPoint->points }}</b>
                                             </a>
                                         </td>
                                     @else
                                         <td>
-                                            <a href="/app/events/{{ $cupEventPoint->protocolLine->distance->event_id }}#{{ $cupEventPoint->protocolLine->id }}">
+                                            <a href="/app/events/{{ $cupEventPoint->protocolLine->distance->event_id }}?distanceId={{ $cupEventPoint->protocolLine->distance_id }}#protocol-line-{{ $cupEventPoint->protocolLine->id }}">
                                                 <b class="text-dark">{{ $cupEventPoint->points }}</b>
                                             </a>
                                         </td>

@@ -4,14 +4,19 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import PersonRanksPage from './PersonRanksPage.vue'
 
-const { auth, getEventsByIds, getPersonRankHistories, getRanks } = vi.hoisted(
-    () => ({
-        auth: { isAuthenticated: true },
-        getEventsByIds: vi.fn(),
-        getPersonRankHistories: vi.fn(),
-        getRanks: vi.fn(),
-    }),
-)
+const {
+    auth,
+    getEventsByIds,
+    getPersonRankHistories,
+    getRanks,
+    rebuildPersonRanks,
+} = vi.hoisted(() => ({
+    auth: { isAuthenticated: true },
+    getEventsByIds: vi.fn(),
+    getPersonRankHistories: vi.fn(),
+    getRanks: vi.fn(),
+    rebuildPersonRanks: vi.fn(),
+}))
 
 vi.mock('../../api/events', () => ({ getEventsByIds }))
 vi.mock('../../api/personRankHistory', async () => ({
@@ -20,6 +25,7 @@ vi.mock('../../api/personRankHistory', async () => ({
     updatePersonRankActivation: vi.fn(),
 }))
 vi.mock('../../api/ranks', () => ({ getRanks }))
+vi.mock('../../api/persons', () => ({ rebuildPersonRanks }))
 vi.mock('../../stores/auth', () => ({ useAuthStore: () => auth }))
 vi.mock('vue-router', () => ({
     useRoute: () => ({ params: { personId: '7' } }),
@@ -117,6 +123,36 @@ describe('person ranks page', () => {
         await flushPromises()
 
         expect(wrapper.text()).not.toContain('Актываваць разрад')
+    })
+
+    it('rebuilds ranks and refreshes history for an authenticated user', async () => {
+        rebuildPersonRanks.mockResolvedValue(undefined)
+        const wrapper = mount(PersonRanksPage, {
+            global: {
+                stubs: {
+                    ActionButton: {
+                        props: ['label'],
+                        template:
+                            '<button @click="$emit(\'click\')">{{ label }}</button>',
+                    },
+                    Button: true,
+                    Column: true,
+                    DataTable: DataTableStub,
+                    Dialog: true,
+                    Message: { template: '<div><slot /></div>' },
+                    RouterLink: true,
+                },
+            },
+        })
+        await flushPromises()
+        const callsBeforeRebuild = getPersonRankHistories.mock.calls.length
+        await wrapper.get('button').trigger('click')
+        await flushPromises()
+
+        expect(rebuildPersonRanks).toHaveBeenCalledWith('7')
+        expect(getPersonRankHistories.mock.calls.length).toBeGreaterThanOrEqual(
+            callsBeforeRebuild + 1,
+        )
     })
 
     it('keeps lower-rank achievements in their own rank period', async () => {

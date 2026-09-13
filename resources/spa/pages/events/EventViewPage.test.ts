@@ -133,6 +133,9 @@ describe('event view page', () => {
         )
         expect(wrapper.find('.competition-details-card').exists()).toBe(true)
         expect(wrapper.find('.filter-card').exists()).toBe(true)
+        expect(wrapper.find('.listing-table__filters--sticky').exists()).toBe(
+            true,
+        )
         expect(wrapper.find('.events-table').exists()).toBe(true)
         expect(wrapper.findComponent(Select).props()).toMatchObject({
             filter: true,
@@ -245,10 +248,10 @@ describe('event view page', () => {
             page: 1,
             perPage: 100,
         })
-        expect(document.getElementById('11')).not.toBeNull()
-        expect(document.getElementById('11')?.scrollIntoView).toBe(
-            scrollIntoView,
-        )
+        expect(document.getElementById('protocol-line-11')).not.toBeNull()
+        expect(
+            document.getElementById('protocol-line-11')?.scrollIntoView,
+        ).toBe(scrollIntoView)
         expect(scrollIntoView).toHaveBeenCalledWith({
             behavior: 'smooth',
             block: 'center',

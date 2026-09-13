@@ -13,6 +13,7 @@ import { getUsers } from '../../api/users'
 import type { Club, PaginationHeaders, User } from '../../api/types'
 import ImpressionDetails from '../../components/ImpressionDetails.vue'
 import FilterPanel from '../../components/FilterPanel.vue'
+import ListingTable from '../../components/ListingTable.vue'
 import EditActionButton from '../../components/actions/EditActionButton.vue'
 import { t } from '../../i18n'
 import { useAuthStore } from '../../stores/auth'
@@ -42,6 +43,17 @@ const fieldErrors = reactive<Record<string, string>>({})
 const auth = useAuthStore()
 const router = useRouter()
 let latestRequest = 0
+const columns = [
+    { key: 'name', label: t('spa.clubs.name'), defaultVisible: true },
+    {
+        key: 'persons',
+        label: t('spa.clubs.persons_count'),
+        defaultVisible: true,
+    },
+    { key: 'created', label: t('spa.clubs.created'), defaultVisible: true },
+    { key: 'updated', label: t('spa.clubs.updated'), defaultVisible: true },
+    { key: 'actions', label: t('spa.club.actions'), defaultVisible: true },
+]
 
 const debouncedNameSearch = debounce(() => {
     void load(resetPageOnFilterChange(pagination.value.currentPage))
@@ -131,80 +143,109 @@ onBeforeUnmount(() => {
         </template>
     </Toolbar>
 
-    <FilterPanel>
-        <div class="filter-field">
-            <label for="club-name-filter">{{
-                t('spa.clubs.name_filter')
-            }}</label>
-            <InputText
-                id="club-name-filter"
-                v-model="name"
-                :invalid="Boolean(fieldErrors.name)"
-                @update:model-value="onNameChange"
-            />
-            <small v-if="fieldErrors.name" class="p-error">{{
-                fieldErrors.name
-            }}</small>
-            <small
-                v-else-if="hasTooShortNameSearch(name)"
-                class="filter-hint"
-                >{{ t('spa.clubs.name_hint') }}</small
+    <ListingTable
+        table-id="clubs"
+        :columns="auth.isAuthenticated ? columns : columns.slice(0, 2)"
+        :authenticated="auth.isAuthenticated"
+    >
+        <template #filters>
+            <FilterPanel>
+                <div class="filter-field">
+                    <label for="club-name-filter">{{
+                        t('spa.clubs.name_filter')
+                    }}</label>
+                    <InputText
+                        id="club-name-filter"
+                        v-model="name"
+                        :invalid="Boolean(fieldErrors.name)"
+                        @update:model-value="onNameChange"
+                    />
+                    <small v-if="fieldErrors.name" class="p-error">{{
+                        fieldErrors.name
+                    }}</small>
+                    <small
+                        v-else-if="hasTooShortNameSearch(name)"
+                        class="filter-hint"
+                        >{{ t('spa.clubs.name_hint') }}</small
+                    >
+                </div>
+            </FilterPanel>
+        </template>
+        <template #default="{ isVisible }">
+            <Message v-if="loading" severity="info" :closable="false">{{
+                t('spa.clubs.loading')
+            }}</Message>
+            <Message v-else-if="error" severity="error" :closable="false">{{
+                error
+            }}</Message>
+            <Message
+                v-else-if="!clubs.length"
+                severity="secondary"
+                :closable="false"
+                >{{ t('spa.clubs.empty') }}</Message
             >
-        </div>
-    </FilterPanel>
-
-    <Message v-if="loading" severity="info" :closable="false">{{
-        t('spa.clubs.loading')
-    }}</Message>
-    <Message v-else-if="error" severity="error" :closable="false">{{
-        error
-    }}</Message>
-    <Message v-else-if="!clubs.length" severity="secondary" :closable="false">{{
-        t('spa.clubs.empty')
-    }}</Message>
-    <DataTable v-else :value="clubs" striped-rows class="clubs-table">
-        <Column field="name" :header="t('spa.clubs.name')">
-            <template #body="{ data }">
-                <RouterLink :to="`/app/clubs/${data.id}`">
-                    {{ data.name }}
-                </RouterLink>
-            </template>
-        </Column>
-        <Column field="personsCount" :header="t('spa.clubs.persons_count')" />
-        <Column v-if="auth.isAuthenticated" :header="t('spa.clubs.created')">
-            <template #body="{ data }">
-                <ImpressionDetails
-                    :impression="data.created"
-                    :users="users"
-                    :label="t('spa.clubs.created')"
+            <DataTable v-else :value="clubs" striped-rows class="clubs-table">
+                <Column
+                    v-if="isVisible('name')"
+                    field="name"
+                    :header="t('spa.clubs.name')"
+                >
+                    <template #body="{ data }">
+                        <RouterLink :to="`/app/clubs/${data.id}`">
+                            {{ data.name }}
+                        </RouterLink>
+                    </template>
+                </Column>
+                <Column
+                    v-if="isVisible('persons')"
+                    field="personsCount"
+                    :header="t('spa.clubs.persons_count')"
                 />
-            </template>
-        </Column>
-        <Column v-if="auth.isAuthenticated" :header="t('spa.clubs.updated')">
-            <template #body="{ data }">
-                <ImpressionDetails
-                    :impression="data.updated"
-                    :users="users"
-                    :label="t('spa.clubs.updated')"
-                />
-            </template>
-        </Column>
-        <Column v-if="auth.isAuthenticated" :header="t('spa.club.actions')">
-            <template #body="{ data }">
-                <EditActionButton
-                    :to="`/app/clubs/${data.id}/edit`"
-                    :label="t('spa.club.edit.action')"
-                />
-            </template>
-        </Column>
-    </DataTable>
-    <Paginator
-        v-if="pagination.total > 0"
-        :first="(pagination.currentPage - 1) * pagination.perPage"
-        :rows="pagination.perPage"
-        :total-records="pagination.total"
-        :rows-per-page-options="[10, 20, 50]"
-        class="clubs-paginator"
-        @page="onPage"
-    />
+                <Column
+                    v-if="auth.isAuthenticated && isVisible('created')"
+                    :header="t('spa.clubs.created')"
+                >
+                    <template #body="{ data }">
+                        <ImpressionDetails
+                            :impression="data.created"
+                            :users="users"
+                            :label="t('spa.clubs.created')"
+                        />
+                    </template>
+                </Column>
+                <Column
+                    v-if="auth.isAuthenticated && isVisible('updated')"
+                    :header="t('spa.clubs.updated')"
+                >
+                    <template #body="{ data }">
+                        <ImpressionDetails
+                            :impression="data.updated"
+                            :users="users"
+                            :label="t('spa.clubs.updated')"
+                        />
+                    </template>
+                </Column>
+                <Column
+                    v-if="auth.isAuthenticated && isVisible('actions')"
+                    :header="t('spa.club.actions')"
+                >
+                    <template #body="{ data }">
+                        <EditActionButton
+                            :to="`/app/clubs/${data.id}/edit`"
+                            :label="t('spa.club.edit.action')"
+                        />
+                    </template>
+                </Column>
+            </DataTable>
+            <Paginator
+                v-if="pagination.total > 0"
+                :first="(pagination.currentPage - 1) * pagination.perPage"
+                :rows="pagination.perPage"
+                :total-records="pagination.total"
+                :rows-per-page-options="[10, 20, 50]"
+                class="clubs-paginator"
+                @page="onPage"
+            />
+        </template>
+    </ListingTable>
 </template>

@@ -24,7 +24,7 @@ final class ProtocolFactoryTest extends TestCase
     #[Test]
     public function it_builds_protocol_from_uploaded_file(): void
     {
-        $file = $this->createMock(UploadedFile::class);
+        $file = $this->createStub(UploadedFile::class);
         $file->method('getContent')->willReturn('protocol content');
         $file->method('getMimeType')->willReturn('text/plain');
 

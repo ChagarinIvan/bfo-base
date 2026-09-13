@@ -1,11 +1,8 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, reactive, ref } from 'vue'
-import Column from 'primevue/column'
-import DataTable from 'primevue/datatable'
+import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
-import Message from 'primevue/message'
-import Paginator, { type PageState } from 'primevue/paginator'
+import type { PageState } from 'primevue/paginator'
 import Toolbar from 'primevue/toolbar'
 import { useRouter } from 'vue-router'
 import { api } from '../../api/client'
@@ -20,6 +17,7 @@ import FilterPanel from '../../components/FilterPanel.vue'
 import YearFilter from '../../components/YearFilter.vue'
 import CompetitionActionMenu from '../../components/actions/CompetitionActionMenu.vue'
 import ConfirmDeleteDialog from '../../components/actions/ConfirmDeleteDialog.vue'
+import ListingTable from '../../components/ListingTable.vue'
 import { useToast } from 'primevue/usetoast'
 import {
     competitionQuery,
@@ -54,6 +52,40 @@ const selectedCompetition = ref<Competition | null>(null)
 const auth = useAuthStore()
 const router = useRouter()
 const toast = useToast()
+const columns = computed(() => [
+    {
+        key: 'name',
+        label: t('spa.competition.create.name'),
+        defaultVisible: true,
+    },
+    { key: 'dates', label: t('spa.competitions.dates'), defaultVisible: true },
+    {
+        key: 'description',
+        label: t('spa.competitions.description'),
+        defaultVisible: true,
+        field: 'description',
+    },
+    { key: 'mass', label: t('spa.competitions.mass'), defaultVisible: true },
+    ...(auth.isAuthenticated
+        ? [
+              {
+                  key: 'created',
+                  label: t('spa.competitions.created'),
+                  defaultVisible: true,
+              },
+              {
+                  key: 'updated',
+                  label: t('spa.competitions.updated'),
+                  defaultVisible: true,
+              },
+              {
+                  key: 'actions',
+                  label: t('spa.competition.actions'),
+                  defaultVisible: true,
+              },
+          ]
+        : []),
+])
 
 const debouncedNameSearch = debounce(() => {
     void load(resetPageOnFilterChange(pagination.value.currentPage))
@@ -190,135 +222,99 @@ onBeforeUnmount(() => {
         </template>
     </Toolbar>
 
-    <FilterPanel>
-        <YearFilter
-            v-model="year"
-            input-id="competition-year"
-            :years="years"
-            :disabled="loading"
-            @update:model-value="onYearChange"
-        />
-        <div class="filter-field">
-            <label for="competition-name-filter">{{
-                t('spa.competitions.name_filter')
-            }}</label>
-            <InputText
-                id="competition-name-filter"
-                v-model="name"
-                @update:model-value="onNameChange"
-            />
-            <small v-if="hasTooShortNameSearch(name)" class="filter-hint">{{
-                t('spa.competitions.name_hint')
-            }}</small>
-        </div>
-        <DateFilter
-            v-model="date"
-            input-id="competition-date-filter"
-            :label="t('spa.competitions.date_filter')"
-            :disabled="loading"
-            :error="fieldErrors.date"
-            @update:model-value="onDateChange"
-        />
-    </FilterPanel>
-
-    <Message v-if="loading" severity="info" :closable="false">{{
-        t('spa.competitions.loading')
-    }}</Message>
-    <Message v-else-if="error" severity="error" :closable="false">{{
-        error
-    }}</Message>
-    <Message
-        v-else-if="!competitions.length"
-        severity="secondary"
-        :closable="false"
-        >{{ t('spa.competitions.empty') }}</Message
-    >
-    <DataTable
-        v-else
-        :value="competitions"
-        striped-rows
-        class="competitions-table"
-    >
-        <Column field="name" :header="t('spa.competition.create.name')">
-            <template #body="{ data }">
-                <RouterLink :to="`/app/competitions/${data.id}`">
-                    {{ data.name }}
-                </RouterLink>
-            </template>
-        </Column>
-        <Column :header="t('spa.competitions.dates')">
-            <template #body="{ data }">{{
-                formatDateRange(data.from, data.to)
-            }}</template>
-        </Column>
-        <Column
-            field="description"
-            :header="t('spa.competitions.description')"
-        />
-        <Column :header="t('spa.competitions.mass')">
-            <template #body="{ data }">
-                <i
-                    :class="[
-                        massIconClass(data.mass),
-                        'mass-icon',
-                        data.mass ? 'mass-icon--active' : 'mass-icon--inactive',
-                    ]"
-                    :aria-label="
-                        t(
-                            data.mass
-                                ? 'spa.competitions.mass_yes'
-                                : 'spa.competitions.mass_no',
-                        )
-                    "
-                    role="img"
-                />
-            </template>
-        </Column>
-        <Column
-            v-if="auth.isAuthenticated"
-            :header="t('spa.competitions.created')"
-        >
-            <template #body="{ data }">
-                <ImpressionDetails
-                    :impression="data.created"
-                    :users="users"
-                    :label="t('spa.competitions.created')"
-                />
-            </template>
-        </Column>
-        <Column
-            v-if="auth.isAuthenticated"
-            :header="t('spa.competitions.updated')"
-        >
-            <template #body="{ data }">
-                <ImpressionDetails
-                    :impression="data.updated"
-                    :users="users"
-                    :label="t('spa.competitions.updated')"
-                />
-            </template>
-        </Column>
-        <Column
-            v-if="auth.isAuthenticated"
-            :header="t('spa.competition.actions')"
-        >
-            <template #body="{ data }">
-                <CompetitionActionMenu
-                    :competition-id="data.id"
-                    @delete="selectedCompetition = data"
-                />
-            </template>
-        </Column>
-    </DataTable>
-    <Paginator
-        v-if="pagination.total > 0"
-        :first="(pagination.currentPage - 1) * pagination.perPage"
-        :rows="pagination.perPage"
-        :total-records="pagination.total"
-        :rows-per-page-options="[10, 20, 50]"
-        class="competitions-paginator"
+    <ListingTable
+        table-id="competitions"
+        :columns="columns"
+        :authenticated="auth.isAuthenticated"
+        :items="competitions"
+        :pagination="pagination"
+        :loading="loading"
+        :error="error"
+        :loading-label="t('spa.competitions.loading')"
+        :empty-label="t('spa.competitions.empty')"
+        table-class="competitions-table"
         @page="onPage"
-    />
+    >
+        <template #filters>
+            <FilterPanel>
+                <YearFilter
+                    v-model="year"
+                    input-id="competition-year"
+                    :years="years"
+                    :disabled="loading"
+                    @update:model-value="onYearChange"
+                />
+                <div class="filter-field">
+                    <label for="competition-name-filter">{{
+                        t('spa.competitions.name_filter')
+                    }}</label>
+                    <InputText
+                        id="competition-name-filter"
+                        v-model="name"
+                        @update:model-value="onNameChange"
+                    />
+                    <small
+                        v-if="hasTooShortNameSearch(name)"
+                        class="filter-hint"
+                        >{{ t('spa.competitions.name_hint') }}</small
+                    >
+                </div>
+                <DateFilter
+                    v-model="date"
+                    input-id="competition-date-filter"
+                    :label="t('spa.competitions.date_filter')"
+                    :disabled="loading"
+                    :error="fieldErrors.date"
+                    @update:model-value="onDateChange"
+                />
+            </FilterPanel>
+        </template>
+        <template #cell-name="{ data }">
+            <RouterLink :to="`/app/competitions/${data.id}`">
+                {{ data.name }}
+            </RouterLink>
+        </template>
+        <template #cell-dates="{ data }">{{
+            formatDateRange(data.from, data.to)
+        }}</template>
+        <template #cell-mass="{ data }">
+            <i
+                :class="[
+                    massIconClass(data.mass),
+                    'mass-icon',
+                    data.mass ? 'mass-icon--active' : 'mass-icon--inactive',
+                ]"
+                :aria-label="
+                    t(
+                        data.mass
+                            ? 'spa.competitions.mass_yes'
+                            : 'spa.competitions.mass_no',
+                    )
+                "
+                role="img"
+            />
+        </template>
+        <template #cell-created="{ data }">
+            <ImpressionDetails
+                :impression="data.created"
+                :users="users"
+                :label="t('spa.competitions.created')"
+            />
+        </template>
+        <template #cell-updated="{ data }">
+            <ImpressionDetails
+                :impression="data.updated"
+                :users="users"
+                :label="t('spa.competitions.updated')"
+            />
+        </template>
+        <template #cell-actions="{ data }">
+            <CompetitionActionMenu
+                :competition-id="data.id"
+                @delete="selectedCompetition = data"
+            />
+        </template>
+    </ListingTable>
     <ConfirmDeleteDialog
         v-if="auth.isAuthenticated && selectedCompetition"
         :visible="Boolean(selectedCompetition)"

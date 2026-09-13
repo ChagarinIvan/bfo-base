@@ -141,7 +141,7 @@ final class UpdateEventServiceTest extends TestCase
         $info->description = 'description';
         $info->date = '1989-07-01';
 
-        $protocol = $this->createMock(UploadedFile::class);
+        $protocol = $this->createStub(UploadedFile::class);
         $protocol->method('getContent')->willReturn('content');
         $protocol->method('getMimeType')->willReturn('html');
 
@@ -166,7 +166,13 @@ final class UpdateEventServiceTest extends TestCase
 
         /** @var Event $event */
         $event = Event::factory()->makeOne();
-        $this->events->method('lockById')->willReturn($event);
+        $this->events
+            ->expects($this->once())
+            ->method('lockById')
+            ->with(1)
+            ->willReturn($event)
+        ;
+        $this->updater->expects($this->never())->method('update');
 
         $info = new EventInfoDto;
         $info->name = 'title';

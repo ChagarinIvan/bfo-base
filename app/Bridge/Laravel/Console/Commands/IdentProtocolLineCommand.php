@@ -10,6 +10,7 @@ use App\Application\Dto\Person\PersonInfoDto;
 use App\Application\Service\Person\AddPerson;
 use App\Application\Service\Person\AddPersonService;
 use App\Application\Service\Person\Exception\FailedToAddPerson;
+use App\Application\Service\Person\Exception\PersonNotFound;
 use App\Application\Service\Person\RebuildPersonRanks;
 use App\Application\Service\Person\RebuildPersonRanksService;
 use App\Domain\Club\Club;
@@ -63,7 +64,7 @@ final class IdentProtocolLineCommand extends Command
                 $protocolLine->save();
             });
 
-            $rankService->execute(new RebuildPersonRanks($personId, new UserId($userId)));
+            $this->rebuildRanks($rankService, $personId, $userId);
         } else {
             if ($protocolLines->isEmpty()) {
                 return;
@@ -99,7 +100,16 @@ final class IdentProtocolLineCommand extends Command
                 $protocolLine->save();
             });
 
-            $rankService->execute(new RebuildPersonRanks($personId, new UserId($userId)));
+            $this->rebuildRanks($rankService, $personId, $userId);
+        }
+    }
+
+    private function rebuildRanks(RebuildPersonRanksService $service, int $personId, int $userId): void
+    {
+        try {
+            $service->execute(new RebuildPersonRanks($personId, new UserId($userId)));
+        } catch (PersonNotFound) {
+            // Identification is best effort; the person may have been deleted concurrently.
         }
     }
 }

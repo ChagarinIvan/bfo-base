@@ -51,7 +51,7 @@ final class UniteEventsServiceTest extends TestCase
             'updated' => $impression,
             'protocol_lines_count' => null,
         ]);
-        $newEventFactory = $this->createMock(EventFactory::class);
+        $newEventFactory = $this->createStub(EventFactory::class);
         $newEventFactory->method('create')->willReturn($newEvent);
         $events->expects($this->once())->method('add')->with($newEvent);
 
@@ -84,7 +84,7 @@ final class UniteEventsServiceTest extends TestCase
     /** @param array<string, mixed> $attributes */
     private function mockEvent(array $attributes): Event
     {
-        $event = $this->createMock(Event::class);
+        $event = $this->createStub(Event::class);
         $event->method('getAttribute')->willReturnCallback(
             static fn (string $key): mixed => $attributes[$key] ?? null,
         );

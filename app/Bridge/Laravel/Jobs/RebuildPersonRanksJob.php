@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Bridge\Laravel\Jobs;
 
 use App\Application\Dto\Auth\UserId;
+use App\Application\Service\Person\Exception\PersonNotFound;
 use App\Application\Service\Person\RebuildPersonRanks;
 use App\Application\Service\Person\RebuildPersonRanksService;
 use App\Domain\Auth\Impression;
@@ -27,7 +28,11 @@ final class RebuildPersonRanksJob implements ShouldQueue
     public function handle(RebuildPersonRanksService $rebuild): void
     {
         foreach (array_unique($this->personIds) as $personId) {
-            $rebuild->execute(new RebuildPersonRanks($personId, new UserId($this->impression->by)));
+            try {
+                $rebuild->execute(new RebuildPersonRanks($personId, new UserId($this->impression->by)));
+            } catch (PersonNotFound) {
+                // The person was removed after this asynchronous job was queued.
+            }
         }
     }
 }

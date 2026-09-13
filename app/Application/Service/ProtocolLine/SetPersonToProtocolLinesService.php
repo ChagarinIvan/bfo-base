@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Service\ProtocolLine;
 
+use App\Application\Service\Person\Exception\PersonNotFound;
 use App\Application\Service\Person\RebuildPersonRanks;
 use App\Application\Service\Person\RebuildPersonRanksService;
 use App\Application\Service\PersonPrompt\ChangePersonPrompt;
@@ -40,6 +41,13 @@ final readonly class SetPersonToProtocolLinesService
         ));
 
         $this->ranks->execute(new RebuildPersonRanks($command->personId(), $command->userId()));
-        $oldPersonIds->each(fn (int $personId) => $this->ranks->execute(new RebuildPersonRanks($personId, $command->userId())));
+
+        $oldPersonIds->each(function (int $personId) use ($command): void {
+            try {
+                $this->ranks->execute(new RebuildPersonRanks($personId, $command->userId()));
+            } catch (PersonNotFound) {
+                // A former person can be deleted concurrently with reassignment.
+            }
+        });
     }
 }

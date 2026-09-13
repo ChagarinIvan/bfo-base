@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import type { AxiosError } from 'axios'
 import Card from 'primevue/card'
-import Column from 'primevue/column'
-import DataTable from 'primevue/datatable'
 import Message from 'primevue/message'
-import Paginator, { type PageState } from 'primevue/paginator'
+import type { PageState } from 'primevue/paginator'
 import { useRoute, useRouter } from 'vue-router'
 import { getCompetition } from '../../api/competitions'
 import { deleteCompetition } from '../../api/competitions'
@@ -24,6 +22,7 @@ import CompetitionActionMenu from '../../components/actions/CompetitionActionMen
 import ConfirmDeleteDialog from '../../components/actions/ConfirmDeleteDialog.vue'
 import ImpressionDetails from '../../components/ImpressionDetails.vue'
 import ActionButton from '../../components/actions/ActionButton.vue'
+import ListingTable from '../../components/ListingTable.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -43,6 +42,50 @@ const deleteDialogVisible = ref(false)
 const selectedEvent = ref<Event | null>(null)
 const eventDeleting = ref(false)
 const auth = useAuthStore()
+const eventColumns = computed(() => [
+    {
+        key: 'name',
+        label: t('spa.competition.create.name'),
+        defaultVisible: true,
+    },
+    {
+        key: 'date',
+        label: t('spa.competition.details.date'),
+        defaultVisible: true,
+        field: 'date',
+    },
+    {
+        key: 'description',
+        label: t('spa.competitions.description'),
+        defaultVisible: true,
+        field: 'description',
+    },
+    {
+        key: 'participants',
+        label: t('spa.competition.details.participants'),
+        defaultVisible: true,
+        field: 'participantsCount',
+    },
+    ...(auth.isAuthenticated
+        ? [
+              {
+                  key: 'created',
+                  label: t('spa.competitions.created'),
+                  defaultVisible: true,
+              },
+              {
+                  key: 'updated',
+                  label: t('spa.competitions.updated'),
+                  defaultVisible: true,
+              },
+              {
+                  key: 'actions',
+                  label: t('spa.competition.actions'),
+                  defaultVisible: true,
+              },
+          ]
+        : []),
+])
 
 function isNotFound(exception: unknown): boolean {
     return (
@@ -235,82 +278,54 @@ async function deleteCurrentEvent(): Promise<void> {
         </Card>
 
         <h2 class="section-title">{{ t('spa.competition.details.events') }}</h2>
-        <Message v-if="!events.length" severity="secondary" :closable="false">
-            {{ t('spa.competition.details.empty') }}
-        </Message>
-        <DataTable v-else :value="events" striped-rows class="events-table">
-            <Column field="name" :header="t('spa.competition.create.name')">
-                <template #body="{ data }">
-                    <a :href="`/app/events/${data.id}`">{{ data.name }}</a>
-                </template>
-            </Column>
-            <Column field="date" :header="t('spa.competition.details.date')" />
-            <Column
-                field="description"
-                :header="t('spa.competitions.description')"
-            />
-            <Column
-                field="participantsCount"
-                :header="t('spa.competition.details.participants')"
-            />
-            <Column
-                v-if="auth.isAuthenticated"
-                :header="t('spa.competitions.created')"
-            >
-                <template #body="{ data }">
-                    <ImpressionDetails
-                        :impression="data.created"
-                        :users="users"
-                        :label="t('spa.competitions.created')"
-                    />
-                </template>
-            </Column>
-            <Column
-                v-if="auth.isAuthenticated"
-                :header="t('spa.competitions.updated')"
-            >
-                <template #body="{ data }">
-                    <ImpressionDetails
-                        :impression="data.updated"
-                        :users="users"
-                        :label="t('spa.competitions.updated')"
-                    />
-                </template>
-            </Column>
-            <Column
-                v-if="auth.isAuthenticated"
-                :header="t('spa.competition.actions')"
-            >
-                <template #body="{ data }">
-                    <ActionButton
-                        as="a"
-                        :href="`/app/events/${data.id}/edit`"
-                        icon="pi pi-pencil"
-                        :label="t('spa.competition.edit.action')"
-                        severity="secondary"
-                        text
-                        class="competition-legacy-action"
-                    />
-                    <ActionButton
-                        :label="t('spa.event.delete.action')"
-                        icon="pi pi-trash"
-                        severity="danger"
-                        text
-                        class="competition-legacy-action"
-                        @click="selectedEvent = data"
-                    />
-                </template>
-            </Column>
-        </DataTable>
-        <Paginator
-            v-if="eventPagination.total > 0"
-            :first="(eventPagination.currentPage - 1) * eventPagination.perPage"
-            :rows="eventPagination.perPage"
-            :total-records="eventPagination.total"
+        <ListingTable
+            table-id="competition-events"
+            :columns="eventColumns"
+            :authenticated="auth.isAuthenticated"
+            :items="events"
+            :pagination="eventPagination"
+            :empty-label="t('spa.competition.details.empty')"
+            table-class="events-table"
             :rows-per-page-options="[10, 20]"
-            class="competitions-paginator"
             @page="onEventPage"
-        />
+        >
+            <template #cell-name="{ data }">
+                <a :href="`/app/events/${data.id}`">{{ data.name }}</a>
+            </template>
+            <template #cell-created="{ data }">
+                <ImpressionDetails
+                    :impression="data.created"
+                    :users="users"
+                    :label="t('spa.competitions.created')"
+                />
+            </template>
+            <template #cell-updated="{ data }">
+                <ImpressionDetails
+                    :impression="data.updated"
+                    :users="users"
+                    :label="t('spa.competitions.updated')"
+                />
+            </template>
+            <template #cell-actions="{ data }">
+                <ActionButton
+                    as="a"
+                    :href="`/app/events/${data.id}/edit`"
+                    icon="pi pi-pencil"
+                    :label="t('spa.competition.edit.action')"
+                    severity="secondary"
+                    text
+                    class="competition-legacy-action"
+                />
+                <ActionButton
+                    :label="t('spa.event.delete.action')"
+                    icon="pi pi-trash"
+                    severity="danger"
+                    text
+                    class="competition-legacy-action"
+                    @click="selectedEvent = data"
+                />
+            </template>
+        </ListingTable>
         <ConfirmDeleteDialog
             v-if="auth.isAuthenticated"
             :visible="deleteDialogVisible"

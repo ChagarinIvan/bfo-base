@@ -10,6 +10,7 @@ use App\Application\Service\PersonPrompt\ChangePersonPromptService;
 use App\Application\Service\ProtocolLine\SetPersonToProtocolLines;
 use App\Application\Service\ProtocolLine\SetPersonToProtocolLinesService;
 use App\Domain\Auth\Impression;
+use App\Domain\Person\Person;
 use App\Domain\Person\PersonRepository;
 use App\Domain\Person\RankCalculator;
 use App\Domain\Person\RankFactsCollector;
@@ -46,14 +47,25 @@ final class AssignPersonOnProtocolLinesServiceTest extends TestCase
         $promptRepository->expects($this->once())->method('add');
         $promptFactory = $this->createMock(PersonPromptFactory::class);
         $promptFactory->expects($this->once())->method('create')->willReturn($this->createStub(PersonPrompt::class));
+        $person = $this->createMock(Person::class);
+        $person->expects($this->atLeast(2))->method('__get')->willReturnMap([
+            ['id', 42],
+            ['birthday', null],
+        ]);
+        $person->expects($this->once())->method('updateRanks');
         $persons = $this->createMock(PersonRepository::class);
-        $persons->expects($this->atLeastOnce())->method('lockById')->willReturn(null);
+        $persons->expects($this->once())
+            ->method('lockById')
+            ->willReturnCallback(static fn (int $personId): ?Person => $personId === 42 ? $person : null);
+        $persons->expects($this->once())->method('update')->with($person);
+        $rankFacts = $this->createMock(RankFactsCollector::class);
+        $rankFacts->expects($this->once())->method('collect')->with(42)->willReturn([]);
         $clock = new FrozenClock(Carbon::parse('2026-09-09'));
 
         new SetPersonToProtocolLinesService(
             $lines,
             new ChangePersonPromptService($promptRepository, $promptFactory, $clock),
-            new RebuildPersonRanksService($persons, $this->createStub(RankFactsCollector::class), new RankCalculator(), $clock, new DummyTransactional()),
+            new RebuildPersonRanksService($persons, $rankFacts, new RankCalculator(), $clock, new DummyTransactional()),
             $clock,
         )->execute(new SetPersonToProtocolLines(
             'ivanou-jan-2001',
@@ -67,6 +79,10 @@ final class AssignPersonOnProtocolLinesServiceTest extends TestCase
     {
         $line = $this->createMock(ProtocolLine::class);
         $line->method('__get')->willReturnMap([
+            ['prepared_line', $preparedLine],
+            ['person_id', $personId],
+        ]);
+        $line->method('getAttribute')->willReturnMap([
             ['prepared_line', $preparedLine],
             ['person_id', $personId],
         ]);

@@ -294,9 +294,11 @@ describe('person view page', () => {
         })
         await flushPromises()
 
-        await wrapper.find('input').setValue('a')
+        await wrapper.find('#person-view-competition-name-filter').setValue('a')
 
-        expect(wrapper.find('input').element).toHaveProperty('value', 'a')
+        expect(
+            wrapper.find('#person-view-competition-name-filter').element,
+        ).toHaveProperty('value', 'a')
         expect(getPersonProtocolLines).toHaveBeenCalledTimes(1)
     })
 })

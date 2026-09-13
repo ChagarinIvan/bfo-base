@@ -13,8 +13,11 @@ import {
 } from '../../api/personRankHistory'
 import { getEventsByIds } from '../../api/events'
 import { getRanks, type RankOption } from '../../api/ranks'
+import { rebuildPersonRanks } from '../../api/persons'
 import type { Event, PersonRankHistory } from '../../api/types'
 import ActionButton from '../../components/actions/ActionButton.vue'
+import ListingTable from '../../components/ListingTable.vue'
+import { protocolLineEventUrl } from '../../components/tableModels'
 import { t } from '../../i18n'
 import { useAuthStore } from '../../stores/auth'
 
@@ -38,8 +41,43 @@ const selected = ref<PersonRankHistory | null>(null)
 const editDate = ref('')
 const dateError = ref('')
 const saving = ref(false)
+const rebuilding = ref(false)
+const rebuildError = ref('')
 const expandedRankIds = ref<Set<string>>(new Set())
 let latestRequest = 0
+const columns = computed(() => [
+    {
+        key: 'completed',
+        label: t('spa.person_rank.completed'),
+        defaultVisible: true,
+    },
+    { key: 'rank', label: t('spa.person_rank.rank'), defaultVisible: true },
+    {
+        key: 'changeType',
+        label: t('spa.person_rank.change_type'),
+        defaultVisible: true,
+    },
+    {
+        key: 'activated',
+        label: t('spa.person_rank.activated'),
+        defaultVisible: true,
+    },
+    {
+        key: 'competition',
+        label: t('spa.person_rank.competition'),
+        defaultVisible: true,
+    },
+    { key: 'event', label: t('spa.person_rank.event'), defaultVisible: true },
+    ...(auth.isAuthenticated
+        ? [
+              {
+                  key: 'actions',
+                  label: t('spa.person.actions'),
+                  defaultVisible: true,
+              },
+          ]
+        : []),
+])
 
 const timeline = computed(() =>
     [...history.value].sort(
@@ -189,7 +227,24 @@ function toggleRank(groupId: string): void {
 }
 
 function eventUrl(item: PersonRankHistory): string {
-    return `/app/events/${item.eventId}#${item.protocolLineId}`
+    return protocolLineEventUrl(
+        item.eventId,
+        item.protocolLineId,
+        item.distanceId,
+    )
+}
+
+async function rebuild(): Promise<void> {
+    rebuilding.value = true
+    rebuildError.value = ''
+    try {
+        await rebuildPersonRanks(personId())
+        await loadHistory()
+    } catch {
+        rebuildError.value = t('spa.person_rank.rebuild_error')
+    } finally {
+        rebuilding.value = false
+    }
 }
 
 function display(value: string | null): string {
@@ -252,6 +307,17 @@ onBeforeUnmount(() => {
     <div class="page-toolbar">
         <h1 class="page-title">{{ t('spa.person_rank.title') }}</h1>
     </div>
+    <ActionButton
+        v-if="auth.isAuthenticated"
+        :label="t('spa.person_rank.rebuild')"
+        icon="pi pi-refresh"
+        severity="info"
+        :disabled="rebuilding"
+        @click="void rebuild()"
+    />
+    <Message v-if="rebuildError" severity="error" :closable="false">{{
+        rebuildError
+    }}</Message>
     <Message v-if="loading" severity="info" :closable="false">
         {{ t('spa.person_rank.loading') }}
     </Message>
@@ -270,98 +336,129 @@ onBeforeUnmount(() => {
     >
         {{ t('spa.person_rank.empty') }}
     </Message>
-    <div v-else class="rank-history-groups">
-        <div class="rank-history-group-header" aria-hidden="true">
-            <span />
-            <span>{{ t('spa.person_rank.rank') }}</span>
-            <span>{{ t('spa.person_rank.confirmations') }}</span>
-            <span>{{ t('spa.person_rank.started') }}</span>
-            <span>{{ t('spa.person_rank.finished') }}</span>
-        </div>
-        <section v-for="group in groupedHistory" :key="group.id">
-            <button
-                class="rank-history-group"
-                type="button"
-                :aria-expanded="isRankExpanded(group.id)"
-                @click="toggleRank(group.id)"
-            >
-                <i
-                    :class="
-                        isRankExpanded(group.id)
-                            ? 'pi pi-chevron-down'
-                            : 'pi pi-chevron-right'
-                    "
-                    aria-hidden="true"
-                />
-                <span>{{ group.rank }}</span>
-                <span class="rank-history-group-count">{{
-                    group.items.length
-                }}</span>
-                <span>{{ group.startedOn }}</span>
-                <span>{{ display(group.finishedOn) }}</span>
-            </button>
-            <DataTable
-                v-if="isRankExpanded(group.id) && group.items.length"
-                :value="group.items"
-                striped-rows
-                class="rank-history-timeline"
-            >
-                <Column
-                    field="achievedOn"
-                    :header="t('spa.person_rank.completed')"
-                />
-                <Column :header="t('spa.person_rank.rank')">
-                    <template #body="{ data }">{{
-                        rankLabel(data.rankId)
-                    }}</template>
-                </Column>
-                <Column :header="t('spa.person_rank.change_type')">
-                    <template #body="{ data }">{{
-                        changeTypeLabel(data.changeType)
-                    }}</template>
-                </Column>
-                <Column :header="t('spa.person_rank.activated')">
-                    <template #body="{ data }">{{
-                        display(data.activatedOn)
-                    }}</template>
-                </Column>
-                <Column :header="t('spa.person_rank.competition')">
-                    <template #body="{ data }">
-                        <RouterLink
-                            v-if="data.competitionId"
-                            :to="`/app/competitions/${data.competitionId}`"
-                            >{{ display(competitionName(data)) }}</RouterLink
-                        >
-                        <span v-else>{{ display(competitionName(data)) }}</span>
-                    </template>
-                </Column>
-                <Column :header="t('spa.person_rank.event')">
-                    <template #body="{ data }">
-                        <a :href="eventUrl(data)">{{
-                            display(eventName(data))
-                        }}</a>
-                    </template>
-                </Column>
-                <Column
-                    v-if="auth.isAuthenticated"
-                    :header="t('spa.person.actions')"
-                >
-                    <template #body="{ data }">
-                        <ActionButton
-                            :label="
-                                data.activatedOn
-                                    ? t('spa.person_rank.edit_activation')
-                                    : t('spa.person_rank.activate')
+    <ListingTable
+        v-else
+        table-id="person-rank-history"
+        :columns="columns"
+        :authenticated="auth.isAuthenticated"
+    >
+        <template #default="{ isVisible }">
+            <div class="rank-history-groups">
+                <div class="rank-history-group-header" aria-hidden="true">
+                    <span />
+                    <span>{{ t('spa.person_rank.rank') }}</span>
+                    <span>{{ t('spa.person_rank.confirmations') }}</span>
+                    <span>{{ t('spa.person_rank.started') }}</span>
+                    <span>{{ t('spa.person_rank.finished') }}</span>
+                </div>
+                <section v-for="group in groupedHistory" :key="group.id">
+                    <button
+                        class="rank-history-group"
+                        type="button"
+                        :aria-expanded="isRankExpanded(group.id)"
+                        @click="toggleRank(group.id)"
+                    >
+                        <i
+                            :class="
+                                isRankExpanded(group.id)
+                                    ? 'pi pi-chevron-down'
+                                    : 'pi pi-chevron-right'
                             "
-                            icon="pi pi-calendar"
-                            severity="info"
-                            @click="openActivation(data)"
+                            aria-hidden="true"
                         />
-                    </template>
-                </Column>
-            </DataTable>
-        </section>
-    </div>
+                        <span>{{ group.rank }}</span>
+                        <span class="rank-history-group-count">{{
+                            group.items.length
+                        }}</span>
+                        <span>{{ group.startedOn }}</span>
+                        <span>{{ display(group.finishedOn) }}</span>
+                    </button>
+                    <DataTable
+                        v-if="isRankExpanded(group.id) && group.items.length"
+                        :value="group.items"
+                        striped-rows
+                        class="rank-history-timeline"
+                    >
+                        <Column
+                            v-if="isVisible('completed')"
+                            field="achievedOn"
+                            :header="t('spa.person_rank.completed')"
+                        />
+                        <Column
+                            v-if="isVisible('rank')"
+                            :header="t('spa.person_rank.rank')"
+                        >
+                            <template #body="{ data }">{{
+                                rankLabel(data.rankId)
+                            }}</template>
+                        </Column>
+                        <Column
+                            v-if="isVisible('changeType')"
+                            :header="t('spa.person_rank.change_type')"
+                        >
+                            <template #body="{ data }">{{
+                                changeTypeLabel(data.changeType)
+                            }}</template>
+                        </Column>
+                        <Column
+                            v-if="isVisible('activated')"
+                            :header="t('spa.person_rank.activated')"
+                        >
+                            <template #body="{ data }">{{
+                                display(data.activatedOn)
+                            }}</template>
+                        </Column>
+                        <Column
+                            v-if="isVisible('competition')"
+                            :header="t('spa.person_rank.competition')"
+                        >
+                            <template #body="{ data }">
+                                <RouterLink
+                                    v-if="data.competitionId"
+                                    :to="`/app/competitions/${data.competitionId}`"
+                                    >{{
+                                        display(competitionName(data))
+                                    }}</RouterLink
+                                >
+                                <span v-else>{{
+                                    display(competitionName(data))
+                                }}</span>
+                            </template>
+                        </Column>
+                        <Column
+                            v-if="isVisible('event')"
+                            :header="t('spa.person_rank.event')"
+                        >
+                            <template #body="{ data }">
+                                <a :href="eventUrl(data)">{{
+                                    display(eventName(data))
+                                }}</a>
+                            </template>
+                        </Column>
+                        <Column
+                            v-if="auth.isAuthenticated && isVisible('actions')"
+                            :header="t('spa.person.actions')"
+                        >
+                            <template #body="{ data }">
+                                <ActionButton
+                                    :label="
+                                        data.activatedOn
+                                            ? t(
+                                                  'spa.person_rank.edit_activation',
+                                              )
+                                            : t('spa.person_rank.activate')
+                                    "
+                                    icon="pi pi-calendar"
+                                    severity="info"
+                                    @click="openActivation(data)"
+                                />
+                            </template>
+                        </Column>
+                    </DataTable>
+                </section>
+            </div>
+        </template>
+    </ListingTable>
 
     <Dialog
         v-model:visible="dialogVisible"
