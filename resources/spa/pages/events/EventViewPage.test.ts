@@ -313,7 +313,8 @@ describe('event view page', () => {
         await flushPromises()
 
         expect(wrapper.text()).toContain('распазнаванне ўдзельнікаў')
-        const lineRequestsBeforeRefresh = getPersonProtocolLines.mock.calls.length
+        const lineRequestsBeforeRefresh =
+            getPersonProtocolLines.mock.calls.length
         await vi.advanceTimersByTimeAsync(5000)
         await flushPromises()
         expect(getEvent).toHaveBeenCalledTimes(2)
