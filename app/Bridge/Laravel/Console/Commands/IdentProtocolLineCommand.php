@@ -13,11 +13,13 @@ use App\Application\Service\Person\Exception\FailedToAddPerson;
 use App\Application\Service\Person\Exception\PersonNotFound;
 use App\Application\Service\Person\RebuildPersonRanks;
 use App\Application\Service\Person\RebuildPersonRanksService;
+use App\Domain\Auth\Impression;
 use App\Domain\Club\Club;
 use App\Domain\Club\ClubNameNormalizer;
 use App\Domain\Club\ClubRepository;
 use App\Domain\Person\Citizenship;
 use App\Domain\ProtocolLine\ProtocolLine;
+use App\Domain\Shared\Clock;
 use App\Models\IdentLine;
 use App\Services\ProtocolLineIdentService;
 use App\Services\ProtocolLineService;
@@ -46,6 +48,7 @@ final class IdentProtocolLineCommand extends Command
         ClubNameNormalizer $clubNameNormalizer,
         ProtocolLineService $protocolLineService,
         ProtocolLineIdentService $protocolLineIdentService,
+        Clock $clock,
     ): void {
         $userId = (int) $this->argument('userId');
         $identLine = IdentLine::first();
@@ -59,8 +62,10 @@ final class IdentProtocolLineCommand extends Command
         $protocolLines = $protocolLineService->getEqualLines($identLine->ident_line);
 
         if ($personId > 0) {
-            $protocolLines->each(static function (ProtocolLine $protocolLine) use ($personId): void {
-                $protocolLine->person_id = $personId;
+            $impression = new Impression($clock->now(), $userId);
+
+            $protocolLines->each(static function (ProtocolLine $protocolLine) use ($personId, $impression): void {
+                $protocolLine->setPerson($personId, $impression);
                 $protocolLine->save();
             });
 
@@ -95,8 +100,10 @@ final class IdentProtocolLineCommand extends Command
                 $personId = $e->previousPersonId;
             }
 
-            $protocolLines->each(static function (ProtocolLine $protocolLine) use ($personId): void {
-                $protocolLine->person_id = $personId;
+            $impression = new Impression($clock->now(), $userId);
+
+            $protocolLines->each(static function (ProtocolLine $protocolLine) use ($personId, $impression): void {
+                $protocolLine->setPerson($personId, $impression);
                 $protocolLine->save();
             });
 

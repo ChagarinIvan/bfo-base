@@ -282,4 +282,72 @@ describe('event view page', () => {
         ).toBe(false)
         wrapper.unmount()
     })
+
+    it('polls a transitional protocol every five seconds and stops at ready', async () => {
+        vi.useFakeTimers()
+        auth.isAuthenticated = true
+        getEvent.mockReset()
+        getEvent
+            .mockResolvedValueOnce({
+                id: '42',
+                competitionId: '9',
+                name: 'Этап',
+                description: 'Апісанне',
+                date: '2026-05-10',
+                participantsCount: 1,
+                processingStatus: 'identifying',
+            })
+            .mockResolvedValueOnce({
+                id: '42',
+                competitionId: '9',
+                name: 'Этап',
+                description: 'Апісанне',
+                date: '2026-05-10',
+                participantsCount: 1,
+                processingStatus: 'ready',
+            })
+
+        const wrapper = mount(EventViewPage, {
+            global: { plugins: [PrimeVue] },
+        })
+        await flushPromises()
+
+        expect(wrapper.text()).toContain('распазнаванне ўдзельнікаў')
+        const lineRequestsBeforeRefresh =
+            getPersonProtocolLines.mock.calls.length
+        await vi.advanceTimersByTimeAsync(5000)
+        await flushPromises()
+        expect(getEvent).toHaveBeenCalledTimes(2)
+        expect(getPersonProtocolLines).toHaveBeenCalledTimes(
+            lineRequestsBeforeRefresh + 1,
+        )
+
+        await vi.advanceTimersByTimeAsync(5000)
+        expect(getEvent).toHaveBeenCalledTimes(2)
+        wrapper.unmount()
+    })
+
+    it('cleans the processing timer up when leaving the page', async () => {
+        vi.useFakeTimers()
+        auth.isAuthenticated = true
+        getEvent.mockReset()
+        getEvent.mockResolvedValue({
+            id: '42',
+            competitionId: '9',
+            name: 'Этап',
+            description: 'Апісанне',
+            date: '2026-05-10',
+            participantsCount: 1,
+            processingStatus: 'parsing',
+        })
+
+        const wrapper = mount(EventViewPage, {
+            global: { plugins: [PrimeVue] },
+        })
+        await flushPromises()
+        wrapper.unmount()
+        await vi.advanceTimersByTimeAsync(5000)
+
+        expect(getEvent).toHaveBeenCalledTimes(1)
+    })
 })

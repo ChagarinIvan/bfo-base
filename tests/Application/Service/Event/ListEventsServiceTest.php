@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Application\Service\Event;
 
 use App\Application\Dto\Auth\AuthAssembler;
+use App\Application\Dto\Auth\UserId;
 use App\Application\Dto\Event\EventAssembler;
 use App\Application\Dto\Event\SearchEventDto;
 use App\Application\Service\Event\ListEvents;
@@ -46,11 +47,11 @@ final class ListEventsServiceTest extends TestCase
         $this->events
             ->expects($this->once())
             ->method('paginate')
-            ->with(new Criteria(['competitionId' => '1']), new EventResources())
+            ->with(new Criteria(['competitionId' => '1']), new EventResources(withActiveProtocol: true))
             ->willReturn(new Slice(new ArrayAdapter($events)))
         ;
 
-        $result = $this->service->execute(new ListEvents(new SearchEventDto('1')));
+        $result = $this->service->execute(new ListEvents(new SearchEventDto('1'), new UserId(1)));
         $items = $result->items();
 
         $this->assertInstanceOf(Slice::class, $result);

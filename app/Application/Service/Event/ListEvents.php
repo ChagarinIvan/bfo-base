@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Service\Event;
 
+use App\Application\Dto\Auth\UserId;
 use App\Application\Dto\Event\SearchEventDto;
 use App\Domain\Event\EventResources;
 use App\Domain\Shared\Criteria;
@@ -12,8 +13,10 @@ use function get_object_vars;
 
 final readonly class ListEvents
 {
-    public function __construct(private SearchEventDto $search)
-    {
+    public function __construct(
+        private SearchEventDto $search,
+        private ?UserId $userId = null,
+    ) {
     }
 
     public function criteria(): Criteria
@@ -27,6 +30,10 @@ final readonly class ListEvents
 
     public function resources(): EventResources
     {
-        return new EventResources(withCompetitionName: $this->search->withCompetition === '1');
+        return new EventResources(
+            withCompetitionName: $this->search->withCompetition === '1',
+            withActiveProtocol: $this->userId !== null,
+            readyOnly: $this->userId === null,
+        );
     }
 }

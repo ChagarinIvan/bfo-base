@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Laravel\Eloquent\Event;
 
 use App\Domain\Event\Event;
+use App\Domain\Event\EventProtocolStatus;
 use App\Domain\Event\EventRepository;
 use App\Domain\Event\EventResources;
 use App\Domain\Shared\Criteria;
@@ -27,6 +28,14 @@ final class EloquentEventRepository implements EventRepository
 
         if ($resources->withCompetitionName) {
             $query->with('competition:id,name');
+        }
+
+        if ($resources->withActiveProtocol) {
+            $query->with('activeProtocol');
+        }
+
+        if ($resources->readyOnly) {
+            $query->whereHas('activeProtocol', static fn (Builder $query): Builder => $query->where('status', EventProtocolStatus::READY->value));
         }
 
         if ($resources->withDistances) {
@@ -53,6 +62,14 @@ final class EloquentEventRepository implements EventRepository
             $query->with('protocolLines.distance');
         }
 
+        if ($resources->withActiveProtocol) {
+            $query->with('activeProtocol');
+        }
+
+        if ($resources->readyOnly) {
+            $query->whereHas('activeProtocol', static fn (Builder $query): Builder => $query->where('status', EventProtocolStatus::READY->value));
+        }
+
         return $query->get();
     }
 
@@ -77,6 +94,14 @@ final class EloquentEventRepository implements EventRepository
             $query->with('protocolLines.distance');
         }
 
+        if ($resources->withActiveProtocol) {
+            $query->with('activeProtocol');
+        }
+
+        if ($resources->readyOnly) {
+            $query->whereHas('activeProtocol', static fn (Builder $query): Builder => $query->where('status', EventProtocolStatus::READY->value));
+        }
+
         return $query->get();
     }
 
@@ -87,6 +112,14 @@ final class EloquentEventRepository implements EventRepository
 
         if ($resources->withCompetitionName) {
             $query->with('competition:id,name');
+        }
+
+        if ($resources->withActiveProtocol) {
+            $query->with('activeProtocol');
+        }
+
+        if ($resources->readyOnly) {
+            $query->whereHas('activeProtocol', static fn (Builder $query): Builder => $query->where('status', EventProtocolStatus::READY->value));
         }
 
         return new Slice(new EloquentQueryAdapter($query));

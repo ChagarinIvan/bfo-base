@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Domain\Event;
 
+use App\Domain\Auth\Impression;
 use App\Domain\Event\Event;
 use App\Domain\Event\Protocol;
 use App\Domain\Event\ProtocolPathResolver;
 use App\Domain\Event\ProtocolStorage;
 use App\Domain\Event\StandardProtocolUpdater;
+use Carbon\Carbon;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
@@ -48,7 +50,7 @@ final class StandardProtocolUpdaterTest extends TestCase
 
         /** @var Event $event */
         $event = Event::factory(state: ['name' => 'test_event', 'date' => '2023-02-02', 'file' => 'initial_file.xml'])->makeOne();
-        $path = $this->updater->update($event, $protocol);
+        $path = $this->updater->update($event, $protocol, new Impression(Carbon::parse('2026-09-13'), 1));
 
         $this->assertSame('2023/2023-02-02_test_event@@xml', $path);
     }

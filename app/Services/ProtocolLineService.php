@@ -37,9 +37,9 @@ final readonly class ProtocolLineService implements ProtocolLineOperations
      * формируем идентификационную строку
      * заполняем разряд
      */
-    public function fillProtocolLines(int $eventId, Collection $lineList): Collection
+    public function fillProtocolLines(int $eventId, Collection $lineList, int $eventProtocolId): Collection
     {
-        return $lineList->transform(function (array $lineData) use ($eventId): ProtocolLine {
+        return $lineList->transform(function (array $lineData) use ($eventId, $eventProtocolId): ProtocolLine {
             $protocolLine = new ProtocolLine($lineData);
 
             $groupName = str_replace(' ', '', $lineData['group']);
@@ -61,6 +61,7 @@ final readonly class ProtocolLineService implements ProtocolLineOperations
                 $distance->id,
                 $this->rankNormalizer->normalize($protocolLine->complete_rank)?->label() ?? '',
             );
+            $protocolLine->event_protocol_id = $eventProtocolId;
 
             $protocolLine->save();
 

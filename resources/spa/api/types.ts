@@ -29,9 +29,18 @@ export interface Event {
     date: string
     participantsCount: number
     competitionName?: string | null
+    processingStatus?: EventProcessingStatus | null
     created?: Impression
     updated?: Impression
 }
+
+export type EventProcessingStatus =
+    | 'queued'
+    | 'parsing'
+    | 'identifying'
+    | 'rebuildingRanks'
+    | 'ready'
+    | 'failed'
 
 export interface EventFormRequest {
     name: string

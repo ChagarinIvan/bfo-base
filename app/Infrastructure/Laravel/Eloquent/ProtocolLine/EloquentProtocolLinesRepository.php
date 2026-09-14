@@ -94,6 +94,18 @@ final readonly class EloquentProtocolLinesRepository implements ProtocolLineRepo
         $protocolLine->save();
     }
 
+    public function personIdsForEventProtocol(int $eventProtocolId): array
+    {
+        return ProtocolLine::query()
+            ->where('event_protocol_id', $eventProtocolId)
+            ->whereNotNull('person_id')
+            ->distinct()
+            ->pluck('person_id')
+            ->map(static fn (int $id): int => $id)
+            ->all()
+        ;
+    }
+
     /** @return Builder<ProtocolLine> */
     private function buildQuery(Criteria $criteria): Builder
     {
@@ -187,6 +199,14 @@ final readonly class EloquentProtocolLinesRepository implements ProtocolLineRepo
 
         if ($criteria->hasParam('eventId')) {
             $query->where('distances.event_id', $criteria->param('eventId'));
+        }
+
+        if ($criteria->hasParam('eventProtocolId')) {
+            $query->where('protocol_lines.event_protocol_id', $criteria->param('eventProtocolId'));
+        }
+
+        if ($criteria->hasParam('unidentified') && $criteria->param('unidentified')) {
+            $query->whereNull('protocol_lines.person_id');
         }
 
         if ($criteria->hasParam('distanceId')) {

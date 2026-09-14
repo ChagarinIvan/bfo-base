@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Http\Controllers\CupEvents;
 
+use App\Application\Dto\Auth\UserId;
 use App\Application\Dto\Event\SearchEventDto;
 use App\Application\Service\Cup\Exception\CupNotFound;
 use App\Application\Service\Cup\ViewCup;
@@ -23,6 +24,7 @@ class ShowCreateCupEventFormAction extends BaseController
         string $cupId,
         ViewCupService $viewCupService,
         ListEventsService $listEvents,
+        UserId $userId,
     ): RedirectResponse|View {
         try {
             $cup = $viewCupService->execute(new ViewCup($cupId));
@@ -35,7 +37,7 @@ class ShowCreateCupEventFormAction extends BaseController
                 withCompetition: '1',
                 year: (string) $cup->year,
                 notRelatedToCup: $cupId,
-            )))
+            ), $userId))
             ->setPerPage(10_000)
             ->items();
 

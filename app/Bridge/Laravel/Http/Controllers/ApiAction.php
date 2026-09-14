@@ -24,14 +24,10 @@ trait ApiAction
     public function __construct(
         private readonly Request $request,
         private readonly Validator $validator,
-        Container $container,
+        private readonly Container $container,
         private readonly ApiDtoSerializer $serializer,
         private readonly ApiErrorResponse $errorResponse,
-    )
-    {
-        if ($request->user()) {
-            $container->instance(UserId::class, new UserId($request->user()->id));
-        }
+    ) {
     }
 
     public function callAction($method, $parameters): mixed
@@ -99,5 +95,16 @@ trait ApiAction
         }
 
         return $response;
+    }
+
+    protected function currentUserId(): ?UserId
+    {
+        if (! $this->container->bound(UserId::class)) {
+            return null;
+        }
+
+        $userId = $this->container->make(UserId::class);
+
+        return $userId instanceof UserId ? $userId : null;
     }
 }

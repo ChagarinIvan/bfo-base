@@ -11,6 +11,7 @@ use App\Domain\Distance\Distance;
 use App\Domain\Event\Event\EventCreated;
 use App\Domain\Event\Event\EventDisabled;
 use App\Domain\Event\Event\EventInfoUpdated;
+use App\Domain\Event\Event\EventProtocolActivated;
 use App\Domain\Event\Event\EventProtocolUpdated;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\Shared\AggregatedModel;
@@ -33,6 +34,7 @@ use Illuminate\Support\Collection;
  * @property int $competition_id
  * @property string $file
  * @property bool $active
+ * @property int|null $active_event_protocol_id
  * @property-read int $protocol_lines_count
  *
  * @property Impression $created
@@ -42,6 +44,7 @@ use Illuminate\Support\Collection;
  * @property-read Collection|ProtocolLine[] $protocolLines
  * @property-read Collection|Distance[] $distances
  * @property-read Collection|CupEvent[] $cups
+ * @property-read EventProtocol|null $activeProtocol
  */
 #[Fillable([
     'name', 'description', 'date'
@@ -72,6 +75,11 @@ class Event extends AggregatedModel
         return $this->hasMany(CupEvent::class);
     }
 
+    public function activeProtocol(): HasOne
+    {
+        return $this->hasOne(EventProtocol::class, 'id', 'active_event_protocol_id');
+    }
+
     public function disable(Impression $impression): void
     {
         $this->updated = $impression;
@@ -92,7 +100,7 @@ class Event extends AggregatedModel
 
     public function updateProtocol(ProtocolUpdater $updater, Protocol $protocol, Impression $impression): void
     {
-        $this->file = $updater->update($this, $protocol);
+        $this->file = $updater->update($this, $protocol, $impression);
         $this->updated = $impression;
 
         $this->recordThat(new EventProtocolUpdated($this));
@@ -104,6 +112,15 @@ class Event extends AggregatedModel
 
         $this->save();
     }
+
+    public function activateProtocolRun(int $protocolId, Impression $impression): void
+    {
+        $this->active_event_protocol_id = $protocolId;
+        $this->updated = $impression;
+
+        $this->recordThat(new EventProtocolActivated($this, $protocolId, $impression));
+    }
+
     protected function casts(): array
     {
         return [
