@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import Button from 'primevue/button'
+import ProgressSpinner from 'primevue/progressspinner'
 import Tag from 'primevue/tag'
 import Toolbar from 'primevue/toolbar'
 import type { PageState } from 'primevue/paginator'
@@ -146,10 +147,18 @@ onBeforeUnmount(() => stopPolling())
                 class="rank-check-status-link"
                 :to="`/app/rank-checks/${data.id}`"
             >
-                <Tag
-                    :value="rankCheckStatusLabel(data.status)"
-                    :severity="rankCheckStatusSeverity(data.status)"
-                />
+                <span class="rank-check-status-content">
+                    <Tag
+                        :value="rankCheckStatusLabel(data.status)"
+                        :severity="rankCheckStatusSeverity(data.status)"
+                    />
+                    <ProgressSpinner
+                        v-if="data.status === 'PARSING'"
+                        class="rank-check-status-spinner"
+                        stroke-width="6"
+                        aria-label="Pending"
+                    />
+                </span>
             </RouterLink>
         </template>
         <template #cell-created="{ data }">

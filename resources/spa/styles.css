@@ -632,6 +632,17 @@ body {
     text-decoration: none;
 }
 
+.rank-check-status-content {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.rank-check-status-spinner {
+    width: 0.9rem;
+    height: 0.9rem;
+}
+
 .rank-check-pending {
     display: grid;
     justify-items: center;
