@@ -13,9 +13,9 @@ use App\Domain\Auth\Impression;
 use App\Domain\Club\Club;
 use App\Domain\Club\ClubRepository;
 use App\Domain\Shared\Criteria;
+use App\Domain\Shared\Pagination\ArraySliceAdapter;
 use App\Domain\Shared\Pagination\Slice;
 use Carbon\Carbon;
-use Pagerfanta\Adapter\ArrayAdapter;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
@@ -53,7 +53,7 @@ final class ListClubsServiceTest extends TestCase
             ->expects($this->once())
             ->method('paginate')
             ->with(new Criteria(['name' => 'Minsk Orienteering']))
-            ->willReturn(new Slice(new ArrayAdapter([$club])))
+            ->willReturn(new Slice(new ArraySliceAdapter([$club])))
         ;
 
         $result = $this->service->execute(
@@ -73,7 +73,7 @@ final class ListClubsServiceTest extends TestCase
             ->expects($this->once())
             ->method('paginate')
             ->with(Criteria::empty())
-            ->willReturn(new Slice(new ArrayAdapter([])))
+            ->willReturn(new Slice(new ArraySliceAdapter([])))
         ;
 
         $result = $this->service->execute(new ListClubs($this->normalisedSearch('  ')));

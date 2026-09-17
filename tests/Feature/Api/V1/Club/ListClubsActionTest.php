@@ -90,10 +90,11 @@ final class ListClubsActionTest extends TestCase
 
         $this->getJson('/api/v1/clubs?perPage=2&page=2')
             ->assertOk()
-            ->assertHeader('X-Pagination-Total', '3')
+            ->assertHeader('X-Pagination-Has-Next', 'false')
             ->assertHeader('X-Pagination-Per-Page', '2')
             ->assertHeader('X-Pagination-Current-Page', '2')
-            ->assertHeader('X-Pagination-Last-Page', '2')
+            ->assertHeaderMissing('X-Pagination-Total')
+            ->assertHeaderMissing('X-Pagination-Last-Page')
         ;
     }
 

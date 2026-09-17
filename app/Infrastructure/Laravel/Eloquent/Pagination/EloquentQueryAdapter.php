@@ -4,24 +4,19 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Laravel\Eloquent\Pagination;
 
+use App\Domain\Shared\Pagination\SliceAdapter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Pagerfanta\Adapter\AdapterInterface;
 
 /**
  * @template TModel of Model
- * @implements AdapterInterface<TModel>
+ * @implements SliceAdapter<TModel>
  */
-final readonly class EloquentQueryAdapter implements AdapterInterface
+final readonly class EloquentQueryAdapter implements SliceAdapter
 {
     /** @param Builder<TModel> $query */
     public function __construct(private Builder $query)
     {
-    }
-
-    public function getNbResults(): int
-    {
-        return (clone $this->query)->count();
     }
 
     /** @return iterable<int, TModel> */

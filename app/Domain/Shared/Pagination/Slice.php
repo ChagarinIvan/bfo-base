@@ -10,26 +10,29 @@ use InvalidArgumentException;
 use Iterator;
 use IteratorAggregate;
 use JsonSerializable;
-use Pagerfanta\Adapter\AdapterInterface;
-use Pagerfanta\Adapter\TransformingAdapter;
-use Pagerfanta\Pagerfanta;
 use Traversable;
+use function array_keys;
+use function array_map;
+use function array_slice;
 use function array_values;
 use function count;
 use function iterator_to_array;
 
 /** @template T */
-final readonly class Slice implements JsonSerializable, Countable, IteratorAggregate
+final class Slice implements JsonSerializable, Countable, IteratorAggregate
 {
-    /** @var Pagerfanta<T> */
-    private Pagerfanta $pager;
+    private int $currentPage = 1;
 
-    /** @param AdapterInterface<T> $adapter */
-    public function __construct(AdapterInterface $adapter)
+    private int $perPage = 20;
+
+    /** @var list<T>|null */
+    private ?array $items = null;
+
+    private ?bool $hasNext = null;
+
+    /** @param SliceAdapter<T> $adapter */
+    public function __construct(private readonly SliceAdapter $adapter)
     {
-        $this->pager = new Pagerfanta($adapter);
-        $this->pager->setAllowOutOfRangePages(true);
-        $this->pager->setMaxPerPage(20);
     }
 
     public function setCurrentPage(int $currentPage): self
@@ -38,14 +41,15 @@ final readonly class Slice implements JsonSerializable, Countable, IteratorAggre
             throw new InvalidArgumentException('The page cannot be less than 1.');
         }
 
-        $this->pager->setCurrentPage($currentPage);
+        $this->currentPage = $currentPage;
+        $this->reset();
 
         return $this;
     }
 
     public function currentPage(): int
     {
-        return $this->pager->getCurrentPage();
+        return $this->currentPage;
     }
 
     public function setPerPage(int $perPage): self
@@ -54,34 +58,49 @@ final readonly class Slice implements JsonSerializable, Countable, IteratorAggre
             throw new InvalidArgumentException('The perPage cannot be less than 1.');
         }
 
-        $this->pager->setMaxPerPage($perPage);
+        $this->perPage = $perPage;
+        $this->reset();
 
         return $this;
     }
 
     public function perPage(): int
     {
-        return $this->pager->getMaxPerPage();
+        return $this->perPage;
     }
 
     /** @return list<T> */
     public function items(): array
     {
-        $results = $this->pager->getCurrentPageResults();
+        if ($this->items === null) {
+            $read = $this->adapter->getSlice(
+                ($this->currentPage - 1) * $this->perPage,
+                $this->perPage + 1,
+            );
+            $items = array_values($read instanceof Traversable
+                ? iterator_to_array($read, preserve_keys: false)
+                : $read);
+            $this->hasNext = count($items) > $this->perPage;
+            $this->items = array_values(array_slice($items, 0, $this->perPage));
+        }
 
-        return array_values($results instanceof Traversable
-            ? iterator_to_array($results, preserve_keys: false)
-            : $results);
+        return $this->items;
     }
 
-    /** @return array<string, int> */
+    public function hasNext(): bool
+    {
+        $this->items();
+
+        return $this->hasNext ?? false;
+    }
+
+    /** @return array<string, int|bool> */
     public function paginationHeaders(): array
     {
         return [
-            'X-Pagination-Current-Page' => $this->currentPage(),
-            'X-Pagination-Per-Page' => $this->perPage(),
-            'X-Pagination-Total' => $this->pager->getNbResults(),
-            'X-Pagination-Last-Page' => $this->pager->getNbPages(),
+            'X-Pagination-Current-Page' => $this->currentPage,
+            'X-Pagination-Per-Page' => $this->perPage,
+            'X-Pagination-Has-Next' => $this->hasNext(),
         ];
     }
 
@@ -92,12 +111,16 @@ final readonly class Slice implements JsonSerializable, Countable, IteratorAggre
      */
     public function map(callable $transformer): self
     {
-        $slice = new self(new TransformingAdapter(
-            $this->pager->getAdapter(),
-            $transformer,
-        ));
-        $slice->setPerPage($this->perPage());
-        $slice->setCurrentPage($this->currentPage());
+        $items = $this->items();
+        $mappedItems = $items
+                |> array_keys(...)
+                |> (fn($x) => array_map($transformer, $items, $x,))
+                |> array_values(...);
+        $slice = new self(new ArraySliceAdapter($mappedItems));
+        $slice->perPage = $this->perPage;
+        $slice->currentPage = $this->currentPage;
+        $slice->hasNext = $this->hasNext();
+        $slice->items = $mappedItems;
 
         return $slice;
     }
@@ -117,5 +140,11 @@ final readonly class Slice implements JsonSerializable, Countable, IteratorAggre
     public function jsonSerialize(): array
     {
         return $this->items();
+    }
+
+    private function reset(): void
+    {
+        $this->items = null;
+        $this->hasNext = null;
     }
 }

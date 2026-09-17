@@ -34,7 +34,9 @@ final class PersonPromptApiTest extends TestCase
             ->assertOk()
             ->assertJsonCount(1)
             ->assertJsonStructure(['0' => ['id', 'personId', 'prompt', 'metaphone']])
-            ->assertHeader('X-Pagination-Total', '2')
+            ->assertHeader('X-Pagination-Has-Next', 'true')
+            ->assertHeaderMissing('X-Pagination-Total')
+            ->assertHeaderMissing('X-Pagination-Last-Page')
             ->assertJsonPath('0.personId', (string) $person->id);
     }
 

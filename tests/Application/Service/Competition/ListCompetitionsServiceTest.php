@@ -12,8 +12,8 @@ use App\Application\Service\Competition\ListCompetitionsService;
 use App\Domain\Competition\Competition;
 use App\Domain\Competition\CompetitionRepository;
 use App\Domain\Shared\Criteria;
+use App\Domain\Shared\Pagination\ArraySliceAdapter;
 use App\Domain\Shared\Pagination\Slice;
-use Pagerfanta\Adapter\ArrayAdapter;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
@@ -44,7 +44,7 @@ final class ListCompetitionsServiceTest extends TestCase
             ->expects($this->once())
             ->method('paginate')
             ->with(new Criteria(['year' => '2021']))
-            ->willReturn(new Slice(new ArrayAdapter($competitions)))
+            ->willReturn(new Slice(new ArraySliceAdapter($competitions)))
         ;
 
         $dto = new SearchCompetitionDto('2021');

@@ -13,7 +13,7 @@ import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import InputText from 'primevue/inputtext'
 import Message from 'primevue/message'
-import Paginator, { type PageState } from 'primevue/paginator'
+import type { PageState } from 'primevue/paginator'
 import { useRoute, useRouter } from 'vue-router'
 import { extractPerson, getPersonProtocolLines } from '../../api/protocolLines'
 import { getYears } from '../../api/years'
@@ -21,6 +21,7 @@ import type { PaginationHeaders, ProtocolLine } from '../../api/types'
 import DateFilter from '../../components/DateFilter.vue'
 import FilterPanel from '../../components/FilterPanel.vue'
 import ListingTable from '../../components/ListingTable.vue'
+import SlicePaginator from '../../components/SlicePaginator.vue'
 import { protocolLineEventUrl } from '../../components/tableModels'
 import YearFilter from '../../components/YearFilter.vue'
 import ActionButton from '../../components/actions/ActionButton.vue'
@@ -86,8 +87,7 @@ const columns = computed(() => [
 const pagination = ref<PaginationHeaders>({
     currentPage: 1,
     perPage: 20,
-    total: 0,
-    lastPage: 1,
+    hasNext: false,
 })
 let latestRequest = 0
 
@@ -386,11 +386,8 @@ onBeforeUnmount(() => debouncedCompetitionSearch.cancel())
                     </template>
                 </Column>
             </DataTable>
-            <Paginator
-                v-if="pagination.total > 0"
-                :first="(pagination.currentPage - 1) * pagination.perPage"
-                :rows="pagination.perPage"
-                :total-records="pagination.total"
+            <SlicePaginator
+                :pagination="pagination"
                 :rows-per-page-options="[10, 20, 50]"
                 @page="onPage"
             />

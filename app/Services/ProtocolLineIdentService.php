@@ -98,8 +98,8 @@ class ProtocolLineIdentService
     }
 
     public function __construct(
-        private readonly ProtocolLineOperations         $protocolLineService,
-        private readonly PersonPromptRepository        $personPrompts,
+        private readonly ProtocolLineOperations $protocolLineService,
+        private readonly PersonPromptRepository $personPrompts,
         private readonly TranslitPersonPromptMetaphone $metaphone,
     ) {
     }

@@ -37,7 +37,7 @@ describe('person payments page', () => {
                     date: '2025-01-01',
                 },
             ],
-            headers: { 'x-pagination-total': '1' },
+            headers: { 'x-pagination-has-next': 'false' },
         })
 
         const wrapper = mount(PersonPaymentsPage, {

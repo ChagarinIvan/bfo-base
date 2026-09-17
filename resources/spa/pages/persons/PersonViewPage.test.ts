@@ -55,7 +55,7 @@ describe('person view page', () => {
                     completeRank: 'II',
                 },
             ],
-            headers: { 'x-pagination-total': '1' },
+            headers: { 'x-pagination-has-next': 'false' },
         })
 
         const wrapper = mount(PersonViewPage, {
@@ -153,7 +153,7 @@ describe('person view page', () => {
         }
         getPersonProtocolLines.mockResolvedValue({
             data: [mismatchedLine],
-            headers: { 'x-pagination-total': '1' },
+            headers: { 'x-pagination-has-next': 'false' },
         })
 
         const wrapper = mount(PersonViewPage, {
@@ -219,7 +219,7 @@ describe('person view page', () => {
         const mismatchedLine = { ...matchingLine, id: '12', firstname: 'John' }
         getPersonProtocolLines.mockResolvedValue({
             data: [matchingLine, mismatchedLine],
-            headers: { 'x-pagination-total': '2' },
+            headers: { 'x-pagination-has-next': 'false' },
         })
 
         const wrapper = mount(PersonViewPage, {

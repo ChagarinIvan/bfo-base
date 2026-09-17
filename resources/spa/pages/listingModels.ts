@@ -52,17 +52,21 @@ export function shouldLoadUsers(
 export function paginationFromHeaders(
     headers: Record<string, unknown>,
 ): PaginationHeaders {
-    const read = (name: string, fallback: number): number => {
+    const readNumber = (name: string, fallback: number): number => {
         const value = headers[name] ?? headers[name.toLowerCase()]
         const parsed = Number(value)
         return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback
     }
+    const readBoolean = (name: string): boolean => {
+        const value = headers[name] ?? headers[name.toLowerCase()]
+
+        return value === true || value === 'true' || value === 1 || value === '1'
+    }
 
     return {
-        currentPage: read('x-pagination-current-page', 1),
-        perPage: read('x-pagination-per-page', 20),
-        total: read('x-pagination-total', 0),
-        lastPage: read('x-pagination-last-page', 1),
+        currentPage: readNumber('x-pagination-current-page', 1),
+        perPage: readNumber('x-pagination-per-page', 20),
+        hasNext: readBoolean('x-pagination-has-next'),
     }
 }
 

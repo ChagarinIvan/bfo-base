@@ -56,7 +56,7 @@ describe('clubs api', () => {
     })
 
     it('requests the paginated club listing and returns response metadata', async () => {
-        const headers = { 'x-pagination-total': '2' }
+        const headers = { 'x-pagination-has-next': 'false' }
         vi.mocked(api.get).mockResolvedValue({
             data: [{ id: '1', name: 'Club', personsCount: 0 }],
             headers,

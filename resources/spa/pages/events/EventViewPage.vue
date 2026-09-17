@@ -6,13 +6,14 @@ import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import InputText from 'primevue/inputtext'
 import Message from 'primevue/message'
-import Paginator, { type PageState } from 'primevue/paginator'
+import type { PageState } from 'primevue/paginator'
 import Select from 'primevue/select'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 import ActionButton from '../../components/actions/ActionButton.vue'
 import FilterPanel from '../../components/FilterPanel.vue'
 import ImpressionDetails from '../../components/ImpressionDetails.vue'
 import ListingTable from '../../components/ListingTable.vue'
+import SlicePaginator from '../../components/SlicePaginator.vue'
 import { getEventDistances } from '../../api/distances'
 import { getCompetition } from '../../api/competitions'
 import { deleteEvent, getEvent } from '../../api/events'
@@ -52,8 +53,7 @@ const name = ref('')
 const pagination = ref<PaginationHeaders>({
     currentPage: 1,
     perPage: 100,
-    total: 0,
-    lastPage: 1,
+    hasNext: false,
 })
 const hasPoints = computed(() =>
     lines.value.some((line) => line.points !== null),
@@ -526,15 +526,9 @@ onBeforeUnmount(() => {
                                         severity="success" /></template
                             ></Column>
                         </DataTable>
-                        <Paginator
-                            :first="
-                                (pagination.currentPage - 1) *
-                                pagination.perPage
-                            "
-                            :rows="pagination.perPage"
-                            :total-records="pagination.total"
+                        <SlicePaginator
+                            :pagination="pagination"
                             :rows-per-page-options="[20, 50, 100]"
-                            class="competitions-paginator"
                             @page="onPage"
                         />
                     </template>

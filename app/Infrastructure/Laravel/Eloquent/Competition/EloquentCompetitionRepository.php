@@ -43,7 +43,9 @@ final class EloquentCompetitionRepository implements CompetitionRepository
     /** @return Builder<Competition> */
     private function createQuery(Criteria $criteria): Builder
     {
-        $query = Competition::where('active', true)->orderByDesc('from');
+        $query = Competition::where('active', true)
+            ->orderByDesc('from')
+            ->orderBy('id');
 
         if ($criteria->hasParam('year')) {
             $query

@@ -90,7 +90,9 @@ final class RankCheckApiTest extends TestCase
             ->assertOk()
             ->assertJsonPath('0.position', 1)
             ->assertJsonPath('0.isEqual', true)
-            ->assertHeader('X-Pagination-Total', '1')
+            ->assertHeader('X-Pagination-Has-Next', 'false')
+            ->assertHeaderMissing('X-Pagination-Total')
+            ->assertHeaderMissing('X-Pagination-Last-Page')
         ;
     }
 
@@ -105,8 +107,9 @@ final class RankCheckApiTest extends TestCase
             ->assertOk()
             ->assertJsonCount(1)
             ->assertJsonStructure([['id', 'status', 'created', 'updated']])
-            ->assertHeader('X-Pagination-Total', '2')
-            ->assertHeader('X-Pagination-Last-Page', '2')
+            ->assertHeader('X-Pagination-Has-Next', 'true')
+            ->assertHeaderMissing('X-Pagination-Total')
+            ->assertHeaderMissing('X-Pagination-Last-Page')
         ;
     }
 

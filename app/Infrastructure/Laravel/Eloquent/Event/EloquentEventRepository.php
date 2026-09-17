@@ -164,6 +164,7 @@ final class EloquentEventRepository implements EventRepository
             foreach ($criteria->sorting() as $key => $order) {
                 $query->orderBy($key, $order);
             }
+            $query->orderBy('events.id');
         } else {
             $query->orderBy('events.date', 'asc')->orderBy('events.id');
         }

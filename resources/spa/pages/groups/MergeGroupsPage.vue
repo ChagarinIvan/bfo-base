@@ -27,8 +27,7 @@ const error = ref('')
 const pagination = ref<PaginationHeaders>({
     currentPage: 1,
     perPage: 20,
-    total: 0,
-    lastPage: 1,
+    hasNext: false,
 })
 const filter = debounce(() => void load())
 async function load(
