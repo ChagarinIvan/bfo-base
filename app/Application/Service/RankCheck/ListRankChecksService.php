@@ -7,7 +7,6 @@ namespace App\Application\Service\RankCheck;
 use App\Application\Dto\RankCheck\RankCheckAssembler;
 use App\Application\Dto\RankCheck\ViewRankCheckDto;
 use App\Domain\RankCheck\RankCheckRepository;
-use App\Domain\Shared\Criteria;
 use App\Domain\Shared\Pagination\Slice;
 
 final readonly class ListRankChecksService
