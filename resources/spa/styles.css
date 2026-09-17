@@ -284,6 +284,11 @@ body {
     box-shadow: 0 0.25rem 0.75rem rgb(33 37 41 / 7%);
 }
 
+.rank-check-details-card {
+    margin-bottom: 1.5rem;
+    box-shadow: 0 0.25rem 0.75rem rgb(33 37 41 / 7%);
+}
+
 .competition-details-info {
     width: 100%;
     border-collapse: collapse;
@@ -620,6 +625,72 @@ body {
 }
 
 .field-error {
+    color: #dc3545;
+}
+
+.rank-check-status-link {
+    text-decoration: none;
+}
+
+.rank-check-status-content {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.rank-check-status-spinner {
+    width: 0.75rem !important;
+    height: 0.75rem !important;
+}
+
+.rank-check-pending {
+    display: grid;
+    justify-items: center;
+    gap: 0.75rem;
+    padding: 2rem;
+    color: #6c757d;
+    text-align: center;
+}
+
+.rank-check-value--match {
+    display: inline-block;
+    border-radius: 0.25rem;
+    padding: 0.1rem 0.3rem;
+    background: #d1e7dd;
+    color: #0f5132;
+}
+
+.rank-check-value--mismatch {
+    display: inline-block;
+    border-radius: 0.25rem;
+    padding: 0.1rem 0.3rem;
+    background: #f8d7da;
+    color: #842029;
+    text-decoration: line-through;
+}
+
+.rank-check-value__arrow {
+    margin: 0 0.25rem;
+    color: #6c757d;
+}
+
+.rank-check-value__correct {
+    color: #0f5132;
+}
+
+.rank-check-match-icon,
+.rank-check-person-icon {
+    font-size: 1.15rem;
+}
+
+.rank-check-match-icon--yes,
+.rank-check-person-icon--yes {
+    color: #198754;
+    font-weight: 700;
+}
+
+.rank-check-match-icon--no,
+.rank-check-person-icon--no {
     color: #dc3545;
 }
 

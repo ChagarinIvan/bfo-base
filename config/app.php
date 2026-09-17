@@ -16,6 +16,7 @@ use App\Bridge\Laravel\Provider\PersonPayment\PersonPaymentProvider;
 use App\Bridge\Laravel\Provider\PersonPrompt\PersonPromptProvider;
 use App\Bridge\Laravel\Provider\ProtocolLine\ProtocolLineProvider;
 use App\Bridge\Laravel\Provider\Rank\RankProvider;
+use App\Bridge\Laravel\Provider\RankCheck\RankCheckProvider;
 use App\Bridge\Laravel\Provider\Shared\SharedProvider;
 use App\Bridge\Laravel\Provider\User\AuthProvider;
 use App\Bridge\Laravel\Provider\ViewProvider;
@@ -222,6 +223,7 @@ return [
         SharedProvider::class,
         ProtocolLineProvider::class,
         RankProvider::class,
+        RankCheckProvider::class,
         AuthProvider::class,
 
         // event handlers

@@ -11,14 +11,16 @@ use App\Domain\Person\PersonRepository;
 use App\Domain\Shared\Criteria;
 use App\Domain\Shared\Pagination\Slice;
 use App\Infrastructure\Laravel\Eloquent\Pagination\EloquentQueryAdapter;
+use App\Infrastructure\Laravel\Eloquent\Shared\EscapesLikePatterns;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
 use function mb_strtolower;
-use function strtr;
 
 final class EloquentPersonRepository implements PersonRepository
 {
+    use EscapesLikePatterns;
+
     public function byId(int $id): ?Person
     {
         $query = Person::where('active', true);
@@ -86,11 +88,6 @@ final class EloquentPersonRepository implements PersonRepository
     public function paginate(Criteria $criteria): Slice
     {
         return new Slice(new EloquentQueryAdapter($this->createPaginatedQuery($criteria)));
-    }
-
-    private function escapeLikePattern(string $value): string
-    {
-        return strtr($value, ['!' => '!!', '%' => '!%', '_' => '!_']);
     }
 
     /** @return Builder<Person> */

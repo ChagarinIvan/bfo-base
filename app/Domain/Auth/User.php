@@ -33,7 +33,7 @@ class User extends Authenticatable
     use HasFactory;
     use Notifiable;
 
-    public const SYSTEM_USER_ID = 10;
+    public const int SYSTEM_USER_ID = 10;
 
     protected function casts(): array
     {

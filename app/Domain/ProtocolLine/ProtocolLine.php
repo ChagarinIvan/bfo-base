@@ -14,7 +14,7 @@ use App\Domain\ProtocolLine\Event\ProtocolLinePersonAssigned;
 use App\Domain\ProtocolLine\Event\ProtocolLinePersonSet;
 use App\Domain\ProtocolLine\Event\ProtocolLineRankActivated;
 use App\Domain\Shared\AggregatedModel;
-use App\Services\PersonsIdentService;
+use App\Domain\Shared\IdentLineGenerator;
 use Carbon\Carbon;
 use Database\Factories\Domain\ProtocolLine\ProtocolLineFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -87,9 +87,9 @@ class ProtocolLine extends AggregatedModel
         return $this->BelongsTo(Person::class, 'person_id', 'id');
     }
 
-    public function fillProtocolLine(int $distanceId, string $completeRank): void
+    public function fillProtocolLine(int $distanceId, string $completeRank, IdentLineGenerator $identLineGenerator): void
     {
-        $this->prepared_line = PersonsIdentService::makeIdentLine($this->lastname, $this->firstname, $this->year ? (int)$this->year : null);
+        $this->prepared_line = $identLineGenerator->generate($this->lastname, $this->firstname, $this->year);
 
         //чистим разряды
         $this->rank = trim((string) ($this->rank ?? ''));

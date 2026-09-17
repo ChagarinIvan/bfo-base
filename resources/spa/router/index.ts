@@ -37,6 +37,9 @@ import EventViewPage from '../pages/events/EventViewPage.vue'
 import CreateEventPage from '../pages/events/CreateEventPage.vue'
 import EditEventPage from '../pages/events/EditEventPage.vue'
 import UniteEventsPage from '../pages/events/UniteEventsPage.vue'
+import RankChecksPage from '../pages/rank-checks/RankChecksPage.vue'
+import RankCheckUploadPage from '../pages/rank-checks/RankCheckUploadPage.vue'
+import RankCheckViewPage from '../pages/rank-checks/RankCheckViewPage.vue'
 
 export function createAppRouter(
     history: RouterHistory = typeof window === 'undefined'
@@ -47,6 +50,21 @@ export function createAppRouter(
         history,
         routes: [
             { path: '/app/competitions', component: CompetitionsPage },
+            {
+                path: '/app/rank-checks',
+                component: RankChecksPage,
+                meta: { requiresAuth: true },
+            },
+            {
+                path: '/app/rank-checks/create',
+                component: RankCheckUploadPage,
+                meta: { requiresAuth: true },
+            },
+            {
+                path: '/app/rank-checks/:rankCheckId',
+                component: RankCheckViewPage,
+                meta: { requiresAuth: true },
+            },
             { path: '/app/events/:eventId', component: EventViewPage },
             {
                 path: '/app/competitions/:competitionId/events/create',

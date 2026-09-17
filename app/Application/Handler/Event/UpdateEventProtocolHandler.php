@@ -7,7 +7,7 @@ namespace App\Application\Handler\Event;
 use App\Application\Service\Cup\ClearCupCacheService;
 use App\Application\Service\Person\RebuildPersonRanksService;
 use App\Domain\Event\Event\EventProtocolUpdated;
-use App\Domain\Event\ProtocolStorage;
+use App\Domain\Shared\Storage;
 use App\Services\DistanceService;
 use App\Services\ParserService;
 use App\Services\ProtocolLineIdentService;
@@ -19,7 +19,7 @@ final class UpdateEventProtocolHandler extends ParseProtocolHandler implements S
     use DisableEventHandlerTrait;
 
     public function __construct(
-        ProtocolStorage $storage,
+        Storage $storage,
         ParserService $parser,
         ProtocolLineService $protocolLineService,
         ProtocolLineIdentService $identService,

@@ -7,15 +7,15 @@ namespace Tests\Domain\Event;
 use App\Domain\Event\Event;
 use App\Domain\Event\Protocol;
 use App\Domain\Event\ProtocolPathResolver;
-use App\Domain\Event\ProtocolStorage;
 use App\Domain\Event\StandardProtocolUpdater;
+use App\Domain\Shared\Storage;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
 final class StandardProtocolUpdaterTest extends TestCase
 {
-    private MockObject&ProtocolStorage $protocols;
+    private MockObject&Storage $protocols;
 
     private StandardProtocolUpdater $updater;
 
@@ -24,7 +24,7 @@ final class StandardProtocolUpdaterTest extends TestCase
         parent::setUp();
 
         $this->updater = new StandardProtocolUpdater(
-            $this->protocols = $this->createMock(ProtocolStorage::class),
+            $this->protocols = $this->createMock(Storage::class),
             new ProtocolPathResolver,
         );
     }
@@ -43,7 +43,7 @@ final class StandardProtocolUpdaterTest extends TestCase
         $this->protocols
             ->expects($this->once())
             ->method('put')
-            ->with('2023/2023-02-02_test_event@@xml', $this->identicalTo($protocol))
+            ->with('2023/2023-02-02_test_event@@xml', $protocol->content)
         ;
 
         /** @var Event $event */

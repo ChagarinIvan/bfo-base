@@ -197,16 +197,6 @@ class ProtocolLineIdentService
         }
     }
 
-    /** @return array<string, int> */
-    public function identLinesByPrompts(array $lines): array
-    {
-        return $this->personPrompts
-            ->byCriteria(new Criteria(['prompts' => $lines]))
-            ->pluck('person_id', 'prompt')
-            ->toArray()
-        ;
-    }
-
     /**
      * Определяем людей по идентификаторам с использованием расстояния левенштайна.
      */
