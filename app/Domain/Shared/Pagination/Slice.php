@@ -114,7 +114,7 @@ final class Slice implements JsonSerializable, Countable, IteratorAggregate
         $items = $this->items();
         $mappedItems = $items
                 |> array_keys(...)
-                |> (fn($x) => array_map($transformer, $items, $x,))
+                |> (static fn($x) => array_map($transformer, $items, $x, ))
                 |> array_values(...);
         $slice = new self(new ArraySliceAdapter($mappedItems));
         $slice->perPage = $this->perPage;

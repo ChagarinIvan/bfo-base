@@ -21,13 +21,15 @@ describe('slice paginator', () => {
         ])
     })
 
-    it('does not render navigation when there is no previous or next page', () => {
+    it('keeps the page-size selector when there is no previous or next page', () => {
         const wrapper = mount(SlicePaginator, {
             props: {
                 pagination: { currentPage: 1, perPage: 20, hasNext: false },
             },
         })
 
-        expect(wrapper.find('nav').exists()).toBe(false)
+        expect(wrapper.find('nav').exists()).toBe(true)
+        expect(wrapper.findAll('button')).toHaveLength(0)
+        expect(wrapper.find('select').exists()).toBe(true)
     })
 })

@@ -7,6 +7,7 @@ namespace Tests\Infrastructure\Laravel\Eloquent\Pagination;
 use App\Domain\Person\Person;
 use App\Domain\Shared\Pagination\Slice;
 use App\Infrastructure\Laravel\Eloquent\Pagination\EloquentQueryAdapter;
+use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
@@ -23,7 +24,12 @@ final class EloquentQueryAdapterTest extends TestCase
     #[Test]
     public function it_fetches_a_probe_row_without_counting_total_results(): void
     {
-        Person::factory()->count(41)->create();
+        Person::factory()
+            ->count(41)
+            ->sequence(static fn (Sequence $sequence): array => [
+                'id' => 1000 + $sequence->index,
+            ])
+            ->create();
         $queries = [];
         DB::listen(static function (QueryExecuted $query) use (&$queries): void {
             $queries[] = $query;

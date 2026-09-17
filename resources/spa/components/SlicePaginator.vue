@@ -22,16 +22,31 @@ function go(page: number, rows = props.pagination.perPage): void {
 </script>
 
 <template>
-    <nav v-if="pagination.currentPage > 1 || pagination.hasNext" class="slice-paginator">
-        <button :disabled="pagination.currentPage <= 1" @click="go(pagination.currentPage - 2)">
-            Previous
-        </button>
-        <span>Page {{ pagination.currentPage }}</span>
-        <button :disabled="!pagination.hasNext" @click="go(pagination.currentPage)">
-            Next
-        </button>
-        <select :value="pagination.perPage" @change="go(0, Number(($event.target as HTMLSelectElement).value))">
-            <option v-for="option in rowsPerPageOptions" :key="option" :value="option">
+    <nav v-if="pagination" class="slice-paginator">
+        <template v-if="pagination.currentPage > 1 || pagination.hasNext">
+            <button
+                :disabled="pagination.currentPage <= 1"
+                @click="go(pagination.currentPage - 2)"
+            >
+                Previous
+            </button>
+            <span>Page {{ pagination.currentPage }}</span>
+            <button
+                :disabled="!pagination.hasNext"
+                @click="go(pagination.currentPage)"
+            >
+                Next
+            </button>
+        </template>
+        <select
+            :value="pagination.perPage"
+            @change="go(0, Number(($event.target as HTMLSelectElement).value))"
+        >
+            <option
+                v-for="option in rowsPerPageOptions"
+                :key="option"
+                :value="option"
+            >
                 {{ option }}
             </option>
         </select>

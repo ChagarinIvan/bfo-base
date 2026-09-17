@@ -60,7 +60,9 @@ export function paginationFromHeaders(
     const readBoolean = (name: string): boolean => {
         const value = headers[name] ?? headers[name.toLowerCase()]
 
-        return value === true || value === 'true' || value === 1 || value === '1'
+        return (
+            value === true || value === 'true' || value === 1 || value === '1'
+        )
     }
 
     return {
