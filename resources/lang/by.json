@@ -461,5 +461,6 @@
     "spa.rank_check.equal": "Супадае",
     "spa.rank_check.has_person": "Ёсць у базе",
     "spa.rank_check.no_person": "Няма ў базе",
-    "spa.rank_check.different": "Адрозніваецца"
+    "spa.rank_check.different": "Адрозніваецца",
+    "spa.rank_check.empty": "пуста"
 }

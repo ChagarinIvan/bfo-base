@@ -13,11 +13,14 @@ Success: `202 Accepted`
 {
   "id": "123",
   "status": "PARSING",
-  "updatedAt": "2026-09-16T10:00:00Z"
+  "created": {"at": "2026-09-16T10:00:00Z", "by": "10"},
+  "updated": {"at": "2026-09-16T10:00:00Z", "by": "10"}
 }
 ```
 
-Validation errors return the standard `422` shape. Unauthenticated users receive `401`.
+Invalid rank-check files return the application `400` error `invalid_rank_check_list`.
+Transport validation errors (for example, missing multipart field) return the standard `422` shape.
+Unauthenticated users receive `401`.
 
 ## View a check
 
@@ -52,6 +55,7 @@ Ready:
 
 `GET /rank-checks/123/rows` returns the standard serialized `RankCheckRowDto[]`; pagination is
 provided by `X-Pagination-*` response headers.
+For `PARSING` or `FAILED` checks the repository status filter returns no rows.
 
 Failed:
 

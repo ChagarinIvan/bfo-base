@@ -24,6 +24,13 @@ final readonly class EloquentRankCheckRowRepository implements RankCheckRowRepos
         if ($criteria->hasParam('rankCheckId')) {
             $query->where('rank_check_id', $criteria->param('rankCheckId'));
         }
+        if ($criteria->hasParam('status')) {
+            $query
+                ->join('rank_checks', 'rank_checks.id', '=', 'rank_check_rows.rank_check_id')
+                ->where('rank_checks.status', $criteria->param('status'))
+                ->select('rank_check_rows.*')
+            ;
+        }
 
         return new Slice(new EloquentQueryAdapter(
             $query,

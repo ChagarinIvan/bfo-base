@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import {
     getRankCheck,
@@ -17,6 +17,22 @@ const error = ref('')
 const page = ref(1)
 let timer: ReturnType<typeof window.setInterval> | undefined
 
+function stopPolling(): void {
+    if (!timer) return
+
+    window.clearInterval(timer)
+    timer = undefined
+}
+
+function startPolling(): void {
+    if (timer) return
+
+    timer = window.setInterval(
+        () => void load(),
+        5000,
+    ) as unknown as ReturnType<typeof window.setInterval>
+}
+
 async function load(nextPage = page.value): Promise<void> {
     try {
         error.value = ''
@@ -31,24 +47,32 @@ async function load(nextPage = page.value): Promise<void> {
             lastPage.value = result.lastPage
         }
         if (check.value.status !== 'PARSING' && timer) {
-            window.clearInterval(timer)
-            timer = undefined
+            stopPolling()
         }
     } catch {
         error.value = t('spa.rank_check.retry')
     }
 }
 
-onMounted(async () => {
-    await load()
-    if (check.value?.status === 'PARSING')
-        timer = window.setInterval(
-            () => void load(),
-            5000,
-        ) as unknown as ReturnType<typeof window.setInterval>
+onMounted(() => {
+    startPolling()
+    void load()
 })
+
+watch(
+    () => route.params.rankCheckId,
+    () => {
+        check.value = null
+        rows.value = []
+        lastPage.value = 1
+        page.value = 1
+        startPolling()
+        void load()
+    },
+)
+
 onBeforeUnmount(() => {
-    if (timer) window.clearInterval(timer)
+    stopPolling()
 })
 </script>
 
@@ -81,44 +105,52 @@ onBeforeUnmount(() => {
                         {{ row.name
                         }}<template
                             v-if="
-                                row.databaseName &&
-                                row.databaseName !== row.name
+                                row.hasPerson && row.databaseName !== row.name
                             "
                         >
-                            → {{ row.databaseName }}</template
+                            →
+                            {{
+                                row.databaseName ?? t('spa.rank_check.empty')
+                            }}</template
                         >
                     </td>
                     <td>
                         {{ row.club
                         }}<template
                             v-if="
-                                row.databaseClub &&
-                                row.databaseClub !== row.club
+                                row.hasPerson && row.databaseClub !== row.club
                             "
                         >
-                            → {{ row.databaseClub }}</template
+                            →
+                            {{
+                                row.databaseClub ?? t('spa.rank_check.empty')
+                            }}</template
                         >
                     </td>
                     <td>
                         {{ row.rank
                         }}<template
                             v-if="
-                                row.databaseRank &&
-                                row.databaseRank !== row.rank
+                                row.hasPerson && row.databaseRank !== row.rank
                             "
                         >
-                            → {{ row.databaseRank }}</template
+                            →
+                            {{
+                                row.databaseRank ?? t('spa.rank_check.empty')
+                            }}</template
                         >
                     </td>
                     <td>
                         {{ row.year
                         }}<template
                             v-if="
-                                row.databaseYear &&
-                                row.databaseYear !== row.year
+                                row.hasPerson && row.databaseYear !== row.year
                             "
                         >
-                            → {{ row.databaseYear }}</template
+                            →
+                            {{
+                                row.databaseYear ?? t('spa.rank_check.empty')
+                            }}</template
                         >
                     </td>
                     <td>{{ row.isEqual ? '✓' : '✗' }}</td>

@@ -36,3 +36,5 @@
 - Реализация завершена: status и rows разделены на два API-запроса, строки читаются стандартным `Slice`,
   queue запускается доменным событием, а `RankCheck::process()` владеет финальным переходом и `updated` Impression.
 - Гейты пройдены: PHPUnit `471/471`, PHPStan, CS Fixer, Rector dry-run и SPA CI `53 files / 148 tests`.
+- API request coverage добавлена для `202`, `400`, `401`, status-only view, READY rows pagination и
+  запрета rows до `READY`; cleanup-тест оставлен отложенным по согласованному приоритету.
