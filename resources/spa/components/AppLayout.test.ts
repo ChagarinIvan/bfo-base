@@ -31,7 +31,7 @@ describe('hybrid SPA navbar', () => {
     it('keeps authenticated links outside the removed help menu', () => {
         expect(
             authenticatedCompetitionNavigation.map((item) => item.href),
-        ).toEqual([])
+        ).toEqual(['/app/rank-checks'])
         expect(authenticatedAccountNavigation.map((item) => item.href)).toEqual(
             ['/app/registration'],
         )

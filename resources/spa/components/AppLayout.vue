@@ -86,14 +86,24 @@ async function logout(): Promise<void> {
                             </a>
                         </template>
                         <template v-if="auth.isAuthenticated">
-                            <a
+                            <template
                                 v-for="item in authenticatedCompetitionNavigation"
                                 :key="item.href"
-                                class="app-nav-dropdown-link"
-                                :href="item.href"
                             >
-                                {{ t(item.label) }}
-                            </a>
+                                <RouterLink
+                                    v-if="item.spa"
+                                    class="app-nav-dropdown-link"
+                                    :to="item.href"
+                                >
+                                    {{ t(item.label) }}
+                                </RouterLink>
+                                <a
+                                    v-else
+                                    class="app-nav-dropdown-link"
+                                    :href="item.href"
+                                    >{{ t(item.label) }}</a
+                                >
+                            </template>
                         </template>
                     </div>
                 </details>

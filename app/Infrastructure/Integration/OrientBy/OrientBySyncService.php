@@ -13,8 +13,9 @@ use App\Domain\Club\Club;
 use App\Domain\Club\ClubNameNormalizer;
 use App\Domain\Club\ClubRepository;
 use App\Domain\Person\Person;
+use App\Domain\RankCheck\RankCheckPersonMatcher;
 use App\Domain\Shared\Clock;
-use App\Services\PersonsIdentService;
+use App\Domain\Shared\IdentLineGenerator;
 use App\Services\PersonsService;
 use Illuminate\Log\LogManager;
 use Psr\Log\LoggerInterface;
@@ -27,12 +28,13 @@ class OrientBySyncService
     private readonly LoggerInterface $logger;
 
     public function __construct(
-        private readonly PersonsIdentService $identService,
+        private readonly RankCheckPersonMatcher $personMatcher,
         private readonly PersonsService $personsService,
         private readonly ClubRepository $clubs,
         private readonly ClubNameNormalizer $clubNameNormalizer,
         private readonly CreateOrUpdatePersonPaymentsService $createOrUpdatePersonPaymentsService,
         private readonly Clock $clock,
+        private readonly IdentLineGenerator $identLineGenerator,
         LogManager $loggerManager,
     ) {
         $this->logger = $loggerManager->channel('sync');
@@ -50,7 +52,7 @@ class OrientBySyncService
             $personsPrompts[$this->makePromptFromPersonDto($personDto)] = $personDto;
         }
 
-        $indicatedPersons = $this->identService->identLines(array_keys($personsPrompts));
+        $indicatedPersons = $this->personMatcher->match(array_keys($personsPrompts));
         $this->logger->info(sprintf("Found %d persons.", count($indicatedPersons)));
 
         foreach ($personsPrompts as $personsPrompt => $personDto) {
@@ -145,7 +147,7 @@ class OrientBySyncService
 
     private function makePromptFromPersonDto(OrientByPersonDto $personDto): string
     {
-        return PersonsIdentService::makeIdentLine($personDto->getLastName(), $personDto->getFirstName(), $personDto->yob);
+        return $this->identLineGenerator->generate($personDto->getLastName(), $personDto->getFirstName(), $personDto->yob);
     }
 
     private function setClub(Person $person, OrientByPersonDto $personDto): bool

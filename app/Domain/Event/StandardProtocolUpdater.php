@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Domain\Event;
 
+use App\Domain\Shared\Storage;
+
 final readonly class StandardProtocolUpdater implements ProtocolUpdater
 {
     public function __construct(
-        private ProtocolStorage $storage,
+        private Storage $storage,
         private ProtocolPathResolver $path,
     ) {
     }
@@ -16,7 +18,7 @@ final readonly class StandardProtocolUpdater implements ProtocolUpdater
     {
         $this->storage->delete($event->file);
         $path = $this->path->protocolPath($event->date, $event->name, $protocol->extension);
-        $this->storage->put($path, $protocol);
+        $this->storage->put($path, $protocol->content);
 
         return $path;
     }

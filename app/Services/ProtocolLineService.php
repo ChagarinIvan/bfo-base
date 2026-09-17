@@ -15,6 +15,7 @@ use App\Domain\ProtocolLine\ProtocolLineOperations;
 use App\Domain\Rank\RankNormalizer;
 use App\Domain\Shared\Clock;
 use App\Domain\Shared\Criteria;
+use App\Domain\Shared\IdentLineGenerator;
 use App\Repositories\ProtocolLinesRepository as LegacyProtocolLinesRepository;
 use Illuminate\Support\Collection;
 use function str_replace;
@@ -27,6 +28,7 @@ final readonly class ProtocolLineService implements ProtocolLineOperations
         private RankNormalizer $rankNormalizer,
         private Clock $clock,
         private GroupNameNormalizer $groupNameNormalizer,
+        private IdentLineGenerator $identLineGenerator,
     ) {
     }
 
@@ -60,6 +62,7 @@ final readonly class ProtocolLineService implements ProtocolLineOperations
             $protocolLine->fillProtocolLine(
                 $distance->id,
                 $this->rankNormalizer->normalize($protocolLine->complete_rank)?->label() ?? '',
+                $this->identLineGenerator,
             );
 
             $protocolLine->save();

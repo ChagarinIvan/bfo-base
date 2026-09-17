@@ -444,5 +444,22 @@
     "spa.group.merge": "Аб'яднаць",
     "spa.group.merge.confirm": "Вы сапраўды хочаце аб'яднаць «:source» і «:target»? Усе дыстанцыі будуць перанесеныя.",
     "spa.group.merge.error": "Не атрымалася аб'яднаць групы.",
-    "spa.common.cancel": "Скасаваць"
+    "spa.common.cancel": "Скасаваць",
+    "spa.nav.rank_checks": "Праверка разрадаў",
+    "spa.rank_check.title": "Праверка разрадаў",
+    "spa.rank_check.select_file": "Выберыце файл",
+    "spa.rank_check.submit": "Праверыць разрады",
+    "spa.rank_check.parsing": "Спіс разрадаў апрацоўваецца…",
+    "spa.rank_check.ready": "Праверка завершана",
+    "spa.rank_check.failed": "Не атрымалася апрацаваць спіс разрадаў.",
+    "spa.rank_check.retry": "Часовая памылка абнаўлення. Паўторым спробу.",
+    "spa.rank_check.group": "Група",
+    "spa.rank_check.name": "ФІО",
+    "spa.rank_check.club": "Клуб",
+    "spa.rank_check.rank": "Разрад",
+    "spa.rank_check.year": "Год нараджэння",
+    "spa.rank_check.equal": "Супадае",
+    "spa.rank_check.has_person": "Ёсць у базе",
+    "spa.rank_check.no_person": "Няма ў базе",
+    "spa.rank_check.different": "Адрозніваецца"
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Console;
 
+use App\Bridge\Laravel\Console\Commands\CleanupRankChecksCommand;
 use App\Bridge\Laravel\Console\Commands\DeleteInactivePersonsPromptsCommand;
 use App\Bridge\Laravel\Console\Commands\FixInactivePersonsProtocolLinesCommand;
 use App\Bridge\Laravel\Console\Commands\IdentProtocolLineCommand;
@@ -36,6 +37,7 @@ class Kernel extends ConsoleKernel
         PruneInactivePersonsCommand::class,
         DeleteInactivePersonsPromptsCommand::class,
         FixInactivePersonsProtocolLinesCommand::class,
+        CleanupRankChecksCommand::class,
     ];
 
     /**
@@ -54,6 +56,8 @@ class Kernel extends ConsoleKernel
             ->withoutOverlapping(5)
             ->runInBackground()
         ;
+
+        $schedule->command(CleanupRankChecksCommand::class)->dailyAt('04:00')->runInBackground();
     }
 
     /**

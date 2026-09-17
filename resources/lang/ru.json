@@ -163,5 +163,22 @@
     "spa.group.merge": "Объединить",
     "spa.group.merge.confirm": "Вы действительно хотите объединить «:source» и «:target»? Все дистанции будут перенесены.",
     "spa.group.merge.error": "Не удалось объединить группы.",
-    "spa.common.cancel": "Отмена"
+    "spa.common.cancel": "Отмена",
+    "spa.nav.rank_checks": "Проверка разрядов",
+    "spa.rank_check.title": "Проверка разрядов",
+    "spa.rank_check.select_file": "Выберите файл",
+    "spa.rank_check.submit": "Проверить разряды",
+    "spa.rank_check.parsing": "Список разрядов обрабатывается…",
+    "spa.rank_check.ready": "Проверка завершена",
+    "spa.rank_check.failed": "Не удалось обработать список разрядов.",
+    "spa.rank_check.retry": "Временная ошибка обновления. Повторяем попытку.",
+    "spa.rank_check.group": "Группа",
+    "spa.rank_check.name": "ФИО",
+    "spa.rank_check.club": "Клуб",
+    "spa.rank_check.rank": "Разряд",
+    "spa.rank_check.year": "Год рождения",
+    "spa.rank_check.equal": "Совпадает",
+    "spa.rank_check.has_person": "Есть в базе",
+    "spa.rank_check.no_person": "Нет в базе",
+    "spa.rank_check.different": "Отличается"
 }
