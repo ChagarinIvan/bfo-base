@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 import Button from 'primevue/button'
+import Tag from 'primevue/tag'
 import Toolbar from 'primevue/toolbar'
 import type { PageState } from 'primevue/paginator'
 import { useRouter } from 'vue-router'
@@ -12,6 +13,10 @@ import { getUsers } from '../../api/users'
 import { paginationFromHeaders } from '../listingModels'
 import { t } from '../../i18n'
 import type { RankCheck } from '../../api/rankChecks'
+import {
+    rankCheckStatusLabel,
+    rankCheckStatusSeverity,
+} from './rankCheckModels'
 
 const router = useRouter()
 const checks = ref<RankCheck[]>([])
@@ -24,6 +29,7 @@ const pagination = ref<PaginationHeaders>({
 })
 const loading = ref(false)
 const error = ref('')
+let timer: ReturnType<typeof window.setInterval> | undefined
 
 const columns = [
     { key: 'id', label: t('spa.rank_check.number'), defaultVisible: true },
@@ -40,10 +46,6 @@ const columns = [
     },
 ]
 
-function statusLabel(status: RankCheck['status']): string {
-    return t(`spa.rank_check.status_${status.toLowerCase()}` as never)
-}
-
 async function load(
     page = 1,
     perPage = pagination.value.perPage,
@@ -55,6 +57,7 @@ async function load(
         checks.value = response.data
         pagination.value = paginationFromHeaders(response.headers)
         if (!users.value.length) users.value = await getUsers()
+        syncPolling()
     } catch {
         error.value = t('spa.rank_check.list_error')
     } finally {
@@ -62,11 +65,37 @@ async function load(
     }
 }
 
+function stopPolling(): void {
+    if (!timer) return
+
+    window.clearInterval(timer)
+    timer = undefined
+}
+
+function syncPolling(): void {
+    const hasPendingChecks = checks.value.some(
+        (check) => check.status !== 'READY' && check.status !== 'FAILED',
+    )
+
+    if (!hasPendingChecks) {
+        stopPolling()
+        return
+    }
+
+    if (timer) return
+
+    timer = window.setInterval(() => {
+        if (!loading.value)
+            void load(pagination.value.currentPage, pagination.value.perPage)
+    }, 5000) as unknown as ReturnType<typeof window.setInterval>
+}
+
 async function onPage(event: PageState): Promise<void> {
     await load(event.page + 1, event.rows)
 }
 
 onMounted(() => void load())
+onBeforeUnmount(() => stopPolling())
 </script>
 
 <template>
@@ -103,7 +132,15 @@ onMounted(() => void load())
             </RouterLink>
         </template>
         <template #cell-status="{ data }">
-            {{ statusLabel(data.status) }}
+            <RouterLink
+                class="rank-check-status-link"
+                :to="`/app/rank-checks/${data.id}`"
+            >
+                <Tag
+                    :value="rankCheckStatusLabel(data.status)"
+                    :severity="rankCheckStatusSeverity(data.status)"
+                />
+            </RouterLink>
         </template>
         <template #cell-created="{ data }">
             <ImpressionDetails

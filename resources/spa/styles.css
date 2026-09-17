@@ -623,6 +623,60 @@ body {
     color: #dc3545;
 }
 
+.rank-check-status-link {
+    text-decoration: none;
+}
+
+.rank-check-pending {
+    display: grid;
+    justify-items: center;
+    gap: 0.75rem;
+    padding: 2rem;
+    color: #6c757d;
+    text-align: center;
+}
+
+.rank-check-value--match {
+    display: inline-block;
+    border-radius: 0.25rem;
+    padding: 0.1rem 0.3rem;
+    background: #d1e7dd;
+    color: #0f5132;
+}
+
+.rank-check-value--mismatch {
+    display: inline-block;
+    border-radius: 0.25rem;
+    padding: 0.1rem 0.3rem;
+    background: #f8d7da;
+    color: #842029;
+    text-decoration: line-through;
+}
+
+.rank-check-value__arrow {
+    margin: 0 0.25rem;
+    color: #6c757d;
+}
+
+.rank-check-value__correct {
+    color: #0f5132;
+}
+
+.rank-check-match-icon,
+.rank-check-person-icon {
+    font-size: 1.15rem;
+}
+
+.rank-check-match-icon--yes,
+.rank-check-person-icon--yes {
+    color: #198754;
+}
+
+.rank-check-match-icon--no,
+.rank-check-person-icon--no {
+    color: #dc3545;
+}
+
 @media (max-width: 640px) {
     .app-navbar {
         flex-wrap: wrap;

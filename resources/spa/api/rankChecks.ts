@@ -1,5 +1,5 @@
 import { api } from './client'
-import type { Impression } from './types'
+import type { Impression, PaginationHeaders } from './types'
 import { paginationFromHeaders } from '../pages/listingModels'
 
 export interface RankCheckRow {
@@ -56,15 +56,16 @@ export async function getRankCheck(id: string): Promise<RankCheck> {
 export async function listRankCheckRows(
     id: string,
     page = 1,
-): Promise<{ data: RankCheckRow[]; lastPage: number }> {
+    perPage = 50,
+): Promise<{ data: RankCheckRow[]; pagination: PaginationHeaders }> {
     const response = await api.get<RankCheckRow[]>(`/rank-checks/${id}/rows`, {
-        params: { page, perPage: 50 },
+        params: { page, perPage },
     })
 
     return {
         data: response.data,
-        lastPage: paginationFromHeaders(
+        pagination: paginationFromHeaders(
             response.headers as Record<string, unknown>,
-        ).lastPage,
+        ),
     }
 }

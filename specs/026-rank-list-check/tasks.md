@@ -183,4 +183,5 @@ Tests are written first and verified red, then domain/application code, adapters
 
 - [x] T052 Move `/app/rank-checks` to a standard white listing page with a green create action and no filters in `resources/spa/pages/rank-checks/RankChecksPage.vue`.
 - [x] T053 Add authenticated paginated `GET /api/v1/rank-checks` using the existing `ViewRankCheckDto` in the RankCheck application and API layers.
-- [x] T054 Return to the listing after upload and add an explicit back-to-list action on the result page.
+- [x] T054 Return to the listing after upload and keep the result page without a redundant back-to-list action.
+- [x] T055 Poll the paginated rank-check listing while it contains a non-final `PARSING` run and stop the timer on component unmount in `resources/spa/pages/rank-checks/RankChecksPage.vue`; cover the lifecycle in `RankChecksPage.test.ts`.
