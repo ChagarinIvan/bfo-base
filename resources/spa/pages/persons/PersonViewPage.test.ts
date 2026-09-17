@@ -61,6 +61,7 @@ describe('person view page', () => {
         const wrapper = mount(PersonViewPage, {
             global: {
                 stubs: {
+                    SlicePaginator: true,
                     Button: {
                         props: ['label'],
                         template: '<button>{{ label }}</button>',
@@ -112,6 +113,7 @@ describe('person view page', () => {
         const wrapper = mount(PersonViewPage, {
             global: {
                 stubs: {
+                    SlicePaginator: true,
                     Button: true,
                     ActionButton: true,
                     Column: true,
@@ -159,6 +161,7 @@ describe('person view page', () => {
         const wrapper = mount(PersonViewPage, {
             global: {
                 stubs: {
+                    SlicePaginator: true,
                     ActionButton: true,
                     Button: true,
                     Column: {
@@ -225,6 +228,7 @@ describe('person view page', () => {
         const wrapper = mount(PersonViewPage, {
             global: {
                 stubs: {
+                    SlicePaginator: true,
                     ActionButton: true,
                     Button: true,
                     Column: true,
@@ -272,6 +276,7 @@ describe('person view page', () => {
         const wrapper = mount(PersonViewPage, {
             global: {
                 stubs: {
+                    SlicePaginator: true,
                     Button: true,
                     ActionButton: true,
                     Column: true,

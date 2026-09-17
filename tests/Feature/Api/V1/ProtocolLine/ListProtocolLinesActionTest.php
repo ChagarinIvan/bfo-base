@@ -278,7 +278,7 @@ final class ListProtocolLinesActionTest extends TestCase
         $this->getJson("/api/v1/protocol-lines?personId={$person->id}&withEvent=1&withCompetition=1")
             ->assertOk();
 
-        $this->assertCount(2, array_filter(
+        $this->assertCount(1, array_filter(
             $queries,
             static fn (string $query): bool => str_contains($query, 'from `protocol_lines`'),
         ));

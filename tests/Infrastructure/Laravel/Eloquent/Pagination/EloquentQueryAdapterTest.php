@@ -44,8 +44,9 @@ final class EloquentQueryAdapterTest extends TestCase
         $this->assertCount(20, $slice->items());
         $this->assertTrue($slice->hasNext());
         $this->assertCount(1, $queries);
-        $this->assertContains(20, $queries[0]->bindings);
         $this->assertContains(21, $queries[0]->bindings);
+        $this->assertStringContainsString('limit 21', strtolower($queries[0]->sql));
+        $this->assertStringContainsString('offset 20', strtolower($queries[0]->sql));
         $this->assertCount(0, array_filter(
             $queries,
             static fn (QueryExecuted $query): bool => str_contains(strtolower($query->sql), 'count('),

@@ -115,7 +115,7 @@ final class ListPersonPaymentsActionTest extends TestCase
 
         $this->getJson('/api/v1/persons/payments?personId=' . $person->id)->assertOk();
 
-        $this->assertCount(2, $queries);
+        $this->assertCount(1, $queries);
     }
 
     private function createPerson(): Person

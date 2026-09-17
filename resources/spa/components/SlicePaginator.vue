@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import Button from 'primevue/button'
+import Select from 'primevue/select'
 import type { PageState } from 'primevue/paginator'
 import type { PaginationHeaders } from '../api/types'
 
@@ -23,32 +25,46 @@ function go(page: number, rows = props.pagination.perPage): void {
 
 <template>
     <nav v-if="pagination" class="slice-paginator">
-        <template v-if="pagination.currentPage > 1 || pagination.hasNext">
-            <button
-                :disabled="pagination.currentPage <= 1"
-                @click="go(pagination.currentPage - 2)"
-            >
-                Previous
-            </button>
-            <span>Page {{ pagination.currentPage }}</span>
-            <button
-                :disabled="!pagination.hasNext"
-                @click="go(pagination.currentPage)"
-            >
-                Next
-            </button>
-        </template>
-        <select
-            :value="pagination.perPage"
-            @change="go(0, Number(($event.target as HTMLSelectElement).value))"
-        >
-            <option
-                v-for="option in rowsPerPageOptions"
-                :key="option"
-                :value="option"
-            >
-                {{ option }}
-            </option>
-        </select>
+        <Button
+            icon="pi pi-chevron-left"
+            severity="secondary"
+            text
+            rounded
+            aria-label="Previous page"
+            :disabled="pagination.currentPage <= 1"
+            @click="go(pagination.currentPage - 2)"
+        />
+        <span class="slice-paginator__page">
+            Page {{ pagination.currentPage }}
+        </span>
+        <Button
+            icon="pi pi-chevron-right"
+            severity="secondary"
+            text
+            rounded
+            aria-label="Next page"
+            :disabled="!pagination.hasNext"
+            @click="go(pagination.currentPage)"
+        />
+        <Select
+            :model-value="pagination.perPage"
+            :options="rowsPerPageOptions"
+            @update:model-value="go(0, $event)"
+        />
     </nav>
 </template>
+
+<style scoped>
+.slice-paginator {
+    align-items: center;
+    display: flex;
+    gap: 0.25rem;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+.slice-paginator__page {
+    min-width: 5rem;
+    text-align: center;
+}
+</style>

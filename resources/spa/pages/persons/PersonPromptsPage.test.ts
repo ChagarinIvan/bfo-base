@@ -42,6 +42,7 @@ describe('person prompts page', () => {
         const wrapper = mount(PersonPromptsPage, {
             global: {
                 stubs: {
+                    SlicePaginator: true,
                     Button: true,
                     Column: {
                         props: ['header'],

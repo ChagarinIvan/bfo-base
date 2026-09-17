@@ -1,6 +1,8 @@
 // @vitest-environment happy-dom
 
 import { mount } from '@vue/test-utils'
+import PrimeVue from 'primevue/config'
+import Select from 'primevue/select'
 import { describe, expect, it } from 'vitest'
 import SlicePaginator from './SlicePaginator.vue'
 
@@ -10,6 +12,7 @@ describe('slice paginator', () => {
             props: {
                 pagination: { currentPage: 2, perPage: 20, hasNext: true },
             },
+            global: { plugins: [PrimeVue] },
         })
 
         const buttons = wrapper.findAll('button')
@@ -26,10 +29,14 @@ describe('slice paginator', () => {
             props: {
                 pagination: { currentPage: 1, perPage: 20, hasNext: false },
             },
+            global: { plugins: [PrimeVue] },
         })
 
         expect(wrapper.find('nav').exists()).toBe(true)
-        expect(wrapper.findAll('button')).toHaveLength(0)
-        expect(wrapper.find('select').exists()).toBe(true)
+        const buttons = wrapper.findAll('button')
+        expect(buttons).toHaveLength(2)
+        expect(buttons[0].attributes('disabled')).toBeDefined()
+        expect(buttons[1].attributes('disabled')).toBeDefined()
+        expect(wrapper.findComponent(Select).exists()).toBe(true)
     })
 })

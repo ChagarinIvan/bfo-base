@@ -225,7 +225,7 @@ final class ListPersonsActionTest extends TestCase
 
         $this->getJson('/api/v1/persons')->assertOk();
 
-        $this->assertCount(2, $queries);
+        $this->assertCount(1, $queries);
         $this->assertCount(1, array_filter(
             $queries,
             static fn (string $sql): bool => str_contains($sql, 'limit'),

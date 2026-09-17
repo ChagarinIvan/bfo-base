@@ -43,6 +43,7 @@ describe('person payments page', () => {
         const wrapper = mount(PersonPaymentsPage, {
             global: {
                 stubs: {
+                    SlicePaginator: true,
                     Button: {
                         props: ['label'],
                         template: '<button>{{ label }}</button>',
@@ -78,6 +79,7 @@ describe('person payments page', () => {
         const wrapper = mount(PersonPaymentsPage, {
             global: {
                 stubs: {
+                    SlicePaginator: true,
                     Button: true,
                     Column: true,
                     DataTable: true,
