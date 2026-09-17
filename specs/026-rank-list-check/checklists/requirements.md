@@ -38,3 +38,6 @@
 - Гейты пройдены: PHPUnit `471/471`, PHPStan, CS Fixer, Rector dry-run и SPA CI `53 files / 148 tests`.
 - API request coverage добавлена для `202`, `400`, `401`, status-only view, READY rows pagination и
   запрета rows до `READY`; cleanup-тест оставлен отложенным по согласованному приоритету.
+- Финальный scope закрыт: реализованы list-first UX, polling списка с остановкой при уходе со страницы,
+  серверные фильтры строк, общий шаблон таблицы и беларускія UI-подписи. Отложенные тестовые задачи и
+  отдельный result-table component явно зафиксированы в `spec.md` и `tasks.md`.

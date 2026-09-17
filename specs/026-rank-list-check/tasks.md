@@ -45,7 +45,7 @@ description: "Task list template for feature implementation"
 
 - [x] T013 [P] [US1] Add application unit tests for create command validation, source storage, domain event and immediate return without waiting for event handler in `tests/Application/Service/RankCheck/CreateRankCheckServiceTest.php`
 - [x] T014 [P] [US1] Add API request tests for `202`, `401`, unsupported file and create payload in `tests/Feature/Api/V1/RankCheck/RankCheckApiTest.php`
-- [ ] T015 [P] [US1] Add SPA tests for authenticated-only navigation, upload validation, disabled submit and redirect to a new check in `resources/spa/pages/rank-checks/RankCheckUploadPage.test.ts`
+- [x] T015 [P] [US1] Add SPA tests for authenticated-only navigation, upload validation, disabled submit and redirect to a new check in `resources/spa/pages/rank-checks/RankCheckUploadPage.test.ts`
 
 ### Implementation for User Story 1
 
@@ -98,7 +98,7 @@ description: "Task list template for feature implementation"
 
 - [x] T035 [US3] Implement the domain-level row processor against parser, person-matching, snapshot and row-factory ports in `app/Domain/RankCheck/StandardRankCheckProcessor.php`
 - [x] T036 [US3] Persist source and database snapshots plus `hasPerson`/`isEqual` flags in the processing service and Eloquent adapter in `app/Application/Service/RankCheck/ProcessRankCheckService.php` and `app/Infrastructure/Laravel/Eloquent/RankCheck/`
-- [ ] T037 [US3] Add the seven-column comparison table, explicit source-to-database differences and person/rank links in `resources/spa/pages/rank-checks/RankCheckResultTable.vue`
+- [x] T037 [US3] Add the seven-column comparison table, explicit source-to-database differences and person/rank links through the shared `ListingTable` slots in `resources/spa/pages/rank-checks/RankCheckViewPage.vue`
 - [x] T038 [US3] Add localized labels for navigation, statuses, columns, match states and errors in `resources/lang/ru.json` and `resources/lang/by.json`
 
 **Checkpoint**: `READY` is a durable, ordered snapshot with the same meaningful output as the removed legacy screen.
@@ -185,3 +185,11 @@ Tests are written first and verified red, then domain/application code, adapters
 - [x] T053 Add authenticated paginated `GET /api/v1/rank-checks` using the existing `ViewRankCheckDto` in the RankCheck application and API layers.
 - [x] T054 Return to the listing after upload and keep the result page without a redundant back-to-list action.
 - [x] T055 Poll the paginated rank-check listing while it contains a non-final `PARSING` run and stop the timer on component unmount in `resources/spa/pages/rank-checks/RankChecksPage.vue`; cover the lifecycle in `RankChecksPage.test.ts`.
+
+## Final scope decision
+
+Фича закрыта для текущего product scope. Незакрытые ранее задачи T001, T002, T007, T011, T012,
+T024, T034, T039, T040, T041, T046 и T048 оставлены отложенными: это дополнительные fixture,
+расширенные unit/SPA/concurrency/retention-тесты и ресурсы, не блокирующие текущий пользовательский
+сценарий. T037 реализован inline через общий `ListingTable` и слоты `RankCheckViewPage.vue`, поэтому
+отдельный `RankCheckResultTable.vue` создавать не нужно.

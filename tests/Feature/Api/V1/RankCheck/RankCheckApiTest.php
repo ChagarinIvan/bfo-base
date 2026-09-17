@@ -104,7 +104,7 @@ final class RankCheckApiTest extends TestCase
         $this->getJson('/api/v1/rank-checks?page=1&perPage=1')
             ->assertOk()
             ->assertJsonCount(1)
-            ->assertJsonStructure(['0.id', '0.status', '0.created', '0.updated'])
+            ->assertJsonStructure([['id', 'status', 'created', 'updated']])
             ->assertHeader('X-Pagination-Total', '2')
             ->assertHeader('X-Pagination-Last-Page', '2')
         ;
