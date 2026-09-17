@@ -639,8 +639,8 @@ body {
 }
 
 .rank-check-status-spinner {
-    width: 0.9rem;
-    height: 0.9rem;
+    width: 0.75rem !important;
+    height: 0.75rem !important;
 }
 
 .rank-check-pending {

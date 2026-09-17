@@ -155,6 +155,7 @@ onBeforeUnmount(() => stopPolling())
                     <ProgressSpinner
                         v-if="data.status === 'PARSING'"
                         class="rank-check-status-spinner"
+                        style="width: 0.75rem; height: 0.75rem"
                         stroke-width="6"
                         aria-label="Pending"
                     />

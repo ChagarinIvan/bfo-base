@@ -8,22 +8,22 @@ import { hasTooShortNameSearch } from '../listingModels'
 defineProps<{
     name: string
     group: string
-    hasPerson: '' | 0 | 1
-    isEqual: '' | 0 | 1
+    hasPerson: 'all' | 0 | 1
+    isEqual: 'all' | 0 | 1
 }>()
 
 const emit = defineEmits<{
     'update:name': [value: string]
     'update:group': [value: string]
-    'update:hasPerson': [value: '' | 0 | 1]
-    'update:isEqual': [value: '' | 0 | 1]
+    'update:hasPerson': [value: 'all' | 0 | 1]
+    'update:isEqual': [value: 'all' | 0 | 1]
     'name-change': [value: string]
     'group-change': [value: string]
     'filter-change': []
 }>()
 
 const booleanOptions = [
-    { label: t('spa.rank_check.all_options'), value: '' },
+    { label: t('spa.rank_check.all_options'), value: 'all' },
     { label: t('spa.rank_check.yes'), value: 1 },
     { label: t('spa.rank_check.no'), value: 0 },
 ]
@@ -38,12 +38,12 @@ function onGroupChange(value: string | undefined): void {
     emit('group-change', value ?? '')
 }
 
-function onHasPersonChange(value: '' | 0 | 1): void {
+function onHasPersonChange(value: 'all' | 0 | 1): void {
     emit('update:hasPerson', value)
     emit('filter-change')
 }
 
-function onEqualChange(value: '' | 0 | 1): void {
+function onEqualChange(value: 'all' | 0 | 1): void {
     emit('update:isEqual', value)
     emit('filter-change')
 }

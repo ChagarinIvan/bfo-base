@@ -41,8 +41,8 @@ const loading = ref(true)
 const error = ref('')
 const name = ref('')
 const group = ref('')
-const hasPerson = ref<'' | 0 | 1>('')
-const isEqual = ref<'' | 0 | 1>('')
+const hasPerson = ref<'all' | 0 | 1>('all')
+const isEqual = ref<'all' | 0 | 1>('all')
 let timer: ReturnType<typeof window.setInterval> | undefined
 let latestRequest = 0
 
@@ -153,10 +153,12 @@ async function load(
                     ...(group.value.trim().length >= 1
                         ? { group: group.value.trim() }
                         : {}),
-                    ...(hasPerson.value === ''
+                    ...(hasPerson.value === 'all'
                         ? {}
                         : { hasPerson: hasPerson.value }),
-                    ...(isEqual.value === '' ? {} : { isEqual: isEqual.value }),
+                    ...(isEqual.value === 'all'
+                        ? {}
+                        : { isEqual: isEqual.value }),
                 },
             )
             if (requestId !== latestRequest) return
