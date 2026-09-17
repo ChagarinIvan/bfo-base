@@ -12,5 +12,5 @@ interface RankCheckRowRepository
     public function add(RankCheckRow $row): void;
 
     /** @return Slice<RankCheckRow> */
-    public function paginateRows(Criteria $criteria): Slice;
+    public function paginate(Criteria $criteria): Slice;
 }

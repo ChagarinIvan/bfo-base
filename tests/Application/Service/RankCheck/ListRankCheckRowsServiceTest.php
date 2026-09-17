@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Application\Service\RankCheck;
 
 use App\Application\Dto\RankCheck\RankCheckRowAssembler;
+use App\Application\Dto\RankCheck\SearchRankCheckRowsDto;
 use App\Application\Service\RankCheck\ListRankCheckRows;
 use App\Application\Service\RankCheck\ListRankCheckRowsService;
 use App\Domain\RankCheck\RankCheckRow;
@@ -63,12 +64,14 @@ final class ListRankCheckRowsServiceTest extends TestCase
 
         $this->rows
             ->expects($this->once())
-            ->method('paginateRows')
+            ->method('paginate')
             ->with($this->callback(static fn(Criteria $criteria): bool => self::matchesCriteria($criteria)))
             ->willReturn(new Slice(new ArrayAdapter([$firstRow])))
         ;
 
-        $result = $this->service->execute(new ListRankCheckRows(17));
+        $result = $this->service->execute(
+            new ListRankCheckRows(17, new SearchRankCheckRowsDto()),
+        );
         $items = $result->items();
 
         $this->assertSame('Иванов Иван', $items[0]->name);

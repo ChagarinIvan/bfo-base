@@ -17,9 +17,15 @@ import ImpressionDetails from '../../components/ImpressionDetails.vue'
 import ListingTable from '../../components/ListingTable.vue'
 import { t } from '../../i18n'
 import {
+    debounce,
+    hasTooShortNameSearch,
+    resetPageOnFilterChange,
+} from '../listingModels'
+import {
     rankCheckStatusLabel,
     rankCheckStatusSeverity,
 } from './rankCheckModels'
+import RankCheckRowFilters from './RankCheckRowFilters.vue'
 
 const route = useRoute()
 const check = ref<RankCheck | null>(null)
@@ -33,7 +39,12 @@ const pagination = ref<PaginationHeaders>({
 })
 const loading = ref(true)
 const error = ref('')
+const name = ref('')
+const group = ref('')
+const hasPerson = ref<boolean | null>(null)
+const isEqual = ref<boolean | null>(null)
 let timer: ReturnType<typeof window.setInterval> | undefined
+let latestRequest = 0
 
 const columns = [
     { key: 'group', label: t('spa.rank_check.group'), defaultVisible: true },
@@ -48,6 +59,13 @@ const columns = [
         defaultVisible: true,
     },
 ]
+
+const debouncedNameSearch = debounce(() => {
+    void load(resetPageOnFilterChange(pagination.value.currentPage))
+})
+const debouncedGroupSearch = debounce(() => {
+    void load(resetPageOnFilterChange(pagination.value.currentPage))
+})
 
 function hasDifference(
     source: string | null,
@@ -85,10 +103,43 @@ function startPolling(): void {
     ) as unknown as ReturnType<typeof window.setInterval>
 }
 
+function onNameChange(value: string): void {
+    name.value = value
+    if (!value.trim()) {
+        debouncedNameSearch.cancel()
+        void load(resetPageOnFilterChange(pagination.value.currentPage))
+        return
+    }
+    if (hasTooShortNameSearch(value)) {
+        debouncedNameSearch.cancel()
+        return
+    }
+    debouncedNameSearch()
+}
+
+function onGroupChange(value: string): void {
+    group.value = value
+    if (!value.trim()) {
+        debouncedGroupSearch.cancel()
+        void load(resetPageOnFilterChange(pagination.value.currentPage))
+        return
+    }
+    if (hasTooShortNameSearch(value)) {
+        debouncedGroupSearch.cancel()
+        return
+    }
+    debouncedGroupSearch()
+}
+
+function onFilterChange(): void {
+    void load(resetPageOnFilterChange(pagination.value.currentPage))
+}
+
 async function load(
     nextPage = pagination.value.currentPage,
     perPage = pagination.value.perPage,
 ): Promise<void> {
+    const requestId = ++latestRequest
     try {
         loading.value = true
         error.value = ''
@@ -99,7 +150,22 @@ async function load(
                 String(route.params.rankCheckId),
                 nextPage,
                 perPage,
+                {
+                    ...(name.value.trim().length >= 3
+                        ? { name: name.value.trim() }
+                        : {}),
+                    ...(group.value.trim().length >= 3
+                        ? { group: group.value.trim() }
+                        : {}),
+                    ...(hasPerson.value === null
+                        ? {}
+                        : { hasPerson: hasPerson.value }),
+                    ...(isEqual.value === null
+                        ? {}
+                        : { isEqual: isEqual.value }),
+                },
             )
+            if (requestId !== latestRequest) return
             rows.value = result.data
             pagination.value = result.pagination
         }
@@ -140,6 +206,8 @@ watch(
 
 onBeforeUnmount(() => {
     stopPolling()
+    debouncedNameSearch.cancel()
+    debouncedGroupSearch.cancel()
 })
 </script>
 
@@ -234,6 +302,17 @@ onBeforeUnmount(() => {
                 table-class="rank-check-rows-table"
                 @page="onPage"
             >
+                <template #filters>
+                    <RankCheckRowFilters
+                        v-model:name="name"
+                        v-model:group="group"
+                        v-model:has-person="hasPerson"
+                        v-model:is-equal="isEqual"
+                        @name-change="onNameChange"
+                        @group-change="onGroupChange"
+                        @filter-change="onFilterChange"
+                    />
+                </template>
                 <template #cell-group="{ data }">{{
                     data.group || '—'
                 }}</template>
@@ -385,27 +464,33 @@ onBeforeUnmount(() => {
                     </span>
                 </template>
                 <template #cell-person="{ data }">
-                    <RouterLink
-                        v-if="data.personId"
-                        :to="`/app/persons/${data.personId}`"
-                    >
-                        <span
-                            v-tooltip.top="t('spa.rank_check.person')"
-                            class="rank-check-person-icon rank-check-person-icon--yes"
-                            role="img"
-                            :aria-label="t('spa.rank_check.person')"
-                        >
-                            <i class="pi pi-user" aria-hidden="true" />
-                        </span>
-                    </RouterLink>
                     <span
-                        v-else
-                        v-tooltip.top="t('spa.rank_check.no_person')"
-                        class="rank-check-person-icon rank-check-person-icon--no"
+                        v-tooltip.top="
+                            data.personId
+                                ? t('spa.rank_check.person')
+                                : t('spa.rank_check.no_person')
+                        "
+                        class="rank-check-person-icon"
+                        :class="
+                            data.personId
+                                ? 'rank-check-person-icon--yes'
+                                : 'rank-check-person-icon--no'
+                        "
                         role="img"
-                        :aria-label="t('spa.rank_check.no_person')"
+                        :aria-label="
+                            data.personId
+                                ? t('spa.rank_check.person')
+                                : t('spa.rank_check.no_person')
+                        "
                     >
-                        <i class="pi pi-user-minus" aria-hidden="true" />
+                        <i
+                            :class="
+                                data.personId
+                                    ? 'pi pi-check-circle'
+                                    : 'pi pi-times-circle'
+                            "
+                            aria-hidden="true"
+                        />
                     </span>
                 </template>
             </ListingTable>

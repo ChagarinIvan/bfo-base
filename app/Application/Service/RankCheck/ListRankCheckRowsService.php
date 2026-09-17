@@ -21,7 +21,7 @@ final readonly class ListRankCheckRowsService
     public function execute(ListRankCheckRows $command): Slice
     {
         return $this->rows
-            ->paginateRows($command->criteria())
+            ->paginate($command->criteria())
             ->map($this->assembler->toDto(...))
         ;
     }

@@ -6,11 +6,11 @@ import {
 
 describe('rank check statuses', () => {
     it.each([
-        ['PARSING', 'pending', 'warn'],
-        ['READY', 'ready', 'success'],
-        ['FAILED', 'failed', 'danger'],
+        ['PARSING', 'Pending', 'warn'],
+        ['READY', 'Ready', 'success'],
+        ['FAILED', 'Failed', 'danger'],
     ] as const)(
-        '%s has a lowercase label and semantic severity',
+        '%s has a capitalized label and semantic severity',
         (status, label, severity) => {
             expect(rankCheckStatusLabel(status)).toBe(label)
             expect(rankCheckStatusSeverity(status)).toBe(severity)

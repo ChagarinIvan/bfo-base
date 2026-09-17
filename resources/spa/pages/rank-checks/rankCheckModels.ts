@@ -4,9 +4,9 @@ export type RankCheckTagSeverity = 'warn' | 'success' | 'danger'
 
 export function rankCheckStatusLabel(status: RankCheck['status']): string {
     return {
-        PARSING: 'pending',
-        READY: 'ready',
-        FAILED: 'failed',
+        PARSING: 'Pending',
+        READY: 'Ready',
+        FAILED: 'Failed',
     }[status]
 }
 
