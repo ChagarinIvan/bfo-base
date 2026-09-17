@@ -33,7 +33,7 @@ const rows = ref<RankCheckRow[]>([])
 const users = ref<User[]>([])
 const pagination = ref<PaginationHeaders>({
     currentPage: 1,
-    perPage: 50,
+    perPage: 20,
     total: 0,
     lastPage: 1,
 })
@@ -41,8 +41,8 @@ const loading = ref(true)
 const error = ref('')
 const name = ref('')
 const group = ref('')
-const hasPerson = ref<boolean | null>(null)
-const isEqual = ref<boolean | null>(null)
+const hasPerson = ref<0 | 1 | null>(null)
+const isEqual = ref<0 | 1 | null>(null)
 let timer: ReturnType<typeof window.setInterval> | undefined
 let latestRequest = 0
 
@@ -124,10 +124,6 @@ function onGroupChange(value: string): void {
         void load(resetPageOnFilterChange(pagination.value.currentPage))
         return
     }
-    if (hasTooShortNameSearch(value)) {
-        debouncedGroupSearch.cancel()
-        return
-    }
     debouncedGroupSearch()
 }
 
@@ -154,7 +150,7 @@ async function load(
                     ...(name.value.trim().length >= 3
                         ? { name: name.value.trim() }
                         : {}),
-                    ...(group.value.trim().length >= 3
+                    ...(group.value.trim().length >= 1
                         ? { group: group.value.trim() }
                         : {}),
                     ...(hasPerson.value === null
@@ -195,7 +191,7 @@ watch(
         rows.value = []
         pagination.value = {
             currentPage: 1,
-            perPage: 50,
+            perPage: 20,
             total: 0,
             lastPage: 1,
         }

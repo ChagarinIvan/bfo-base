@@ -22,8 +22,8 @@ export interface RankCheckRow {
 export interface RankCheckRowsQuery {
     name?: string
     group?: string
-    hasPerson?: boolean
-    isEqual?: boolean
+    hasPerson?: 0 | 1
+    isEqual?: 0 | 1
 }
 
 export interface RankCheck {
@@ -63,7 +63,7 @@ export async function getRankCheck(id: string): Promise<RankCheck> {
 export async function listRankCheckRows(
     id: string,
     page = 1,
-    perPage = 50,
+    perPage = 20,
     query: RankCheckRowsQuery = {},
 ): Promise<{ data: RankCheckRow[]; pagination: PaginationHeaders }> {
     const response = await api.get<RankCheckRow[]>(`/rank-checks/${id}/rows`, {

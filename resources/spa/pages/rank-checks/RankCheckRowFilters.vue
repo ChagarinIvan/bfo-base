@@ -8,15 +8,15 @@ import { hasTooShortNameSearch } from '../listingModels'
 defineProps<{
     name: string
     group: string
-    hasPerson: boolean | null
-    isEqual: boolean | null
+    hasPerson: number | null
+    isEqual: number | null
 }>()
 
 const emit = defineEmits<{
     'update:name': [value: string]
     'update:group': [value: string]
-    'update:hasPerson': [value: boolean | null]
-    'update:isEqual': [value: boolean | null]
+    'update:hasPerson': [value: number | null]
+    'update:isEqual': [value: number | null]
     'name-change': [value: string]
     'group-change': [value: string]
     'filter-change': []
@@ -24,8 +24,8 @@ const emit = defineEmits<{
 
 const booleanOptions = [
     { label: t('spa.rank_check.all_options'), value: null },
-    { label: t('spa.rank_check.yes'), value: true },
-    { label: t('spa.rank_check.no'), value: false },
+    { label: t('spa.rank_check.yes'), value: 1 },
+    { label: t('spa.rank_check.no'), value: 0 },
 ]
 
 function onNameChange(value: string | undefined): void {
@@ -38,12 +38,12 @@ function onGroupChange(value: string | undefined): void {
     emit('group-change', value ?? '')
 }
 
-function onHasPersonChange(value: boolean | null): void {
+function onHasPersonChange(value: number | null): void {
     emit('update:hasPerson', value)
     emit('filter-change')
 }
 
-function onEqualChange(value: boolean | null): void {
+function onEqualChange(value: number | null): void {
     emit('update:isEqual', value)
     emit('filter-change')
 }
@@ -52,8 +52,18 @@ function onEqualChange(value: boolean | null): void {
 <template>
     <FilterPanel>
         <div class="filter-field">
+            <label for="rank-check-group-filter">{{
+                t('spa.rank_check.group')
+            }}</label>
+            <InputText
+                id="rank-check-group-filter"
+                :model-value="group"
+                @update:model-value="onGroupChange"
+            />
+        </div>
+        <div class="filter-field">
             <label for="rank-check-name-filter">{{
-                t('spa.rank_check.name')
+                t('spa.rank_check.name_filter')
             }}</label>
             <InputText
                 id="rank-check-name-filter"
@@ -63,19 +73,6 @@ function onEqualChange(value: boolean | null): void {
             <small v-if="hasTooShortNameSearch(name)" class="filter-hint">
                 {{ t('spa.person.search_hint') }}
             </small>
-        </div>
-        <div class="filter-field">
-            <label for="rank-check-has-person-filter">{{
-                t('spa.rank_check.has_person')
-            }}</label>
-            <Select
-                id="rank-check-has-person-filter"
-                :model-value="hasPerson"
-                :options="booleanOptions"
-                option-label="label"
-                option-value="value"
-                @update:model-value="onHasPersonChange"
-            />
         </div>
         <div class="filter-field">
             <label for="rank-check-equal-filter">{{
@@ -91,17 +88,17 @@ function onEqualChange(value: boolean | null): void {
             />
         </div>
         <div class="filter-field">
-            <label for="rank-check-group-filter">{{
-                t('spa.rank_check.group')
+            <label for="rank-check-has-person-filter">{{
+                t('spa.rank_check.has_person')
             }}</label>
-            <InputText
-                id="rank-check-group-filter"
-                :model-value="group"
-                @update:model-value="onGroupChange"
+            <Select
+                id="rank-check-has-person-filter"
+                :model-value="hasPerson"
+                :options="booleanOptions"
+                option-label="label"
+                option-value="value"
+                @update:model-value="onHasPersonChange"
             />
-            <small v-if="hasTooShortNameSearch(group)" class="filter-hint">
-                {{ t('spa.person.search_hint') }}
-            </small>
         </div>
     </FilterPanel>
 </template>

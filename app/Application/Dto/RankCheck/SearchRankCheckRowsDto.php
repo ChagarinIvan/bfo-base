@@ -15,7 +15,7 @@ final class SearchRankCheckRowsDto extends AbstractDto
     {
         return [
             'name' => ['nullable', 'string', 'min:3', 'max:255'],
-            'group' => ['nullable', 'string', 'min:3', 'max:255'],
+            'group' => ['nullable', 'string', 'min:1', 'max:255'],
             'hasPerson' => ['nullable', 'boolean'],
             'isEqual' => ['nullable', 'boolean'],
         ];
@@ -55,10 +55,10 @@ final class SearchRankCheckRowsDto extends AbstractDto
             $this->group = (string) $data['group'];
         }
         if (array_key_exists('hasPerson', $data)) {
-            $this->hasPerson = (bool) $data['hasPerson'];
+            $this->hasPerson = (bool) (int) $data['hasPerson'];
         }
         if (array_key_exists('isEqual', $data)) {
-            $this->isEqual = (bool) $data['isEqual'];
+            $this->isEqual = (bool) (int) $data['isEqual'];
         }
 
         return $this;

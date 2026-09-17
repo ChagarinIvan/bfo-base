@@ -49,8 +49,11 @@ const columns = [
 async function load(
     page = 1,
     perPage = pagination.value.perPage,
+    silent = false,
 ): Promise<void> {
-    loading.value = true
+    if (!silent) {
+        loading.value = true
+    }
     error.value = ''
     try {
         const response = await getRankChecks(page, perPage)
@@ -61,7 +64,9 @@ async function load(
     } catch {
         error.value = t('spa.rank_check.list_error')
     } finally {
-        loading.value = false
+        if (!silent) {
+            loading.value = false
+        }
     }
 }
 
@@ -85,8 +90,13 @@ function syncPolling(): void {
     if (timer) return
 
     timer = window.setInterval(() => {
-        if (!loading.value)
-            void load(pagination.value.currentPage, pagination.value.perPage)
+        if (!loading.value) {
+            void load(
+                pagination.value.currentPage,
+                pagination.value.perPage,
+                true,
+            )
+        }
     }, 5000) as unknown as ReturnType<typeof window.setInterval>
 }
 

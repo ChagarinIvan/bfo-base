@@ -284,6 +284,11 @@ body {
     box-shadow: 0 0.25rem 0.75rem rgb(33 37 41 / 7%);
 }
 
+.rank-check-details-card {
+    margin-bottom: 1.5rem;
+    box-shadow: 0 0.25rem 0.75rem rgb(33 37 41 / 7%);
+}
+
 .competition-details-info {
     width: 100%;
     border-collapse: collapse;
@@ -670,6 +675,7 @@ body {
 .rank-check-match-icon--yes,
 .rank-check-person-icon--yes {
     color: #198754;
+    font-weight: 700;
 }
 
 .rank-check-match-icon--no,
