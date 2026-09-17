@@ -35,6 +35,20 @@ export async function createRankCheck(
     return (await api.post('/rank-checks', form)).data
 }
 
+export async function getRankChecks(
+    page = 1,
+    perPage = 20,
+): Promise<{ data: RankCheck[]; headers: Record<string, unknown> }> {
+    const response = await api.get<RankCheck[]>('/rank-checks', {
+        params: { page, perPage },
+    })
+
+    return {
+        data: response.data,
+        headers: response.headers as Record<string, unknown>,
+    }
+}
+
 export async function getRankCheck(id: string): Promise<RankCheck> {
     return (await api.get<RankCheck>(`/rank-checks/${id}`)).data
 }

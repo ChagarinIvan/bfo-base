@@ -53,6 +53,7 @@ use App\Bridge\Laravel\Http\Controllers\Api\V1\ProtocolLine\ListProtocolLinesAct
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Rank\ListRanksAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\RankCheck\CreateRankCheckAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\RankCheck\ListRankCheckRowsAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\RankCheck\ListRankChecksAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\RankCheck\ViewRankCheckAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Year\ListYearsAction;
 use App\Bridge\Laravel\Http\Middleware\AuthenticateApiV1;
@@ -96,6 +97,7 @@ final class ApiV1RoutesServiceProvider extends ServiceProvider
             $router->prefix('api/v1')->get('years', ListYearsAction::class);
 
             $router->prefix('api/v1')->middleware(AuthenticateApiV1::class)->group(static function () use ($router): void {
+                $router->get('rank-checks', ListRankChecksAction::class);
                 $router->post('rank-checks', CreateRankCheckAction::class);
                 $router->get('rank-checks/{rankCheckId}', ViewRankCheckAction::class);
                 $router->get('rank-checks/{rankCheckId}/rows', ListRankCheckRowsAction::class);

@@ -22,8 +22,8 @@ async function submit(): Promise<void> {
     loading.value = true
     error.value = ''
     try {
-        const check = await createRankCheck(file.value)
-        await router.push(`/app/rank-checks/${check.id}`)
+        await createRankCheck(file.value)
+        await router.push('/app/rank-checks')
     } catch {
         error.value = t('spa.rank_check.failed')
     } finally {

@@ -52,6 +52,6 @@ describe('rank check upload page', () => {
         expect(createRankCheck).toHaveBeenCalledWith(
             expect.objectContaining({ name: 'ranks.csv' }),
         )
-        expect(push).toHaveBeenCalledWith('/app/rank-checks/42')
+        expect(push).toHaveBeenCalledWith('/app/rank-checks')
     })
 })

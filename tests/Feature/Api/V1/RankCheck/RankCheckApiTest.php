@@ -94,6 +94,22 @@ final class RankCheckApiTest extends TestCase
         ;
     }
 
+    #[Test]
+    public function an_authenticated_user_can_list_checks_with_pagination(): void
+    {
+        Sanctum::actingAs($this->createUser());
+        $this->createCheck(RankCheckStatus::Ready);
+        $this->createCheck(RankCheckStatus::Parsing);
+
+        $this->getJson('/api/v1/rank-checks?page=1&perPage=1')
+            ->assertOk()
+            ->assertJsonCount(1)
+            ->assertJsonStructure(['0.id', '0.status', '0.created', '0.updated'])
+            ->assertHeader('X-Pagination-Total', '2')
+            ->assertHeader('X-Pagination-Last-Page', '2')
+        ;
+    }
+
     private function file(): UploadedFile
     {
         return UploadedFile::fake()->createWithContent(

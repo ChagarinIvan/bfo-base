@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import Button from 'primevue/button'
+import Toolbar from 'primevue/toolbar'
 import { useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
 import {
     getRankCheck,
     listRankCheckRows,
@@ -10,6 +13,7 @@ import {
 import { t } from '../../i18n'
 
 const route = useRoute()
+const router = useRouter()
 const check = ref<RankCheck | null>(null)
 const rows = ref<RankCheckRow[]>([])
 const lastPage = ref(1)
@@ -78,7 +82,19 @@ onBeforeUnmount(() => {
 
 <template>
     <section>
-        <h1>{{ t('spa.rank_check.title') }}</h1>
+        <Toolbar class="page-toolbar">
+            <template #start>
+                <h1 class="page-title">{{ t('spa.rank_check.title') }}</h1>
+            </template>
+            <template #end>
+                <Button
+                    :label="t('spa.rank_check.back_to_list')"
+                    icon="pi pi-arrow-left"
+                    severity="secondary"
+                    @click="router.push('/app/rank-checks')"
+                />
+            </template>
+        </Toolbar>
         <p v-if="check?.status === 'PARSING'" role="status">
             {{ t('spa.rank_check.parsing') }}
         </p>

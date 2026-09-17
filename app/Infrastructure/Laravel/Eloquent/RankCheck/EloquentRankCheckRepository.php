@@ -7,6 +7,8 @@ namespace App\Infrastructure\Laravel\Eloquent\RankCheck;
 use App\Domain\RankCheck\RankCheck;
 use App\Domain\RankCheck\RankCheckRepository;
 use App\Domain\Shared\Criteria;
+use App\Domain\Shared\Pagination\Slice;
+use App\Infrastructure\Laravel\Eloquent\Pagination\EloquentQueryAdapter;
 use Illuminate\Support\Collection;
 
 final readonly class EloquentRankCheckRepository implements RankCheckRepository
@@ -14,6 +16,14 @@ final readonly class EloquentRankCheckRepository implements RankCheckRepository
     public function byId(int $id): ?RankCheck
     {
         return RankCheck::query()->find($id);
+    }
+
+    /** @return Slice<RankCheck> */
+    public function paginate(Criteria $criteria): Slice
+    {
+        return new Slice(new EloquentQueryAdapter(
+            RankCheck::query()->orderByDesc('created_at')->orderByDesc('id'),
+        ));
     }
 
     public function lockById(int $id): ?RankCheck
