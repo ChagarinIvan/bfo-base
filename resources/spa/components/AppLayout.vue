@@ -8,6 +8,7 @@ import brandIconUrl from '../assets/icon.svg'
 import {
     authenticatedAccountNavigation,
     authenticatedCompetitionNavigation,
+    authenticatedPersonsNavigation,
     competitionNavigation,
     personsNavigation,
 } from './navigationModels'
@@ -135,6 +136,16 @@ async function logout(): Promise<void> {
                             >
                                 {{ t(item.label) }}
                             </a>
+                        </template>
+                        <template v-if="auth.isAuthenticated">
+                            <RouterLink
+                                v-for="item in authenticatedPersonsNavigation"
+                                :key="item.href"
+                                class="app-nav-dropdown-link"
+                                :to="item.href"
+                            >
+                                {{ t(item.label) }}
+                            </RouterLink>
                         </template>
                     </div>
                 </details>

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
     authenticatedAccountNavigation,
     authenticatedCompetitionNavigation,
+    authenticatedPersonsNavigation,
     competitionNavigation,
     personsNavigation,
 } from './navigationModels'
@@ -28,10 +29,11 @@ describe('hybrid SPA navbar', () => {
         expect(personsNavigation[1].spa).toBe(true)
     })
 
-    it('keeps authenticated links outside the removed help menu', () => {
-        expect(
-            authenticatedCompetitionNavigation.map((item) => item.href),
-        ).toEqual(['/app/rank-checks'])
+    it('places rank checks in the authenticated persons menu', () => {
+        expect(authenticatedCompetitionNavigation).toEqual([])
+        expect(authenticatedPersonsNavigation.map((item) => item.href)).toEqual(
+            ['/app/rank-checks'],
+        )
         expect(authenticatedAccountNavigation.map((item) => item.href)).toEqual(
             ['/app/registration'],
         )
@@ -39,6 +41,7 @@ describe('hybrid SPA navbar', () => {
             [
                 ...competitionNavigation,
                 ...personsNavigation,
+                ...authenticatedPersonsNavigation,
                 ...authenticatedCompetitionNavigation,
                 ...authenticatedAccountNavigation,
             ].map((item) => item.href),

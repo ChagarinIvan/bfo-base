@@ -22,9 +22,11 @@ export const personsNavigation: NavigationItem[] = [
     { label: 'spa.nav.clubs', href: '/app/clubs', spa: true },
 ]
 
-export const authenticatedCompetitionNavigation: NavigationItem[] = [
+export const authenticatedPersonsNavigation: NavigationItem[] = [
     { label: 'spa.nav.rank_checks', href: '/app/rank-checks', spa: true },
 ]
+
+export const authenticatedCompetitionNavigation: NavigationItem[] = []
 
 export const authenticatedAccountNavigation: NavigationItem[] = [
     { label: 'spa.nav.registration', href: '/app/registration', spa: true },
