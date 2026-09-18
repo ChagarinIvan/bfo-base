@@ -6,7 +6,6 @@
     use App\Bridge\Laravel\Http\Controllers\Cup\ExportCupTableAction;
     use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupEventGroupAction;
     use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupTableAction;
-    use App\Bridge\Laravel\Http\Controllers\Cup\ShowEditCupFormAction;
     use App\Bridge\Laravel\Http\Controllers\CupEvents\DeleteCupEventAction;
     use App\Bridge\Laravel\Http\Controllers\CupEvents\ShowCreateCupEventFormAction;
     use App\Bridge\Laravel\Http\Controllers\CupEvents\ShowEditCupEventFormAction;
@@ -25,7 +24,6 @@
     <div class="row mb-3">
         <div class="col-12">
             @auth
-                <x-edit-button url="{{ action(ShowEditCupFormAction::class, [$cup->id]) }}"/>
                 <x-button text="app.competition.add_event"
                           color="success"
                           icon="bi-file-earmark-plus-fill"

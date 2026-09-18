@@ -211,7 +211,7 @@ onBeforeUnmount(() => debouncedSearch.cancel())
                 icon="pi pi-plus"
                 :label="t('spa.cups.create')"
                 severity="success"
-                @click="router.push('/cups/create')"
+                @click="router.push('/app/cups/create')"
             />
         </template>
     </Toolbar>
