@@ -11,6 +11,22 @@ body {
     color: #212529;
 }
 
+.cup-name-link,
+.cup-type-icon {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.cup-type-icon {
+    min-width: 1.25rem;
+    color: var(--spa-accent);
+}
+
+.cup-type-icon__label {
+    color: inherit;
+}
+
 .app-header {
     position: sticky;
     top: 0;

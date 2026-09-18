@@ -47,6 +47,7 @@ function mountPage() {
                             <div data-testid="columns">{{ columns.map((column) => column.key).join(',') }}</div>
                             <div data-testid="items">{{ items.length }}</div>
                             <div v-for="item in items" :key="item.id">
+                                <slot name="cell-name" :data="item" />
                                 <slot name="cell-groups" :data="item" />
                                 <slot name="cell-visible" :data="item" />
                                 <slot name="cell-actions" :data="item" />
@@ -86,6 +87,15 @@ describe('cups page', () => {
                     groups: [],
                     visible: true,
                 },
+                {
+                    id: '2',
+                    name: 'Bike Cup',
+                    eventsCount: '3',
+                    year: 2026,
+                    type: 'bike',
+                    groups: [],
+                    visible: true,
+                },
             ],
             headers: {},
         })
@@ -101,9 +111,13 @@ describe('cups page', () => {
             perPage: 20,
             visible: '1',
         })
-        expect(wrapper.get('[data-testid="items"]').text()).toBe('1')
+        expect(wrapper.get('[data-testid="items"]').text()).toBe('2')
         expect(wrapper.get('[data-testid="columns"]').text()).toContain(
             'eventsCount',
+        )
+        expect(wrapper.findAll('.cup-type-icon')).toHaveLength(2)
+        expect(wrapper.find('.cup-type-icon i').classes()).toEqual(
+            expect.arrayContaining(['fa-running']),
         )
     })
 
