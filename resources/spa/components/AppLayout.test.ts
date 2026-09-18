@@ -20,7 +20,7 @@ describe('hybrid SPA navbar', () => {
                 href: '/app/groups',
                 spa: true,
             },
-            { label: 'spa.nav.cups', href: '/app/cups' },
+            { label: 'spa.nav.cups', href: '/app/cups', spa: true },
         ])
         expect(personsNavigation.map((item) => item.href)).toEqual([
             '/app/persons',

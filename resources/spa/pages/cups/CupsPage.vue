@@ -44,9 +44,21 @@ const columns = computed(() => [
     { key: 'groups', label: t('spa.cups.groups'), defaultVisible: true },
     ...(auth.isAuthenticated
         ? [
-              { key: 'created', label: t('spa.cups.created'), defaultVisible: true },
-              { key: 'updated', label: t('spa.cups.updated'), defaultVisible: true },
-              { key: 'actions', label: t('spa.cups.actions'), defaultVisible: true },
+              {
+                  key: 'created',
+                  label: t('spa.cups.created'),
+                  defaultVisible: true,
+              },
+              {
+                  key: 'updated',
+                  label: t('spa.cups.updated'),
+                  defaultVisible: true,
+              },
+              {
+                  key: 'actions',
+                  label: t('spa.cups.actions'),
+                  defaultVisible: true,
+              },
           ]
         : []),
 ])
@@ -61,7 +73,10 @@ const debouncedSearch = debounce(() => {
     void load(resetPageOnFilterChange(pagination.value.currentPage))
 })
 
-async function load(page = 1, perPage = pagination.value.perPage): Promise<void> {
+async function load(
+    page = 1,
+    perPage = pagination.value.perPage,
+): Promise<void> {
     const requestId = ++latestRequest
     if (year.value === null) return
 
@@ -145,7 +160,9 @@ onBeforeUnmount(() => debouncedSearch.cancel())
 
 <template>
     <Toolbar class="page-toolbar">
-        <template #start><h1 class="page-title">{{ t('spa.cups.title') }}</h1></template>
+        <template #start
+            ><h1 class="page-title">{{ t('spa.cups.title') }}</h1></template
+        >
         <template #end>
             <Button
                 v-if="auth.isAuthenticated"
@@ -179,12 +196,24 @@ onBeforeUnmount(() => debouncedSearch.cancel())
                     @update:model-value="onYearChange"
                 />
                 <div class="filter-field">
-                    <label for="cup-name-filter">{{ t('spa.cups.name_filter') }}</label>
-                    <InputText id="cup-name-filter" v-model="name" @update:model-value="onNameChange" />
-                    <small v-if="hasTooShortNameSearch(name)" class="filter-hint">{{ t('spa.cups.name_hint') }}</small>
+                    <label for="cup-name-filter">{{
+                        t('spa.cups.name_filter')
+                    }}</label>
+                    <InputText
+                        id="cup-name-filter"
+                        v-model="name"
+                        @update:model-value="onNameChange"
+                    />
+                    <small
+                        v-if="hasTooShortNameSearch(name)"
+                        class="filter-hint"
+                        >{{ t('spa.cups.name_hint') }}</small
+                    >
                 </div>
                 <div v-if="auth.isAuthenticated" class="filter-field">
-                    <label for="cup-visibility-filter">{{ t('spa.cups.visibility') }}</label>
+                    <label for="cup-visibility-filter">{{
+                        t('spa.cups.visibility')
+                    }}</label>
                     <Select
                         id="cup-visibility-filter"
                         v-model="visible"
@@ -200,12 +229,27 @@ onBeforeUnmount(() => debouncedSearch.cancel())
             <a :href="`/cups/${data.id}/show`">{{ data.name }}</a>
         </template>
         <template #cell-groups="{ data }">
-            <a v-for="group in data.groups" :key="group.id" :href="`/cups/${data.id}/${group.id}/table`" class="badge-link">
+            <a
+                v-for="group in data.groups"
+                :key="group.id"
+                :href="`/cups/${data.id}/${group.id}/table`"
+                class="badge-link"
+            >
                 {{ group.name }}
             </a>
         </template>
-        <template #cell-created="{ data }"><ImpressionDetails :impression="data.created" :users="[]" :label="t('spa.cups.created')" /></template>
-        <template #cell-updated="{ data }"><ImpressionDetails :impression="data.updated" :users="[]" :label="t('spa.cups.updated')" /></template>
+        <template #cell-created="{ data }"
+            ><ImpressionDetails
+                :impression="data.created"
+                :users="[]"
+                :label="t('spa.cups.created')"
+        /></template>
+        <template #cell-updated="{ data }"
+            ><ImpressionDetails
+                :impression="data.updated"
+                :users="[]"
+                :label="t('spa.cups.updated')"
+        /></template>
         <template #cell-actions="{ data }">
             <a :href="cupTableUrl(data)">{{ t('spa.cups.table') }}</a>
         </template>
