@@ -16,18 +16,19 @@ available without adding dependencies or remote assets:
 | Cup type | Icon | Meaning |
 |---|---|---|
 | elite | `fa-running` | adult running |
-| master | `fa-running` | adult running |
+| master | `fa-user-tie` | veteran |
 | sprint | `fa-bolt` | sprint/speed |
 | bike | `fa-bicycle` | bicycle |
-| juniors | `fa-child` | junior |
+| juniors | `fa-user-graduate` | junior |
 | youth | `fa-child` | youth |
 | new_youth | `fa-child` | youth |
-| new_master | `fa-running` | adult running |
+| new_master | `fa-user-tie` | veteran |
 | ski | `fa-skiing` | skiing |
-| elk_path | `fa-mountain` | trail/mountain |
+| elk_path | bundled SVG moose | elk path |
 
-The label remains the localized type name; icon classes are visual metadata.
-Unknown values use `fa-circle-question` and a generic Belarusian label.
+The label remains the localized type name; icon classes and illustrations are
+visual metadata. Unknown values use `fa-question-circle` and a generic
+Belarusian label.
 
 ## Decision
 

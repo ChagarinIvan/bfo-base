@@ -24,4 +24,12 @@ describe('cup type icon', () => {
             expect.arrayContaining(['fa-question-circle']),
         )
     })
+
+    it('renders the custom moose illustration for elk path cups', () => {
+        const wrapper = mount(CupTypeIcon, { props: { type: 'elk_path' } })
+
+        expect(wrapper.find('svg').exists()).toBe(true)
+        expect(wrapper.find('svg').attributes('aria-label')).toBeTruthy()
+        expect(wrapper.find('path').exists()).toBe(true)
+    })
 })

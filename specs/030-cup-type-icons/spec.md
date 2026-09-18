@@ -68,7 +68,7 @@ verify that listing and form components consume the same mapping.
 **Acceptance Scenarios**:
 
 1. **Given** any current cup type, **When** the mapping is requested, **Then**
-   it returns a stable icon class and human-readable label key.
+   it returns a stable icon or illustration and human-readable label key.
 2. **Given** a type not yet recognized by the SPA, **When** it is rendered,
    **Then** a neutral fallback icon and label are used without breaking the row
    or form.
@@ -79,7 +79,7 @@ verify that listing and form components consume the same mapping.
 
 - The backend enum gains a new value before the SPA mapping is updated; the UI
   must render a neutral fallback rather than an empty or broken icon.
-- A cup type has a valid icon class but no loaded icon font; the accessible
+- A cup type has a valid icon or illustration but no loaded icon font; the accessible
   label/title remains available.
 - The selected type is restored during edit loading and remains the submitted
   enum value.
@@ -91,7 +91,8 @@ verify that listing and form components consume the same mapping.
 ### Functional Requirements
 
 - **FR-001**: The SPA MUST define one reusable mapping for every current backend
-  `CupType` value to an icon class, label key, and neutral fallback.
+  `CupType` value to an icon or bundled illustration, label key, and neutral
+  fallback.
 - **FR-002**: The cups listing MUST render the mapped icon beside each cup name
   and retain the existing cup link behavior.
 - **FR-003**: The create and edit cup type selectors MUST render the mapped icon
@@ -115,7 +116,7 @@ verify that listing and form components consume the same mapping.
 ### Key Entities
 
 - **CupType icon definition**: Presentation metadata for one backend cup type:
-  icon class, label key, and accessible fallback text.
+  icon class or bundled illustration, label key, and accessible fallback text.
 - **Cup**: Existing cup DTO whose `type` value selects the icon definition.
 
 ## Success Criteria

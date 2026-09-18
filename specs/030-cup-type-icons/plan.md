@@ -44,7 +44,9 @@ the API and persisted cup model remain unchanged.
   already depends on `@fortawesome/fontawesome-free` for the legacy bundle.
 - PrimeIcons does not provide the needed bicycle, skiing, and running symbols;
   Font Awesome 5 free provides `fa-bicycle`, `fa-skiing`, `fa-running`,
-  `fa-child`, `fa-bolt`, and `fa-mountain`.
+  `fa-user-tie`, `fa-user-graduate`, `fa-child`, and `fa-bolt`. The elk-path
+  cup uses a small bundled SVG moose illustration because the icon set has no
+  suitable moose icon.
 - PrimeVue `Select` supports `#option` and `#value` slots, so type options can
   display an icon without changing the submitted string value.
 
@@ -71,7 +73,7 @@ the cups page implementation.
 
 - Keep canonical enum strings in the mapping: `elite`, `master`, `sprint`,
   `bike`, `juniors`, `youth`, `new_youth`, `new_master`, `ski`, `elk_path`.
-- Use a typed fallback for unknown strings (`fa-circle-question` and a generic
+- Use a typed fallback for unknown strings (`fa-question-circle` and a generic
   Belarusian label), while preserving the original type value in form payloads.
 - Use `aria-label`/`title` on the icon and render a visible type label in
   selector options; icons are supplementary, not the only meaning.

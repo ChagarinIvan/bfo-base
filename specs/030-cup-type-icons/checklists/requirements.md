@@ -30,5 +30,5 @@
 
 ## Notes
 
-- The exact bundled icon class is selected during planning, while the mapping
+- The exact bundled icon class or illustration is selected during planning, while the mapping
   contract remains stable and typed.

@@ -11,10 +11,23 @@ describe('cup type models', () => {
         CUP_TYPES.forEach((type) => {
             expect(cupTypeDefinitions[type]).toMatchObject({
                 type,
-                icon: expect.stringContaining('fa-'),
                 fallback: false,
             })
+            expect(
+                cupTypeDefinitions[type].icon ||
+                    cupTypeDefinitions[type].illustration,
+            ).toBeTruthy()
         })
+    })
+
+    it('uses distinct visual identities for age and competition categories', () => {
+        expect(cupTypeDefinitions.elite.icon).not.toBe(
+            cupTypeDefinitions.master.icon,
+        )
+        expect(cupTypeDefinitions.juniors.icon).not.toBe(
+            cupTypeDefinitions.youth.icon,
+        )
+        expect(cupTypeDefinitions.elk_path.illustration).toBe('moose')
     })
 
     it('returns a neutral definition for an unknown type', () => {

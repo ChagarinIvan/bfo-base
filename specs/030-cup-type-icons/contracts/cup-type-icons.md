@@ -7,14 +7,16 @@
 ```ts
 {
   type: string
-  icon: string
+  icon?: string
+  illustration?: 'moose'
   label: string
   fallback: boolean
 }
 ```
 
 For each current `CupType`, `fallback` is `false`. Unknown values return the
-neutral icon and `fallback: true`.
+neutral icon and `fallback: true`. The `elk_path` definition uses the bundled
+`moose` illustration instead of a font icon.
 
 ## Components
 

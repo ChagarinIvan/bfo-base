@@ -117,7 +117,7 @@ describe('cups page', () => {
         )
         expect(wrapper.findAll('.cup-type-icon')).toHaveLength(2)
         expect(wrapper.find('.cup-type-icon i').classes()).toEqual(
-            expect.arrayContaining(['fa-running']),
+            expect.arrayContaining(['fa-user-tie']),
         )
     })
 

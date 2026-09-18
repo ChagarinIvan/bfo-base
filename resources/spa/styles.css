@@ -23,6 +23,12 @@ body {
     color: var(--spa-accent);
 }
 
+.cup-type-icon__svg {
+    width: 1.1em;
+    height: 1.1em;
+    overflow: visible;
+}
+
 .cup-type-icon__label {
     color: inherit;
 }

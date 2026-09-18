@@ -17,7 +17,8 @@ export type CupType = (typeof CUP_TYPES)[number]
 
 export interface CupTypeDefinition {
     type: string
-    icon: string
+    icon?: string
+    illustration?: 'moose'
     label: TranslationKey
     fallback: boolean
 }
@@ -31,7 +32,7 @@ const definitions: Record<CupType, CupTypeDefinition> = {
     },
     master: {
         type: 'master',
-        icon: 'fas fa-running',
+        icon: 'fas fa-user-tie',
         label: 'app.cup.type.master',
         fallback: false,
     },
@@ -49,7 +50,7 @@ const definitions: Record<CupType, CupTypeDefinition> = {
     },
     juniors: {
         type: 'juniors',
-        icon: 'fas fa-child',
+        icon: 'fas fa-user-graduate',
         label: 'app.cup.type.juniors',
         fallback: false,
     },
@@ -79,7 +80,7 @@ const definitions: Record<CupType, CupTypeDefinition> = {
     },
     elk_path: {
         type: 'elk_path',
-        icon: 'fas fa-mountain',
+        illustration: 'moose',
         label: 'app.cup.type.elk_path',
         fallback: false,
     },
