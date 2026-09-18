@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Api\V1\PersonPayment;
 
+use App\Bridge\Laravel\Http\Controllers\Api\V1\PersonPayment\CreateOrUpdatePersonPaymentAction;
 use App\Domain\Person\Person;
 use App\Domain\PersonPayment\Event\PersonPaymentCreated;
 use App\Domain\PersonPayment\Event\PersonPaymentUpdated;
@@ -15,6 +16,8 @@ use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\Sanctum;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+
+/** @see CreateOrUpdatePersonPaymentAction */
 
 final class CreateOrUpdatePersonPaymentActionTest extends TestCase
 {

@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Api\V1\Event;
 
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Event\CreateEventAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Event\DeleteEventAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Event\UniteEventsAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Event\UpdateEventAction;
 use App\Domain\Competition\Competition;
 use App\Domain\Distance\Distance;
 use App\Domain\Event\Event;
@@ -15,6 +19,13 @@ use Illuminate\Http\UploadedFile;
 use Laravel\Sanctum\Sanctum;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+
+/**
+ * @see CreateEventAction
+ * @see DeleteEventAction
+ * @see UniteEventsAction
+ * @see UpdateEventAction
+ */
 
 final class EventManagementActionTest extends TestCase
 {

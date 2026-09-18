@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Api\V1\ProtocolLine;
 
+use App\Bridge\Laravel\Http\Controllers\Api\V1\ProtocolLine\ListProtocolLinesAction;
 use App\Domain\Club\Club;
 use App\Domain\Competition\Competition;
 use App\Domain\Distance\Distance;
@@ -19,6 +20,8 @@ use Tests\TestCase;
 use function array_filter;
 use function str_contains;
 use function strtolower;
+
+/** @see ListProtocolLinesAction */
 
 final class ListProtocolLinesActionTest extends TestCase
 {

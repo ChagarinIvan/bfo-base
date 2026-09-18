@@ -501,6 +501,25 @@ body {
     text-decoration: none;
 }
 
+.cup-group-badge {
+    display: inline-block;
+    margin: 0.125rem 0.25rem 0.125rem 0;
+    padding: 0.2rem 0.5rem;
+    border-radius: 999px;
+    color: #fff;
+    background: var(--p-primary-color);
+    font-size: 0.8rem;
+    text-decoration: none;
+}
+
+.cup-group-badge:nth-child(3n + 2) {
+    background: var(--p-green-500, #22c55e);
+}
+
+.cup-group-badge:nth-child(3n) {
+    background: var(--p-orange-500, #f97316);
+}
+
 .mass-icon {
     font-size: 1.2rem;
 }

@@ -11,7 +11,7 @@ use App\Bridge\Laravel\Http\Serialization\ApiDtoSerializer;
 use App\Bridge\Laravel\Http\Serialization\ApiErrorResponse;
 use App\Domain\Shared\Pagination\Slice;
 use Illuminate\Contracts\Container\Container;
-use Illuminate\Http\Request;
+use Illuminate\Routing\Router;
 use Illuminate\Validation\Factory as Validator;
 use Illuminate\Validation\ValidationException;
 use ReflectionClass;
@@ -23,20 +23,18 @@ use function is_bool;
 trait ApiAction
 {
     public function __construct(
-        private readonly Request $request,
+        private readonly Router $router,
         private readonly Validator $validator,
-        Container $container,
+        private readonly Container $container,
         private readonly ApiDtoSerializer $serializer,
         private readonly ApiErrorResponse $errorResponse,
     )
     {
-        if ($request->user()) {
-            $container->instance(UserId::class, new UserId($request->user()->id));
-        }
     }
 
     public function callAction($method, $parameters): mixed
     {
+        $request = $this->router->getCurrentRequest();
         $injected = [];
         foreach ($parameters as $parameter) {
             if (!$parameter instanceof AbstractDto) {
@@ -44,7 +42,7 @@ trait ApiAction
                 continue;
             }
             try {
-                $requestData = $parameter::normaliseRequestData($this->request->all());
+                $requestData = $parameter::normaliseRequestData($request->all());
                 $validated = $parameter::requestValidationRules() === []
                     ? []
                     : $this->validator->validate(
@@ -85,7 +83,7 @@ trait ApiAction
         $status = new ReflectionClass($this)->getAttributes(ResponseStatus::class);
         $serialized = $this->serializer->serialize(
             $result,
-            $this->request->user() ? 'authenticated' : 'public',
+            $request->user() ? 'authenticated' : 'public',
         );
 
         $response = response()->json(
@@ -103,5 +101,10 @@ trait ApiAction
         }
 
         return $response;
+    }
+
+    protected function userId(): ?UserId
+    {
+        return $this->container->has(UserId::class) ? $this->container->get(UserId::class) ?? null : null;
     }
 }

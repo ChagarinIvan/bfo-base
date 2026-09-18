@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Api\V1\RankCheck;
 
+use App\Bridge\Laravel\Http\Controllers\Api\V1\RankCheck\CreateRankCheckAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\RankCheck\ListRankCheckRowsAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\RankCheck\ListRankChecksAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\RankCheck\ViewRankCheckAction;
 use App\Domain\Auth\Impression;
 use App\Domain\RankCheck\Event\RankCheckCreated;
 use App\Domain\RankCheck\RankCheck;
@@ -18,6 +22,13 @@ use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\Sanctum;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+
+/**
+ * @see CreateRankCheckAction
+ * @see ListRankCheckRowsAction
+ * @see ListRankChecksAction
+ * @see ViewRankCheckAction
+ */
 
 final class RankCheckApiTest extends TestCase
 {

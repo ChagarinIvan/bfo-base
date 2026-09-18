@@ -46,12 +46,12 @@ final class SearchCupDto extends AbstractDto
     /** @param array<string, mixed> $data */
     public function fromArray(array $data): self
     {
-        $this->setStringParam('year', $data);
-        $this->setStringParam('name', $data);
-        if (array_key_exists('visible', $data)) {
-            $this->visible = (bool) (int) $data['visible'];
-        }
-
-        return $this;
+        return new self(
+            year: isset($data['year']) ? (string) $data['year'] : null,
+            name: isset($data['name']) ? (string) $data['name'] : null,
+            visible: array_key_exists('visible', $data)
+                ? (bool) (int) $data['visible']
+                : null,
+        );
     }
 }

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Http\Controllers\Api\V1\Cup;
 
-use App\Application\Dto\Auth\UserId;
 use App\Application\Dto\Cup\SearchCupDto;
 use App\Application\Dto\Pagination\Pagination;
 use App\Application\Service\Cup\ListCup;
@@ -21,10 +20,9 @@ final class ListCupsAction extends BaseController
         SearchCupDto $search,
         Pagination $pagination,
         ListCupService $service,
-        ?UserId $userId = null,
     ): Slice {
         return $service
-            ->execute(new ListCup($search, $userId !== null))
+            ->execute(new ListCup($search, (bool) $this->userId()))
             ->setPerPage($pagination->perPage)
             ->setCurrentPage($pagination->page)
         ;

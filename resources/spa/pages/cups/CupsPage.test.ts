@@ -46,6 +46,10 @@ function mountPage() {
                         <div>
                             <div data-testid="columns">{{ columns.map((column) => column.key).join(',') }}</div>
                             <div data-testid="items">{{ items.length }}</div>
+                            <div v-for="item in items" :key="item.id">
+                                <slot name="cell-groups" :data="item" />
+                                <slot name="cell-actions" :data="item" />
+                            </div>
                             <slot name="filters" />
                         </div>
                     `,
@@ -123,5 +127,36 @@ describe('cups page', () => {
             perPage: 20,
             visible: '1',
         })
+    })
+
+    it('renders group badges and admin actions for authenticated users', async () => {
+        auth.setAuthenticated(true)
+        getCups.mockResolvedValue({
+            data: [
+                {
+                    id: '7',
+                    name: 'Master Cup',
+                    eventsCount: '4',
+                    year: 2026,
+                    type: 'master',
+                    groups: [{ id: 'M_35_', name: 'М35' }],
+                    visible: true,
+                    created: { at: '', by: '' },
+                    updated: { at: '', by: '' },
+                },
+            ],
+            headers: {},
+        })
+
+        const wrapper = mountPage()
+        await flushPromises()
+
+        expect(wrapper.find('.cup-group-badge').attributes('href')).toBe(
+            '/cups/7/M_35_/table',
+        )
+        expect(wrapper.find('.action-menu').exists()).toBe(true)
+        expect(wrapper.get('[data-testid="columns"]').text()).toContain(
+            'actions',
+        )
     })
 })

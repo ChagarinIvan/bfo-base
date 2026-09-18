@@ -12,7 +12,7 @@ final readonly class ViewCupDto
     public function __construct(
         public string $id,
         public string $name,
-        public int $eventsCount,
+        public string $eventsCount,
         public int $year,
         public string $type,
         /** @var ViewCupGroupDto[] */

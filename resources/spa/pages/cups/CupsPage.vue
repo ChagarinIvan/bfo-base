@@ -13,6 +13,8 @@ import FilterPanel from '../../components/FilterPanel.vue'
 import ImpressionDetails from '../../components/ImpressionDetails.vue'
 import ListingTable from '../../components/ListingTable.vue'
 import YearFilter from '../../components/YearFilter.vue'
+import ConfirmDeleteDialog from '../../components/actions/ConfirmDeleteDialog.vue'
+import CupActionMenu from '../../components/actions/CupActionMenu.vue'
 import { t } from '../../i18n'
 import { useAuthStore } from '../../stores/auth'
 import {
@@ -30,6 +32,8 @@ const name = ref('')
 const visible = ref<'all' | '1' | '0'>('1')
 const loading = ref(false)
 const error = ref('')
+const selectedCup = ref<Cup | null>(null)
+const deleting = ref(false)
 const pagination = ref<PaginationHeaders>({
     currentPage: 1,
     perPage: 20,
@@ -152,6 +156,13 @@ function cupTableUrl(cup: Cup): string {
     return `/cups/${cup.id}/${cup.groups[0]?.id ?? ''}/table`
 }
 
+function deleteSelectedCup(): void {
+    if (!selectedCup.value) return
+
+    deleting.value = true
+    window.location.assign(`/cups/${selectedCup.value.id}/delete`)
+}
+
 watch(
     () => auth.isAuthenticated,
     (authenticated) => {
@@ -239,7 +250,7 @@ onBeforeUnmount(() => debouncedSearch.cancel())
                 v-for="group in data.groups"
                 :key="group.id"
                 :href="`/cups/${data.id}/${group.id}/table`"
-                class="badge-link"
+                class="cup-group-badge"
             >
                 {{ group.name }}
             </a>
@@ -257,7 +268,22 @@ onBeforeUnmount(() => debouncedSearch.cancel())
                 :label="t('spa.cups.updated')"
         /></template>
         <template #cell-actions="{ data }">
-            <a :href="cupTableUrl(data)">{{ t('spa.cups.table') }}</a>
+            <CupActionMenu
+                :cup-id="data.id"
+                :table-url="cupTableUrl(data)"
+                @delete="selectedCup = data"
+            />
         </template>
     </ListingTable>
+    <ConfirmDeleteDialog
+        v-if="auth.isAuthenticated && selectedCup"
+        :visible="Boolean(selectedCup)"
+        :title="t('spa.cups.delete.title')"
+        :confirmation="t('spa.cups.delete.confirm', { name: selectedCup.name })"
+        :cancel-label="t('spa.cups.delete.cancel')"
+        :action-label="t('spa.cups.delete.action')"
+        :pending="deleting"
+        @cancel="selectedCup = null"
+        @confirm="deleteSelectedCup"
+    />
 </template>

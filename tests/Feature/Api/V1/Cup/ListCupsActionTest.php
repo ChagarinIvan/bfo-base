@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Api\V1\Cup;
 
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\ListCupsAction;
 use App\Domain\Cup\Cup;
 use App\Domain\Cup\CupType;
 use App\Infrastructure\Sanctum\SanctumUser;
@@ -13,6 +14,8 @@ use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\Sanctum;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+
+/** @see ListCupsAction */
 
 final class ListCupsActionTest extends TestCase
 {
@@ -71,10 +74,11 @@ final class ListCupsActionTest extends TestCase
     }
 
     #[Test]
-    public function authenticated_client_can_select_all_visibility_modes(): void
+    public function authenticated_client_can_request_hidden_cups(): void
     {
-        $visibleCup = $this->createCup(['visible' => true]);
+        $this->createCup(['visible' => true]);
         $hiddenCup = $this->createCup(['visible' => false]);
+
         Sanctum::actingAs($this->createUser());
 
         $this->getJson('/api/v1/cups?visible=0')
@@ -82,11 +86,27 @@ final class ListCupsActionTest extends TestCase
             ->assertJsonCount(1)
             ->assertJsonPath('0.id', (string) $hiddenCup->getKey())
         ;
+    }
+
+    #[Test]
+    public function authenticated_client_can_request_all_cups_without_visibility_filter(): void
+    {
+        $this->createCup(['visible' => true]);
+        $this->createCup(['visible' => false]);
+        Sanctum::actingAs($this->createUser());
 
         $this->getJson('/api/v1/cups')
             ->assertOk()
             ->assertJsonCount(2)
         ;
+    }
+
+    #[Test]
+    public function authenticated_client_can_request_visible_cups(): void
+    {
+        $visibleCup = $this->createCup(['visible' => true]);
+        $this->createCup(['visible' => false]);
+        Sanctum::actingAs($this->createUser());
 
         $this->getJson('/api/v1/cups?visible=1')
             ->assertOk()

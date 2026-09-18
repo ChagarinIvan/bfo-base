@@ -7,6 +7,7 @@ namespace App\Domain\Shared;
 use OutOfRangeException;
 use function array_flip;
 use function array_intersect_key;
+use function array_key_exists;
 use function count;
 use function md5;
 use function serialize;
@@ -39,7 +40,7 @@ readonly class Criteria
 
     public function hasParam(string $param): bool
     {
-        return isset($this->params[$param]);
+        return array_key_exists($param, $this->params);
     }
 
     /** @return array<string, mixed> */

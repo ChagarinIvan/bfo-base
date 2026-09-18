@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Api\V1\PersonRankHistory;
 
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\PersonRankHistory\ListPersonRankHistoryAction;
 use App\Domain\Competition\Competition;
 use App\Domain\Distance\Distance;
 use App\Domain\Event\Event;
@@ -15,6 +16,8 @@ use App\Domain\Rank\Rank;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+
+/** @see ListPersonRankHistoryAction */
 
 final class ListPersonRankHistoryActionTest extends TestCase
 {

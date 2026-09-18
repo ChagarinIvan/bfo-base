@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Api\V1\Club;
 
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Club\ListClubsAction;
 use App\Domain\Club\Club;
 use App\Domain\Person\Person;
 use App\Infrastructure\Sanctum\SanctumUser;
@@ -17,6 +18,8 @@ use Tests\TestCase;
 use function array_filter;
 use function str_contains;
 use function strtolower;
+
+/** @see ListClubsAction */
 
 final class ListClubsActionTest extends TestCase
 {
