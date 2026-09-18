@@ -8,6 +8,9 @@ use App\Application\Dto\AbstractDto;
 use App\Domain\Cup\CupType;
 use App\Models\Year;
 use Illuminate\Validation\Rules\Enum;
+use function array_key_exists;
+use function filter_var;
+use const FILTER_VALIDATE_BOOLEAN;
 
 final class CupDto extends AbstractDto
 {
@@ -24,7 +27,7 @@ final class CupDto extends AbstractDto
             'eventsCount' => 'required|numeric|min:1|max:100',
             'year' => [new Enum(Year::class)],
             'type' => [new Enum(CupType::class)],
-            'visible' => '',
+            'visible' => 'boolean',
         ];
     }
 
@@ -34,7 +37,9 @@ final class CupDto extends AbstractDto
         $this->eventsCount = (int) $data['eventsCount'];
         $this->year = (int) $data['year'];
         $this->type = $data['type'];
-        $this->visible = isset($data['visible']) ? $data['visible'] === 'on' : $this->visible;
+        $this->visible = array_key_exists('visible', $data)
+            ? filter_var($data['visible'], FILTER_VALIDATE_BOOLEAN)
+            : $this->visible;
 
         return $this;
     }

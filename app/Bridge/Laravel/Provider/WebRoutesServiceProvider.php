@@ -8,13 +8,9 @@ use App\Bridge\Laravel\Http\Controllers\Cup\ClearCacheAction;
 use App\Bridge\Laravel\Http\Controllers\Cup\DeleteCupAction;
 use App\Bridge\Laravel\Http\Controllers\Cup\ExportCupGroupTableAction;
 use App\Bridge\Laravel\Http\Controllers\Cup\ExportCupTableAction;
-use App\Bridge\Laravel\Http\Controllers\Cup\ShowCreateCupFormAction;
 use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupAction;
 use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupEventGroupAction;
 use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupTableAction;
-use App\Bridge\Laravel\Http\Controllers\Cup\ShowEditCupFormAction;
-use App\Bridge\Laravel\Http\Controllers\Cup\StoreCupAction;
-use App\Bridge\Laravel\Http\Controllers\Cup\UpdateCupAction;
 use App\Bridge\Laravel\Http\Controllers\CupEvents\DeleteCupEventAction;
 use App\Bridge\Laravel\Http\Controllers\CupEvents\ShowCreateCupEventFormAction;
 use App\Bridge\Laravel\Http\Controllers\CupEvents\ShowEditCupEventFormAction;
@@ -52,10 +48,6 @@ class WebRoutesServiceProvider extends ServiceProvider
                     $this->middleware(['auth'])->group(function (): void {
                         $this->route->get('{cup}/{group}/table-export', ExportCupGroupTableAction::class);
                         $this->route->get('{cup}/export', ExportCupTableAction::class);
-                        $this->route->get('create', ShowCreateCupFormAction::class);
-                        $this->route->post('store', StoreCupAction::class);
-                        $this->route->get('{cupId}/edit', ShowEditCupFormAction::class);
-                        $this->route->post('{cupId}/update', UpdateCupAction::class);
                         $this->route->get('{cupId}/delete', DeleteCupAction::class);
                         $this->route->get('{cupId}/event/create', ShowCreateCupEventFormAction::class);
                         $this->route->post('{cup}/event/store', StoreCupEventAction::class);

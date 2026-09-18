@@ -55,7 +55,7 @@ class Cup extends AggregatedModel
         $this->events_count = $input->info->eventsCount;
         $this->year = $input->info->year;
         $this->type = $input->info->type;
-        $this->visible = $input->visible;
+        $this->setAttribute('visible', $input->visible);
         $this->updated = $impression;
 
         $this->recordThat(new CupUpdated($this));

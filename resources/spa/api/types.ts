@@ -46,6 +46,17 @@ export interface CupSearchQuery {
     perPage?: number
 }
 
+export interface CupFormRequest {
+    name: string
+    eventsCount: number
+    year: number
+    type: string
+    visible: boolean
+}
+
+export type CreateCupRequest = CupFormRequest
+export type UpdateCupRequest = CupFormRequest
+
 export interface Event {
     id: string
     competitionId: string

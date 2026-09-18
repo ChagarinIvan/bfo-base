@@ -41,6 +41,8 @@ import RankChecksPage from '../pages/rank-checks/RankChecksPage.vue'
 import RankCheckUploadPage from '../pages/rank-checks/RankCheckUploadPage.vue'
 import RankCheckViewPage from '../pages/rank-checks/RankCheckViewPage.vue'
 import CupsPage from '../pages/cups/CupsPage.vue'
+import CreateCupPage from '../pages/cups/CreateCupPage.vue'
+import EditCupPage from '../pages/cups/EditCupPage.vue'
 
 export function createAppRouter(
     history: RouterHistory = typeof window === 'undefined'
@@ -52,6 +54,16 @@ export function createAppRouter(
         routes: [
             { path: '/app/competitions', component: CompetitionsPage },
             { path: '/app/cups', component: CupsPage },
+            {
+                path: '/app/cups/create',
+                component: CreateCupPage,
+                meta: { requiresAuth: true },
+            },
+            {
+                path: '/app/cups/:id/edit',
+                component: EditCupPage,
+                meta: { requiresAuth: true },
+            },
             {
                 path: '/app/rank-checks',
                 component: RankChecksPage,

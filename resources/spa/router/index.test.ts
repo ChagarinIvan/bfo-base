@@ -159,6 +159,16 @@ describe('SPA navigation guard', () => {
         expect(router.currentRoute.value.path).toBe('/app/login')
     })
 
+    it('protects cup create and edit routes', async () => {
+        const router = createAppRouter(createMemoryHistory())
+
+        await router.push('/app/cups/create')
+        expect(router.currentRoute.value.path).toBe('/app/login')
+
+        await router.push('/app/cups/42/edit')
+        expect(router.currentRoute.value.path).toBe('/app/login')
+    })
+
     it('protects person payment list and create routes', async () => {
         const router = createAppRouter(createMemoryHistory())
 
