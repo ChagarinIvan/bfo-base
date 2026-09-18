@@ -2,12 +2,12 @@
 
 import { mount } from '@vue/test-utils'
 import PrimeVue from 'primevue/config'
-import Select from 'primevue/select'
+import Paginator from 'primevue/paginator'
 import { describe, expect, it } from 'vitest'
 import SlicePaginator from './SlicePaginator.vue'
 
 describe('slice paginator', () => {
-    it('emits the next page only when the probe row exists', async () => {
+    it('mimics total records from the probe-row pagination metadata', () => {
         const wrapper = mount(SlicePaginator, {
             props: {
                 pagination: { currentPage: 2, perPage: 20, hasNext: true },
@@ -15,9 +15,24 @@ describe('slice paginator', () => {
             global: { plugins: [PrimeVue] },
         })
 
-        const buttons = wrapper.findAll('button')
-        expect(buttons[0].attributes('disabled')).toBeUndefined()
-        await buttons[1].trigger('click')
+        const paginator = wrapper.findComponent(Paginator)
+        expect(paginator.props('totalRecords')).toBe(60)
+        expect(paginator.props('first')).toBe(20)
+    })
+
+    it('forwards PrimeVue page events', async () => {
+        const wrapper = mount(SlicePaginator, {
+            props: {
+                pagination: { currentPage: 2, perPage: 20, hasNext: true },
+            },
+            global: { plugins: [PrimeVue] },
+        })
+
+        wrapper.findComponent(Paginator).vm.$emit('page', {
+            page: 2,
+            first: 40,
+            rows: 20,
+        })
 
         expect(wrapper.emitted('page')).toEqual([
             [{ page: 2, first: 40, rows: 20 }],
@@ -32,11 +47,9 @@ describe('slice paginator', () => {
             global: { plugins: [PrimeVue] },
         })
 
-        expect(wrapper.find('nav').exists()).toBe(true)
-        const buttons = wrapper.findAll('button')
-        expect(buttons).toHaveLength(2)
-        expect(buttons[0].attributes('disabled')).toBeDefined()
-        expect(buttons[1].attributes('disabled')).toBeDefined()
-        expect(wrapper.findComponent(Select).exists()).toBe(true)
+        const paginator = wrapper.findComponent(Paginator)
+        expect(paginator.exists()).toBe(true)
+        expect(paginator.props('totalRecords')).toBe(20)
+        expect(paginator.props('rowsPerPageOptions')).toEqual([10, 20, 50])
     })
 })
