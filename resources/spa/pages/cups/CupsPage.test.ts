@@ -48,6 +48,7 @@ function mountPage() {
                             <div data-testid="items">{{ items.length }}</div>
                             <div v-for="item in items" :key="item.id">
                                 <slot name="cell-groups" :data="item" />
+                                <slot name="cell-visible" :data="item" />
                                 <slot name="cell-actions" :data="item" />
                             </div>
                             <slot name="filters" />
@@ -139,7 +140,10 @@ describe('cups page', () => {
                     eventsCount: '4',
                     year: 2026,
                     type: 'master',
-                    groups: [{ id: 'M_35_', name: 'М35' }],
+                    groups: [
+                        { id: 'M_35_', name: 'М35' },
+                        { id: 'W_35_', name: 'Ж35' },
+                    ],
                     visible: true,
                     created: { at: '', by: '' },
                     updated: { at: '', by: '' },
@@ -154,7 +158,10 @@ describe('cups page', () => {
         expect(wrapper.find('.cup-group-badge').attributes('href')).toBe(
             '/cups/7/M_35_/table',
         )
+        const groupBadges = wrapper.findAll('.cup-group-badge')
+        expect(groupBadges[0].classes()).not.toEqual(groupBadges[1].classes())
         expect(wrapper.find('.action-menu').exists()).toBe(true)
+        expect(wrapper.find('.pi-eye').attributes('aria-label')).toBe('Бачныя')
         expect(wrapper.get('[data-testid="columns"]').text()).toContain(
             'actions',
         )

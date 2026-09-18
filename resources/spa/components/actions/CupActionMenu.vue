@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { t } from '../../i18n'
 import ActionButton from './ActionButton.vue'
-import EditActionButton from './EditActionButton.vue'
 
 const props = defineProps<{ cupId: string; tableUrl: string }>()
 const emit = defineEmits<{ delete: [] }>()
@@ -9,9 +8,12 @@ const emit = defineEmits<{ delete: [] }>()
 
 <template>
     <span class="action-menu">
-        <EditActionButton
-            :to="`/cups/${props.cupId}/edit`"
+        <ActionButton
+            as="a"
+            :href="`/cups/${props.cupId}/edit`"
+            icon="pi pi-pencil"
             :label="t('spa.cups.edit.action')"
+            severity="secondary"
         />
         <ActionButton
             as="a"

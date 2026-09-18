@@ -512,12 +512,36 @@ body {
     text-decoration: none;
 }
 
-.cup-group-badge:nth-child(3n + 2) {
+.cup-group-badge--blue {
+    background: var(--p-blue-500, #3b82f6);
+}
+
+.cup-group-badge--green {
     background: var(--p-green-500, #22c55e);
 }
 
-.cup-group-badge:nth-child(3n) {
+.cup-group-badge--orange {
     background: var(--p-orange-500, #f97316);
+}
+
+.cup-group-badge--purple {
+    background: var(--p-purple-500, #a855f7);
+}
+
+.cup-group-badge--pink {
+    background: var(--p-pink-500, #ec4899);
+}
+
+.cup-group-badge--cyan {
+    background: var(--p-cyan-500, #06b6d4);
+}
+
+.cup-group-badge--indigo {
+    background: var(--p-indigo-500, #6366f1);
+}
+
+.cup-group-badge--teal {
+    background: var(--p-teal-500, #14b8a6);
 }
 
 .mass-icon {

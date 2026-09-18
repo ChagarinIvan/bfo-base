@@ -8,7 +8,7 @@ import Toolbar from 'primevue/toolbar'
 import { useRouter } from 'vue-router'
 import { getCups } from '../../api/cups'
 import { getYears } from '../../api/years'
-import type { Cup, PaginationHeaders } from '../../api/types'
+import type { Cup, CupGroup, PaginationHeaders } from '../../api/types'
 import FilterPanel from '../../components/FilterPanel.vue'
 import ImpressionDetails from '../../components/ImpressionDetails.vue'
 import ListingTable from '../../components/ListingTable.vue'
@@ -54,6 +54,11 @@ const columns = computed(() => [
     { key: 'groups', label: t('spa.cups.groups'), defaultVisible: true },
     ...(auth.isAuthenticated
         ? [
+              {
+                  key: 'visible',
+                  label: t('spa.cups.visibility'),
+                  defaultVisible: true,
+              },
               {
                   key: 'created',
                   label: t('spa.cups.created'),
@@ -156,6 +161,26 @@ function cupTableUrl(cup: Cup): string {
     return `/cups/${cup.id}/${cup.groups[0]?.id ?? ''}/table`
 }
 
+const cupGroupColors = [
+    'blue',
+    'green',
+    'orange',
+    'purple',
+    'pink',
+    'cyan',
+    'indigo',
+    'teal',
+] as const
+
+function cupGroupBadgeClass(group: CupGroup): string {
+    let hash = 0
+    for (const character of group.id) {
+        hash = (hash * 31 + character.charCodeAt(0)) >>> 0
+    }
+
+    return `cup-group-badge--${cupGroupColors[hash % cupGroupColors.length]}`
+}
+
 function deleteSelectedCup(): void {
     if (!selectedCup.value) return
 
@@ -250,10 +275,25 @@ onBeforeUnmount(() => debouncedSearch.cancel())
                 v-for="group in data.groups"
                 :key="group.id"
                 :href="`/cups/${data.id}/${group.id}/table`"
-                class="cup-group-badge"
+                :class="['cup-group-badge', cupGroupBadgeClass(group)]"
             >
                 {{ group.name }}
             </a>
+        </template>
+        <template #cell-visible="{ data }">
+            <i
+                :class="data.visible ? 'pi pi-eye' : 'pi pi-eye-slash'"
+                :aria-label="
+                    data.visible
+                        ? t('spa.cups.visible_yes')
+                        : t('spa.cups.visible_no')
+                "
+                :title="
+                    data.visible
+                        ? t('spa.cups.visible_yes')
+                        : t('spa.cups.visible_no')
+                "
+            />
         </template>
         <template #cell-created="{ data }"
             ><ImpressionDetails
