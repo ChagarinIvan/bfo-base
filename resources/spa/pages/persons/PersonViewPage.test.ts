@@ -55,12 +55,13 @@ describe('person view page', () => {
                     completeRank: 'II',
                 },
             ],
-            headers: { 'x-pagination-total': '1' },
+            headers: { 'x-pagination-has-next': 'false' },
         })
 
         const wrapper = mount(PersonViewPage, {
             global: {
                 stubs: {
+                    SlicePaginator: true,
                     Button: {
                         props: ['label'],
                         template: '<button>{{ label }}</button>',
@@ -112,6 +113,7 @@ describe('person view page', () => {
         const wrapper = mount(PersonViewPage, {
             global: {
                 stubs: {
+                    SlicePaginator: true,
                     Button: true,
                     ActionButton: true,
                     Column: true,
@@ -153,12 +155,13 @@ describe('person view page', () => {
         }
         getPersonProtocolLines.mockResolvedValue({
             data: [mismatchedLine],
-            headers: { 'x-pagination-total': '1' },
+            headers: { 'x-pagination-has-next': 'false' },
         })
 
         const wrapper = mount(PersonViewPage, {
             global: {
                 stubs: {
+                    SlicePaginator: true,
                     ActionButton: true,
                     Button: true,
                     Column: {
@@ -219,12 +222,13 @@ describe('person view page', () => {
         const mismatchedLine = { ...matchingLine, id: '12', firstname: 'John' }
         getPersonProtocolLines.mockResolvedValue({
             data: [matchingLine, mismatchedLine],
-            headers: { 'x-pagination-total': '2' },
+            headers: { 'x-pagination-has-next': 'false' },
         })
 
         const wrapper = mount(PersonViewPage, {
             global: {
                 stubs: {
+                    SlicePaginator: true,
                     ActionButton: true,
                     Button: true,
                     Column: true,
@@ -272,6 +276,7 @@ describe('person view page', () => {
         const wrapper = mount(PersonViewPage, {
             global: {
                 stubs: {
+                    SlicePaginator: true,
                     Button: true,
                     ActionButton: true,
                     Column: true,

@@ -197,8 +197,7 @@ export interface AuthToken {
 export interface PaginationHeaders {
     currentPage: number
     perPage: number
-    total: number
-    lastPage: number
+    hasNext: boolean
 }
 
 export interface PaginatedApiResponse<T> {

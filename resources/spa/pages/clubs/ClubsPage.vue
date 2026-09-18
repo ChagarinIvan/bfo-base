@@ -4,7 +4,7 @@ import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import InputText from 'primevue/inputtext'
 import Message from 'primevue/message'
-import Paginator, { type PageState } from 'primevue/paginator'
+import type { PageState } from 'primevue/paginator'
 import Toolbar from 'primevue/toolbar'
 import Button from 'primevue/button'
 import { useRouter } from 'vue-router'
@@ -14,6 +14,7 @@ import type { Club, PaginationHeaders, User } from '../../api/types'
 import ImpressionDetails from '../../components/ImpressionDetails.vue'
 import FilterPanel from '../../components/FilterPanel.vue'
 import ListingTable from '../../components/ListingTable.vue'
+import SlicePaginator from '../../components/SlicePaginator.vue'
 import EditActionButton from '../../components/actions/EditActionButton.vue'
 import { t } from '../../i18n'
 import { useAuthStore } from '../../stores/auth'
@@ -34,8 +35,7 @@ const name = ref('')
 const pagination = ref<PaginationHeaders>({
     currentPage: 1,
     perPage: 20,
-    total: 0,
-    lastPage: 1,
+    hasNext: false,
 })
 const loading = ref(false)
 const error = ref('')
@@ -237,11 +237,8 @@ onBeforeUnmount(() => {
                     </template>
                 </Column>
             </DataTable>
-            <Paginator
-                v-if="pagination.total > 0"
-                :first="(pagination.currentPage - 1) * pagination.perPage"
-                :rows="pagination.perPage"
-                :total-records="pagination.total"
+            <SlicePaginator
+                :pagination="pagination"
                 :rows-per-page-options="[10, 20, 50]"
                 class="clubs-paginator"
                 @page="onPage"

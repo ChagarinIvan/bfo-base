@@ -25,7 +25,9 @@ final readonly class EloquentRankCheckRowRepository implements RankCheckRowRepos
     /** @return Slice<RankCheckRow> */
     public function paginate(Criteria $criteria): Slice
     {
-        $query = RankCheckRow::query()->orderBy('position');
+        $query = RankCheckRow::query()
+            ->orderBy('position')
+            ->orderBy('rank_check_rows.id');
 
         if ($criteria->hasParam('rankCheckId')) {
             $query->where('rank_check_id', $criteria->param('rankCheckId'));

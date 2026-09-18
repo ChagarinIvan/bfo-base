@@ -11,8 +11,8 @@ use App\Application\Service\RankCheck\ListRankCheckRowsService;
 use App\Domain\RankCheck\RankCheckRow;
 use App\Domain\RankCheck\RankCheckRowRepository;
 use App\Domain\Shared\Criteria;
+use App\Domain\Shared\Pagination\ArraySliceAdapter;
 use App\Domain\Shared\Pagination\Slice;
-use Pagerfanta\Adapter\ArrayAdapter;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
@@ -66,7 +66,7 @@ final class ListRankCheckRowsServiceTest extends TestCase
             ->expects($this->once())
             ->method('paginate')
             ->with($this->callback(static fn(Criteria $criteria): bool => self::matchesCriteria($criteria)))
-            ->willReturn(new Slice(new ArrayAdapter([$firstRow])))
+            ->willReturn(new Slice(new ArraySliceAdapter([$firstRow])))
         ;
 
         $result = $this->service->execute(

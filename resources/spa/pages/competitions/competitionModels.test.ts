@@ -89,14 +89,12 @@ describe('competition models', () => {
             paginationFromHeaders({
                 'x-pagination-current-page': '2',
                 'x-pagination-per-page': '10',
-                'x-pagination-total': '31',
-                'x-pagination-last-page': '4',
+                'x-pagination-has-next': 'true',
             }),
         ).toEqual({
             currentPage: 2,
             perPage: 10,
-            total: 31,
-            lastPage: 4,
+            hasNext: true,
         })
     })
 

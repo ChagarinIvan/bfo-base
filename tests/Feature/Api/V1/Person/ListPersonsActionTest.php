@@ -172,10 +172,11 @@ final class ListPersonsActionTest extends TestCase
             ->assertOk()
             ->assertJsonPath('0.id', '3')
             ->assertJsonPath('1.id', '1')
-            ->assertHeader('X-Pagination-Total', '3')
+            ->assertHeader('X-Pagination-Has-Next', 'true')
             ->assertHeader('X-Pagination-Per-Page', '2')
             ->assertHeader('X-Pagination-Current-Page', '1')
-            ->assertHeader('X-Pagination-Last-Page', '2')
+            ->assertHeaderMissing('X-Pagination-Total')
+            ->assertHeaderMissing('X-Pagination-Last-Page')
         ;
     }
 
@@ -224,7 +225,7 @@ final class ListPersonsActionTest extends TestCase
 
         $this->getJson('/api/v1/persons')->assertOk();
 
-        $this->assertCount(2, $queries);
+        $this->assertCount(1, $queries);
         $this->assertCount(1, array_filter(
             $queries,
             static fn (string $sql): bool => str_contains($sql, 'limit'),

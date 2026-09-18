@@ -20,7 +20,7 @@ describe('person payments api', () => {
             data: [
                 { id: '1', personId: '7', year: '2025', date: '2025-01-01' },
             ],
-            headers: { 'x-pagination-total': '1' },
+            headers: { 'x-pagination-has-next': 'false' },
         })
 
         await expect(
@@ -34,7 +34,7 @@ describe('person payments api', () => {
             data: [
                 { id: '1', personId: '7', year: '2025', date: '2025-01-01' },
             ],
-            headers: { 'x-pagination-total': '1' },
+            headers: { 'x-pagination-has-next': 'false' },
         })
         expect(api.get).toHaveBeenCalledWith('/persons/payments', {
             params: { personId: '7', year: 2025, page: 2, perPage: 10 },

@@ -28,7 +28,7 @@ describe('persons api', () => {
     })
 
     it('requests paginated compact persons with the optional camelCase club filter', async () => {
-        const headers = { 'x-pagination-total': '1' }
+        const headers = { 'x-pagination-has-next': 'false' }
         vi.mocked(api.get).mockResolvedValue({
             data: [
                 {

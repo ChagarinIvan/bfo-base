@@ -3,10 +3,11 @@ import { computed, ref, watch } from 'vue'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Message from 'primevue/message'
-import Paginator, { type PageState } from 'primevue/paginator'
+import type { PageState } from 'primevue/paginator'
 import type { ListingColumn } from './tableModels'
 import type { PaginationHeaders } from '../api/types'
 import { sanitizeVisibleColumns, tableStorageKey } from './tableModels'
+import SlicePaginator from './SlicePaginator.vue'
 
 const props = withDefaults(
     defineProps<{
@@ -142,13 +143,10 @@ watch(visible, (value) => {
                 </template>
             </Column>
         </DataTable>
-        <Paginator
-            v-if="pagination && pagination.total > 0"
-            :first="(pagination.currentPage - 1) * pagination.perPage"
-            :rows="pagination.perPage"
-            :total-records="pagination.total"
+        <SlicePaginator
+            v-if="pagination"
+            :pagination="pagination"
             :rows-per-page-options="rowsPerPageOptions"
-            :class="`${tableClass}-paginator`"
             @page="(event) => emit('page', event)"
         />
     </template>

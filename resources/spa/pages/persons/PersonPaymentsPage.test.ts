@@ -37,12 +37,13 @@ describe('person payments page', () => {
                     date: '2025-01-01',
                 },
             ],
-            headers: { 'x-pagination-total': '1' },
+            headers: { 'x-pagination-has-next': 'false' },
         })
 
         const wrapper = mount(PersonPaymentsPage, {
             global: {
                 stubs: {
+                    SlicePaginator: true,
                     Button: {
                         props: ['label'],
                         template: '<button>{{ label }}</button>',
@@ -78,6 +79,7 @@ describe('person payments page', () => {
         const wrapper = mount(PersonPaymentsPage, {
             global: {
                 stubs: {
+                    SlicePaginator: true,
                     Button: true,
                     Column: true,
                     DataTable: true,

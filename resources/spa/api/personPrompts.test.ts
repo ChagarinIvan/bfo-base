@@ -20,7 +20,7 @@ describe('person prompts api', () => {
     beforeEach(() => vi.clearAllMocks())
 
     it('loads a paginated person-filtered list', async () => {
-        const headers = { 'x-pagination-total': '2' }
+        const headers = { 'x-pagination-has-next': 'false' }
         vi.mocked(api.get).mockResolvedValue({ data: [{ id: '1' }], headers })
 
         await expect(

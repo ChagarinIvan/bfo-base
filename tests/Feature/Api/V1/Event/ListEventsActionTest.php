@@ -65,7 +65,9 @@ final class ListEventsActionTest extends TestCase
         $this->getJson("/api/v1/events?competitionId={$competition->id}&perPage=1&page=2")
             ->assertOk()
             ->assertJsonCount(1)
-            ->assertHeader('X-Pagination-Total', '2')
+            ->assertHeader('X-Pagination-Has-Next', 'false')
+            ->assertHeaderMissing('X-Pagination-Total')
+            ->assertHeaderMissing('X-Pagination-Last-Page')
             ->assertHeader('X-Pagination-Per-Page', '1')
             ->assertHeader('X-Pagination-Current-Page', '2')
         ;

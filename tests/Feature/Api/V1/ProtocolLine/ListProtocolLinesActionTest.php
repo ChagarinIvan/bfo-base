@@ -255,7 +255,9 @@ final class ListProtocolLinesActionTest extends TestCase
         $this->getJson("/api/v1/protocol-lines?personId={$person->id}&perPage=1&page=2")
             ->assertOk()
             ->assertJsonCount(1)
-            ->assertHeader('X-Pagination-Total', '2')
+            ->assertHeader('X-Pagination-Has-Next', 'false')
+            ->assertHeaderMissing('X-Pagination-Total')
+            ->assertHeaderMissing('X-Pagination-Last-Page')
             ->assertHeader('X-Pagination-Per-Page', '1')
             ->assertHeader('X-Pagination-Current-Page', '2')
         ;
@@ -276,7 +278,7 @@ final class ListProtocolLinesActionTest extends TestCase
         $this->getJson("/api/v1/protocol-lines?personId={$person->id}&withEvent=1&withCompetition=1")
             ->assertOk();
 
-        $this->assertCount(2, array_filter(
+        $this->assertCount(1, array_filter(
             $queries,
             static fn (string $query): bool => str_contains($query, 'from `protocol_lines`'),
         ));

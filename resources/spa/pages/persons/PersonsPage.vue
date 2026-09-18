@@ -2,7 +2,7 @@
 import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import Button from 'primevue/button'
 import Message from 'primevue/message'
-import Paginator, { type PageState } from 'primevue/paginator'
+import type { PageState } from 'primevue/paginator'
 import Toolbar from 'primevue/toolbar'
 import { getClubOptions } from '../../api/clubs'
 import { getPersons } from '../../api/persons'
@@ -16,6 +16,7 @@ import type {
 } from '../../api/types'
 import PersonFilters from '../../components/PersonFilters.vue'
 import PersonTable from '../../components/PersonTable.vue'
+import SlicePaginator from '../../components/SlicePaginator.vue'
 import { t } from '../../i18n'
 import { useAuthStore } from '../../stores/auth'
 import {
@@ -40,8 +41,7 @@ const birthYear = ref<number | null>(null)
 const pagination = ref<PaginationHeaders>({
     currentPage: 1,
     perPage: 20,
-    total: 0,
-    lastPage: 1,
+    hasNext: false,
 })
 const loading = ref(false)
 const error = ref('')
@@ -197,11 +197,8 @@ onBeforeUnmount(() => debouncedNameSearch.cancel())
         :closable="false"
         >{{ t('spa.person.empty') }}</Message
     >
-    <Paginator
-        v-if="pagination.total > 0"
-        :first="(pagination.currentPage - 1) * pagination.perPage"
-        :rows="pagination.perPage"
-        :total-records="pagination.total"
+    <SlicePaginator
+        :pagination="pagination"
         :rows-per-page-options="[10, 20, 50]"
         class="persons-paginator"
         @page="onPage"

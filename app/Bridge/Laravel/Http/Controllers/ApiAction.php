@@ -18,6 +18,7 @@ use ReflectionClass;
 use Symfony\Component\HttpFoundation\Response;
 use function array_map;
 use function array_merge;
+use function is_bool;
 
 trait ApiAction
 {
@@ -94,7 +95,10 @@ trait ApiAction
 
         if ($result instanceof Slice) {
             foreach ($result->paginationHeaders() as $header => $value) {
-                $response->header($header, (string) $value);
+                $response->header(
+                    $header,
+                    is_bool($value) ? ($value ? 'true' : 'false') : (string) $value,
+                );
             }
         }
 

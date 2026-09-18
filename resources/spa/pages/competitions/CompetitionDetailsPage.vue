@@ -33,8 +33,7 @@ const users = ref<User[]>([])
 const eventPagination = ref<PaginationHeaders>({
     currentPage: 1,
     perPage: 20,
-    total: 0,
-    lastPage: 1,
+    hasNext: false,
 })
 const loading = ref(true)
 const error = ref('')

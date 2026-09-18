@@ -5,7 +5,7 @@ import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import InputText from 'primevue/inputtext'
 import Message from 'primevue/message'
-import Paginator, { type PageState } from 'primevue/paginator'
+import type { PageState } from 'primevue/paginator'
 import { useRoute, useRouter } from 'vue-router'
 import { deleteGroup, getGroup } from '../../api/groups'
 import { getUsers } from '../../api/users'
@@ -19,6 +19,7 @@ import YearFilter from '../../components/YearFilter.vue'
 import ConfirmDeleteDialog from '../../components/actions/ConfirmDeleteDialog.vue'
 import GroupActionMenu from '../../components/actions/GroupActionMenu.vue'
 import ListingTable from '../../components/ListingTable.vue'
+import SlicePaginator from '../../components/SlicePaginator.vue'
 import { t } from '../../i18n'
 import { useAuthStore } from '../../stores/auth'
 import {
@@ -45,8 +46,7 @@ const deletePending = ref(false)
 const pagination = ref<PaginationHeaders>({
     currentPage: 1,
     perPage: 20,
-    total: 0,
-    lastPage: 1,
+    hasNext: false,
 })
 const auth = useAuthStore()
 const columns = computed(() => [
@@ -329,11 +329,8 @@ onBeforeUnmount(() => debouncedFilter.cancel())
                             />
                         </template> </Column
                 ></DataTable>
-                <Paginator
-                    v-if="pagination.total"
-                    :first="(pagination.currentPage - 1) * pagination.perPage"
-                    :rows="pagination.perPage"
-                    :total-records="pagination.total"
+                <SlicePaginator
+                    :pagination="pagination"
                     :rows-per-page-options="[10, 20, 50]"
                     @page="onPage"
                 />
