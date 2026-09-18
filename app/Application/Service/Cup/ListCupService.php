@@ -7,7 +7,7 @@ namespace App\Application\Service\Cup;
 use App\Application\Dto\Cup\CupAssembler;
 use App\Application\Dto\Cup\ViewCupDto;
 use App\Domain\Cup\CupRepository;
-use function array_map;
+use App\Domain\Shared\Pagination\Slice;
 
 final readonly class ListCupService
 {
@@ -17,12 +17,12 @@ final readonly class ListCupService
     ) {
     }
 
-    /** @return ViewCupDto[] */
-    public function execute(ListCup $command): array
+    /** @return Slice<ViewCupDto> */
+    public function execute(ListCup $command): Slice
     {
-        return array_map(
-            $this->assembler->toViewCupDto(...),
-            $this->cups->byCriteria($command->criteria())->all(),
-        );
+        return $this->cups
+            ->paginate($command->criteria())
+            ->map($this->assembler->toViewCupDto(...))
+        ;
     }
 }

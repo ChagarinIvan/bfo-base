@@ -29,6 +29,6 @@ class DeleteCupAction extends BaseController
             return $this->redirectTo404Error();
         }
 
-        return $this->redirector->action(ShowCupsListAction::class, ['year' => $cup->year]);
+        return $this->redirector->to('/app/cups');
     }
 }

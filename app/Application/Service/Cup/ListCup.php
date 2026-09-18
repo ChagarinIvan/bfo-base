@@ -4,19 +4,39 @@ declare(strict_types=1);
 
 namespace App\Application\Service\Cup;
 
-use App\Application\Dto\Cup\CupSearchDto;
+use App\Application\Dto\Cup\SearchCupDto;
 use App\Domain\Shared\Criteria;
-use function array_filter;
-use function get_object_vars;
 
 final readonly class ListCup
 {
-    public function __construct(private CupSearchDto $search)
-    {
+    public function __construct(
+        private SearchCupDto $search,
+        private bool $authenticated,
+    ) {
     }
 
     public function criteria(): Criteria
     {
-        return new Criteria(array_filter(get_object_vars($this->search)));
+        $visible = true;
+        if ($this->authenticated) {
+            $visible = match ($this->search->visible) {
+                true => true,
+                false => false,
+                default => null,
+            };
+        }
+
+        $params = [];
+        if ($this->search->year !== null) {
+            $params['year'] = (int) $this->search->year;
+        }
+        if ($this->search->name !== null && $this->search->name !== '') {
+            $params['name'] = $this->search->name;
+        }
+        if ($visible !== null) {
+            $params['visible'] = $visible;
+        }
+
+        return new Criteria($params);
     }
 }

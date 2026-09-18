@@ -21,6 +21,30 @@ export interface Competition {
     updated?: Impression
 }
 
+export interface CupGroup {
+    id: string
+    name: string
+}
+
+export interface Cup {
+    id: string
+    name: string
+    year: number
+    type: string
+    groups: CupGroup[]
+    visible: boolean
+    created?: Impression
+    updated?: Impression
+}
+
+export interface CupSearchQuery {
+    year?: number
+    name?: string
+    visible?: '1' | '0'
+    page?: number
+    perPage?: number
+}
+
 export interface Event {
     id: string
     competitionId: string

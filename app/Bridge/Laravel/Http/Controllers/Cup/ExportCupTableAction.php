@@ -21,7 +21,7 @@ class ExportCupTableAction extends BaseController
     public function __invoke(Cup $cup, CupEventsService $service): BinaryFileResponse
     {
         $content = '';
-        foreach ($cup->type->instance()->getGroups() as $group) {
+        foreach ($cup->groups() as $group) {
             $cupEvents = $service->getCupEvents((string) $cup->id)->sortBy('event.date');
             $cupPoints = $service->calculateCup($cup, $cupEvents, $group);
 

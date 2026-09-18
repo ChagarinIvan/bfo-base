@@ -14,7 +14,7 @@ class CupGroupFactory
     /**
      * @param GroupAge[] $ages
      */
-    public static function getAgeTypeGroups(array $ages = []): Collection
+    public static function getAgeTypeGroups(array $ages = []): array
     {
         $groups = Collection::make();
 
@@ -28,7 +28,7 @@ class CupGroupFactory
             $groups->push(new CupGroup(GroupMale::Woman));
         }
 
-        return $groups;
+        return $groups->all();
     }
 
     /**

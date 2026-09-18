@@ -39,7 +39,7 @@ class EliteCupType extends AbstractCupType
         ;
     }
 
-    public function getGroups(): array|Collection
+    public function groups(): array
     {
         return CupGroupFactory::getAgeTypeGroups();
     }

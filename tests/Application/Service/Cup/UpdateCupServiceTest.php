@@ -14,9 +14,6 @@ use App\Application\Service\Cup\UpdateCup;
 use App\Application\Service\Cup\UpdateCupService;
 use App\Domain\Cup\Cup;
 use App\Domain\Cup\CupRepository;
-use App\Domain\Event\Event;
-use App\Domain\Event\EventRepository;
-use App\Domain\Shared\Criteria;
 use App\Domain\Shared\DummyTransactional;
 use App\Domain\Shared\FrozenClock;
 use Carbon\Carbon;
@@ -30,8 +27,6 @@ final class UpdateCupServiceTest extends TestCase
 
     private CupRepository&MockObject $cups;
 
-    private EventRepository&MockObject $events;
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -42,7 +37,6 @@ final class UpdateCupServiceTest extends TestCase
             $this->cups = $this->createMock(CupRepository::class),
             new FrozenClock(Carbon::parse('2023-04-01')),
             new CupAssembler(
-                $this->events = $this->createMock(EventRepository::class),
                 new EventAssembler($authAssembler),
                 $authAssembler,
             ),
@@ -62,9 +56,6 @@ final class UpdateCupServiceTest extends TestCase
             ->willReturn(null)
         ;
 
-        // на пути «кубок не найден» репозиторий событий не задействуется
-        $this->events->expects($this->never())->method($this->anything());
-
         $dto = new CupDto();
         $dto->name = 'test cup';
         $dto->eventsCount = 4;
@@ -81,21 +72,11 @@ final class UpdateCupServiceTest extends TestCase
     {
         /** @var Cup $cup */
         $cup = Cup::factory()->makeOne();
-        /** @var Event $event */
-        $event = Event::factory()->makeOne();
-
         $this->cups
             ->expects($this->once())
             ->method('lockById')
             ->with(1)
             ->willReturn($cup)
-        ;
-
-        $this->events
-            ->expects($this->once())
-            ->method('oneByCriteria')
-            ->with(new Criteria(['cupId' => $cup->id], ['date' => 'desc']))
-            ->willReturn($event)
         ;
 
         $this->cups->expects($this->once())->method('update');
@@ -112,7 +93,6 @@ final class UpdateCupServiceTest extends TestCase
 
         $this->assertSame('test cup', $cup->name);
         $this->assertSame(2023, $cup->year);
-        $this->assertEquals('4', $cup->eventsCount);
         $this->assertSame('master', $cup->type);
         $this->assertSame('2023-04-01T00:00:00+00:00', $cup->updated->at);
     }

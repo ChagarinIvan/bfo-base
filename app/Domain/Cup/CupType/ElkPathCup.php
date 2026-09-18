@@ -9,6 +9,7 @@ use App\Domain\Cup\Group\CupGroup;
 use App\Domain\Cup\Group\GroupAge;
 use App\Domain\Cup\Group\GroupMale;
 use App\Domain\ProtocolLine\Criteria\CupEventDistancesProtocolLinesCriteria;
+use App\Domain\Shared\Criteria;
 use Illuminate\Support\Collection;
 
 class ElkPathCup extends EliteCupType
@@ -33,7 +34,7 @@ class ElkPathCup extends EliteCupType
         return 'app.cup.type.elk_path';
     }
 
-    public function getGroups(): array|Collection
+    public function groups(): array
     {
         $groups = Collection::make();
 
@@ -50,7 +51,7 @@ class ElkPathCup extends EliteCupType
         $groups->push(new CupGroup(GroupMale::Woman, name: 'OpenTrail-W'));
         $groups->push(new CupGroup(GroupMale::Man, name: 'OpenTrail-M'));
 
-        return $groups;
+        return $groups->all();
     }
 
     protected function getGroupProtocolLines(CupEvent $cupEvent, CupGroup $group): Collection
@@ -62,14 +63,16 @@ class ElkPathCup extends EliteCupType
             return new Collection();
         }
 
-        return $this->protocolLinesRepository->byCriteria(
-            CupEventDistancesProtocolLinesCriteria::create(collect([$mainDistance]), $cupEvent)
-        );
+        return [$mainDistance]
+            |> collect(...)
+            |> (static fn(Collection $x): Criteria => CupEventDistancesProtocolLinesCriteria::create($x, $cupEvent))
+            |> $this->protocolLinesRepository->byCriteria(...)
+        ;
     }
 
     protected function getGroupsMap(CupGroup $group): array
     {
-        foreach ($this->getGroups() as $cupGroup) {
+        foreach ($this->groups() as $cupGroup) {
             if ($cupGroup->equal($group)) {
                 return self::GROUPS_MAP[$cupGroup->id()];
             }

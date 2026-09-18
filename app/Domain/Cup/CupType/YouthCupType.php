@@ -199,12 +199,12 @@ class YouthCupType extends MasterCupType
         return $results->sortByDesc(static fn (CupEventPoint $cupEventResult): float|int|string => $cupEventResult->points);
     }
 
-    public function getGroups(): array|Collection
+    public function groups(): array
     {
         return CupGroupFactory::getAgeTypeGroups([GroupAge::a12, GroupAge::a14, GroupAge::a16, GroupAge::a18]);
     }
 
-    public function getCalculatedGroups(): Collection
+    public function getCalculatedGroups(): array
     {
         return CupGroupFactory::getAgeTypeGroups([GroupAge::a12, GroupAge::a14, GroupAge::a16, GroupAge::a18, GroupAge::a20, GroupAge::a21]);
     }
