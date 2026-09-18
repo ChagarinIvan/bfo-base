@@ -35,17 +35,10 @@ final class EloquentCupRepository implements CupRepository
 
     public function byCriteria(Criteria $criteria): Collection
     {
-        $query = Cup::where('active', true)->orderByDesc('id');
-
-        if ($criteria->hasParam('visible')) {
-            $query->where('visible', $criteria->param('visible'));
-        }
-
-        if ($criteria->hasParam('year')) {
-            $query->where('year', $criteria->param('year'));
-        }
-
-        return $query->get();
+        return $this->applyCriteria(
+            Cup::where('active', true)->orderByDesc('id'),
+            $criteria,
+        )->get();
     }
 
     /** @return Slice<Cup> */
@@ -64,6 +57,14 @@ final class EloquentCupRepository implements CupRepository
     {
         $query = Cup::where('active', true)->orderByDesc('year')->orderByDesc('id');
 
+        return $this->applyCriteria($query, $criteria);
+    }
+
+    /** @param Builder<Cup> $query
+     * @return Builder<Cup>
+     */
+    private function applyCriteria(Builder $query, Criteria $criteria): Builder
+    {
         if ($criteria->hasParam('visible')) {
             $query->where('visible', $criteria->param('visible'));
         }

@@ -170,6 +170,7 @@
     "spa.cups.name_filter": "Поиск по названию",
     "spa.cups.name_hint": "Введите не менее 3 символов",
     "spa.cups.year": "Год",
+    "spa.cups.events_count": "Количество этапов",
     "spa.cups.last_date": "Дата последнего этапа",
     "spa.cups.groups": "Группы",
     "spa.cups.created": "Создан",

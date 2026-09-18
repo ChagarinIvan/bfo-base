@@ -29,6 +29,7 @@ final readonly class CupAssembler
         return new ViewCupDto(
             id: (string) $cup->id,
             name: $cup->name,
+            eventsCount: $cup->events_count,
             year: $cup->year->value,
             type: $cup->type->value,
             groups: array_map($this->toViewCupGroupDto(...), $cup->groups()),

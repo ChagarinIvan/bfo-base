@@ -41,6 +41,12 @@ let latestRequest = 0
 
 const columns = computed(() => [
     { key: 'name', label: t('spa.cups.name'), defaultVisible: true },
+    {
+        key: 'eventsCount',
+        label: t('spa.cups.events_count'),
+        field: 'eventsCount',
+        defaultVisible: true,
+    },
     { key: 'groups', label: t('spa.cups.groups'), defaultVisible: true },
     ...(auth.isAuthenticated
         ? [

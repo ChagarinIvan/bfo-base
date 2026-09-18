@@ -29,6 +29,7 @@ export interface CupGroup {
 export interface Cup {
     id: string
     name: string
+    eventsCount: string
     year: number
     type: string
     groups: CupGroup[]
