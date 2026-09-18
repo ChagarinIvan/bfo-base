@@ -479,6 +479,7 @@
     "spa.cup.edit.submit": "Захаваць",
     "spa.cup.edit.success": "Кубак паспяхова зменены.",
     "spa.cup.edit.error": "Не атрымалася змяніць кубак.",
+    "spa.cup.edit.load_error": "Не атрымалася загрузіць кубак.",
     "spa.cup.type": "Тып",
     "spa.cup.form.name": "Назва",
     "spa.cup.form.events_count": "Колькасць этапаў",

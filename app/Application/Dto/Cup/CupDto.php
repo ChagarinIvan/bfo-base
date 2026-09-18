@@ -18,7 +18,7 @@ final class CupDto extends AbstractDto
     public int $eventsCount;
     public int $year;
     public string $type;
-    public bool $visible = false;
+    public bool $visible = true;
 
     public static function requestValidationRules(): array
     {

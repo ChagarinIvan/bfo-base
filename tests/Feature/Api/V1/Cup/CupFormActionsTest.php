@@ -55,6 +55,19 @@ final class CupFormActionsTest extends TestCase
     }
 
     #[Test]
+    public function visibility_defaults_to_true_when_omitted_on_create(): void
+    {
+        Sanctum::actingAs($this->createUser());
+        $payload = $this->payload();
+        unset($payload['visible']);
+
+        $this->postJson('/api/v1/cups', $payload)
+            ->assertCreated()
+            ->assertJsonPath('visible', true)
+        ;
+    }
+
+    #[Test]
     public function it_validates_create_and_update_payloads(): void
     {
         Sanctum::actingAs($this->createUser());
@@ -68,6 +81,11 @@ final class CupFormActionsTest extends TestCase
             'eventsCount' => 0,
         ])->assertUnprocessable()
             ->assertJsonFragment(['field' => 'eventsCount']);
+
+        $this->assertDatabaseHas('cups', [
+            'id' => $cup->getKey(),
+            'events_count' => 3,
+        ]);
     }
 
     #[Test]
@@ -90,6 +108,13 @@ final class CupFormActionsTest extends TestCase
             ->assertJsonPath('name', 'Updated SPA cup')
             ->assertJsonPath('visible', false)
         ;
+
+        $this->assertDatabaseHas('cups', [
+            'id' => $cup->getKey(),
+            'name' => 'Updated SPA cup',
+            'events_count' => 4,
+            'visible' => false,
+        ]);
     }
 
     #[Test]

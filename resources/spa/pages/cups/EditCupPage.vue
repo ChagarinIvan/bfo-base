@@ -32,11 +32,23 @@ function isValidationError(
     )
 }
 
+function isNotFound(exception: unknown): boolean {
+    return (
+        typeof exception === 'object' &&
+        exception !== null &&
+        'isAxiosError' in exception &&
+        exception.isAxiosError === true &&
+        (exception as AxiosError).response?.status === 404
+    )
+}
+
 async function load(): Promise<void> {
     try {
         cup.value = await getCup(String(route.params.id))
-    } catch {
-        error.value = t('spa.cup.form.not_found')
+    } catch (exception: unknown) {
+        error.value = isNotFound(exception)
+            ? t('spa.cup.form.not_found')
+            : t('spa.cup.edit.load_error')
     } finally {
         loading.value = false
     }
@@ -55,8 +67,9 @@ async function submit(value: UpdateCupRequest): Promise<void> {
         })
         await router.push('/app/cups')
     } catch (exception: unknown) {
-        if (isValidationError(exception) && exception.response)
+        if (isValidationError(exception) && exception.response) {
             applyFieldErrors(exception.response.data.errors, fieldErrors)
+        }
         error.value = t('spa.cup.edit.error')
     } finally {
         pending.value = false

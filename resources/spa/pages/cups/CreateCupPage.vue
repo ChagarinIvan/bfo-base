@@ -41,8 +41,9 @@ async function submit(value: CreateCupRequest): Promise<void> {
         })
         await router.push('/app/cups')
     } catch (exception: unknown) {
-        if (isValidationError(exception) && exception.response)
+        if (isValidationError(exception) && exception.response) {
             applyFieldErrors(exception.response.data.errors, fieldErrors)
+        }
         error.value = t('spa.cup.create.error')
     } finally {
         pending.value = false

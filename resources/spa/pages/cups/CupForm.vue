@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, watch } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import Button from 'primevue/button'
 import Checkbox from 'primevue/checkbox'
 import InputNumber from 'primevue/inputnumber'
@@ -7,6 +7,7 @@ import InputText from 'primevue/inputtext'
 import Message from 'primevue/message'
 import Select from 'primevue/select'
 import { t, type TranslationKey } from '../../i18n'
+import { getYears } from '../../api/years'
 import type { CupFormRequest } from '../../api/types'
 
 const types = [
@@ -39,6 +40,10 @@ const props = withDefaults(
 )
 
 const emit = defineEmits<{ submit: [value: CupFormRequest] }>()
+const availableYears = ref<number[]>([])
+const yearOptions = computed(() =>
+    availableYears.value.map((year) => ({ label: String(year), value: year })),
+)
 const form = reactive<CupFormRequest>({
     name: '',
     eventsCount: 1,
@@ -64,6 +69,14 @@ watch(
 function submit(): void {
     emit('submit', { ...form, name: form.name.trim() })
 }
+
+onMounted(async () => {
+    try {
+        availableYears.value = await getYears()
+    } catch {
+        availableYears.value = []
+    }
+})
 </script>
 
 <template>
@@ -112,11 +125,12 @@ function submit(): void {
             </div>
             <div class="form-field">
                 <label for="cup-year">{{ t('spa.cup.form.year') }}</label>
-                <InputNumber
+                <Select
                     id="cup-year"
                     v-model="form.year"
-                    :use-grouping="false"
-                    required
+                    :options="yearOptions"
+                    option-label="label"
+                    option-value="value"
                     :invalid="Boolean(errors.year)"
                 />
                 <small v-if="errors.year" class="field-error">{{
