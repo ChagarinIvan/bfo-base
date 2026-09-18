@@ -22,6 +22,8 @@ final readonly class AuthenticateApiV1
 
     public function handle(Request $request, Closure $next): Response
     {
+        $this->container->forgetInstance(UserId::class);
+
         $user = $this->auth->guard('sanctum')->user();
         if (!$user) {
             return response()->json(['errors' => [[

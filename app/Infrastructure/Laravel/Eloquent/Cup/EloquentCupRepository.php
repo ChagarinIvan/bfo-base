@@ -7,10 +7,17 @@ namespace App\Infrastructure\Laravel\Eloquent\Cup;
 use App\Domain\Cup\Cup;
 use App\Domain\Cup\CupRepository;
 use App\Domain\Shared\Criteria;
+use App\Domain\Shared\Pagination\Slice;
+use App\Infrastructure\Laravel\Eloquent\Pagination\EloquentQueryAdapter;
+use App\Infrastructure\Laravel\Eloquent\Shared\EscapesLikePatterns;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use function mb_strtolower;
 
 final class EloquentCupRepository implements CupRepository
 {
+    use EscapesLikePatterns;
+
     public function add(Cup $cup): void
     {
         $cup->create();
@@ -28,8 +35,36 @@ final class EloquentCupRepository implements CupRepository
 
     public function byCriteria(Criteria $criteria): Collection
     {
-        $query = Cup::where('active', true)->orderByDesc('id');
+        return $this->applyCriteria(
+            Cup::where('active', true)->orderByDesc('id'),
+            $criteria,
+        )->get();
+    }
 
+    /** @return Slice<Cup> */
+    public function paginate(Criteria $criteria): Slice
+    {
+        return new Slice(new EloquentQueryAdapter($this->createQuery($criteria)));
+    }
+
+    public function update(Cup $cup): void
+    {
+        $cup->save();
+    }
+
+    /** @return Builder<Cup> */
+    private function createQuery(Criteria $criteria): Builder
+    {
+        $query = Cup::where('active', true)->orderByDesc('year')->orderByDesc('id');
+
+        return $this->applyCriteria($query, $criteria);
+    }
+
+    /** @param Builder<Cup> $query
+     * @return Builder<Cup>
+     */
+    private function applyCriteria(Builder $query, Criteria $criteria): Builder
+    {
         if ($criteria->hasParam('visible')) {
             $query->where('visible', $criteria->param('visible'));
         }
@@ -38,11 +73,15 @@ final class EloquentCupRepository implements CupRepository
             $query->where('year', $criteria->param('year'));
         }
 
-        return $query->get();
-    }
+        if ($criteria->hasParam('name')) {
+            $name = $this->escapeLikePattern(mb_strtolower((string) $criteria->param('name')));
 
-    public function update(Cup $cup): void
-    {
-        $cup->save();
+            $query->whereRaw(
+                "LOWER(name) LIKE ? ESCAPE '!'",
+                ['%' . $name . '%'],
+            );
+        }
+
+        return $query;
     }
 }

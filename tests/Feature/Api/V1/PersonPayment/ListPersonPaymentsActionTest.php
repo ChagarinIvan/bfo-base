@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Api\V1\PersonPayment;
 
+use App\Bridge\Laravel\Http\Controllers\Api\V1\PersonPayment\ListPersonPaymentsAction;
 use App\Domain\Person\Person;
 use App\Domain\PersonPayment\PersonPayment;
 use App\Infrastructure\Sanctum\SanctumUser;
@@ -16,6 +17,8 @@ use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 use function str_contains;
 use function strtolower;
+
+/** @see ListPersonPaymentsAction */
 
 final class ListPersonPaymentsActionTest extends TestCase
 {

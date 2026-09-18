@@ -41,7 +41,7 @@ final class DeleteCupActionTest extends TestCase
 
         $this->get('/cups/101/delete')
             ->assertStatus(Response::HTTP_FOUND)
-            ->assertRedirect('/cups?year=2022')
+            ->assertRedirect('/app/cups')
         ;
 
         $this->assertDatabaseHas('cups', [

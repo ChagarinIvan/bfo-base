@@ -12,16 +12,13 @@ use App\Domain\Cup\Cup;
 use App\Domain\Cup\CupEvent\CupEvent;
 use App\Domain\Cup\CupEvent\CupEventPoint;
 use App\Domain\Cup\Group\CupGroup;
-use App\Domain\Event\EventRepository;
 use App\Domain\Event\EventResources;
-use App\Domain\Shared\Criteria;
 use function array_map;
 use function sprintf;
 
 final readonly class CupAssembler
 {
     public function __construct(
-        private EventRepository $events,
         private EventAssembler $eventAssembler,
         private AuthAssembler $authAssembler,
     ) {
@@ -29,16 +26,13 @@ final readonly class CupAssembler
 
     public function toViewCupDto(Cup $cup): ViewCupDto
     {
-        $eventCriteria = new Criteria(['cupId' => $cup->id], ['date' => 'desc']);
-
         return new ViewCupDto(
             id: (string) $cup->id,
             name: $cup->name,
             eventsCount: (string) $cup->events_count,
             year: $cup->year->value,
             type: $cup->type->value,
-            groups: $this->toViewCupGroupsDto($cup),
-            lastEventDate: $this->events->oneByCriteria($eventCriteria)?->date->format('Y-m-d') ?? '',
+            groups: array_map($this->toViewCupGroupDto(...), $cup->groups()),
             visible: $cup->visible,
             created: $this->authAssembler->toImpressionDto($cup->created),
             updated: $this->authAssembler->toImpressionDto($cup->updated),
@@ -59,7 +53,7 @@ final readonly class CupAssembler
         return new ViewCalculatedCupEventDto(
             cupName: $cup->name,
             cupYear: $cup->year->toString(),
-            cupGroups: $this->toViewCupGroupsDto($cup),
+            cupGroups: array_map($this->toViewCupGroupDto(...), $cup->groups()),
             cupEvent: $this->toViewCupEventDto($cupEvent),
             points: array_map($this->toViewCupEventPointDto(...), $points),
         );
@@ -79,14 +73,6 @@ final readonly class CupAssembler
                 new EventResources(withCompetitionName: true),
             ),
         );
-    }
-
-    private function toViewCupGroupsDto(Cup $cup): array
-    {
-        $cupTypeInstance = $cup->type->instance();
-        $cupGroups = $cupTypeInstance->getGroups()->toArray();
-
-        return array_map($this->toViewCupGroupDto(...), $cupGroups);
     }
 
     private function toViewCupEventPointDto(CupEventPoint $point): ViewCupEventPointDto

@@ -13,7 +13,6 @@ use App\Application\Service\Cup\DisableCupService;
 use App\Application\Service\Cup\Exception\CupNotFound;
 use App\Domain\Cup\Cup;
 use App\Domain\Cup\CupRepository;
-use App\Domain\Event\EventRepository;
 use App\Domain\Shared\DummyTransactional;
 use App\Domain\Shared\FrozenClock;
 use PHPUnit\Framework\Attributes\Test;
@@ -35,7 +34,6 @@ final class DisableCupServiceTest extends TestCase
             $this->cups = $this->createMock(CupRepository::class),
             new FrozenClock(),
             new CupAssembler(
-                $this->createStub(EventRepository::class),
                 new EventAssembler($authAssembler),
                 $authAssembler,
             ),

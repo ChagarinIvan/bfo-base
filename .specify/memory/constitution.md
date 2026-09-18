@@ -1,7 +1,7 @@
 <!--
 Отчёт о синхронизации (Sync Impact Report)
 ===========================================
-Изменение версии: 2.3.0 → 2.4.0
+Изменение версии: 2.4.0 → 2.5.0
 Обоснование бампа (MINOR): явно закреплён целевой паттерн Domain repository port +
 Infrastructure Eloquent implementation и разграничен с запрещёнными legacy-каталогами.
 
@@ -9,6 +9,9 @@ Infrastructure Eloquent implementation и разграничен с запрещ
   - I. Слоистая архитектура и границы домена — разрешены и предписаны новые Domain repository
     ports, Infrastructure Eloquent implementations и Application services; запрещено только
     расширение legacy `app/Repositories` и `app/Services`.
+  - VIII. Обязательный контракт V1 API и SPA — нормативные правила перенесены из
+    `api-v1-manifest.md` в Конституцию; добавлена обязательная связь API request-тестов с actions
+    через class-level `@see`.
 
 Разделы, требующие сверки при следующей генерации:
   ✅ .specify/memory/constitution.md (этот файл)
@@ -21,7 +24,8 @@ Infrastructure Eloquent implementation и разграничен с запрещ
 2.2.0 (принцип VI — импорт вместо FQCN) → 2.2.1 (синхронизация версий стека после апгрейда) →
 2.2.2 (разграничение legacy `app/Services` и Application-сервисов) → 2.2.3 (уточнения стека) →
 2.3.0 (commands, criteria/resources и domain mutation policies) → 2.4.0 (явное разрешение
-целевых repository ports и Eloquent adapters).
+целевых repository ports и Eloquent adapters) → 2.5.0 (обязательный контракт V1 API/SPA и
+class-level `@see` в API request-тестах).
 
 Отложенные TODO: нет. Дата ратификации сохранена (2026-08-18), дата последней правки — 2026-08-31.
 -->
@@ -148,6 +152,42 @@ BFO Base — бэкенд-платформа для белорусского с�
 Обоснование: эти контракты исключают transport leakage в use cases, разрастание repository API,
 скрытые N+1 и потерю domain events при persistence-операциях.
 
+### VIII. Обязательный контракт V1 API и SPA
+
+Правила нового версионированного API и пилотного SPA обязательны для проекта. Файл
+`specs/004-spa-foundation/contracts/api-v1-manifest.md` является производным справочным контрактом;
+при расхождении приоритет у этой Конституции.
+
+- Правила раздела относятся к `/api/v1/*`; legacy API, Blade-маршруты и старые `Api\\`-контроллеры
+  находятся вне его области.
+- HTTP boundary V1 находится в `App\\Bridge\\Laravel\\Http\\Controllers\\Api\\V1`.
+- API actions принимают Application DTO, передают command в Application service и возвращают
+  `View*Dto` или массив DTO. Они не работают с полями Request, Eloquent и ручной сериализацией.
+- Application services принимают command; DTO-маппинг выполняют отдельные Assembler-классы.
+- Application services зависят от доменных интерфейсов, а Laravel/Sanctum-адаптеры находятся в
+  Infrastructure.
+- Пагинация выполняется в доменном repository через `Slice` и Pagerfanta adapter; загрузка всех
+  записей в память запрещена.
+- Все DTO сериализуются общим Bridge-сериализатором. Поля `#[Groups(['authenticated'])]` выдаются
+  только при валидном Bearer-токене.
+- Ожидаемые API-ошибки наследуются от `ApplicationException` и имеют `#[HttpError]`; `Handler` не
+  используется для их преобразования. Пароли и внутренние поля пользователей не попадают в DTO.
+- Все query-параметры и JSON-поля V1 используют `camelCase` (`perPage`, `competitionId`). Каждый
+  новый или изменённый endpoint покрывается request-тестом с camelCase-параметрами.
+- V1 использует Sanctum Bearer token, TTL токена — 1440 минут, refresh token отсутствует.
+- `ApiAction` получает текущего пользователя из authenticated context и регистрирует `UserId` в
+  контейнере; actions принимают пользователя типизированным параметром, когда он нужен.
+- SPA поддерживает только белорусский язык. Русская локализация SPA не поддерживается; тексты
+  берутся из `resources/lang/by.json` через `resources/spa/i18n.ts`.
+- SPA наследует визуальную базу legacy Blade; интерактивные элементы реализуются PrimeVue.
+
+#### Связь request-тестов с API actions
+
+- Каждый request-тест V1 API обязан иметь class-level PHPDoc `@see` на action-контроллер,
+  обслуживающий проверяемый endpoint.
+- Если тестовый класс проверяет несколько actions, он обязан содержать отдельный `@see` для каждого.
+- В `@see` используются импортированные короткие имена action-классов.
+
 ## Технологические и архитектурные ограничения
 
 - Рантайм: PHP 8.5 на Laravel 13. Новый код ориентируется на актуальные версии.
@@ -214,4 +254,4 @@ BFO Base — бэкенд-платформа для белорусского с�
   повторяемости — оформляются поправкой.
 - Сложность требует обоснования: предпочитаем простейшее решение, удовлетворяющее принципам.
 
-**Версия**: 2.4.0 | **Ратифицирована**: 2026-08-18 | **Последняя правка**: 2026-09-10
+**Версия**: 2.5.0 | **Ратифицирована**: 2026-08-18 | **Последняя правка**: 2026-09-18

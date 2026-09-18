@@ -1,6 +1,4 @@
 @php
-    use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupsListAction;
-    use App\Models\Year;
     /**
      * @var bool $isAuth;
      * @var bool $isCompetitionsRoute;
@@ -33,7 +31,7 @@
                         </li>
                         <li>
                             <a class="dropdown-item {{ $isCupsRoute ? 'active' : '' }}"
-                               href="{{ action(ShowCupsListAction::class, ['year' => (string)Year::actualYear()->value, 'visible' => true]) }}"
+                               href="/app/cups"
                             >{{ __('app.navbar.cups') }}</a>
                         </li>
                         <li>

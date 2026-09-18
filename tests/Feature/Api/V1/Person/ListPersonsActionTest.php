@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Api\V1\Person;
 
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\ListPersonsAction;
 use App\Domain\Club\Club;
 use App\Domain\Person\Citizenship;
 use App\Domain\Person\Person;
@@ -19,6 +20,8 @@ use Tests\TestCase;
 use function array_filter;
 use function str_contains;
 use function strtolower;
+
+/** @see ListPersonsAction */
 
 final class ListPersonsActionTest extends TestCase
 {

@@ -132,7 +132,7 @@ class MasterCupType extends AbstractCupType
         return $results->sortByDesc(static fn (CupEventPoint $cupEventResult): float|int|string => $cupEventResult->points);
     }
 
-    public function getGroups(): array|Collection
+    public function groups(): array
     {
         return CupGroupFactory::getAgeTypeGroups([
             GroupAge::a35,
@@ -148,9 +148,10 @@ class MasterCupType extends AbstractCupType
         ]);
     }
 
-    public function getCalculatedGroups(): Collection
+    /** @return CupGroup[] */
+    public function getCalculatedGroups(): array
     {
-        return $this->getGroups();
+        return $this->groups();
     }
 
     protected function calculateGroup(CupEvent $cupEvent, int $groupId): Collection
@@ -178,7 +179,6 @@ class MasterCupType extends AbstractCupType
     {
         $groupNames = [];
 
-        /** @var CupGroup $cupGroup */
         foreach ($this->getCalculatedGroups() as $cupGroup) {
             if ($cupGroup->male() === $male) {
                 $groupNames = array_merge(

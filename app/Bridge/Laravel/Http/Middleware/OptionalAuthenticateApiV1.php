@@ -22,7 +22,10 @@ final readonly class OptionalAuthenticateApiV1
 
     public function handle(Request $request, Closure $next): Response
     {
+        $this->container->forgetInstance(UserId::class);
+
         $user = $this->auth->guard('sanctum')->user();
+
         if ($user) {
             $request->setUserResolver(static fn () => $user);
             $this->container->instance(UserId::class, new UserId((int) $this->auth->guard('sanctum')->id()));

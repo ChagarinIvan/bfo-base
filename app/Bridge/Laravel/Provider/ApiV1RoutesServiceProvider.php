@@ -19,6 +19,7 @@ use App\Bridge\Laravel\Http\Controllers\Api\V1\Competition\DeleteCompetitionActi
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Competition\ListCompetitionsAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Competition\UpdateCompetitionAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Competition\ViewCompetitionAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\ListCupsAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Distance\ListDistancesAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Event\CreateEventAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Event\DeleteEventAction;
@@ -78,6 +79,7 @@ final class ApiV1RoutesServiceProvider extends ServiceProvider
 
             $router->prefix('api/v1')->middleware(OptionalAuthenticateApiV1::class)->group(static function () use ($router): void {
                 $router->get('competitions', ListCompetitionsAction::class);
+                $router->get('cups', ListCupsAction::class);
                 $router->get('competitions/{competitionId}', ViewCompetitionAction::class);
                 $router->get('clubs', ListClubsAction::class);
                 $router->get('clubs/all', ListAllClubAction::class);

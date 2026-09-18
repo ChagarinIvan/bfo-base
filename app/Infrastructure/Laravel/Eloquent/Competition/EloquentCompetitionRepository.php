@@ -9,11 +9,14 @@ use App\Domain\Competition\CompetitionRepository;
 use App\Domain\Shared\Criteria;
 use App\Domain\Shared\Pagination\Slice;
 use App\Infrastructure\Laravel\Eloquent\Pagination\EloquentQueryAdapter;
+use App\Infrastructure\Laravel\Eloquent\Shared\EscapesLikePatterns;
 use Illuminate\Database\Eloquent\Builder;
 use function mb_strtolower;
 
 final class EloquentCompetitionRepository implements CompetitionRepository
 {
+    use EscapesLikePatterns;
+
     public function add(Competition $competition): void
     {
         $competition->create();
@@ -55,9 +58,11 @@ final class EloquentCompetitionRepository implements CompetitionRepository
         }
 
         if ($criteria->hasParam('name')) {
+            $name = $this->escapeLikePattern(mb_strtolower((string) $criteria->param('name')));
+
             $query->whereRaw(
-                'LOWER(name) LIKE ?',
-                ['%' . mb_strtolower((string) $criteria->param('name')) . '%'],
+                "LOWER(name) LIKE ? ESCAPE '!'",
+                ['%' . $name . '%'],
             );
         }
 

@@ -18,7 +18,6 @@ use App\Domain\Cup\CupEvent\CupEventRepository;
 use App\Domain\Cup\CupRepository;
 use App\Domain\Cup\CupType;
 use App\Domain\Event\Event;
-use App\Domain\Event\EventRepository;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
@@ -31,8 +30,6 @@ final class CalculateCupEventServiceTest extends TestCase
 
     private CupEventRepository&MockObject $cupEvents;
 
-    private EventRepository&MockObject $events;
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -42,7 +39,6 @@ final class CalculateCupEventServiceTest extends TestCase
             $this->cups = $this->createMock(CupRepository::class),
             $this->cupEvents = $this->createMock(CupEventRepository::class),
             new CupAssembler(
-                $this->events = $this->createMock(EventRepository::class),
                 new EventAssembler($authAssembler),
                 $authAssembler,
             ),
@@ -62,8 +58,6 @@ final class CalculateCupEventServiceTest extends TestCase
         ;
 
         $this->cupEvents->expects($this->never())->method('byId');
-        $this->events->expects($this->never())->method('oneByCriteria');
-
         $command = new CalculateCupEvent('1', '1', 'M_');
         $this->service->execute($command);
     }
@@ -89,8 +83,6 @@ final class CalculateCupEventServiceTest extends TestCase
             ->with(1)
             ->willReturn(null)
         ;
-
-        $this->events->expects($this->never())->method('oneByCriteria');
 
         $command = new CalculateCupEvent('1', '1', 'M_');
         $this->service->execute($command);
@@ -119,8 +111,6 @@ final class CalculateCupEventServiceTest extends TestCase
             ->with(1)
             ->willReturn($cupEvent)
         ;
-
-        $this->events->expects($this->never())->method('oneByCriteria');
 
         $command = new CalculateCupEvent('1', '1', 'test');
         $this->service->execute($command);
@@ -152,8 +142,6 @@ final class CalculateCupEventServiceTest extends TestCase
             ->with(1)
             ->willReturn($cupEvent)
         ;
-
-        $this->events->expects($this->never())->method('oneByCriteria');
 
         $command = new CalculateCupEvent('1', '1', 'M_0_');
         $result = $this->service->execute($command);

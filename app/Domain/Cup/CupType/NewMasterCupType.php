@@ -213,7 +213,7 @@ class NewMasterCupType extends AbstractCupType
         return $result->sortByDesc(static fn (CupEventPoint $cupEventResult): float|int|string => $cupEventResult->points);
     }
 
-    public function getGroups(): array|Collection
+    public function groups(): array
     {
         return CupGroupFactory::getAgeTypeGroups([
             GroupAge::a35,
@@ -360,7 +360,7 @@ class NewMasterCupType extends AbstractCupType
             return self::$eventGroups[$male->value];
         }
 
-        $groups = collect($this->getGroups())
+        $groups = collect($this->groups())
             ->filter(static fn (CupGroup $g): bool => $g->male() === $male)
             ->flatMap(static fn(CupGroup $g) => collect(static::GROUPS_MAP[$g->id()])
                 ->map(static fn ($name): array => [
