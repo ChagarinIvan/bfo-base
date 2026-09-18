@@ -16,13 +16,13 @@ available without adding dependencies or remote assets:
 | Cup type | Icon | Meaning |
 |---|---|---|
 | elite | `fa-running` | adult running |
-| master | `fa-user-tie` | veteran |
+| master | `fa-user` | veteran |
 | sprint | `fa-bolt` | sprint/speed |
 | bike | `fa-bicycle` | bicycle |
 | juniors | `fa-user-graduate` | junior |
 | youth | `fa-child` | youth |
 | new_youth | `fa-child` | youth |
-| new_master | `fa-user-tie` | veteran |
+| new_master | `fa-user` | veteran |
 | ski | `fa-skiing` | skiing |
 | elk_path | bundled SVG moose | elk path |
 

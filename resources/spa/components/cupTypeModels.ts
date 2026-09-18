@@ -32,7 +32,7 @@ const definitions: Record<CupType, CupTypeDefinition> = {
     },
     master: {
         type: 'master',
-        icon: 'fas fa-user-tie',
+        icon: 'fas fa-user',
         label: 'app.cup.type.master',
         fallback: false,
     },
@@ -68,7 +68,7 @@ const definitions: Record<CupType, CupTypeDefinition> = {
     },
     new_master: {
         type: 'new_master',
-        icon: 'fas fa-running',
+        icon: 'fas fa-user',
         label: 'app.cup.type.new_master',
         fallback: false,
     },

@@ -89,10 +89,10 @@ describe('cups page', () => {
                 },
                 {
                     id: '2',
-                    name: 'Bike Cup',
+                    name: 'Sprint Cup',
                     eventsCount: '3',
                     year: 2026,
-                    type: 'bike',
+                    type: 'sprint',
                     groups: [],
                     visible: true,
                 },
@@ -117,7 +117,10 @@ describe('cups page', () => {
         )
         expect(wrapper.findAll('.cup-type-icon')).toHaveLength(2)
         expect(wrapper.find('.cup-type-icon i').classes()).toEqual(
-            expect.arrayContaining(['fa-user-tie']),
+            expect.arrayContaining(['fa-user']),
+        )
+        expect(wrapper.findAll('.cup-type-icon i')[1].classes()).toEqual(
+            expect.arrayContaining(['fa-bolt']),
         )
     })
 

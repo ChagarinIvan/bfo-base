@@ -44,7 +44,7 @@ the API and persisted cup model remain unchanged.
   already depends on `@fortawesome/fontawesome-free` for the legacy bundle.
 - PrimeIcons does not provide the needed bicycle, skiing, and running symbols;
   Font Awesome 5 free provides `fa-bicycle`, `fa-skiing`, `fa-running`,
-  `fa-user-tie`, `fa-user-graduate`, `fa-child`, and `fa-bolt`. The elk-path
+  `fa-user`, `fa-user-graduate`, `fa-child`, and `fa-bolt`. The elk-path
   cup uses a small bundled SVG moose illustration because the icon set has no
   suitable moose icon.
 - PrimeVue `Select` supports `#option` and `#value` slots, so type options can

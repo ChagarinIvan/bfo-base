@@ -24,6 +24,9 @@ describe('cup type models', () => {
         expect(cupTypeDefinitions.elite.icon).not.toBe(
             cupTypeDefinitions.master.icon,
         )
+        expect(cupTypeDefinitions.master.icon).toBe(
+            cupTypeDefinitions.new_master.icon,
+        )
         expect(cupTypeDefinitions.juniors.icon).not.toBe(
             cupTypeDefinitions.youth.icon,
         )
