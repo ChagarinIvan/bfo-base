@@ -209,7 +209,7 @@ onBeforeUnmount(() => debouncedSearch.cancel())
             <Button
                 v-if="auth.isAuthenticated"
                 icon="pi pi-plus"
-                :label="t('spa.nav.create')"
+                :label="t('spa.cups.create')"
                 severity="success"
                 @click="router.push('/cups/create')"
             />
@@ -281,19 +281,30 @@ onBeforeUnmount(() => debouncedSearch.cancel())
             </a>
         </template>
         <template #cell-visible="{ data }">
-            <i
-                :class="data.visible ? 'pi pi-eye' : 'pi pi-eye-slash'"
-                :aria-label="
-                    data.visible
-                        ? t('spa.cups.visible_yes')
-                        : t('spa.cups.visible_no')
-                "
-                :title="
-                    data.visible
-                        ? t('spa.cups.visible_yes')
-                        : t('spa.cups.visible_no')
-                "
-            />
+            <span class="mass-competition-indicator__icon">
+                <i
+                    :class="[
+                        data.visible
+                            ? 'pi pi-check-square'
+                            : 'pi pi-times-circle',
+                        'mass-icon',
+                        data.visible
+                            ? 'mass-icon--active'
+                            : 'mass-icon--inactive',
+                    ]"
+                    :aria-label="
+                        data.visible
+                            ? t('spa.cups.visible_yes')
+                            : t('spa.cups.visible_no')
+                    "
+                    :title="
+                        data.visible
+                            ? t('spa.cups.visible_yes')
+                            : t('spa.cups.visible_no')
+                    "
+                    role="img"
+                />
+            </span>
         </template>
         <template #cell-created="{ data }"
             ><ImpressionDetails

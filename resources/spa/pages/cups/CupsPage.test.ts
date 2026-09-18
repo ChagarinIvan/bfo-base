@@ -161,7 +161,9 @@ describe('cups page', () => {
         const groupBadges = wrapper.findAll('.cup-group-badge')
         expect(groupBadges[0].classes()).not.toEqual(groupBadges[1].classes())
         expect(wrapper.find('.action-menu').exists()).toBe(true)
-        expect(wrapper.find('.pi-eye').attributes('aria-label')).toBe('Бачныя')
+        expect(wrapper.find('.pi-check-square').attributes('aria-label')).toBe(
+            'Бачныя',
+        )
         expect(wrapper.get('[data-testid="columns"]').text()).toContain(
             'actions',
         )
