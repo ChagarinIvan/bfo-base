@@ -34,8 +34,8 @@ function go(page: number, rows = props.pagination.perPage): void {
             :disabled="pagination.currentPage <= 1"
             @click="go(pagination.currentPage - 2)"
         />
-        <span class="slice-paginator__page">
-            Page {{ pagination.currentPage }}
+        <span class="slice-paginator__page" aria-current="page">
+            {{ pagination.currentPage }}
         </span>
         <Button
             icon="pi pi-chevron-right"
@@ -64,7 +64,14 @@ function go(page: number, rows = props.pagination.perPage): void {
 }
 
 .slice-paginator__page {
-    min-width: 5rem;
+    align-items: center;
+    background: var(--p-primary-color);
+    border-radius: var(--p-paginator-nav-button-border-radius);
+    color: var(--p-primary-contrast-color);
+    display: inline-flex;
+    min-width: 2.5rem;
+    min-height: var(--p-paginator-nav-button-height);
     text-align: center;
+    justify-content: center;
 }
 </style>

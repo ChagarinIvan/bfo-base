@@ -11,8 +11,6 @@ use Iterator;
 use IteratorAggregate;
 use JsonSerializable;
 use Traversable;
-use function array_keys;
-use function array_map;
 use function array_slice;
 use function array_values;
 use function count;
@@ -111,16 +109,9 @@ final class Slice implements JsonSerializable, Countable, IteratorAggregate
      */
     public function map(callable $transformer): self
     {
-        $items = $this->items();
-        $mappedItems = $items
-                |> array_keys(...)
-                |> (static fn($x) => array_map($transformer, $items, $x, ))
-                |> array_values(...);
-        $slice = new self(new ArraySliceAdapter($mappedItems));
+        $slice = new self(new TransformingSliceAdapter($this->adapter, $transformer));
         $slice->perPage = $this->perPage;
         $slice->currentPage = $this->currentPage;
-        $slice->hasNext = $this->hasNext();
-        $slice->items = $mappedItems;
 
         return $slice;
     }

@@ -51,6 +51,19 @@ final class SliceTest extends TestCase
         $this->assertFalse($slice->hasNext());
         $this->assertSame(['offset' => 20, 'length' => 21], $adapter->read);
     }
+
+    #[Test]
+    public function it_maps_lazily_after_page_settings_are_applied(): void
+    {
+        $adapter = new SpySliceAdapter(range(1, 41));
+        $slice = new Slice($adapter);
+        $mapped = $slice->map(static fn (int $item): int => $item * 10);
+        $mapped->setPerPage(20)->setCurrentPage(2);
+
+        $this->assertSame(210, $mapped->items()[0]);
+        $this->assertTrue($mapped->hasNext());
+        $this->assertSame(['offset' => 20, 'length' => 21], $adapter->read);
+    }
 }
 
 /** @implements SliceAdapter<int> */
