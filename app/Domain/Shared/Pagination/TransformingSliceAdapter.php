@@ -19,13 +19,13 @@ use function iterator_to_array;
 final readonly class TransformingSliceAdapter implements SliceAdapter
 {
     /** @var Closure(T, array-key): TTransformed */
-    private readonly Closure $transformer;
+    private Closure $transformer;
     /**
      * @param SliceAdapter<T> $adapter
      * @param callable(T, array-key): TTransformed $transformer
      */
     public function __construct(
-        private readonly SliceAdapter $adapter,
+        private SliceAdapter $adapter,
         callable $transformer,
     ) {
         $this->transformer = Closure::fromCallable($transformer);

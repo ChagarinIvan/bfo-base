@@ -14,8 +14,8 @@ const props = withDefaults(
 const emit = defineEmits<{ page: [event: PageState] }>()
 
 function syntheticTotalRecords(): number {
-    const visiblePages = props.pagination.currentPage +
-        (props.pagination.hasNext ? 1 : 0)
+    const visiblePages =
+        props.pagination.currentPage + (props.pagination.hasNext ? 1 : 0)
 
     return props.pagination.perPage * visiblePages
 }
