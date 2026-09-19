@@ -270,8 +270,8 @@ onBeforeUnmount(() => debouncedSearch.cancel())
         </template>
         <template #cell-name="{ data }">
             <RouterLink :to="`/app/cups/${data.id}`">
-              <CupTypeIcon :type="data.type" />
-              <span>{{ data.name }}</span>
+                <CupTypeIcon :type="data.type" />
+                <span>{{ data.name }}</span>
             </RouterLink>
         </template>
         <template #cell-groups="{ data }">

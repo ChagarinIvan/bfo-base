@@ -219,6 +219,35 @@ onBeforeUnmount(() => debouncedSearch.cancel())
                                 }}
                             </td>
                         </tr>
+                        <tr>
+                            <th>{{ t('spa.cups.visibility') }}</th>
+                            <td>
+                                <span class="mass-competition-indicator__icon">
+                                    <i
+                                        :class="[
+                                            cup.visible
+                                                ? 'pi pi-check-square'
+                                                : 'pi pi-times-circle',
+                                            'mass-icon',
+                                            cup.visible
+                                                ? 'mass-icon--active'
+                                                : 'mass-icon--inactive',
+                                        ]"
+                                        :aria-label="
+                                            cup.visible
+                                                ? t('spa.cups.visible_yes')
+                                                : t('spa.cups.visible_no')
+                                        "
+                                        :title="
+                                            cup.visible
+                                                ? t('spa.cups.visible_yes')
+                                                : t('spa.cups.visible_no')
+                                        "
+                                        role="img"
+                                    />
+                                </span>
+                            </td>
+                        </tr>
                         <tr v-if="auth.isAuthenticated">
                             <th>{{ t('spa.cups.created') }}</th>
                             <td>

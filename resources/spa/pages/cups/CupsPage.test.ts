@@ -15,7 +15,10 @@ const { getCups, getYears, auth } = vi.hoisted(() => ({
 
 vi.mock('../../api/cups', () => ({ getCups }))
 vi.mock('../../api/years', () => ({ getYears }))
-vi.mock('vue-router', () => ({ useRouter: () => ({ push: vi.fn() }) }))
+vi.mock('vue-router', () => ({
+    RouterLink: { props: ['to'], template: '<a :href="to"><slot /></a>' },
+    useRouter: () => ({ push: vi.fn() }),
+}))
 vi.mock('../../stores/auth', async () => {
     const { reactive } = await import('vue')
     const store = reactive(auth)

@@ -19,7 +19,6 @@ use Tests\TestCase;
 
 /**
  * @see CreateCupAction
- * @see ViewCupAction
  * @see UpdateCupAction
  */
 final class CupFormActionsTest extends TestCase
@@ -30,7 +29,6 @@ final class CupFormActionsTest extends TestCase
     public function unauthenticated_clients_cannot_use_cup_form_api(): void
     {
         $this->postJson('/api/v1/cups', $this->payload())->assertUnauthorized();
-        $this->getJson('/api/v1/cups/101')->assertUnauthorized();
         $this->putJson('/api/v1/cups/101', $this->payload())->assertUnauthorized();
     }
 

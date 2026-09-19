@@ -94,6 +94,9 @@ describe('cup view page', () => {
             'actions',
         )
         expect(wrapper.find('.action-menu').exists()).toBe(false)
+        expect(wrapper.find('.pi-check-square').attributes('aria-label')).toBe(
+            'Бачныя',
+        )
     })
 
     it('renders authenticated card and stage controls', async () => {
