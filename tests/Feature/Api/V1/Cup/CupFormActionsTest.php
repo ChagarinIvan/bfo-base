@@ -6,7 +6,6 @@ namespace Tests\Feature\Api\V1\Cup;
 
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\CreateCupAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\UpdateCupAction;
-use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\ViewCupAction;
 use App\Domain\Cup\Cup;
 use App\Domain\Cup\CupType;
 use App\Infrastructure\Sanctum\SanctumUser;
