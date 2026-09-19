@@ -1,4 +1,4 @@
-import type { CupSearchQuery } from '../../api/types'
+import type { CupGroup, CupSearchQuery } from '../../api/types'
 import {
     NAME_SEARCH_MINIMUM_LENGTH,
     normaliseNameSearch,
@@ -24,4 +24,24 @@ export function cupQuery(filters: CupSearchQuery): CupSearchQuery {
     if (filters.perPage !== undefined) query.perPage = filters.perPage
 
     return query
+}
+
+const cupGroupColors = [
+    'blue',
+    'green',
+    'orange',
+    'purple',
+    'pink',
+    'cyan',
+    'indigo',
+    'teal',
+] as const
+
+export function cupGroupBadgeClass(group: CupGroup): string {
+    let hash = 0
+    for (const character of group.id) {
+        hash = (hash * 31 + character.charCodeAt(0)) >>> 0
+    }
+
+    return `cup-group-badge--${cupGroupColors[hash % cupGroupColors.length]}`
 }

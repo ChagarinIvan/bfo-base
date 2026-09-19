@@ -23,6 +23,10 @@ body {
     color: var(--spa-accent);
 }
 
+.cup-type-icon--standalone {
+    margin-inline-end: 0.4rem;
+}
+
 .cup-type-icon__svg {
     width: 1.1em;
     height: 1.1em;

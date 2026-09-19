@@ -21,6 +21,7 @@ import DateFilter from '../../components/DateFilter.vue'
 import FilterPanel from '../../components/FilterPanel.vue'
 import ImpressionDetails from '../../components/ImpressionDetails.vue'
 import ListingTable from '../../components/ListingTable.vue'
+import CupTypeIcon from '../../components/CupTypeIcon.vue'
 import { t } from '../../i18n'
 import { useAuthStore } from '../../stores/auth'
 import { getUsers } from '../../api/users'
@@ -30,6 +31,7 @@ import {
     paginationFromHeaders,
 } from '../listingModels'
 import { cupEventQuery } from './cupViewModels'
+import { cupGroupBadgeClass } from './cupModels'
 
 const route = useRoute()
 const router = useRouter()
@@ -59,7 +61,12 @@ const columns = computed(() => [
         defaultVisible: true,
         field: 'event.date',
     },
-    { key: 'points', label: t('app.common.points'), defaultVisible: true },
+    {
+        key: 'points',
+        label: t('app.common.points'),
+        field: 'points',
+        defaultVisible: true,
+    },
     ...(auth.isAuthenticated
         ? [
               {
@@ -202,6 +209,7 @@ onBeforeUnmount(() => debouncedSearch.cancel())
                         <tr>
                             <th>{{ t('spa.cup.type') }}</th>
                             <td>
+                                <CupTypeIcon :type="cup.type" />
                                 {{ t(`app.cup.type.${cup.type}` as never) }}
                             </td>
                         </tr>
@@ -212,11 +220,17 @@ onBeforeUnmount(() => debouncedSearch.cancel())
                         <tr>
                             <th>{{ t('spa.cups.groups') }}</th>
                             <td>
-                                {{
-                                    cup.groups
-                                        .map((group) => group.name)
-                                        .join(', ')
-                                }}
+                                <a
+                                    v-for="group in cup.groups"
+                                    :key="group.id"
+                                    :href="`/cups/${cup.id}/${group.id}/table`"
+                                    :class="[
+                                        'cup-group-badge',
+                                        cupGroupBadgeClass(group),
+                                    ]"
+                                >
+                                    {{ group.name }}
+                                </a>
                             </td>
                         </tr>
                         <tr>
@@ -270,7 +284,13 @@ onBeforeUnmount(() => debouncedSearch.cancel())
                         </tr>
                     </tbody>
                 </table>
-                <div v-if="auth.isAuthenticated" class="action-menu">
+                <div v-if="auth.isAuthenticated" class="details-actions">
+                    <ActionButton
+                        as="a"
+                        :href="`/app/cups/${cup.id}/edit`"
+                        icon="pi pi-pencil"
+                        :label="t('spa.cups.edit.action')"
+                    />
                     <ActionButton
                         as="a"
                         :href="`/cups/${cup.id}/event/create`"

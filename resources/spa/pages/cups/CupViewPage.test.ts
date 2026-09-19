@@ -45,7 +45,7 @@ function mountPage() {
                 ListingTable: {
                     props: ['columns', 'items'],
                     template:
-                        '<div data-testid="columns">{{ columns.map((item) => item.key).join(",") }}<slot name="cell-actions" :data="items[0]" /></div>',
+                        '<div data-testid="columns">{{ columns.map((item) => `${item.key}:${item.field ?? ""}`).join(",") }}<slot name="cell-actions" :data="items[0]" /></div>',
                 },
             },
         },
@@ -90,10 +90,14 @@ describe('cup view page', () => {
         })
         expect(getEventsByIds).toHaveBeenCalledWith(['9'])
         expect(wrapper.text()).toContain('Кубак')
+        expect(wrapper.find('.cup-type-icon').exists()).toBe(true)
         expect(wrapper.get('[data-testid="columns"]').text()).not.toContain(
             'actions',
         )
-        expect(wrapper.find('.action-menu').exists()).toBe(false)
+        expect(wrapper.get('[data-testid="columns"]').text()).toContain(
+            'points:points',
+        )
+        expect(wrapper.find('.details-actions').exists()).toBe(false)
         expect(wrapper.find('.pi-check-square').attributes('aria-label')).toBe(
             'Бачныя',
         )
@@ -129,11 +133,15 @@ describe('cup view page', () => {
         const wrapper = mountPage()
         await flushPromises()
 
-        expect(wrapper.find('.action-menu').exists()).toBe(true)
+        expect(wrapper.find('.details-actions').exists()).toBe(true)
         expect(wrapper.get('[data-testid="columns"]').text()).toContain(
             'actions',
         )
         expect(wrapper.html()).toContain('/cups/42/event/create')
+        expect(wrapper.html()).toContain('/app/cups/42/edit')
         expect(wrapper.html()).toContain('/cups/42/7/edit')
+        expect(wrapper.find('.cup-group-badge').attributes('href')).toBe(
+            '/cups/42/M21/table',
+        )
     })
 })

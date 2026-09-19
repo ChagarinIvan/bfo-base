@@ -8,7 +8,7 @@ import Toolbar from 'primevue/toolbar'
 import { RouterLink, useRouter } from 'vue-router'
 import { getCups } from '../../api/cups'
 import { getYears } from '../../api/years'
-import type { Cup, CupGroup, PaginationHeaders } from '../../api/types'
+import type { Cup, PaginationHeaders } from '../../api/types'
 import FilterPanel from '../../components/FilterPanel.vue'
 import ImpressionDetails from '../../components/ImpressionDetails.vue'
 import ListingTable from '../../components/ListingTable.vue'
@@ -20,6 +20,7 @@ import { t } from '../../i18n'
 import { useAuthStore } from '../../stores/auth'
 import {
     cupQuery,
+    cupGroupBadgeClass,
     debounce,
     hasTooShortNameSearch,
     paginationFromHeaders,
@@ -160,26 +161,6 @@ function onPage(event: PageState): void {
 
 function cupTableUrl(cup: Cup): string {
     return `/cups/${cup.id}/${cup.groups[0]?.id ?? ''}/table`
-}
-
-const cupGroupColors = [
-    'blue',
-    'green',
-    'orange',
-    'purple',
-    'pink',
-    'cyan',
-    'indigo',
-    'teal',
-] as const
-
-function cupGroupBadgeClass(group: CupGroup): string {
-    let hash = 0
-    for (const character of group.id) {
-        hash = (hash * 31 + character.charCodeAt(0)) >>> 0
-    }
-
-    return `cup-group-badge--${cupGroupColors[hash % cupGroupColors.length]}`
 }
 
 function deleteSelectedCup(): void {
