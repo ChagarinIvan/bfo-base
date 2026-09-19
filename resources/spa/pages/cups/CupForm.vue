@@ -6,24 +6,15 @@ import InputNumber from 'primevue/inputnumber'
 import InputText from 'primevue/inputtext'
 import Message from 'primevue/message'
 import Select from 'primevue/select'
-import { t, type TranslationKey } from '../../i18n'
+import { t } from '../../i18n'
 import { getYears } from '../../api/years'
 import type { CupFormRequest } from '../../api/types'
+import CupTypeIcon from '../../components/CupTypeIcon.vue'
+import { CUP_TYPES, cupTypeDefinition } from '../../components/cupTypeModels'
 
-const types = [
-    'elite',
-    'master',
-    'sprint',
-    'bike',
-    'juniors',
-    'youth',
-    'new_youth',
-    'new_master',
-    'ski',
-    'elk_path',
-].map((value) => ({
+const types = CUP_TYPES.map((value) => ({
     value,
-    label: t(`app.cup.type.${value}` as TranslationKey),
+    label: t(cupTypeDefinition(value).label),
 }))
 
 const props = withDefaults(
@@ -102,7 +93,14 @@ onMounted(async () => {
                     :options="types"
                     option-label="label"
                     option-value="value"
-                />
+                >
+                    <template #option="{ option }">
+                        <CupTypeIcon :type="option.value" show-label />
+                    </template>
+                    <template #value="{ value }">
+                        <CupTypeIcon v-if="value" :type="value" show-label />
+                    </template>
+                </Select>
                 <small v-if="errors.type" class="field-error">{{
                     errors.type
                 }}</small>
