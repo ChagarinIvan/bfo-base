@@ -17,7 +17,7 @@
 - [X] T004 Add `Slice` pagination to `app/Domain/Cup/CupEvent/CupEventRepository.php`, `app/Infrastructure/Laravel/Eloquent/CupEvent/EloquentCupEventRepository.php`, and `app/Application/Service/CupEvent/ListCupEventService.php`
 - [X] T005 Add authenticated serialization groups to impressions in `app/Application/Dto/CupEvent/ViewCupEventDto.php`
 - [X] T006 Add `ListCupEventsAction` and its optional-auth V1 route; move `ViewCupAction` to optional authentication in `app/Bridge/Laravel/Http/Controllers/Api/V1/Cup/` and `app/Bridge/Laravel/Provider/ApiV1RoutesServiceProvider.php`
-- [ ] T007 [P] Add Application tests for cup-stage criteria, Slice mapping, and bounded repository calls in `tests/Application/Service/CupEvent/ListCupEventServiceTest.php`
+- [X] T007 [P] Add Application tests for cup-stage criteria, Slice mapping, and bounded repository calls in `tests/Application/Service/CupEvent/ListCupEventServiceTest.php`
 - [X] T008 [P] Add request tests with class-level `@see` for cup detail and cup-event pagination, filters, 404, authenticated impressions, and public isolation in `tests/Feature/Api/V1/Cup/ListCupEventsActionTest.php`
 
 ## Phase 3: User Story 1 - View a cup and its stages (Priority: P1)
@@ -53,9 +53,9 @@
 
 ## Phase 6: Polish and verification
 
-- [ ] T019 Run focused PHPUnit and Vitest suites for cup detail, cup events, routes, API client, router, and page files
-- [ ] T020 Run `composer cs`, `composer rector -- --dry-run`, `XDEBUG_MODE=off composer stan --memory-limit=4G`, `composer test`, `npm run ci`, and `git diff --check`; inspect eager loading to confirm no new N+1 or unbounded stage read
-- [ ] T021 Validate `specs/030-cup-view-spa/quickstart.md`, mark all tasks complete, and reconcile results against spec/plan/contracts
+- [X] T019 Run focused PHPUnit and Vitest suites for cup detail, cup events, routes, API client, router, and page files
+- [X] T020 Run `composer cs`, `composer rector -- --dry-run`, `XDEBUG_MODE=off composer stan --memory-limit=4G`, `composer test`, `npm run ci`, and `git diff --check`; inspect eager loading to confirm no new N+1 or unbounded stage read
+- [X] T021 Validate `specs/030-cup-view-spa/quickstart.md`, mark all tasks complete, and reconcile results against spec/plan/contracts
 
 ## Dependencies & Execution Order
 

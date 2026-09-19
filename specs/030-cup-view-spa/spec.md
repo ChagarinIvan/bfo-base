@@ -4,7 +4,7 @@
 
 **Created**: 2026-09-19
 
-**Status**: Ready for planning
+**Status**: Implemented
 
 **Input**: Move the cup detail page to the SPA with a cup information card and
 paginated cup-event listing. Preserve established filters, authenticated
@@ -28,8 +28,9 @@ shown.
 **Acceptance Scenarios**:
 
 1. **Given** an existing cup, **When** a visitor opens its SPA URL, **Then**
-   they see the cup name, year, type, stage count, groups, and visibility
-   information in the standard information-card layout.
+   they see the full public `ViewCupDto` data — name, year, type with icon,
+   stage count, linked group badges, and visibility information — in the
+   standard information-card layout.
 2. **Given** a cup with stages, **When** its page opens, **Then** the stage
    table shows at most 50 rows by default and offers pagination using the
    shared listing-table controls.
@@ -113,7 +114,8 @@ continue to resolve.
 - **FR-001**: The system MUST provide a public SPA cup-detail route and update
   SPA cup-name links to use it.
 - **FR-002**: The cup-detail view MUST use the established SPA information-card
-  presentation and display the cup's public details, including groups.
+  presentation and display every public `ViewCupDto` field, including type
+  icon, linked group badges, and visibility.
 - **FR-003**: The cup-detail view MUST show a shared paginated listing of cup
   stages with a default page size of 50.
 - **FR-004**: The stage list MUST support established date and name filters and

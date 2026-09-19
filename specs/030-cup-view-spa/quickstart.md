@@ -1,7 +1,8 @@
 # Quickstart: Cup View SPA
 
-1. Open `/app/cups/:cupId` as a guest: card details and stages appear; no
-   impressions or management controls are visible.
+1. Open `/app/cups/:cupId` as a guest: card details, type icon, linked group
+   badges, visibility indicator and stages appear; no impressions or management
+   controls are visible.
 2. Confirm the stage table requests 50 rows initially; change page and ensure
    the standard pagination controls update the query.
 3. Filter by a valid stage/competition title and date; each change reloads page

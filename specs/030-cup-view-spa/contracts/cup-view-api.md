@@ -27,3 +27,7 @@ Each item contains `id`, `cupId`, `eventId`, and `points`; `created` and
 route cup ID and are ordered by event ID then stage ID. The SPA resolves the
 returned IDs separately through `GET /api/v1/events?ids[]=` with
 `withCompetition=1`.
+
+The repository joins active cups, so an unknown or inactive route cup produces
+an empty stage array. Direct reads of hidden but active cups remain supported,
+matching the existing cup-detail behaviour.
