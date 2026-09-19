@@ -15,6 +15,7 @@ import ListingTable from '../../components/ListingTable.vue'
 import YearFilter from '../../components/YearFilter.vue'
 import ConfirmDeleteDialog from '../../components/actions/ConfirmDeleteDialog.vue'
 import CupActionMenu from '../../components/actions/CupActionMenu.vue'
+import CupTypeIcon from '../../components/CupTypeIcon.vue'
 import { t } from '../../i18n'
 import { useAuthStore } from '../../stores/auth'
 import {
@@ -268,9 +269,10 @@ onBeforeUnmount(() => debouncedSearch.cancel())
             </FilterPanel>
         </template>
         <template #cell-name="{ data }">
-            <RouterLink :to="`/app/cups/${data.id}`">{{
-                data.name
-            }}</RouterLink>
+            <RouterLink :to="`/app/cups/${data.id}`">
+              <CupTypeIcon :type="data.type" />
+              <span>{{ data.name }}</span>
+            </RouterLink>
         </template>
         <template #cell-groups="{ data }">
             <a

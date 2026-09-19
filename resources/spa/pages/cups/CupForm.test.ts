@@ -4,6 +4,7 @@ import { mount } from '@vue/test-utils'
 import PrimeVue from 'primevue/config'
 import { describe, expect, it, vi } from 'vitest'
 import CupForm from './CupForm.vue'
+import { CUP_TYPES } from '../../components/cupTypeModels'
 
 vi.mock('../../api/years', () => ({
     getYears: vi.fn().mockResolvedValue([2026, 2025]),
@@ -25,6 +26,9 @@ describe('cup form', () => {
             global: { plugins: [PrimeVue] },
         })
 
+        expect(
+            wrapper.findComponent({ name: 'Select' }).props('options'),
+        ).toHaveLength(CUP_TYPES.length)
         await wrapper.find('form').trigger('submit')
 
         expect(wrapper.emitted('submit')).toEqual([
@@ -38,6 +42,7 @@ describe('cup form', () => {
                 },
             ],
         ])
+        expect(wrapper.findAll('.cup-type-icon')).not.toHaveLength(0)
     })
 
     it('shows field and form errors and exposes the pending state', () => {
