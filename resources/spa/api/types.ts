@@ -54,6 +54,23 @@ export interface CupFormRequest {
     visible: boolean
 }
 
+export interface CupEvent {
+    id: string
+    cupId: string
+    eventId: string
+    points: string
+    created?: Impression
+    updated?: Impression
+}
+
+export interface CupEventSearchQuery {
+    eventIds?: string[]
+    name?: string
+    date?: string
+    page?: number
+    perPage?: number
+}
+
 export type CreateCupRequest = CupFormRequest
 export type UpdateCupRequest = CupFormRequest
 

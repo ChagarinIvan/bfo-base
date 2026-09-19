@@ -38,10 +38,7 @@ final class AddCupServiceTest extends TestCase
         $this->service = new AddCupService(
             $this->factory = $this->createMock(CupFactory::class),
             $this->cups = $this->createMock(CupRepository::class),
-            new CupAssembler(
-                new EventAssembler($authAssembler),
-                $authAssembler,
-            ),
+            new CupAssembler($authAssembler, new EventAssembler($authAssembler)),
         );
     }
 

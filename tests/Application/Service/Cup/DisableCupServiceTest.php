@@ -33,10 +33,7 @@ final class DisableCupServiceTest extends TestCase
         $this->service = new DisableCupService(
             $this->cups = $this->createMock(CupRepository::class),
             new FrozenClock(),
-            new CupAssembler(
-                new EventAssembler($authAssembler),
-                $authAssembler,
-            ),
+            new CupAssembler($authAssembler, new EventAssembler($authAssembler)),
             new DummyTransactional(),
         );
     }

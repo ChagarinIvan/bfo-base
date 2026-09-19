@@ -36,10 +36,7 @@ final class UpdateCupServiceTest extends TestCase
         $this->service = new UpdateCupService(
             $this->cups = $this->createMock(CupRepository::class),
             new FrozenClock(Carbon::parse('2023-04-01')),
-            new CupAssembler(
-                new EventAssembler($authAssembler),
-                $authAssembler,
-            ),
+            new CupAssembler($authAssembler, new EventAssembler($authAssembler)),
             new DummyTransactional,
         );
     }

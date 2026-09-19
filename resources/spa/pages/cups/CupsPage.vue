@@ -5,7 +5,7 @@ import InputText from 'primevue/inputtext'
 import Select from 'primevue/select'
 import Button from 'primevue/button'
 import Toolbar from 'primevue/toolbar'
-import { useRouter } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
 import { getCups } from '../../api/cups'
 import { getYears } from '../../api/years'
 import type { Cup, CupGroup, PaginationHeaders } from '../../api/types'
@@ -268,7 +268,9 @@ onBeforeUnmount(() => debouncedSearch.cancel())
             </FilterPanel>
         </template>
         <template #cell-name="{ data }">
-            <a :href="`/cups/${data.id}/show`">{{ data.name }}</a>
+            <RouterLink :to="`/app/cups/${data.id}`">{{
+                data.name
+            }}</RouterLink>
         </template>
         <template #cell-groups="{ data }">
             <a

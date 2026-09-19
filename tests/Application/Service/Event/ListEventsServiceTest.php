@@ -46,11 +46,17 @@ final class ListEventsServiceTest extends TestCase
         $this->events
             ->expects($this->once())
             ->method('paginate')
-            ->with(new Criteria(['competitionId' => '1']), new EventResources())
+            ->with(
+                new Criteria(['competitionId' => '1']),
+                new EventResources(withParticipantsCount: true),
+            )
             ->willReturn(new Slice(new ArraySliceAdapter($events)))
         ;
 
-        $result = $this->service->execute(new ListEvents(new SearchEventDto('1')));
+        $result = $this->service->execute(new ListEvents(new SearchEventDto(
+            competitionId: '1',
+            withParticipantsCount: '1',
+        )));
         $items = $result->items();
 
         $this->assertInstanceOf(Slice::class, $result);

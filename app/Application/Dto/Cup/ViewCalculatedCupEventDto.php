@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Dto\Cup;
 
-use App\Application\Dto\CupEvent\ViewCupEventDto;
+use App\Application\Dto\CupEvent\LegacyViewCupEventDto;
 
 final readonly class ViewCalculatedCupEventDto
 {
@@ -13,7 +13,7 @@ final readonly class ViewCalculatedCupEventDto
         public string $cupYear,
         /** @var ViewCupGroupDto[] */
         public array $cupGroups,
-        public ViewCupEventDto $cupEvent,
+        public LegacyViewCupEventDto $cupEvent,
         /** ViewCupEventPointDto[] */
         public array $points,
     ) {

@@ -41,7 +41,7 @@ final class DeleteCupEventActionTest extends TestCase
 
         $this->get('/cups/101/101/delete')
             ->assertStatus(Response::HTTP_FOUND)
-            ->assertRedirect('/cups/101/show')
+            ->assertRedirect('/app/cups/101')
         ;
 
         $this->assertDatabaseHas('cup_events', [

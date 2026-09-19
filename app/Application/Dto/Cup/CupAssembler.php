@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Dto\Cup;
 
 use App\Application\Dto\Auth\AuthAssembler;
+use App\Application\Dto\CupEvent\LegacyViewCupEventDto;
 use App\Application\Dto\CupEvent\ViewCupEventDto;
 use App\Application\Dto\CupEvent\ViewCupEventPointDto;
 use App\Application\Dto\Event\EventAssembler;
@@ -19,8 +20,8 @@ use function sprintf;
 final readonly class CupAssembler
 {
     public function __construct(
-        private EventAssembler $eventAssembler,
         private AuthAssembler $authAssembler,
+        private EventAssembler $eventAssembler,
     ) {
     }
 
@@ -39,14 +40,6 @@ final readonly class CupAssembler
         );
     }
 
-    public function toViewCupGroupDto(CupGroup $group): ViewCupGroupDto
-    {
-        return new ViewCupGroupDto(
-            id: $group->id(),
-            name: $group->name(),
-        );
-    }
-
     /** @property CupEventPoint[] $points */
     public function toViewCalculatedCupEventDto(Cup $cup, CupEvent $cupEvent, array $points): ViewCalculatedCupEventDto
     {
@@ -54,7 +47,13 @@ final readonly class CupAssembler
             cupName: $cup->name,
             cupYear: $cup->year->toString(),
             cupGroups: array_map($this->toViewCupGroupDto(...), $cup->groups()),
-            cupEvent: $this->toViewCupEventDto($cupEvent),
+            cupEvent: new LegacyViewCupEventDto(
+                id: (string) $cupEvent->id,
+                cupId: (string) $cupEvent->cup_id,
+                eventId: (string) $cupEvent->event_id,
+                points: (string) $cupEvent->points,
+                event: $this->eventAssembler->toViewEventDto($cupEvent->event, new EventResources(withCompetitionName: true)),
+            ),
             points: array_map($this->toViewCupEventPointDto(...), $points),
         );
     }
@@ -68,10 +67,14 @@ final readonly class CupAssembler
             points: (string) $cupEvent->points,
             created: $this->authAssembler->toImpressionDto($cupEvent->created),
             updated: $this->authAssembler->toImpressionDto($cupEvent->updated),
-            event: $this->eventAssembler->toViewEventDto(
-                $cupEvent->event,
-                new EventResources(withCompetitionName: true),
-            ),
+        );
+    }
+
+    private function toViewCupGroupDto(CupGroup $group): ViewCupGroupDto
+    {
+        return new ViewCupGroupDto(
+            id: $group->id(),
+            name: $group->name(),
         );
     }
 

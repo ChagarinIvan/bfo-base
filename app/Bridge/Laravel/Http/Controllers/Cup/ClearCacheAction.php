@@ -17,6 +17,6 @@ class ClearCacheAction extends BaseController
     {
         $service->execute(new ClearCupCache($cupId));
 
-        return $this->redirector->action(ShowCupAction::class, [$cupId]);
+        return $this->redirector->to("/app/cups/{$cupId}");
     }
 }

@@ -9,7 +9,6 @@ use App\Application\Service\CupEvent\DisableCupEvent;
 use App\Application\Service\CupEvent\DisableCupEventService;
 use App\Application\Service\CupEvent\Exception\CupEventNotFound;
 use App\Bridge\Laravel\Http\Controllers\Cup\CupAction;
-use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupAction;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller as BaseController;
 
@@ -29,6 +28,6 @@ class DeleteCupEventAction extends BaseController
             return $this->redirectTo404Error();
         }
 
-        return $this->redirector->action(ShowCupAction::class, [$cupId]);
+        return $this->redirector->to("/app/cups/{$cupId}");
     }
 }
