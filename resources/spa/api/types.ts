@@ -39,6 +39,7 @@ export interface Cup {
 }
 
 export interface CupSearchQuery {
+    ids?: string[]
     year?: number
     name?: string
     visible?: '1' | '0'
@@ -61,6 +62,16 @@ export interface CupEvent {
     points: string
     created?: Impression
     updated?: Impression
+}
+
+export interface CupEventContext {
+    eventId: string
+    cupEventId: string
+    cupId: string
+    cupName: string
+    cupType: string
+    groups: CupGroup[]
+    href: string
 }
 
 export interface CupEventFormRequest {

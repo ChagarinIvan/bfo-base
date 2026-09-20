@@ -37,6 +37,84 @@ body {
     color: inherit;
 }
 
+.cup-event-badges {
+    display: inline-flex;
+    gap: 0.2rem;
+    margin-left: 0.35rem;
+    vertical-align: middle;
+}
+
+.cup-event-badge {
+    display: inline-grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    margin: 0.125rem 0.25rem 0.125rem 0;
+    border-radius: 999px;
+    color: #fff;
+    text-decoration: none;
+}
+
+.cup-event-badge--green {
+    color: #fff;
+    background: var(--p-green-500, #22c55e);
+}
+
+.cup-event-badge.cup-group-badge--blue {
+    color: #fff;
+    background: var(--p-blue-500, #3b82f6);
+}
+
+.cup-event-badge.cup-group-badge--green {
+    color: #fff;
+    background: var(--p-green-500, #22c55e);
+}
+
+.cup-event-badge.cup-group-badge--orange {
+    color: #fff;
+    background: var(--p-orange-500, #f97316);
+}
+
+.cup-event-badge.cup-group-badge--purple {
+    color: #fff;
+    background: var(--p-purple-500, #a855f7);
+}
+
+.cup-event-badge.cup-group-badge--pink {
+    color: #fff;
+    background: var(--p-pink-500, #ec4899);
+}
+
+.cup-event-badge.cup-group-badge--cyan {
+    color: #fff;
+    background: var(--p-cyan-500, #06b6d4);
+}
+
+.cup-event-badge.cup-group-badge--indigo {
+    color: #fff;
+    background: var(--p-indigo-500, #6366f1);
+}
+
+.cup-event-badge.cup-group-badge--teal {
+    color: #fff;
+    background: var(--p-teal-500, #14b8a6);
+}
+
+.cup-event-badge .cup-type-icon {
+    display: grid;
+    place-items: center;
+    width: 1rem;
+    height: 1rem;
+    margin: 0;
+    color: #fff;
+    line-height: 1;
+}
+
+.cup-event-badge .cup-type-icon__svg {
+    width: 1rem;
+    height: 1rem;
+}
+
 .app-header {
     position: sticky;
     top: 0;

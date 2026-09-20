@@ -15,9 +15,11 @@ import ImpressionDetails from '../../components/ImpressionDetails.vue'
 import ListingTable from '../../components/ListingTable.vue'
 import SlicePaginator from '../../components/SlicePaginator.vue'
 import { getEventDistances } from '../../api/distances'
+import { getCupEventContexts } from '../../api/cups'
 import { getCompetition } from '../../api/competitions'
 import { deleteEvent, getEvent } from '../../api/events'
 import ConfirmDeleteDialog from '../../components/actions/ConfirmDeleteDialog.vue'
+import CupEventBadges from '../../components/CupEventBadges.vue'
 import { getPersonProtocolLines } from '../../api/protocolLines'
 import type {
     Distance,
@@ -41,6 +43,7 @@ const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
 const event = ref<Event | null>(null)
+const cupEventContexts = ref<import('../../api/types').CupEventContext[]>([])
 const competition = ref<Competition | null>(null)
 const distances = ref<Distance[]>([])
 const distanceId = ref<string>()
@@ -200,6 +203,11 @@ async function load(eventId: string): Promise<void> {
     error.value = ''
     try {
         event.value = await getEvent(eventId)
+        void getCupEventContexts([event.value.id])
+            .then((contexts) => {
+                cupEventContexts.value = contexts
+            })
+            .catch(() => undefined)
         const [loadedCompetition, loadedDistances] = await Promise.all([
             getCompetition(event.value.competitionId),
             getEventDistances(eventId),
@@ -301,6 +309,14 @@ onBeforeUnmount(() => {
                         <tr>
                             <th scope="row">Апісанне</th>
                             <td>{{ event.description }}</td>
+                        </tr>
+                        <tr v-if="cupEventContexts.length">
+                            <th scope="row">
+                                {{ t('spa.cup_event.context.cups') }}
+                            </th>
+                            <td>
+                                <CupEventBadges :contexts="cupEventContexts" />
+                            </td>
                         </tr>
                         <tr>
                             <th scope="row">Спаборніцтва</th>

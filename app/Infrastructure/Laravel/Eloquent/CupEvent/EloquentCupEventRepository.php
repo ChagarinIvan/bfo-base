@@ -47,7 +47,7 @@ final class EloquentCupEventRepository implements CupEventRepository
 
     public function byCriteria(Criteria $criteria): Collection
     {
-        return $this->buildQuery($criteria)->with('event')->get();
+        return $this->buildQuery($criteria)->get();
     }
 
     /** @return Slice<CupEvent> */

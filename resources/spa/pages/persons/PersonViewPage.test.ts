@@ -6,13 +6,16 @@ import { ref } from 'vue'
 import PersonViewPage from './PersonViewPage.vue'
 import { personContextKey } from './personContext'
 
-const { auth, getPersonProtocolLines, getYears, push } = vi.hoisted(() => ({
-    auth: { isAuthenticated: true },
-    getPersonProtocolLines: vi.fn(),
-    getYears: vi.fn(),
-    push: vi.fn(),
-}))
+const { auth, getCupEventContexts, getPersonProtocolLines, getYears, push } =
+    vi.hoisted(() => ({
+        auth: { isAuthenticated: true },
+        getCupEventContexts: vi.fn(),
+        getPersonProtocolLines: vi.fn(),
+        getYears: vi.fn(),
+        push: vi.fn(),
+    }))
 
+vi.mock('../../api/cups', () => ({ getCupEventContexts }))
 vi.mock('../../api/protocolLines', () => ({ getPersonProtocolLines }))
 vi.mock('../../api/years', () => ({ getYears }))
 vi.mock('vue-router', () => ({
@@ -31,6 +34,7 @@ describe('person view page', () => {
     beforeEach(() => {
         vi.resetAllMocks()
         auth.isAuthenticated = true
+        getCupEventContexts.mockResolvedValue([])
     })
 
     it('loads participation with both related resources', async () => {
@@ -102,8 +106,9 @@ describe('person view page', () => {
             page: 1,
             perPage: 20,
         })
+        expect(getCupEventContexts).toHaveBeenCalledWith(['13'])
         expect(wrapper.text()).toContain('Удзел у спаборніцтвах')
-        expect(wrapper.findAll('.column')).toHaveLength(10)
+        expect(wrapper.findAll('.column')).toHaveLength(11)
     })
 
     it('shows an empty state', async () => {

@@ -18,7 +18,9 @@ final readonly class ListCup
     public function criteria(): Criteria
     {
         $visible = true;
-        if ($this->authenticated) {
+        if ($this->search->ids !== null) {
+            $visible = null;
+        } elseif ($this->authenticated) {
             $visible = match ($this->search->visible) {
                 true => true,
                 false => false,
@@ -27,6 +29,9 @@ final readonly class ListCup
         }
 
         $params = [];
+        if ($this->search->ids !== null) {
+            $params['ids'] = $this->search->ids;
+        }
         if ($this->search->year !== null) {
             $params['year'] = (int) $this->search->year;
         }

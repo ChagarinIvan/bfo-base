@@ -153,6 +153,18 @@ final class ListCupsActionTest extends TestCase
     }
 
     #[Test]
+    public function it_returns_an_active_hidden_cup_when_its_id_is_explicitly_requested(): void
+    {
+        $cup = $this->createCup(['visible' => false]);
+
+        $this->getJson("/api/v1/cups?ids[]={$cup->id}")
+            ->assertOk()
+            ->assertJsonCount(1)
+            ->assertJsonPath('0.id', (string) $cup->id)
+        ;
+    }
+
+    #[Test]
     public function it_rejects_invalid_listing_parameters(): void
     {
         $this->getJson('/api/v1/cups?year=1999')
@@ -165,7 +177,7 @@ final class ListCupsActionTest extends TestCase
             ->assertJsonFragment(['code' => 'validation_error', 'field' => 'name'])
         ;
 
-        $this->getJson('/api/v1/cups?page=0&perPage=101')
+        $this->getJson('/api/v1/cups?page=0&perPage=1001')
             ->assertUnprocessable()
             ->assertJsonFragment(['code' => 'validation_error', 'field' => 'page'])
             ->assertJsonFragment(['code' => 'validation_error', 'field' => 'perPage'])
