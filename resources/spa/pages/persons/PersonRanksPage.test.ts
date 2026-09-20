@@ -100,7 +100,7 @@ describe('person ranks page', () => {
 
         expect(getPersonRankHistories).toHaveBeenCalledWith('7')
         expect(getEventsByIds).toHaveBeenCalledWith(['12'])
-        expect(getCupEventContexts).toHaveBeenCalledWith(['12'])
+        expect(getCupEventContexts).not.toHaveBeenCalled()
         expect(getRanks).toHaveBeenCalledOnce()
         expect(wrapper.find('#person-rank-year-filter').exists()).toBe(false)
         expect(wrapper.find('#person-rank-filter').exists()).toBe(false)
@@ -108,6 +108,8 @@ describe('person ranks page', () => {
         expect(wrapper.find('.rank-history-group').exists()).toBe(true)
         expect(wrapper.find('.rank-history-timeline').exists()).toBe(false)
         await wrapper.find('.rank-history-group').trigger('click')
+        await flushPromises()
+        expect(getCupEventContexts).toHaveBeenCalledWith(['12'])
         expect(wrapper.find('.rank-history-timeline').exists()).toBe(true)
         expect(wrapper.findAll('.column')).toHaveLength(8)
         expect(wrapper.text()).toContain('Тып выканання')

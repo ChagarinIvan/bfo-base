@@ -39,6 +39,7 @@ const auth = useAuthStore()
 const history = ref<PersonRankHistory[]>([])
 const events = ref<Record<string, Event>>({})
 const cupEventContexts = ref<Record<string, CupEventContext[]>>({})
+const loadedCupEventIds = ref<Set<string>>(new Set())
 const ranks = ref<RankOption[]>([])
 const loading = ref(true)
 const error = ref('')
@@ -201,16 +202,11 @@ async function loadHistory(): Promise<void> {
         ])
         if (requestId !== latestRequest) return
         history.value = loadedHistory
+        cupEventContexts.value = {}
+        loadedCupEventIds.value = new Set()
         events.value = Object.fromEntries(
             loadedEvents.map((event) => [event.id, event]),
         )
-        void getCupEventContexts(loadedEvents.map((event) => event.id))
-            .then((contexts) => {
-                if (requestId === latestRequest) {
-                    cupEventContexts.value = contextsByEventId(contexts)
-                }
-            })
-            .catch(() => undefined)
     } catch {
         if (requestId !== latestRequest) return
         error.value = t('spa.person_rank.error')
@@ -239,8 +235,32 @@ function toggleRank(groupId: string): void {
         next.delete(groupId)
     } else {
         next.add(groupId)
+        const group = groupedHistory.value.find((item) => item.id === groupId)
+        if (group) {
+            void loadCupEventContexts(group.items.map((item) => item.eventId))
+        }
     }
     expandedRankIds.value = next
+}
+
+async function loadCupEventContexts(eventIds: string[]): Promise<void> {
+    const ids = [...new Set(eventIds)].filter(
+        (id) => !loadedCupEventIds.value.has(id),
+    )
+    if (ids.length === 0) {
+        return
+    }
+
+    try {
+        const contexts = await getCupEventContexts(ids)
+        cupEventContexts.value = {
+            ...cupEventContexts.value,
+            ...contextsByEventId(contexts),
+        }
+        loadedCupEventIds.value = new Set([...loadedCupEventIds.value, ...ids])
+    } catch {
+        // The rank timeline remains usable when cup context cannot be loaded.
+    }
 }
 
 function eventUrl(item: PersonRankHistory): string {

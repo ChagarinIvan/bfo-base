@@ -34,7 +34,7 @@ export async function getCupEventContexts(eventIds: string[]) {
 
     const cupEvents = (
         await api.get<CupEvent[]>('/cup-events', {
-            params: { eventIds, perPage: Math.min(eventIds.length, 1000) },
+            params: { eventIds, perPage: 1000 },
         })
     ).data
     const cups = (

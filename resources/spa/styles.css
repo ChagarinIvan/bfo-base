@@ -56,7 +56,48 @@ body {
 }
 
 .cup-event-badge--green {
-    background: var(--p-green-400, #4ade80);
+    color: #fff;
+    background: var(--p-green-500, #22c55e);
+}
+
+.cup-event-badge.cup-group-badge--blue {
+    color: #fff;
+    background: var(--p-blue-500, #3b82f6);
+}
+
+.cup-event-badge.cup-group-badge--green {
+    color: #fff;
+    background: var(--p-green-500, #22c55e);
+}
+
+.cup-event-badge.cup-group-badge--orange {
+    color: #fff;
+    background: var(--p-orange-500, #f97316);
+}
+
+.cup-event-badge.cup-group-badge--purple {
+    color: #fff;
+    background: var(--p-purple-500, #a855f7);
+}
+
+.cup-event-badge.cup-group-badge--pink {
+    color: #fff;
+    background: var(--p-pink-500, #ec4899);
+}
+
+.cup-event-badge.cup-group-badge--cyan {
+    color: #fff;
+    background: var(--p-cyan-500, #06b6d4);
+}
+
+.cup-event-badge.cup-group-badge--indigo {
+    color: #fff;
+    background: var(--p-indigo-500, #6366f1);
+}
+
+.cup-event-badge.cup-group-badge--teal {
+    color: #fff;
+    background: var(--p-teal-500, #14b8a6);
 }
 
 .cup-event-badge .cup-type-icon {

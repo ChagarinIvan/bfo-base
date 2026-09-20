@@ -76,7 +76,7 @@ describe('cups API', () => {
         const contexts = await getCupEventContexts(['10', '20'])
 
         expect(api.get).toHaveBeenCalledWith('/cup-events', {
-            params: { eventIds: ['10', '20'], perPage: 2 },
+            params: { eventIds: ['10', '20'], perPage: 1000 },
         })
         expect(api.get).toHaveBeenLastCalledWith('/cups', {
             params: { ids: ['8'], perPage: 100 },
