@@ -500,8 +500,14 @@ onBeforeUnmount(() => {
                                               )
                                             : t('spa.person_rank.activate')
                                     "
-                                    icon="pi pi-calendar"
-                                    severity="info"
+                                    :icon="
+                                        data.activatedOn
+                                            ? 'pi pi-pencil'
+                                            : 'pi pi-check'
+                                    "
+                                    :severity="
+                                        data.activatedOn ? 'info' : 'success'
+                                    "
                                     @click="openActivation(data)"
                                 />
                             </template>

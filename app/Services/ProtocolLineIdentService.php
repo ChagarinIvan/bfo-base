@@ -10,10 +10,14 @@ use App\Domain\PersonPrompt\PersonPromptRepository;
 use App\Domain\PersonPrompt\TranslitPersonPromptMetaphone;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\ProtocolLine\ProtocolLineOperations;
+use App\Domain\Rank\Rank;
 use App\Domain\Shared\Criteria;
 use App\Models\IdentLine;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
+use function array_key_exists;
+use function in_array;
 use function levenshtein;
 use function sprintf;
 use function str_replace;
@@ -119,6 +123,8 @@ class ProtocolLineIdentService
         $notIdentedLines = $notIdentedLines->keyBy('id');
         $identedLines = ProtocolLine::find($protocolLines->diffKeys($notIdentedLines)->keys());
         Log::info(sprintf('Idented %d lines.', $identedLines->count()));
+        $this->activateRepeatedMasterRanks($identedLines);
+
         // Пересчитываем затронутых спортсменов одной идемпотентной batch-задачей.
         $personIds = $identedLines->pluck('person_id')->filter()->unique()->values()->all();
         if ($personIds !== []) {
@@ -144,6 +150,60 @@ class ProtocolLineIdentService
         $this->protocolLineService->fastIdent($linesIds->all());
 
         return new Collection($this->protocolLineService->getProtocolLinesInListWithoutPerson($linesIds->all()));
+    }
+
+    /**
+     * @param Collection<int, ProtocolLine> $protocolLines
+     * @return list<int>
+     */
+    public function activateRepeatedMasterRanks(Collection $protocolLines, bool $dryRun = false): array
+    {
+        $lines = ProtocolLine::query()
+            ->with('distance.event')
+            ->whereKey($protocolLines->pluck('id'))
+            ->get()
+        ;
+
+        $hasPreviousActivation = [];
+        $activatedLineIds = [];
+
+        foreach ($lines as $line) {
+            $rank = Rank::fromProtocolValue($line->complete_rank);
+            if (
+                $line->person_id === null
+                || $line->activate_rank !== null
+                || !in_array($rank, [Rank::CandidateMaster, Rank::MasterOfSport], true)
+            ) {
+                continue;
+            }
+
+            $eventDate = $line->distance->event->date;
+            $key = $line->person_id . ':' . $rank->value . ':' . $eventDate->format('Y-m-d');
+            if (!array_key_exists($key, $hasPreviousActivation)) {
+                $hasPreviousActivation[$key] = ProtocolLine::query()
+                    ->where('person_id', $line->person_id)
+                    ->where('complete_rank', $rank->label())
+                    ->whereNotNull('activate_rank')
+                    ->where('id', '!=', $line->id)
+                    ->whereHas('distance.event', static function (Builder $query) use ($eventDate): void {
+                        $query->where('date', '<', $eventDate);
+                    })
+                    ->exists()
+                ;
+            }
+
+            if (!$hasPreviousActivation[$key]) {
+                continue;
+            }
+
+            $activatedLineIds[] = $line->id;
+            if (!$dryRun) {
+                $line->activate_rank = $eventDate;
+                $line->save();
+            }
+        }
+
+        return $activatedLineIds;
     }
 
     /**
