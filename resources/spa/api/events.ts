@@ -76,7 +76,7 @@ export async function getCompetitionEvents(
     perPage = 20,
 ): Promise<PaginatedApiResponse<Event>> {
     const response = await api.get<Event[]>('/events', {
-        params: { competitionId, page, perPage },
+        params: { competitionId, page, perPage, withParticipantsCount: 1 },
     })
 
     return {

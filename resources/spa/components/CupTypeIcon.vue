@@ -13,7 +13,10 @@ const label = computed(() => t(definition.value.label))
 </script>
 
 <template>
-    <span class="cup-type-icon" :title="label">
+    <span
+        :class="['cup-type-icon', { 'cup-type-icon--standalone': !showLabel }]"
+        :title="label"
+    >
         <svg
             v-if="definition.illustration === 'moose'"
             class="cup-type-icon__svg"

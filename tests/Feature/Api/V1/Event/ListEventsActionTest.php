@@ -48,7 +48,7 @@ final class ListEventsActionTest extends TestCase
         $this->createProtocolLine($event);
         $this->createEvent($competition, ['active' => false]);
 
-        $this->getJson("/api/v1/events?competitionId={$competition->id}")
+        $this->getJson("/api/v1/events?competitionId={$competition->id}&withParticipantsCount=1")
             ->assertOk()
             ->assertJsonCount(1)
             ->assertJsonPath('0.id', (string) $event->id)

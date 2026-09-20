@@ -10,7 +10,7 @@ final readonly class EventResources
         public bool $withCompetitionName = false,
         public bool $withDistances = false,
         public bool $withProtocolLines = false,
-    )
-    {
+        public bool $withParticipantsCount = false,
+    ) {
     }
 }

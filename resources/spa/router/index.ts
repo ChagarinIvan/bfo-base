@@ -43,6 +43,7 @@ import RankCheckViewPage from '../pages/rank-checks/RankCheckViewPage.vue'
 import CupsPage from '../pages/cups/CupsPage.vue'
 import CreateCupPage from '../pages/cups/CreateCupPage.vue'
 import EditCupPage from '../pages/cups/EditCupPage.vue'
+import CupViewPage from '../pages/cups/CupViewPage.vue'
 
 export function createAppRouter(
     history: RouterHistory = typeof window === 'undefined'
@@ -64,6 +65,7 @@ export function createAppRouter(
                 component: EditCupPage,
                 meta: { requiresAuth: true },
             },
+            { path: '/app/cups/:cupId', component: CupViewPage },
             {
                 path: '/app/rank-checks',
                 component: RankChecksPage,

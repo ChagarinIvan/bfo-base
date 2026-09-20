@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Bridge\Laravel\Http\Controllers\CupEvents;
 
 use App\Bridge\Laravel\Http\Controllers\Cup\CupAction;
-use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupAction;
 use App\Services\CupEventsService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -32,6 +31,6 @@ class UpdateCupEventAction extends BaseController
         $cupEvent->points = $formData['points'];
         $cupEvent->save();
 
-        return $this->redirector->action(ShowCupAction::class, [$cupId]);
+        return $this->redirector->to("/app/cups/{$cupId}");
     }
 }

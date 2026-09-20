@@ -20,6 +20,7 @@ use App\Bridge\Laravel\Http\Controllers\Api\V1\Competition\ListCompetitionsActio
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Competition\UpdateCompetitionAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Competition\ViewCompetitionAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\CreateCupAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\ListCupEventsAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\ListCupsAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\UpdateCupAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\ViewCupAction;
@@ -83,6 +84,8 @@ final class ApiV1RoutesServiceProvider extends ServiceProvider
             $router->prefix('api/v1')->middleware(OptionalAuthenticateApiV1::class)->group(static function () use ($router): void {
                 $router->get('competitions', ListCompetitionsAction::class);
                 $router->get('cups', ListCupsAction::class);
+                $router->get('cups/{cupId}', ViewCupAction::class);
+                $router->get('cups/{cupId}/events', ListCupEventsAction::class);
                 $router->get('competitions/{competitionId}', ViewCompetitionAction::class);
                 $router->get('clubs', ListClubsAction::class);
                 $router->get('clubs/all', ListAllClubAction::class);
@@ -131,7 +134,6 @@ final class ApiV1RoutesServiceProvider extends ServiceProvider
                 $router->put('competitions/{competitionId}', UpdateCompetitionAction::class);
                 $router->delete('competitions/{competitionId}', DeleteCompetitionAction::class);
                 $router->post('cups', CreateCupAction::class);
-                $router->get('cups/{cupId}', ViewCupAction::class);
                 $router->put('cups/{cupId}', UpdateCupAction::class);
                 $router->post('competitions/{competitionId}/events', CreateEventAction::class);
                 $router->post('competitions/{competitionId}/events/unite', UniteEventsAction::class);

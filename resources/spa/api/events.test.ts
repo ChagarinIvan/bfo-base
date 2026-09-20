@@ -39,7 +39,12 @@ describe('events API', () => {
             headers: {},
         })
         expect(api.get).toHaveBeenCalledWith('/events', {
-            params: { competitionId: '42', page: 1, perPage: 20 },
+            params: {
+                competitionId: '42',
+                page: 1,
+                perPage: 20,
+                withParticipantsCount: 1,
+            },
         })
     })
 

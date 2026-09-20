@@ -43,7 +43,7 @@ final readonly class CreateOrUpdatePersonPayments
 
     public function date(): Carbon
     {
-        return Carbon::createFromFormat('Y-m-d', $this->dto->date);
+        return Carbon::createFromFormat('Y-m-d', $this->dto->date)->startOfDay();
     }
 
     public function userId(): int

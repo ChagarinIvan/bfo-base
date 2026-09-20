@@ -62,7 +62,7 @@ final class CreateOrUpdatePersonPaymentsServiceTest extends TestCase
             ->with(new Criteria(['personId' => 1, 'year' => 2021]))
         ;
 
-        $date = Carbon::createFromFormat('Y-m-d', '2021-01-01');
+        $date = Carbon::createFromFormat('Y-m-d', '2021-01-01')->startOfDay();
         $personPayment = $this->paymentStub();
 
         $this->factory
@@ -113,7 +113,7 @@ final class CreateOrUpdatePersonPaymentsServiceTest extends TestCase
     #[Test]
     public function it_updates_existed_payment(): void
     {
-        $date = Carbon::createFromFormat('Y-m-d', '2021-01-01');
+        $date = Carbon::createFromFormat('Y-m-d', '2021-01-01')->startOfDay();
         $existPersonPayment = $this->paymentMock();
         $existPersonPayment
             ->expects($this->once())

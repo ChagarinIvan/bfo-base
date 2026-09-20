@@ -83,7 +83,11 @@ final class EloquentEventRepository implements EventRepository
     /** @return Slice<Event> */
     public function paginate(Criteria $criteria, EventResources $resources = new EventResources()): Slice
     {
-        $query = $this->buildQuery($criteria)->withCount('protocolLines');
+        $query = $this->buildQuery($criteria);
+
+        if ($resources->withParticipantsCount) {
+            $query->withCount('protocolLines');
+        }
 
         if ($resources->withCompetitionName) {
             $query->with('competition:id,name');

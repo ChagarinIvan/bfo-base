@@ -38,10 +38,7 @@ final class CalculateCupEventServiceTest extends TestCase
         $this->service = new CalculateCupEventService(
             $this->cups = $this->createMock(CupRepository::class),
             $this->cupEvents = $this->createMock(CupEventRepository::class),
-            new CupAssembler(
-                new EventAssembler($authAssembler),
-                $authAssembler,
-            ),
+            new CupAssembler($authAssembler, new EventAssembler($authAssembler)),
         );
     }
 

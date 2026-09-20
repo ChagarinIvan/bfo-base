@@ -30,10 +30,7 @@ final class ViewCupServiceTest extends TestCase
 
         $this->service = new ViewCupService(
             $this->cups = $this->createMock(CupRepository::class),
-            new CupAssembler(
-                new EventAssembler($authAssembler),
-                $authAssembler,
-            ),
+            new CupAssembler($authAssembler, new EventAssembler($authAssembler)),
         );
     }
 
