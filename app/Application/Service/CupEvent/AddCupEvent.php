@@ -14,16 +14,6 @@ final readonly class AddCupEvent
     {
     }
 
-    public function cupId(): int
-    {
-        return $this->dto->cupId;
-    }
-
-    public function eventId(): int
-    {
-        return $this->dto->eventId;
-    }
-
     public function input(): CupEventInput
     {
         return new CupEventInput($this->dto->cupId, $this->dto->eventId, $this->dto->points, $this->userId->id);

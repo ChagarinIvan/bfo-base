@@ -35,9 +35,7 @@ export async function updateCupEvent(
     cupEventId: string,
     value: CupEventFormRequest,
 ) {
-    return (
-        await api.put<CupEvent>(`/cup-events/${cupEventId}`, value)
-    ).data
+    return (await api.put<CupEvent>(`/cup-events/${cupEventId}`, value)).data
 }
 
 export async function createCup(value: CreateCupRequest) {

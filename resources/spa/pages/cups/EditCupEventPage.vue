@@ -106,12 +106,9 @@ onMounted(load)
     <Message v-if="loading" severity="info" :closable="false">{{
         t('spa.cups.loading')
     }}</Message>
-    <Message
-        v-else-if="error || !cupEvent"
-        severity="error"
-        :closable="false"
-        >{{ error }}</Message
-    >
+    <Message v-else-if="!cupEvent" severity="error" :closable="false">{{
+        error
+    }}</Message>
     <Card v-else class="form-card">
         <template #title>{{ t('spa.cup_event.edit.title') }}</template>
         <template #content
