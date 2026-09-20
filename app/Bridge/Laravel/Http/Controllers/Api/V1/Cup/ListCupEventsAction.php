@@ -16,14 +16,8 @@ final class ListCupEventsAction extends BaseController
 {
     use ApiAction;
 
-    public function __invoke(
-        string $cupId,
-        CupEventSearchDto $search,
-        Pagination $pagination,
-        ListCupEventService $service,
-    ): Slice {
-        $search->cupId = $cupId;
-
+    public function __invoke(CupEventSearchDto $search, Pagination $pagination, ListCupEventService $service): Slice
+    {
         return $service
             ->execute(new ListCupEvent($search))
             ->setPerPage($pagination->perPage)

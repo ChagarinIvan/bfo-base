@@ -6,6 +6,7 @@ import PersonRanksPage from './PersonRanksPage.vue'
 
 const {
     auth,
+    getCupEventContexts,
     getEventsByIds,
     getPersonRankHistories,
     getRanks,
@@ -13,6 +14,7 @@ const {
     routerReplace,
 } = vi.hoisted(() => ({
     auth: { isAuthenticated: true },
+    getCupEventContexts: vi.fn(),
     getEventsByIds: vi.fn(),
     getPersonRankHistories: vi.fn(),
     getRanks: vi.fn(),
@@ -20,6 +22,7 @@ const {
     routerReplace: vi.fn(),
 }))
 
+vi.mock('../../api/cups', () => ({ getCupEventContexts }))
 vi.mock('../../api/events', () => ({ getEventsByIds }))
 vi.mock('../../api/personRankHistory', async () => ({
     getPersonRankHistories,
@@ -59,6 +62,7 @@ describe('person ranks page', () => {
     beforeEach(() => {
         vi.resetAllMocks()
         auth.isAuthenticated = true
+        getCupEventContexts.mockResolvedValue([])
         getRanks.mockResolvedValue([{ id: 7, label: 'КМС' }])
         getPersonRankHistories.mockResolvedValue([history])
         getEventsByIds.mockResolvedValue([
@@ -96,6 +100,7 @@ describe('person ranks page', () => {
 
         expect(getPersonRankHistories).toHaveBeenCalledWith('7')
         expect(getEventsByIds).toHaveBeenCalledWith(['12'])
+        expect(getCupEventContexts).toHaveBeenCalledWith(['12'])
         expect(getRanks).toHaveBeenCalledOnce()
         expect(wrapper.find('#person-rank-year-filter').exists()).toBe(false)
         expect(wrapper.find('#person-rank-filter').exists()).toBe(false)
@@ -104,7 +109,7 @@ describe('person ranks page', () => {
         expect(wrapper.find('.rank-history-timeline').exists()).toBe(false)
         await wrapper.find('.rank-history-group').trigger('click')
         expect(wrapper.find('.rank-history-timeline').exists()).toBe(true)
-        expect(wrapper.findAll('.column')).toHaveLength(7)
+        expect(wrapper.findAll('.column')).toHaveLength(8)
         expect(wrapper.text()).toContain('Тып выканання')
     })
 

@@ -11,7 +11,14 @@ import { deleteGroup, getGroup } from '../../api/groups'
 import { getUsers } from '../../api/users'
 import { getYears } from '../../api/years'
 import { getGroupEvents } from '../../api/events'
-import type { Event, Group, PaginationHeaders, User } from '../../api/types'
+import { getCupEventContexts } from '../../api/cups'
+import type {
+    CupEventContext,
+    Event,
+    Group,
+    PaginationHeaders,
+    User,
+} from '../../api/types'
 import FilterPanel from '../../components/FilterPanel.vue'
 import ImpressionDetails from '../../components/ImpressionDetails.vue'
 import DateFilter from '../../components/DateFilter.vue'
@@ -20,6 +27,8 @@ import ConfirmDeleteDialog from '../../components/actions/ConfirmDeleteDialog.vu
 import GroupActionMenu from '../../components/actions/GroupActionMenu.vue'
 import ListingTable from '../../components/ListingTable.vue'
 import SlicePaginator from '../../components/SlicePaginator.vue'
+import CupEventBadges from '../../components/CupEventBadges.vue'
+import { contextsByEventId } from '../../components/cupEventContextModels'
 import { t } from '../../i18n'
 import { useAuthStore } from '../../stores/auth'
 import {
@@ -34,6 +43,7 @@ const route = useRoute()
 const router = useRouter()
 const group = ref<Group | null>(null)
 const events = ref<Event[]>([])
+const cupEventContexts = ref<Record<string, CupEventContext[]>>({})
 const users = ref<User[]>([])
 const years = ref<number[]>([])
 const competitionName = ref('')
@@ -56,6 +66,11 @@ const columns = computed(() => [
         defaultVisible: true,
     },
     { key: 'event', label: t('spa.group.details.start'), defaultVisible: true },
+    {
+        key: 'cups',
+        label: t('spa.cup_event.context.cups'),
+        defaultVisible: true,
+    },
     {
         key: 'date',
         label: t('spa.group.filters.date'),
@@ -130,6 +145,13 @@ async function loadEvents(
     )
     if (requestId !== latestRequest) return
     events.value = response.data
+    void getCupEventContexts(events.value.map((event) => event.id))
+        .then((contexts) => {
+            if (requestId === latestRequest) {
+                cupEventContexts.value = contextsByEventId(contexts)
+            }
+        })
+        .catch(() => undefined)
     pagination.value = paginationFromHeaders(response.headers)
 }
 async function load(id: string): Promise<void> {
@@ -299,6 +321,15 @@ onBeforeUnmount(() => debouncedFilter.cancel())
                             <RouterLink :to="`/app/events/${data.id}`">
                                 {{ data.name }}
                             </RouterLink>
+                        </template> </Column
+                    ><Column
+                        v-if="isVisible('cups')"
+                        :header="t('spa.cup_event.context.cups')"
+                    >
+                        <template #body="{ data }">
+                            <CupEventBadges
+                                :contexts="cupEventContexts[data.id] ?? []"
+                            />
                         </template> </Column
                     ><Column
                         v-if="isVisible('date')"

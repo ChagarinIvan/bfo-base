@@ -69,6 +69,10 @@ final class EloquentCupRepository implements CupRepository
             $query->where('visible', $criteria->param('visible'));
         }
 
+        if ($criteria->hasParam('ids')) {
+            $query->whereIn('id', $criteria->param('ids'));
+        }
+
         if ($criteria->hasParam('year')) {
             $query->where('year', $criteria->param('year'));
         }

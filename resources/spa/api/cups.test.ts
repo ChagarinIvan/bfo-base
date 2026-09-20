@@ -3,6 +3,7 @@ import { api } from './client'
 import {
     createCupEvent,
     getCupEvent,
+    getCupEventContexts,
     getCupEvents,
     updateCupEvent,
 } from './cups'
@@ -23,8 +24,9 @@ describe('cups API', () => {
             perPage: 50,
         })
 
-        expect(api.get).toHaveBeenCalledWith('/cups/42/events', {
+        expect(api.get).toHaveBeenCalledWith('/cup-events', {
             params: {
+                cupId: '42',
                 eventIds: ['10', '20'],
                 name: 'Stage',
                 date: '2026-05-10',
@@ -53,5 +55,32 @@ describe('cups API', () => {
             eventId: 9,
             points: 75,
         })
+    })
+
+    it('loads compact cup contexts for event table rows', async () => {
+        vi.mocked(api.get)
+            .mockResolvedValueOnce({
+                data: [{ id: '7', cupId: '8', eventId: '10', points: '0' }],
+            })
+            .mockResolvedValueOnce({
+                data: [
+                    {
+                        id: '8',
+                        name: 'Кубак',
+                        type: 'sprint',
+                        groups: [{ id: 'M_0_', name: 'М' }],
+                    },
+                ],
+            })
+
+        const contexts = await getCupEventContexts(['10', '20'])
+
+        expect(api.get).toHaveBeenCalledWith('/cup-events', {
+            params: { eventIds: ['10', '20'], perPage: 2 },
+        })
+        expect(api.get).toHaveBeenLastCalledWith('/cups', {
+            params: { ids: ['8'], perPage: 100 },
+        })
+        expect(contexts).toMatchObject([{ cupName: 'Кубак', groupName: 'М' }])
     })
 })

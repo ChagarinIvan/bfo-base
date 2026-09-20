@@ -65,6 +65,7 @@ use App\Bridge\Laravel\Http\Controllers\Api\V1\RankCheck\ListRankChecksAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\RankCheck\ViewRankCheckAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Year\ListYearsAction;
 use App\Bridge\Laravel\Http\Middleware\AuthenticateApiV1;
+use App\Bridge\Laravel\Http\Middleware\CacheResponseByQueryParameter;
 use App\Bridge\Laravel\Http\Middleware\OptionalAuthenticateApiV1;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Routing\Router;
@@ -86,9 +87,9 @@ final class ApiV1RoutesServiceProvider extends ServiceProvider
 
             $router->prefix('api/v1')->middleware(OptionalAuthenticateApiV1::class)->group(static function () use ($router): void {
                 $router->get('competitions', ListCompetitionsAction::class);
-                $router->get('cups', ListCupsAction::class);
+                $router->get('cups', ListCupsAction::class)->middleware(CacheResponseByQueryParameter::class . ':ids,86400');
                 $router->get('cups/{cupId}', ViewCupAction::class);
-                $router->get('cups/{cupId}/events', ListCupEventsAction::class);
+                $router->get('cup-events', ListCupEventsAction::class)->middleware(CacheResponseByQueryParameter::class . ':eventIds,86400');
                 $router->get('cup-events/{cupEventId}', ViewCupEventAction::class);
                 $router->get('competitions/{competitionId}', ViewCompetitionAction::class);
                 $router->get('clubs', ListClubsAction::class);

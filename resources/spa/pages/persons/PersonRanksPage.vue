@@ -12,11 +12,14 @@ import {
     updatePersonRankActivation,
 } from '../../api/personRankHistory'
 import { getEventsByIds } from '../../api/events'
+import { getCupEventContexts } from '../../api/cups'
 import { getRanks, type RankOption } from '../../api/ranks'
 import { rebuildPersonRanks } from '../../api/persons'
-import type { Event, PersonRankHistory } from '../../api/types'
+import type { CupEventContext, Event, PersonRankHistory } from '../../api/types'
 import ActionButton from '../../components/actions/ActionButton.vue'
 import ListingTable from '../../components/ListingTable.vue'
+import CupEventBadges from '../../components/CupEventBadges.vue'
+import { contextsByEventId } from '../../components/cupEventContextModels'
 import { protocolLineEventUrl } from '../../components/tableModels'
 import { t } from '../../i18n'
 import { useAuthStore } from '../../stores/auth'
@@ -35,6 +38,7 @@ const router = useRouter()
 const auth = useAuthStore()
 const history = ref<PersonRankHistory[]>([])
 const events = ref<Record<string, Event>>({})
+const cupEventContexts = ref<Record<string, CupEventContext[]>>({})
 const ranks = ref<RankOption[]>([])
 const loading = ref(true)
 const error = ref('')
@@ -69,6 +73,11 @@ const columns = computed(() => [
         defaultVisible: true,
     },
     { key: 'event', label: t('spa.person_rank.event'), defaultVisible: true },
+    {
+        key: 'cups',
+        label: t('spa.cup_event.context.cups'),
+        defaultVisible: true,
+    },
     ...(auth.isAuthenticated
         ? [
               {
@@ -195,6 +204,13 @@ async function loadHistory(): Promise<void> {
         events.value = Object.fromEntries(
             loadedEvents.map((event) => [event.id, event]),
         )
+        void getCupEventContexts(loadedEvents.map((event) => event.id))
+            .then((contexts) => {
+                if (requestId === latestRequest) {
+                    cupEventContexts.value = contextsByEventId(contexts)
+                }
+            })
+            .catch(() => undefined)
     } catch {
         if (requestId !== latestRequest) return
         error.value = t('spa.person_rank.error')
@@ -437,6 +453,18 @@ onBeforeUnmount(() => {
                                 <a :href="eventUrl(data)">{{
                                     display(eventName(data))
                                 }}</a>
+                            </template>
+                        </Column>
+                        <Column
+                            v-if="isVisible('cups')"
+                            :header="t('spa.cup_event.context.cups')"
+                        >
+                            <template #body="{ data }">
+                                <CupEventBadges
+                                    :contexts="
+                                        cupEventContexts[data.eventId] ?? []
+                                    "
+                                />
                             </template>
                         </Column>
                         <Column

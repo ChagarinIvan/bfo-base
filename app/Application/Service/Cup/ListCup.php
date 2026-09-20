@@ -27,6 +27,9 @@ final readonly class ListCup
         }
 
         $params = [];
+        if ($this->search->ids !== null) {
+            $params['ids'] = $this->search->ids;
+        }
         if ($this->search->year !== null) {
             $params['year'] = (int) $this->search->year;
         }

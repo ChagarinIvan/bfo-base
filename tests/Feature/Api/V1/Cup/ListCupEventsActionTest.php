@@ -53,7 +53,7 @@ final class ListCupEventsActionTest extends TestCase
             'event_id' => $otherEvent->id,
         ]);
 
-        $this->getJson('/api/v1/cups/101/events?name=Spring&date=2026-05-10&perPage=50')
+        $this->getJson('/api/v1/cup-events?cupId=101&name=Spring&date=2026-05-10&perPage=50')
             ->assertOk()
             ->assertJsonCount(1)
             ->assertJsonPath('0.cupId', '101')
@@ -77,7 +77,7 @@ final class ListCupEventsActionTest extends TestCase
         CupEvent::factory()->createOne(['cup_id' => $cup->id, 'event_id' => $includedEvent->id]);
         CupEvent::factory()->createOne(['cup_id' => $cup->id, 'event_id' => $excludedEvent->id]);
 
-        $this->getJson('/api/v1/cups/101/events?eventIds[]=101')
+        $this->getJson('/api/v1/cup-events?cupId=101&eventIds[]=101')
             ->assertOk()
             ->assertJsonCount(1)
             ->assertJsonPath('0.eventId', '101')
@@ -87,7 +87,7 @@ final class ListCupEventsActionTest extends TestCase
     #[Test]
     public function it_validates_event_ids(): void
     {
-        $this->getJson('/api/v1/cups/101/events?eventIds[]=invalid')
+        $this->getJson('/api/v1/cup-events?cupId=101&eventIds[]=invalid')
             ->assertUnprocessable()
             ->assertJsonFragment(['code' => 'validation_error', 'field' => 'eventIds.0'])
         ;
@@ -96,7 +96,7 @@ final class ListCupEventsActionTest extends TestCase
     #[Test]
     public function it_returns_no_stages_for_a_missing_or_inactive_cup(): void
     {
-        $this->getJson('/api/v1/cups/999/events')
+        $this->getJson('/api/v1/cup-events?cupId=999')
             ->assertOk()
             ->assertJsonCount(0)
         ;
@@ -113,10 +113,10 @@ final class ListCupEventsActionTest extends TestCase
         $event = Event::factory()->createOne(['id' => 101, 'competition_id' => $competition->id]);
         CupEvent::factory()->createOne(['cup_id' => $cup->id, 'event_id' => $event->id]);
 
-        $this->getJson('/api/v1/cups/101/events')->assertJsonMissingPath('0.created');
+        $this->getJson('/api/v1/cup-events?cupId=101')->assertJsonMissingPath('0.created');
 
         Sanctum::actingAs($this->createUser());
-        $this->getJson('/api/v1/cups/101/events')->assertJsonStructure([['created', 'updated']]);
+        $this->getJson('/api/v1/cup-events?cupId=101')->assertJsonStructure([['created', 'updated']]);
     }
 
     private function createUser(): SanctumUser

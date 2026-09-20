@@ -8,6 +8,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { getCompetition } from '../../api/competitions'
 import { deleteCompetition } from '../../api/competitions'
 import { deleteEvent, getCompetitionEvents } from '../../api/events'
+import { getCupEventContexts } from '../../api/cups'
 import { getUsers } from '../../api/users'
 import { t } from '../../i18n'
 import { formatDateRange, paginationFromHeaders } from './competitionModels'
@@ -24,11 +25,16 @@ import ImpressionDetails from '../../components/ImpressionDetails.vue'
 import ActionButton from '../../components/actions/ActionButton.vue'
 import ListingTable from '../../components/ListingTable.vue'
 import MassCompetitionIndicator from '../../components/MassCompetitionIndicator.vue'
+import CupEventBadges from '../../components/CupEventBadges.vue'
+import { contextsByEventId } from '../../components/cupEventContextModels'
 
 const route = useRoute()
 const router = useRouter()
 const competition = ref<Competition | null>(null)
 const events = ref<Event[]>([])
+const cupEventContexts = ref<
+    Record<string, import('../../api/types').CupEventContext[]>
+>({})
 const users = ref<User[]>([])
 const eventPagination = ref<PaginationHeaders>({
     currentPage: 1,
@@ -46,6 +52,11 @@ const eventColumns = computed(() => [
     {
         key: 'name',
         label: t('spa.competition.create.name'),
+        defaultVisible: true,
+    },
+    {
+        key: 'cups',
+        label: t('spa.cup_event.context.cups'),
         defaultVisible: true,
     },
     {
@@ -104,6 +115,11 @@ async function loadEvents(
 ): Promise<void> {
     const response = await getCompetitionEvents(id, page, perPage)
     events.value = response.data
+    void getCupEventContexts(events.value.map((event) => event.id))
+        .then((contexts) => {
+            cupEventContexts.value = contextsByEventId(contexts)
+        })
+        .catch(() => undefined)
     eventPagination.value = paginationFromHeaders(response.headers)
 }
 
@@ -292,6 +308,9 @@ async function deleteCurrentEvent(): Promise<void> {
         >
             <template #cell-name="{ data }">
                 <a :href="`/app/events/${data.id}`">{{ data.name }}</a>
+            </template>
+            <template #cell-cups="{ data }">
+                <CupEventBadges :contexts="cupEventContexts[data.id] ?? []" />
             </template>
             <template #cell-created="{ data }">
                 <ImpressionDetails
