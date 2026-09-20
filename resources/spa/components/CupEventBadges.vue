@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import Popover from 'primevue/popover'
-import type { CupEventContext } from '../api/types'
+import type { CupEventContext, CupGroup } from '../api/types'
+import { cupGroupBadgeClass } from '../pages/cups/cupModels'
 import CupTypeIcon from './CupTypeIcon.vue'
 
 const props = defineProps<{
     contexts: CupEventContext[]
     groupName?: string | null
 }>()
+
+type BadgeContext = CupEventContext & { badgeGroup?: CupGroup }
 
 const selected = ref<CupEventContext | null>(null)
 const popover = ref<{
@@ -24,7 +27,7 @@ function hide(): void {
     popover.value?.hide()
 }
 
-const visibleContexts = computed(() =>
+const visibleContexts = computed<BadgeContext[]>(() =>
     props.contexts.flatMap((context) => {
         if (!props.groupName) return [context]
 
@@ -36,6 +39,7 @@ const visibleContexts = computed(() =>
         return [
             {
                 ...context,
+                badgeGroup: group,
                 href:
                     '/cups/' +
                     context.cupId +
@@ -56,7 +60,12 @@ const visibleContexts = computed(() =>
             v-for="context in visibleContexts"
             :key="context.cupEventId"
             :href="context.href"
-            class="cup-event-badge"
+            :class="[
+                'cup-event-badge',
+                context.badgeGroup
+                    ? cupGroupBadgeClass(context.badgeGroup)
+                    : 'cup-event-badge--green',
+            ]"
             :aria-label="context.cupName"
             @mouseenter="show($event, context)"
             @mouseleave="hide"

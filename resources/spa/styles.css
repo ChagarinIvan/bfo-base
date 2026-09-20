@@ -45,16 +45,32 @@ body {
 }
 
 .cup-event-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    display: inline-grid;
+    place-items: center;
     width: 2rem;
     height: 2rem;
     margin: 0.125rem 0.25rem 0.125rem 0;
     border-radius: 999px;
     color: #fff;
-    background: var(--p-green-400, #4ade80);
     text-decoration: none;
+}
+
+.cup-event-badge--green {
+    background: var(--p-green-400, #4ade80);
+}
+
+.cup-event-badge .cup-type-icon {
+    display: grid;
+    place-items: center;
+    width: 1rem;
+    height: 1rem;
+    margin: 0;
+    line-height: 1;
+}
+
+.cup-event-badge .cup-type-icon__svg {
+    width: 1rem;
+    height: 1rem;
 }
 
 .app-header {
