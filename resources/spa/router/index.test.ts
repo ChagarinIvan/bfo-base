@@ -175,6 +175,12 @@ describe('SPA navigation guard', () => {
 
         await router.push('/app/cups/42/edit')
         expect(router.currentRoute.value.path).toBe('/app/login')
+
+        await router.push('/app/cups/42/events/create')
+        expect(router.currentRoute.value.path).toBe('/app/login')
+
+        await router.push('/app/cups/42/events/7/edit')
+        expect(router.currentRoute.value.path).toBe('/app/login')
     })
 
     it('protects person payment list and create routes', async () => {

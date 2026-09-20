@@ -2,6 +2,8 @@ import { api } from './client'
 import type {
     Cup,
     CupEvent,
+    CupEventFormRequest,
+    CreateCupEventRequest,
     CupEventSearchQuery,
     CupSearchQuery,
     CreateCupRequest,
@@ -19,6 +21,21 @@ export async function getCup(id: string) {
 
 export async function getCupEvents(cupId: string, query: CupEventSearchQuery) {
     return api.get<CupEvent[]>(`/cups/${cupId}/events`, { params: query })
+}
+
+export async function getCupEvent(cupEventId: string) {
+    return (await api.get<CupEvent>(`/cup-events/${cupEventId}`)).data
+}
+
+export async function createCupEvent(value: CreateCupEventRequest) {
+    return (await api.post<CupEvent>('/cup-events', value)).data
+}
+
+export async function updateCupEvent(
+    cupEventId: string,
+    value: CupEventFormRequest,
+) {
+    return (await api.put<CupEvent>(`/cup-events/${cupEventId}`, value)).data
 }
 
 export async function createCup(value: CreateCupRequest) {

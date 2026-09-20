@@ -10,6 +10,8 @@ use Illuminate\Support\Collection;
 
 interface CupEventRepository
 {
+    public function add(CupEvent $cupEvent): void;
+
     public function byId(int $id): ?CupEvent;
 
     public function lockById(int $id): ?CupEvent;

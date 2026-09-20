@@ -63,6 +63,22 @@ export interface CupEvent {
     updated?: Impression
 }
 
+export interface CupEventFormRequest {
+    eventId: number
+    points: number
+}
+
+export interface CreateCupEventRequest extends CupEventFormRequest {
+    cupId: number
+}
+
+export interface CupEventOptionQuery {
+    year: number
+    notRelatedToCup?: string
+    page?: number
+    perPage?: number
+}
+
 export interface CupEventSearchQuery {
     eventIds?: string[]
     name?: string
