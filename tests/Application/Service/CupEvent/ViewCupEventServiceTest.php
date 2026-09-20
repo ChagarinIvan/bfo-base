@@ -47,7 +47,8 @@ final class ViewCupEventServiceTest extends TestCase
     public function it_assembles_the_found_stage(): void
     {
         $cupEvent = $this->createMock(CupEvent::class);
-        $cupEvent->method('__get')->willReturnMap([
+
+        $cupEvent->expects($this->atLeast(6))->method('__get')->willReturnMap([
             ['id', 3],
             ['cup_id', 1],
             ['event_id', 2],
@@ -60,6 +61,7 @@ final class ViewCupEventServiceTest extends TestCase
         $view = $this->service->execute(new ViewCupEvent('3'));
 
         $this->assertInstanceOf(ViewCupEventDto::class, $view);
+
         $this->assertSame('3', $view->id);
         $this->assertSame('1', $view->cupId);
         $this->assertSame('2', $view->eventId);

@@ -15,6 +15,10 @@ describe('cup event form', () => {
         const picker = wrapper.findComponent(Select)
 
         expect(picker.props('filter')).toBe(true)
+        expect(picker.props('filterFields')).toEqual([
+            'name',
+            'competitionName',
+        ])
         expect(picker.props('placeholder')).toBe('Абярыце спаборніцтва')
     })
 

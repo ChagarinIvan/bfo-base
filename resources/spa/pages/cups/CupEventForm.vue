@@ -53,6 +53,7 @@ function submit(): void {
                 :options="events"
                 option-value="id"
                 :filter="true"
+                :filter-fields="['name', 'competitionName']"
                 :placeholder="t('spa.cup_event.form.event_placeholder')"
                 :invalid="Boolean(errors.eventId)"
                 required
