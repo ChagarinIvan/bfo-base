@@ -28,6 +28,7 @@ final class EloquentCupEventRepository implements CupEventRepository
             ->where('cup_events.active', true)
             ->where('cups.active', true)
             ->where('cup_events.id', $id)
+            ->with('event.competition')
             ->first()
         ;
     }

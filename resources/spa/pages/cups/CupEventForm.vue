@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, ref, watch } from 'vue'
+import { reactive, watch } from 'vue'
 import Button from 'primevue/button'
 import InputNumber from 'primevue/inputnumber'
 import Message from 'primevue/message'
@@ -21,7 +21,6 @@ const props = withDefaults(
 
 const emit = defineEmits<{ submit: [value: CupEventFormRequest] }>()
 const form = reactive<CupEventFormRequest>({ eventId: 0, points: 0 })
-const filter = ref('')
 
 watch(
     () => props.initialValue,
@@ -54,12 +53,11 @@ function submit(): void {
                 :options="events"
                 option-value="id"
                 :filter="true"
-                :filter-value="filter"
+                :placeholder="t('spa.cup_event.form.event_placeholder')"
                 :invalid="Boolean(errors.eventId)"
                 required
-                @filter="filter = $event.value"
             >
-                <template #value="{ value }">
+                <template #value="{ value, placeholder }">
                     {{
                         events.find((event) => event.id === String(value))
                             ? label(
@@ -67,7 +65,7 @@ function submit(): void {
                                       (event) => event.id === String(value),
                                   )!,
                               )
-                            : ''
+                            : placeholder
                     }}
                 </template>
                 <template #option="{ option }">{{ label(option) }}</template>

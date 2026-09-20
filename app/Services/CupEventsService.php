@@ -27,11 +27,6 @@ final readonly class CupEventsService
         return $this->cupEvents->byCriteria(new Criteria(['cupId' => $cupId]));
     }
 
-    public function getCupEvent(int $cupEventId): CupEvent
-    {
-        return $this->cupEvents->byId($cupEventId) ?? throw new RuntimeException('Wrong cup event id.');
-    }
-
     /** @return array<string, CupEventPoint[]> */
     public function calculateCup(Cup $cup, Collection $cupEvents, CupGroup $group): array
     {

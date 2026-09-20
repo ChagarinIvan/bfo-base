@@ -2,10 +2,22 @@
 
 import { mount } from '@vue/test-utils'
 import PrimeVue from 'primevue/config'
+import Select from 'primevue/select'
 import { describe, expect, it } from 'vitest'
 import CupEventForm from './CupEventForm.vue'
 
 describe('cup event form', () => {
+    it('keeps the event picker searchable and shows a placeholder before selection', () => {
+        const wrapper = mount(CupEventForm, {
+            props: { events: [], submitLabel: 'Захаваць' },
+            global: { plugins: [PrimeVue] },
+        })
+        const picker = wrapper.findComponent(Select)
+
+        expect(picker.props('filter')).toBe(true)
+        expect(picker.props('placeholder')).toBe('Абярыце спаборніцтва')
+    })
+
     it('emits the prefilled event and points', async () => {
         const wrapper = mount(CupEventForm, {
             props: {

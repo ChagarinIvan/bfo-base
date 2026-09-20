@@ -496,6 +496,7 @@
     "spa.cup_event.edit.success": "Этап паспяхова зменены.",
     "spa.cup_event.edit.error": "Не атрымалася змяніць этап.",
     "spa.cup_event.form.event": "Спаборніцтва",
+    "spa.cup_event.form.event_placeholder": "Абярыце спаборніцтва",
     "spa.cup_event.form.points": "Ачкі",
     "spa.cup_event.form.not_found": "Этап кубка не знойдзены.",
     "spa.cup.type.unknown": "Невядомы тып кубка",
