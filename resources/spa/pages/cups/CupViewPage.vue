@@ -361,7 +361,7 @@ onBeforeUnmount(() => debouncedSearch.cancel())
             <template #cell-name="{ data }">
                 <RouterLink
                     v-if="stageEvents[data.eventId]"
-                    :to="`/app/events/${data.eventId}`"
+                    :to="`/app/cup-events/${data.id}`"
                 >
                     {{ stageEvents[data.eventId].competitionName }} -
                     {{ stageEvents[data.eventId].name }}

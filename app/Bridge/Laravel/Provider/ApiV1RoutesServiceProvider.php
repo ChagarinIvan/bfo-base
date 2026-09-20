@@ -21,6 +21,7 @@ use App\Bridge\Laravel\Http\Controllers\Api\V1\Competition\UpdateCompetitionActi
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Competition\ViewCompetitionAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\CreateCupAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\CreateCupEventAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\ListCupEventPointsAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\ListCupEventsAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\ListCupsAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\UpdateCupAction;
@@ -91,6 +92,7 @@ final class ApiV1RoutesServiceProvider extends ServiceProvider
                 $router->get('cups/{cupId}', ViewCupAction::class);
                 $router->get('cup-events', ListCupEventsAction::class)->middleware(CacheResponseByQueryParameter::class . ':eventIds,86400');
                 $router->get('cup-events/{cupEventId}', ViewCupEventAction::class);
+                $router->get('cup-events/{cupEventId}/points', ListCupEventPointsAction::class);
                 $router->get('competitions/{competitionId}', ViewCompetitionAction::class);
                 $router->get('clubs', ListClubsAction::class);
                 $router->get('clubs/all', ListAllClubAction::class);
