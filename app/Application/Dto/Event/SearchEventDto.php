@@ -13,7 +13,7 @@ final class SearchEventDto extends AbstractDto
     {
         return [
             'competitionId' => 'nullable|integer|min:1|required_without_all:groupId,ids,year',
-            'groupId' => 'nullable|integer|min:1|required_without_all:competitionId,ids',
+            'groupId' => 'nullable|integer|min:1|required_without_all:competitionId,ids,year',
             'ids' => 'nullable|array',
             'ids.*' => 'integer|min:1',
             'withCompetition' => 'nullable|boolean',

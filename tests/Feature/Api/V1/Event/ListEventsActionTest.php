@@ -116,6 +116,19 @@ final class ListEventsActionTest extends TestCase
     }
 
     #[Test]
+    public function it_lists_cup_stage_options_by_year_without_requiring_a_group(): void
+    {
+        $competition = $this->createCompetition(['name' => 'Spring Cup']);
+        $event = $this->createEvent($competition, ['date' => '2026-05-11']);
+
+        $this->getJson('/api/v1/events?year=2026&notRelatedToCup=60&perPage=100&withCompetition=1')
+            ->assertOk()
+            ->assertJsonPath('0.id', (string) $event->id)
+            ->assertJsonPath('0.competitionName', 'Spring Cup')
+        ;
+    }
+
+    #[Test]
     public function it_includes_impressions_for_an_authenticated_client(): void
     {
         $competition = $this->createCompetition();
