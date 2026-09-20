@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Bridge\Laravel\Console;
 
+use App\Bridge\Laravel\Console\Commands\BackfillRepeatMasterRankActivationCommand;
 use App\Bridge\Laravel\Console\Commands\CleanupRankChecksCommand;
 use App\Bridge\Laravel\Console\Commands\DeleteInactivePersonsPromptsCommand;
 use App\Bridge\Laravel\Console\Commands\FixInactivePersonsProtocolLinesCommand;
@@ -27,6 +28,7 @@ class Kernel extends ConsoleKernel
      */
     #[Override]
     protected $commands = [
+        BackfillRepeatMasterRankActivationCommand::class,
         IdentProtocolLineCommand::class,
         SimpleIndentCommand::class,
         StartBigIdentCommand::class,
