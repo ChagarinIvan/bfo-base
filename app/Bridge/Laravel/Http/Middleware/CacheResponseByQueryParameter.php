@@ -16,7 +16,7 @@ final class CacheResponseByQueryParameter
         $response = $next($request);
 
         if ($request->query->has($parameter)) {
-            $response->setPublic();
+            $response->setPrivate();
             $response->setMaxAge($maxAge);
         }
 

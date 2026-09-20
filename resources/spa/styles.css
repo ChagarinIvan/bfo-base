@@ -47,7 +47,12 @@ body {
 .cup-event-badge {
     display: inline-flex;
     align-items: center;
-    gap: 0.25rem;
+    margin: 0.125rem 0.25rem 0.125rem 0;
+    padding: 0.2rem 0.5rem;
+    border-radius: 999px;
+    color: #fff;
+    background: var(--p-green-500, #22c55e);
+    text-decoration: none;
 }
 
 .app-header {

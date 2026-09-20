@@ -165,7 +165,7 @@ final class ListCupsActionTest extends TestCase
             ->assertJsonFragment(['code' => 'validation_error', 'field' => 'name'])
         ;
 
-        $this->getJson('/api/v1/cups?page=0&perPage=101')
+        $this->getJson('/api/v1/cups?page=0&perPage=1001')
             ->assertUnprocessable()
             ->assertJsonFragment(['code' => 'validation_error', 'field' => 'page'])
             ->assertJsonFragment(['code' => 'validation_error', 'field' => 'perPage'])

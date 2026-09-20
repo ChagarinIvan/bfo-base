@@ -13,9 +13,7 @@ describe('cup event badges', () => {
                 cupId: '30',
                 cupName: 'Кубак спрынту',
                 cupType: 'sprint',
-                groupId: 'M_0_',
-                groupName: 'М',
-                href: '/cups/30/20/M_0_/show',
+                href: '/app/cups/30',
             },
             {
                 eventId: '10',
@@ -23,9 +21,7 @@ describe('cup event badges', () => {
                 cupId: '31',
                 cupName: 'Велакубак',
                 cupType: 'bike',
-                groupId: 'W_0_',
-                groupName: 'Ж',
-                href: '/cups/31/21/W_0_/show',
+                href: '/app/cups/31',
             },
         ]
         const wrapper = mount(CupEventBadges, {
@@ -37,11 +33,10 @@ describe('cup event badges', () => {
 
         expect(wrapper.findAll('.cup-event-badge')).toHaveLength(2)
         expect(wrapper.get('.cup-event-badge').attributes('href')).toBe(
-            '/cups/30/20/M_0_/show',
+            '/app/cups/30',
         )
-        expect(wrapper.get('.cup-event-badge').text()).toContain('М')
         expect(wrapper.get('.cup-event-badge').classes()).toContain(
-            'cup-group-badge--green',
+            'cup-event-badge',
         )
     })
 })

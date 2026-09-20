@@ -70,8 +70,6 @@ export interface CupEventContext {
     cupId: string
     cupName: string
     cupType: string
-    groupId: string
-    groupName: string
     href: string
 }
 

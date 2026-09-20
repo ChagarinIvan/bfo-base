@@ -34,7 +34,7 @@ export async function getCupEventContexts(eventIds: string[]) {
 
     const cupEvents = (
         await api.get<CupEvent[]>('/cup-events', {
-            params: { eventIds, perPage: eventIds.length },
+            params: { eventIds, perPage: Math.min(eventIds.length, 1000) },
         })
     ).data
     const cups = (
@@ -49,23 +49,14 @@ export async function getCupEventContexts(eventIds: string[]) {
         const cup = cupsById[cupEvent.cupId]
         if (!cup) return []
 
-        return cup.groups.map((group) => ({
+        return {
             eventId: cupEvent.eventId,
             cupEventId: cupEvent.id,
             cupId: cup.id,
             cupName: cup.name,
             cupType: cup.type,
-            groupId: group.id,
-            groupName: group.name,
-            href:
-                '/cups/' +
-                cup.id +
-                '/' +
-                cupEvent.id +
-                '/' +
-                group.id +
-                '/show',
-        }))
+            href: '/app/cups/' + cup.id,
+        }
     })
 }
 

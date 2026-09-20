@@ -2,7 +2,6 @@
 import { ref } from 'vue'
 import Popover from 'primevue/popover'
 import type { CupEventContext } from '../api/types'
-import { cupGroupBadgeClass } from '../pages/cups/cupModels'
 import CupTypeIcon from './CupTypeIcon.vue'
 
 defineProps<{ contexts: CupEventContext[] }>()
@@ -27,24 +26,16 @@ function hide(): void {
     <span v-if="contexts.length" class="cup-event-badges">
         <a
             v-for="context in contexts"
-            :key="context.cupEventId + ':' + context.groupId"
+            :key="context.cupEventId"
             :href="context.href"
-            :class="[
-                'cup-event-badge',
-                'cup-group-badge',
-                cupGroupBadgeClass({
-                    id: context.groupId,
-                    name: context.groupName,
-                }),
-            ]"
-            :aria-label="context.cupName + ': ' + context.groupName"
+            class="cup-event-badge"
+            :aria-label="context.cupName"
             @mouseenter="show($event, context)"
             @mouseleave="hide"
             @focus="show($event, context)"
             @blur="hide"
         >
             <CupTypeIcon :type="context.cupType" />
-            <span>{{ context.groupName }}</span>
         </a>
         <Popover ref="popover">
             <span>{{ selected?.cupName }}</span>
