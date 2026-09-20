@@ -13,6 +13,7 @@ describe('cup event badges', () => {
                 cupId: '30',
                 cupName: 'Кубак спрынту',
                 cupType: 'sprint',
+                groups: [{ id: 'M_35_', name: 'М35' }],
                 href: '/app/cups/30',
             },
             {
@@ -21,6 +22,7 @@ describe('cup event badges', () => {
                 cupId: '31',
                 cupName: 'Велакубак',
                 cupType: 'bike',
+                groups: [{ id: 'Ж_35_', name: 'Ж35' }],
                 href: '/app/cups/31',
             },
         ]
@@ -37,6 +39,40 @@ describe('cup event badges', () => {
         )
         expect(wrapper.get('.cup-event-badge').classes()).toContain(
             'cup-event-badge',
+        )
+    })
+
+    it('shows only the cup matching a person protocol group', () => {
+        const wrapper = mount(CupEventBadges, {
+            props: {
+                groupName: 'М35',
+                contexts: [
+                    {
+                        eventId: '10',
+                        cupEventId: '20',
+                        cupId: '30',
+                        cupName: 'Ветэранскі кубак',
+                        cupType: 'master',
+                        groups: [{ id: 'M_35_', name: 'М35' }],
+                        href: '/app/cups/30',
+                    },
+                    {
+                        eventId: '10',
+                        cupEventId: '21',
+                        cupId: '31',
+                        cupName: 'Элітны кубак',
+                        cupType: 'elite',
+                        groups: [{ id: 'M_21_', name: 'М21' }],
+                        href: '/app/cups/31',
+                    },
+                ],
+            },
+            global: { stubs: { Popover: { template: '<slot />' } } },
+        })
+
+        expect(wrapper.findAll('.cup-event-badge')).toHaveLength(1)
+        expect(wrapper.get('.cup-event-badge').attributes('href')).toBe(
+            '/cups/30/20/M_35_/show',
         )
     })
 })

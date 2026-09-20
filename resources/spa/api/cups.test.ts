@@ -68,6 +68,7 @@ describe('cups API', () => {
                         id: '8',
                         name: 'Кубак',
                         type: 'sprint',
+                        groups: [{ id: 'M_35_', name: 'М35' }],
                     },
                 ],
             })
@@ -81,7 +82,11 @@ describe('cups API', () => {
             params: { ids: ['8'], perPage: 100 },
         })
         expect(contexts).toMatchObject([
-            { cupName: 'Кубак', href: '/app/cups/8' },
+            {
+                cupName: 'Кубак',
+                groups: [{ name: 'М35' }],
+                href: '/app/cups/8',
+            },
         ])
     })
 })

@@ -55,6 +55,7 @@ export async function getCupEventContexts(eventIds: string[]) {
             cupId: cup.id,
             cupName: cup.name,
             cupType: cup.type,
+            groups: cup.groups,
             href: '/app/cups/' + cup.id,
         }
     })

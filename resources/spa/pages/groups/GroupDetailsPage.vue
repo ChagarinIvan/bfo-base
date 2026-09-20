@@ -329,6 +329,7 @@ onBeforeUnmount(() => debouncedFilter.cancel())
                         <template #body="{ data }">
                             <CupEventBadges
                                 :contexts="cupEventContexts[data.id] ?? []"
+                                :group-name="group.name"
                             />
                         </template> </Column
                     ><Column

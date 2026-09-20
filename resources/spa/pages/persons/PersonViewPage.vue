@@ -350,6 +350,7 @@ onBeforeUnmount(() => debouncedCompetitionSearch.cancel())
                         <CupEventBadges
                             v-if="data.eventId"
                             :contexts="cupEventContexts[data.eventId] ?? []"
+                            :group-name="data.groupName"
                         />
                     </template>
                 </Column>
