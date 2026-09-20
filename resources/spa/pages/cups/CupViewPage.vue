@@ -293,7 +293,7 @@ onBeforeUnmount(() => debouncedSearch.cancel())
                     />
                     <ActionButton
                         as="a"
-                        :href="`/cups/${cup.id}/event/create`"
+                        :href="`/app/cups/${cup.id}/events/create`"
                         icon="pi pi-plus"
                         :label="t('app.competition.add_event')"
                         severity="success"
@@ -385,7 +385,7 @@ onBeforeUnmount(() => debouncedSearch.cancel())
             <template #cell-actions="{ data }"
                 ><ActionButton
                     as="a"
-                    :href="`/cups/${cup.id}/${data.id}/edit`"
+                    :href="`/app/cups/${cup.id}/events/${data.id}/edit`"
                     icon="pi pi-pencil"
                     :label="t('spa.cups.edit.action')" /><ActionButton
                     icon="pi pi-trash"

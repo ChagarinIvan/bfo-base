@@ -20,10 +20,13 @@ use App\Bridge\Laravel\Http\Controllers\Api\V1\Competition\ListCompetitionsActio
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Competition\UpdateCompetitionAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Competition\ViewCompetitionAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\CreateCupAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\CreateCupEventAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\ListCupEventsAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\ListCupsAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\UpdateCupAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\UpdateCupEventAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\ViewCupAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\ViewCupEventAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Distance\ListDistancesAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Event\CreateEventAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Event\DeleteEventAction;
@@ -86,6 +89,7 @@ final class ApiV1RoutesServiceProvider extends ServiceProvider
                 $router->get('cups', ListCupsAction::class);
                 $router->get('cups/{cupId}', ViewCupAction::class);
                 $router->get('cups/{cupId}/events', ListCupEventsAction::class);
+                $router->get('cup-events/{cupEventId}', ViewCupEventAction::class);
                 $router->get('competitions/{competitionId}', ViewCompetitionAction::class);
                 $router->get('clubs', ListClubsAction::class);
                 $router->get('clubs/all', ListAllClubAction::class);
@@ -135,6 +139,8 @@ final class ApiV1RoutesServiceProvider extends ServiceProvider
                 $router->delete('competitions/{competitionId}', DeleteCompetitionAction::class);
                 $router->post('cups', CreateCupAction::class);
                 $router->put('cups/{cupId}', UpdateCupAction::class);
+                $router->post('cup-events', CreateCupEventAction::class);
+                $router->put('cup-events/{cupEventId}', UpdateCupEventAction::class);
                 $router->post('competitions/{competitionId}/events', CreateEventAction::class);
                 $router->post('competitions/{competitionId}/events/unite', UniteEventsAction::class);
                 $router->put('events/{eventId}', UpdateEventAction::class);

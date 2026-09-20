@@ -137,9 +137,9 @@ describe('cup view page', () => {
         expect(wrapper.get('[data-testid="columns"]').text()).toContain(
             'actions',
         )
-        expect(wrapper.html()).toContain('/cups/42/event/create')
+        expect(wrapper.html()).toContain('/app/cups/42/events/create')
         expect(wrapper.html()).toContain('/app/cups/42/edit')
-        expect(wrapper.html()).toContain('/cups/42/7/edit')
+        expect(wrapper.html()).toContain('/app/cups/42/events/7/edit')
         expect(wrapper.find('.cup-group-badge').attributes('href')).toBe(
             '/cups/42/M21/table',
         )

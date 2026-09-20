@@ -15,17 +15,33 @@ use function mb_strtolower;
 
 final class EloquentCupEventRepository implements CupEventRepository
 {
+    public function add(CupEvent $cupEvent): void
+    {
+        $cupEvent->create();
+    }
+
     public function byId(int $id): ?CupEvent
     {
-        return CupEvent::where('active', true)
-            ->with('event.competition')
-            ->find($id)
+        return CupEvent::query()
+            ->select('cup_events.*')
+            ->join('cups', 'cups.id', '=', 'cup_events.cup_id')
+            ->where('cup_events.active', true)
+            ->where('cups.active', true)
+            ->where('cup_events.id', $id)
+            ->first()
         ;
     }
 
     public function lockById(int $id): ?CupEvent
     {
-        return CupEvent::where('active', true)->lockForUpdate()->find($id);
+        return CupEvent::query()
+            ->select('cup_events.*')
+            ->join('cups', 'cups.id', '=', 'cup_events.cup_id')
+            ->where('cup_events.active', true)
+            ->where('cups.active', true)
+            ->where('cup_events.id', $id)
+            ->lockForUpdate()
+            ->first();
     }
 
     public function byCriteria(Criteria $criteria): Collection
