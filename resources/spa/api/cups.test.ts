@@ -90,7 +90,7 @@ describe('cups API', () => {
             {
                 cupName: 'Кубак',
                 groups: [{ name: 'М35' }],
-                href: '/app/cups/8',
+                href: '/app/cup-events/7',
             },
         ])
     })

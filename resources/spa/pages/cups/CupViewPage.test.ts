@@ -137,6 +137,12 @@ describe('cup view page', () => {
         expect(wrapper.get('[data-testid="columns"]').text()).toContain(
             'actions',
         )
+        expect(wrapper.get('[data-testid="columns"]').text()).toContain(
+            'created',
+        )
+        expect(wrapper.get('[data-testid="columns"]').text()).toContain(
+            'updated',
+        )
         expect(wrapper.html()).toContain('/app/cups/42/events/create')
         expect(wrapper.html()).toContain('/app/cups/42/edit')
         expect(wrapper.html()).toContain('/app/cups/42/events/7/edit')

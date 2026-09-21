@@ -293,6 +293,7 @@
     "spa.person_rank.started": "Дата пачатку",
     "spa.person_rank.activated": "Дата актывацыі",
     "spa.person_rank.finished": "Дата заканчэння",
+    "spa.person_rank.pending": "Чакаюць актывацыі",
     "spa.person_rank.competition": "Спаборніцтва",
     "spa.person_rank.event": "Этап",
     "spa.person_rank.loading": "Загрузка разрадаў…",

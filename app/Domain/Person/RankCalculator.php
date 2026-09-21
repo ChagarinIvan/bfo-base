@@ -92,7 +92,9 @@ final class RankCalculator
             $startedOn = $strongerRank->finished_on;
         }
 
-        $history = $this->endLowerRankPeriods($history, $fact, $startedOn, $personId);
+        if ($activatedOn !== null) {
+            $history = $this->endLowerRankPeriods($history, $fact, $startedOn, $personId);
+        }
         $history = $this->extendActivePeriods($history, $fact, $startedOn, $finishedOn, $personId);
 
         $history[] = PersonRankHistory::fromValues(

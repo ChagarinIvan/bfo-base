@@ -39,6 +39,17 @@ describe('person view page', () => {
 
     it('loads participation with both related resources', async () => {
         getYears.mockResolvedValue([2026, 2025])
+        getCupEventContexts.mockResolvedValue([
+            {
+                eventId: '13',
+                cupEventId: '20',
+                cupId: '30',
+                cupName: 'Кубак спрынту',
+                cupType: 'sprint',
+                groups: [{ id: 'M21', name: 'М21' }],
+                href: '/app/cup-events/20',
+            },
+        ])
         getPersonProtocolLines.mockResolvedValue({
             data: [
                 {
@@ -73,7 +84,8 @@ describe('person view page', () => {
                     ActionButton: true,
                     Column: {
                         props: ['header'],
-                        template: '<div class="column">{{ header }}</div>',
+                        template:
+                            '<div class="column">{{ header }}<slot name="body" :data="{ eventId: \'13\', groupName: \'M21\' }" /></div>',
                     },
                     DataTable: { template: '<div><slot /></div>' },
                     DateFilter: true,
@@ -98,6 +110,7 @@ describe('person view page', () => {
             },
         })
         await flushPromises()
+        await flushPromises()
 
         expect(getPersonProtocolLines).toHaveBeenCalledWith({
             personId: '7',
@@ -109,6 +122,9 @@ describe('person view page', () => {
         expect(getCupEventContexts).toHaveBeenCalledWith(['13'])
         expect(wrapper.text()).toContain('Удзел у спаборніцтвах')
         expect(wrapper.findAll('.column')).toHaveLength(11)
+        expect(wrapper.get('.cup-event-badge').attributes('href')).toBe(
+            '/app/cup-events/20',
+        )
     })
 
     it('shows an empty state', async () => {

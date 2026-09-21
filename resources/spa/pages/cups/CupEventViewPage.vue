@@ -10,6 +10,7 @@ import { useRoute, useRouter, RouterLink } from 'vue-router'
 import { getClubOptions } from '../../api/clubs'
 import { getCup, getCupEvent, getCupEventPoints } from '../../api/cups'
 import { getEventsByIds } from '../../api/events'
+import { getUsers } from '../../api/users'
 import type {
     ClubOption,
     Cup,
@@ -17,11 +18,14 @@ import type {
     CupEventPoint,
     Event,
     PaginationHeaders,
+    User,
 } from '../../api/types'
 import CupTypeIcon from '../../components/CupTypeIcon.vue'
 import FilterPanel from '../../components/FilterPanel.vue'
+import ImpressionDetails from '../../components/ImpressionDetails.vue'
 import ListingTable from '../../components/ListingTable.vue'
 import { t } from '../../i18n'
+import { useAuthStore } from '../../stores/auth'
 import {
     debounce,
     hasTooShortNameSearch,
@@ -30,10 +34,12 @@ import {
 
 const route = useRoute()
 const router = useRouter()
+const auth = useAuthStore()
 const cupEvent = ref<CupEvent | null>(null)
 const cup = ref<Cup | null>(null)
 const event = ref<Event | null>(null)
 const clubs = ref<Record<string, ClubOption>>({})
+const users = ref<User[]>([])
 const points = ref<CupEventPoint[]>([])
 const groupId = ref<string | null>(null)
 const name = ref('')
@@ -96,16 +102,19 @@ async function load(cupEventId: string): Promise<void> {
     groupId.value = null
     try {
         cupEvent.value = await getCupEvent(cupEventId)
-        const [loadedCup, loadedEvents, clubOptions] = await Promise.all([
-            getCup(cupEvent.value.cupId),
-            getEventsByIds([cupEvent.value.eventId]),
-            getClubOptions(),
-        ])
+        const [loadedCup, loadedEvents, clubOptions, loadedUsers] =
+            await Promise.all([
+                getCup(cupEvent.value.cupId),
+                getEventsByIds([cupEvent.value.eventId]),
+                getClubOptions(),
+                auth.isAuthenticated ? getUsers() : Promise.resolve([]),
+            ])
         cup.value = loadedCup
         event.value = loadedEvents[0] ?? null
         clubs.value = Object.fromEntries(
             clubOptions.map((item) => [item.id, item]),
         )
+        users.value = loadedUsers
         groupId.value = cup.value.groups[0]?.id ?? null
         await loadPoints()
     } catch (exception) {
@@ -113,6 +122,7 @@ async function load(cupEventId: string): Promise<void> {
         cup.value = null
         event.value = null
         points.value = []
+        users.value = []
         if (isNotFound(exception)) {
             await router.replace({ name: 'not-found' })
             return
@@ -189,6 +199,26 @@ onBeforeUnmount(() => debouncedSearch.cancel())
                         <tr>
                             <th>{{ t('app.common.points') }}</th>
                             <td>{{ cupEvent.points }}</td>
+                        </tr>
+                        <tr v-if="auth.isAuthenticated">
+                            <th>{{ t('spa.cups.created') }}</th>
+                            <td>
+                                <ImpressionDetails
+                                    :impression="cupEvent.created"
+                                    :users="users"
+                                    :label="t('spa.cups.created')"
+                                />
+                            </td>
+                        </tr>
+                        <tr v-if="auth.isAuthenticated">
+                            <th>{{ t('spa.cups.updated') }}</th>
+                            <td>
+                                <ImpressionDetails
+                                    :impression="cupEvent.updated"
+                                    :users="users"
+                                    :label="t('spa.cups.updated')"
+                                />
+                            </td>
                         </tr>
                     </tbody>
                 </table>
