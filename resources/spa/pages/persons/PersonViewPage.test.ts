@@ -3,6 +3,7 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { ref } from 'vue'
+import CupEventBadges from '../../components/CupEventBadges.vue'
 import PersonViewPage from './PersonViewPage.vue'
 import { personContextKey } from './personContext'
 
@@ -122,9 +123,19 @@ describe('person view page', () => {
         expect(getCupEventContexts).toHaveBeenCalledWith(['13'])
         expect(wrapper.text()).toContain('Удзел у спаборніцтвах')
         expect(wrapper.findAll('.column')).toHaveLength(11)
-        expect(wrapper.get('.cup-event-badge').attributes('href')).toBe(
-            '/app/cup-events/20',
+        await vi.waitFor(() =>
+            expect(
+                wrapper.findComponent(CupEventBadges).props('contexts'),
+            ).toHaveLength(1),
         )
+        expect(
+            wrapper.findComponent(CupEventBadges).props('contexts'),
+        ).toMatchObject([
+            {
+                href: '/app/cup-events/20',
+                groups: [{ id: 'M21', name: 'М21' }],
+            },
+        ])
     })
 
     it('shows an empty state', async () => {
