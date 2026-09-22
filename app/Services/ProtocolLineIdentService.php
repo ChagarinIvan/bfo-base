@@ -165,7 +165,7 @@ class ProtocolLineIdentService
         }
 
         foreach ($lines as $line) {
-            $line->activate_rank = $line->activation_event_date;
+            $line->setAttribute('activate_rank', $line->getAttribute('activation_event_date'));
             $line->save();
         }
 
