@@ -19,8 +19,13 @@ final readonly class ListCupEventPoints
         return (int) $this->cupEventId;
     }
 
-    public function search(): CupEventPointSearchDto
+    public function groupId(): string
     {
-        return $this->search;
+        return $this->search->groupId;
+    }
+
+    public function name(): ?string
+    {
+        return $this->search->name;
     }
 }

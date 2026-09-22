@@ -33,7 +33,7 @@ final class CupEventPointSearchDto extends AbstractDto
     }
 
     public function __construct(
-        public ?string $groupId = null,
+        public string $groupId,
         public ?string $name = null,
     ) {
     }

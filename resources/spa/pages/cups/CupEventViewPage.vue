@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import axios from 'axios'
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import type { AxiosError } from 'axios'
 import Card from 'primevue/card'
@@ -45,12 +46,17 @@ const groupId = ref<string | null>(null)
 const name = ref('')
 const loading = ref(true)
 const pointsLoading = ref(false)
+const pointsError = ref('')
 const error = ref('')
 const pagination = ref<PaginationHeaders>({
     currentPage: 1,
     perPage: 50,
     hasNext: false,
 })
+let pointsRequestId = 0
+let pointsController: AbortController | null = null
+let loadRequestId = 0
+let loadController: AbortController | null = null
 
 const columns = computed(() => [
     { key: 'place', label: '№', defaultVisible: true },
@@ -81,34 +87,53 @@ async function loadPoints(
 ): Promise<void> {
     if (!cupEvent.value || !groupId.value) return
 
+    pointsController?.abort()
+    const controller = new AbortController()
+    pointsController = controller
+    const requestId = ++pointsRequestId
     pointsLoading.value = true
+    pointsError.value = ''
     try {
         const response = await getCupEventPoints(cupEvent.value.id, {
             groupId: groupId.value,
             ...(hasTooShortNameSearch(name.value) ? {} : { name: name.value }),
             page,
             perPage,
-        })
+        }, controller.signal)
+        if (requestId !== pointsRequestId) return
         points.value = response.data
         pagination.value = paginationFromHeaders(response.headers)
+    } catch (exception) {
+        if (axios.isCancel(exception) || requestId !== pointsRequestId) return
+        points.value = []
+        pointsError.value = t('spa.cup_event.error')
     } finally {
-        pointsLoading.value = false
+        if (requestId === pointsRequestId) pointsLoading.value = false
     }
 }
 
 async function load(cupEventId: string): Promise<void> {
+    loadController?.abort()
+    pointsController?.abort()
+    const controller = new AbortController()
+    loadController = controller
+    const requestId = ++loadRequestId
     loading.value = true
     error.value = ''
     groupId.value = null
     try {
-        cupEvent.value = await getCupEvent(cupEventId)
+        cupEvent.value = await getCupEvent(cupEventId, controller.signal)
+        if (requestId !== loadRequestId) return
         const [loadedCup, loadedEvents, clubOptions, loadedUsers] =
             await Promise.all([
-                getCup(cupEvent.value.cupId),
-                getEventsByIds([cupEvent.value.eventId]),
-                getClubOptions(),
-                auth.isAuthenticated ? getUsers() : Promise.resolve([]),
+                getCup(cupEvent.value.cupId, controller.signal),
+                getEventsByIds([cupEvent.value.eventId], controller.signal),
+                getClubOptions(controller.signal),
+                auth.isAuthenticated
+                    ? getUsers(controller.signal)
+                    : Promise.resolve([]),
             ])
+        if (requestId !== loadRequestId) return
         cup.value = loadedCup
         event.value = loadedEvents[0] ?? null
         clubs.value = Object.fromEntries(
@@ -118,6 +143,7 @@ async function load(cupEventId: string): Promise<void> {
         groupId.value = cup.value.groups[0]?.id ?? null
         await loadPoints()
     } catch (exception) {
+        if (axios.isCancel(exception) || requestId !== loadRequestId) return
         cupEvent.value = null
         cup.value = null
         event.value = null
@@ -129,7 +155,7 @@ async function load(cupEventId: string): Promise<void> {
         }
         error.value = t('spa.cup_event.error')
     } finally {
-        loading.value = false
+        if (requestId === loadRequestId) loading.value = false
     }
 }
 
@@ -137,7 +163,12 @@ const debouncedSearch = debounce(() => void loadPoints(1))
 function onNameChange(): void {
     if (hasTooShortNameSearch(name.value)) {
         debouncedSearch.cancel()
-        void loadPoints(1)
+        pointsController?.abort()
+        pointsRequestId += 1
+        pointsLoading.value = false
+        points.value = []
+        pointsError.value = ''
+        pagination.value = { ...pagination.value, currentPage: 1 }
         return
     }
     debouncedSearch()
@@ -154,7 +185,11 @@ watch(
     (id) => void load(id),
     { immediate: true },
 )
-onBeforeUnmount(() => debouncedSearch.cancel())
+onBeforeUnmount(() => {
+    debouncedSearch.cancel()
+    pointsController?.abort()
+    loadController?.abort()
+})
 </script>
 
 <template>
@@ -231,6 +266,7 @@ onBeforeUnmount(() => debouncedSearch.cancel())
             :items="points"
             :pagination="pagination"
             :loading="pointsLoading"
+            :error="pointsError"
             :empty-label="t('spa.cup_event.empty')"
             :rows-per-page-options="[20, 50, 100]"
             @page="onPage"

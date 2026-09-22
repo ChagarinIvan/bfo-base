@@ -113,14 +113,25 @@ watch(visible, (value) => {
         </div>
     </div>
     <template v-if="items !== undefined">
-        <Message v-if="loading" severity="info" :closable="false">
+        <Message
+            v-if="loading"
+            class="listing-table__message"
+            severity="info"
+            :closable="false"
+        >
             {{ loadingLabel }}
         </Message>
-        <Message v-else-if="error" severity="error" :closable="false">
+        <Message
+            v-else-if="error"
+            class="listing-table__message"
+            severity="error"
+            :closable="false"
+        >
             {{ error }}
         </Message>
         <Message
             v-else-if="items.length === 0 && emptyLabel"
+            class="listing-table__message"
             severity="secondary"
             :closable="false"
         >

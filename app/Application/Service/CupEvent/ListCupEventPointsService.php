@@ -39,8 +39,7 @@ final readonly class ListCupEventPointsService
     {
         $cupEvent = $this->cupEvents->byId($command->cupEventId()) ?? throw new CupEventNotFound();
         $cup = $this->cups->byId($cupEvent->cup_id) ?? throw new CupNotFound();
-        $search = $command->search();
-        $groupId = $search->groupId ?? throw new GroupNotFound();
+        $groupId = $command->groupId();
 
         if (!array_filter($cup->groups(), static fn (CupGroup $group): bool => $group->id() === $groupId)) {
             throw new GroupNotFound();
@@ -51,8 +50,8 @@ final readonly class ListCupEventPointsService
             ->points
         ;
 
-        if ($search->name !== null) {
-            $name = mb_strtolower($search->name);
+        if ($command->name() !== null) {
+            $name = mb_strtolower($command->name());
             $points = array_filter(
                 $points,
                 static fn (ViewCupEventPointDto $point): bool => str_contains(mb_strtolower($point->personName), $name),

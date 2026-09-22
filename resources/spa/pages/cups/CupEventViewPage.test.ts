@@ -96,7 +96,7 @@ describe('cup event view page', () => {
             name: '',
             page: 1,
             perPage: 50,
-        })
+        }, expect.any(AbortSignal))
         expect(wrapper.text()).toContain('Кубак')
         expect(wrapper.html()).toContain('/app/events/9')
         expect(wrapper.html()).toContain('/app/competitions/3')

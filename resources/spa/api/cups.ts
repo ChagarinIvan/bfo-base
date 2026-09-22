@@ -16,8 +16,8 @@ export async function getCups(query: CupSearchQuery) {
     return api.get<Cup[]>('/cups', { params: query })
 }
 
-export async function getCup(id: string) {
-    const response = await api.get<Cup>(`/cups/${id}`)
+export async function getCup(id: string, signal?: AbortSignal) {
+    const response = await api.get<Cup>(`/cups/${id}`, { signal })
     return response.data
 }
 
@@ -27,16 +27,19 @@ export async function getCupEvents(cupId: string, query: CupEventSearchQuery) {
     })
 }
 
-export async function getCupEvent(cupEventId: string) {
-    return (await api.get<CupEvent>(`/cup-events/${cupEventId}`)).data
+export async function getCupEvent(cupEventId: string, signal?: AbortSignal) {
+    return (await api.get<CupEvent>(`/cup-events/${cupEventId}`, { signal }))
+        .data
 }
 
 export async function getCupEventPoints(
     cupEventId: string,
     query: CupEventPointSearchQuery,
+    signal?: AbortSignal,
 ) {
     return api.get<CupEventPoint[]>(`/cup-events/${cupEventId}/points`, {
         params: query,
+        signal,
     })
 }
 

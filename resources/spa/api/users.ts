@@ -56,7 +56,7 @@ export function clearUsersCache(): void {
     }
 }
 
-export async function getUsers(): Promise<User[]> {
+export async function getUsers(signal?: AbortSignal): Promise<User[]> {
     const now = Date.now()
     const cached = memoryCache ?? readStorageCache()
     if (cached && cached.expiresAt > now) {
@@ -64,7 +64,7 @@ export async function getUsers(): Promise<User[]> {
         return cached.users
     }
 
-    const users = (await api.get<User[]>('/users')).data
+    const users = (await api.get<User[]>('/users', { signal })).data
     const nextCache = {
         expiresAt: now + USERS_CACHE_TTL_MS,
         users,
