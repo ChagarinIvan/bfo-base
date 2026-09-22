@@ -32,11 +32,9 @@ final class CupEventPointSearchDto extends AbstractDto
         return $data;
     }
 
-    public function __construct(
-        public string $groupId,
-        public ?string $name = null,
-    ) {
-    }
+    public string $groupId;
+
+    public ?string $name = null;
 
     /** @param array<string, mixed> $data */
     public function fromArray(array $data): self
