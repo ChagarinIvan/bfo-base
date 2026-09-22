@@ -24,5 +24,7 @@
 
 - First and unactivated-prior KMS/MS achievements remain unactivated.
 - A prefilled activation date is preserved.
+- A batch with several athletes performs one set-based prior-activation lookup, without
+  a per-athlete `exists()` query.
 - Run the targeted feature and command tests, then the project PHP quality gates at
   feature completion.
