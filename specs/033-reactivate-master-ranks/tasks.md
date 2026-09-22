@@ -102,3 +102,8 @@
 3. Add the console invocation and its independent regression test.
 4. Verify rebuild consumes, rather than derives, activation.
 5. Run full PHP quality gates once at feature completion.
+
+## Phase 8: Production N+1 remediation
+
+- [X] T019 Replace the per-athlete prior-activation `exists()` loop with one set-based candidate query in `app/Services/ProtocolLineIdentService.php` per plan: performance goal.
+- [ ] T020 Run the multi-athlete query-count regression in `tests/Feature/Rank/RepeatMasterRankActivationTest.php` against isolated MySQL per plan: performance goal.

@@ -14,12 +14,16 @@ use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\Rank\Rank;
 use App\Services\ProtocolLineIdentService;
 use Carbon\Carbon;
+use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Queue;
 use Iterator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+use function array_filter;
+use function str_contains;
+use function strtolower;
 
 final class RepeatMasterRankActivationTest extends TestCase
 {
@@ -91,6 +95,52 @@ final class RepeatMasterRankActivationTest extends TestCase
 
         $line->refresh();
         $this->assertNull($line->activate_rank);
+    }
+
+    #[Test]
+    public function it_checks_repeated_master_rank_activation_once_for_the_entire_batch(): void
+    {
+        [$firstPerson, $oldDistance, $newDistance] = $this->fixtures();
+        /** @var Person $secondPerson */
+        $secondPerson = Person::factory()->createOne(['id' => 2]);
+
+        foreach ([$firstPerson, $secondPerson] as $person) {
+            ProtocolLine::factory()->createOne([
+                'distance_id' => $oldDistance->id,
+                'person_id' => $person->id,
+                'complete_rank' => Rank::MasterOfSport->label(),
+                'activate_rank' => '2024-06-01',
+            ]);
+        }
+
+        /** @var ProtocolLine $firstLine */
+        $firstLine = ProtocolLine::factory()->createOne([
+            'distance_id' => $newDistance->id,
+            'person_id' => $firstPerson->id,
+            'complete_rank' => Rank::MasterOfSport->label(),
+            'activate_rank' => null,
+        ]);
+        /** @var ProtocolLine $secondLine */
+        $secondLine = ProtocolLine::factory()->createOne([
+            'distance_id' => $newDistance->id,
+            'person_id' => $secondPerson->id,
+            'complete_rank' => Rank::MasterOfSport->label(),
+            'activate_rank' => null,
+        ]);
+        $queries = [];
+
+        DB::listen(static function (QueryExecuted $query) use (&$queries): void {
+            $queries[] = strtolower($query->sql);
+        });
+
+        app(ProtocolLineIdentService::class)->activateRepeatedMasterRanks(collect([$firstLine, $secondLine]));
+
+        $this->assertCount(1, array_filter(
+            $queries,
+            static fn (string $query): bool => str_contains($query, 'exists') && str_contains($query, 'protocol_lines'),
+        ));
+        $this->assertSame('2026-06-10', $firstLine->refresh()->activate_rank?->format('Y-m-d'));
+        $this->assertSame('2026-06-10', $secondLine->refresh()->activate_rank?->format('Y-m-d'));
     }
 
     /** @return array{Person, Distance, Distance} */

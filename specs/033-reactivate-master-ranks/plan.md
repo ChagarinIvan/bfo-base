@@ -34,8 +34,8 @@ dispatches. First-time and previously unactivated KMS/MS remain pending manual a
 
 **Project Type**: Monolithic web application with legacy protocol parsing/identification
 
-**Performance Goals**: One bounded existence lookup per distinct athlete/rank during an
-identification batch; no full-history loading into PHP.
+**Performance Goals**: One set-based existence lookup for an identification batch; no
+full-history loading into PHP and no per-athlete query pattern.
 
 **Constraints**: `activate_rank` is persisted before rebuild; only KMS and MS are in
 scope; no migration or SPA/API contract change.
