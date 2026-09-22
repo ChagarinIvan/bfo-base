@@ -16,6 +16,7 @@ use App\Services\ProtocolLineIdentService;
 use Carbon\Carbon;
 use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
 use Iterator;
 use PHPUnit\Framework\Attributes\DataProvider;
