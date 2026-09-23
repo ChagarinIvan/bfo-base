@@ -159,6 +159,21 @@ final class RankCalculatorTest extends TestCase
     }
 
     #[Test]
+    public function it_keeps_an_active_candidate_master_rank_when_an_unconfirmed_master_rank_is_achieved(): void
+    {
+        $result = new RankCalculator()->calculate([
+            $this->achievement(Rank::CandidateMaster, '2024-06-23', 1, '2024-08-26'),
+            $this->achievement(Rank::CandidateMaster, '2026-06-06', 2, '2026-06-06'),
+            $this->achievement(Rank::MasterOfSport, '2026-08-02', 3),
+        ], $this->person(null), Carbon::parse('2026-09-21'));
+
+        $this->assertSame(Rank::CandidateMaster, $result->current->rank);
+        $this->assertSame('2026-06-06', $result->current->startedOn?->format('Y-m-d'));
+        $this->assertSame('2028-06-06', $result->current->finishedOn?->format('Y-m-d'));
+        $this->assertNull($result->history[2]->activated_on);
+    }
+
+    #[Test]
     public function it_enforces_the_junior_age_limit_and_awards_junior_third_rank_after_three_results(): void
     {
         $adult = $this->calculate([$this->achievement(Rank::JuniorFirstRank, '2026-01-10')], '2000-01-01');

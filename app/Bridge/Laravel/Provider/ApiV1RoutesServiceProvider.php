@@ -9,6 +9,8 @@ use App\Bridge\Laravel\Http\Controllers\Api\V1\Auth\ListUsersAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Auth\LoginAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Auth\LogoutAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Auth\SendRegistrationInvitationAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Auth\StartHorizonSessionAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Auth\ViewHorizonAccessAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Club\CreateClubAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Club\ListAllClubAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Club\ListClubsAction;
@@ -21,6 +23,7 @@ use App\Bridge\Laravel\Http\Controllers\Api\V1\Competition\UpdateCompetitionActi
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Competition\ViewCompetitionAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\CreateCupAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\CreateCupEventAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\ListCupEventPointsAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\ListCupEventsAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\ListCupsAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\UpdateCupAction;
@@ -67,6 +70,7 @@ use App\Bridge\Laravel\Http\Controllers\Api\V1\Year\ListYearsAction;
 use App\Bridge\Laravel\Http\Middleware\AuthenticateApiV1;
 use App\Bridge\Laravel\Http\Middleware\CacheResponseByQueryParameter;
 use App\Bridge\Laravel\Http\Middleware\OptionalAuthenticateApiV1;
+use App\Bridge\Laravel\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Routing\Router;
 
@@ -91,6 +95,7 @@ final class ApiV1RoutesServiceProvider extends ServiceProvider
                 $router->get('cups/{cupId}', ViewCupAction::class);
                 $router->get('cup-events', ListCupEventsAction::class)->middleware(CacheResponseByQueryParameter::class . ':eventIds,86400');
                 $router->get('cup-events/{cupEventId}', ViewCupEventAction::class);
+                $router->get('cup-events/{cupEventId}/points', ListCupEventPointsAction::class);
                 $router->get('competitions/{competitionId}', ViewCompetitionAction::class);
                 $router->get('clubs', ListClubsAction::class);
                 $router->get('clubs/all', ListAllClubAction::class);
@@ -109,12 +114,21 @@ final class ApiV1RoutesServiceProvider extends ServiceProvider
             $router->prefix('api/v1')->get('ranks', ListRanksAction::class);
             $router->prefix('api/v1')->get('years', ListYearsAction::class);
 
+            $router->prefix('api/v1')->middleware(['web', AuthenticateApiV1::class])->group(static function () use ($router): void {
+                $router->post('auth/horizon-session', StartHorizonSessionAction::class)
+                    ->withoutMiddleware(VerifyCsrfToken::class)
+                ;
+                $router->delete('auth/logout', LogoutAction::class)
+                    ->withoutMiddleware(VerifyCsrfToken::class)
+                ;
+            });
+
             $router->prefix('api/v1')->middleware(AuthenticateApiV1::class)->group(static function () use ($router): void {
+                $router->get('auth/horizon-access', ViewHorizonAccessAction::class);
                 $router->get('rank-checks', ListRankChecksAction::class);
                 $router->post('rank-checks', CreateRankCheckAction::class);
                 $router->get('rank-checks/{rankCheckId}', ViewRankCheckAction::class);
                 $router->get('rank-checks/{rankCheckId}/rows', ListRankCheckRowsAction::class);
-                $router->delete('auth/logout', LogoutAction::class);
                 $router->post('auth/registration-invitations', SendRegistrationInvitationAction::class);
                 $router->get('users', ListUsersAction::class);
                 $router->post('persons', CreatePersonAction::class);

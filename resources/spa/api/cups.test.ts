@@ -3,6 +3,7 @@ import { api } from './client'
 import {
     createCupEvent,
     getCupEvent,
+    getCupEventPoints,
     getCupEventContexts,
     getCupEvents,
     updateCupEvent,
@@ -42,10 +43,17 @@ describe('cups API', () => {
         vi.mocked(api.put).mockResolvedValue({ data: { id: '7' } })
 
         await getCupEvent('7')
+        await getCupEventPoints('7', { groupId: 'M21', perPage: 50 })
         await createCupEvent({ cupId: 42, eventId: 9, points: 100 })
         await updateCupEvent('7', { eventId: 9, points: 75 })
 
-        expect(api.get).toHaveBeenCalledWith('/cup-events/7')
+        expect(api.get).toHaveBeenCalledWith('/cup-events/7', {
+            signal: undefined,
+        })
+        expect(api.get).toHaveBeenCalledWith('/cup-events/7/points', {
+            params: { groupId: 'M21', perPage: 50 },
+            signal: undefined,
+        })
         expect(api.post).toHaveBeenCalledWith('/cup-events', {
             cupId: 42,
             eventId: 9,
@@ -85,7 +93,7 @@ describe('cups API', () => {
             {
                 cupName: 'Кубак',
                 groups: [{ name: 'М35' }],
-                href: '/app/cups/8',
+                href: '/app/cup-events/7',
             },
         ])
     })

@@ -64,6 +64,23 @@ export interface CupEvent {
     updated?: Impression
 }
 
+export interface CupEventPoint {
+    cupEventId: string
+    points: string
+    personId: string
+    personName: string
+    personYear: number
+    personClubId: string | null
+    time: string
+}
+
+export interface CupEventPointSearchQuery {
+    groupId: string
+    name?: string
+    page?: number
+    perPage?: number
+}
+
 export interface CupEventContext {
     eventId: string
     cupEventId: string

@@ -243,4 +243,45 @@ describe('person ranks page', () => {
             lowerConfirmation,
         ])
     })
+
+    it('keeps unconfirmed achievements outside active rank periods', async () => {
+        const unconfirmedMaster = {
+            ...history,
+            id: '2',
+            rankId: 8,
+            achievedOn: '2026-08-02',
+            activatedOn: null,
+            startedOn: '2026-08-02',
+            finishedOn: null,
+        }
+        getRanks.mockResolvedValue([
+            { id: 7, label: 'КМС' },
+            { id: 8, label: 'МС' },
+        ])
+        getPersonRankHistories.mockResolvedValue([history, unconfirmedMaster])
+
+        const wrapper = mount(PersonRanksPage, {
+            global: {
+                stubs: {
+                    ActionButton: true,
+                    Button: true,
+                    Column: true,
+                    DataTable: DataTableStub,
+                    Dialog: true,
+                    Message: { template: '<div><slot /></div>' },
+                    RouterLink: true,
+                },
+            },
+        })
+        await flushPromises()
+
+        const groups = wrapper.findAll('.rank-history-group')
+        expect(groups).toHaveLength(2)
+        expect(groups[0]?.text()).toContain('КМС')
+        expect(groups[1]?.text()).toContain('Чакаюць актывацыі')
+        await groups[1]?.trigger('click')
+        expect(wrapper.findComponent(DataTableStub).props('value')).toEqual([
+            unconfirmedMaster,
+        ])
+    })
 })

@@ -14,7 +14,7 @@ describe('cup event badges', () => {
                 cupName: 'Кубак спрынту',
                 cupType: 'sprint',
                 groups: [{ id: 'M_35_', name: 'М35' }],
-                href: '/app/cups/30',
+                href: '/app/cup-events/20',
             },
             {
                 eventId: '10',
@@ -23,7 +23,7 @@ describe('cup event badges', () => {
                 cupName: 'Велакубак',
                 cupType: 'bike',
                 groups: [{ id: 'Ж_35_', name: 'Ж35' }],
-                href: '/app/cups/31',
+                href: '/app/cup-events/21',
             },
         ]
         const wrapper = mount(CupEventBadges, {
@@ -35,7 +35,7 @@ describe('cup event badges', () => {
 
         expect(wrapper.findAll('.cup-event-badge')).toHaveLength(2)
         expect(wrapper.get('.cup-event-badge').attributes('href')).toBe(
-            '/app/cups/30',
+            '/app/cup-events/20',
         )
         expect(wrapper.get('.cup-event-badge').classes()).toContain(
             'cup-event-badge',
@@ -54,7 +54,7 @@ describe('cup event badges', () => {
                         cupName: 'Ветэранскі кубак',
                         cupType: 'master',
                         groups: [{ id: 'M_35_', name: 'М35' }],
-                        href: '/app/cups/30',
+                        href: '/app/cup-events/20',
                     },
                     {
                         eventId: '10',
@@ -63,7 +63,7 @@ describe('cup event badges', () => {
                         cupName: 'Элітны кубак',
                         cupType: 'elite',
                         groups: [{ id: 'M_21_', name: 'М21' }],
-                        href: '/app/cups/31',
+                        href: '/app/cup-events/21',
                     },
                 ],
             },
@@ -72,7 +72,7 @@ describe('cup event badges', () => {
 
         expect(wrapper.findAll('.cup-event-badge')).toHaveLength(1)
         expect(wrapper.get('.cup-event-badge').attributes('href')).toBe(
-            '/cups/30/20/M_35_/show',
+            '/app/cup-events/20',
         )
     })
 })

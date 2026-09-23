@@ -9,6 +9,7 @@ use App\Bridge\Laravel\Http\Middleware\AuthenticateApiV1;
 use App\Infrastructure\Sanctum\SanctumUser;
 use Illuminate\Contracts\Auth\Factory as AuthFactory;
 use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Contracts\Config\Repository as ConfigRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use PHPUnit\Framework\Attributes\Test;
@@ -31,7 +32,9 @@ final class AuthenticateApiV1Test extends TestCase
             return new Response();
         };
 
-        $response = new AuthenticateApiV1($auth, app())->handle(Request::create('/api/v1/users'), $next);
+        $response = new AuthenticateApiV1($auth, app(ConfigRepository::class), app())
+            ->handle(Request::create('/api/v1/users'), $next)
+        ;
 
         $this->assertInstanceOf(JsonResponse::class, $response);
         $this->assertSame(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
@@ -51,7 +54,6 @@ final class AuthenticateApiV1Test extends TestCase
         $user->id = 42;
         $guard = $this->createMock(Guard::class);
         $guard->expects($this->once())->method('user')->willReturn($user);
-        $guard->expects($this->once())->method('id')->willReturn(42);
         $auth = $this->authFactory($guard);
         $request = Request::create('/api/v1/users');
         $next = function (Request $nextRequest) use ($user): Response {
@@ -60,7 +62,9 @@ final class AuthenticateApiV1Test extends TestCase
             return new Response('ok');
         };
 
-        $response = new AuthenticateApiV1($auth, app())->handle($request, $next);
+        $response = new AuthenticateApiV1($auth, app(ConfigRepository::class), app())
+            ->handle($request, $next)
+        ;
 
         $this->assertSame(Response::HTTP_OK, $response->getStatusCode());
         $this->assertSame(42, app()->make(UserId::class)->id);

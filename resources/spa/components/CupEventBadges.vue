@@ -40,14 +40,6 @@ const visibleContexts = computed<BadgeContext[]>(() =>
             {
                 ...context,
                 badgeGroup: group,
-                href:
-                    '/cups/' +
-                    context.cupId +
-                    '/' +
-                    context.cupEventId +
-                    '/' +
-                    group.id +
-                    '/show',
             },
         ]
     }),

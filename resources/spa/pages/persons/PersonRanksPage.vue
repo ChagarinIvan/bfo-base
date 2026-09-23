@@ -90,8 +90,20 @@ const columns = computed(() => [
         : []),
 ])
 
+const activeHistory = computed(() =>
+    history.value.filter((item) => item.activatedOn !== null),
+)
+const pendingHistory = computed(() =>
+    [...history.value]
+        .filter((item) => item.activatedOn === null)
+        .sort(
+            (left, right) =>
+                right.achievedOn.localeCompare(left.achievedOn) ||
+                Number(right.id) - Number(left.id),
+        ),
+)
 const timeline = computed(() =>
-    [...history.value].sort(
+    [...activeHistory.value].sort(
         (left, right) =>
             right.achievedOn.localeCompare(left.achievedOn) ||
             Number(right.id) - Number(left.id),
@@ -102,8 +114,10 @@ const groupedHistory = computed<RankHistoryGroup[]>(() => {
     const groups = new Map<string, RankHistoryGroup>()
     const periodIds = new Map<string, string>()
 
-    for (const rankId of new Set(history.value.map((item) => item.rankId))) {
-        const rankHistory = history.value
+    for (const rankId of new Set(
+        activeHistory.value.map((item) => item.rankId),
+    )) {
+        const rankHistory = activeHistory.value
             .filter((item) => item.rankId === rankId)
             .sort((left, right) =>
                 left.startedOn.localeCompare(right.startedOn),
@@ -142,9 +156,22 @@ const groupedHistory = computed<RankHistoryGroup[]>(() => {
         if (groupId !== undefined) groups.get(groupId)?.items.push(item)
     }
 
-    return [...groups.values()].sort((left, right) =>
+    const periods = [...groups.values()].sort((left, right) =>
         right.startedOn.localeCompare(left.startedOn),
     )
+
+    if (pendingHistory.value.length > 0) {
+        periods.push({
+            id: 'pending',
+            rankId: 0,
+            rank: t('spa.person_rank.pending'),
+            items: pendingHistory.value,
+            startedOn: '—',
+            finishedOn: null,
+        })
+    }
+
+    return periods
 })
 
 const dialogVisible = computed({

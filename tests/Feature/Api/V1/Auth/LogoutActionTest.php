@@ -39,6 +39,35 @@ final class LogoutActionTest extends TestCase
         $this->deleteJson('/api/v1/auth/logout')->assertUnauthorized();
     }
 
+    #[Test]
+    public function it_ends_the_horizon_session_with_the_token(): void
+    {
+        $user = $this->createUser();
+        config()->set('horizon.authorized_user_id', $user->id);
+        $token = $user->createToken('test-token')->plainTextToken;
+        $sessionResponse = $this->withToken($token)
+            ->postJson('/api/v1/auth/horizon-session')
+            ->assertNoContent()
+        ;
+        $sessionId = $sessionResponse->getCookie(config('session.cookie'))?->getValue();
+
+        $this->assertNotNull($sessionId);
+        app('auth')->forgetGuards();
+        $this->withoutToken()
+            ->withUnencryptedCookie(config('session.cookie'), $sessionId)
+            ->withToken($token)
+            ->deleteJson('/api/v1/auth/logout')
+            ->assertNoContent()
+        ;
+
+        app('auth')->forgetGuards();
+        $this->withoutToken()
+            ->withUnencryptedCookie(config('session.cookie'), $sessionId)
+            ->get('/horizon')
+            ->assertForbidden()
+        ;
+    }
+
     private function createUser(): SanctumUser
     {
         return SanctumUser::query()->create([

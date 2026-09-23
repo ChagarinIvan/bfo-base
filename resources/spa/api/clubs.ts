@@ -60,7 +60,9 @@ export function clearClubOptionsCache(): void {
     }
 }
 
-export async function getClubOptions(): Promise<ClubOption[]> {
+export async function getClubOptions(
+    signal?: AbortSignal,
+): Promise<ClubOption[]> {
     const now = Date.now()
     if (clubOptionsMemoryCache && clubOptionsMemoryCache.expiresAt > now) {
         return clubOptionsMemoryCache.clubs
@@ -80,7 +82,7 @@ export async function getClubOptions(): Promise<ClubOption[]> {
         }
     }
 
-    const clubs = (await api.get<ClubOption[]>('/clubs/all')).data
+    const clubs = (await api.get<ClubOption[]>('/clubs/all', { signal })).data
     clubOptionsMemoryCache = {
         expiresAt: now + CLUB_OPTIONS_CACHE_TTL_MS,
         clubs,

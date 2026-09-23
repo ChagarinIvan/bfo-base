@@ -1,6 +1,5 @@
 @php
     use App\Bridge\Laravel\Http\Controllers\Cup\ExportCupGroupTableAction;
-    use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupEventGroupAction;
     use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupTableAction;
     use App\Application\Dto\Club\ViewClubDto;
     use App\Application\Dto\Person\ViewPersonDto;
@@ -77,7 +76,7 @@
                         <th data-sortable="true">{{ __('app.club.name') }}</th>
                         @foreach($cupEvents as $cupEvent)
                             <th data-sortable="true">
-                                <a href="{{ action(ShowCupEventGroupAction::class, [$cup->id, $cupEvent->id, $activeGroup->id()]) }}"
+                                <a href="/app/cup-events/{{ $cupEvent->id }}"
                                    class="text-white">
                                     {{ $cupEvent->event->date->format('m-d') }}
                                 </a>

@@ -46,6 +46,7 @@ import EditCupPage from '../pages/cups/EditCupPage.vue'
 import CupViewPage from '../pages/cups/CupViewPage.vue'
 import CreateCupEventPage from '../pages/cups/CreateCupEventPage.vue'
 import EditCupEventPage from '../pages/cups/EditCupEventPage.vue'
+import CupEventViewPage from '../pages/cups/CupEventViewPage.vue'
 
 export function createAppRouter(
     history: RouterHistory = typeof window === 'undefined'
@@ -68,6 +69,10 @@ export function createAppRouter(
                 meta: { requiresAuth: true },
             },
             { path: '/app/cups/:cupId', component: CupViewPage },
+            {
+                path: '/app/cup-events/:cupEventId',
+                component: CupEventViewPage,
+            },
             {
                 path: '/app/cups/:cupId/events/create',
                 component: CreateCupEventPage,

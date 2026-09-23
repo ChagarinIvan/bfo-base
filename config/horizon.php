@@ -33,6 +33,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Horizon Authorized User
+    |--------------------------------------------------------------------------
+    |
+    | Only this account may open Horizon. The same setting is applied when the
+    | SPA exchanges its Bearer token for a web session.
+    |
+    */
+
+    'authorized_user_id' => (int) env('HORIZON_AUTHORIZED_USER_ID', 1),
+
+    /*
+    |--------------------------------------------------------------------------
     | Horizon Redis Connection
     |--------------------------------------------------------------------------
     |

@@ -305,6 +305,19 @@ body {
     background: #fff;
 }
 
+.listing-table__message {
+    box-sizing: border-box;
+    min-height: 3rem;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    line-height: 1.5;
+}
+
+.listing-table__message .p-message-text {
+    line-height: inherit;
+    white-space: normal;
+}
+
 [id^='protocol-line-'] {
     scroll-margin-top: 12rem;
 }

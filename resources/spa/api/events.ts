@@ -57,7 +57,10 @@ export async function getEvent(id: string): Promise<Event> {
     return (await api.get<Event>(`/events/${id}`)).data
 }
 
-export async function getEventsByIds(ids: string[]): Promise<Event[]> {
+export async function getEventsByIds(
+    ids: string[],
+    signal?: AbortSignal,
+): Promise<Event[]> {
     if (!ids.length) return []
 
     const response = await api.get<Event[]>('/events', {
@@ -66,6 +69,7 @@ export async function getEventsByIds(ids: string[]): Promise<Event[]> {
             withCompetition: 1,
             perPage: ids.length,
         },
+        signal,
     })
 
     return response.data
