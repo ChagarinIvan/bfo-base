@@ -1,28 +1,15 @@
 # API Contract: Cup Event View SPA
 
-Both endpoints are public V1 reads. All fields use camelCase. Inactive cup
-events or their inactive cups return the existing application 404 error.
+The page composes existing public V1 reads. All fields use camelCase. Inactive
+cup events or their inactive cups return the existing application 404 error.
 
-## `GET /api/v1/cup-events/{cupEventId}/context`
+## Card resources
 
-Returns one public cup-event context object:
+`GET /api/v1/cup-events/{cupEventId}` returns the stage record. Its `cupId` and
+`eventId` identify the existing `GET /api/v1/cups/{cupId}` and event lookup
+used by the SPA to render the card and eligible group selector.
 
-```json
-{
-  "id": "17",
-  "cup": { "id": "4", "name": "Кубак", "year": "2026", "type": "bike", "groups": [] },
-  "event": {
-    "id": "25",
-    "name": "Этап",
-    "date": "2026-05-10",
-    "competitionId": "9",
-    "competitionName": "Спаборніцтва"
-  },
-  "points": "100"
-}
-```
-
-## `GET /api/v1/cup-events/{cupEventId}/standings`
+## `GET /api/v1/cup-events/{cupEventId}/points`
 
 Query parameters:
 
@@ -40,3 +27,10 @@ The body is a JSON array of standing objects. Standard
 Each row contains `cupEventId`, `place`, `personId`, `personName`,
 `personYear`, `personClubId`, `personClubName`, `time`, and `points`. The
 result order is the established calculated standings order before filtering.
+
+The client may omit `name` for an empty value. It must not send one or two
+characters: the API returns 422 for a supplied short value, while the SPA shows
+its local minimum-length hint without issuing a broad request.
+
+Every SPA client function accepts an optional `AbortSignal`. Cancellation is a
+client-side control-flow outcome, not an API error response.

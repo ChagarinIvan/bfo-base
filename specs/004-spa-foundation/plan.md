@@ -18,6 +18,17 @@ Vue 3 Composition API + PrimeVue 4, собирается в `public/spa/`, со�
 location-блок для SPA-роутинга. Пилот — две страницы соревнований: публичный список
 (`/app/competitions`) и приватная форма создания (`/app/competitions/create`).
 
+### Дополнение: безопасный переход в Horizon
+
+Bearer-токен SPA нельзя использовать при браузерной навигации напрямую, поэтому
+`POST /api/v1/auth/horizon-session` создаёт и меняет идентификатор зашифрованной
+HttpOnly web-сессии, после чего SPA открывает `/horizon/`. `DELETE /api/v1/auth/logout`
+отзывает токен и завершает эту сессию. Port `HorizonAccessAuthorizer` отделяет
+Application-правило доступа от Laravel-конфигурации; его реализация сравнивает
+пользователя с `HORIZON_AUTHORIZED_USER_ID`. `GET /api/v1/auth/horizon-access`
+возвращает capability для скрытия кнопки у остальных пользователей. Прямой маршрут
+Horizon применяет ту же серверную проверку.
+
 ---
 
 ## Технический контекст

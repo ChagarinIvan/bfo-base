@@ -60,11 +60,18 @@
 
 **Checkpoint**: No legacy cup-event group render or uniquely dead legacy support remains.
 
+## Amendment: request lifecycle and table feedback
+
+- [X] T020 [US1] Add `AbortSignal` support to cup, event, club, user and points API clients; abort superseded cup-event loads and use request IDs to discard obsolete responses in `resources/spa/api/` and `resources/spa/pages/cups/CupEventViewPage.vue`
+- [X] T021 [US1] Clear stale points and render the localized table error state after a non-cancellation points request failure in `resources/spa/pages/cups/CupEventViewPage.vue`
+- [X] T022 [US1] Prevent one- and two-character athlete searches from requesting points, show the shared Belarusian minimum-length hint, and cover it in `resources/spa/pages/cups/CupEventViewPage.test.ts`
+- [X] T023 [P] Add shared Message sizing for loading, error and empty ListingTable states in `resources/spa/components/ListingTable.vue` and `resources/spa/styles.css`
+
 ## Phase 6: Polish and verification
 
-- [ ] T020 Run focused PHPUnit and Vitest suites for new context/standings reads, cup links, router, page and legacy retirement
-- [ ] T021 Run `composer cs`, `composer stan`, `composer rector -- --dry-run`, `composer test`, `npm run ci`, and `git diff --check`; inspect queries for N+1 and response bounds
-- [ ] T022 Reconcile implementation against `spec.md`, `plan.md`, `contracts/`, `quickstart.md` and mark all completed tasks in this file
+- [ ] T024 Run focused PHPUnit and Vitest suites for new points reads, cup links, router, page, request lifecycle and legacy retirement
+- [ ] T025 Run `composer cs`, `composer stan`, `composer rector -- --dry-run`, `composer test`, `npm run ci`, and `git diff --check`; inspect queries for N+1 and response bounds
+- [X] T026 Reconcile implementation against `spec.md`, `plan.md`, `contracts/`, `quickstart.md` and record delivered request-lifecycle work
 
 ## Dependencies & Execution Order
 
@@ -72,7 +79,7 @@
 - T009–T013 deliver the independently usable standings page.
 - T014–T016 fix the cup-table navigation after the page route exists.
 - T017–T019 remove the Blade surface only after SPA coverage passes.
-- T020–T022 complete the feature after all stories.
+- T024–T026 complete the feature after all stories.
 
 ## Parallel Opportunities
 

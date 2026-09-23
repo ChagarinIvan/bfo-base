@@ -5,10 +5,12 @@
 ## Summary
 
 Replace the legacy group-specific standings render with `/app/cup-events/:cupEventId`.
-Expose a public V1 cup-event context and a group-scoped, paginated standings
-read. The SPA uses the shared detail-card, filter, select, and listing-table
-components. Cup-stage links point to the new route. Only the retired rendering
-path and its uniquely unused legacy support are deleted.
+Reuse the existing public cup-event, cup, and event reads for the detail card,
+and add a group-scoped, paginated points read. The SPA uses the shared
+detail-card, filter, select, and listing-table components. Each asynchronous
+read supports cancellation and ignores obsolete completions. Cup-stage links
+point to the new route. Only the retired rendering path and its uniquely unused
+legacy support are deleted.
 
 ## Technical Context
 
@@ -68,15 +70,18 @@ fix, and retirement of one Blade surface.
    cup-type calculation for group points, applies normalized athlete-name
    filtering, and returns a `Slice` of `ViewCupEventPointDto` rows. The
    calculator remains scoring authority; `Slice` constrains response delivery.
-3. Add `GET /api/v1/cup-events/{cupEventId}/context` and
-   `GET /api/v1/cup-events/{cupEventId}/standings`. The latter accepts
+3. Reuse `GET /api/v1/cup-events/{cupEventId}`, `GET /api/v1/cups/{cupId}` and
+   the existing event lookup for the card. Add
+   `GET /api/v1/cup-events/{cupEventId}/points`, which accepts
    `groupId`, optional `name`, and shared `page`/`perPage`; invalid group or
    inactive cup event becomes the existing application 404, while invalid
    query input returns standard 422.
-4. Add typed SPA client functions and `CupEventViewPage`. It loads context,
-   preselects the first group, reloads standings at 50 rows, debounces valid
-   athlete-name input, resets page on every filter change, and uses the shared
-   not-found flow. Card links target existing competition/event SPA routes.
+4. Add typed SPA client functions and `CupEventViewPage`. It loads the related
+   card resources, preselects the first group, reloads points at 50 rows,
+   debounces valid athlete-name input, resets page on every filter change, and
+   uses the shared not-found flow. It aborts obsolete Axios requests and clears
+   stale points before presenting an error. Card links target existing
+   competition/event SPA routes.
 5. Register `/app/cup-events/:cupEventId`; make the stage-name link in
    `CupViewPage` target this route. Keep explicit event navigation separately
    available from the card.

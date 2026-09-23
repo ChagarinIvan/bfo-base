@@ -4,7 +4,7 @@
 
 **Created**: 2026-09-20
 
-**Status**: Draft
+**Status**: Implemented; final full-suite verification remains in tasks
 
 **Input**: Move the legacy cup-event group standings page to the SPA. Show a
 full cup-event detail card, then a paginated standings table (50 rows by
@@ -39,7 +39,12 @@ group, search an athlete by name, and navigate between pages of results.
 4. **Given** a visitor enters a valid athlete-name search, **When** the search
    is applied, **Then** the table reloads from its first page with matching
    athletes only.
-5. **Given** a missing, disabled, or inactive cup event, **When** its SPA URL
+5. **Given** a visitor changes a group or search while a previous points
+   request is pending, **When** the later request completes first, **Then**
+   only results for the latest selection are rendered.
+6. **Given** a points request fails, **When** it completes, **Then** stale rows
+   are cleared and the table displays the shared error state.
+7. **Given** a missing, disabled, or inactive cup event, **When** its SPA URL
    is opened, **Then** the visitor receives the established SPA not-found
    state.
 
@@ -93,7 +98,12 @@ still resolve.
 - A cup event without eligible groups or calculated points displays an explicit
   empty state and does not issue an invalid group request.
 - A name shorter than the established minimum does not issue a broad name
-  query; clearing a valid search reloads the first page.
+  query; the page clears rows, displays the shared three-character hint, and
+  clearing a valid search reloads the first page.
+- A cancelled or superseded request cannot overwrite rows, pagination, or an
+  error state selected by a later group or search request.
+- A table loading, error, or empty message has enough vertical space for its
+  text and remains readable on every table using the shared component.
 - A requested group outside the cup event's eligible groups yields no data and
   does not expose standings from another group.
 - A missing athlete, club, competition, or event reference renders the shared
@@ -120,7 +130,9 @@ still resolve.
   configured maximum-points result visually distinguished.
 - **FR-006**: The table MUST support the established debounced athlete-name
   search, reset pagination whenever group or name changes, and avoid broad
-  requests for incomplete names.
+  requests for incomplete names. One- and two-character values MUST clear the
+  current rows and show the shared three-character hint without a request; a
+  name sent to API MUST contain at least three characters.
 - **FR-007**: Read endpoints for the new page MUST be public and use the
   established V1 DTO, validation, serialization, command, application-service,
   domain-port, repository, and `Slice` pagination contracts.
@@ -134,9 +146,12 @@ still resolve.
 - **FR-010**: New or changed V1 endpoints MUST have request tests with
   class-level `@see` references; SPA tests MUST cover page loading, group
   selection, filters, pagination, link destination, empty/not-found handling,
-  and legacy retirement.
+  request lifecycle/error handling, and legacy retirement.
 - **FR-011**: New user-facing SPA text MUST be added only to the Belarusian
   dictionary.
+- **FR-012**: Every asynchronous page and points request MUST accept an
+  `AbortSignal`, cancel its predecessor on supersession or unmount, and retain
+  a request identity guard for clients that complete a cancelled request.
 
 ### Key Entities
 
@@ -161,6 +176,8 @@ still resolve.
   scenarios, including the navigation regression and retired URL.
 - **SC-005**: No uniquely obsolete Blade rendering or legacy service code
   remains after the SPA route becomes the sole cup-event standings view.
+- **SC-006**: Switching groups or typing during a slow request never shows
+  rows or pagination from a previous group or filter.
 
 ## Assumptions
 
