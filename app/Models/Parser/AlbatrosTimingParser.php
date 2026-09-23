@@ -84,9 +84,11 @@ class AlbatrosTimingParser extends AbstractParser
                     break;
                 }
                 $preparedLine = preg_replace('#\s+#', ' ', $line);
-                $isIncomplete = str_contains($preparedLine, 'п.п.');
-                $preparedLine = preg_replace('/п\.п\.[^\s]+/u', 'пп', $preparedLine) ?? $preparedLine;
-                $preparedLine = preg_replace('/\s+пп(?:\s+-)+/u', ' пп - -', $preparedLine) ?? $preparedLine;
+                $preparedLine = preg_replace(
+                    '/п\.?\s*п\.?\s*20[.,]10(?:\s+-){2,}/u',
+                    'пп - -',
+                    $preparedLine,
+                ) ?? $preparedLine;
                 $lineData = explode(' ', $preparedLine);
                 $fieldsCount = count($lineData);
                 if ($fieldsCount < 6 || !is_numeric($lineData[0])) {
@@ -161,10 +163,6 @@ class AlbatrosTimingParser extends AbstractParser
                 $protocolLine['lastname'] = $lineData[1];
                 $protocolLine['firstname'] = $lineData[2];
                 $protocolLine['club'] = implode(' ', array_slice($lineData, 3, $fieldsCount - $indent - 3));
-                if ($isIncomplete) {
-                    $protocolLine['complete_rank'] ??= '-';
-                }
-
                 $linesList->push($protocolLine);
             }
         }
