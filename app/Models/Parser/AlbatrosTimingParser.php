@@ -25,6 +25,7 @@ use function preg_replace;
 use function preg_split;
 use function str_contains;
 use function str_replace;
+use function str_starts_with;
 use function strpos;
 use function substr;
 use function trim;
@@ -47,6 +48,7 @@ class AlbatrosTimingParser extends AbstractParser
             $text = trim($groupBlock['text']);
             $text = trim($text, '-');
             $text = trim($text);
+            $teсxt = preg_replace('/-{20,}/', "\n-----------------------\n", $text) ?? $text;
 
             $groupName = $groupBlock['group'];
             if (str_contains($groupName, ',')) {
@@ -77,6 +79,7 @@ class AlbatrosTimingParser extends AbstractParser
                     break;
                 }
                 $preparedLine = preg_replace('#\s+#', ' ', $line);
+                $preparedLine = preg_replace('/\s+п\.п\.[^\s]+(?:\s+-){2,}/u', ' пп - -', $preparedLine) ?? $preparedLine;
                 $lineData = explode(' ', $preparedLine);
                 $fieldsCount = count($lineData);
                 $protocolLine = [
@@ -125,7 +128,7 @@ class AlbatrosTimingParser extends AbstractParser
                 $time = null;
                 try {
                     $number = $lineData[$fieldsCount - ($indent + 1)];
-                    if ($number === 'пп') {
+                    if ($number === 'пп' || str_starts_with($number, 'п.п.')) {
                         $indent++;
                         $indent++;
                         throw new Exception();
