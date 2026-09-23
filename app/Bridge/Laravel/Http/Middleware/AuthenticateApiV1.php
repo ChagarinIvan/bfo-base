@@ -28,14 +28,14 @@ final readonly class AuthenticateApiV1
         $this->container->forgetInstance(UserId::class);
 
         $user = $this->bearerUser($request);
-        if (!$user) {
+        if (!$user instanceof Authenticatable) {
             return response()->json(['errors' => [[
                 'code' => 'unauthenticated',
                 'message' => 'Unauthenticated.',
             ]]], Response::HTTP_UNAUTHORIZED);
         }
 
-        $request->setUserResolver(static fn () => $user);
+        $request->setUserResolver(static fn (): Authenticatable => $user);
         $this->container->instance(UserId::class, new UserId((int) $user->getAuthIdentifier()));
 
         return $next($request);

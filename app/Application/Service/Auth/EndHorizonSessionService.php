@@ -14,6 +14,6 @@ final readonly class EndHorizonSessionService
 
     public function execute(EndHorizonSession $command): void
     {
-        $this->authenticator->end();
+        $this->authenticator->end($command->userId());
     }
 }

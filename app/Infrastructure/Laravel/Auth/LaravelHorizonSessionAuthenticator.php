@@ -34,9 +34,12 @@ final readonly class LaravelHorizonSessionAuthenticator implements HorizonSessio
         $this->session->regenerate();
     }
 
-    public function end(): void
+    public function end(int $userId): void
     {
-        $this->guard()->logout();
+        $guard = $this->guard();
+        if ((int) $guard->id() === $userId) {
+            $guard->logout();
+        }
         $this->session->invalidate();
         $this->session->regenerateToken();
     }

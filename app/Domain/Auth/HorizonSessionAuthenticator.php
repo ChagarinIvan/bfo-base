@@ -8,5 +8,5 @@ interface HorizonSessionAuthenticator
 {
     public function start(int $userId): void;
 
-    public function end(): void;
+    public function end(int $userId): void;
 }

@@ -11,6 +11,10 @@ use function trim;
 
 final class CupEventPointSearchDto extends AbstractDto
 {
+    public string $groupId;
+
+    public ?string $name = null;
+
     public static function requestValidationRules(): array
     {
         return [
@@ -31,10 +35,6 @@ final class CupEventPointSearchDto extends AbstractDto
 
         return $data;
     }
-
-    public string $groupId;
-
-    public ?string $name = null;
 
     /** @param array<string, mixed> $data */
     public function fromArray(array $data): self

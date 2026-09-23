@@ -47,9 +47,12 @@ describe('cups API', () => {
         await createCupEvent({ cupId: 42, eventId: 9, points: 100 })
         await updateCupEvent('7', { eventId: 9, points: 75 })
 
-        expect(api.get).toHaveBeenCalledWith('/cup-events/7')
+        expect(api.get).toHaveBeenCalledWith('/cup-events/7', {
+            signal: undefined,
+        })
         expect(api.get).toHaveBeenCalledWith('/cup-events/7/points', {
             params: { groupId: 'M21', perPage: 50 },
+            signal: undefined,
         })
         expect(api.post).toHaveBeenCalledWith('/cup-events', {
             cupId: 42,

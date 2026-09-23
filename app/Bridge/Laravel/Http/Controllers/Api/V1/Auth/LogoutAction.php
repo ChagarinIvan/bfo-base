@@ -24,7 +24,7 @@ final class LogoutAction extends BaseController
     ): Response
     {
         $service->execute(new Logout($userId));
-        $horizonSession->execute(new EndHorizonSession());
+        $horizonSession->execute(new EndHorizonSession($userId));
 
         return response()->noContent();
     }
