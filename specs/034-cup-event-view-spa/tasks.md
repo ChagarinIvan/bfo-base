@@ -66,12 +66,13 @@
 - [X] T021 [US1] Clear stale points and render the localized table error state after a non-cancellation points request failure in `resources/spa/pages/cups/CupEventViewPage.vue`
 - [X] T022 [US1] Prevent one- and two-character athlete searches from requesting points, show the shared Belarusian minimum-length hint, and cover it in `resources/spa/pages/cups/CupEventViewPage.test.ts`
 - [X] T023 [P] Add shared Message sizing for loading, error and empty ListingTable states in `resources/spa/components/ListingTable.vue` and `resources/spa/styles.css`
+- [X] T024 [US2] Link the displayed cup type in the cup-event card to `/app/cups/{cupId}` and cover the destination in `resources/spa/pages/cups/CupEventViewPage.test.ts`
 
 ## Phase 6: Polish and verification
 
-- [ ] T024 Run focused PHPUnit and Vitest suites for new points reads, cup links, router, page, request lifecycle and legacy retirement
-- [ ] T025 Run `composer cs`, `composer stan`, `composer rector -- --dry-run`, `composer test`, `npm run ci`, and `git diff --check`; inspect queries for N+1 and response bounds
-- [X] T026 Reconcile implementation against `spec.md`, `plan.md`, `contracts/`, `quickstart.md` and record delivered request-lifecycle work
+- [ ] T025 Run focused PHPUnit and Vitest suites for new points reads, cup links, router, page, request lifecycle and legacy retirement
+- [ ] T026 Run `composer cs`, `composer stan`, `composer rector -- --dry-run`, `composer test`, `npm run ci`, and `git diff --check`; inspect queries for N+1 and response bounds
+- [X] T027 Reconcile implementation against `spec.md`, `plan.md`, `contracts/`, `quickstart.md` and record delivered request-lifecycle work
 
 ## Dependencies & Execution Order
 
@@ -79,7 +80,7 @@
 - T009–T013 deliver the independently usable standings page.
 - T014–T016 fix the cup-table navigation after the page route exists.
 - T017–T019 remove the Blade surface only after SPA coverage passes.
-- T024–T026 complete the feature after all stories.
+- T025–T027 complete the feature after all stories.
 
 ## Parallel Opportunities
 

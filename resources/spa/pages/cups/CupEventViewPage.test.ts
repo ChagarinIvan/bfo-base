@@ -108,6 +108,7 @@ describe('cup event view page', () => {
             expect.any(AbortSignal),
         )
         expect(wrapper.text()).toContain('Кубак')
+        expect(wrapper.html()).toContain('/app/cups/4')
         expect(wrapper.html()).toContain('/app/events/9')
         expect(wrapper.html()).toContain('/app/competitions/3')
     })

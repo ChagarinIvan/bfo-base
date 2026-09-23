@@ -215,7 +215,9 @@ onBeforeUnmount(() => {
                             <th>{{ t('spa.cup.type') }}</th>
                             <td>
                                 <CupTypeIcon :type="cup.type" />
-                                {{ t(`app.cup.type.${cup.type}` as never) }}
+                                <RouterLink :to="`/app/cups/${cup.id}`">
+                                    {{ t(`app.cup.type.${cup.type}` as never) }}
+                                </RouterLink>
                             </td>
                         </tr>
                         <tr>

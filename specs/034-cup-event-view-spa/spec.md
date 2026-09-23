@@ -119,7 +119,8 @@ still resolve.
   identifies a cup event independently of the cup-detail route.
 - **FR-002**: The detail page MUST use the established SPA information-card
   pattern and display the public cup-event data: cup name/year/type, linked
-  competition and event, event date, and configured points.
+  competition and event, event date, and configured points. The displayed cup
+  type MUST link to that cup's SPA view.
 - **FR-003**: The page MUST present a group selector populated only with the
   cup event's eligible cup groups; the first available group is selected by
   default.
