@@ -94,12 +94,18 @@ async function loadPoints(
     pointsLoading.value = true
     pointsError.value = ''
     try {
-        const response = await getCupEventPoints(cupEvent.value.id, {
-            groupId: groupId.value,
-            ...(hasTooShortNameSearch(name.value) ? {} : { name: name.value }),
-            page,
-            perPage,
-        }, controller.signal)
+        const response = await getCupEventPoints(
+            cupEvent.value.id,
+            {
+                groupId: groupId.value,
+                ...(hasTooShortNameSearch(name.value)
+                    ? {}
+                    : { name: name.value }),
+                page,
+                perPage,
+            },
+            controller.signal,
+        )
         if (requestId !== pointsRequestId) return
         points.value = response.data
         pagination.value = paginationFromHeaders(response.headers)
@@ -295,6 +301,11 @@ onBeforeUnmount(() => {
                             v-model="name"
                             @update:model-value="onNameChange"
                         />
+                        <small
+                            v-if="hasTooShortNameSearch(name)"
+                            class="filter-hint"
+                            >{{ t('spa.cup_event.person_filter_hint') }}</small
+                        >
                     </div>
                 </FilterPanel>
             </template>

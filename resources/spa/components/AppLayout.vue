@@ -39,6 +39,18 @@ async function logout(): Promise<void> {
         await router.push('/app/competitions')
     }
 }
+
+async function openHorizon(): Promise<void> {
+    try {
+        await auth.openHorizon()
+    } catch {
+        toast.add({
+            severity: 'error',
+            summary: t('spa.nav.horizon_error'),
+            life: 5000,
+        })
+    }
+}
 </script>
 
 <template>
@@ -159,6 +171,14 @@ async function logout(): Promise<void> {
                     <i class="pi pi-sign-in" /> {{ t('spa.nav.login') }}
                 </RouterLink>
                 <template v-else>
+                    <button
+                        v-if="auth.canAccessHorizon"
+                        class="app-logout-button"
+                        type="button"
+                        @click="openHorizon"
+                    >
+                        <i class="pi pi-server" /> {{ t('spa.nav.horizon') }}
+                    </button>
                     <template
                         v-for="item in authenticatedAccountNavigation"
                         :key="item.href"

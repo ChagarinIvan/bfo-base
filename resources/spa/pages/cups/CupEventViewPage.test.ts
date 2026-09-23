@@ -45,11 +45,17 @@ function mountPage() {
                 },
                 Message: true,
                 Select: true,
-                InputText: true,
+                InputText: {
+                    props: ['id', 'modelValue'],
+                    emits: ['update:modelValue'],
+                    template:
+                        '<input :id="id" :value="modelValue" @input="$emit(\'update:modelValue\', $event.target.value)" />',
+                },
                 FilterPanel: { template: '<div><slot /></div>' },
                 ListingTable: {
                     props: ['items'],
-                    template: '<div>{{ items.length }}</div>',
+                    template:
+                        '<div><slot name="filters" />{{ items.length }}</div>',
                 },
                 ImpressionDetails: true,
             },
@@ -91,15 +97,53 @@ describe('cup event view page', () => {
         const wrapper = mountPage()
         await flushPromises()
 
-        expect(getCupEventPoints).toHaveBeenCalledWith('7', {
-            groupId: 'M21',
-            name: '',
-            page: 1,
-            perPage: 50,
-        }, expect.any(AbortSignal))
+        expect(getCupEventPoints).toHaveBeenCalledWith(
+            '7',
+            {
+                groupId: 'M21',
+                name: '',
+                page: 1,
+                perPage: 50,
+            },
+            expect.any(AbortSignal),
+        )
         expect(wrapper.text()).toContain('Кубак')
         expect(wrapper.html()).toContain('/app/events/9')
         expect(wrapper.html()).toContain('/app/competitions/3')
+    })
+
+    it('does not load standings for a too-short name search', async () => {
+        getCupEvent.mockResolvedValue({
+            id: '7',
+            cupId: '4',
+            eventId: '9',
+            points: '100',
+        })
+        getCup.mockResolvedValue({
+            id: '4',
+            name: 'Кубак',
+            type: 'bike',
+            groups: [{ id: 'M21', name: 'М21' }],
+        })
+        getEventsByIds.mockResolvedValue([
+            {
+                id: '9',
+                competitionId: '3',
+                competitionName: 'Старт',
+                name: 'Этап',
+                date: '2026-09-21',
+            },
+        ])
+        getClubOptions.mockResolvedValue([])
+        getCupEventPoints.mockResolvedValue({ data: [], headers: {} })
+
+        const wrapper = mountPage()
+        await flushPromises()
+        await wrapper.get('#cup-event-person-name').setValue('аб')
+        await flushPromises()
+
+        expect(getCupEventPoints).toHaveBeenCalledTimes(1)
+        expect(wrapper.text()).toContain('Увядзіце не менш за 3 сімвалы.')
     })
 
     it('shows impressions to an authenticated user', async () => {

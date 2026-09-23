@@ -6,12 +6,16 @@ namespace App\Bridge\Laravel\Provider\User;
 
 use App\Domain\Auth\CurrentTokenRevoker;
 use App\Domain\Auth\Factory\UserFactory;
+use App\Domain\Auth\HorizonAccessAuthorizer;
+use App\Domain\Auth\HorizonSessionAuthenticator;
 use App\Domain\Auth\LoginAuthenticator;
 use App\Domain\Auth\PasswordGenerator;
 use App\Domain\Auth\PasswordHasher;
 use App\Domain\Auth\UserRepository;
 use App\Infrastructure\Laravel\Auth\LaravelPasswordGenerator;
 use App\Infrastructure\Laravel\Auth\LaravelPasswordHasher;
+use App\Infrastructure\Laravel\Auth\ConfiguredHorizonAccessAuthorizer;
+use App\Infrastructure\Laravel\Auth\LaravelHorizonSessionAuthenticator;
 use App\Infrastructure\Laravel\Eloquent\User\EloquentUserFactory;
 use App\Infrastructure\Laravel\Eloquent\User\EloquentUserRepository;
 use App\Infrastructure\Sanctum\SanctumCurrentTokenRevoker;
@@ -28,5 +32,7 @@ final class AuthProvider extends ServiceProvider
         $this->app->bind(PasswordHasher::class, LaravelPasswordHasher::class);
         $this->app->bind(LoginAuthenticator::class, SanctumLoginAuthenticator::class);
         $this->app->bind(CurrentTokenRevoker::class, SanctumCurrentTokenRevoker::class);
+        $this->app->bind(HorizonAccessAuthorizer::class, ConfiguredHorizonAccessAuthorizer::class);
+        $this->app->bind(HorizonSessionAuthenticator::class, LaravelHorizonSessionAuthenticator::class);
     }
 }
