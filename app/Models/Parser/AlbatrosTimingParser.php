@@ -22,6 +22,7 @@ use function mb_check_encoding;
 use function mb_convert_encoding;
 use function preg_match;
 use function preg_replace;
+use function preg_replace_callback;
 use function preg_split;
 use function str_contains;
 use function str_replace;
@@ -48,7 +49,11 @@ class AlbatrosTimingParser extends AbstractParser
             $text = trim($groupBlock['text']);
             $text = trim($text, '-');
             $text = trim($text);
-            $teсxt = preg_replace('/-{20,}/', "\n-----------------------\n", $text) ?? $text;
+            $text = preg_replace_callback(
+                '/-{20,}/',
+                static fn (array $match): string => "\n{$match[0]}\n",
+                $text,
+            ) ?? $text;
 
             $groupName = $groupBlock['group'];
             if (str_contains($groupName, ',')) {
