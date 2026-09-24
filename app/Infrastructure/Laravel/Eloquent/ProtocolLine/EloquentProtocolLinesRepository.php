@@ -39,7 +39,20 @@ final readonly class EloquentProtocolLinesRepository implements ProtocolLineRepo
 
     public function byCriteria(Criteria $criteria): Collection
     {
-        return $this->buildQuery($criteria)->get();
+        $query = $this->buildQuery($criteria);
+        $lines = $query->get();
+
+        if ($criteria->hasParam('distances')) {
+            logger()->info('cup protocol lines lookup', [
+                'criteria' => $criteria->params(),
+                'sql' => $query->toRawSql(),
+                'count' => $lines->count(),
+                'person_ids' => $lines->pluck('person_id')->values()->all(),
+                'distance_ids' => $lines->pluck('distance_id')->unique()->values()->all(),
+            ]);
+        }
+
+        return $lines;
     }
 
     /** @return Slice<ProtocolLine> */
