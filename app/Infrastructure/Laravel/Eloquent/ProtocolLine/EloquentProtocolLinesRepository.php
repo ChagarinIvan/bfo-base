@@ -39,20 +39,7 @@ final readonly class EloquentProtocolLinesRepository implements ProtocolLineRepo
 
     public function byCriteria(Criteria $criteria): Collection
     {
-        $query = $this->buildQuery($criteria);
-        $lines = $query->get();
-
-        if ($criteria->hasParam('distances')) {
-            logger()->info('cup protocol lines lookup', [
-                'criteria' => $criteria->params(),
-                'sql' => $query->toRawSql(),
-                'count' => $lines->count(),
-                'person_ids' => $lines->pluck('person_id')->values()->all(),
-                'distance_ids' => $lines->pluck('distance_id')->unique()->values()->all(),
-            ]);
-        }
-
-        return $lines;
+        return $this->buildQuery($criteria)->get();
     }
 
     /** @return Slice<ProtocolLine> */
@@ -229,9 +216,11 @@ final readonly class EloquentProtocolLinesRepository implements ProtocolLineRepo
             ;
         }
 
-        if ($criteria->hasParam('paymentYear')) {
+        $paymentYear = $criteria->paramOrDefault('paymentYear');
+
+        if ($paymentYear !== null) {
             $query
-                ->where('persons_payments.year', '>=', $criteria->param('paymentYear'))
+                ->where('persons_payments.year', '>=', $paymentYear)
                 ->where('persons_payments.date', '<=', $criteria->param('eventDate'))
             ;
         }

@@ -17,7 +17,6 @@ use App\Domain\Shared\Pagination\ArraySliceAdapter;
 use App\Domain\Shared\Pagination\Slice;
 use function array_filter;
 use function array_map;
-use function count;
 use function mb_strtolower;
 use function str_contains;
 
@@ -50,18 +49,6 @@ final readonly class ListCupEventPointsService
             ->execute(new CalculateCupEvent((string) $cup->id, (string) $cupEvent->id, $groupId))
             ->points
         ;
-
-        logger()->info('cup event points calculated', [
-            'cup_event_id' => $cupEvent->id,
-            'cup_id' => $cup->id,
-            'event_id' => $cupEvent->event_id,
-            'group_id' => $groupId,
-            'count' => count($points),
-            'person_ids' => array_map(
-                static fn (ViewCupEventPointDto $point): string => $point->personId,
-                $points,
-            ),
-        ]);
 
         if ($command->name() !== null) {
             $name = mb_strtolower($command->name());

@@ -49,22 +49,10 @@ readonly class DistanceService
      */
     public function findDistance(array $groupNames, int $eventId): ?Distance
     {
-        $distance = $this->distances->oneByCriteria(new Criteria([
+        return $this->distances->oneByCriteria(new Criteria([
             'eventId' => $eventId,
             'groupNames' => $groupNames,
         ]));
-
-        logger()->info('cup distance lookup', [
-            'event_id' => $eventId,
-            'group_names' => $groupNames,
-            'distance_id' => $distance?->id,
-            'distance_group_id' => $distance?->group_id,
-            'distance_group_name' => $distance?->group?->name,
-            'length' => $distance?->length,
-            'points' => $distance?->points,
-        ]);
-
-        return $distance;
     }
 
     public function deleteEventDistances(Event $event): void

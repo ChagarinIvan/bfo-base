@@ -28,7 +28,10 @@ final readonly class CupEventsService
     /** @return array<string, CupEventPoint[]> */
     public function calculateCup(Cup $cup, Collection $cupEvents, CupGroup $group): array
     {
-        // Temporary diagnostic bypass. Remove after the ElkPath incident is resolved.
-        return $cup->type->instance()->calculateCup($cup, $cupEvents, $group);
+        return $this->cache->tags(['cups', $cup->id])->remember(
+            "{$cup->id}_{$group->id()}",
+            1000000,
+            static fn() => $cup->type->instance()->calculateCup($cup, $cupEvents, $group)
+        );
     }
 }
