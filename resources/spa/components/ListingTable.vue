@@ -42,6 +42,9 @@ const storageKey = computed(() =>
     tableStorageKey(props.tableId, props.authenticated),
 )
 const availableKeys = computed(() => props.columns.map((column) => column.key))
+const configurableColumns = computed(() =>
+    props.columns.filter((column) => column.configurable !== false),
+)
 const defaultKeys = computed(() =>
     props.columns
         .filter((column) => column.defaultVisible)
@@ -91,7 +94,7 @@ watch(visible, (value) => {
             :class="{ 'listing-table__columns--with-filters': $slots.filters }"
         >
             <div class="listing-table__column-options">
-                <label v-for="column in columns" :key="column.key">
+                <label v-for="column in configurableColumns" :key="column.key">
                     <input
                         type="checkbox"
                         :checked="isVisible(column.key)"

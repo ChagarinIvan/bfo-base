@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Service\Cup;
 
 use App\Application\Dto\Cup\CupTableAssembler;
-use App\Application\Dto\Cup\ViewCupTableDto;
+use App\Application\Dto\Cup\ViewCupTableRowDto;
 use App\Application\Service\Cup\Exception\CupNotFound;
 use App\Application\Service\Cup\Exception\UnsupportedCupGroup;
 use App\Domain\Cup\CupEvent\CupEventRepository;
@@ -15,6 +15,7 @@ use App\Domain\Cup\Exception\CupGroupNotSupported as DomainCupGroupNotSupported;
 use App\Domain\Cup\Table\CupTableBuilder;
 use App\Domain\Cup\Table\CupTableRow;
 use App\Domain\Shared\Criteria;
+use App\Domain\Shared\Pagination\Slice;
 use function array_filter;
 use function array_values;
 use function mb_strtolower;
@@ -31,7 +32,8 @@ final readonly class ViewCupTableService
     }
 
     /** @throws CupNotFound|UnsupportedCupGroup */
-    public function execute(ViewCupTable $command): ViewCupTableDto
+    /** @return Slice<ViewCupTableRowDto> */
+    public function execute(ViewCupTable $command): Slice
     {
         $cup = $this->cups->byId((int) $command->cupId) ?? throw new CupNotFound();
         $group = $command->group;
@@ -61,8 +63,6 @@ final readonly class ViewCupTableService
             static fn (CupTableRow $row): bool => $name === null || str_contains(mb_strtolower($row->personName), $name),
         ));
 
-        $table = $table->withRows($rows);
-
-        return $this->assembler->toViewCupTableDto($table);
+        return $this->assembler->toRowsSlice($rows);
     }
 }

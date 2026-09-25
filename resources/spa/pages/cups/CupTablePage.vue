@@ -3,36 +3,48 @@ import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { isCancel } from 'axios'
 import Card from 'primevue/card'
 import InputText from 'primevue/inputtext'
-import Message from 'primevue/message'
 import Select from 'primevue/select'
 import { useRoute, useRouter } from 'vue-router'
-import { getCup, getCupTable } from '../../api/cups'
-import type { Cup, CupTable } from '../../api/types'
+import { getCup, getCupEvents, getCupTable } from '../../api/cups'
+import { getEventsByIds } from '../../api/events'
+import type {
+    Cup,
+    CupTable,
+    CupTableStage,
+    PaginationHeaders,
+} from '../../api/types'
 import ListingTable from '../../components/ListingTable.vue'
 import ActionButton from '../../components/actions/ActionButton.vue'
+import ConfirmDeleteDialog from '../../components/actions/ConfirmDeleteDialog.vue'
 import { useAuthStore } from '../../stores/auth'
 import CupTypeIcon from '../../components/CupTypeIcon.vue'
 import { protocolLineEventUrl } from '../../components/tableModels'
 import FilterPanel from '../../components/FilterPanel.vue'
-import {
-    debounce,
-    hasTooShortNameSearch,
-} from '../listingModels'
+import { debounce, hasTooShortNameSearch } from '../listingModels'
 import { t } from '../../i18n'
+import { paginationFromHeaders } from '../listingModels'
 
 const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
 const cup = ref<Cup | null>(null)
 const table = ref<CupTable | null>(null)
+const stages = ref<CupTableStage[]>([])
+const stagesLoaded = ref(false)
+const pagination = ref<PaginationHeaders>({
+    currentPage: 1,
+    perPage: 50,
+    hasNext: false,
+})
 const groupId = ref(String(route.params.groupId ?? ''))
 const name = ref('')
 const loading = ref(true)
 const error = ref('')
+const deleteCupVisible = ref(false)
 const controller = ref<AbortController | null>(null)
 const requestId = ref(0)
 const columns = computed(() => {
-    const stages = table.value?.stages ?? []
+    const tableStages = stages.value
     return [
         { key: 'place', label: t('app.common.place'), defaultVisible: true },
         { key: 'personName', label: t('app.common.fio'), defaultVisible: true },
@@ -42,12 +54,13 @@ const columns = computed(() => {
             defaultVisible: true,
         },
         { key: 'clubName', label: t('app.club.name'), defaultVisible: true },
-        ...stages.map((stage) => ({
+        ...tableStages.map((stage) => ({
             key: `stage-${stage.stageId}`,
             label: `${stage.date} ${stage.name}`,
             defaultVisible: true,
             field: `stages.${stage.stageId}.points`,
             required: true,
+            configurable: false,
         })),
         {
             key: 'totalPoints',
@@ -75,14 +88,52 @@ async function load(): Promise<void> {
         const query: { name?: string } = {}
         const searchedName = name.value.trim()
         if (searchedName.length >= 3) query.name = searchedName
-        const response = await getCupTable(
-            String(route.params.cupId),
-            groupId.value,
-            query,
-            current.signal,
-        )
+        const [cupEventsResponse, response] = await Promise.all([
+            stagesLoaded.value
+                ? Promise.resolve(null)
+                : getCupEvents(String(route.params.cupId), {
+                      page: 1,
+                      perPage: 1000,
+                  }),
+            getCupTable(
+                String(route.params.cupId),
+                groupId.value,
+                {
+                    ...query,
+                    page: pagination.value.currentPage,
+                    perPage: pagination.value.perPage,
+                },
+                current.signal,
+            ),
+        ])
+        const eventDetails = cupEventsResponse
+            ? await getEventsByIds(
+                  cupEventsResponse.data.map((item) => item.eventId),
+              )
+            : []
         if (id === requestId.value) {
             table.value = response.data
+            if (cupEventsResponse) {
+                stages.value = cupEventsResponse.data
+                    .flatMap((cupEvent) => {
+                        const event = eventDetails.find(
+                            (item) => item.id === cupEvent.eventId,
+                        )
+                        return event
+                            ? [
+                                  {
+                                      stageId: Number(cupEvent.id),
+                                      eventId: event.id,
+                                      date: event.date,
+                                      name: event.name,
+                                  },
+                              ]
+                            : []
+                    })
+                    .sort((a, b) => a.date.localeCompare(b.date))
+                stagesLoaded.value = true
+            }
+            pagination.value = paginationFromHeaders(response.headers)
         }
     } catch (exception) {
         if (id === requestId.value && !isCancel(exception))
@@ -99,10 +150,23 @@ function onName(value: string | undefined): void {
         debouncedSearch.cancel()
         return
     }
+    pagination.value = { ...pagination.value, currentPage: 1 }
     debouncedSearch()
 }
 function onGroupChange(): void {
+    pagination.value = { ...pagination.value, currentPage: 1 }
     void router.replace({ params: { ...route.params, groupId: groupId.value } })
+}
+function onPage(page: { page: number; rows: number }): void {
+    pagination.value = {
+        ...pagination.value,
+        currentPage: page.page + 1,
+        perPage: page.rows,
+    }
+    void load()
+}
+function deleteCup(): void {
+    window.location.assign(`/cups/${cup.value?.id}/delete`)
 }
 watch(
     () => String(route.params.groupId),
@@ -119,13 +183,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <Message v-if="loading" severity="info" :closable="false">{{
-        t('spa.cups.loading')
-    }}</Message>
-    <Message v-else-if="error" severity="error" :closable="false">{{
-        error
-    }}</Message>
-    <template v-else-if="cup && table">
+    <template v-if="cup">
         <Card class="competition-details-card">
             <template #title>{{ cup.name }}</template>
             <template #content>
@@ -162,6 +220,47 @@ onBeforeUnmount(() => {
                 </table>
             </template>
         </Card>
+        <div v-if="auth.isAuthenticated" class="details-actions mb-3">
+            <ActionButton
+                as="a"
+                :href="`/app/cups/${cup.id}/edit`"
+                icon="pi pi-pencil"
+                :label="t('spa.cups.edit.action')"
+            />
+            <ActionButton
+                as="a"
+                :href="`/app/cups/${cup.id}/events/create`"
+                icon="pi pi-plus"
+                :label="t('app.competition.add_event')"
+                severity="success"
+            />
+            <ActionButton
+                as="a"
+                :href="`/cups/${cup.id}/cache`"
+                icon="pi pi-refresh"
+                :label="t('app.common.cache_clear')"
+                severity="warn"
+            />
+            <ActionButton
+                as="a"
+                :href="`/cups/${cup.id}/export`"
+                icon="pi pi-download"
+                :label="t('app.cup.table.export')"
+                severity="info"
+            />
+            <ActionButton
+                as="a"
+                :href="`/app/cups/${cup.id}/table/${groupId}`"
+                icon="pi pi-table"
+                :label="t('spa.cups.table')"
+            />
+            <ActionButton
+                icon="pi pi-trash"
+                :label="t('spa.cups.delete.action')"
+                severity="danger"
+                @click="deleteCupVisible = true"
+            />
+        </div>
         <div class="flex gap-2 mb-3">
             <router-link :to="`/app/cups/${cup.id}`">{{
                 t('spa.cups.stages_tab')
@@ -198,10 +297,16 @@ onBeforeUnmount(() => {
             class="mb-3"
         />
         <ListingTable
-            table-id="cup-table"
+            table-id="cup-table-v2"
             :columns="columns"
-            :items="table.rows"
+            :items="table ?? []"
+            :pagination="pagination"
+            :loading="loading"
+            :error="error"
+            :loading-label="t('spa.cups.loading')"
             :empty-label="t('spa.cups.table_empty')"
+            :rows-per-page-options="[20, 50, 100]"
+            @page="onPage"
         >
             <template #cell-personName="{ data }">
                 <a :href="`/app/persons/${data.personId}`">{{
@@ -209,7 +314,7 @@ onBeforeUnmount(() => {
                 }}</a>
             </template>
             <template
-                v-for="stage in table.stages"
+                v-for="stage in stages"
                 #[`cell-stage-${stage.stageId}`]="{ data }"
                 :key="stage.stageId"
             >
@@ -218,6 +323,8 @@ onBeforeUnmount(() => {
                         :class="{
                             'font-bold text-info':
                                 data.stages[String(stage.stageId)].counted,
+                            'text-body':
+                                !data.stages[String(stage.stageId)].counted,
                         }"
                         :href="
                             protocolLineEventUrl(
@@ -232,5 +339,15 @@ onBeforeUnmount(() => {
                 ><template v-else>—</template>
             </template>
         </ListingTable>
+        <ConfirmDeleteDialog
+            v-if="auth.isAuthenticated"
+            :visible="deleteCupVisible"
+            :title="t('spa.cups.delete.title')"
+            :confirmation="t('spa.cups.delete.confirm', { name: cup.name })"
+            :cancel-label="t('spa.cups.delete.cancel')"
+            :action-label="t('spa.cups.delete.action')"
+            @cancel="deleteCupVisible = false"
+            @confirm="deleteCup"
+        />
     </template>
 </template>

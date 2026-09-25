@@ -23,11 +23,13 @@ are the behavior reference. New target code must avoid adding more logic to lega
 `app/Services`; wrap/reuse calculation behind the Application use case where
 needed.
 
-**API shape**: `GET /api/v1/cups/{cupId}/tables/{groupId}`, query `name`, response
-contains ordered `stages` and the full `rows` array. All query keys are camelCase.
+**API shape**: `GET /api/v1/cups/{cupId}/tables/{groupId}`, query `name`, `page`,
+`perPage`; response is a standard paginated slice of result rows. Stage metadata
+comes from the existing cup/event endpoints. All query keys are camelCase.
 
-**Performance**: calculate once per cup/group request, paginate the assembled rows
-before transport serialization, and avoid one person/club query per row.
+**Performance**: the cached domain builder calculates once per cup/group cache key;
+Application filters and paginates the cached rows before transport serialization.
+Avoid one person/club query per row.
 
 ## Constitution Check
 
@@ -36,7 +38,7 @@ before transport serialization, and avoid one person/club query per row.
 | Target layers | Pass with design constraint | New API query is Bridge → Application → Domain ports/assemblers; legacy calculator is adapted rather than extended with another endpoint. |
 | Commands/queries | Pass | Read query receives a command/input and returns a view DTO/slice; transport DTO stays at Bridge boundary. |
 | API V1 | Pass | camelCase query, DTO serializer, request test with `@see`, optional auth behavior. |
-| Table rows | Complete table | The SPA receives the full calculated table for the selected group. |
+| Table rows | Cached result slice | The SPA receives only the requested page of result rows; cup and stage metadata are loaded separately. |
 | Testing | Required | API contract, application calculation mapping, SPA route/tabs/table/filter tests. |
 | N+1 | Required | Stage/person/club data is assembled with batch resources or explicit eager loading. |
 
@@ -54,8 +56,9 @@ before transport serialization, and avoid one person/club query per row.
 
 ### Table contract
 
-The API returns `stages` with event/cup-event IDs, date, name and maximum points;
-each row returns rank/place, person and club fields, and an ordered stage-cell map.
+The API returns a paginated list of rows; each row returns rank/place, person and
+club fields, and an ordered stage-cell map. Stage headings are assembled in the SPA
+from the cup's event list.
 Each stage cell includes displayed points, whether it contributes to the total, and
 protocol event/distance/line IDs for the link. `totalPoints`, `averagePoints` and
 `place` are server-calculated.

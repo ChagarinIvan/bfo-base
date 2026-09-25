@@ -12,7 +12,6 @@ use Database\Seeders\SprintCupLineSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
-use function array_column;
 
 /** @see ViewCupTableAction */
 final class ViewCupTableActionTest extends TestCase
@@ -31,11 +30,12 @@ final class ViewCupTableActionTest extends TestCase
         ])->createOne();
         CupEvent::factory(state: ['id' => 102, 'cup_id' => 101, 'event_id' => 102, 'points' => 1000])->createOne();
 
-        $response = $this->getJson('/api/v1/cups/101/tables/M_0_')
+        $this->getJson('/api/v1/cups/101/tables/M_0_')
             ->assertOk()
-            ->assertJsonStructure(['stages', 'rows'])
+            ->assertJsonStructure([['place', 'personId', 'personName', 'personYear', 'clubName', 'stages', 'totalPoints', 'averagePoints']])
+            ->assertHeader('X-Pagination-Current-Page', '1')
+            ->assertHeader('X-Pagination-Per-Page', '20')
         ;
-        $this->assertSame(['2024-04-10', '2024-04-12'], array_column($response->json('stages'), 'date'));
     }
 
     #[Test]

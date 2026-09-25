@@ -4,13 +4,18 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
 import CupTablePage from './CupTablePage.vue'
 
-const { getCup, getCupTable, route } = vi.hoisted(() => ({
-    getCup: vi.fn(),
-    getCupTable: vi.fn(),
-    route: { params: { cupId: '42', groupId: 'M_0_' } },
-}))
+const { getCup, getCupEvents, getCupTable, getEventsByIds, route } = vi.hoisted(
+    () => ({
+        getCup: vi.fn(),
+        getCupEvents: vi.fn(),
+        getCupTable: vi.fn(),
+        getEventsByIds: vi.fn(),
+        route: { params: { cupId: '42', groupId: 'M_0_' } },
+    }),
+)
 
-vi.mock('../../api/cups', () => ({ getCup, getCupTable }))
+vi.mock('../../api/cups', () => ({ getCup, getCupEvents, getCupTable }))
+vi.mock('../../api/events', () => ({ getEventsByIds }))
 vi.mock('../../stores/auth', () => ({
     useAuthStore: () => ({ isAuthenticated: false }),
 }))
@@ -29,37 +34,34 @@ describe('cup table page', () => {
             eventsCount: '1',
             groups: [{ id: 'M_0_', name: 'М0' }],
         })
+        getCupEvents.mockResolvedValue({
+            data: [{ id: '7', eventId: '9' }],
+        })
+        getEventsByIds.mockResolvedValue([
+            { id: '9', date: '2026-05-10', name: 'Этап' },
+        ])
         getCupTable.mockResolvedValue({
-            data: {
-                stages: [
-                    {
-                        stageId: 7,
-                        eventId: '9',
-                        date: '2026-05-10',
-                        name: 'Этап',
-                    },
-                ],
-                rows: [
-                    {
-                        place: 1,
-                        personId: '10',
-                        personName: 'Иван Иванов',
-                        personYear: 1990,
-                        clubName: 'Клуб',
-                        stages: {
-                            '7': {
-                                stageId: 7,
-                                points: 100,
-                                counted: true,
-                                distanceId: '8',
-                                protocolLineId: '11',
-                            },
+            data: [
+                {
+                    place: 1,
+                    personId: '10',
+                    personName: 'Иван Иванов',
+                    personYear: 1990,
+                    clubName: 'Клуб',
+                    stages: {
+                        '7': {
+                            stageId: 7,
+                            points: 100,
+                            counted: true,
+                            distanceId: '8',
+                            protocolLineId: '11',
                         },
-                        totalPoints: '100',
-                        averagePoints: '100',
                     },
-                ],
-            },
+                    totalPoints: '100',
+                    averagePoints: '100',
+                },
+            ],
+            headers: {},
         })
 
         const wrapper = mount(CupTablePage, {
@@ -90,7 +92,7 @@ describe('cup table page', () => {
         expect(getCupTable).toHaveBeenCalledWith(
             '42',
             'M_0_',
-            {},
+            { page: 1, perPage: 50 },
             expect.any(AbortSignal),
         )
         expect(wrapper.text()).toContain('Иван Иванов')

@@ -6,7 +6,6 @@ namespace Tests\Application\Service\Cup;
 
 use App\Application\Dto\Cup\CupTableAssembler;
 use App\Application\Dto\Cup\CupTableSearchDto;
-use App\Application\Dto\Cup\ViewCupTableDto;
 use App\Application\Service\Cup\Exception\CupNotFound;
 use App\Application\Service\Cup\Exception\UnsupportedCupGroup;
 use App\Application\Service\Cup\ViewCupTable;
@@ -50,7 +49,7 @@ final class ViewCupTableServiceTest extends TestCase
     }
 
     #[Test]
-    public function it_builds_a_view_dto_through_the_cup_table_service(): void
+    public function it_returns_a_slice_of_rows_from_the_cup_table_service(): void
     {
         $events = new Collection();
         $group = CupGroupFactory::fromId('M_0_');
@@ -73,9 +72,7 @@ final class ViewCupTableServiceTest extends TestCase
 
         $result = $this->service->execute(new ViewCupTable('42', 'M_0_', (new CupTableSearchDto())->fromArray([])));
 
-        $this->assertInstanceOf(ViewCupTableDto::class, $result);
-        $this->assertSame([], $result->stages);
-        $this->assertSame([], $result->rows);
+        $this->assertSame([], $result->items());
     }
 
     #[Test]
@@ -119,7 +116,7 @@ final class ViewCupTableServiceTest extends TestCase
             ->willReturn($table)
         ;
         $result = $this->service->execute(new ViewCupTable('42', 'M_0_', (new CupTableSearchDto())->fromArray(['name' => 'john'])));
-        $rows = $result->rows;
+        $rows = $result->items();
 
         $this->assertCount(2, $rows);
         $this->assertSame(['John Doe', 'John Smith'], array_map(static fn ($row): string => $row->personName, $rows));

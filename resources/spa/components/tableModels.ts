@@ -4,6 +4,7 @@ export interface ListingColumn {
     defaultVisible: boolean
     field?: string
     required?: boolean
+    configurable?: boolean
 }
 
 export function tableStorageKey(

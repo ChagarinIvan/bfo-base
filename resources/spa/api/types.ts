@@ -83,6 +83,8 @@ export interface CupEventPointSearchQuery {
 
 export interface CupTableSearchQuery {
     name?: string
+    page?: number
+    perPage?: number
 }
 
 export interface CupTableStage {
@@ -117,10 +119,7 @@ export interface CupTableRow {
     averagePoints: string
 }
 
-export interface CupTable {
-    stages: CupTableStage[]
-    rows: CupTableRow[]
-}
+export type CupTable = CupTableRow[]
 
 export interface CupEventContext {
     eventId: string

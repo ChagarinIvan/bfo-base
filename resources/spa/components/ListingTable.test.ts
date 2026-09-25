@@ -75,6 +75,31 @@ describe('listing table', () => {
         ).toBe(false)
     })
 
+    it('does not show non-configurable columns in the column chooser', () => {
+        const wrapper = mount(ListingTable, {
+            props: {
+                tableId: 'test-table',
+                columns: [
+                    { key: 'name', label: 'Name', defaultVisible: true },
+                    {
+                        key: 'stage-1',
+                        label: 'Stage 1',
+                        defaultVisible: true,
+                        configurable: false,
+                    },
+                ],
+            },
+            slots: { default: '<div>rows</div>' },
+        })
+
+        expect(wrapper.find('.listing-table__controls').text()).toContain(
+            'Name',
+        )
+        expect(wrapper.find('.listing-table__controls').text()).not.toContain(
+            'Stage 1',
+        )
+    })
+
     it('renders declarative fields and delegates custom cells to named slots', () => {
         const wrapper = mount(ListingTable, {
             props: {

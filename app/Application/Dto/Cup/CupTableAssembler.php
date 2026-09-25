@@ -4,30 +4,18 @@ declare(strict_types=1);
 
 namespace App\Application\Dto\Cup;
 
-use App\Domain\Cup\Table\CupTable;
 use App\Domain\Cup\Table\CupTableRow;
-use App\Domain\Cup\Table\CupTableStage;
 use App\Domain\Cup\Table\CupTableStageCell;
+use App\Domain\Shared\Pagination\ArraySliceAdapter;
+use App\Domain\Shared\Pagination\Slice;
 use function array_map;
 
 final readonly class CupTableAssembler
 {
-    public function toViewCupTableDto(CupTable $table): ViewCupTableDto
+    /** @param list<CupTableRow> $rows @return Slice<ViewCupTableRowDto> */
+    public function toRowsSlice(array $rows): Slice
     {
-        return new ViewCupTableDto(
-            stages: array_map($this->toViewCupTableStageDto(...), $table->stages),
-            rows: array_map($this->toViewCupTableRowDto(...), $table->rows),
-        );
-    }
-
-    private function toViewCupTableStageDto(CupTableStage $stage): ViewCupTableStageDto
-    {
-        return new ViewCupTableStageDto(
-            stageId: $stage->stageId,
-            eventId: $stage->eventId,
-            date: $stage->date,
-            name: $stage->name,
-        );
+        return new Slice(new ArraySliceAdapter(array_map($this->toViewCupTableRowDto(...), $rows)));
     }
 
     private function toViewCupTableRowDto(CupTableRow $row): ViewCupTableRowDto

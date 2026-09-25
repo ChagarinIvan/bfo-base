@@ -12,15 +12,19 @@ Query parameters:
 
 - `name` — optional, empty value means no predicate, non-empty value must have at
   least 3 characters;
+- `page` and `perPage` — optional slice pagination; response headers use the
+  standard `X-Pagination-*` contract.
 
 Все параметры используют camelCase. Endpoint доступен через optional API auth;
 authenticated-only metadata не должен появляться в публичных строках.
 
 ## Response
 
-Ответ содержит один типизированный объект `stages` и полный массив `rows` с
-полями из `data-model.md`. Фильтр `name` применяется в Application после
-получения рассчитанной таблицы из доменного builder/cache. Ошибки: 404 для
+Ответ — массив строк текущего среза, каждая строка содержит поля из
+`CupTableRow`. Объект таблицы и метаданные этапов не передаются: SPA уже загружает
+кубок отдельно и получает этапы из списка этапов. Фильтр `name` и пагинация
+применяются в Application после получения рассчитанной таблицы из доменного
+builder/cache. Ошибки: 404 для
 несуществующего кубка, 400 если группа не поддерживается типом кубка и 422 для
 невалидного формата `groupId` или имени длиной 1–2 символа.
 
