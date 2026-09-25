@@ -14,7 +14,8 @@ use Illuminate\Support\Collection;
 
 class ElkPathCup extends EliteCupType
 {
-    protected const GROUPS_MAP = [
+    /** @var array<string, string[]>  */
+    protected const array GROUPS_MAP = [
         'M_0_Elite–M' => ['Elite–Mужчыны', 'EliteTrail-М', '%Elite-М'],
         'W_0_Elite–W' => ['Elite–Жанчыны', 'EliteTrail-Ж', '%Elite-Ж'],
         'M_0_Short–M' => ['ShortTrail-М,15-34', 'Short–Mужчыны', '%Short-М%34'],

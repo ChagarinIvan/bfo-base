@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useAuthStore } from '../stores/auth'
+import { useAppearanceStore } from '../stores/appearance'
 import { t } from '../i18n'
 import { useRouter } from 'vue-router'
 import { useToast } from 'primevue/usetoast'
@@ -14,9 +15,24 @@ import {
 } from './navigationModels'
 
 const auth = useAuthStore()
+const appearance = useAppearanceStore()
 const router = useRouter()
 const toast = useToast()
 const openMenu = ref<'competitions' | 'persons' | null>(null)
+const appearanceActionLabel = computed(() =>
+    t(
+        appearance.mode === 'night'
+            ? 'spa.nav.appearance_light'
+            : 'spa.nav.appearance_night',
+    ),
+)
+const appearanceStateLabel = computed(() =>
+    t(
+        appearance.mode === 'night'
+            ? 'spa.nav.appearance_current_night'
+            : 'spa.nav.appearance_current_light',
+    ),
+)
 
 function toggleMenu(menu: 'competitions' | 'persons'): void {
     openMenu.value = openMenu.value === menu ? null : menu
@@ -163,6 +179,25 @@ async function openHorizon(): Promise<void> {
                 </details>
             </div>
             <div class="app-nav-auth">
+                <button
+                    class="app-appearance-toggle"
+                    type="button"
+                    :aria-label="appearanceActionLabel"
+                    :aria-pressed="appearance.mode === 'night'"
+                    :title="appearanceStateLabel"
+                    @click="appearance.toggle"
+                >
+                    <i
+                        :class="[
+                            'pi',
+                            appearance.mode === 'night' ? 'pi-sun' : 'pi-moon',
+                        ]"
+                        aria-hidden="true"
+                    />
+                    <span class="app-appearance-toggle__label">
+                        {{ appearanceActionLabel }}
+                    </span>
+                </button>
                 <RouterLink
                     v-if="!auth.isAuthenticated"
                     class="app-nav-link app-login-link"
