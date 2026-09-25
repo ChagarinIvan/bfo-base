@@ -130,13 +130,6 @@ final readonly class EloquentProtocolLinesRepository implements ProtocolLineRepo
             ;
         }
 
-        if ($criteria->hasParam('distances')) {
-            $query
-                ->join('person', 'person.id', '=', 'protocol_lines.person_id')
-                ->where('person.active', true)
-            ;
-        }
-
         if (
             $criteria->hasOneParam(['dateFrom', 'dateTo', 'year', 'date', 'eventId', 'eventIds', 'distanceId', 'distances', 'massCompetition', 'competitionName', 'personId'])
             || array_key_exists('eventDate', $criteria->sorting())
@@ -221,8 +214,15 @@ final readonly class EloquentProtocolLinesRepository implements ProtocolLineRepo
         if ($criteria->hasParam('distances')) {
             $query
                 ->selectRaw('protocol_lines.*, max(persons_payments.date)')
-                ->join('person', 'person.id', '=', 'protocol_lines.person_id')
+            ;
+
+            if (!$criteria->hasParam('personId')) {
+                $query->join('person', 'person.id', '=', 'protocol_lines.person_id');
+            }
+
+            $query
                 ->leftJoin('persons_payments', 'person.id', '=', 'persons_payments.person_id')
+                ->where('person.active', true)
                 ->where('protocol_lines.vk', false)
                 ->whereIn('distance_id', $criteria->param('distances'))
                 ->groupBy('protocol_lines.id')

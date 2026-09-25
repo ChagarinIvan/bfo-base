@@ -10,6 +10,7 @@ use App\Domain\Cup\CupEvent\CupEventPoint;
 use App\Domain\Cup\Event\CupCreated;
 use App\Domain\Cup\Event\CupDisabled;
 use App\Domain\Cup\Event\CupUpdated;
+use App\Domain\Cup\Exception\CupGroupNotSupported;
 use App\Domain\Cup\Factory\CupInput;
 use App\Domain\Cup\Group\CupGroup;
 use App\Domain\Shared\AggregatedModel;
@@ -20,6 +21,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
+use function array_map;
+use function in_array;
 
 /**
  * @property int $id
@@ -90,6 +93,16 @@ class Cup extends AggregatedModel
     public function groups(): array
     {
         return $this->type->instance()->groups();
+    }
+
+    /** @throws CupGroupNotSupported */
+    public function assertGroupSupported(CupGroup $group): void
+    {
+        $groupIds = array_map(static fn (CupGroup $cupGroup): string => $cupGroup->id(), $this->groups());
+
+        if (!in_array($group->id(), $groupIds, true)) {
+            throw new CupGroupNotSupported((int) $this->id, $group->id());
+        }
     }
 
     protected function casts(): array

@@ -21,8 +21,8 @@ authenticated-only metadata не должен появляться в публи
 Ответ содержит один типизированный объект `stages` и полный массив `rows` с
 полями из `data-model.md`. Фильтр `name` применяется в Application после
 получения рассчитанной таблицы из доменного builder/cache. Ошибки: 404 для
-несуществующего кубка/группы и 422 для имени длиной 1–2 символа или отсутствующего
-обязательного groupId.
+несуществующего кубка, 400 если группа не поддерживается типом кубка и 422 для
+невалидного формата `groupId` или имени длиной 1–2 символа.
 
 Каждая stage cell содержит `stageId`, `distanceId` и `protocolLineId`. Для ссылки
 на `/app/events/{eventId}?distanceId={distanceId}#protocol-line-{protocolLineId}`

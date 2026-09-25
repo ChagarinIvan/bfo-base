@@ -7,9 +7,11 @@ namespace App\Application\Service\Cup;
 use App\Application\Dto\Cup\CupTableAssembler;
 use App\Application\Dto\Cup\ViewCupTableDto;
 use App\Application\Service\Cup\Exception\CupNotFound;
+use App\Application\Service\Cup\Exception\UnsupportedCupGroup;
 use App\Domain\Cup\CupEvent\CupEventRepository;
 use App\Domain\Cup\CupEvent\CupEventResources;
 use App\Domain\Cup\CupRepository;
+use App\Domain\Cup\Exception\CupGroupNotSupported as DomainCupGroupNotSupported;
 use App\Domain\Cup\Table\CupTableBuilder;
 use App\Domain\Cup\Table\CupTableRow;
 use App\Domain\Shared\Criteria;
@@ -28,10 +30,18 @@ final readonly class ViewCupTableService
     ) {
     }
 
-    /** @throws CupNotFound */
+    /** @throws CupNotFound|UnsupportedCupGroup */
     public function execute(ViewCupTable $command): ViewCupTableDto
     {
         $cup = $this->cups->byId((int) $command->cupId) ?? throw new CupNotFound();
+        $group = $command->group;
+
+        try {
+            $cup->assertGroupSupported($group);
+        } catch (DomainCupGroupNotSupported $exception) {
+            throw new UnsupportedCupGroup($exception);
+        }
+
         $events = $this->cupEvents
             ->byCriteria(
                 new Criteria(['cupId' => (int) $command->cupId], ['event.date' => 'asc']),
@@ -42,7 +52,7 @@ final readonly class ViewCupTableService
         $table = $this->table->build(
             cup: $cup,
             events: $events,
-            group: $command->group,
+            group: $group,
         );
 
         $name = $command->name;

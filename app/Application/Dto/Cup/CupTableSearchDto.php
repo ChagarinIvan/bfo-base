@@ -18,6 +18,17 @@ final class CupTableSearchDto extends AbstractDto
         return ['name' => 'nullable|string|min:3|max:255'];
     }
 
+    public static function parametersValidationRules(): array
+    {
+        return [
+            'groupId' => [
+                'required',
+                'string',
+                'regex:#\\A[MW]_(?:0|12|14|16|18|20|21|35|40|45|50|55|60|65|70|75|80)_[^/]*\\z#',
+            ],
+        ];
+    }
+
     /** @param array<string, mixed> $data */
     public static function normaliseRequestData(array $data): array
     {
