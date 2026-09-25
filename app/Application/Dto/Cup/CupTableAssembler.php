@@ -39,8 +39,8 @@ final readonly class CupTableAssembler
             personYear: $row->personYear,
             clubName: $row->clubName,
             stages: array_map($this->toViewCupTableStageCellDto(...), $row->stages),
-            totalPoints: (string) $row->totalPoints,
-            averagePoints: (string) $row->averagePoints,
+            totalPoints: $row->totalPoints,
+            averagePoints: $row->averagePoints,
         );
     }
 

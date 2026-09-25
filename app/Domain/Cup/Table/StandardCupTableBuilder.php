@@ -8,11 +8,10 @@ use App\Domain\Cup\Cup;
 use App\Domain\Cup\CupEvent\CupEventPoint;
 use App\Domain\Cup\Group\CupGroup;
 use Illuminate\Support\Collection;
-use function count;
 use function is_numeric;
 use function round;
 
-final readonly class StandardCupTableService implements CupTableService
+final readonly class StandardCupTableBuilder implements CupTableBuilder
 {
     public function build(Cup $cup, Collection $events, CupGroup $group): CupTable
     {

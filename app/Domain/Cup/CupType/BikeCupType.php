@@ -8,7 +8,6 @@ use App\Domain\Cup\CupEvent\CupEvent;
 use App\Domain\Cup\CupEvent\CupEventPoint;
 use App\Domain\Cup\Group\CupGroup;
 use App\Domain\Cup\Group\GroupMale;
-use Illuminate\Support\Collection;
 use function array_merge;
 
 class BikeCupType extends EliteCupType

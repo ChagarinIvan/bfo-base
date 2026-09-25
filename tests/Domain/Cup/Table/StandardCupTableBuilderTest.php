@@ -8,13 +8,14 @@ use App\Domain\Cup\Cup;
 use App\Domain\Cup\CupEvent\CupEventPoint;
 use App\Domain\Cup\Group\CupGroupFactory;
 use App\Domain\Cup\Table\CupTable;
-use App\Domain\Cup\Table\StandardCupTableService;
+use App\Domain\Cup\Table\StandardCupTableBuilder;
 use App\Domain\ProtocolLine\ProtocolLine;
 use Illuminate\Support\Collection;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+use function array_values;
 
-final class StandardCupTableServiceTest extends TestCase
+final class StandardCupTableBuilderTest extends TestCase
 {
     #[Test]
     public function it_builds_stage_rows_and_totals_from_calculated_points(): void
@@ -28,7 +29,10 @@ final class StandardCupTableServiceTest extends TestCase
             new CupEventPoint(12, $protocolLine, 0),
             new CupEventPoint(13, $protocolLine, 50),
         ];
-        $cup = $this->createMock(Cup::class);
+        $cup = $this->getMockBuilder(Cup::class)
+            ->onlyMethods(['calculateGroupEvents'])
+            ->getMock()
+        ;
         $cup
             ->expects($this->once())
             ->method('calculateGroupEvents')
@@ -40,7 +44,7 @@ final class StandardCupTableServiceTest extends TestCase
         ;
         $cup->setAttribute('events_count', 2);
 
-        $table = (new StandardCupTableService())->build($cup, $events, $group);
+        $table = new StandardCupTableBuilder()->build($cup, $events, $group);
 
         $this->assertInstanceOf(CupTable::class, $table);
         $this->assertSame([], $table->stages);
@@ -54,10 +58,11 @@ final class StandardCupTableServiceTest extends TestCase
         $this->assertSame('Club', $row->clubName);
         $this->assertSame('80', $row->totalPoints);
         $this->assertSame('80', $row->averagePoints);
-        $this->assertTrue($row->stages['11']->counted);
-        $this->assertSame(11, $row->stages['11']->stageId);
-        $this->assertTrue($row->stages['12']->counted);
-        $this->assertFalse($row->stages['13']->counted);
+        $cells = array_values($row->stages);
+        $this->assertTrue($cells[0]->counted);
+        $this->assertSame(11, $cells[0]->stageId);
+        $this->assertTrue($cells[1]->counted);
+        $this->assertFalse($cells[2]->counted);
     }
 
     private function protocolLineStub(

@@ -246,7 +246,8 @@ onBeforeUnmount(() => controller.value?.abort())
                         :href="
                             protocolLineEventUrl(
                                 stage.eventId,
-                                data.stages[String(stage.stageId)].protocolLineId,
+                                data.stages[String(stage.stageId)]
+                                    .protocolLineId,
                                 data.stages[String(stage.stageId)].distanceId,
                             )
                         "

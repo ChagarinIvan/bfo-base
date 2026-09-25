@@ -28,7 +28,7 @@ final readonly class ProtocolLinesRepository
 
     public function byCriteria(Criteria $criteria): Collection
     {
-        return $this->repository->byCriteria($criteria)->loadMissing(['distance.group', 'person']);
+        return $this->repository->byCriteria($criteria, ['distance.group', 'person']);
     }
 
     public function getCupEventProtocolLinesForPersonsCertainAge(

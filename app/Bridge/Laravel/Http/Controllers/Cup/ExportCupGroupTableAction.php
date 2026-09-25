@@ -33,7 +33,7 @@ final class ExportCupGroupTableAction extends BaseController
                 continue;
             }
             $sum = array_slice($personPoints, 0, $cup->events_count)
-                |> (fn($x) => array_map(static fn(CupEventPoint $point): float => is_numeric($point->points) ? (float)$point->points : 0, $x,))
+                |> (static fn($x): array => array_map(static fn(CupEventPoint $point): float => is_numeric($point->points) ? (float)$point->points : 0, $x, ))
                 |> array_sum(...)
             ;
 

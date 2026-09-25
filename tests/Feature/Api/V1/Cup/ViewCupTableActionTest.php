@@ -16,14 +16,13 @@ final class ViewCupTableActionTest extends TestCase
     use RefreshDatabase;
 
     #[Test]
-    public function it_returns_a_paginated_cup_table(): void
+    public function it_returns_a_cup_table(): void
     {
         $this->seed(SprintCupLineSeeder::class);
 
-        $this->getJson('/api/v1/cups/101/tables/M_0_?perPage=2')
+        $this->getJson('/api/v1/cups/101/tables/M_0_')
             ->assertOk()
-            ->assertJsonStructure(['*' => ['stages', 'totalPoints', 'averagePoints']])
-            ->assertHeader('X-Pagination-Per-Page', '2')
+            ->assertJsonStructure(['stages', 'rows'])
         ;
     }
 }

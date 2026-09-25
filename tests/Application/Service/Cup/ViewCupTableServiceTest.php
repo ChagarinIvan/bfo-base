@@ -15,7 +15,7 @@ use App\Domain\Cup\CupEvent\CupEventResources;
 use App\Domain\Cup\CupRepository;
 use App\Domain\Cup\Group\CupGroupFactory;
 use App\Domain\Cup\Table\CupTable;
-use App\Domain\Cup\Table\CupTableService;
+use App\Domain\Cup\Table\CupTableBuilder;
 use App\Domain\Shared\Criteria;
 use Illuminate\Support\Collection;
 use PHPUnit\Framework\Attributes\Test;
@@ -30,7 +30,7 @@ final class ViewCupTableServiceTest extends TestCase
 
     private CupEventRepository&MockObject $cupEvents;
 
-    private CupTableService&MockObject $table;
+    private CupTableBuilder&MockObject $table;
 
     protected function setUp(): void
     {
@@ -39,7 +39,7 @@ final class ViewCupTableServiceTest extends TestCase
         $this->service = new ViewCupTableService(
             $this->cups = $this->createMock(CupRepository::class),
             $this->cupEvents = $this->createMock(CupEventRepository::class),
-            $this->table = $this->createMock(CupTableService::class),
+            $this->table = $this->createMock(CupTableBuilder::class),
             new CupTableAssembler(),
         );
     }
@@ -61,10 +61,7 @@ final class ViewCupTableServiceTest extends TestCase
         $this->cupEvents
             ->expects($this->once())
             ->method('byCriteria')
-            ->with($this->callback(static fn (Criteria $criteria): bool =>
-                $criteria->params() === ['cupId' => 42]
-                && $criteria->sorting() === ['event.date' => 'asc']
-            ), new CupEventResources(withCup: true, withEvent: true))
+            ->with(new Criteria(['cupId' => 42], ['event.date' => 'asc']), new CupEventResources(withCup: true, withEvent: true))
             ->willReturn($events)
         ;
         $this->table

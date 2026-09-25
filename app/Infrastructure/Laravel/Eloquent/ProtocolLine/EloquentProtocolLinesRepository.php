@@ -37,9 +37,15 @@ final readonly class EloquentProtocolLinesRepository implements ProtocolLineRepo
         return $protocolLine;
     }
 
-    public function byCriteria(Criteria $criteria): Collection
+    public function byCriteria(Criteria $criteria, array $with = []): Collection
     {
-        return $this->buildQuery($criteria)->get();
+        $query = $this->buildQuery($criteria);
+
+        if ($with !== []) {
+            $query->with($with);
+        }
+
+        return $query->get();
     }
 
     /** @return Slice<ProtocolLine> */

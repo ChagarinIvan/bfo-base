@@ -10,7 +10,7 @@ use App\Application\Service\Cup\Exception\CupNotFound;
 use App\Domain\Cup\CupEvent\CupEventRepository;
 use App\Domain\Cup\CupEvent\CupEventResources;
 use App\Domain\Cup\CupRepository;
-use App\Domain\Cup\Table\CupTableService;
+use App\Domain\Cup\Table\CupTableBuilder;
 use App\Domain\Shared\Criteria;
 
 final readonly class ViewCupTableService
@@ -18,7 +18,7 @@ final readonly class ViewCupTableService
     public function __construct(
         private CupRepository $cups,
         private CupEventRepository $cupEvents,
-        private CupTableService $table,
+        private CupTableBuilder $table,
         private CupTableAssembler $assembler,
     ) {
     }

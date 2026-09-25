@@ -10,7 +10,6 @@ use App\Domain\Cup\CupEvent\CupEventPoint;
 use App\Domain\Cup\Group\CupGroup;
 use App\Domain\Cup\Group\GroupMale;
 use App\Models\Year;
-use Illuminate\Support\Collection;
 
 class SkiCupType extends EliteCupType
 {

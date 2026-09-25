@@ -6,7 +6,6 @@ namespace App\Application\Dto\Cup;
 
 use App\Application\Dto\Auth\AuthAssembler;
 use App\Application\Dto\CupEvent\LegacyViewCupEventDto;
-use App\Application\Dto\CupEvent\ViewCupEventDto;
 use App\Application\Dto\CupEvent\ViewCupEventPointDto;
 use App\Application\Dto\Event\EventAssembler;
 use App\Domain\Cup\Cup;
