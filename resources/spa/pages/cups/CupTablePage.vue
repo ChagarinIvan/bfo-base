@@ -6,8 +6,7 @@ import InputText from 'primevue/inputtext'
 import Message from 'primevue/message'
 import Select from 'primevue/select'
 import { useRoute, useRouter } from 'vue-router'
-import { getCup, getCupEvents, getCupTable } from '../../api/cups'
-import { getEventsByIds } from '../../api/events'
+import { getCup, getCupTable } from '../../api/cups'
 import type { Cup, CupTable } from '../../api/types'
 import ListingTable from '../../components/ListingTable.vue'
 import ActionButton from '../../components/actions/ActionButton.vue'
@@ -15,7 +14,10 @@ import { useAuthStore } from '../../stores/auth'
 import CupTypeIcon from '../../components/CupTypeIcon.vue'
 import { protocolLineEventUrl } from '../../components/tableModels'
 import FilterPanel from '../../components/FilterPanel.vue'
-import { hasTooShortNameSearch } from '../listingModels'
+import {
+    debounce,
+    hasTooShortNameSearch,
+} from '../listingModels'
 import { t } from '../../i18n'
 
 const route = useRoute()
@@ -29,17 +31,6 @@ const loading = ref(true)
 const error = ref('')
 const controller = ref<AbortController | null>(null)
 const requestId = ref(0)
-
-const visibleRows = computed(() => {
-    const needle = name.value.trim().toLocaleLowerCase()
-    return (
-        table.value?.rows.filter(
-            (row) =>
-                needle.length < 3 ||
-                row.personName.toLocaleLowerCase().includes(needle),
-        ) ?? []
-    )
-})
 const columns = computed(() => {
     const stages = table.value?.stages ?? []
     return [
@@ -81,42 +72,17 @@ async function load(): Promise<void> {
     try {
         if (!cup.value)
             cup.value = await getCup(String(route.params.cupId), current.signal)
-        const cupEvents = await getCupEvents(String(route.params.cupId), {
-            page: 1,
-            perPage: 1000,
-        })
-        const stageEvents = await getEventsByIds(
-            cupEvents.data.map((event) => event.eventId),
-        )
-        const stageById = Object.fromEntries(
-            stageEvents.map((event) => [event.id, event]),
-        )
+        const query: { name?: string } = {}
+        const searchedName = name.value.trim()
+        if (searchedName.length >= 3) query.name = searchedName
         const response = await getCupTable(
             String(route.params.cupId),
             groupId.value,
-            {},
+            query,
             current.signal,
         )
         if (id === requestId.value) {
-            table.value = {
-                ...response.data,
-                stages: cupEvents.data
-                    .map((cupEvent) => {
-                        const event = stageById[cupEvent.eventId]
-                        return event
-                            ? {
-                                  stageId: Number(cupEvent.id),
-                                  eventId: event.id,
-                                  date: event.date,
-                                  name: event.name,
-                              }
-                            : null
-                    })
-                    .filter(
-                        (stage): stage is NonNullable<typeof stage> =>
-                            stage !== null,
-                    ),
-            }
+            table.value = response.data
         }
     } catch (exception) {
         if (id === requestId.value && !isCancel(exception))
@@ -125,8 +91,15 @@ async function load(): Promise<void> {
         if (id === requestId.value) loading.value = false
     }
 }
+const debouncedSearch = debounce(() => void load())
+
 function onName(value: string | undefined): void {
     name.value = value ?? ''
+    if (hasTooShortNameSearch(name.value)) {
+        debouncedSearch.cancel()
+        return
+    }
+    debouncedSearch()
 }
 function onGroupChange(): void {
     void router.replace({ params: { ...route.params, groupId: groupId.value } })
@@ -139,7 +112,10 @@ watch(
     },
     { immediate: true },
 )
-onBeforeUnmount(() => controller.value?.abort())
+onBeforeUnmount(() => {
+    controller.value?.abort()
+    debouncedSearch.cancel()
+})
 </script>
 
 <template>
@@ -224,7 +200,7 @@ onBeforeUnmount(() => controller.value?.abort())
         <ListingTable
             table-id="cup-table"
             :columns="columns"
-            :items="visibleRows"
+            :items="table.rows"
             :empty-label="t('spa.cups.table_empty')"
         >
             <template #cell-personName="{ data }">

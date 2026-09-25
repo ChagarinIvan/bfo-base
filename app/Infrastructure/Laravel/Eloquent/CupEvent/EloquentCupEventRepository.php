@@ -12,6 +12,7 @@ use App\Domain\Shared\Pagination\Slice;
 use App\Infrastructure\Laravel\Eloquent\Pagination\EloquentQueryAdapter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use function array_key_exists;
 use function mb_strtolower;
 
 final class EloquentCupEventRepository implements CupEventRepository
@@ -109,9 +110,15 @@ final class EloquentCupEventRepository implements CupEventRepository
                 ->orWhereHas('competition', static fn (Builder $competition): Builder => $competition->whereRaw('LOWER(name) LIKE ?', [$name])));
         }
 
-        return $query
-            ->orderBy('cup_events.event_id')
-            ->orderBy('cup_events.id')
-        ;
+        if (array_key_exists('event.date', $criteria->sorting())) {
+            $query
+                ->join('events', 'events.id', '=', 'cup_events.event_id')
+                ->orderBy('events.date', $criteria->sorting()['event.date'])
+            ;
+        } else {
+            $query->orderBy('cup_events.event_id');
+        }
+
+        return $query->orderBy('cup_events.id');
     }
 }

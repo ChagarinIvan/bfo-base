@@ -81,11 +81,21 @@ export interface CupEventPointSearchQuery {
     perPage?: number
 }
 
+export interface CupTableSearchQuery {
+    name?: string
+}
+
 export interface CupTableStage {
     stageId: number
     eventId: string
     date: string
     name: string
+}
+
+export interface PaginationHeaders {
+    currentPage: number
+    perPage: number
+    hasNext: boolean
 }
 
 export interface CupTableStageCell {
@@ -320,12 +330,6 @@ export interface PersonPromptRequest {
 export interface AuthToken {
     token: string
     token_type: string
-}
-
-export interface PaginationHeaders {
-    currentPage: number
-    perPage: number
-    hasNext: boolean
 }
 
 export interface PaginatedApiResponse<T> {

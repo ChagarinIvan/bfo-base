@@ -16,11 +16,13 @@ use App\Domain\Cup\CupRepository;
 use App\Domain\Cup\Group\CupGroupFactory;
 use App\Domain\Cup\Table\CupTable;
 use App\Domain\Cup\Table\CupTableBuilder;
+use App\Domain\Cup\Table\CupTableRow;
 use App\Domain\Shared\Criteria;
 use Illuminate\Support\Collection;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
+use function array_map;
 
 final class ViewCupTableServiceTest extends TestCase
 {
@@ -93,5 +95,55 @@ final class ViewCupTableServiceTest extends TestCase
         $this->table->expects($this->never())->method('build');
 
         $this->service->execute(new ViewCupTable('42', CupGroupFactory::fromId('M_0_')));
+    }
+
+    #[Test]
+    public function it_filters_cached_rows_by_name(): void
+    {
+        $cup = $this->createStub(Cup::class);
+        $events = new Collection();
+        $group = CupGroupFactory::fromId('M_0_');
+        $table = new CupTable([], [
+            $this->row(1, 42, 'John Doe'),
+            $this->row(2, 43, 'Jane Doe'),
+            $this->row(3, 44, 'John Smith'),
+        ]);
+
+        $this->cups
+            ->expects($this->once())
+            ->method('byId')
+            ->with(42)
+            ->willReturn($cup)
+        ;
+        $this->cupEvents
+            ->expects($this->once())
+            ->method('byCriteria')
+            ->willReturn($events)
+        ;
+        $this->table
+            ->expects($this->once())
+            ->method('build')
+            ->willReturn($table)
+        ;
+        $result = $this->service->execute(new ViewCupTable('42', $group, 'john'));
+        $rows = $result->rows;
+
+        $this->assertCount(2, $rows);
+        $this->assertSame(['John Doe', 'John Smith'], array_map(static fn ($row): string => $row->personName, $rows));
+        $this->assertSame([1, 3], array_map(static fn ($row): int => $row->place, $rows));
+    }
+
+    private function row(int $place, int $personId, string $name): CupTableRow
+    {
+        return new CupTableRow(
+            place: $place,
+            personId: (string) $personId,
+            personName: $name,
+            personYear: 1990,
+            clubName: 'Club',
+            stages: [],
+            totalPoints: '100',
+            averagePoints: '100',
+        );
     }
 }

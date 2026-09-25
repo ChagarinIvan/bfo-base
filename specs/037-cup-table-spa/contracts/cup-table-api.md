@@ -12,8 +12,6 @@ Query parameters:
 
 - `name` — optional, empty value means no predicate, non-empty value must have at
   least 3 characters;
-- `page` — optional, 1-based;
-- `perPage` — optional, из стандартного набора пагинации.
 
 Все параметры используют camelCase. Endpoint доступен через optional API auth;
 authenticated-only metadata не должен появляться в публичных строках.
@@ -21,7 +19,8 @@ authenticated-only metadata не должен появляться в публи
 ## Response
 
 Ответ содержит один типизированный объект `stages` и полный массив `rows` с
-полями из `data-model.md`; pagination не используется. Ошибки: 404 для
+полями из `data-model.md`. Фильтр `name` применяется в Application после
+получения рассчитанной таблицы из доменного builder/cache. Ошибки: 404 для
 несуществующего кубка/группы и 422 для имени длиной 1–2 символа или отсутствующего
 обязательного groupId.
 

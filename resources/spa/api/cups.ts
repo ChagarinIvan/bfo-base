@@ -9,6 +9,7 @@ import type {
     CupEventSearchQuery,
     CupSearchQuery,
     CupTable,
+    CupTableSearchQuery,
     CreateCupRequest,
     UpdateCupRequest,
 } from './types'
@@ -47,7 +48,7 @@ export async function getCupEventPoints(
 export async function getCupTable(
     cupId: string,
     groupId: string,
-    query: Record<string, never> = {},
+    query: CupTableSearchQuery = {},
     signal?: AbortSignal,
 ) {
     const response = await api.get<CupTable>(

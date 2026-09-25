@@ -43,6 +43,7 @@ final readonly class ProtocolLinesRepository
             ->with(['person.club', 'distance.group'])
             ->join('person', 'person.id', '=', 'protocol_lines.person_id')
             ->join('distances', 'distances.id', '=', 'protocol_lines.distance_id')
+            ->where('person.active', true)
             ->where('protocol_lines.vk', false)
             ->where('distances.event_id', $cupEvent->event_id)
         ;
@@ -83,6 +84,7 @@ final readonly class ProtocolLinesRepository
             ->join('persons_payments', 'person.id', '=', 'persons_payments.person_id')
             ->join('distances', 'distances.id', '=', 'protocol_lines.distance_id')
             ->where('persons_payments.year', $cupEvent->cup->year)
+            ->where('person.active', true)
             ->where('distances.event_id', $cupEvent->event_id)
             ->where('distances.group_id', $groupId)
             ->havingRaw('persons_payments.date <= ?', [$cupEvent->event->date])
@@ -96,6 +98,7 @@ final readonly class ProtocolLinesRepository
             ->with(['person.club', 'distance.group'])
             ->join('person', 'person.id', '=', 'protocol_lines.person_id')
             ->where('protocol_lines.vk', false)
+            ->where('person.active', true)
             ->where('person.citizenship', Citizenship::BELARUS->value)
             ->get()
         ;

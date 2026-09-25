@@ -5,10 +5,14 @@ declare(strict_types=1);
 namespace Tests\Feature\Api\V1\Cup;
 
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\ViewCupTableAction;
+use App\Domain\Cup\CupEvent\CupEvent;
+use App\Domain\Event\Event;
+use App\Domain\Person\Person;
 use Database\Seeders\SprintCupLineSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+use function array_column;
 
 /** @see ViewCupTableAction */
 final class ViewCupTableActionTest extends TestCase
@@ -19,10 +23,39 @@ final class ViewCupTableActionTest extends TestCase
     public function it_returns_a_cup_table(): void
     {
         $this->seed(SprintCupLineSeeder::class);
+        Event::factory(state: [
+            'id' => 102,
+            'competition_id' => 101,
+            'name' => 'First by date',
+            'date' => '2024-04-10',
+        ])->createOne();
+        CupEvent::factory(state: ['id' => 102, 'cup_id' => 101, 'event_id' => 102, 'points' => 1000])->createOne();
+
+        $response = $this->getJson('/api/v1/cups/101/tables/M_0_')
+            ->assertOk()
+            ->assertJsonStructure(['stages', 'rows'])
+        ;
+        $this->assertSame(['2024-04-10', '2024-04-12'], array_column($response->json('stages'), 'date'));
+    }
+
+    #[Test]
+    public function it_omits_inactive_people_from_the_public_table(): void
+    {
+        $this->seed(SprintCupLineSeeder::class);
+        Person::query()->whereKey(101)->update(['active' => false]);
 
         $this->getJson('/api/v1/cups/101/tables/M_0_')
             ->assertOk()
-            ->assertJsonStructure(['stages', 'rows'])
+            ->assertJsonMissing(['personId' => '101'])
+        ;
+    }
+
+    #[Test]
+    public function it_rejects_a_name_filter_shorter_than_three_characters(): void
+    {
+        $this->getJson('/api/v1/cups/101/tables/M_0_?name=Jo')
+            ->assertUnprocessable()
+            ->assertJsonPath('errors.0.field', 'name')
         ;
     }
 }

@@ -4,17 +4,13 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
 import CupTablePage from './CupTablePage.vue'
 
-const { getCup, getCupEvents, getCupTable, route } = vi.hoisted(() => ({
+const { getCup, getCupTable, route } = vi.hoisted(() => ({
     getCup: vi.fn(),
-    getCupEvents: vi.fn(),
     getCupTable: vi.fn(),
     route: { params: { cupId: '42', groupId: 'M_0_' } },
 }))
 
-vi.mock('../../api/cups', () => ({ getCup, getCupEvents, getCupTable }))
-vi.mock('../../api/events', () => ({
-    getEventsByIds: vi.fn().mockResolvedValue([]),
-}))
+vi.mock('../../api/cups', () => ({ getCup, getCupTable }))
 vi.mock('../../stores/auth', () => ({
     useAuthStore: () => ({ isAuthenticated: false }),
 }))
@@ -63,12 +59,8 @@ describe('cup table page', () => {
                         averagePoints: '100',
                     },
                 ],
-                currentPage: 1,
-                perPage: 20,
-                hasNext: false,
             },
         })
-        getCupEvents.mockResolvedValue({ data: [] })
 
         const wrapper = mount(CupTablePage, {
             global: {

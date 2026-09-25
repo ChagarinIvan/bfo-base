@@ -23,10 +23,8 @@ are the behavior reference. New target code must avoid adding more logic to lega
 `app/Services`; wrap/reuse calculation behind the Application use case where
 needed.
 
-**API shape**: `GET /api/v1/cups/{cupId}/tables/{groupId}`, query `name`, `page`,
-`perPage`, response contains
-ordered `stages`, paginated `rows`, and pagination headers. All query keys are
-camelCase.
+**API shape**: `GET /api/v1/cups/{cupId}/tables/{groupId}`, query `name`, response
+contains ordered `stages` and the full `rows` array. All query keys are camelCase.
 
 **Performance**: calculate once per cup/group request, paginate the assembled rows
 before transport serialization, and avoid one person/club query per row.
@@ -38,7 +36,7 @@ before transport serialization, and avoid one person/club query per row.
 | Target layers | Pass with design constraint | New API query is Bridge → Application → Domain ports/assemblers; legacy calculator is adapted rather than extended with another endpoint. |
 | Commands/queries | Pass | Read query receives a command/input and returns a view DTO/slice; transport DTO stays at Bridge boundary. |
 | API V1 | Pass | camelCase query, DTO serializer, request test with `@see`, optional auth behavior. |
-| Pagination | Required | Response is a `Slice`; no unbounded person list is sent to SPA. |
+| Table rows | Complete table | The SPA receives the full calculated table for the selected group. |
 | Testing | Required | API contract, application calculation mapping, SPA route/tabs/table/filter tests. |
 | N+1 | Required | Stage/person/club data is assembled with batch resources or explicit eager loading. |
 
@@ -50,7 +48,7 @@ before transport serialization, and avoid one person/club query per row.
 - Use child routes analogous to `PersonLayoutPage`: default child renders the
   existing event list; `table/:groupId` renders the new table.
 - Navigation buttons update Vue Router history without document reload. Group tabs
-  are local router links and preserve the table filter/page where appropriate.
+  are local router links and preserve the selected group.
 - Direct old links remain outside this feature; the SPA deep-link is stable and
   can be linked from the card group badges.
 
@@ -71,7 +69,7 @@ case-insensitively.
 ### Error and race handling
 
 The table request uses AbortController plus a monotonically increasing request ID.
-Only the latest group/filter/page request may update rows, loading or error state.
+Only the latest group/filter request may update rows, loading or error state.
 Validation for a 1–2 character name is local and no API call is made.
 
 ## Project Structure

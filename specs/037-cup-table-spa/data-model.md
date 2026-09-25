@@ -6,8 +6,7 @@
 |---|---|
 | `cupId`, `groupId` | Контекст таблицы |
 | `stages[]` | Стабильный порядок этапов: `stageId` (ID этапа кубка), дата, name и `eventId` |
-| `rows[]` | Пагинированные спортсмены |
-| pagination headers | `currentPage`, `perPage`, `hasNext` |
+| `rows[]` | Все строки таблицы, прошедшие фильтр по имени |
 
 ## CupTableRow
 

@@ -12,6 +12,7 @@ use function array_map;
 
 final readonly class CupTableAssembler
 {
+    /** @param list<CupTableRow> $rows */
     public function toViewCupTableDto(CupTable $table): ViewCupTableDto
     {
         return new ViewCupTableDto(

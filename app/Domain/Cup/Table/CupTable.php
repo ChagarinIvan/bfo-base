@@ -15,4 +15,10 @@ final readonly class CupTable
         public array $rows,
     ) {
     }
+
+    /** @param list<CupTableRow> $rows */
+    public function withRows(array $rows): self
+    {
+        return new self($this->stages, $rows);
+    }
 }

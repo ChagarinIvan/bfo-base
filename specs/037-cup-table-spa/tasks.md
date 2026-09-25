@@ -9,8 +9,8 @@
 
 - [X] T003 Добавить V1 DTO и assembler для stage metadata, table rows и stage cells в `app/Application/Dto/Cup/`.
 - [X] T004 Добавить Application query command/service для таблицы кубка в `app/Application/Service/Cup/`, изолировав существующий cup calculation и batch loading persons/clubs.
-- [X] T005 Добавить Bridge action и маршрут `GET /api/v1/cups/{cupId}/tables/{groupId}` с обязательным `groupId` и camelCase `name`, `page`, `perPage` в `app/Bridge/Laravel/Http/Controllers/Api/V1/Cup/` и `ApiV1RoutesServiceProvider.php`, повторив семантику `ListCupEventPointsService`.
-- [X] T006 [P] Добавить API request tests с `@see`, проверяющие 200 contract, pagination, 404 и validation для короткого имени в `tests/Feature/Api/V1/Cup/CupTableActionTest.php`.
+- [X] T005 Добавить Bridge action и маршрут `GET /api/v1/cups/{cupId}/tables/{groupId}` с обязательным `groupId` и camelCase `name` в `app/Bridge/Laravel/Http/Controllers/Api/V1/Cup/` и `ApiV1RoutesServiceProvider.php`.
+- [X] T006 [P] Добавить API request tests с `@see`, проверяющие 200 contract, 404 и validation для короткого имени в `tests/Feature/Api/V1/Cup/CupTableActionTest.php`.
 
 ## Phase 3: User Story 1 — layout и вкладки (P1)
 
@@ -32,11 +32,11 @@
 
 ## Phase 5: User Story 3 — фильтр, pagination и columns (P1)
 
-**Independent test**: фильтр от трёх символов, page changes и column visibility работают без потери группы и stage columns.
+**Independent test**: фильтр от трёх символов и column visibility работают без потери группы и stage columns.
 
-- [X] T015 [US3] Добавить обязательный group select из `cup.groups`, server-side pagination, debounced name filter с minimum 3 validation и AbortController/request identity в `CupTablePage.vue`.
+- [X] T015 [US3] Добавить обязательный group select из `cup.groups`, debounced name filter с minimum 3 validation и AbortController/request identity в `CupTablePage.vue`.
 - [X] T016 [US3] Расширить `ListingTable` или добавить table-specific column policy, чтобы stage columns были обязательными, а остальные сохраняли пользовательскую настройку.
-- [X] T017 [US3] Добавить frontend tests на обязательную группу, короткий ввод без запроса, debounce, pagination, stale response и невозможность скрыть stage columns.
+- [X] T017 [US3] Добавить frontend tests на обязательную группу, короткий ввод без запроса, debounce, stale response и невозможность скрыть stage columns.
 - [X] T018 [P] Добавить белорусские тексты для вкладок, фильтра, loading/error/empty/validation в `resources/lang/by.json` и обновить i18n tests при необходимости.
 
 ## Phase 6: User Story 4 — ошибки и compatibility (P2)
@@ -70,5 +70,5 @@ foundational API; US3 зависит от US2; US4 можно начинать �
 ## MVP
 
 MVP: T003–T005, T007–T017. Он даёт карточку с вкладками, рабочую таблицу,
-API-пагинацию, поиск от трёх символов и обязательные stage columns. T019–T024
+полную таблицу, поиск от трёх символов и обязательные stage columns. T019–T024
 завершают error/compatibility и quality gates.
