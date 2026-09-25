@@ -188,6 +188,7 @@ body {
 }
 
 .app-appearance-toggle {
+    position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -198,6 +199,37 @@ body {
     padding: 0;
     background: transparent;
     cursor: pointer;
+}
+
+.app-appearance-toggle::after {
+    position: absolute;
+    z-index: 20;
+    top: calc(100% + 0.55rem);
+    left: 50%;
+    width: max-content;
+    max-width: min(16rem, calc(100vw - 2rem));
+    border-radius: 0.35rem;
+    padding: 0.4rem 0.6rem;
+    background: #0f172a;
+    color: #fff;
+    content: attr(data-tooltip);
+    font-size: 0.8rem;
+    font-weight: 400;
+    line-height: 1.3;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, -0.2rem);
+    transition:
+        opacity 0.12s ease,
+        transform 0.12s ease;
+    visibility: hidden;
+}
+
+.app-appearance-toggle:hover::after,
+.app-appearance-toggle:focus-visible::after {
+    opacity: 1;
+    transform: translate(-50%, 0);
+    visibility: visible;
 }
 
 .app-appearance-toggle__track {

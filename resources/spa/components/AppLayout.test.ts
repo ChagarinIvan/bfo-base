@@ -79,7 +79,7 @@ describe('hybrid SPA navbar', () => {
             toggle.element,
         )
         expect(wrapper.find('button.app-logout-button').exists()).toBe(true)
-        expect(toggle.attributes('title')).toBe(
+        expect(toggle.attributes('data-tooltip')).toBe(
             'Пераключэнне паміж светлай і начной тэмамі',
         )
 
@@ -88,7 +88,7 @@ describe('hybrid SPA navbar', () => {
 
         expect(toggle.attributes('aria-pressed')).toBe('true')
         expect(toggle.attributes('aria-label')).toBe('Уключыць светлы рэжым')
-        expect(toggle.attributes('title')).toBe(
+        expect(toggle.attributes('data-tooltip')).toBe(
             'Пераключэнне паміж светлай і начной тэмамі',
         )
         expect(

@@ -180,7 +180,7 @@ async function openHorizon(): Promise<void> {
                     type="button"
                     :aria-label="appearanceActionLabel"
                     :aria-pressed="appearance.mode === 'night'"
-                    :title="t('spa.nav.appearance_tooltip')"
+                    :data-tooltip="t('spa.nav.appearance_tooltip')"
                     @click="appearance.toggle"
                 >
                     <span
