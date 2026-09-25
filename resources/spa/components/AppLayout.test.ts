@@ -63,6 +63,9 @@ describe('hybrid SPA navbar', () => {
 
         expect(toggle.attributes('aria-pressed')).toBe('false')
         expect(toggle.attributes('aria-label')).toBe('Уключыць начны рэжым')
+        expect(
+            toggle.find('.app-appearance-toggle__thumb .pi-moon').exists(),
+        ).toBe(true)
         expect(wrapper.find('.app-login-link').exists()).toBe(true)
     })
 
@@ -84,6 +87,9 @@ describe('hybrid SPA navbar', () => {
         expect(toggle.attributes('aria-pressed')).toBe('true')
         expect(toggle.attributes('aria-label')).toBe('Уключыць светлы рэжым')
         expect(toggle.attributes('title')).toBe('Начны рэжым уключаны')
+        expect(
+            toggle.find('.app-appearance-toggle__thumb .pi-sun').exists(),
+        ).toBe(true)
     })
 
     it('keeps migrated competitions and groups in SPA', () => {

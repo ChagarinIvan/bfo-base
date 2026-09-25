@@ -181,19 +181,31 @@ async function openHorizon(): Promise<void> {
             <div class="app-nav-auth">
                 <button
                     class="app-appearance-toggle"
+                    :class="{
+                        'app-appearance-toggle--night':
+                            appearance.mode === 'night',
+                    }"
                     type="button"
                     :aria-label="appearanceActionLabel"
                     :aria-pressed="appearance.mode === 'night'"
                     :title="appearanceStateLabel"
                     @click="appearance.toggle"
                 >
-                    <i
-                        :class="[
-                            'pi',
-                            appearance.mode === 'night' ? 'pi-sun' : 'pi-moon',
-                        ]"
+                    <span
+                        class="app-appearance-toggle__track"
                         aria-hidden="true"
-                    />
+                    >
+                        <span class="app-appearance-toggle__thumb">
+                            <i
+                                :class="[
+                                    'pi',
+                                    appearance.mode === 'night'
+                                        ? 'pi-sun'
+                                        : 'pi-moon',
+                                ]"
+                            />
+                        </span>
+                    </span>
                     <span class="app-appearance-toggle__label">
                         {{ appearanceActionLabel }}
                     </span>
