@@ -8,7 +8,6 @@ use App\Bridge\Laravel\Http\Controllers\Cup\ClearCacheAction;
 use App\Bridge\Laravel\Http\Controllers\Cup\DeleteCupAction;
 use App\Bridge\Laravel\Http\Controllers\Cup\ExportCupGroupTableAction;
 use App\Bridge\Laravel\Http\Controllers\Cup\ExportCupTableAction;
-use App\Bridge\Laravel\Http\Controllers\Cup\ShowCupTableAction;
 use App\Bridge\Laravel\Http\Controllers\CupEvents\DeleteCupEventAction;
 use Illuminate\Contracts\Routing\Registrar;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
@@ -34,13 +33,12 @@ class WebRoutesServiceProvider extends ServiceProvider
                 //cups
                 $this->routeRegistrar->prefix('cups')->group(function (): void {
                     $this->route->get('{cupId}/cache', ClearCacheAction::class);
-                    $this->route->get('{cup}/{group}/table', ShowCupTableAction::class);
 
                     //old auth
                     $this->middleware(['auth'])->group(function (): void {
-                        $this->route->get('{cup}/{group}/table-export', ExportCupGroupTableAction::class);
-                        $this->route->get('{cup}/export', ExportCupTableAction::class);
                         $this->route->get('{cupId}/delete', DeleteCupAction::class);
+                        $this->route->get('{cup}/export', ExportCupTableAction::class);
+                        $this->route->get('{cup}/{group}/table-export', ExportCupGroupTableAction::class);
                         $this->route->get('{cupId}/{event}/delete', DeleteCupEventAction::class);
                     });
                 });

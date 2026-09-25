@@ -6,6 +6,7 @@ namespace App\Domain\Cup;
 
 use App\Domain\Auth\Impression;
 use App\Domain\Cup\CupEvent\CupEvent;
+use App\Domain\Cup\CupEvent\CupEventPoint;
 use App\Domain\Cup\Event\CupCreated;
 use App\Domain\Cup\Event\CupDisabled;
 use App\Domain\Cup\Event\CupUpdated;
@@ -73,9 +74,16 @@ class Cup extends AggregatedModel
         return $this->hasMany(CupEvent::class)->active();
     }
 
-    public function calculateEvent(CupEvent $cupEvent, CupGroup $group): Collection
+    /** @return array<int|string, CupEventPoint> */
+    public function calculateEvent(CupEvent $cupEvent, CupGroup $group): array
     {
         return $this->type->instance()->calculateEvent($cupEvent, $group);
+    }
+
+    /** @return array<string, CupEventPoint[]> */
+    public function calculateGroupEvents(CupGroup $group, Collection $cupEvents): array
+    {
+        return $this->type->instance()->calculateCup($this, $cupEvents, $group);
     }
 
     /** @return CupGroup[] */

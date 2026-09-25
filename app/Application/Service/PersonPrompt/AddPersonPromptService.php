@@ -21,6 +21,7 @@ final readonly class AddPersonPromptService
     ) {
     }
 
+    /** @throws PersonNotFound */
     public function execute(AddPersonPrompt $command): ViewPersonPromptDto
     {
         $this->persons->byId($command->personId()) ?? throw new PersonNotFound();

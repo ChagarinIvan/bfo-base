@@ -147,7 +147,7 @@ describe('cup view page', () => {
         expect(wrapper.html()).toContain('/app/cups/42/edit')
         expect(wrapper.html()).toContain('/app/cups/42/events/7/edit')
         expect(wrapper.find('.cup-group-badge').attributes('href')).toBe(
-            '/cups/42/M21/table',
+            '/app/cups/42/table/M21',
         )
     })
 })

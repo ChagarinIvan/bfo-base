@@ -20,7 +20,10 @@ final readonly class ListPersonsPromptsService
     ) {
     }
 
-    /** @return Slice<ViewPersonPromptDto> */
+    /**
+     * @return Slice<ViewPersonPromptDto>
+     * @throws PersonNotFound
+     */
     public function paginate(ListPersonsPrompts $command): Slice
     {
         $criteria = $command->criteria();

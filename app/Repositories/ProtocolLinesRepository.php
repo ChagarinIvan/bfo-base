@@ -28,7 +28,7 @@ final readonly class ProtocolLinesRepository
 
     public function byCriteria(Criteria $criteria): Collection
     {
-        return $this->repository->byCriteria($criteria);
+        return $this->repository->byCriteria($criteria)->loadMissing(['distance.group', 'person']);
     }
 
     public function getCupEventProtocolLinesForPersonsCertainAge(
@@ -40,7 +40,7 @@ final readonly class ProtocolLinesRepository
         bool $citizhenship = false,
     ): Collection {
         $protocolLinesQuery = ProtocolLine::selectRaw('protocol_lines.*')
-            ->with(['person.club'])
+            ->with(['person.club', 'distance.group'])
             ->join('person', 'person.id', '=', 'protocol_lines.person_id')
             ->join('distances', 'distances.id', '=', 'protocol_lines.distance_id')
             ->where('protocol_lines.vk', false)
@@ -78,7 +78,7 @@ final readonly class ProtocolLinesRepository
     public function getCupEventGroupProtocolLinesForPersonsWithPayment(CupEvent $cupEvent, int $groupId): Collection
     {
         return ProtocolLine::selectRaw('protocol_lines.*, persons_payments.date')
-            ->with(['person.club'])
+            ->with(['person.club', 'distance.group'])
             ->join('person', 'person.id', '=', 'protocol_lines.person_id')
             ->join('persons_payments', 'person.id', '=', 'persons_payments.person_id')
             ->join('distances', 'distances.id', '=', 'protocol_lines.distance_id')
@@ -93,7 +93,7 @@ final readonly class ProtocolLinesRepository
     public function getCupEventDistanceProtocolLines(int $distanceId): Collection
     {
         return ProtocolLine::where('protocol_lines.distance_id', $distanceId)
-            ->with(['person.club'])
+            ->with(['person.club', 'distance.group'])
             ->join('person', 'person.id', '=', 'protocol_lines.person_id')
             ->where('protocol_lines.vk', false)
             ->where('person.citizenship', Citizenship::BELARUS->value)

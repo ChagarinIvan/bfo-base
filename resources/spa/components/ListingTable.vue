@@ -68,6 +68,7 @@ function isVisible(key: string): boolean {
 }
 
 function toggle(key: string, checked: boolean): void {
+    if (props.columns.find((column) => column.key === key)?.required) return
     if (!checked && visible.value.length === 1 && isVisible(key)) return
 
     visible.value = checked
@@ -95,7 +96,8 @@ watch(visible, (value) => {
                         type="checkbox"
                         :checked="isVisible(column.key)"
                         :disabled="
-                            visible.length === 1 && isVisible(column.key)
+                            column.required ||
+                            (visible.length === 1 && isVisible(column.key))
                         "
                         @change="
                             toggle(

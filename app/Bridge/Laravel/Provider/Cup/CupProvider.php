@@ -9,6 +9,8 @@ use App\Domain\Cup\CupCacheInvalidator;
 use App\Domain\Cup\CupRepository;
 use App\Domain\Cup\Factory\CupFactory;
 use App\Domain\Cup\Factory\StandardCupFactory;
+use App\Domain\Cup\Table\CupTableService;
+use App\Domain\Cup\Table\StandardCupTableService;
 use App\Infrastructure\Laravel\Eloquent\Cup\EloquentCupRepository;
 use Illuminate\Support\ServiceProvider;
 
@@ -19,5 +21,6 @@ final class CupProvider extends ServiceProvider
         $this->app->bind(CupFactory::class, StandardCupFactory::class);
         $this->app->bind(CupRepository::class, EloquentCupRepository::class);
         $this->app->bind(CupCacheInvalidator::class, CacheManagerCupsCacheInvalidator::class);
+        $this->app->bind(CupTableService::class, StandardCupTableService::class);
     }
 }

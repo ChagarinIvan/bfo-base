@@ -29,7 +29,10 @@ final readonly class UpdateEventService
     ) {
     }
 
-    /** @throws EventNotFound */
+    /**
+     * @throws EventNotFound
+     * @throws InvalidProtocol
+     */
     public function execute(UpdateEvent $command): ViewEventDto
     {
         return $this->transactional->run(function () use ($command): ViewEventDto {

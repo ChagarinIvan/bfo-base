@@ -3,6 +3,7 @@ export interface ListingColumn {
     label: string
     defaultVisible: boolean
     field?: string
+    required?: boolean
 }
 
 export function tableStorageKey(

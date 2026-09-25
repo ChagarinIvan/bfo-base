@@ -7,46 +7,43 @@ namespace App\Bridge\Laravel\Http\Controllers\Cup;
 use App\Domain\Cup\Cup;
 use App\Domain\Cup\CupEvent\CupEventPoint;
 use App\Domain\Cup\Group\CupGroupFactory;
-use App\Domain\Person\Person;
 use App\Services\CupEventsService;
 use Illuminate\Routing\Controller as BaseController;
-use Illuminate\Support\Facades\File;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use function array_filter;
-use function array_keys;
-use function count;
-use function sys_get_temp_dir;
-use function tempnam;
+use Symfony\Component\HttpFoundation\Response;
+use function array_map;
+use function array_slice;
+use function array_sum;
+use function implode;
+use function is_numeric;
 
-class ExportCupGroupTableAction extends BaseController
+final class ExportCupGroupTableAction extends BaseController
 {
     use CupAction;
 
-    public function __invoke(Cup $cup, string $cupGroupId, CupEventsService $service): BinaryFileResponse
+    public function __invoke(Cup $cup, string $group, CupEventsService $service): Response
     {
-        $cupEvents = $service->getCupEvents((string) $cup->id)->sortBy('event.date');
-        $cupGroup = CupGroupFactory::fromId($cupGroupId);
-        $cupPoints = $service->calculateCup($cup, $cupEvents, $cupGroup);
+        $cupGroup = CupGroupFactory::fromId($group);
+        $points = $service->calculateCup($cup, $service->getCupEvents((string) $cup->id), $cupGroup);
+        $lines = [$cupGroup->name(), 'Место;ФИО;Год;Клуб;Очки'];
+        $place = 1;
+        foreach ($points as $personPoints) {
+            /** @var CupEventPoint|null $first */
+            $first = $personPoints[0] ?? null;
+            if ($first === null || $first->protocolLine->person_id === null) {
+                continue;
+            }
+            $sum = array_slice($personPoints, 0, $cup->events_count)
+                |> (fn($x) => array_map(static fn(CupEventPoint $point): float => is_numeric($point->points) ? (float)$point->points : 0, $x,))
+                |> array_sum(...)
+            ;
 
-        // толькі тыя у каго бал большы за 0
-        $cupPoints = array_filter(
-            $cupPoints,
-            static fn (array $points): bool => count(array_filter($points, static fn (CupEventPoint $p): bool => $p->points > 0)) > 0,
-        );
+            $line = $first->protocolLine;
+            $lines[] = implode(';', [$place++, $line->getFullName(), $line->year ?? '', $line->club, $sum]);
+        }
 
-        $view = $this->view('cup.export.table', [
-            'cup' => $cup,
-            'cupEvents' => $cupEvents,
-            'cupPoints' => $cupPoints,
-            'persons' => Person::where('active', true)->whereIn('id', array_keys($cupPoints))->get()->keyBy('id'),
+        return response(implode("\r\n", $lines), 200, [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="' . $cup->name . '_' . $cupGroup->name() . '.csv"',
         ]);
-
-        $tempFilePath = tempnam(sys_get_temp_dir(), 'tempfile');
-        File::put($tempFilePath, $view->render());
-
-        return response()
-            ->download(file: $tempFilePath, name: "{$cup->name}_{$cupGroup->name()}.html")
-            ->deleteFileAfterSend()
-        ;
     }
 }

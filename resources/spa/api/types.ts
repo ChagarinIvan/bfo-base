@@ -81,6 +81,37 @@ export interface CupEventPointSearchQuery {
     perPage?: number
 }
 
+export interface CupTableStage {
+    stageId: number
+    eventId: string
+    date: string
+    name: string
+}
+
+export interface CupTableStageCell {
+    stageId: number
+    points: number | string
+    counted: boolean
+    distanceId: string
+    protocolLineId: string
+}
+
+export interface CupTableRow {
+    place: number
+    personId: string
+    personName: string
+    personYear: number
+    clubName: string
+    stages: Record<string, CupTableStageCell>
+    totalPoints: string
+    averagePoints: string
+}
+
+export interface CupTable {
+    stages: CupTableStage[]
+    rows: CupTableRow[]
+}
+
 export interface CupEventContext {
     eventId: string
     cupEventId: string

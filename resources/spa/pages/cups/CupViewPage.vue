@@ -173,7 +173,7 @@ function deleteEvent(): void {
 }
 function cupTableUrl(): string {
     return cup.value?.groups[0]
-        ? `/cups/${cup.value.id}/${cup.value.groups[0].id}/table`
+        ? `/app/cups/${cup.value.id}/table/${cup.value.groups[0].id}`
         : ''
 }
 
@@ -223,7 +223,7 @@ onBeforeUnmount(() => debouncedSearch.cancel())
                                 <a
                                     v-for="group in cup.groups"
                                     :key="group.id"
-                                    :href="`/cups/${cup.id}/${group.id}/table`"
+                                    :href="`/app/cups/${cup.id}/table/${group.id}`"
                                     :class="[
                                         'cup-group-badge',
                                         cupGroupBadgeClass(group),

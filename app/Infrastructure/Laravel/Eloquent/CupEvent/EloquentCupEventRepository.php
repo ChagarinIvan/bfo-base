@@ -6,6 +6,7 @@ namespace App\Infrastructure\Laravel\Eloquent\CupEvent;
 
 use App\Domain\Cup\CupEvent\CupEvent;
 use App\Domain\Cup\CupEvent\CupEventRepository;
+use App\Domain\Cup\CupEvent\CupEventResources;
 use App\Domain\Shared\Criteria;
 use App\Domain\Shared\Pagination\Slice;
 use App\Infrastructure\Laravel\Eloquent\Pagination\EloquentQueryAdapter;
@@ -45,9 +46,27 @@ final class EloquentCupEventRepository implements CupEventRepository
             ->first();
     }
 
-    public function byCriteria(Criteria $criteria): Collection
+    public function byCriteria(
+        Criteria $criteria,
+        CupEventResources $resources = new CupEventResources(),
+    ): Collection
     {
-        return $this->buildQuery($criteria)->get();
+        $query = $this->buildQuery($criteria);
+        $relations = [];
+
+        if ($resources->withCup) {
+            $relations[] = 'cup';
+        }
+
+        if ($resources->withEvent) {
+            $relations[] = 'event';
+        }
+
+        if ($relations !== []) {
+            $query->with($relations);
+        }
+
+        return $query->get();
     }
 
     /** @return Slice<CupEvent> */

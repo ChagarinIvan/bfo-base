@@ -7,6 +7,7 @@ namespace App\Services;
 use App\Domain\Cup\Cup;
 use App\Domain\Cup\CupEvent\CupEventPoint;
 use App\Domain\Cup\CupEvent\CupEventRepository;
+use App\Domain\Cup\CupEvent\CupEventResources;
 use App\Domain\Cup\Group\CupGroup;
 use App\Domain\Shared\Criteria;
 use Illuminate\Cache\Repository as CacheManager;
@@ -22,7 +23,10 @@ final readonly class CupEventsService
 
     public function getCupEvents(string $cupId): Collection
     {
-        return $this->cupEvents->byCriteria(new Criteria(['cupId' => $cupId]));
+        return $this->cupEvents->byCriteria(
+            new Criteria(['cupId' => $cupId], ['event.date' => 'asc']),
+            new CupEventResources(withCup: true, withEvent: true),
+        );
     }
 
     /** @return array<string, CupEventPoint[]> */
@@ -31,7 +35,7 @@ final readonly class CupEventsService
         return $this->cache->tags(['cups', $cup->id])->remember(
             "{$cup->id}_{$group->id()}",
             1000000,
-            static fn() => $cup->type->instance()->calculateCup($cup, $cupEvents, $group)
+            static fn() => $cup->calculateGroupEvents($group, $cupEvents),
         );
     }
 }

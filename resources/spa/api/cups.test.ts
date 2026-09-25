@@ -6,6 +6,7 @@ import {
     getCupEventPoints,
     getCupEventContexts,
     getCupEvents,
+    getCupTable,
     updateCupEvent,
 } from './cups'
 
@@ -14,6 +15,20 @@ vi.mock('./client', () => ({
 }))
 
 describe('cups API', () => {
+    it('loads a complete cup table for the selected group', async () => {
+        vi.mocked(api.get).mockResolvedValue({
+            data: { rows: [] },
+            headers: {},
+        })
+
+        await getCupTable('42', 'M_0_')
+
+        expect(api.get).toHaveBeenCalledWith('/cups/42/tables/M_0_', {
+            params: {},
+            signal: undefined,
+        })
+    })
+
     it('passes compact cup-stage filters to the nested endpoint', async () => {
         vi.mocked(api.get).mockResolvedValue({ data: [], headers: {} })
 

@@ -22,6 +22,7 @@ final readonly class AddEventService
     ) {
     }
 
+    /** @throws InvalidProtocol */
     public function execute(AddEvent $command): ViewEventDto
     {
         try {

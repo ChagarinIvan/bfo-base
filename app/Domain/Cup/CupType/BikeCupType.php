@@ -23,16 +23,15 @@ class BikeCupType extends EliteCupType
         return 'app.cup.type.bike';
     }
 
-    /**
-     * @return Collection //array<int, CupEventPoint>
-     */
-    public function calculateEvent(CupEvent $cupEvent, CupGroup $mainGroup): Collection
+    /** @return array<int|string, CupEventPoint> */
+    public function calculateEvent(CupEvent $cupEvent, CupGroup $mainGroup): array
     {
         $cupEventProtocolLines = $this->getGroupProtocolLines($cupEvent, $mainGroup);
 
         return $this
             ->calculateLines($cupEvent, $cupEventProtocolLines)
             ->sortByDesc(static fn (CupEventPoint $cupEventResult): float|int|string => $cupEventResult->points)
+            ->all()
         ;
     }
 

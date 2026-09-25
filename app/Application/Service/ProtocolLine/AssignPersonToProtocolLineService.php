@@ -19,6 +19,7 @@ final readonly class AssignPersonToProtocolLineService
     ) {
     }
 
+    /** @throws ProtocolLineNotFound */
     public function execute(AssignPersonToProtocolLine $command): void
     {
         $this->transaction->run(function () use ($command): void {

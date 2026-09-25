@@ -30,6 +30,7 @@ use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\UpdateCupAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\UpdateCupEventAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\ViewCupAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\ViewCupEventAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\ViewCupTableAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Distance\ListDistancesAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Event\CreateEventAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Event\DeleteEventAction;
@@ -93,6 +94,7 @@ final class ApiV1RoutesServiceProvider extends ServiceProvider
                 $router->get('competitions', ListCompetitionsAction::class);
                 $router->get('cups', ListCupsAction::class)->middleware(CacheResponseByQueryParameter::class . ':ids,86400');
                 $router->get('cups/{cupId}', ViewCupAction::class);
+                $router->get('cups/{cupId}/tables/{groupId}', ViewCupTableAction::class);
                 $router->get('cup-events', ListCupEventsAction::class)->middleware(CacheResponseByQueryParameter::class . ':eventIds,86400');
                 $router->get('cup-events/{cupEventId}', ViewCupEventAction::class);
                 $router->get('cup-events/{cupEventId}/points', ListCupEventPointsAction::class);
