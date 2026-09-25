@@ -26,14 +26,6 @@ const appearanceActionLabel = computed(() =>
             : 'spa.nav.appearance_night',
     ),
 )
-const appearanceStateLabel = computed(() =>
-    t(
-        appearance.mode === 'night'
-            ? 'spa.nav.appearance_current_night'
-            : 'spa.nav.appearance_current_light',
-    ),
-)
-
 function toggleMenu(menu: 'competitions' | 'persons'): void {
     openMenu.value = openMenu.value === menu ? null : menu
 }
@@ -188,7 +180,7 @@ async function openHorizon(): Promise<void> {
                     type="button"
                     :aria-label="appearanceActionLabel"
                     :aria-pressed="appearance.mode === 'night'"
-                    :title="appearanceStateLabel"
+                    :title="t('spa.nav.appearance_tooltip')"
                     @click="appearance.toggle"
                 >
                     <span
