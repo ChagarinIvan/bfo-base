@@ -9,6 +9,7 @@ export const useAuthStore = defineStore('auth', {
     state: () => ({
         token: localStorage.getItem(tokenKey) as string | null,
         canAccessHorizon: false,
+        horizonAccessCheckedFor: null as string | null,
     }),
 
     getters: { isAuthenticated: (state) => Boolean(state.token) },
@@ -20,6 +21,7 @@ export const useAuthStore = defineStore('auth', {
                 password,
             })
             this.token = response.data.token
+            this.horizonAccessCheckedFor = null
             localStorage.setItem(tokenKey, this.token)
             setBearerToken(this.token)
             await this.refreshHorizonAccess()
@@ -31,6 +33,7 @@ export const useAuthStore = defineStore('auth', {
             } finally {
                 this.token = null
                 this.canAccessHorizon = false
+                this.horizonAccessCheckedFor = null
                 localStorage.removeItem(tokenKey)
                 setBearerToken(null)
             }
@@ -42,13 +45,28 @@ export const useAuthStore = defineStore('auth', {
         },
 
         async refreshHorizonAccess(): Promise<void> {
+            const token = this.token
+
+            if (!token) {
+                this.canAccessHorizon = false
+                this.horizonAccessCheckedFor = null
+                return
+            }
+
+            if (this.horizonAccessCheckedFor === token) return
+
+            this.horizonAccessCheckedFor = token
             try {
                 const response = await api.get<{ allowed: boolean }>(
                     '/auth/horizon-access',
                 )
-                this.canAccessHorizon = response.data.allowed
+                if (this.token === token) {
+                    this.canAccessHorizon = response.data.allowed
+                }
             } catch {
-                this.canAccessHorizon = false
+                if (this.token === token) {
+                    this.canAccessHorizon = false
+                }
             }
         },
 
@@ -56,6 +74,7 @@ export const useAuthStore = defineStore('auth', {
             setUnauthorizedHandler(() => {
                 this.token = null
                 this.canAccessHorizon = false
+                this.horizonAccessCheckedFor = null
                 localStorage.removeItem(tokenKey)
             })
             setBearerToken(this.token)
@@ -67,6 +86,7 @@ export const useAuthStore = defineStore('auth', {
                     this.token = event.newValue
                     setBearerToken(this.token)
                     this.canAccessHorizon = false
+                    this.horizonAccessCheckedFor = null
 
                     if (this.token) {
                         void this.refreshHorizonAccess()

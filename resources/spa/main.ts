@@ -6,18 +6,27 @@ import Aura from '@primevue/themes/aura'
 import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
+import {
+    applyAppearanceMode,
+    appearanceNightClass,
+    readStoredAppearance,
+} from './stores/appearance'
 import 'primeicons/primeicons.css'
 import '@fortawesome/fontawesome-free/css/all.min.css'
 import './styles.css'
 
 document.title = 'OrientBase'
+applyAppearanceMode(readStoredAppearance())
 
 createApp(App)
     .use(createPinia())
     .use(router)
     .use(PrimeVue, {
         locale: { firstDayOfWeek: 1 },
-        theme: { preset: Aura },
+        theme: {
+            preset: Aura,
+            options: { darkModeSelector: `.${appearanceNightClass}` },
+        },
     })
     .use(ToastService)
     .directive('tooltip', Tooltip)
