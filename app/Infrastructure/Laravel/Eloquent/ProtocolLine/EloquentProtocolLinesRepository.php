@@ -216,9 +216,11 @@ final readonly class EloquentProtocolLinesRepository implements ProtocolLineRepo
             ;
         }
 
-        if ($criteria->hasParam('paymentYear')) {
+        $paymentYear = $criteria->paramOrDefault('paymentYear');
+
+        if ($paymentYear !== null) {
             $query
-                ->where('persons_payments.year', '>=', $criteria->param('paymentYear'))
+                ->where('persons_payments.year', '>=', $paymentYear)
                 ->where('persons_payments.date', '<=', $criteria->param('eventDate'))
             ;
         }

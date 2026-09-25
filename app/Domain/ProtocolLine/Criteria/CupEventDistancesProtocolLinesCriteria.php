@@ -13,10 +13,15 @@ final readonly class CupEventDistancesProtocolLinesCriteria
 {
     public static function create(Collection $distances, CupEvent $cupEvent, ?Year $paymentYear = null): Criteria
     {
-        return new Criteria([
+        $params = [
             'distances' => $distances->pluck('id')->unique(),
             'eventDate' => $cupEvent->event->date,
-            'paymentYear' =>$paymentYear,
-        ]);
+        ];
+
+        if ($paymentYear !== null) {
+            $params['paymentYear'] = $paymentYear;
+        }
+
+        return new Criteria($params);
     }
 }
