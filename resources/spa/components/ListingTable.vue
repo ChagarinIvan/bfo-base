@@ -158,6 +158,9 @@ watch(visible, (value) => {
                 :field="column.field"
                 :header="column.label"
             >
+                <template #header>
+                    <span :title="column.title">{{ column.label }}</span>
+                </template>
                 <template v-if="$slots[`cell-${column.key}`]" #body="slotProps">
                     <slot :name="`cell-${column.key}`" v-bind="slotProps" />
                 </template>

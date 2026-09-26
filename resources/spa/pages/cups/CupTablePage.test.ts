@@ -7,15 +7,14 @@ import CupTablePage from './CupTablePage.vue'
 import ListingTable from '../../components/ListingTable.vue'
 import { cupContextKey } from './cupContext'
 
-const { getCup, getCupEvents, getCupTable, getEventsByIds, route } = vi.hoisted(
-    () => ({
-        getCup: vi.fn(),
-        getCupEvents: vi.fn(),
-        getCupTable: vi.fn(),
-        getEventsByIds: vi.fn(),
-        route: { params: { cupId: '42', groupId: 'M_0_' } },
-    }),
-)
+const { getCup, getCupEvents, getCupTable, getEventsByIds, route } =
+    vi.hoisted(() => ({
+    getCup: vi.fn(),
+    getCupEvents: vi.fn(),
+    getCupTable: vi.fn(),
+    getEventsByIds: vi.fn(),
+    route: { params: { cupId: '42', groupId: 'M_0_' } },
+}))
 
 vi.mock('../../api/cups', () => ({ getCup, getCupEvents, getCupTable }))
 vi.mock('../../api/events', () => ({ getEventsByIds }))
@@ -102,10 +101,17 @@ describe('cup table page', () => {
         expect(getCupTable).toHaveBeenCalledWith(
             '42',
             'M_0_',
-            { page: 1, perPage: 50 },
+            { page: 1, perPage: 20 },
             expect.any(AbortSignal),
         )
         expect(wrapper.text()).toContain('Иван Иванов')
+        expect(getEventsByIds).toHaveBeenCalledWith(['9'])
+        expect(
+            wrapper
+                .findComponent(ListingTable)
+                .props('columns')
+                .find((column) => column.key === 'stage-7'),
+        ).toMatchObject({ label: '2026-05-10', title: 'Этап' })
         expect(
             wrapper
                 .findComponent(ListingTable)
@@ -114,7 +120,6 @@ describe('cup table page', () => {
                     [
                         'place',
                         'personYear',
-                        'clubName',
                         'totalPoints',
                         'averagePoints',
                     ].includes(column.key),

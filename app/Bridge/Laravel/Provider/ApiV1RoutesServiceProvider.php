@@ -104,7 +104,7 @@ final class ApiV1RoutesServiceProvider extends ServiceProvider
                 $router->get('clubs/{clubId}', ViewClubAction::class);
                 $router->get('groups', ListGroupsAction::class);
                 $router->get('groups/{groupId}', ViewGroupAction::class);
-                $router->get('events', ListEventsAction::class);
+                $router->get('events', ListEventsAction::class)->middleware(CacheResponseByQueryParameter::class . ':ids,86400');
                 $router->get('events/{eventId}', ViewEventAction::class);
                 $router->get('distances', ListDistancesAction::class);
                 $router->get('persons', ListPersonsAction::class);

@@ -13,8 +13,8 @@ import type {
     PaginationHeaders,
 } from '../../api/types'
 import ListingTable from '../../components/ListingTable.vue'
-import ActionButton from '../../components/actions/ActionButton.vue'
 import { useAuthStore } from '../../stores/auth'
+import ActionButton from '../../components/actions/ActionButton.vue'
 import { protocolLineEventUrl } from '../../components/tableModels'
 import FilterPanel from '../../components/FilterPanel.vue'
 import { cupContextKey } from './cupContext'
@@ -31,7 +31,7 @@ const stages = ref<CupTableStage[]>([])
 const stagesLoaded = ref(false)
 const pagination = ref<PaginationHeaders>({
     currentPage: 1,
-    perPage: 50,
+    perPage: 20,
     hasNext: false,
 })
 const groupId = ref(String(route.params.groupId ?? ''))
@@ -56,15 +56,10 @@ const columns = computed(() => {
             field: 'personYear',
             defaultVisible: true,
         },
-        {
-            key: 'clubName',
-            label: t('app.club.name'),
-            field: 'clubName',
-            defaultVisible: true,
-        },
         ...tableStages.map((stage) => ({
             key: `stage-${stage.stageId}`,
-            label: `${stage.date} ${stage.name}`,
+            label: stage.date,
+            title: stage.name,
             defaultVisible: true,
             field: `stages.${stage.stageId}.points`,
             required: true,
@@ -242,10 +237,11 @@ onBeforeUnmount(() => {
             >
                 <template v-if="data.stages[String(stage.stageId)]">
                     <a
+                        class="cup-table-result"
                         :class="{
-                            'font-bold text-info':
+                            'cup-table-result--counted':
                                 data.stages[String(stage.stageId)].counted,
-                            'text-body':
+                            'cup-table-result--not-counted':
                                 !data.stages[String(stage.stageId)].counted,
                         }"
                         :href="

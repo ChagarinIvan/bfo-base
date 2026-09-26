@@ -1,6 +1,7 @@
 export interface ListingColumn {
     key: string
     label: string
+    title?: string
     defaultVisible: boolean
     field?: string
     required?: boolean

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Application\Service\Cup;
 
-use App\Application\Dto\Cup\ViewCupTableRowDto;
 use App\Application\Dto\Cup\CupTableAssembler;
 use App\Application\Dto\Cup\CupTableSearchDto;
+use App\Application\Dto\Cup\ViewCupTableRowDto;
 use App\Application\Service\Cup\Exception\CupNotFound;
 use App\Application\Service\Cup\Exception\UnsupportedCupGroup;
 use App\Application\Service\Cup\ViewCupTable;

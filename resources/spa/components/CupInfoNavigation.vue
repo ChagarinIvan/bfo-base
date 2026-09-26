@@ -44,22 +44,6 @@ const eventsUrl = computed(() =>
             :label="t('app.competition.add_event')"
             severity="success"
         />
-        <ActionButton
-            v-if="auth.isAuthenticated"
-            as="a"
-            :href="`/cups/${props.cupId}/cache`"
-            icon="pi pi-refresh"
-            :label="t('app.common.cache_clear')"
-            severity="warn"
-        />
-        <ActionButton
-            v-if="auth.isAuthenticated"
-            as="a"
-            :href="`/cups/${props.cupId}/export`"
-            icon="pi pi-download"
-            :label="t('app.cup.table.export')"
-            severity="info"
-        />
         <RouterLink v-slot="{ navigate, isExactActive }" :to="eventsUrl" custom>
             <ActionButton
                 type="button"
@@ -83,6 +67,22 @@ const eventsUrl = computed(() =>
                 @click="navigate"
             />
         </RouterLink>
+        <ActionButton
+            v-if="auth.isAuthenticated"
+            as="a"
+            :href="`/cups/${props.cupId}/export`"
+            icon="pi pi-download"
+            :label="t('app.cup.table.export')"
+            severity="info"
+        />
+        <ActionButton
+            v-if="auth.isAuthenticated"
+            as="a"
+            :href="`/cups/${props.cupId}/cache`"
+            icon="pi pi-refresh"
+            :label="t('app.common.cache_clear')"
+            severity="warn"
+        />
         <ActionButton
             v-if="auth.isAuthenticated"
             type="button"

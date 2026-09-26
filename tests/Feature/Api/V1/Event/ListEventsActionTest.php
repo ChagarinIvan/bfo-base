@@ -110,6 +110,7 @@ final class ListEventsActionTest extends TestCase
 
         $this->getJson("/api/v1/events?ids[]={$event->id}&withCompetition=1")
             ->assertOk()
+            ->assertHeader('Cache-Control', 'max-age=86400, private')
             ->assertJsonCount(1)
             ->assertJsonPath('0.id', (string) $event->id)
             ->assertJsonPath('0.competitionName', 'Spring Cup');
