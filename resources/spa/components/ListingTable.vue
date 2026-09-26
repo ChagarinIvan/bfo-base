@@ -156,10 +156,14 @@ watch(visible, (value) => {
                 v-for="column in columns.filter((item) => isVisible(item.key))"
                 :key="column.key"
                 :field="column.field"
-                :header="column.label"
             >
                 <template #header>
-                    <span :title="column.title">{{ column.label }}</span>
+                    <slot
+                        v-if="$slots[`header-${column.key}`]"
+                        :name="`header-${column.key}`"
+                        :column="column"
+                    />
+                    <span v-else :title="column.title">{{ column.label }}</span>
                 </template>
                 <template v-if="$slots[`cell-${column.key}`]" #body="slotProps">
                     <slot :name="`cell-${column.key}`" v-bind="slotProps" />

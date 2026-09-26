@@ -2,7 +2,6 @@
 import { computed, inject, onBeforeUnmount, ref, watch } from 'vue'
 import type { AxiosError } from 'axios'
 import InputText from 'primevue/inputtext'
-import Message from 'primevue/message'
 import type { PageState } from 'primevue/paginator'
 import { useRoute, useRouter } from 'vue-router'
 import { getCup, getCupEvents } from '../../api/cups'
@@ -177,13 +176,7 @@ onBeforeUnmount(() => debouncedSearch.cancel())
 </script>
 
 <template>
-    <Message v-if="loading" severity="info" :closable="false">{{
-        t('spa.cups.loading')
-    }}</Message>
-    <Message v-else-if="error" severity="error" :closable="false">{{
-        error
-    }}</Message>
-    <template v-else-if="cup">
+    <template v-if="cup">
         <h2 class="section-title">{{ t('app.cup.events') }}</h2>
         <ListingTable
             table-id="cup-events"
@@ -191,7 +184,9 @@ onBeforeUnmount(() => debouncedSearch.cancel())
             :authenticated="auth.isAuthenticated"
             :items="events"
             :pagination="pagination"
-            :loading="eventsLoading"
+            :loading="loading || eventsLoading"
+            :error="error"
+            :loading-label="t('spa.cups.loading')"
             :empty-label="t('spa.cups.empty')"
             :rows-per-page-options="[20, 50, 100]"
             @page="onPage"

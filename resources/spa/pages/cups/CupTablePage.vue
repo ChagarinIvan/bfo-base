@@ -13,8 +13,6 @@ import type {
     PaginationHeaders,
 } from '../../api/types'
 import ListingTable from '../../components/ListingTable.vue'
-import { useAuthStore } from '../../stores/auth'
-import ActionButton from '../../components/actions/ActionButton.vue'
 import { protocolLineEventUrl } from '../../components/tableModels'
 import FilterPanel from '../../components/FilterPanel.vue'
 import { cupContextKey } from './cupContext'
@@ -24,10 +22,9 @@ import { paginationFromHeaders } from '../listingModels'
 
 const route = useRoute()
 const router = useRouter()
-const auth = useAuthStore()
 const cup = inject(cupContextKey, ref<Cup | null>(null))
 const table = ref<CupTable | null>(null)
-const stages = ref<CupTableStage[]>([])
+const stages = ref<(CupTableStage & { cupEventId: string })[]>([])
 const stagesLoaded = ref(false)
 const pagination = ref<PaginationHeaders>({
     currentPage: 1,
@@ -126,6 +123,7 @@ async function load(): Promise<void> {
                             ? [
                                   {
                                       stageId: Number(cupEvent.id),
+                                      cupEventId: cupEvent.id,
                                       eventId: event.id,
                                       date: event.date,
                                       name: event.name,
@@ -184,35 +182,6 @@ onBeforeUnmount(() => {
 
 <template>
     <template v-if="cup">
-        <FilterPanel>
-            <div class="filter-field">
-                <label>{{ t('spa.cups.table_group') }}</label
-                ><Select
-                    v-model="groupId"
-                    :options="cup.groups"
-                    option-label="name"
-                    option-value="id"
-                    @change="onGroupChange"
-                />
-            </div>
-            <div class="filter-field">
-                <label>{{ t('spa.cups.table_person_filter') }}</label
-                ><InputText v-model="name" @update:model-value="onName" /><small
-                    v-if="hasTooShortNameSearch(name)"
-                    class="filter-hint"
-                    >{{ t('spa.cups.table_person_filter_hint') }}</small
-                >
-            </div>
-        </FilterPanel>
-        <ActionButton
-            v-if="auth.isAuthenticated"
-            as="a"
-            :href="`/cups/${cup.id}/${groupId}/table-export`"
-            icon="pi pi-download"
-            :label="t('app.cup.table.export')"
-            severity="info"
-            class="mb-3"
-        />
         <ListingTable
             table-id="cup-table-v2"
             :columns="columns"
@@ -225,6 +194,40 @@ onBeforeUnmount(() => {
             :rows-per-page-options="[20, 50, 100]"
             @page="onPage"
         >
+            <template #filters>
+                <FilterPanel>
+                    <div class="filter-field">
+                        <label>{{ t('spa.cups.table_group') }}</label
+                        ><Select
+                            v-model="groupId"
+                            :options="cup.groups"
+                            option-label="name"
+                            option-value="id"
+                            @change="onGroupChange"
+                        />
+                    </div>
+                    <div class="filter-field">
+                        <label>{{ t('spa.cups.table_person_filter') }}</label
+                        ><InputText
+                            v-model="name"
+                            @update:model-value="onName"
+                        /><small
+                            v-if="hasTooShortNameSearch(name)"
+                            class="filter-hint"
+                            >{{ t('spa.cups.table_person_filter_hint') }}</small
+                        >
+                    </div>
+                </FilterPanel>
+            </template>
+            <template
+                v-for="stage in stages"
+                #[`header-stage-${stage.stageId}`]
+                :key="stage.stageId"
+            >
+                <RouterLink :to="`/app/cup-events/${stage.cupEventId}`">
+                    {{ stage.date }}
+                </RouterLink>
+            </template>
             <template #cell-personName="{ data }">
                 <a :href="`/app/persons/${data.personId}`">{{
                     data.personName
