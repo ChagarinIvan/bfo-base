@@ -22,6 +22,7 @@ final readonly class UpdatePersonRankActivationDateService
     ) {
     }
 
+    /** @throws ProtocolLineNotFound */
     public function execute(UpdatePersonRankActivationDate $command): ViewProtocolLineDto
     {
         return $this->transaction->run(function () use ($command): ViewProtocolLineDto {

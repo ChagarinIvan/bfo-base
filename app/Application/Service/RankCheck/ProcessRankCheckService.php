@@ -21,6 +21,7 @@ final readonly class ProcessRankCheckService
     ) {
     }
 
+    /** @throws RankCheckNotFound */
     public function execute(ProcessRankCheck $command): void
     {
         $this->transaction->run(function () use ($command): void {

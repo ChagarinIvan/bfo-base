@@ -81,6 +81,46 @@ export interface CupEventPointSearchQuery {
     perPage?: number
 }
 
+export interface CupTableSearchQuery {
+    name?: string
+    page?: number
+    perPage?: number
+}
+
+export interface CupTableStage {
+    stageId: number
+    eventId: string
+    date: string
+    name: string
+}
+
+export interface PaginationHeaders {
+    currentPage: number
+    perPage: number
+    hasNext: boolean
+}
+
+export interface CupTableStageCell {
+    stageId: number
+    points: number | string
+    counted: boolean
+    distanceId: string
+    protocolLineId: string
+}
+
+export interface CupTableRow {
+    place: number
+    personId: string
+    personName: string
+    personYear: number
+    clubName: string
+    stages: Record<string, CupTableStageCell>
+    totalPoints: string
+    averagePoints: string
+}
+
+export type CupTable = CupTableRow[]
+
 export interface CupEventContext {
     eventId: string
     cupEventId: string
@@ -289,12 +329,6 @@ export interface PersonPromptRequest {
 export interface AuthToken {
     token: string
     token_type: string
-}
-
-export interface PaginationHeaders {
-    currentPage: number
-    perPage: number
-    hasNext: boolean
 }
 
 export interface PaginatedApiResponse<T> {

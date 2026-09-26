@@ -160,7 +160,7 @@ function onPage(event: PageState): void {
 }
 
 function cupTableUrl(cup: Cup): string {
-    return `/cups/${cup.id}/${cup.groups[0]?.id ?? ''}/table`
+    return `/app/cups/${cup.id}/table/${cup.groups[0]?.id ?? ''}`
 }
 
 function deleteSelectedCup(): void {
@@ -256,14 +256,14 @@ onBeforeUnmount(() => debouncedSearch.cancel())
             </RouterLink>
         </template>
         <template #cell-groups="{ data }">
-            <a
+            <RouterLink
                 v-for="group in data.groups"
                 :key="group.id"
-                :href="`/cups/${data.id}/${group.id}/table`"
+                :to="`/app/cups/${data.id}/table/${group.id}`"
                 :class="['cup-group-badge', cupGroupBadgeClass(group)]"
             >
                 {{ group.name }}
-            </a>
+            </RouterLink>
         </template>
         <template #cell-visible="{ data }">
             <span class="mass-competition-indicator__icon">

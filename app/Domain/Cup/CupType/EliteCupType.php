@@ -29,13 +29,15 @@ class EliteCupType extends AbstractCupType
         return 'app.cup.type.elite';
     }
 
-    public function calculateEvent(CupEvent $cupEvent, CupGroup $mainGroup): Collection
+    /** @return array<int|string, CupEventPoint> */
+    public function calculateEvent(CupEvent $cupEvent, CupGroup $mainGroup): array
     {
         $cupEventProtocolLines = $this->getGroupProtocolLines($cupEvent, $mainGroup);
 
         return $this
             ->calculateLines($cupEvent, $cupEventProtocolLines)
             ->sortByDesc(static fn (CupEventPoint $cupEventResult): float|int|string => $cupEventResult->points)
+            ->all()
         ;
     }
 

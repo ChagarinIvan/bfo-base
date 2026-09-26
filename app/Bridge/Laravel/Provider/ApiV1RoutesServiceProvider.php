@@ -30,6 +30,7 @@ use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\UpdateCupAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\UpdateCupEventAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\ViewCupAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\ViewCupEventAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\ViewCupTableAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Distance\ListDistancesAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Event\CreateEventAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Event\DeleteEventAction;
@@ -67,6 +68,7 @@ use App\Bridge\Laravel\Http\Controllers\Api\V1\RankCheck\ListRankCheckRowsAction
 use App\Bridge\Laravel\Http\Controllers\Api\V1\RankCheck\ListRankChecksAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\RankCheck\ViewRankCheckAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Year\ListYearsAction;
+use App\Bridge\Laravel\Http\Controllers\Cup\ExportCupTableAction;
 use App\Bridge\Laravel\Http\Middleware\AuthenticateApiV1;
 use App\Bridge\Laravel\Http\Middleware\CacheResponseByQueryParameter;
 use App\Bridge\Laravel\Http\Middleware\OptionalAuthenticateApiV1;
@@ -93,6 +95,7 @@ final class ApiV1RoutesServiceProvider extends ServiceProvider
                 $router->get('competitions', ListCompetitionsAction::class);
                 $router->get('cups', ListCupsAction::class)->middleware(CacheResponseByQueryParameter::class . ':ids,86400');
                 $router->get('cups/{cupId}', ViewCupAction::class);
+                $router->get('cups/{cupId}/tables/{groupId}', ViewCupTableAction::class);
                 $router->get('cup-events', ListCupEventsAction::class)->middleware(CacheResponseByQueryParameter::class . ':eventIds,86400');
                 $router->get('cup-events/{cupEventId}', ViewCupEventAction::class);
                 $router->get('cup-events/{cupEventId}/points', ListCupEventPointsAction::class);
@@ -102,7 +105,7 @@ final class ApiV1RoutesServiceProvider extends ServiceProvider
                 $router->get('clubs/{clubId}', ViewClubAction::class);
                 $router->get('groups', ListGroupsAction::class);
                 $router->get('groups/{groupId}', ViewGroupAction::class);
-                $router->get('events', ListEventsAction::class);
+                $router->get('events', ListEventsAction::class)->middleware(CacheResponseByQueryParameter::class . ':ids,86400');
                 $router->get('events/{eventId}', ViewEventAction::class);
                 $router->get('distances', ListDistancesAction::class);
                 $router->get('persons', ListPersonsAction::class);
@@ -124,6 +127,7 @@ final class ApiV1RoutesServiceProvider extends ServiceProvider
             });
 
             $router->prefix('api/v1')->middleware(AuthenticateApiV1::class)->group(static function () use ($router): void {
+                $router->get('cups/{cup}/export', ExportCupTableAction::class);
                 $router->get('auth/horizon-access', ViewHorizonAccessAction::class);
                 $router->get('rank-checks', ListRankChecksAction::class);
                 $router->post('rank-checks', CreateRankCheckAction::class);

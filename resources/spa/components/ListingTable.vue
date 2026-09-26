@@ -42,6 +42,9 @@ const storageKey = computed(() =>
     tableStorageKey(props.tableId, props.authenticated),
 )
 const availableKeys = computed(() => props.columns.map((column) => column.key))
+const configurableColumns = computed(() =>
+    props.columns.filter((column) => column.configurable !== false),
+)
 const defaultKeys = computed(() =>
     props.columns
         .filter((column) => column.defaultVisible)
@@ -64,10 +67,15 @@ function restore(): void {
 }
 
 function isVisible(key: string): boolean {
+    if (props.columns.find((column) => column.key === key)?.required) {
+        return true
+    }
+
     return visible.value.includes(key)
 }
 
 function toggle(key: string, checked: boolean): void {
+    if (props.columns.find((column) => column.key === key)?.required) return
     if (!checked && visible.value.length === 1 && isVisible(key)) return
 
     visible.value = checked
@@ -90,12 +98,13 @@ watch(visible, (value) => {
             :class="{ 'listing-table__columns--with-filters': $slots.filters }"
         >
             <div class="listing-table__column-options">
-                <label v-for="column in columns" :key="column.key">
+                <label v-for="column in configurableColumns" :key="column.key">
                     <input
                         type="checkbox"
                         :checked="isVisible(column.key)"
                         :disabled="
-                            visible.length === 1 && isVisible(column.key)
+                            column.required ||
+                            (visible.length === 1 && isVisible(column.key))
                         "
                         @change="
                             toggle(
@@ -147,8 +156,15 @@ watch(visible, (value) => {
                 v-for="column in columns.filter((item) => isVisible(item.key))"
                 :key="column.key"
                 :field="column.field"
-                :header="column.label"
             >
+                <template #header>
+                    <slot
+                        v-if="$slots[`header-${column.key}`]"
+                        :name="`header-${column.key}`"
+                        :column="column"
+                    />
+                    <span v-else :title="column.title">{{ column.label }}</span>
+                </template>
                 <template v-if="$slots[`cell-${column.key}`]" #body="slotProps">
                     <slot :name="`cell-${column.key}`" v-bind="slotProps" />
                 </template>

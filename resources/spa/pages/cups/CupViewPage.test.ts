@@ -45,7 +45,7 @@ function mountPage() {
                 ListingTable: {
                     props: ['columns', 'items'],
                     template:
-                        '<div data-testid="columns">{{ columns.map((item) => `${item.key}:${item.field ?? ""}`).join(",") }}<slot name="cell-actions" :data="items[0]" /></div>',
+                        '<div data-testid="columns">{{ columns.map((item) => `${item.key}:${item.field ?? ""}`).join(",") }}<slot v-if="items[0]" name="cell-actions" :data="items[0]" /></div>',
                 },
             },
         },
@@ -58,7 +58,7 @@ describe('cup view page', () => {
         vi.resetAllMocks()
     })
 
-    it('renders a public card and compact stage request without admin controls', async () => {
+    it('renders the events tab content without duplicating the cup layout', async () => {
         getCup.mockResolvedValue({
             id: '42',
             name: 'Кубак',
@@ -89,8 +89,7 @@ describe('cup view page', () => {
             perPage: 50,
         })
         expect(getEventsByIds).toHaveBeenCalledWith(['9'])
-        expect(wrapper.text()).toContain('Кубак')
-        expect(wrapper.find('.cup-type-icon').exists()).toBe(true)
+        expect(wrapper.text()).not.toContain('Кубак')
         expect(wrapper.get('[data-testid="columns"]').text()).not.toContain(
             'actions',
         )
@@ -98,12 +97,9 @@ describe('cup view page', () => {
             'points:points',
         )
         expect(wrapper.find('.details-actions').exists()).toBe(false)
-        expect(wrapper.find('.pi-check-square').attributes('aria-label')).toBe(
-            'Бачныя',
-        )
     })
 
-    it('renders authenticated card and stage controls', async () => {
+    it('renders authenticated event controls inside the events tab', async () => {
         auth.isAuthenticated = true
         getCup.mockResolvedValue({
             id: '42',
@@ -133,7 +129,6 @@ describe('cup view page', () => {
         const wrapper = mountPage()
         await flushPromises()
 
-        expect(wrapper.find('.details-actions').exists()).toBe(true)
         expect(wrapper.get('[data-testid="columns"]').text()).toContain(
             'actions',
         )
@@ -143,11 +138,7 @@ describe('cup view page', () => {
         expect(wrapper.get('[data-testid="columns"]').text()).toContain(
             'updated',
         )
-        expect(wrapper.html()).toContain('/app/cups/42/events/create')
-        expect(wrapper.html()).toContain('/app/cups/42/edit')
         expect(wrapper.html()).toContain('/app/cups/42/events/7/edit')
-        expect(wrapper.find('.cup-group-badge').attributes('href')).toBe(
-            '/cups/42/M21/table',
-        )
+        expect(wrapper.find('.details-actions').exists()).toBe(false)
     })
 })

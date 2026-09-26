@@ -26,6 +26,7 @@ final readonly class ExtractPersonFromProtocolLineService
     ) {
     }
 
+    /** @throws ProtocolLineNotFound */
     public function execute(ExtractPersonFromProtocolLine $command): ViewPersonDto
     {
         return $this->transaction->run(function () use ($command): ViewPersonDto {

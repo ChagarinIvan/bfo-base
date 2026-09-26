@@ -72,6 +72,11 @@ class ProtocolLine extends AggregatedModel
     /** @see ProtocolLineFactory */
     use HasFactory;
 
+    public function getFullName(): string
+    {
+        return trim($this->lastname . ' ' . $this->firstname);
+    }
+
     public function distance(): BelongsTo
     {
         return $this->belongsTo(Distance::class, 'distance_id', 'id');

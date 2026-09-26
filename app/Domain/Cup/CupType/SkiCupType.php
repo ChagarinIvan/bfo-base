@@ -10,7 +10,6 @@ use App\Domain\Cup\CupEvent\CupEventPoint;
 use App\Domain\Cup\Group\CupGroup;
 use App\Domain\Cup\Group\GroupMale;
 use App\Models\Year;
-use Illuminate\Support\Collection;
 
 class SkiCupType extends EliteCupType
 {
@@ -22,16 +21,15 @@ class SkiCupType extends EliteCupType
         return 'app.cup.type.ski';
     }
 
-    /**
-     * @return Collection // array<int, CupEventPoint>
-     */
-    public function calculateEvent(CupEvent $cupEvent, CupGroup $mainGroup): Collection
+    /** @return array<int|string, CupEventPoint> */
+    public function calculateEvent(CupEvent $cupEvent, CupGroup $mainGroup): array
     {
         $cupEventProtocolLines = $this->getGroupProtocolLines($cupEvent, $mainGroup);
 
         return $this
             ->calculateLines($cupEvent, $cupEventProtocolLines)
             ->sortByDesc(static fn (CupEventPoint $cupEventResult): float|int|string => $cupEventResult->points)
+            ->all()
         ;
     }
 

@@ -63,7 +63,8 @@ class MasterCupType extends AbstractCupType
         return 'app.cup.type.master';
     }
 
-    public function calculateEvent(CupEvent $cupEvent, CupGroup $mainGroup): Collection
+    /** @return array<int|string, CupEventPoint> */
+    public function calculateEvent(CupEvent $cupEvent, CupGroup $mainGroup): array
     {
         $results = new Collection();
         $cupEventProtocolLines = $this->getGroupProtocolLines($cupEvent, $mainGroup);
@@ -129,7 +130,10 @@ class MasterCupType extends AbstractCupType
         $eventGroupResults = $this->calculateLines($cupEvent, $equalGroupResults);
         $results = $results->merge($eventGroupResults->intersectByKeys($equalGroupResults->keyBy('person_id')));
 
-        return $results->sortByDesc(static fn (CupEventPoint $cupEventResult): float|int|string => $cupEventResult->points);
+        return $results
+            ->sortByDesc(static fn (CupEventPoint $cupEventResult): float|int|string => $cupEventResult->points)
+            ->all()
+        ;
     }
 
     public function groups(): array

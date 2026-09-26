@@ -17,6 +17,7 @@ final readonly class ViewRankCheckService
     ) {
     }
 
+    /** @throws RankCheckNotFound */
     public function execute(ViewRankCheck $command): ViewRankCheckDto
     {
         $check = $this->checks->byId($command->id) ?? throw new RankCheckNotFound();

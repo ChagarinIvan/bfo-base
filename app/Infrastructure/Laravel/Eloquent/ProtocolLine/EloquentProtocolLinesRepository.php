@@ -37,9 +37,15 @@ final readonly class EloquentProtocolLinesRepository implements ProtocolLineRepo
         return $protocolLine;
     }
 
-    public function byCriteria(Criteria $criteria): Collection
+    public function byCriteria(Criteria $criteria, array $with = []): Collection
     {
-        return $this->buildQuery($criteria)->get();
+        $query = $this->buildQuery($criteria);
+
+        if ($with !== []) {
+            $query->with($with);
+        }
+
+        return $query->get();
     }
 
     /** @return Slice<ProtocolLine> */
@@ -208,8 +214,15 @@ final readonly class EloquentProtocolLinesRepository implements ProtocolLineRepo
         if ($criteria->hasParam('distances')) {
             $query
                 ->selectRaw('protocol_lines.*, max(persons_payments.date)')
-                ->join('person', 'person.id', '=', 'protocol_lines.person_id')
+            ;
+
+            if (!$criteria->hasParam('personId')) {
+                $query->join('person', 'person.id', '=', 'protocol_lines.person_id');
+            }
+
+            $query
                 ->leftJoin('persons_payments', 'person.id', '=', 'persons_payments.person_id')
+                ->where('person.active', true)
                 ->where('protocol_lines.vk', false)
                 ->whereIn('distance_id', $criteria->param('distances'))
                 ->groupBy('protocol_lines.id')

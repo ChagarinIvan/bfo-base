@@ -44,9 +44,11 @@ import CupsPage from '../pages/cups/CupsPage.vue'
 import CreateCupPage from '../pages/cups/CreateCupPage.vue'
 import EditCupPage from '../pages/cups/EditCupPage.vue'
 import CupViewPage from '../pages/cups/CupViewPage.vue'
+import CupLayoutPage from '../pages/cups/CupLayoutPage.vue'
 import CreateCupEventPage from '../pages/cups/CreateCupEventPage.vue'
 import EditCupEventPage from '../pages/cups/EditCupEventPage.vue'
 import CupEventViewPage from '../pages/cups/CupEventViewPage.vue'
+import CupTablePage from '../pages/cups/CupTablePage.vue'
 
 export function createAppRouter(
     history: RouterHistory = typeof window === 'undefined'
@@ -68,7 +70,17 @@ export function createAppRouter(
                 component: EditCupPage,
                 meta: { requiresAuth: true },
             },
-            { path: '/app/cups/:cupId', component: CupViewPage },
+            {
+                path: '/app/cups/:cupId',
+                component: CupLayoutPage,
+                children: [
+                    { path: '', component: CupViewPage },
+                    {
+                        path: 'table/:groupId',
+                        component: CupTablePage,
+                    },
+                ],
+            },
             {
                 path: '/app/cup-events/:cupEventId',
                 component: CupEventViewPage,

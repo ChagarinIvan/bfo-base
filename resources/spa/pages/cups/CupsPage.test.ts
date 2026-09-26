@@ -176,7 +176,7 @@ describe('cups page', () => {
         await flushPromises()
 
         expect(wrapper.find('.cup-group-badge').attributes('href')).toBe(
-            '/cups/7/M_35_/table',
+            '/app/cups/7/table/M_35_',
         )
         const groupBadges = wrapper.findAll('.cup-group-badge')
         expect(groupBadges[0].classes()).not.toEqual(groupBadges[1].classes())

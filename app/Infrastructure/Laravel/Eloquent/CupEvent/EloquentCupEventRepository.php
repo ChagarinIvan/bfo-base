@@ -6,11 +6,13 @@ namespace App\Infrastructure\Laravel\Eloquent\CupEvent;
 
 use App\Domain\Cup\CupEvent\CupEvent;
 use App\Domain\Cup\CupEvent\CupEventRepository;
+use App\Domain\Cup\CupEvent\CupEventResources;
 use App\Domain\Shared\Criteria;
 use App\Domain\Shared\Pagination\Slice;
 use App\Infrastructure\Laravel\Eloquent\Pagination\EloquentQueryAdapter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use function array_key_exists;
 use function mb_strtolower;
 
 final class EloquentCupEventRepository implements CupEventRepository
@@ -45,9 +47,27 @@ final class EloquentCupEventRepository implements CupEventRepository
             ->first();
     }
 
-    public function byCriteria(Criteria $criteria): Collection
+    public function byCriteria(
+        Criteria $criteria,
+        CupEventResources $resources = new CupEventResources(),
+    ): Collection
     {
-        return $this->buildQuery($criteria)->get();
+        $query = $this->buildQuery($criteria);
+        $relations = [];
+
+        if ($resources->withCup) {
+            $relations[] = 'cup';
+        }
+
+        if ($resources->withEvent) {
+            $relations[] = 'event';
+        }
+
+        if ($relations !== []) {
+            $query->with($relations);
+        }
+
+        return $query->get();
     }
 
     /** @return Slice<CupEvent> */
@@ -90,9 +110,15 @@ final class EloquentCupEventRepository implements CupEventRepository
                 ->orWhereHas('competition', static fn (Builder $competition): Builder => $competition->whereRaw('LOWER(name) LIKE ?', [$name])));
         }
 
-        return $query
-            ->orderBy('cup_events.event_id')
-            ->orderBy('cup_events.id')
-        ;
+        if (array_key_exists('event.date', $criteria->sorting())) {
+            $query
+                ->join('events', 'events.id', '=', 'cup_events.event_id')
+                ->orderBy('events.date', $criteria->sorting()['event.date'])
+            ;
+        } else {
+            $query->orderBy('cup_events.event_id');
+        }
+
+        return $query->orderBy('cup_events.id');
     }
 }

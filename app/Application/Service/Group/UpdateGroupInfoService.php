@@ -20,6 +20,10 @@ final readonly class UpdateGroupInfoService
     {
     }
 
+    /**
+     * @throws FailedToUpdateGroup
+     * @throws GroupNotFound
+     */
     public function execute(UpdateGroupInfo $command): ViewGroupDto
     {
         return $this->transactional->run(function () use ($command): ViewGroupDto {

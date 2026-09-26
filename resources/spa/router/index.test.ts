@@ -122,6 +122,26 @@ describe('SPA navigation guard', () => {
         )
     })
 
+    it('keeps the cup layout while switching between events and table', async () => {
+        const router = createAppRouter(createMemoryHistory())
+
+        await router.push('/app/cups/42')
+        expect(router.currentRoute.value.matched[0]?.path).toBe(
+            '/app/cups/:cupId',
+        )
+        expect(router.currentRoute.value.matched[1]?.path).toBe(
+            '/app/cups/:cupId',
+        )
+
+        await router.push('/app/cups/42/table/M_0_')
+        expect(router.currentRoute.value.matched[0]?.path).toBe(
+            '/app/cups/:cupId',
+        )
+        expect(router.currentRoute.value.matched[1]?.path).toBe(
+            '/app/cups/:cupId/table/:groupId',
+        )
+    })
+
     it('resolves the public clubs listing route', async () => {
         const router = createAppRouter(createMemoryHistory())
 

@@ -17,6 +17,7 @@ final readonly class StartHorizonSessionService
     {
     }
 
+    /** @throws HorizonAccessDenied */
     public function execute(StartHorizonSession $command): void
     {
         if (!$this->authorizer->canAccess($command->userId())) {

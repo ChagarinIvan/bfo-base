@@ -28,7 +28,7 @@ final readonly class ProtocolLinesRepository
 
     public function byCriteria(Criteria $criteria): Collection
     {
-        return $this->repository->byCriteria($criteria);
+        return $this->repository->byCriteria($criteria, ['distance.group', 'person']);
     }
 
     public function getCupEventProtocolLinesForPersonsCertainAge(
@@ -40,9 +40,10 @@ final readonly class ProtocolLinesRepository
         bool $citizhenship = false,
     ): Collection {
         $protocolLinesQuery = ProtocolLine::selectRaw('protocol_lines.*')
-            ->with(['person.club'])
+            ->with(['person.club', 'distance.group'])
             ->join('person', 'person.id', '=', 'protocol_lines.person_id')
             ->join('distances', 'distances.id', '=', 'protocol_lines.distance_id')
+            ->where('person.active', true)
             ->where('protocol_lines.vk', false)
             ->where('distances.event_id', $cupEvent->event_id)
         ;
@@ -78,11 +79,12 @@ final readonly class ProtocolLinesRepository
     public function getCupEventGroupProtocolLinesForPersonsWithPayment(CupEvent $cupEvent, int $groupId): Collection
     {
         return ProtocolLine::selectRaw('protocol_lines.*, persons_payments.date')
-            ->with(['person.club'])
+            ->with(['person.club', 'distance.group'])
             ->join('person', 'person.id', '=', 'protocol_lines.person_id')
             ->join('persons_payments', 'person.id', '=', 'persons_payments.person_id')
             ->join('distances', 'distances.id', '=', 'protocol_lines.distance_id')
             ->where('persons_payments.year', $cupEvent->cup->year)
+            ->where('person.active', true)
             ->where('distances.event_id', $cupEvent->event_id)
             ->where('distances.group_id', $groupId)
             ->havingRaw('persons_payments.date <= ?', [$cupEvent->event->date])
@@ -93,9 +95,10 @@ final readonly class ProtocolLinesRepository
     public function getCupEventDistanceProtocolLines(int $distanceId): Collection
     {
         return ProtocolLine::where('protocol_lines.distance_id', $distanceId)
-            ->with(['person.club'])
+            ->with(['person.club', 'distance.group'])
             ->join('person', 'person.id', '=', 'protocol_lines.person_id')
             ->where('protocol_lines.vk', false)
+            ->where('person.active', true)
             ->where('person.citizenship', Citizenship::BELARUS->value)
             ->get()
         ;

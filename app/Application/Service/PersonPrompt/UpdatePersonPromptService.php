@@ -27,7 +27,10 @@ final readonly class UpdatePersonPromptService
     ) {
     }
 
-    /** @throws PersonPromptNotFound */
+    /**
+     * @throws PersonPromptNotFound
+     * @throws PersonNotFound
+     */
     public function execute(UpdatePersonPrompt $command): ViewPersonPromptDto
     {
         return $this->transactional->run(function () use ($command): ViewPersonPromptDto {

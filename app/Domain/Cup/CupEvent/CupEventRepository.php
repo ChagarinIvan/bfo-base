@@ -16,7 +16,10 @@ interface CupEventRepository
 
     public function lockById(int $id): ?CupEvent;
 
-    public function byCriteria(Criteria $criteria): Collection;
+    public function byCriteria(
+        Criteria $criteria,
+        CupEventResources $resources = new CupEventResources(),
+    ): Collection;
 
     /** @return Slice<CupEvent> */
     public function paginate(Criteria $criteria): Slice;
