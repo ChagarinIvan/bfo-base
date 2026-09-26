@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { api } from './client'
-import { clearUsersCache, getUsers } from './users'
+import { clearUsersCache, getUsers, refreshUsers } from './users'
 
 vi.mock('./client', () => ({
     api: {
@@ -42,5 +42,26 @@ describe('users API cache', () => {
         ])
         expect(api.get).toHaveBeenCalledTimes(2)
         now.mockRestore()
+    })
+
+    it('refreshes a stale list and reuses the refreshed cache', async () => {
+        const stale = [{ id: 1, name: 'Admin', email: 'admin@example.com' }]
+        const fresh = [
+            ...stale,
+            { id: 5, name: 'Editor', email: 'editor@example.com' },
+        ]
+        vi.mocked(api.get).mockResolvedValueOnce({ data: stale })
+        await expect(getUsers()).resolves.toEqual(stale)
+
+        vi.mocked(api.get).mockResolvedValue({ data: fresh })
+        const [first, second] = await Promise.all([
+            refreshUsers(),
+            refreshUsers(),
+        ])
+
+        expect(first).toEqual(fresh)
+        expect(second).toEqual(fresh)
+        await expect(getUsers()).resolves.toEqual(fresh)
+        expect(api.get).toHaveBeenCalledTimes(2)
     })
 })

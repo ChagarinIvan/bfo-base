@@ -12,8 +12,8 @@ final readonly class ClearCupCacheService
     {
     }
 
-    public function execute(ClearCupCache $command): void
+    public function execute(): void
     {
-        $this->invalidator->invalidate($command->id());
+        $this->invalidator->invalidate();
     }
 }

@@ -58,7 +58,7 @@ class ElkPathCup extends EliteCupType
     protected function getGroupProtocolLines(CupEvent $cupEvent, CupGroup $group): Collection
     {
         $groupMap = $this->getGroupsMap($group);
-        $mainDistance = $this->distanceService->findDistance($groupMap, $cupEvent->event_id);
+        $mainDistance = $this->distanceByGroupNames($groupMap, $cupEvent->event_id);
 
         if ($mainDistance === null) {
             return new Collection();

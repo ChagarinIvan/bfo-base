@@ -21,8 +21,12 @@ use App\Bridge\Laravel\Http\Controllers\Api\V1\Competition\DeleteCompetitionActi
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Competition\ListCompetitionsAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Competition\UpdateCompetitionAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Competition\ViewCompetitionAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\ClearCupCacheAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\CreateCupAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\CreateCupEventAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\DeleteCupAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\DeleteCupEventAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\ExportCupTableAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\ListCupEventPointsAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\ListCupEventsAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\ListCupsAction;
@@ -68,7 +72,6 @@ use App\Bridge\Laravel\Http\Controllers\Api\V1\RankCheck\ListRankCheckRowsAction
 use App\Bridge\Laravel\Http\Controllers\Api\V1\RankCheck\ListRankChecksAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\RankCheck\ViewRankCheckAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Year\ListYearsAction;
-use App\Bridge\Laravel\Http\Controllers\Cup\ExportCupTableAction;
 use App\Bridge\Laravel\Http\Middleware\AuthenticateApiV1;
 use App\Bridge\Laravel\Http\Middleware\CacheResponseByQueryParameter;
 use App\Bridge\Laravel\Http\Middleware\OptionalAuthenticateApiV1;
@@ -83,6 +86,7 @@ final class ApiV1RoutesServiceProvider extends ServiceProvider
         $router = $this->app->make(Router::class);
 
         $this->routes(static function () use ($router): void {
+            $router->redirect('/', '/app/competitions');
             $router->prefix('api/v1')->middleware('throttle:10,1')->post('auth/login', LoginAction::class);
             $router->prefix('api/v1')->middleware('throttle:10,1')->post('auth/registration-activation/{token}', ActivateRegistrationInvitationAction::class);
 
@@ -127,7 +131,7 @@ final class ApiV1RoutesServiceProvider extends ServiceProvider
             });
 
             $router->prefix('api/v1')->middleware(AuthenticateApiV1::class)->group(static function () use ($router): void {
-                $router->get('cups/{cup}/export', ExportCupTableAction::class);
+                $router->get('cups/{cupId}/export', ExportCupTableAction::class);
                 $router->get('auth/horizon-access', ViewHorizonAccessAction::class);
                 $router->get('rank-checks', ListRankChecksAction::class);
                 $router->post('rank-checks', CreateRankCheckAction::class);
@@ -158,8 +162,11 @@ final class ApiV1RoutesServiceProvider extends ServiceProvider
                 $router->delete('competitions/{competitionId}', DeleteCompetitionAction::class);
                 $router->post('cups', CreateCupAction::class);
                 $router->put('cups/{cupId}', UpdateCupAction::class);
+                $router->delete('cups/{cupId}', DeleteCupAction::class);
+                $router->post('cups/cache-clear', ClearCupCacheAction::class);
                 $router->post('cup-events', CreateCupEventAction::class);
                 $router->put('cup-events/{cupEventId}', UpdateCupEventAction::class);
+                $router->delete('cup-events/{cupEventId}', DeleteCupEventAction::class);
                 $router->post('competitions/{competitionId}/events', CreateEventAction::class);
                 $router->post('competitions/{competitionId}/events/unite', UniteEventsAction::class);
                 $router->put('events/{eventId}', UpdateEventAction::class);

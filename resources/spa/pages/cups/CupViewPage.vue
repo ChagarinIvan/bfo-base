@@ -4,7 +4,7 @@ import type { AxiosError } from 'axios'
 import InputText from 'primevue/inputtext'
 import type { PageState } from 'primevue/paginator'
 import { useRoute, useRouter } from 'vue-router'
-import { getCup, getCupEvents } from '../../api/cups'
+import { deleteCupEvent, getCup, getCupEvents } from '../../api/cups'
 import { getEventsByIds } from '../../api/events'
 import type {
     Cup,
@@ -157,11 +157,15 @@ function onDateChange(): void {
 function onPage(page: PageState): void {
     void loadEvents(page.page + 1, page.rows)
 }
-function deleteEvent(): void {
-    if (cup.value && selectedEvent.value)
-        window.location.assign(
-            `/cups/${cup.value.id}/${selectedEvent.value.id}/delete`,
-        )
+async function deleteEvent(): Promise<void> {
+    if (!cup.value || !selectedEvent.value) return
+    try {
+        await deleteCupEvent(selectedEvent.value.id)
+        selectedEvent.value = null
+        await load(String(route.params.cupId))
+    } catch {
+        error.value = t('spa.cups.error')
+    }
 }
 watch(
     () => String(route.params.cupId),

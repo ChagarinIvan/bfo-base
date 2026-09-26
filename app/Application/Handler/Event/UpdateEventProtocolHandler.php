@@ -6,9 +6,9 @@ namespace App\Application\Handler\Event;
 
 use App\Application\Service\Cup\ClearCupCacheService;
 use App\Application\Service\Person\RebuildPersonRanksService;
+use App\Domain\Distance\DistanceDeleter;
 use App\Domain\Event\Event\EventProtocolUpdated;
 use App\Domain\Shared\Storage;
-use App\Services\DistanceService;
 use App\Services\ParserService;
 use App\Services\ProtocolLineIdentService;
 use App\Services\ProtocolLineService;
@@ -23,7 +23,7 @@ final class UpdateEventProtocolHandler extends ParseProtocolHandler implements S
         ParserService $parser,
         ProtocolLineService $protocolLineService,
         ProtocolLineIdentService $identService,
-        protected readonly DistanceService $distanceService,
+        protected readonly DistanceDeleter $distanceDeleter,
         protected readonly ClearCupCacheService $clearCupCacheService,
         protected readonly RebuildPersonRanksService $rebuildPersonRanksService,
     ) {

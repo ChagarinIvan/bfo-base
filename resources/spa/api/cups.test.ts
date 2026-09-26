@@ -1,7 +1,10 @@
 import { describe, expect, it, vi } from 'vitest'
 import { api } from './client'
 import {
+    clearCupCache,
     createCupEvent,
+    deleteCup,
+    deleteCupEvent,
     exportCupTable,
     getCupEvent,
     getCupEventPoints,
@@ -12,7 +15,7 @@ import {
 } from './cups'
 
 vi.mock('./client', () => ({
-    api: { get: vi.fn(), post: vi.fn(), put: vi.fn() },
+    api: { get: vi.fn(), post: vi.fn(), put: vi.fn(), delete: vi.fn() },
 }))
 
 describe('cups API', () => {
@@ -38,6 +41,19 @@ describe('cups API', () => {
         expect(api.get).toHaveBeenCalledWith('/cups/42/export', {
             responseType: 'blob',
         })
+    })
+
+    it('uses V1 API calls for cup maintenance', async () => {
+        vi.mocked(api.post).mockResolvedValue({ data: undefined })
+        vi.mocked(api.delete).mockResolvedValue({ data: undefined })
+
+        await clearCupCache()
+        await deleteCupEvent('7')
+        await deleteCup('42')
+
+        expect(api.post).toHaveBeenCalledWith('/cups/cache-clear')
+        expect(api.delete).toHaveBeenCalledWith('/cup-events/7')
+        expect(api.delete).toHaveBeenCalledWith('/cups/42')
     })
 
     it('passes compact cup-stage filters to the nested endpoint', async () => {

@@ -19,8 +19,6 @@ use App\Bridge\Laravel\Provider\Rank\RankProvider;
 use App\Bridge\Laravel\Provider\RankCheck\RankCheckProvider;
 use App\Bridge\Laravel\Provider\Shared\SharedProvider;
 use App\Bridge\Laravel\Provider\User\AuthProvider;
-use App\Bridge\Laravel\Provider\ViewProvider;
-use App\Bridge\Laravel\Provider\WebRoutesServiceProvider;
 use App\Providers\HorizonServiceProvider;
 use Illuminate\Auth\AuthServiceProvider;
 use Illuminate\Auth\Passwords\PasswordResetServiceProvider;
@@ -230,11 +228,9 @@ return [
         EventHandlerServiceProvider::class,
 
         // routes
-        WebRoutesServiceProvider::class,
         ApiV1RoutesServiceProvider::class,
 
         // view
-        ViewProvider::class,
     ],
 
     /*

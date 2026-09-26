@@ -6,7 +6,7 @@ namespace App\Domain\Cup\Table;
 
 final readonly class CupTableRow
 {
-    /** @param array<string, CupTableStageCell> $stages */
+    /** @param array<int|string, CupTableStageCell> $stages */
     public function __construct(
         public int $place,
         public string $personId,

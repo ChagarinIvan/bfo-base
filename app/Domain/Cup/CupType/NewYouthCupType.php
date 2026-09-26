@@ -71,8 +71,7 @@ class NewYouthCupType extends MasterCupType
         $cupEventProtocolLines = $this->getGroupProtocolLines($cupEvent, $mainGroup);
         $eventGroupsId = $this->getCupEventGroups($mainGroup)->pluck('id');
 
-        $eventDistances = $this->distanceService
-            ->getCupEventDistancesByGroups($cupEvent, $eventGroupsId)
+        $eventDistances = $this->cupEventDistancesByGroups($cupEvent, $eventGroupsId)
             ->pluck('id')
             ->toArray()
         ;

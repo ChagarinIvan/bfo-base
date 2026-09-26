@@ -4,7 +4,7 @@ import type { AxiosError } from 'axios'
 import Card from 'primevue/card'
 import Message from 'primevue/message'
 import { useRoute, useRouter } from 'vue-router'
-import { getCup } from '../../api/cups'
+import { deleteCup as disableCup, getCup } from '../../api/cups'
 import type { Cup, User } from '../../api/types'
 import { getUsers } from '../../api/users'
 import CupInfoNavigation from '../../components/CupInfoNavigation.vue'
@@ -61,8 +61,14 @@ async function load(cupId: string): Promise<void> {
     }
 }
 
-function deleteCup(): void {
-    if (cup.value) window.location.assign(`/cups/${cup.value.id}/delete`)
+async function deleteCup(): Promise<void> {
+    if (!cup.value) return
+    try {
+        await disableCup(cup.value.id)
+        await router.push('/app/cups')
+    } catch {
+        error.value = t('spa.cups.error')
+    }
 }
 
 watch(

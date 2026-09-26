@@ -18,12 +18,9 @@ use Tests\TestCase;
 final class CachedCupTableBuilderTest extends TestCase
 {
     #[Test]
-    public function it_caches_tables_with_the_same_tag_as_cup_calculations(): void
+    public function it_caches_tables_with_the_shared_cups_tag(): void
     {
-        $cup = $this->getMockBuilder(Cup::class)
-            ->onlyMethods([])
-            ->getMock()
-        ;
+        $cup = new Cup();
         $cup->setAttribute('id', 42);
         $group = CupGroupFactory::fromId('M_0_');
         $events = new Collection();
@@ -45,7 +42,7 @@ final class CachedCupTableBuilderTest extends TestCase
         $cache = $this->createMock(CacheManager::class);
         $cache->expects($this->once())
             ->method('tags')
-            ->with(['cups', 42])
+            ->with(['cups'])
             ->willReturn($taggedCache)
         ;
 
