@@ -45,7 +45,7 @@ function mountPage() {
                 ListingTable: {
                     props: ['columns', 'items'],
                     template:
-                        '<div data-testid="columns">{{ columns.map((item) => `${item.key}:${item.field ?? ""}`).join(",") }}<slot name="cell-actions" :data="items[0]" /></div>',
+                        '<div data-testid="columns">{{ columns.map((item) => `${item.key}:${item.field ?? ""}`).join(",") }}<slot v-if="items[0]" name="cell-actions" :data="items[0]" /></div>',
                 },
             },
         },

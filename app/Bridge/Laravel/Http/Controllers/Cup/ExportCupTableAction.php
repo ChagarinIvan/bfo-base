@@ -9,6 +9,7 @@ use App\Domain\Cup\CupEvent\CupEventPoint;
 use App\Services\CupEventsService;
 use Illuminate\Routing\Controller as BaseController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use function array_map;
 use function array_slice;
 use function array_sum;
@@ -44,13 +45,16 @@ final class ExportCupTableAction extends BaseController
         }
 
         $csv = implode("\r\n", $lines);
-
-        return response()->streamDownload(
-            static function () use ($csv): void {
-                echo $csv;
-            },
-            $cup->name . '.csv',
-            ['Content-Type' => 'text/csv; charset=UTF-8'],
+        $response = response($csv, 200, ['Content-Type' => 'text/csv; charset=UTF-8']);
+        $response->headers->set(
+            'Content-Disposition',
+            $response->headers->makeDisposition(
+                ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+                $cup->name . '.csv',
+                'cup-' . $cup->id . '.csv',
+            ),
         );
+
+        return $response;
     }
 }
