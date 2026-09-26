@@ -61,6 +61,10 @@ export async function getCupTable(
     return response
 }
 
+export async function exportCupTable(cupId: string) {
+    return api.get<Blob>(`/cups/${cupId}/export`, { responseType: 'blob' })
+}
+
 export async function getCupEventContexts(eventIds: string[]) {
     if (eventIds.length === 0) return []
 

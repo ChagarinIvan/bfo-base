@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { api } from './client'
 import {
     createCupEvent,
+    exportCupTable,
     getCupEvent,
     getCupEventPoints,
     getCupEventContexts,
@@ -26,6 +27,16 @@ describe('cups API', () => {
         expect(api.get).toHaveBeenCalledWith('/cups/42/tables/M_0_', {
             params: {},
             signal: undefined,
+        })
+    })
+
+    it('downloads the cup export through the authenticated API client', async () => {
+        vi.mocked(api.get).mockResolvedValue({ data: new Blob(['csv']) })
+
+        await exportCupTable('42')
+
+        expect(api.get).toHaveBeenCalledWith('/cups/42/export', {
+            responseType: 'blob',
         })
     })
 

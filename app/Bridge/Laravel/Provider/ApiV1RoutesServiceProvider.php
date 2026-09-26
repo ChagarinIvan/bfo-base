@@ -23,6 +23,7 @@ use App\Bridge\Laravel\Http\Controllers\Api\V1\Competition\UpdateCompetitionActi
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Competition\ViewCompetitionAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\CreateCupAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\CreateCupEventAction;
+use App\Bridge\Laravel\Http\Controllers\Cup\ExportCupTableAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\ListCupEventPointsAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\ListCupEventsAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\ListCupsAction;
@@ -126,6 +127,7 @@ final class ApiV1RoutesServiceProvider extends ServiceProvider
             });
 
             $router->prefix('api/v1')->middleware(AuthenticateApiV1::class)->group(static function () use ($router): void {
+                $router->get('cups/{cup}/export', ExportCupTableAction::class);
                 $router->get('auth/horizon-access', ViewHorizonAccessAction::class);
                 $router->get('rank-checks', ListRankChecksAction::class);
                 $router->post('rank-checks', CreateRankCheckAction::class);

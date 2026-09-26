@@ -18,10 +18,9 @@ use function is_numeric;
 
 final class ExportCupTableAction extends BaseController
 {
-    use CupAction;
-
-    public function __invoke(Cup $cup, CupEventsService $service): Response
+    public function __invoke(string $cupId, CupEventsService $service): Response
     {
+        $cup = Cup::query()->findOrFail($cupId);
         $lines = [];
         foreach ($cup->groups() as $group) {
             $events = $service->getCupEvents((string) $cup->id);

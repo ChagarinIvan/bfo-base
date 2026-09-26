@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import { t } from '../i18n'
 import ActionButton from './actions/ActionButton.vue'
+import { exportCupTable } from '../api/cups'
 
 const props = defineProps<{ cupId: string; firstGroupId?: string }>()
 const route = useRoute()
@@ -25,6 +26,18 @@ const eventsUrl = computed(() =>
           }
         : `/app/cups/${props.cupId}`,
 )
+
+async function downloadCupTable() {
+    const response = await exportCupTable(props.cupId)
+    const url = URL.createObjectURL(response.data)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `cup-${props.cupId}.csv`
+    document.body.append(link)
+    link.click()
+    link.remove()
+    URL.revokeObjectURL(url)
+}
 </script>
 
 <template>
@@ -69,12 +82,11 @@ const eventsUrl = computed(() =>
         </RouterLink>
         <ActionButton
             v-if="auth.isAuthenticated"
-            as="a"
-            :href="`/cups/${props.cupId}/export`"
-            download
+            type="button"
             icon="pi pi-download"
             :label="t('app.cup.table.export')"
             severity="info"
+            @click="downloadCupTable"
         />
         <ActionButton
             v-if="auth.isAuthenticated"
