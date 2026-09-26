@@ -70,8 +70,7 @@ class MasterCupType extends AbstractCupType
         $cupEventProtocolLines = $this->getGroupProtocolLines($cupEvent, $mainGroup);
         $eventGroupsId = $this->getEventGroups($mainGroup->male())->pluck('id');
 
-        $eventDistances = $this->distanceService
-            ->getCupEventDistancesByGroups($cupEvent, $eventGroupsId)
+        $eventDistances = $this->cupEventDistancesByGroups($cupEvent, $eventGroupsId)
             ->pluck('id')
             ->toArray()
         ;
@@ -104,11 +103,11 @@ class MasterCupType extends AbstractCupType
             ->count() > 0
         ;
 
-        $mainDistance = $this->distanceService->findDistance(self::GROUPS_MAP[$mainGroup->id()], $cupEvent->event_id);
+        $mainDistance = $this->distanceByGroupNames(self::GROUPS_MAP[$mainGroup->id()], $cupEvent->event_id);
         $equalDistances = Collection::make([$mainDistance]);
 
         if ($mainDistance instanceof Distance) {
-            $equalDistances->push(...$this->distanceService->getEqualDistances($mainDistance));
+            $equalDistances->push(...$this->equalDistances($mainDistance));
         }
 
         $equalGroupsIds = $equalDistances->pluck('group_id');

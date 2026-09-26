@@ -65,6 +65,18 @@ export async function exportCupTable(cupId: string) {
     return api.get<Blob>(`/cups/${cupId}/export`, { responseType: 'blob' })
 }
 
+export async function deleteCup(cupId: string) {
+    return api.delete(`/cups/${cupId}`)
+}
+
+export async function deleteCupEvent(cupEventId: string) {
+    return api.delete(`/cup-events/${cupEventId}`)
+}
+
+export async function clearCupCache(cupId: string) {
+    return api.post(`/cups/${cupId}/cache-clear`)
+}
+
 export async function getCupEventContexts(eventIds: string[]) {
     if (eventIds.length === 0) return []
 

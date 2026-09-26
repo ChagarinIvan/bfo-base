@@ -9,6 +9,8 @@ use App\Application\Service\Cup\ClearCupCacheService;
 use App\Application\Service\Person\RebuildPersonRanksService;
 use App\Domain\Auth\Impression;
 use App\Domain\Cup\CupCacheInvalidator;
+use App\Domain\Cup\CupRepository;
+use App\Domain\Distance\DistanceDeleter;
 use App\Domain\Event\Event;
 use App\Domain\Event\Event\EventDisabled;
 use App\Domain\Person\Person;
@@ -18,7 +20,6 @@ use App\Domain\Person\RankFactsCollector;
 use App\Domain\ProtocolLine\ProtocolLineOperations;
 use App\Domain\Shared\Clock;
 use App\Domain\Shared\TransactionManager;
-use App\Services\DistanceService;
 use Carbon\Carbon;
 use Closure;
 use PHPUnit\Framework\Attributes\Test;
@@ -30,6 +31,7 @@ final class DisableEventHandlerTest extends TestCase
     public function it_rebuilds_people_affected_by_deleted_protocol_lines_with_the_event_impression(): void
     {
         $event = new Event();
+        $event->id = 101;
         $event->name = 'Cup';
         $event->updated = $impression = new Impression(Carbon::parse('2026-09-02 12:00:00'), 7);
         $event->setRelation('cups', collect());
@@ -38,8 +40,8 @@ final class DisableEventHandlerTest extends TestCase
         $protocolLines->expects($this->once())->method('personIdsForEvent')->with($event)->willReturn([12, 18]);
         $protocolLines->expects($this->once())->method('deleteEventLines')->with($event);
 
-        $distances = $this->createMock(DistanceService::class);
-        $distances->expects($this->once())->method('deleteEventDistances')->with($event);
+        $distances = $this->createMock(DistanceDeleter::class);
+        $distances->expects($this->once())->method('deleteForEvent')->with((int) $event->id);
 
         $firstPerson = $this->createMock(Person::class);
         $secondPerson = $this->createMock(Person::class);
@@ -56,7 +58,7 @@ final class DisableEventHandlerTest extends TestCase
         $transaction->expects($this->exactly(2))->method('run')->willReturnCallback(static fn (Closure $callback): mixed => $callback());
         $rebuild = new RebuildPersonRanksService($persons, $facts, new RankCalculator(), $clock, $transaction);
 
-        new DisableEventHandler($protocolLines, $distances, new ClearCupCacheService($this->createStub(CupCacheInvalidator::class)), $rebuild)
+        new DisableEventHandler($protocolLines, $distances, new ClearCupCacheService($this->createStub(CupCacheInvalidator::class), $this->createStub(CupRepository::class)), $rebuild)
             ->handle(new EventDisabled($event));
     }
 }

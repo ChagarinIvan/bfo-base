@@ -1,14 +1,16 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
+import Message from 'primevue/message'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import { t } from '../i18n'
 import ActionButton from './actions/ActionButton.vue'
-import { exportCupTable } from '../api/cups'
+import { clearCupCache, exportCupTable } from '../api/cups'
 
 const props = defineProps<{ cupId: string; firstGroupId?: string }>()
 const route = useRoute()
 const auth = useAuthStore()
+const error = ref('')
 const emit = defineEmits<{ deleteCup: [] }>()
 const selectedGroupId = computed(() =>
     String(
@@ -28,20 +30,38 @@ const eventsUrl = computed(() =>
 )
 
 async function downloadCupTable() {
-    const response = await exportCupTable(props.cupId)
-    const url = URL.createObjectURL(response.data)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = `cup-${props.cupId}.csv`
-    document.body.append(link)
-    link.click()
-    link.remove()
-    URL.revokeObjectURL(url)
+    error.value = ''
+    try {
+        const response = await exportCupTable(props.cupId)
+        const url = URL.createObjectURL(response.data)
+        const link = document.createElement('a')
+        link.href = url
+        link.download = `cup-${props.cupId}.csv`
+        document.body.append(link)
+        link.click()
+        link.remove()
+        URL.revokeObjectURL(url)
+    } catch {
+        error.value = t('spa.cups.error')
+    }
+}
+
+async function clearCache() {
+    error.value = ''
+    try {
+        await clearCupCache(props.cupId)
+        window.location.reload()
+    } catch {
+        error.value = t('spa.cups.error')
+    }
 }
 </script>
 
 <template>
     <div class="details-actions">
+        <Message v-if="error" severity="error" :closable="false">{{
+            error
+        }}</Message>
         <ActionButton
             v-if="auth.isAuthenticated"
             as="a"
@@ -90,11 +110,11 @@ async function downloadCupTable() {
         />
         <ActionButton
             v-if="auth.isAuthenticated"
-            as="a"
-            :href="`/cups/${props.cupId}/cache`"
+            type="button"
             icon="pi pi-refresh"
             :label="t('app.common.cache_clear')"
             severity="warn"
+            @click="clearCache"
         />
         <ActionButton
             v-if="auth.isAuthenticated"

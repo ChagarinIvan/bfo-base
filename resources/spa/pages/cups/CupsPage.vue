@@ -6,7 +6,7 @@ import Select from 'primevue/select'
 import Button from 'primevue/button'
 import Toolbar from 'primevue/toolbar'
 import { RouterLink, useRouter } from 'vue-router'
-import { getCups } from '../../api/cups'
+import { deleteCup, getCups } from '../../api/cups'
 import { getYears } from '../../api/years'
 import type { Cup, PaginationHeaders } from '../../api/types'
 import FilterPanel from '../../components/FilterPanel.vue'
@@ -163,11 +163,19 @@ function cupTableUrl(cup: Cup): string {
     return `/app/cups/${cup.id}/table/${cup.groups[0]?.id ?? ''}`
 }
 
-function deleteSelectedCup(): void {
+async function deleteSelectedCup(): Promise<void> {
     if (!selectedCup.value) return
 
     deleting.value = true
-    window.location.assign(`/cups/${selectedCup.value.id}/delete`)
+    try {
+        await deleteCup(selectedCup.value.id)
+        selectedCup.value = null
+        await load(1)
+    } catch {
+        error.value = t('spa.cups.error')
+    } finally {
+        deleting.value = false
+    }
 }
 
 watch(

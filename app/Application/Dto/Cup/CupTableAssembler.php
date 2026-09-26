@@ -15,7 +15,13 @@ final readonly class CupTableAssembler
     /** @param list<CupTableRow> $rows @return Slice<ViewCupTableRowDto> */
     public function toRowsSlice(array $rows): Slice
     {
-        return new Slice(new ArraySliceAdapter(array_map($this->toViewCupTableRowDto(...), $rows)));
+        return new Slice(new ArraySliceAdapter($this->toRows($rows)));
+    }
+
+    /** @param list<CupTableRow> $rows @return list<ViewCupTableRowDto> */
+    public function toRows(array $rows): array
+    {
+        return array_map($this->toViewCupTableRowDto(...), $rows);
     }
 
     private function toViewCupTableRowDto(CupTableRow $row): ViewCupTableRowDto

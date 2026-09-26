@@ -6,7 +6,7 @@ namespace App\Application\Dto\Cup;
 
 final readonly class ViewCupTableRowDto
 {
-    /** @param array<string, ViewCupTableStageCellDto> $stages */
+    /** @param array<int|string, ViewCupTableStageCellDto> $stages */
     public function __construct(
         public int $place,
         public string $personId,

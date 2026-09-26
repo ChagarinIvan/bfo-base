@@ -9,10 +9,13 @@ use App\Domain\Cup\CupEvent\CupEvent;
 use App\Domain\Cup\CupEvent\CupEventPoint;
 use App\Domain\Cup\Group\CupGroup;
 use App\Domain\Cup\Group\CupGroupFactory;
+use App\Domain\Distance\Distance;
+use App\Domain\Distance\DistanceRepository;
+use App\Domain\Group\Group;
 use App\Domain\Group\GroupRepository;
 use App\Domain\ProtocolLine\ProtocolLine;
+use App\Domain\Shared\Criteria;
 use App\Repositories\ProtocolLinesRepository;
-use App\Services\DistanceService;
 use Illuminate\Support\Collection;
 use function array_slice;
 use function max;
@@ -24,7 +27,7 @@ abstract class AbstractCupType implements CupTypeInterface
     abstract protected function getGroupProtocolLines(CupEvent $cupEvent, CupGroup $group): Collection;
 
     public function __construct(
-        protected readonly DistanceService $distanceService,
+        protected readonly DistanceRepository $distances,
         protected readonly ProtocolLinesRepository $protocolLinesRepository,
         protected readonly GroupRepository $groupsRepository,
         protected readonly CupGroupFactory $groupFactory,
@@ -64,6 +67,39 @@ abstract class AbstractCupType implements CupTypeInterface
         });
 
         return $results;
+    }
+
+    /** @param string[] $groupNames */
+    protected function distanceByGroupNames(array $groupNames, int $eventId): ?Distance
+    {
+        return $this->distances->oneByCriteria(new Criteria([
+            'eventId' => $eventId,
+            'groupNames' => $groupNames,
+        ]));
+    }
+
+    /** @return Collection<int, Distance> */
+    protected function equalDistances(Distance $mainDistance): Collection
+    {
+        return $this->distances->byCriteria(new Criteria([
+            'eventId' => $mainDistance->event_id,
+            'excludeId' => $mainDistance->id,
+            'length' => $mainDistance->length,
+            'points' => $mainDistance->points,
+        ]));
+    }
+
+    /** @return Collection<int, Distance> */
+    protected function cupEventDistancesByGroups(CupEvent $cupEvent, Collection $groups): Collection
+    {
+        $groupIds = $groups
+            ->map(static fn (mixed $group): int => $group instanceof Group ? $group->id : (int) $group)
+            ->all();
+
+        return $this->distances->byCriteria(new Criteria([
+            'eventId' => $cupEvent->event_id,
+            'groupIds' => $groupIds,
+        ]));
     }
 
     protected function calculateLines(CupEvent $cupEvent, Collection $protocolLines): Collection

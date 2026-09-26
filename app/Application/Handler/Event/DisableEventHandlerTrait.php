@@ -15,7 +15,7 @@ trait DisableEventHandlerTrait
     protected function cleanUp(Event $event): void
     {
         $personIds = $this->protocolLineService->personIdsForEvent($event);
-        $this->distanceService->deleteEventDistances($event);
+        $this->distanceDeleter->deleteForEvent($event->id);
         $this->protocolLineService->deleteEventLines($event);
 
         foreach ($personIds as $personId) {

@@ -55,12 +55,12 @@ class EliteCupType extends AbstractCupType
     {
         $groupMap = $this->getGroupsMap($group);
 
-        $mainDistance = $this->distanceService->findDistance($groupMap, $cupEvent->event_id);
+        $mainDistance = $this->distanceByGroupNames($groupMap, $cupEvent->event_id);
         if ($mainDistance === null) {
             return new Collection();
         }
 
-        $equalDistances = $this->distanceService->getEqualDistances($mainDistance);
+        $equalDistances = $this->equalDistances($mainDistance);
         $distances = $equalDistances
             ->add($mainDistance)
             ->filter(fn (Distance $distance): bool => in_array($distance->group->name, $this->getAllGroupsMap($group), true))

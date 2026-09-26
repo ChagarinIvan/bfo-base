@@ -16,6 +16,7 @@ use Illuminate\Validation\Factory as Validator;
 use Illuminate\Validation\ValidationException;
 use ReflectionClass;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use function array_map;
 use function array_merge;
 use function is_bool;
@@ -28,8 +29,7 @@ trait ApiAction
         private readonly Container $container,
         private readonly ApiDtoSerializer $serializer,
         private readonly ApiErrorResponse $errorResponse,
-    )
-    {
+    ) {
     }
 
     public function callAction($method, $parameters): mixed
@@ -106,5 +106,17 @@ trait ApiAction
     protected function userId(): ?UserId
     {
         return $this->container->has(UserId::class) ? $this->container->get(UserId::class) ?? null : null;
+    }
+
+    protected function csv(string $contents, string $filename, string $fallbackFilename): Response
+    {
+        $response = response($contents, Response::HTTP_OK, ['Content-Type' => 'text/csv; charset=UTF-8']);
+        $response->headers->set('Content-Disposition', $response->headers->makeDisposition(
+            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+            $filename,
+            $fallbackFilename,
+        ));
+
+        return $response;
     }
 }
