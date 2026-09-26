@@ -11,14 +11,14 @@ describe('impression model', () => {
         by: '7',
     }
 
-    it('prefers a user name and falls back to email', () => {
+    it('prefers an email and falls back to a user name', () => {
         expect(
             impressionUserLabel(
                 impression,
                 [{ id: 7, name: 'Іван', email: 'ivan@example.com' }],
                 'Unknown',
             ),
-        ).toBe('Іван')
+        ).toBe('ivan@example.com')
         expect(
             impressionUserLabel(
                 impression,
@@ -26,6 +26,13 @@ describe('impression model', () => {
                 'Unknown',
             ),
         ).toBe('ivan@example.com')
+        expect(
+            impressionUserLabel(
+                impression,
+                [{ id: 7, name: 'Іван', email: '' }],
+                'Unknown',
+            ),
+        ).toBe('Іван')
     })
 
     it('falls back to the supplied unknown-user label', () => {

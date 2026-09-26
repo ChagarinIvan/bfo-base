@@ -73,8 +73,8 @@ export async function deleteCupEvent(cupEventId: string) {
     return api.delete(`/cup-events/${cupEventId}`)
 }
 
-export async function clearCupCache(cupId: string) {
-    return api.post(`/cups/${cupId}/cache-clear`)
+export async function clearCupCache() {
+    return api.post('/cups/cache-clear')
 }
 
 export async function getCupEventContexts(eventIds: string[]) {

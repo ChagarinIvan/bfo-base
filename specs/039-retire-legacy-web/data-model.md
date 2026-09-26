@@ -13,7 +13,7 @@ No database schema changes are required.
 - `CupTable` contains ordered stages and ranked `CupTableRow` entries.
 - Each row contains place, person identity and name, birth year, club, stage cells, total points, and average points.
 - `CupTableStageCell` contains stage ID, points, counted flag, distance ID, and protocol-line ID.
-- The cached builder keys the table by cup and group; cup mutations invalidate the cup cache tag.
+- The cached builder keys the table by cup and group under the shared `cups` tag; cache clear and relevant cup or event mutations invalidate that tag for all cups.
 - Export traverses the complete table, omitting pagination and search filters.
 
 ## Distance
@@ -27,4 +27,4 @@ No database schema changes are required.
 
 - Active cup to disabled cup: editor command, list exclusion, cache invalidation.
 - Active stage to disabled stage: editor command, cup table recalculation.
-- Cached cup table to invalidated table: explicit clear or cup/stage mutation; next read rebuilds it.
+- Cached cup tables to invalidated tables: explicit global clear or cup/stage mutation; next read rebuilds them.

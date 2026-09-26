@@ -21,7 +21,7 @@ final readonly class CachedCupTableBuilder implements CupTableBuilder
 
     public function build(Cup $cup, Collection $events, CupGroup $group): CupTable
     {
-        return $this->cache->tags(['cups', $cup->id])->remember(
+        return $this->cache->tags(['cups'])->remember(
             "table_{$cup->id}_{$group->id()}",
             1000000,
             fn (): CupTable => $this->builder->build($cup, $events, $group),

@@ -9,7 +9,6 @@ use App\Application\Service\Cup\ClearCupCacheService;
 use App\Application\Service\Person\RebuildPersonRanksService;
 use App\Domain\Auth\Impression;
 use App\Domain\Cup\CupCacheInvalidator;
-use App\Domain\Cup\CupRepository;
 use App\Domain\Distance\DistanceDeleter;
 use App\Domain\Event\Event;
 use App\Domain\Event\Event\EventDisabled;
@@ -58,7 +57,7 @@ final class DisableEventHandlerTest extends TestCase
         $transaction->expects($this->exactly(2))->method('run')->willReturnCallback(static fn (Closure $callback): mixed => $callback());
         $rebuild = new RebuildPersonRanksService($persons, $facts, new RankCalculator(), $clock, $transaction);
 
-        new DisableEventHandler($protocolLines, $distances, new ClearCupCacheService($this->createStub(CupCacheInvalidator::class), $this->createStub(CupRepository::class)), $rebuild)
+        new DisableEventHandler($protocolLines, $distances, new ClearCupCacheService($this->createStub(CupCacheInvalidator::class)), $rebuild)
             ->handle(new EventDisabled($event));
     }
 }

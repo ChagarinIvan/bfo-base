@@ -47,11 +47,11 @@ describe('cups API', () => {
         vi.mocked(api.post).mockResolvedValue({ data: undefined })
         vi.mocked(api.delete).mockResolvedValue({ data: undefined })
 
-        await clearCupCache('42')
+        await clearCupCache()
         await deleteCupEvent('7')
         await deleteCup('42')
 
-        expect(api.post).toHaveBeenCalledWith('/cups/42/cache-clear')
+        expect(api.post).toHaveBeenCalledWith('/cups/cache-clear')
         expect(api.delete).toHaveBeenCalledWith('/cup-events/7')
         expect(api.delete).toHaveBeenCalledWith('/cups/42')
     })

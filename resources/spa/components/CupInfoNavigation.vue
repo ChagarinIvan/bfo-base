@@ -49,7 +49,7 @@ async function downloadCupTable() {
 async function clearCache() {
     error.value = ''
     try {
-        await clearCupCache(props.cupId)
+        await clearCupCache()
         window.location.reload()
     } catch {
         error.value = t('spa.cups.error')

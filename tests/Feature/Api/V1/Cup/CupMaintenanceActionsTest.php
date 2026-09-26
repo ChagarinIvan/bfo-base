@@ -32,7 +32,7 @@ final class CupMaintenanceActionsTest extends TestCase
     {
         $this->deleteJson('/api/v1/cups/101')->assertUnauthorized();
         $this->deleteJson('/api/v1/cup-events/101')->assertUnauthorized();
-        $this->postJson('/api/v1/cups/101/cache-clear')->assertUnauthorized();
+        $this->postJson('/api/v1/cups/cache-clear')->assertUnauthorized();
 
         $this->authenticate();
         $this->deleteJson('/api/v1/cups/999999')->assertNotFound();
@@ -45,6 +45,7 @@ final class CupMaintenanceActionsTest extends TestCase
     {
         $this->get('/')->assertRedirect('/app/competitions');
         $this->get('/cups/101/cache')->assertNotFound();
+        $this->postJson('/api/v1/cups/101/cache-clear')->assertNotFound();
         $this->get('/cups/101/delete')->assertNotFound();
         $this->get('/cups/101/export')->assertNotFound();
         $this->get('/cups/101/M_0_/table-export')->assertNotFound();
@@ -52,15 +53,18 @@ final class CupMaintenanceActionsTest extends TestCase
     }
 
     #[Test]
-    public function it_clears_the_cup_cache(): void
+    public function it_clears_all_cup_caches_without_a_cup_id(): void
     {
         $this->seed(SprintCupLineSeeder::class);
         $this->authenticate();
         Cache::tags(['cups', 101])->put('table_101_M_0_', 'stale', 60);
+        Cache::tags(['cups', 202])->put('table_202_M_0_', 'stale', 60);
+        Cup::query()->whereKey(101)->update(['active' => false]);
 
-        $this->postJson('/api/v1/cups/101/cache-clear')->assertNoContent();
+        $this->postJson('/api/v1/cups/cache-clear')->assertNoContent();
 
         $this->assertNull(Cache::tags(['cups', 101])->get('table_101_M_0_'));
+        $this->assertNull(Cache::tags(['cups', 202])->get('table_202_M_0_'));
     }
 
     #[Test]

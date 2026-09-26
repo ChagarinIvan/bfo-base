@@ -13,8 +13,8 @@ final readonly class CacheManagerCupsCacheInvalidator implements CupCacheInvalid
     {
     }
 
-    public function invalidate(int $cupId): void
+    public function invalidate(): void
     {
-        $this->cache->tags(['cups', $cupId])->flush();
+        $this->cache->tags(['cups'])->flush();
     }
 }

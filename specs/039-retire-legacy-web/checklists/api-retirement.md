@@ -23,6 +23,8 @@
 - [x] CHK007 Are browser-only assets distinguished from still-used mail templates? [Scope, FR-007]
 - [x] CHK008 Does the service inventory requirement demand active callers for every retained class? [Traceability, FR-010]
 - [x] CHK009 Are scoring and protocol cleanup acceptance cases retained after `DistanceService` removal? [Coverage, FR-009]
+- [x] CHK010 Is global cache clearing specified without a cup ID, including inactive cup links and the retired cup-specific URL? [Coverage, FR-002]
+- [x] CHK011 Is the existing authenticated users API retained for impression email resolution and stale-cache recovery? [Coverage, FR-012]
 
 ## Notes
 

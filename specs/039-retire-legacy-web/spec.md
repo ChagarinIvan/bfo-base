@@ -9,7 +9,7 @@
 
 ### User Story 1 - Manage cups through the SPA (Priority: P1)
 
-An authenticated editor clears a cup's calculated table, disables a cup, or disables a cup stage from the SPA. Each action reports success or an actionable error without opening an old page.
+An authenticated editor clears all calculated cup tables, disables a cup, or disables a cup stage from the SPA. Each action reports success or an actionable error without opening an old page.
 
 **Why this priority**: These are the remaining active links to legacy cup URLs.
 
@@ -17,10 +17,10 @@ An authenticated editor clears a cup's calculated table, disables a cup, or disa
 
 **Acceptance Scenarios**:
 
-1. **Given** an existing cup, **When** an editor clears its cached table, **Then** the next table request recalculates current data and the SPA stays on the cup.
+1. **Given** cached tables for multiple cups, **When** an editor clears the cup cache, **Then** the next table request for each cup recalculates current data and the SPA stays on the current cup.
 2. **Given** an existing cup, **When** an editor disables it, **Then** it disappears from active cup lists and the SPA opens the cup list.
 3. **Given** an existing stage, **When** an editor disables it, **Then** the cup view no longer lists it and its table is recalculated.
-4. **Given** a guest or an unknown cup or stage, **When** they invoke an action, **Then** they receive the established authorization or missing-resource response and no data changes.
+4. **Given** a guest or an unknown cup or stage, **When** they invoke an action, **Then** they receive the established authorization or missing-resource response and no data changes. Cache clear requires authentication but no cup ID.
 
 ### User Story 2 - Download cup tables (Priority: P1)
 
@@ -64,11 +64,25 @@ Cup scoring and event protocol updates continue to find, compare, and remove dis
 2. **Given** an event protocol replacement or event disable, **When** cleanup runs, **Then** obsolete distances and lines are removed before new data is processed.
 3. **Given** the legacy services directory, **When** the cleanup is reviewed, **Then** each service is classified as removed now or retained with its active callers and the reason larger refactoring is needed.
 
+### User Story 5 - Resolve impression authors after web retirement (Priority: P1)
+
+An authenticated user sees the author's email beside an impression in the SPA. The existing private `GET /api/v1/users` endpoint remains available after the old web layer is removed.
+
+**Independent Test**: Open a record whose author is absent from the SPA's cached user list and inspect the author label after the user list refreshes.
+
+**Acceptance Scenarios**:
+
+1. **Given** an author present in the users API, **When** an authenticated user views an impression, **Then** the author label shows the email even when a name exists.
+2. **Given** an author missing from the SPA's cached user list but present in the API, **When** the impression is shown, **Then** the SPA refreshes the list and replaces the numeric fallback with the email.
+3. **Given** a guest, **When** a page is viewed, **Then** no user-list request is made to resolve impressions.
+
 ### Edge Cases
 
 - A cup with no stages or no ranked participants produces a valid export with headings and no invented rows.
 - Semicolons, quotes, or line breaks in names do not change the number of CSV columns.
 - A stale or repeated cache-clear request remains safe.
+- Cup cache invalidation remains safe when an event is linked to an inactive cup or a stage ID differs from its cup ID.
+- A genuinely missing author retains the numeric fallback after a fresh users API response.
 - The retired group export URL does not produce a file.
 - Repeated distance matches do not duplicate protocol lines or cup points.
 
@@ -77,7 +91,7 @@ Cup scoring and event protocol updates continue to find, compare, and remove dis
 ### Functional Requirements
 
 - **FR-001**: Cup disable, stage disable, cache clear, and full export currently registered by `WebRoutesServiceProvider` MUST have V1 API equivalents. The unused group export and all old URL actions and provider MUST be removed.
-- **FR-002**: Cup and cup-stage disabling and cache clearing MUST use the existing authorization model and return API responses without redirects.
+- **FR-002**: Cup and cup-stage disabling and global cup cache clearing MUST use the existing authorization model and return API responses without redirects. The cache-clear route, Application service, and invalidator MUST NOT require a cup ID.
 - **FR-003**: Full-cup export MUST be downloadable through an authenticated V1 API route, preserve CSV compatibility, and use the same calculated table source as the SPA table view.
 - **FR-004**: Export failures MUST use the V1 JSON error contract for unauthenticated requests and unknown cups.
 - **FR-005**: The SPA MUST call the new actions for cup management and export; no active SPA link may invoke a retired cup URL.
@@ -87,6 +101,7 @@ Cup scoring and event protocol updates continue to find, compare, and remove dis
 - **FR-009**: `DistanceService` MUST be removed. Distance queries and deletion MUST remain behaviorally equivalent, with domain rules kept outside legacy services.
 - **FR-010**: The feature MUST include a reference-backed inventory of the remaining `app/Services` classes and remove any additional class with no live production caller when that removal requires no larger refactoring.
 - **FR-011**: Changed API, SPA, cup scoring, and protocol cleanup behavior MUST have focused automated coverage.
+- **FR-012**: The existing authenticated `GET /api/v1/users` JSON array of `id`, `name`, and `email` MUST remain available to resolve impression authors. The SPA MUST display email when an author is found and refresh a stale cached user list when the author ID is absent. Guests MUST NOT fetch the user list for impressions.
 
 ### Key Entities
 
@@ -99,11 +114,12 @@ Cup scoring and event protocol updates continue to find, compare, and remove dis
 
 ### Measurable Outcomes
 
-- **SC-001**: All three cup management actions and the full export complete from the SPA without visiting a retired URL.
+- **SC-001**: Both cup disable actions, global cup cache clear, and the full export complete from the SPA without visiting a retired URL.
 - **SC-002**: For a representative multi-group cup, exported ranked rows and totals match the displayed tables for every group.
 - **SC-003**: All five retired cup URLs perform zero mutations, while the root URL still reaches the SPA competition list.
 - **SC-004**: The legacy service inventory names every class in `app/Services` and gives a caller-based disposition.
 - **SC-005**: Focused regression coverage passes for the changed behavior; the final feature quality gates pass.
+- **SC-006**: An authenticated impression shows the author's email after a stale user-list cache is refreshed.
 
 ## Assumptions
 

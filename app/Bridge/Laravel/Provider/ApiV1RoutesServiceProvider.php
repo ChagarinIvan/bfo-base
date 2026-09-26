@@ -163,7 +163,7 @@ final class ApiV1RoutesServiceProvider extends ServiceProvider
                 $router->post('cups', CreateCupAction::class);
                 $router->put('cups/{cupId}', UpdateCupAction::class);
                 $router->delete('cups/{cupId}', DeleteCupAction::class);
-                $router->post('cups/{cupId}/cache-clear', ClearCupCacheAction::class);
+                $router->post('cups/cache-clear', ClearCupCacheAction::class);
                 $router->post('cup-events', CreateCupEventAction::class);
                 $router->put('cup-events/{cupEventId}', UpdateCupEventAction::class);
                 $router->delete('cup-events/{cupEventId}', DeleteCupEventAction::class);

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Application\Handler\Event;
 
 use App\Application\Dto\Auth\UserId;
-use App\Application\Service\Cup\ClearCupCache;
 use App\Application\Service\Person\Exception\PersonNotFound;
 use App\Application\Service\Person\RebuildPersonRanks;
 use App\Domain\Event\Event;
@@ -26,8 +25,8 @@ trait DisableEventHandlerTrait
             }
         }
 
-        foreach ($event->cups as $cup) {
-            $this->clearCupCacheService->execute(new ClearCupCache((string) $cup->id));
+        if ($event->cups->isNotEmpty()) {
+            $this->clearCupCacheService->execute();
         }
     }
 }

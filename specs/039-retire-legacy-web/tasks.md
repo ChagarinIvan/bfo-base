@@ -32,6 +32,13 @@
 - [X] T014 [US1][US2][US3][US4] Run focused changed-behavior tests, inspect route list and old-route side effects, check full export cache reuse, and compare acceptance scenarios with contracts (FR-011, SC-001 through SC-004).
 - [X] T015 [US1][US2][US3][US4] Run final full PHPUnit suite, `composer stan`, `composer cs`, Rector dry-run, frontend CI, and local application startup; address feature regressions (SC-005). `composer test` hit its 300-second process timeout; direct PHPUnit completed the same suite in 3:56.
 
+## Follow-up: impression author regression
+
+- [X] T016 [US5] Confirm the existing authenticated `/api/v1/users` route and its `id`, `name`, `email` response; show email in the shared impression component and refresh a stale user cache when the author ID is missing (FR-012, SC-006).
+- [X] T017 [US5] Add focused SPA regression coverage for email preference, stale-cache refresh, missing author, and guest isolation (FR-011, FR-012).
+- [X] T018 [US1] Make cache invalidation global under the shared `cups` tag; remove cup ID from the route, command, service, invalidator, handlers, and SPA caller (FR-002).
+- [X] T019 [US1][US2] Verify global invalidation across two cup tags and inactive cups; compare exported CSV rows, stage points, and totals with JSON tables for male and female groups (FR-011, SC-002).
+
 ## Dependencies and execution order
 
 - T001 precedes deletions and T013.
