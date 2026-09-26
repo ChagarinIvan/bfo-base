@@ -23,7 +23,6 @@ use App\Bridge\Laravel\Http\Controllers\Api\V1\Competition\UpdateCompetitionActi
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Competition\ViewCompetitionAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\CreateCupAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\CreateCupEventAction;
-use App\Bridge\Laravel\Http\Controllers\Cup\ExportCupTableAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\ListCupEventPointsAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\ListCupEventsAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\ListCupsAction;
@@ -69,6 +68,7 @@ use App\Bridge\Laravel\Http\Controllers\Api\V1\RankCheck\ListRankCheckRowsAction
 use App\Bridge\Laravel\Http\Controllers\Api\V1\RankCheck\ListRankChecksAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\RankCheck\ViewRankCheckAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Year\ListYearsAction;
+use App\Bridge\Laravel\Http\Controllers\Cup\ExportCupTableAction;
 use App\Bridge\Laravel\Http\Middleware\AuthenticateApiV1;
 use App\Bridge\Laravel\Http\Middleware\CacheResponseByQueryParameter;
 use App\Bridge\Laravel\Http\Middleware\OptionalAuthenticateApiV1;
