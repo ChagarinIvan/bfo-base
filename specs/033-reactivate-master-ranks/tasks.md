@@ -106,4 +106,5 @@
 ## Phase 8: Production N+1 remediation
 
 - [X] T019 Replace the per-athlete prior-activation `exists()` loop with one set-based candidate query in `app/Services/ProtocolLineIdentService.php` per plan: performance goal.
-- [ ] T020 Run the multi-athlete query-count regression in `tests/Feature/Rank/RepeatMasterRankActivationTest.php` against isolated MySQL per plan: performance goal.
+- [X] T020 Run the multi-athlete query-count regression in `tests/Feature/Rank/RepeatMasterRankActivationTest.php` against isolated MySQL per plan: performance goal.
+- [X] T021 Remove the random primary key from `ProtocolLineFactory` so multi-line rank activation fixtures use the database auto-increment key and cannot collide.

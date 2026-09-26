@@ -57,14 +57,14 @@ final class CupMaintenanceActionsTest extends TestCase
     {
         $this->seed(SprintCupLineSeeder::class);
         $this->authenticate();
-        Cache::tags(['cups', 101])->put('table_101_M_0_', 'stale', 60);
-        Cache::tags(['cups', 202])->put('table_202_M_0_', 'stale', 60);
+        Cache::tags(['cups'])->put('table_101_M_0_', 'stale', 60);
+        Cache::tags(['cups'])->put('table_202_M_0_', 'stale', 60);
         Cup::query()->whereKey(101)->update(['active' => false]);
 
         $this->postJson('/api/v1/cups/cache-clear')->assertNoContent();
 
-        $this->assertNull(Cache::tags(['cups', 101])->get('table_101_M_0_'));
-        $this->assertNull(Cache::tags(['cups', 202])->get('table_202_M_0_'));
+        $this->assertNull(Cache::tags(['cups'])->get('table_101_M_0_'));
+        $this->assertNull(Cache::tags(['cups'])->get('table_202_M_0_'));
     }
 
     #[Test]

@@ -156,7 +156,7 @@ final class ExportCupTableActionTest extends TestCase
             'password' => Hash::make('secret'),
         ]));
 
-        Cache::tags(['cups', 101])->flush();
+        Cache::tags(['cups'])->flush();
         DB::enableQueryLog();
         $this->get('/api/v1/cups/101/export')->assertOk();
         $coldQueries = count(DB::getQueryLog());

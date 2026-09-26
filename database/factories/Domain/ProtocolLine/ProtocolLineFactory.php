@@ -14,7 +14,6 @@ class ProtocolLineFactory extends Factory
     public function definition(): array
     {
         return [
-            'id' => $this->faker->numberBetween(1, 100),
             'serial_number' => $this->faker->numberBetween(1, 100),
             'lastname' => $this->faker->lastName,
             'firstname' => $this->faker->firstName,
