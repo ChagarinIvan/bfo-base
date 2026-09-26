@@ -2,7 +2,10 @@
 
 import { flushPromises, mount } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
+import { ref } from 'vue'
 import CupTablePage from './CupTablePage.vue'
+import ListingTable from '../../components/ListingTable.vue'
+import { cupContextKey } from './cupContext'
 
 const { getCup, getCupEvents, getCupTable, getEventsByIds, route } = vi.hoisted(
     () => ({
@@ -66,11 +69,18 @@ describe('cup table page', () => {
 
         const wrapper = mount(CupTablePage, {
             global: {
+                provide: {
+                    [cupContextKey as symbol]: ref({
+                        id: '42',
+                        name: 'Кубак',
+                        year: 2026,
+                        type: 'master',
+                        eventsCount: '1',
+                        groups: [{ id: 'M_0_', name: 'М0' }],
+                        visible: true,
+                    }),
+                },
                 stubs: {
-                    Card: {
-                        template:
-                            '<div><slot name="title" /><slot name="content" /></div>',
-                    },
                     Message: true,
                     Select: true,
                     InputText: true,
@@ -78,7 +88,7 @@ describe('cup table page', () => {
                     CupTypeIcon: true,
                     ActionButton: true,
                     ListingTable: {
-                        props: ['items'],
+                        props: ['items', 'columns'],
                         template:
                             '<div>{{ items[0]?.personName }}<slot name="cell-stage-7" :data="items[0]" /></div>',
                     },
@@ -96,5 +106,20 @@ describe('cup table page', () => {
             expect.any(AbortSignal),
         )
         expect(wrapper.text()).toContain('Иван Иванов')
+        expect(
+            wrapper
+                .findComponent(ListingTable)
+                .props('columns')
+                .filter((column) =>
+                    [
+                        'place',
+                        'personYear',
+                        'clubName',
+                        'totalPoints',
+                        'averagePoints',
+                    ].includes(column.key),
+                )
+                .every((column) => column.field === column.key),
+        ).toBe(true)
     })
 })

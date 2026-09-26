@@ -67,6 +67,10 @@ function restore(): void {
 }
 
 function isVisible(key: string): boolean {
+    if (props.columns.find((column) => column.key === key)?.required) {
+        return true
+    }
+
     return visible.value.includes(key)
 }
 

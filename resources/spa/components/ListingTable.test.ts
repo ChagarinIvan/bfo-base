@@ -100,6 +100,35 @@ describe('listing table', () => {
         )
     })
 
+    it('always renders required columns even when they are not configurable', () => {
+        localStorage.setItem('bfo.table.test-table.guest', '["name"]')
+        const wrapper = mount(ListingTable, {
+            props: {
+                tableId: 'test-table',
+                columns: [
+                    {
+                        key: 'name',
+                        label: 'Name',
+                        field: 'name',
+                        defaultVisible: true,
+                    },
+                    {
+                        key: 'stage-1',
+                        label: 'Stage 1',
+                        field: 'stage1',
+                        defaultVisible: true,
+                        required: true,
+                        configurable: false,
+                    },
+                ],
+                items: [{ name: 'Participant', stage1: 100 }],
+            },
+        })
+
+        expect(wrapper.text()).toContain('Stage 1')
+        expect(wrapper.text()).toContain('100')
+    })
+
     it('renders declarative fields and delegates custom cells to named slots', () => {
         const wrapper = mount(ListingTable, {
             props: {

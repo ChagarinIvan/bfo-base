@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Application\Service\Cup;
 
+use App\Application\Dto\Cup\ViewCupTableRowDto;
 use App\Application\Dto\Cup\CupTableAssembler;
 use App\Application\Dto\Cup\CupTableSearchDto;
 use App\Application\Service\Cup\Exception\CupNotFound;
@@ -70,7 +71,7 @@ final class ViewCupTableServiceTest extends TestCase
             ->willReturn($table)
         ;
 
-        $result = $this->service->execute(new ViewCupTable('42', 'M_0_', (new CupTableSearchDto())->fromArray([])));
+        $result = $this->service->execute(new ViewCupTable('42', 'M_0_', new CupTableSearchDto()->fromArray([])));
 
         $this->assertSame([], $result->items());
     }
@@ -89,7 +90,7 @@ final class ViewCupTableServiceTest extends TestCase
         $this->cupEvents->expects($this->never())->method('byCriteria');
         $this->table->expects($this->never())->method('build');
 
-        $this->service->execute(new ViewCupTable('42', 'M_0_', (new CupTableSearchDto())->fromArray([])));
+        $this->service->execute(new ViewCupTable('42', 'M_0_', new CupTableSearchDto()->fromArray([])));
     }
 
     #[Test]
@@ -115,12 +116,12 @@ final class ViewCupTableServiceTest extends TestCase
             ->method('build')
             ->willReturn($table)
         ;
-        $result = $this->service->execute(new ViewCupTable('42', 'M_0_', (new CupTableSearchDto())->fromArray(['name' => 'john'])));
+        $result = $this->service->execute(new ViewCupTable('42', 'M_0_', new CupTableSearchDto()->fromArray(['name' => 'john'])));
         $rows = $result->items();
 
         $this->assertCount(2, $rows);
-        $this->assertSame(['John Doe', 'John Smith'], array_map(static fn ($row): string => $row->personName, $rows));
-        $this->assertSame([1, 3], array_map(static fn ($row): int => $row->place, $rows));
+        $this->assertSame(['John Doe', 'John Smith'], array_map(static fn (ViewCupTableRowDto $row): string => $row->personName, $rows));
+        $this->assertSame([1, 3], array_map(static fn (ViewCupTableRowDto $row): int => $row->place, $rows));
     }
 
     #[Test]
@@ -132,7 +133,7 @@ final class ViewCupTableServiceTest extends TestCase
         $this->table->expects($this->never())->method('build');
 
         $this->expectException(UnsupportedCupGroup::class);
-        $this->service->execute(new ViewCupTable('42', 'M_12_', (new CupTableSearchDto())->fromArray([])));
+        $this->service->execute(new ViewCupTable('42', 'M_12_', new CupTableSearchDto()->fromArray([])));
     }
 
     private function row(int $place, int $personId, string $name): CupTableRow

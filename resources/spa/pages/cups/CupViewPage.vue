@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, ref, watch } from 'vue'
+import { computed, inject, onBeforeUnmount, ref, watch } from 'vue'
 import type { AxiosError } from 'axios'
-import Card from 'primevue/card'
 import InputText from 'primevue/inputtext'
 import Message from 'primevue/message'
 import type { PageState } from 'primevue/paginator'
@@ -21,7 +20,6 @@ import DateFilter from '../../components/DateFilter.vue'
 import FilterPanel from '../../components/FilterPanel.vue'
 import ImpressionDetails from '../../components/ImpressionDetails.vue'
 import ListingTable from '../../components/ListingTable.vue'
-import CupTypeIcon from '../../components/CupTypeIcon.vue'
 import { t } from '../../i18n'
 import { useAuthStore } from '../../stores/auth'
 import { getUsers } from '../../api/users'
@@ -31,12 +29,12 @@ import {
     paginationFromHeaders,
 } from '../listingModels'
 import { cupEventQuery } from './cupViewModels'
-import { cupGroupBadgeClass } from './cupModels'
+import { cupContextKey } from './cupContext'
 
 const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
-const cup = ref<Cup | null>(null)
+const cup = inject(cupContextKey, ref<Cup | null>(null))
 const events = ref<CupEvent[]>([])
 const stageEvents = ref<Record<string, Event>>({})
 const users = ref<User[]>([])
@@ -46,7 +44,6 @@ const loading = ref(true)
 const eventsLoading = ref(false)
 const error = ref('')
 const selectedEvent = ref<CupEvent | null>(null)
-const deleteCupVisible = ref(false)
 const pagination = ref<PaginationHeaders>({
     currentPage: 1,
     perPage: 50,
@@ -131,11 +128,10 @@ async function load(cupId: string): Promise<void> {
     loading.value = true
     error.value = ''
     try {
-        cup.value = await getCup(cupId)
+        if (!cup.value) cup.value = await getCup(cupId)
         users.value = auth.isAuthenticated ? await getUsers() : []
         await loadEvents()
     } catch (exception) {
-        cup.value = null
         events.value = []
         if (isNotFound(exception)) {
             await router.replace({ name: 'not-found' })
@@ -162,21 +158,12 @@ function onDateChange(): void {
 function onPage(page: PageState): void {
     void loadEvents(page.page + 1, page.rows)
 }
-function deleteCup(): void {
-    if (cup.value) window.location.assign(`/cups/${cup.value.id}/delete`)
-}
 function deleteEvent(): void {
     if (cup.value && selectedEvent.value)
         window.location.assign(
             `/cups/${cup.value.id}/${selectedEvent.value.id}/delete`,
         )
 }
-function cupTableUrl(): string {
-    return cup.value?.groups[0]
-        ? `/app/cups/${cup.value.id}/table/${cup.value.groups[0].id}`
-        : ''
-}
-
 watch(
     () => String(route.params.cupId),
     (id) => void load(id),
@@ -197,137 +184,6 @@ onBeforeUnmount(() => debouncedSearch.cancel())
         error
     }}</Message>
     <template v-else-if="cup">
-        <Card class="competition-details-card">
-            <template #title>{{ cup.name }}</template>
-            <template #content>
-                <table class="competition-details-info">
-                    <tbody>
-                        <tr>
-                            <th>{{ t('spa.cup.form.year') }}</th>
-                            <td>{{ cup.year }}</td>
-                        </tr>
-                        <tr>
-                            <th>{{ t('spa.cup.type') }}</th>
-                            <td>
-                                <CupTypeIcon :type="cup.type" />
-                                {{ t(`app.cup.type.${cup.type}` as never) }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>{{ t('spa.cups.events_count') }}</th>
-                            <td>{{ cup.eventsCount }}</td>
-                        </tr>
-                        <tr>
-                            <th>{{ t('spa.cups.groups') }}</th>
-                            <td>
-                                <a
-                                    v-for="group in cup.groups"
-                                    :key="group.id"
-                                    :href="`/app/cups/${cup.id}/table/${group.id}`"
-                                    :class="[
-                                        'cup-group-badge',
-                                        cupGroupBadgeClass(group),
-                                    ]"
-                                >
-                                    {{ group.name }}
-                                </a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>{{ t('spa.cups.visibility') }}</th>
-                            <td>
-                                <span class="mass-competition-indicator__icon">
-                                    <i
-                                        :class="[
-                                            cup.visible
-                                                ? 'pi pi-check-square'
-                                                : 'pi pi-times-circle',
-                                            'mass-icon',
-                                            cup.visible
-                                                ? 'mass-icon--active'
-                                                : 'mass-icon--inactive',
-                                        ]"
-                                        :aria-label="
-                                            cup.visible
-                                                ? t('spa.cups.visible_yes')
-                                                : t('spa.cups.visible_no')
-                                        "
-                                        :title="
-                                            cup.visible
-                                                ? t('spa.cups.visible_yes')
-                                                : t('spa.cups.visible_no')
-                                        "
-                                        role="img"
-                                    />
-                                </span>
-                            </td>
-                        </tr>
-                        <tr v-if="auth.isAuthenticated">
-                            <th>{{ t('spa.cups.created') }}</th>
-                            <td>
-                                <ImpressionDetails
-                                    :impression="cup.created"
-                                    :users="users"
-                                    :label="t('spa.cups.created')"
-                                />
-                            </td>
-                        </tr>
-                        <tr v-if="auth.isAuthenticated">
-                            <th>{{ t('spa.cups.updated') }}</th>
-                            <td>
-                                <ImpressionDetails
-                                    :impression="cup.updated"
-                                    :users="users"
-                                    :label="t('spa.cups.updated')"
-                                />
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div v-if="auth.isAuthenticated" class="details-actions">
-                    <ActionButton
-                        as="a"
-                        :href="`/app/cups/${cup.id}/edit`"
-                        icon="pi pi-pencil"
-                        :label="t('spa.cups.edit.action')"
-                    />
-                    <ActionButton
-                        as="a"
-                        :href="`/app/cups/${cup.id}/events/create`"
-                        icon="pi pi-plus"
-                        :label="t('app.competition.add_event')"
-                        severity="success"
-                    />
-                    <ActionButton
-                        as="a"
-                        :href="`/cups/${cup.id}/cache`"
-                        icon="pi pi-refresh"
-                        :label="t('app.common.cache_clear')"
-                        severity="warn"
-                    />
-                    <ActionButton
-                        as="a"
-                        :href="`/cups/${cup.id}/export`"
-                        icon="pi pi-download"
-                        :label="t('app.cup.table.export')"
-                        severity="info"
-                    />
-                    <ActionButton
-                        v-if="cupTableUrl()"
-                        as="a"
-                        :href="cupTableUrl()"
-                        icon="pi pi-table"
-                        :label="t('spa.cups.table')"
-                    />
-                    <ActionButton
-                        icon="pi pi-trash"
-                        :label="t('spa.cups.delete.action')"
-                        severity="danger"
-                        @click="deleteCupVisible = true"
-                    />
-                </div>
-            </template>
-        </Card>
         <h2 class="section-title">{{ t('app.cup.events') }}</h2>
         <ListingTable
             table-id="cup-events"
@@ -394,16 +250,6 @@ onBeforeUnmount(() => debouncedSearch.cancel())
                     @click="selectedEvent = data"
             /></template>
         </ListingTable>
-        <ConfirmDeleteDialog
-            v-if="auth.isAuthenticated"
-            :visible="deleteCupVisible"
-            :title="t('spa.cups.delete.title')"
-            :confirmation="t('spa.cups.delete.confirm', { name: cup.name })"
-            :cancel-label="t('spa.cups.delete.cancel')"
-            :action-label="t('spa.cups.delete.action')"
-            @cancel="deleteCupVisible = false"
-            @confirm="deleteCup"
-        />
         <ConfirmDeleteDialog
             v-if="auth.isAuthenticated && selectedEvent"
             :visible="Boolean(selectedEvent)"
