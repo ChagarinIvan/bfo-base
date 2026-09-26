@@ -25,9 +25,9 @@ final class StandardCupTableBuilderTest extends TestCase
         $protocolLine = $this->protocolLineStub(100, 42, '  Doe', 'Jane ', 1990, 'Club', 501);
         $unassignedLine = $this->protocolLineStub(101, null, 'Unknown', 'Runner', 0, '', 502);
         $points = [
-            new CupEventPoint(11, $protocolLine, 80),
-            new CupEventPoint(12, $protocolLine, 0),
-            new CupEventPoint(13, $protocolLine, 50),
+            0 => new CupEventPoint(11, $protocolLine, 80),
+            2 => new CupEventPoint(13, $protocolLine, 50),
+            1 => new CupEventPoint(12, $protocolLine, 0),
         ];
         $cup = $this->getMockBuilder(Cup::class)
             ->onlyMethods(['calculateGroupEvents'])
@@ -56,13 +56,15 @@ final class StandardCupTableBuilderTest extends TestCase
         $this->assertSame('Doe Jane', $row->personName);
         $this->assertSame(1990, $row->personYear);
         $this->assertSame('Club', $row->clubName);
-        $this->assertSame('80', $row->totalPoints);
-        $this->assertSame('80', $row->averagePoints);
+        $this->assertSame('130', $row->totalPoints);
+        $this->assertSame('65', $row->averagePoints);
         $cells = array_values($row->stages);
         $this->assertTrue($cells[0]->counted);
         $this->assertSame(11, $cells[0]->stageId);
         $this->assertTrue($cells[1]->counted);
+        $this->assertSame(13, $cells[1]->stageId);
         $this->assertFalse($cells[2]->counted);
+        $this->assertSame(12, $cells[2]->stageId);
     }
 
     private function protocolLineStub(

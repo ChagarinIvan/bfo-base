@@ -43,9 +43,14 @@ final class ExportCupTableAction extends BaseController
             $lines[] = '';
         }
 
-        return response(implode("\r\n", $lines), 200, [
-            'Content-Type' => 'text/csv; charset=UTF-8',
-            'Content-Disposition' => 'attachment; filename="' . $cup->name . '.csv"',
-        ]);
+        $csv = implode("\r\n", $lines);
+
+        return response()->streamDownload(
+            static function () use ($csv): void {
+                echo $csv;
+            },
+            $cup->name . '.csv',
+            ['Content-Type' => 'text/csv; charset=UTF-8'],
+        );
     }
 }

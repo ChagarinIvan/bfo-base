@@ -7,14 +7,15 @@ import CupTablePage from './CupTablePage.vue'
 import ListingTable from '../../components/ListingTable.vue'
 import { cupContextKey } from './cupContext'
 
-const { getCup, getCupEvents, getCupTable, getEventsByIds, route } =
-    vi.hoisted(() => ({
-    getCup: vi.fn(),
-    getCupEvents: vi.fn(),
-    getCupTable: vi.fn(),
-    getEventsByIds: vi.fn(),
-    route: { params: { cupId: '42', groupId: 'M_0_' } },
-}))
+const { getCup, getCupEvents, getCupTable, getEventsByIds, route } = vi.hoisted(
+    () => ({
+        getCup: vi.fn(),
+        getCupEvents: vi.fn(),
+        getCupTable: vi.fn(),
+        getEventsByIds: vi.fn(),
+        route: { params: { cupId: '42', groupId: 'M_0_' } },
+    }),
+)
 
 vi.mock('../../api/cups', () => ({ getCup, getCupEvents, getCupTable }))
 vi.mock('../../api/events', () => ({ getEventsByIds }))

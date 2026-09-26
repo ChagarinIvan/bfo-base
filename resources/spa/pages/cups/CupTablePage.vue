@@ -182,6 +182,7 @@ onBeforeUnmount(() => {
 
 <template>
     <template v-if="cup">
+        <h2 class="section-title">{{ t('spa.cups.table') }}</h2>
         <ListingTable
             table-id="cup-table-v2"
             :columns="columns"

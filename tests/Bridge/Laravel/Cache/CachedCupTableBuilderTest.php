@@ -38,7 +38,7 @@ final class CachedCupTableBuilderTest extends TestCase
         $taggedCache = $this->createMock(TaggedCache::class);
         $taggedCache->expects($this->once())
             ->method('remember')
-            ->with('table_42_M_0_', 1000000, $this->callback('is_callable'))
+            ->with('table_v2_42_M_0_', 1000000, $this->callback('is_callable'))
             ->willReturnCallback(static fn (string $key, int $ttl, callable $callback): CupTable => $callback())
         ;
 

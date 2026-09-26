@@ -71,6 +71,7 @@ const eventsUrl = computed(() =>
             v-if="auth.isAuthenticated"
             as="a"
             :href="`/cups/${props.cupId}/export`"
+            download
             icon="pi pi-download"
             :label="t('app.cup.table.export')"
             severity="info"

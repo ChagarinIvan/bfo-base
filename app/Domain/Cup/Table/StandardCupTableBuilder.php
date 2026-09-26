@@ -36,10 +36,12 @@ final readonly class StandardCupTableBuilder implements CupTableBuilder
             $cells = [];
             $total = 0.0;
             $countedPoints = 0;
+            $resultRank = 0;
 
-            foreach ($points as $index => $point) {
+            foreach ($points as $point) {
                 $line = $point->protocolLine;
-                $counted = $index < $countedEvents;
+                $counted = $resultRank < $countedEvents;
+                ++$resultRank;
                 $cells[(string) $point->cupEventId] = new CupTableStageCell(
                     stageId: $point->cupEventId,
                     points: (string) $point->points,

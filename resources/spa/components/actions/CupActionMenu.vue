@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { t } from '../../i18n'
+import { RouterLink } from 'vue-router'
 import ActionButton from './ActionButton.vue'
 import EditActionButton from './EditActionButton.vue'
 
@@ -13,13 +14,14 @@ const emit = defineEmits<{ delete: [] }>()
             :to="`/app/cups/${props.cupId}/edit`"
             :label="t('spa.cups.edit.action')"
         />
-        <ActionButton
-            as="a"
-            :href="props.tableUrl"
-            icon="pi pi-table"
-            :label="t('spa.cups.table')"
-            severity="success"
-        />
+        <RouterLink v-slot="{ navigate }" :to="props.tableUrl" custom>
+            <ActionButton
+                icon="pi pi-table"
+                :label="t('spa.cups.table')"
+                severity="success"
+                @click="navigate"
+            />
+        </RouterLink>
         <ActionButton
             icon="pi pi-trash"
             :label="t('spa.cups.delete.action')"
