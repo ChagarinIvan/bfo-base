@@ -5,15 +5,12 @@ declare(strict_types=1);
 namespace App\Application\Dto\CupEvent;
 
 use App\Application\Dto\Auth\AuthAssembler;
-use App\Application\Dto\Event\EventAssembler;
 use App\Domain\Cup\CupEvent\CupEvent;
-use App\Domain\Event\EventResources;
 
 final readonly class CupEventAssembler
 {
     public function __construct(
         private AuthAssembler $authAssembler,
-        private EventAssembler $eventAssembler,
     ) {
     }
 
@@ -26,10 +23,6 @@ final readonly class CupEventAssembler
             points: (string) $cupEvent->points,
             created: $this->authAssembler->toImpressionDto($cupEvent->created),
             updated: $this->authAssembler->toImpressionDto($cupEvent->updated),
-            event: $this->eventAssembler->toViewEventDto(
-                $cupEvent->event,
-                new EventResources(withCompetitionName: true),
-            ),
         );
     }
 }

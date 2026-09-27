@@ -63,14 +63,14 @@ class MasterCupType extends AbstractCupType
         return 'app.cup.type.master';
     }
 
-    public function calculateEvent(CupEvent $cupEvent, CupGroup $mainGroup): Collection
+    /** @return array<int|string, CupEventPoint> */
+    public function calculateEvent(CupEvent $cupEvent, CupGroup $mainGroup): array
     {
         $results = new Collection();
         $cupEventProtocolLines = $this->getGroupProtocolLines($cupEvent, $mainGroup);
         $eventGroupsId = $this->getEventGroups($mainGroup->male())->pluck('id');
 
-        $eventDistances = $this->distanceService
-            ->getCupEventDistancesByGroups($cupEvent, $eventGroupsId)
+        $eventDistances = $this->cupEventDistancesByGroups($cupEvent, $eventGroupsId)
             ->pluck('id')
             ->toArray()
         ;
@@ -103,11 +103,11 @@ class MasterCupType extends AbstractCupType
             ->count() > 0
         ;
 
-        $mainDistance = $this->distanceService->findDistance(self::GROUPS_MAP[$mainGroup->id()], $cupEvent->event_id);
+        $mainDistance = $this->distanceByGroupNames(self::GROUPS_MAP[$mainGroup->id()], $cupEvent->event_id);
         $equalDistances = Collection::make([$mainDistance]);
 
         if ($mainDistance instanceof Distance) {
-            $equalDistances->push(...$this->distanceService->getEqualDistances($mainDistance));
+            $equalDistances->push(...$this->equalDistances($mainDistance));
         }
 
         $equalGroupsIds = $equalDistances->pluck('group_id');
@@ -129,10 +129,13 @@ class MasterCupType extends AbstractCupType
         $eventGroupResults = $this->calculateLines($cupEvent, $equalGroupResults);
         $results = $results->merge($eventGroupResults->intersectByKeys($equalGroupResults->keyBy('person_id')));
 
-        return $results->sortByDesc(static fn (CupEventPoint $cupEventResult): float|int|string => $cupEventResult->points);
+        return $results
+            ->sortByDesc(static fn (CupEventPoint $cupEventResult): float|int|string => $cupEventResult->points)
+            ->all()
+        ;
     }
 
-    public function getGroups(): array|Collection
+    public function groups(): array
     {
         return CupGroupFactory::getAgeTypeGroups([
             GroupAge::a35,
@@ -148,9 +151,10 @@ class MasterCupType extends AbstractCupType
         ]);
     }
 
-    public function getCalculatedGroups(): Collection
+    /** @return CupGroup[] */
+    public function getCalculatedGroups(): array
     {
-        return $this->getGroups();
+        return $this->groups();
     }
 
     protected function calculateGroup(CupEvent $cupEvent, int $groupId): Collection
@@ -178,7 +182,6 @@ class MasterCupType extends AbstractCupType
     {
         $groupNames = [];
 
-        /** @var CupGroup $cupGroup */
         foreach ($this->getCalculatedGroups() as $cupGroup) {
             if ($cupGroup->male() === $male) {
                 $groupNames = array_merge(

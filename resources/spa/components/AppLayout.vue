@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useAuthStore } from '../stores/auth'
+import { useAppearanceStore } from '../stores/appearance'
 import { t } from '../i18n'
 import { useRouter } from 'vue-router'
 import { useToast } from 'primevue/usetoast'
@@ -8,15 +9,23 @@ import brandIconUrl from '../assets/icon.svg'
 import {
     authenticatedAccountNavigation,
     authenticatedCompetitionNavigation,
+    authenticatedPersonsNavigation,
     competitionNavigation,
     personsNavigation,
 } from './navigationModels'
 
 const auth = useAuthStore()
+const appearance = useAppearanceStore()
 const router = useRouter()
 const toast = useToast()
 const openMenu = ref<'competitions' | 'persons' | null>(null)
-
+const appearanceActionLabel = computed(() =>
+    t(
+        appearance.mode === 'night'
+            ? 'spa.nav.appearance_light'
+            : 'spa.nav.appearance_night',
+    ),
+)
 function toggleMenu(menu: 'competitions' | 'persons'): void {
     openMenu.value = openMenu.value === menu ? null : menu
 }
@@ -36,6 +45,18 @@ async function logout(): Promise<void> {
         })
     } finally {
         await router.push('/app/competitions')
+    }
+}
+
+async function openHorizon(): Promise<void> {
+    try {
+        await auth.openHorizon()
+    } catch {
+        toast.add({
+            severity: 'error',
+            summary: t('spa.nav.horizon_error'),
+            life: 5000,
+        })
     }
 }
 </script>
@@ -86,14 +107,24 @@ async function logout(): Promise<void> {
                             </a>
                         </template>
                         <template v-if="auth.isAuthenticated">
-                            <a
+                            <template
                                 v-for="item in authenticatedCompetitionNavigation"
                                 :key="item.href"
-                                class="app-nav-dropdown-link"
-                                :href="item.href"
                             >
-                                {{ t(item.label) }}
-                            </a>
+                                <RouterLink
+                                    v-if="item.spa"
+                                    class="app-nav-dropdown-link"
+                                    :to="item.href"
+                                >
+                                    {{ t(item.label) }}
+                                </RouterLink>
+                                <a
+                                    v-else
+                                    class="app-nav-dropdown-link"
+                                    :href="item.href"
+                                    >{{ t(item.label) }}</a
+                                >
+                            </template>
                         </template>
                     </div>
                 </details>
@@ -126,10 +157,51 @@ async function logout(): Promise<void> {
                                 {{ t(item.label) }}
                             </a>
                         </template>
+                        <template v-if="auth.isAuthenticated">
+                            <RouterLink
+                                v-for="item in authenticatedPersonsNavigation"
+                                :key="item.href"
+                                class="app-nav-dropdown-link"
+                                :to="item.href"
+                            >
+                                {{ t(item.label) }}
+                            </RouterLink>
+                        </template>
                     </div>
                 </details>
             </div>
             <div class="app-nav-auth">
+                <button
+                    class="app-appearance-toggle"
+                    :class="{
+                        'app-appearance-toggle--night':
+                            appearance.mode === 'night',
+                    }"
+                    type="button"
+                    :aria-label="appearanceActionLabel"
+                    :aria-pressed="appearance.mode === 'night'"
+                    :data-tooltip="t('spa.nav.appearance_tooltip')"
+                    @click="appearance.toggle"
+                >
+                    <span
+                        class="app-appearance-toggle__track"
+                        aria-hidden="true"
+                    >
+                        <span class="app-appearance-toggle__thumb">
+                            <i
+                                :class="[
+                                    'pi',
+                                    appearance.mode === 'night'
+                                        ? 'pi-sun'
+                                        : 'pi-moon',
+                                ]"
+                            />
+                        </span>
+                    </span>
+                    <span class="app-appearance-toggle__label">
+                        {{ appearanceActionLabel }}
+                    </span>
+                </button>
                 <RouterLink
                     v-if="!auth.isAuthenticated"
                     class="app-nav-link app-login-link"
@@ -138,6 +210,14 @@ async function logout(): Promise<void> {
                     <i class="pi pi-sign-in" /> {{ t('spa.nav.login') }}
                 </RouterLink>
                 <template v-else>
+                    <button
+                        v-if="auth.canAccessHorizon"
+                        class="app-logout-button"
+                        type="button"
+                        @click="openHorizon"
+                    >
+                        <i class="pi pi-server" /> {{ t('spa.nav.horizon') }}
+                    </button>
                     <template
                         v-for="item in authenticatedAccountNavigation"
                         :key="item.href"

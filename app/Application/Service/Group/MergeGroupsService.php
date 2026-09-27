@@ -22,6 +22,10 @@ final readonly class MergeGroupsService
     ) {
     }
 
+    /**
+     * @throws CannotMergeSameGroup
+     * @throws GroupNotFound
+     */
     public function execute(MergeGroups $command): void
     {
         if ($command->sourceId() === $command->targetId()) {

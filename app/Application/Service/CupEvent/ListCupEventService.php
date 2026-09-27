@@ -7,7 +7,7 @@ namespace App\Application\Service\CupEvent;
 use App\Application\Dto\CupEvent\CupEventAssembler;
 use App\Application\Dto\CupEvent\ViewCupEventDto;
 use App\Domain\Cup\CupEvent\CupEventRepository;
-use function array_map;
+use App\Domain\Shared\Pagination\Slice;
 
 final readonly class ListCupEventService
 {
@@ -17,12 +17,12 @@ final readonly class ListCupEventService
     ) {
     }
 
-    /** @return ViewCupEventDto[] */
-    public function execute(ListCupEvent $command): array
+    /** @return Slice<ViewCupEventDto> */
+    public function execute(ListCupEvent $command): Slice
     {
-        return array_map(
-            $this->assembler->toViewCupEventDto(...),
-            $this->events->byCriteria($command->criteria())->all(),
-        );
+        return $this->events
+            ->paginate($command->criteria())
+            ->map($this->assembler->toViewCupEventDto(...))
+        ;
     }
 }

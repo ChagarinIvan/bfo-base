@@ -69,6 +69,18 @@ final class EloquentCupRepositoryTest extends TestCase
     }
 
     #[Test]
+    public function it_treats_like_wildcards_as_literal_name_characters(): void
+    {
+        Cup::factory()->createOne(['name' => '100% Cup']);
+        Cup::factory()->createOne(['name' => '1000 Cup']);
+
+        $result = $this->repository->byCriteria(new Criteria(['name' => '100%']));
+
+        $this->assertCount(1, $result);
+        $this->assertSame('100% Cup', $result->first()->name);
+    }
+
+    #[Test]
     public function it_orders_by_id_desc(): void
     {
         Cup::factory()->createOne(['id' => 1]);

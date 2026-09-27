@@ -3,11 +3,12 @@ import { createPinia, setActivePinia } from 'pinia'
 
 const post = vi.fn()
 const del = vi.fn()
+const get = vi.fn()
 const setBearerToken = vi.fn()
 const setUnauthorizedHandler = vi.fn()
 
 vi.mock('../api/client', () => ({
-    api: { post, delete: del },
+    api: { post, get, delete: del },
     setBearerToken,
     setUnauthorizedHandler,
 }))
@@ -53,6 +54,7 @@ describe('auth store', () => {
         localStorage.clear()
         post.mockReset()
         del.mockReset()
+        get.mockReset()
         setBearerToken.mockReset()
         setUnauthorizedHandler.mockReset()
     })
@@ -61,6 +63,7 @@ describe('auth store', () => {
         post.mockResolvedValue({
             data: { token: '1|token', token_type: 'Bearer' },
         })
+        get.mockResolvedValue({ data: { allowed: true } })
         const store = useAuthStore()
 
         await store.login('user@example.com', 'secret')
@@ -68,6 +71,8 @@ describe('auth store', () => {
         expect(store.token).toBe('1|token')
         expect(localStorage.getItem('auth_token')).toBe('1|token')
         expect(setBearerToken).toHaveBeenCalledWith('1|token')
+        expect(store.canAccessHorizon).toBe(true)
+        expect(get).toHaveBeenCalledWith('/auth/horizon-access')
     })
 
     it('clears the token after logout even when the request succeeds', async () => {
@@ -81,5 +86,17 @@ describe('auth store', () => {
         expect(store.token).toBeNull()
         expect(localStorage.getItem('auth_token')).toBeNull()
         expect(del).toHaveBeenCalledWith('/auth/logout')
+    })
+
+    it('does not grant Horizon access when the capability endpoint fails', async () => {
+        post.mockResolvedValue({
+            data: { token: '1|token', token_type: 'Bearer' },
+        })
+        get.mockRejectedValue(new Error('Request failed'))
+        const store = useAuthStore()
+
+        await store.login('user@example.com', 'secret')
+
+        expect(store.canAccessHorizon).toBe(false)
     })
 })

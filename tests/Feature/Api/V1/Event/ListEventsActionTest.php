@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Api\V1\Event;
 
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Event\ListEventsAction;
 use App\Domain\Competition\Competition;
 use App\Domain\Distance\Distance;
 use App\Domain\Event\Event;
@@ -16,6 +17,8 @@ use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\Sanctum;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+
+/** @see ListEventsAction */
 
 final class ListEventsActionTest extends TestCase
 {
@@ -48,7 +51,7 @@ final class ListEventsActionTest extends TestCase
         $this->makeProtocolReady($event);
         $this->createEvent($competition, ['active' => false]);
 
-        $this->getJson("/api/v1/events?competitionId={$competition->id}")
+        $this->getJson("/api/v1/events?competitionId={$competition->id}&withParticipantsCount=1")
             ->assertOk()
             ->assertJsonCount(1)
             ->assertJsonPath('0.id', (string) $event->id)
@@ -68,7 +71,9 @@ final class ListEventsActionTest extends TestCase
         $this->getJson("/api/v1/events?competitionId={$competition->id}&perPage=1&page=2")
             ->assertOk()
             ->assertJsonCount(1)
-            ->assertHeader('X-Pagination-Total', '2')
+            ->assertHeader('X-Pagination-Has-Next', 'false')
+            ->assertHeaderMissing('X-Pagination-Total')
+            ->assertHeaderMissing('X-Pagination-Last-Page')
             ->assertHeader('X-Pagination-Per-Page', '1')
             ->assertHeader('X-Pagination-Current-Page', '2')
         ;
@@ -109,9 +114,23 @@ final class ListEventsActionTest extends TestCase
 
         $this->getJson("/api/v1/events?ids[]={$event->id}&withCompetition=1")
             ->assertOk()
+            ->assertHeader('Cache-Control', 'max-age=86400, private')
             ->assertJsonCount(1)
             ->assertJsonPath('0.id', (string) $event->id)
             ->assertJsonPath('0.competitionName', 'Spring Cup');
+    }
+
+    #[Test]
+    public function it_lists_cup_stage_options_by_year_without_requiring_a_group(): void
+    {
+        $competition = $this->createCompetition(['name' => 'Spring Cup']);
+        $event = $this->createEvent($competition, ['date' => '2026-05-11']);
+
+        $this->getJson('/api/v1/events?year=2026&notRelatedToCup=60&perPage=100&withCompetition=1')
+            ->assertOk()
+            ->assertJsonPath('0.id', (string) $event->id)
+            ->assertJsonPath('0.competitionName', 'Spring Cup')
+        ;
     }
 
     #[Test]

@@ -10,8 +10,11 @@ use App\Domain\PersonPrompt\PersonPromptRepository;
 use App\Domain\PersonPrompt\TranslitPersonPromptMetaphone;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\ProtocolLine\ProtocolLineOperations;
+use App\Domain\Rank\Rank;
 use App\Domain\Shared\Criteria;
 use App\Models\IdentLine;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use function levenshtein;
@@ -98,8 +101,8 @@ class ProtocolLineIdentService
     }
 
     public function __construct(
-        private readonly ProtocolLineOperations         $protocolLineService,
-        private readonly PersonPromptRepository        $personPrompts,
+        private readonly ProtocolLineOperations $protocolLineService,
+        private readonly PersonPromptRepository $personPrompts,
         private readonly TranslitPersonPromptMetaphone $metaphone,
     ) {
     }
@@ -119,6 +122,8 @@ class ProtocolLineIdentService
         $notIdentedLines = $notIdentedLines->keyBy('id');
         $identedLines = ProtocolLine::find($protocolLines->diffKeys($notIdentedLines)->keys());
         Log::info(sprintf('Idented %d lines.', $identedLines->count()));
+        $this->activateRepeatedMasterRanks($identedLines);
+
         // Пересчитываем затронутых спортсменов одной идемпотентной batch-задачей.
         $personIds = $identedLines->pluck('person_id')->filter()->unique()->values()->all();
         if ($personIds !== []) {
@@ -144,6 +149,27 @@ class ProtocolLineIdentService
         $this->protocolLineService->fastIdent($linesIds->all());
 
         return new Collection($this->protocolLineService->getProtocolLinesInListWithoutPerson($linesIds->all()));
+    }
+
+    /**
+     * @param Collection<int, ProtocolLine> $protocolLines
+     * @return list<int>
+     */
+    public function activateRepeatedMasterRanks(Collection $protocolLines, bool $dryRun = false): array
+    {
+        $lines = $this->repeatedMasterRankLines($protocolLines)->get();
+        $activatedLineIds = $lines->pluck('id')->all();
+
+        if ($dryRun) {
+            return $activatedLineIds;
+        }
+
+        foreach ($lines as $line) {
+            $line->setAttribute('activate_rank', $line->getAttribute('activation_event_date'));
+            $line->save();
+        }
+
+        return $activatedLineIds;
     }
 
     /**
@@ -197,13 +223,31 @@ class ProtocolLineIdentService
         }
     }
 
-    /** @return array<string, int> */
-    public function identLinesByPrompts(array $lines): array
+    /** @return Builder<ProtocolLine> */
+    private function repeatedMasterRankLines(Collection $protocolLines): Builder
     {
-        return $this->personPrompts
-            ->byCriteria(new Criteria(['prompts' => $lines]))
-            ->pluck('person_id', 'prompt')
-            ->toArray()
+        return ProtocolLine::query()
+            ->select('protocol_lines.*')
+            ->addSelect('current_events.date as activation_event_date')
+            ->join('distances as current_distances', 'current_distances.id', '=', 'protocol_lines.distance_id')
+            ->join('events as current_events', 'current_events.id', '=', 'current_distances.event_id')
+            ->whereKey($protocolLines->pluck('id')->all())
+            ->whereNotNull('protocol_lines.person_id')
+            ->whereNull('protocol_lines.activate_rank')
+            ->whereIn('protocol_lines.complete_rank', [Rank::CandidateMaster->label(), Rank::MasterOfSport->label()])
+            ->whereExists(static function (QueryBuilder $query): void {
+                $query
+                    ->selectRaw('1')
+                    ->from('protocol_lines as previous_lines')
+                    ->join('distances as previous_distances', 'previous_distances.id', '=', 'previous_lines.distance_id')
+                    ->join('events as previous_events', 'previous_events.id', '=', 'previous_distances.event_id')
+                    ->whereColumn('previous_lines.person_id', 'protocol_lines.person_id')
+                    ->whereColumn('previous_lines.complete_rank', 'protocol_lines.complete_rank')
+                    ->whereNotNull('previous_lines.activate_rank')
+                    ->whereColumn('previous_lines.id', '!=', 'protocol_lines.id')
+                    ->whereColumn('previous_events.date', '<', 'current_events.date')
+                ;
+            })
         ;
     }
 

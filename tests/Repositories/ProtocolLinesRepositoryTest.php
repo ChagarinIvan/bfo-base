@@ -107,6 +107,25 @@ final class ProtocolLinesRepositoryTest extends TestCase
         $this->assertSame([101], $lines->pluck('id')->all());
     }
 
+    #[Test]
+    public function it_excludes_inactive_people_from_cup_distance_calculation(): void
+    {
+        /** @var Person $activePerson */
+        $activePerson = Person::factory()->createOne(['id' => 1, 'active' => true]);
+        /** @var Person $inactivePerson */
+        $inactivePerson = Person::factory()->createOne(['id' => 2, 'active' => false]);
+        Competition::factory()->createOne(['id' => 101, 'active' => true]);
+        Event::factory()->createOne(['id' => 101, 'competition_id' => 101, 'active' => true]);
+        Group::factory()->createOne(['id' => 101]);
+        Distance::factory()->createOne(['id' => 101, 'event_id' => 101, 'group_id' => 101]);
+        ProtocolLine::factory()->createOne(['id' => 101, 'distance_id' => 101, 'person_id' => $activePerson->id]);
+        ProtocolLine::factory()->createOne(['id' => 102, 'distance_id' => 101, 'person_id' => $inactivePerson->id]);
+
+        $lines = $this->repository->byCriteria(new Criteria(['distances' => collect([101])]));
+
+        $this->assertSame([101], $lines->pluck('id')->all());
+    }
+
     private function createProtocolLine(int $id, string $preparedLine): void
     {
         Competition::factory(state: ['id' => 101])->createOne();

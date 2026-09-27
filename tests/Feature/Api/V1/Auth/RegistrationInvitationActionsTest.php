@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Api\V1\Auth;
 
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Auth\ActivateRegistrationInvitationAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Auth\SendRegistrationInvitationAction;
 use App\Domain\Auth\User;
 use App\Infrastructure\Sanctum\SanctumUser;
 use App\Mail\PasswordMail;
@@ -15,6 +17,11 @@ use Laravel\Sanctum\Sanctum;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 use function rawurlencode;
+
+/**
+ * @see ActivateRegistrationInvitationAction
+ * @see SendRegistrationInvitationAction
+ */
 
 final class RegistrationInvitationActionsTest extends TestCase
 {

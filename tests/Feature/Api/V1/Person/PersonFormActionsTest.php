@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Api\V1\Person;
 
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\CreatePersonAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\UpdatePersonAction;
 use App\Domain\Person\Citizenship;
 use App\Domain\Person\Person;
 use App\Infrastructure\Sanctum\SanctumUser;
@@ -12,6 +14,11 @@ use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\Sanctum;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+
+/**
+ * @see CreatePersonAction
+ * @see UpdatePersonAction
+ */
 
 final class PersonFormActionsTest extends TestCase
 {

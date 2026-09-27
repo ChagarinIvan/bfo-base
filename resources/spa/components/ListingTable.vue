@@ -3,10 +3,11 @@ import { computed, ref, watch } from 'vue'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Message from 'primevue/message'
-import Paginator, { type PageState } from 'primevue/paginator'
+import type { PageState } from 'primevue/paginator'
 import type { ListingColumn } from './tableModels'
 import type { PaginationHeaders } from '../api/types'
 import { sanitizeVisibleColumns, tableStorageKey } from './tableModels'
+import SlicePaginator from './SlicePaginator.vue'
 
 const props = withDefaults(
     defineProps<{
@@ -41,6 +42,9 @@ const storageKey = computed(() =>
     tableStorageKey(props.tableId, props.authenticated),
 )
 const availableKeys = computed(() => props.columns.map((column) => column.key))
+const configurableColumns = computed(() =>
+    props.columns.filter((column) => column.configurable !== false),
+)
 const defaultKeys = computed(() =>
     props.columns
         .filter((column) => column.defaultVisible)
@@ -63,10 +67,15 @@ function restore(): void {
 }
 
 function isVisible(key: string): boolean {
+    if (props.columns.find((column) => column.key === key)?.required) {
+        return true
+    }
+
     return visible.value.includes(key)
 }
 
 function toggle(key: string, checked: boolean): void {
+    if (props.columns.find((column) => column.key === key)?.required) return
     if (!checked && visible.value.length === 1 && isVisible(key)) return
 
     visible.value = checked
@@ -89,12 +98,13 @@ watch(visible, (value) => {
             :class="{ 'listing-table__columns--with-filters': $slots.filters }"
         >
             <div class="listing-table__column-options">
-                <label v-for="column in columns" :key="column.key">
+                <label v-for="column in configurableColumns" :key="column.key">
                     <input
                         type="checkbox"
                         :checked="isVisible(column.key)"
                         :disabled="
-                            visible.length === 1 && isVisible(column.key)
+                            column.required ||
+                            (visible.length === 1 && isVisible(column.key))
                         "
                         @change="
                             toggle(
@@ -112,14 +122,25 @@ watch(visible, (value) => {
         </div>
     </div>
     <template v-if="items !== undefined">
-        <Message v-if="loading" severity="info" :closable="false">
+        <Message
+            v-if="loading"
+            class="listing-table__message"
+            severity="info"
+            :closable="false"
+        >
             {{ loadingLabel }}
         </Message>
-        <Message v-else-if="error" severity="error" :closable="false">
+        <Message
+            v-else-if="error"
+            class="listing-table__message"
+            severity="error"
+            :closable="false"
+        >
             {{ error }}
         </Message>
         <Message
             v-else-if="items.length === 0 && emptyLabel"
+            class="listing-table__message"
             severity="secondary"
             :closable="false"
         >
@@ -135,20 +156,24 @@ watch(visible, (value) => {
                 v-for="column in columns.filter((item) => isVisible(item.key))"
                 :key="column.key"
                 :field="column.field"
-                :header="column.label"
             >
+                <template #header>
+                    <slot
+                        v-if="$slots[`header-${column.key}`]"
+                        :name="`header-${column.key}`"
+                        :column="column"
+                    />
+                    <span v-else :title="column.title">{{ column.label }}</span>
+                </template>
                 <template v-if="$slots[`cell-${column.key}`]" #body="slotProps">
                     <slot :name="`cell-${column.key}`" v-bind="slotProps" />
                 </template>
             </Column>
         </DataTable>
-        <Paginator
-            v-if="pagination && pagination.total > 0"
-            :first="(pagination.currentPage - 1) * pagination.perPage"
-            :rows="pagination.perPage"
-            :total-records="pagination.total"
+        <SlicePaginator
+            v-if="pagination"
+            :pagination="pagination"
             :rows-per-page-options="rowsPerPageOptions"
-            :class="`${tableClass}-paginator`"
             @page="(event) => emit('page', event)"
         />
     </template>

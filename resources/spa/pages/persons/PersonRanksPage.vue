@@ -12,11 +12,14 @@ import {
     updatePersonRankActivation,
 } from '../../api/personRankHistory'
 import { getEventsByIds } from '../../api/events'
+import { getCupEventContexts } from '../../api/cups'
 import { getRanks, type RankOption } from '../../api/ranks'
 import { rebuildPersonRanks } from '../../api/persons'
-import type { Event, PersonRankHistory } from '../../api/types'
+import type { CupEventContext, Event, PersonRankHistory } from '../../api/types'
 import ActionButton from '../../components/actions/ActionButton.vue'
 import ListingTable from '../../components/ListingTable.vue'
+import CupEventBadges from '../../components/CupEventBadges.vue'
+import { contextsByEventId } from '../../components/cupEventContextModels'
 import { protocolLineEventUrl } from '../../components/tableModels'
 import { t } from '../../i18n'
 import { useAuthStore } from '../../stores/auth'
@@ -35,6 +38,8 @@ const router = useRouter()
 const auth = useAuthStore()
 const history = ref<PersonRankHistory[]>([])
 const events = ref<Record<string, Event>>({})
+const cupEventContexts = ref<Record<string, CupEventContext[]>>({})
+const loadedCupEventIds = ref<Set<string>>(new Set())
 const ranks = ref<RankOption[]>([])
 const loading = ref(true)
 const error = ref('')
@@ -69,6 +74,11 @@ const columns = computed(() => [
         defaultVisible: true,
     },
     { key: 'event', label: t('spa.person_rank.event'), defaultVisible: true },
+    {
+        key: 'cups',
+        label: t('spa.cup_event.context.cups'),
+        defaultVisible: true,
+    },
     ...(auth.isAuthenticated
         ? [
               {
@@ -80,8 +90,20 @@ const columns = computed(() => [
         : []),
 ])
 
+const activeHistory = computed(() =>
+    history.value.filter((item) => item.activatedOn !== null),
+)
+const pendingHistory = computed(() =>
+    [...history.value]
+        .filter((item) => item.activatedOn === null)
+        .sort(
+            (left, right) =>
+                right.achievedOn.localeCompare(left.achievedOn) ||
+                Number(right.id) - Number(left.id),
+        ),
+)
 const timeline = computed(() =>
-    [...history.value].sort(
+    [...activeHistory.value].sort(
         (left, right) =>
             right.achievedOn.localeCompare(left.achievedOn) ||
             Number(right.id) - Number(left.id),
@@ -92,8 +114,10 @@ const groupedHistory = computed<RankHistoryGroup[]>(() => {
     const groups = new Map<string, RankHistoryGroup>()
     const periodIds = new Map<string, string>()
 
-    for (const rankId of new Set(history.value.map((item) => item.rankId))) {
-        const rankHistory = history.value
+    for (const rankId of new Set(
+        activeHistory.value.map((item) => item.rankId),
+    )) {
+        const rankHistory = activeHistory.value
             .filter((item) => item.rankId === rankId)
             .sort((left, right) =>
                 left.startedOn.localeCompare(right.startedOn),
@@ -132,9 +156,22 @@ const groupedHistory = computed<RankHistoryGroup[]>(() => {
         if (groupId !== undefined) groups.get(groupId)?.items.push(item)
     }
 
-    return [...groups.values()].sort((left, right) =>
+    const periods = [...groups.values()].sort((left, right) =>
         right.startedOn.localeCompare(left.startedOn),
     )
+
+    if (pendingHistory.value.length > 0) {
+        periods.push({
+            id: 'pending',
+            rankId: 0,
+            rank: t('spa.person_rank.pending'),
+            items: pendingHistory.value,
+            startedOn: '—',
+            finishedOn: null,
+        })
+    }
+
+    return periods
 })
 
 const dialogVisible = computed({
@@ -192,6 +229,8 @@ async function loadHistory(): Promise<void> {
         ])
         if (requestId !== latestRequest) return
         history.value = loadedHistory
+        cupEventContexts.value = {}
+        loadedCupEventIds.value = new Set()
         events.value = Object.fromEntries(
             loadedEvents.map((event) => [event.id, event]),
         )
@@ -223,8 +262,32 @@ function toggleRank(groupId: string): void {
         next.delete(groupId)
     } else {
         next.add(groupId)
+        const group = groupedHistory.value.find((item) => item.id === groupId)
+        if (group) {
+            void loadCupEventContexts(group.items.map((item) => item.eventId))
+        }
     }
     expandedRankIds.value = next
+}
+
+async function loadCupEventContexts(eventIds: string[]): Promise<void> {
+    const ids = [...new Set(eventIds)].filter(
+        (id) => !loadedCupEventIds.value.has(id),
+    )
+    if (ids.length === 0) {
+        return
+    }
+
+    try {
+        const contexts = await getCupEventContexts(ids)
+        cupEventContexts.value = {
+            ...cupEventContexts.value,
+            ...contextsByEventId(contexts),
+        }
+        loadedCupEventIds.value = new Set([...loadedCupEventIds.value, ...ids])
+    } catch {
+        // The rank timeline remains usable when cup context cannot be loaded.
+    }
 }
 
 function eventUrl(item: PersonRankHistory): string {
@@ -440,6 +503,18 @@ onBeforeUnmount(() => {
                             </template>
                         </Column>
                         <Column
+                            v-if="isVisible('cups')"
+                            :header="t('spa.cup_event.context.cups')"
+                        >
+                            <template #body="{ data }">
+                                <CupEventBadges
+                                    :contexts="
+                                        cupEventContexts[data.eventId] ?? []
+                                    "
+                                />
+                            </template>
+                        </Column>
+                        <Column
                             v-if="auth.isAuthenticated && isVisible('actions')"
                             :header="t('spa.person.actions')"
                         >
@@ -452,8 +527,14 @@ onBeforeUnmount(() => {
                                               )
                                             : t('spa.person_rank.activate')
                                     "
-                                    icon="pi pi-calendar"
-                                    severity="info"
+                                    :icon="
+                                        data.activatedOn
+                                            ? 'pi pi-pencil'
+                                            : 'pi pi-check'
+                                    "
+                                    :severity="
+                                        data.activatedOn ? 'info' : 'success'
+                                    "
                                     @click="openActivation(data)"
                                 />
                             </template>

@@ -8,8 +8,11 @@ use App\Application\Service\Cup\ClearCupCacheService;
 use App\Application\Service\Event\ParseEventProtocol;
 use App\Application\Service\Event\ParseEventProtocolService;
 use App\Application\Service\Person\RebuildPersonRanksService;
+use App\Domain\Distance\DistanceDeleter;
 use App\Domain\Event\Event\EventProtocolUpdated;
-use App\Services\DistanceService;
+use App\Domain\Shared\Storage;
+use App\Services\ParserService;
+use App\Services\ProtocolLineIdentService;
 use App\Services\ProtocolLineService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
@@ -18,9 +21,11 @@ final class UpdateEventProtocolHandler implements ShouldQueue
     use DisableEventHandlerTrait;
 
     public function __construct(
-        private ParseEventProtocolService $parser,
-        protected readonly DistanceService $distanceService,
-        protected readonly ProtocolLineService $protocolLineService,
+        Storage $storage,
+        ParserService $parser,
+        ProtocolLineService $protocolLineService,
+        ProtocolLineIdentService $identService,
+        protected readonly DistanceDeleter $distanceDeleter,
         protected readonly ClearCupCacheService $clearCupCacheService,
         protected readonly RebuildPersonRanksService $rebuildPersonRanksService,
     ) {

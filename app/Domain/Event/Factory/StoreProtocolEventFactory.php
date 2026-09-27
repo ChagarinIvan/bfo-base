@@ -7,13 +7,13 @@ namespace App\Domain\Event\Factory;
 use App\Domain\Event\Event;
 use App\Domain\Event\Protocol;
 use App\Domain\Event\ProtocolPathResolver;
-use App\Domain\Event\ProtocolStorage;
+use App\Domain\Shared\Storage;
 
 final readonly class StoreProtocolEventFactory implements EventFactory
 {
     public function __construct(
         private EventFactory $decorated,
-        private ProtocolStorage $storage,
+        private Storage $storage,
         private ProtocolPathResolver $path,
     ) {
     }
@@ -25,7 +25,7 @@ final readonly class StoreProtocolEventFactory implements EventFactory
         }
 
         $path = $this->path->fromInput($input, $protocol);
-        $this->storage->put($path, $protocol);
+        $this->storage->put($path, $protocol->content);
 
         return $this->decorated->create($input->withFile($path), $protocol);
     }

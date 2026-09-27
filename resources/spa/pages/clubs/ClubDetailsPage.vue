@@ -3,7 +3,7 @@ import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import type { AxiosError } from 'axios'
 import Card from 'primevue/card'
 import Message from 'primevue/message'
-import Paginator, { type PageState } from 'primevue/paginator'
+import type { PageState } from 'primevue/paginator'
 import { useRoute, useRouter } from 'vue-router'
 import { getClub } from '../../api/clubs'
 import { getPersons } from '../../api/persons'
@@ -12,6 +12,7 @@ import type { Club, PaginationHeaders, Person, User } from '../../api/types'
 import ImpressionDetails from '../../components/ImpressionDetails.vue'
 import PersonFilters from '../../components/PersonFilters.vue'
 import PersonTable from '../../components/PersonTable.vue'
+import SlicePaginator from '../../components/SlicePaginator.vue'
 import EditActionButton from '../../components/actions/EditActionButton.vue'
 import { t } from '../../i18n'
 import { useAuthStore } from '../../stores/auth'
@@ -39,8 +40,7 @@ const birthYear = ref<number | null>(null)
 const personPagination = ref<PaginationHeaders>({
     currentPage: 1,
     perPage: 20,
-    total: 0,
-    lastPage: 1,
+    hasNext: false,
 })
 const loading = ref(true)
 const error = ref('')
@@ -254,13 +254,8 @@ onBeforeUnmount(() => debouncedNameSearch.cancel())
                 />
             </template>
         </PersonTable>
-        <Paginator
-            v-if="personPagination.total > 0"
-            :first="
-                (personPagination.currentPage - 1) * personPagination.perPage
-            "
-            :rows="personPagination.perPage"
-            :total-records="personPagination.total"
+        <SlicePaginator
+            :pagination="personPagination"
             :rows-per-page-options="[10, 20, 50]"
             class="clubs-paginator"
             @page="onPersonPage"

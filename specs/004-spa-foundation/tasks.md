@@ -202,6 +202,11 @@ envelope, валидацию 422 и отказ без токена. Полный
 - [X] T074 [US1] Обновить competition list: legacy links, контрастную mass-иконку, убрать subtitle и navbar create action в `resources/spa/pages/competitions/` и `resources/spa/components/AppLayout.vue`
 - [X] T075 Закрепить общий V1 API error-contract: ожидаемые HTTP-ошибки наследуют `ApplicationException` и несут `#[HttpError]`, поэтому `ApiAction` возвращает 4xx до глобального handler/Sentry; добавить request-регрессию для `event_not_found` в `tests/Feature/Api/V1/Event/EventManagementActionTest.php`.
 
+## Amendment: secure Horizon handoff
+
+- [X] T076 [US3] Exchange a validated Bearer token for a rotated encrypted web session through `POST /api/v1/auth/horizon-session`, and invalidate that session during logout in `app/{Application,Bridge,Domain,Infrastructure}/Auth` with request coverage.
+- [X] T077 [US3] Restrict the handoff and direct `/horizon/` access through configurable `HORIZON_AUTHORIZED_USER_ID`, expose the read-only `GET /api/v1/auth/horizon-access` capability, and display the SPA Horizon button only when allowed.
+
 ## Dependencies & Execution Order
 
 ### Phase Dependencies

@@ -22,6 +22,7 @@ final readonly class ActivatePersonRankService
     ) {
     }
 
+    /** @throws ProtocolLineNotFound */
     public function execute(ActivatePersonRank $command): ViewProtocolLineDto
     {
         return $this->transaction->run(function () use ($command): ViewProtocolLineDto {

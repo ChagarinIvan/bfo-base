@@ -122,12 +122,40 @@ describe('SPA navigation guard', () => {
         )
     })
 
+    it('keeps the cup layout while switching between events and table', async () => {
+        const router = createAppRouter(createMemoryHistory())
+
+        await router.push('/app/cups/42')
+        expect(router.currentRoute.value.matched[0]?.path).toBe(
+            '/app/cups/:cupId',
+        )
+        expect(router.currentRoute.value.matched[1]?.path).toBe(
+            '/app/cups/:cupId',
+        )
+
+        await router.push('/app/cups/42/table/M_0_')
+        expect(router.currentRoute.value.matched[0]?.path).toBe(
+            '/app/cups/:cupId',
+        )
+        expect(router.currentRoute.value.matched[1]?.path).toBe(
+            '/app/cups/:cupId/table/:groupId',
+        )
+    })
+
     it('resolves the public clubs listing route', async () => {
         const router = createAppRouter(createMemoryHistory())
 
         await router.push('/app/clubs')
 
         expect(router.currentRoute.value.path).toBe('/app/clubs')
+    })
+
+    it('resolves the public cup details route', async () => {
+        const router = createAppRouter(createMemoryHistory())
+
+        await router.push('/app/cups/42')
+
+        expect(router.currentRoute.value.path).toBe('/app/cups/42')
     })
 
     it('resolves the public club details route', async () => {
@@ -156,6 +184,22 @@ describe('SPA navigation guard', () => {
         expect(router.currentRoute.value.path).toBe('/app/login')
 
         await router.push('/app/clubs/42/edit')
+        expect(router.currentRoute.value.path).toBe('/app/login')
+    })
+
+    it('protects cup create and edit routes', async () => {
+        const router = createAppRouter(createMemoryHistory())
+
+        await router.push('/app/cups/create')
+        expect(router.currentRoute.value.path).toBe('/app/login')
+
+        await router.push('/app/cups/42/edit')
+        expect(router.currentRoute.value.path).toBe('/app/login')
+
+        await router.push('/app/cups/42/events/create')
+        expect(router.currentRoute.value.path).toBe('/app/login')
+
+        await router.push('/app/cups/42/events/7/edit')
         expect(router.currentRoute.value.path).toBe('/app/login')
     })
 

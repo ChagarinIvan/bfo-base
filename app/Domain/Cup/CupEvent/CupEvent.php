@@ -6,6 +6,7 @@ namespace App\Domain\Cup\CupEvent;
 
 use App\Domain\Auth\Impression;
 use App\Domain\Cup\Cup;
+use App\Domain\Cup\CupEvent\Event\CupEventCreated;
 use App\Domain\Cup\CupEvent\Event\CupEventDisabled;
 use App\Domain\Cup\CupEvent\Event\CupEventUpdated;
 use App\Domain\Event\Event;
@@ -42,6 +43,12 @@ class CupEvent extends AggregatedModel
         $this->recordThat(new CupEventDisabled($this));
     }
 
+    public function create(): void
+    {
+        $this->recordThat(new CupEventCreated($this));
+        $this->save();
+    }
+
     public function updateData(int $eventId, float $points, Impression $impression): void
     {
         $this->event_id = $eventId;
@@ -51,7 +58,6 @@ class CupEvent extends AggregatedModel
         $this->recordThat(new CupEventUpdated($this));
     }
 
-    // TODO REMOVE
     public function cup(): HasOne
     {
         return $this->hasOne(Cup::class, 'id', 'cup_id');

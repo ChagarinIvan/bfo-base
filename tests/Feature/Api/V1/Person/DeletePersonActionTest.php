@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Api\V1\Person;
 
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\DeletePersonAction;
 use App\Domain\Person\Person;
 use App\Infrastructure\Sanctum\SanctumUser;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -11,6 +12,8 @@ use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\Sanctum;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+
+/** @see DeletePersonAction */
 
 final class DeletePersonActionTest extends TestCase
 {

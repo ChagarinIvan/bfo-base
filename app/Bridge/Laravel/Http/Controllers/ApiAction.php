@@ -11,18 +11,20 @@ use App\Bridge\Laravel\Http\Serialization\ApiDtoSerializer;
 use App\Bridge\Laravel\Http\Serialization\ApiErrorResponse;
 use App\Domain\Shared\Pagination\Slice;
 use Illuminate\Contracts\Container\Container;
-use Illuminate\Http\Request;
+use Illuminate\Routing\Router;
 use Illuminate\Validation\Factory as Validator;
 use Illuminate\Validation\ValidationException;
 use ReflectionClass;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use function array_map;
 use function array_merge;
+use function is_bool;
 
 trait ApiAction
 {
     public function __construct(
-        private readonly Request $request,
+        private readonly Router $router,
         private readonly Validator $validator,
         private readonly Container $container,
         private readonly ApiDtoSerializer $serializer,
@@ -32,6 +34,7 @@ trait ApiAction
 
     public function callAction($method, $parameters): mixed
     {
+        $request = $this->router->getCurrentRequest();
         $injected = [];
         foreach ($parameters as $parameter) {
             if (!$parameter instanceof AbstractDto) {
@@ -39,7 +42,7 @@ trait ApiAction
                 continue;
             }
             try {
-                $requestData = $parameter::normaliseRequestData($this->request->all());
+                $requestData = $parameter::normaliseRequestData($request->all());
                 $validated = $parameter::requestValidationRules() === []
                     ? []
                     : $this->validator->validate(
@@ -80,7 +83,7 @@ trait ApiAction
         $status = new ReflectionClass($this)->getAttributes(ResponseStatus::class);
         $serialized = $this->serializer->serialize(
             $result,
-            $this->request->user() ? 'authenticated' : 'public',
+            $request->user() ? 'authenticated' : 'public',
         );
 
         $response = response()->json(
@@ -90,9 +93,29 @@ trait ApiAction
 
         if ($result instanceof Slice) {
             foreach ($result->paginationHeaders() as $header => $value) {
-                $response->header($header, (string) $value);
+                $response->header(
+                    $header,
+                    is_bool($value) ? ($value ? 'true' : 'false') : (string) $value,
+                );
             }
         }
+
+        return $response;
+    }
+
+    protected function userId(): ?UserId
+    {
+        return $this->container->has(UserId::class) ? $this->container->get(UserId::class) ?? null : null;
+    }
+
+    protected function csv(string $contents, string $filename, string $fallbackFilename): Response
+    {
+        $response = response($contents, Response::HTTP_OK, ['Content-Type' => 'text/csv; charset=UTF-8']);
+        $response->headers->set('Content-Disposition', $response->headers->makeDisposition(
+            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+            $filename,
+            $fallbackFilename,
+        ));
 
         return $response;
     }

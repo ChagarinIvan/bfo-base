@@ -4,7 +4,7 @@ import Button from 'primevue/button'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Message from 'primevue/message'
-import Paginator, { type PageState } from 'primevue/paginator'
+import type { PageState } from 'primevue/paginator'
 import { useRoute, useRouter } from 'vue-router'
 import { getPersonPayments } from '../../api/personPayments'
 import { getUsers } from '../../api/users'
@@ -13,6 +13,7 @@ import type { PaginationHeaders, PersonPayment, User } from '../../api/types'
 import FilterPanel from '../../components/FilterPanel.vue'
 import ImpressionDetails from '../../components/ImpressionDetails.vue'
 import ListingTable from '../../components/ListingTable.vue'
+import SlicePaginator from '../../components/SlicePaginator.vue'
 import YearFilter from '../../components/YearFilter.vue'
 import { t } from '../../i18n'
 import { useAuthStore } from '../../stores/auth'
@@ -31,8 +32,7 @@ const year = ref<number | null>(null)
 const pagination = ref<PaginationHeaders>({
     currentPage: 1,
     perPage: 20,
-    total: 0,
-    lastPage: 1,
+    hasNext: false,
 })
 const loading = ref(true)
 const error = ref('')
@@ -216,11 +216,8 @@ onMounted(() => void initialize())
                     </template>
                 </Column>
             </DataTable>
-            <Paginator
-                v-if="pagination.total > 0"
-                :first="(pagination.currentPage - 1) * pagination.perPage"
-                :rows="pagination.perPage"
-                :total-records="pagination.total"
+            <SlicePaginator
+                :pagination="pagination"
                 :rows-per-page-options="[10, 20, 50]"
                 @page="onPage"
             />

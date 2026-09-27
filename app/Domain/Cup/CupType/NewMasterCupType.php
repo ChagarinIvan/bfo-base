@@ -148,7 +148,8 @@ class NewMasterCupType extends AbstractCupType
         return 'app.cup.type.new_master';
     }
 
-    public function calculateEvent(CupEvent $cupEvent, CupGroup $mainGroup): Collection
+    /** @return array<int|string, CupEventPoint> */
+    public function calculateEvent(CupEvent $cupEvent, CupGroup $mainGroup): array
     {
         self::$groupProtocolLines = [];
         self::$protocolLines = [];
@@ -180,7 +181,7 @@ class NewMasterCupType extends AbstractCupType
         ;
 
         if ($groups->isEmpty()) {
-            return collect();
+            return [];
         }
 
         $cupEventProtocolLinesWithGroups = $this->getAllGroupProtocolLines($cupEvent, $mainGroup, $groups);
@@ -210,10 +211,13 @@ class NewMasterCupType extends AbstractCupType
             }
         }
 
-        return $result->sortByDesc(static fn (CupEventPoint $cupEventResult): float|int|string => $cupEventResult->points);
+        return $result
+            ->sortByDesc(static fn (CupEventPoint $cupEventResult): float|int|string => $cupEventResult->points)
+            ->all()
+        ;
     }
 
-    public function getGroups(): array|Collection
+    public function groups(): array
     {
         return CupGroupFactory::getAgeTypeGroups([
             GroupAge::a35,
@@ -235,7 +239,7 @@ class NewMasterCupType extends AbstractCupType
             return self::$groups[$group->id()];
         }
 
-        $distance = $this->distanceService->findDistance(self::GROUPS_MAP[$group->id()], $cupEvent->event_id);
+        $distance = $this->distanceByGroupNames(self::GROUPS_MAP[$group->id()], $cupEvent->event_id);
         self::$groups[$group->id()] = $distance;
 
         return $distance;
@@ -318,7 +322,7 @@ class NewMasterCupType extends AbstractCupType
             $equalDistances = Collection::make([$mainDistance]);
 
             if ($mainDistance instanceof Distance) {
-                $equalDistances->push(...$this->distanceService->getEqualDistances($mainDistance));
+                $equalDistances->push(...$this->equalDistances($mainDistance));
             }
 
             self::$equalDistances[$group->id()] = $equalDistances;
@@ -360,7 +364,7 @@ class NewMasterCupType extends AbstractCupType
             return self::$eventGroups[$male->value];
         }
 
-        $groups = collect($this->getGroups())
+        $groups = collect($this->groups())
             ->filter(static fn (CupGroup $g): bool => $g->male() === $male)
             ->flatMap(static fn(CupGroup $g) => collect(static::GROUPS_MAP[$g->id()])
                 ->map(static fn ($name): array => [
@@ -397,8 +401,7 @@ class NewMasterCupType extends AbstractCupType
 
         $eventGroupsId = $this->getEventGroups($male)->pluck('id');
 
-        return self::$eventDistanceIds[$male->value] = $this->distanceService
-            ->getCupEventDistancesByGroups($cupEvent, $eventGroupsId)
+        return self::$eventDistanceIds[$male->value] = $this->cupEventDistancesByGroups($cupEvent, $eventGroupsId)
             ->pluck('id')
             ->toArray()
         ;

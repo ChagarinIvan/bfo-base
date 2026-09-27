@@ -10,6 +10,7 @@ interface UsersCache {
 }
 
 let memoryCache: UsersCache | null = null
+let refreshRequest: Promise<User[]> | null = null
 
 function readStorageCache(): UsersCache | null {
     if (typeof localStorage === 'undefined') return null
@@ -56,7 +57,7 @@ export function clearUsersCache(): void {
     }
 }
 
-export async function getUsers(): Promise<User[]> {
+export async function getUsers(signal?: AbortSignal): Promise<User[]> {
     const now = Date.now()
     const cached = memoryCache ?? readStorageCache()
     if (cached && cached.expiresAt > now) {
@@ -64,7 +65,7 @@ export async function getUsers(): Promise<User[]> {
         return cached.users
     }
 
-    const users = (await api.get<User[]>('/users')).data
+    const users = (await api.get<User[]>('/users', { signal })).data
     const nextCache = {
         expiresAt: now + USERS_CACHE_TTL_MS,
         users,
@@ -73,4 +74,25 @@ export async function getUsers(): Promise<User[]> {
     saveStorageCache(nextCache)
 
     return users
+}
+
+export function refreshUsers(): Promise<User[]> {
+    if (refreshRequest) return refreshRequest
+
+    refreshRequest = api
+        .get<User[]>('/users')
+        .then(({ data: users }) => {
+            const cache = {
+                expiresAt: Date.now() + USERS_CACHE_TTL_MS,
+                users,
+            }
+            memoryCache = cache
+            saveStorageCache(cache)
+            return users
+        })
+        .finally(() => {
+            refreshRequest = null
+        })
+
+    return refreshRequest
 }

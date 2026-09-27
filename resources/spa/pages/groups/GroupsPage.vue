@@ -26,8 +26,7 @@ const deleting = ref(false)
 const pagination = ref<PaginationHeaders>({
     currentPage: 1,
     perPage: 20,
-    total: 0,
-    lastPage: 1,
+    hasNext: false,
 })
 const auth = useAuthStore()
 const router = useRouter()

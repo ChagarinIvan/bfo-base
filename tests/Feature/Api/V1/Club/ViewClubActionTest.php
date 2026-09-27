@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Api\V1\Club;
 
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Club\ViewClubAction;
 use App\Domain\Club\Club;
 use App\Domain\Person\Person;
 use App\Infrastructure\Sanctum\SanctumUser;
@@ -12,6 +13,8 @@ use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\Sanctum;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+
+/** @see ViewClubAction */
 
 final class ViewClubActionTest extends TestCase
 {

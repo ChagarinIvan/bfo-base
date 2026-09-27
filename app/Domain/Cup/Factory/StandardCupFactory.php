@@ -21,7 +21,7 @@ final readonly class StandardCupFactory implements CupFactory
         $cup->events_count = $input->info->eventsCount;
         $cup->year = $input->info->year;
         $cup->type = $input->info->type;
-        $cup->visible = $input->visible;
+        $cup->setAttribute('visible', $input->visible);
         $cup->created = $cup->updated = new Impression($this->clock->now(), $input->userId);
 
         return $cup;

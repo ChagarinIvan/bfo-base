@@ -15,12 +15,14 @@ use App\Domain\Person\PersonRepository;
 use App\Domain\PersonPayment\Factory\PersonPaymentFactory;
 use App\Domain\PersonPayment\PersonPaymentRepository;
 use App\Domain\Rank\Rank;
+use App\Domain\RankCheck\RankCheckPersonMatcher;
 use App\Domain\Shared\Clock;
+use App\Domain\Shared\StandardIdentLineGenerator;
+use App\Domain\Shared\StandardNameNormalizer;
 use App\Domain\Shared\SymbolNormalizer;
 use App\Domain\Shared\TransactionManager;
 use App\Infrastructure\Integration\OrientBy\OrientByPersonDto;
 use App\Infrastructure\Integration\OrientBy\OrientBySyncService;
-use App\Services\PersonsIdentService;
 use App\Services\PersonsService;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -46,10 +48,10 @@ final class OrientBySyncServiceTest extends TestCase
             'current_rank_activated_on' => '2026-01-01',
             'current_rank_finished_on' => '2028-01-01',
         ]);
-        $ident = $this->createMock(PersonsIdentService::class);
+        $ident = $this->createMock(RankCheckPersonMatcher::class);
         $ident->expects($this->once())
-            ->method('identLines')
-            ->willReturn([PersonsIdentService::makeIdentLine('Ivanov', 'Ivan', 2000) => $person->id]);
+            ->method('match')
+        ->willReturn([new StandardIdentLineGenerator(new StandardNameNormalizer())->generate('Ivanov', 'Ivan', 2000) => $person->id]);
         $persons = $this->createMock(PersonsService::class);
         $persons->expects($this->once())->method('getPerson')->with($person->id)->willReturn($person);
         $clock = $this->createStub(Clock::class);
@@ -65,7 +67,7 @@ final class OrientBySyncServiceTest extends TestCase
         self::assertDatabaseCount('person_rank_histories', 0);
     }
 
-    private function service(PersonsIdentService $ident, PersonsService $persons, Clock $clock): OrientBySyncService
+    private function service(RankCheckPersonMatcher $ident, PersonsService $persons, Clock $clock): OrientBySyncService
     {
         $logger = $this->createStub(LoggerInterface::class);
         $logManager = $this->createMock(LogManager::class);
@@ -85,6 +87,7 @@ final class OrientBySyncServiceTest extends TestCase
                 $clock,
             ),
             $clock,
+            new StandardIdentLineGenerator(new StandardNameNormalizer()),
             $logManager,
         );
     }

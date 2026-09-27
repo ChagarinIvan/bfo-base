@@ -21,6 +21,143 @@ export interface Competition {
     updated?: Impression
 }
 
+export interface CupGroup {
+    id: string
+    name: string
+}
+
+export interface Cup {
+    id: string
+    name: string
+    eventsCount: string
+    year: number
+    type: string
+    groups: CupGroup[]
+    visible: boolean
+    created?: Impression
+    updated?: Impression
+}
+
+export interface CupSearchQuery {
+    ids?: string[]
+    year?: number
+    name?: string
+    visible?: '1' | '0'
+    page?: number
+    perPage?: number
+}
+
+export interface CupFormRequest {
+    name: string
+    eventsCount: number
+    year: number
+    type: string
+    visible: boolean
+}
+
+export interface CupEvent {
+    id: string
+    cupId: string
+    eventId: string
+    points: string
+    created?: Impression
+    updated?: Impression
+}
+
+export interface CupEventPoint {
+    cupEventId: string
+    points: string
+    personId: string
+    personName: string
+    personYear: number
+    personClubId: string | null
+    time: string
+}
+
+export interface CupEventPointSearchQuery {
+    groupId: string
+    name?: string
+    page?: number
+    perPage?: number
+}
+
+export interface CupTableSearchQuery {
+    name?: string
+    page?: number
+    perPage?: number
+}
+
+export interface CupTableStage {
+    stageId: number
+    eventId: string
+    date: string
+    name: string
+}
+
+export interface PaginationHeaders {
+    currentPage: number
+    perPage: number
+    hasNext: boolean
+}
+
+export interface CupTableStageCell {
+    stageId: number
+    points: number | string
+    counted: boolean
+    distanceId: string
+    protocolLineId: string
+}
+
+export interface CupTableRow {
+    place: number
+    personId: string
+    personName: string
+    personYear: number
+    clubName: string
+    stages: Record<string, CupTableStageCell>
+    totalPoints: string
+    averagePoints: string
+}
+
+export type CupTable = CupTableRow[]
+
+export interface CupEventContext {
+    eventId: string
+    cupEventId: string
+    cupId: string
+    cupName: string
+    cupType: string
+    groups: CupGroup[]
+    href: string
+}
+
+export interface CupEventFormRequest {
+    eventId: number
+    points: number
+}
+
+export interface CreateCupEventRequest extends CupEventFormRequest {
+    cupId: number
+}
+
+export interface CupEventOptionQuery {
+    year: number
+    notRelatedToCup?: string
+    page?: number
+    perPage?: number
+}
+
+export interface CupEventSearchQuery {
+    eventIds?: string[]
+    name?: string
+    date?: string
+    page?: number
+    perPage?: number
+}
+
+export type CreateCupRequest = CupFormRequest
+export type UpdateCupRequest = CupFormRequest
+
 export interface Event {
     id: string
     competitionId: string
@@ -201,13 +338,6 @@ export interface PersonPromptRequest {
 export interface AuthToken {
     token: string
     token_type: string
-}
-
-export interface PaginationHeaders {
-    currentPage: number
-    perPage: number
-    total: number
-    lastPage: number
 }
 
 export interface PaginatedApiResponse<T> {

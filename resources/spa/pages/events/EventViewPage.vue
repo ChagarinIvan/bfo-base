@@ -6,7 +6,7 @@ import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import InputText from 'primevue/inputtext'
 import Message from 'primevue/message'
-import Paginator, { type PageState } from 'primevue/paginator'
+import type { PageState } from 'primevue/paginator'
 import Select from 'primevue/select'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 import ActionButton from '../../components/actions/ActionButton.vue'
@@ -14,10 +14,13 @@ import FilterPanel from '../../components/FilterPanel.vue'
 import ImpressionDetails from '../../components/ImpressionDetails.vue'
 import EventProcessingStatus from '../../components/EventProcessingStatus.vue'
 import ListingTable from '../../components/ListingTable.vue'
+import SlicePaginator from '../../components/SlicePaginator.vue'
 import { getEventDistances } from '../../api/distances'
+import { getCupEventContexts } from '../../api/cups'
 import { getCompetition } from '../../api/competitions'
 import { deleteEvent, getEvent } from '../../api/events'
 import ConfirmDeleteDialog from '../../components/actions/ConfirmDeleteDialog.vue'
+import CupEventBadges from '../../components/CupEventBadges.vue'
 import { getPersonProtocolLines } from '../../api/protocolLines'
 import type {
     Distance,
@@ -42,6 +45,7 @@ const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
 const event = ref<Event | null>(null)
+const cupEventContexts = ref<import('../../api/types').CupEventContext[]>([])
 const competition = ref<Competition | null>(null)
 const distances = ref<Distance[]>([])
 const distanceId = ref<string>()
@@ -55,8 +59,7 @@ const name = ref('')
 const pagination = ref<PaginationHeaders>({
     currentPage: 1,
     perPage: 100,
-    total: 0,
-    lastPage: 1,
+    hasNext: false,
 })
 const hasPoints = computed(() =>
     lines.value.some((line) => line.points !== null),
@@ -247,7 +250,11 @@ async function load(eventId: string): Promise<void> {
     error.value = ''
     try {
         event.value = await getEvent(eventId)
-        processingRefreshError.value = false
+        void getCupEventContexts([event.value.id])
+            .then((contexts) => {
+                cupEventContexts.value = contexts
+            })
+            .catch(() => undefined)
         const [loadedCompetition, loadedDistances] = await Promise.all([
             getCompetition(event.value.competitionId),
             getEventDistances(eventId),
@@ -352,6 +359,14 @@ onBeforeUnmount(() => {
                         <tr>
                             <th scope="row">Апісанне</th>
                             <td>{{ event.description }}</td>
+                        </tr>
+                        <tr v-if="cupEventContexts.length">
+                            <th scope="row">
+                                {{ t('spa.cup_event.context.cups') }}
+                            </th>
+                            <td>
+                                <CupEventBadges :contexts="cupEventContexts" />
+                            </td>
                         </tr>
                         <tr>
                             <th scope="row">Спаборніцтва</th>
@@ -583,15 +598,9 @@ onBeforeUnmount(() => {
                                         severity="success" /></template
                             ></Column>
                         </DataTable>
-                        <Paginator
-                            :first="
-                                (pagination.currentPage - 1) *
-                                pagination.perPage
-                            "
-                            :rows="pagination.perPage"
-                            :total-records="pagination.total"
+                        <SlicePaginator
+                            :pagination="pagination"
                             :rows-per-page-options="[20, 50, 100]"
-                            class="competitions-paginator"
                             @page="onPage"
                         />
                     </template>

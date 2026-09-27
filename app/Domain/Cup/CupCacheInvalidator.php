@@ -6,5 +6,5 @@ namespace App\Domain\Cup;
 
 interface CupCacheInvalidator
 {
-    public function invalidate(int $cupId): void;
+    public function invalidate(): void;
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Api\V1\ProtocolLine;
 
+use App\Bridge\Laravel\Http\Controllers\Api\V1\ProtocolLine\ListProtocolLinesAction;
 use App\Domain\Club\Club;
 use App\Domain\Competition\Competition;
 use App\Domain\Distance\Distance;
@@ -19,6 +20,8 @@ use Tests\TestCase;
 use function array_filter;
 use function str_contains;
 use function strtolower;
+
+/** @see ListProtocolLinesAction */
 
 final class ListProtocolLinesActionTest extends TestCase
 {
@@ -255,7 +258,9 @@ final class ListProtocolLinesActionTest extends TestCase
         $this->getJson("/api/v1/protocol-lines?personId={$person->id}&perPage=1&page=2")
             ->assertOk()
             ->assertJsonCount(1)
-            ->assertHeader('X-Pagination-Total', '2')
+            ->assertHeader('X-Pagination-Has-Next', 'false')
+            ->assertHeaderMissing('X-Pagination-Total')
+            ->assertHeaderMissing('X-Pagination-Last-Page')
             ->assertHeader('X-Pagination-Per-Page', '1')
             ->assertHeader('X-Pagination-Current-Page', '2')
         ;
@@ -276,7 +281,7 @@ final class ListProtocolLinesActionTest extends TestCase
         $this->getJson("/api/v1/protocol-lines?personId={$person->id}&withEvent=1&withCompetition=1")
             ->assertOk();
 
-        $this->assertCount(2, array_filter(
+        $this->assertCount(1, array_filter(
             $queries,
             static fn (string $query): bool => str_contains($query, 'from `protocol_lines`'),
         ));

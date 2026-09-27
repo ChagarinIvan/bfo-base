@@ -13,17 +13,25 @@ import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import InputText from 'primevue/inputtext'
 import Message from 'primevue/message'
-import Paginator, { type PageState } from 'primevue/paginator'
+import type { PageState } from 'primevue/paginator'
 import { useRoute, useRouter } from 'vue-router'
 import { extractPerson, getPersonProtocolLines } from '../../api/protocolLines'
+import { getCupEventContexts } from '../../api/cups'
 import { getYears } from '../../api/years'
-import type { PaginationHeaders, ProtocolLine } from '../../api/types'
+import type {
+    CupEventContext,
+    PaginationHeaders,
+    ProtocolLine,
+} from '../../api/types'
 import DateFilter from '../../components/DateFilter.vue'
 import FilterPanel from '../../components/FilterPanel.vue'
 import ListingTable from '../../components/ListingTable.vue'
+import SlicePaginator from '../../components/SlicePaginator.vue'
 import { protocolLineEventUrl } from '../../components/tableModels'
 import YearFilter from '../../components/YearFilter.vue'
 import ActionButton from '../../components/actions/ActionButton.vue'
+import CupEventBadges from '../../components/CupEventBadges.vue'
+import { contextsByEventId } from '../../components/cupEventContextModels'
 import { useAuthStore } from '../../stores/auth'
 import { t } from '../../i18n'
 import { personContextKey } from './personContext'
@@ -43,6 +51,7 @@ const router = useRouter()
 const auth = useAuthStore()
 const person = inject(personContextKey, ref(null))
 const lines = ref<ProtocolLine[]>([])
+const cupEventContexts = ref<Record<string, CupEventContext[]>>({})
 const years = ref<number[]>([])
 const year = ref<number | null>(null)
 const competitionName = ref('')
@@ -58,6 +67,11 @@ const columns = computed(() => [
         defaultVisible: true,
     },
     { key: 'event', label: t('spa.person_view.event'), defaultVisible: true },
+    {
+        key: 'cups',
+        label: t('spa.cup_event.context.cups'),
+        defaultVisible: true,
+    },
     { key: 'name', label: t('spa.person_view.name'), defaultVisible: true },
     { key: 'date', label: t('spa.person_view.date'), defaultVisible: true },
     { key: 'group', label: t('spa.person_view.group'), defaultVisible: true },
@@ -86,8 +100,7 @@ const columns = computed(() => [
 const pagination = ref<PaginationHeaders>({
     currentPage: 1,
     perPage: 20,
-    total: 0,
-    lastPage: 1,
+    hasNext: false,
 })
 let latestRequest = 0
 
@@ -124,6 +137,17 @@ async function load(
         )
         if (requestId !== latestRequest) return
         lines.value = response.data
+        void getCupEventContexts(
+            lines.value.flatMap((line) =>
+                line.eventId === null ? [] : [line.eventId],
+            ),
+        )
+            .then((contexts) => {
+                if (requestId === latestRequest) {
+                    cupEventContexts.value = contextsByEventId(contexts)
+                }
+            })
+            .catch(() => undefined)
         pagination.value = paginationFromHeaders(response.headers)
     } catch (exception: unknown) {
         if (requestId !== latestRequest) return
@@ -319,6 +343,18 @@ onBeforeUnmount(() => debouncedCompetitionSearch.cancel())
                     </template>
                 </Column>
                 <Column
+                    v-if="isVisible('cups')"
+                    :header="t('spa.cup_event.context.cups')"
+                >
+                    <template #body="{ data }">
+                        <CupEventBadges
+                            v-if="data.eventId"
+                            :contexts="cupEventContexts[data.eventId] ?? []"
+                            :group-name="data.groupName"
+                        />
+                    </template>
+                </Column>
+                <Column
                     v-if="isVisible('name')"
                     :header="t('spa.person_view.name')"
                 >
@@ -386,11 +422,8 @@ onBeforeUnmount(() => debouncedCompetitionSearch.cancel())
                     </template>
                 </Column>
             </DataTable>
-            <Paginator
-                v-if="pagination.total > 0"
-                :first="(pagination.currentPage - 1) * pagination.perPage"
-                :rows="pagination.perPage"
-                :total-records="pagination.total"
+            <SlicePaginator
+                :pagination="pagination"
                 :rows-per-page-options="[10, 20, 50]"
                 @page="onPage"
             />

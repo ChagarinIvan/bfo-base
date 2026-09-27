@@ -11,7 +11,7 @@ use App\Domain\Event\Factory\EventInput;
 use App\Domain\Event\Factory\StoreProtocolEventFactory;
 use App\Domain\Event\Protocol;
 use App\Domain\Event\ProtocolPathResolver;
-use App\Domain\Event\ProtocolStorage;
+use App\Domain\Shared\Storage;
 use Carbon\Carbon;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -21,7 +21,7 @@ final class StoreProtocolEventFactoryTest extends TestCase
 {
     private EventFactory&MockObject $decorated;
 
-    private MockObject&ProtocolStorage $protocols;
+    private MockObject&Storage $protocols;
 
     private StoreProtocolEventFactory $factory;
 
@@ -31,7 +31,7 @@ final class StoreProtocolEventFactoryTest extends TestCase
 
         $this->factory = new StoreProtocolEventFactory(
             $this->decorated = $this->createMock(EventFactory::class),
-            $this->protocols = $this->createMock(ProtocolStorage::class),
+            $this->protocols = $this->createMock(Storage::class),
             new ProtocolPathResolver(),
         );
     }
@@ -49,7 +49,7 @@ final class StoreProtocolEventFactoryTest extends TestCase
         $this->protocols
             ->expects($this->once())
             ->method('put')
-            ->with('2023/2023-04-01_name@@xml', $this->identicalTo($protocol))
+            ->with('2023/2023-04-01_name@@xml', $protocol->content)
         ;
 
         /** @var Event $event */

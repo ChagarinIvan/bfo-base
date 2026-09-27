@@ -3,16 +3,20 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { ref } from 'vue'
+import CupEventBadges from '../../components/CupEventBadges.vue'
 import PersonViewPage from './PersonViewPage.vue'
 import { personContextKey } from './personContext'
 
-const { auth, getPersonProtocolLines, getYears, push } = vi.hoisted(() => ({
-    auth: { isAuthenticated: true },
-    getPersonProtocolLines: vi.fn(),
-    getYears: vi.fn(),
-    push: vi.fn(),
-}))
+const { auth, getCupEventContexts, getPersonProtocolLines, getYears, push } =
+    vi.hoisted(() => ({
+        auth: { isAuthenticated: true },
+        getCupEventContexts: vi.fn(),
+        getPersonProtocolLines: vi.fn(),
+        getYears: vi.fn(),
+        push: vi.fn(),
+    }))
 
+vi.mock('../../api/cups', () => ({ getCupEventContexts }))
 vi.mock('../../api/protocolLines', () => ({ getPersonProtocolLines }))
 vi.mock('../../api/years', () => ({ getYears }))
 vi.mock('vue-router', () => ({
@@ -31,10 +35,22 @@ describe('person view page', () => {
     beforeEach(() => {
         vi.resetAllMocks()
         auth.isAuthenticated = true
+        getCupEventContexts.mockResolvedValue([])
     })
 
     it('loads participation with both related resources', async () => {
         getYears.mockResolvedValue([2026, 2025])
+        getCupEventContexts.mockResolvedValue([
+            {
+                eventId: '13',
+                cupEventId: '20',
+                cupId: '30',
+                cupName: 'Кубак спрынту',
+                cupType: 'sprint',
+                groups: [{ id: 'M21', name: 'М21' }],
+                href: '/app/cup-events/20',
+            },
+        ])
         getPersonProtocolLines.mockResolvedValue({
             data: [
                 {
@@ -55,12 +71,13 @@ describe('person view page', () => {
                     completeRank: 'II',
                 },
             ],
-            headers: { 'x-pagination-total': '1' },
+            headers: { 'x-pagination-has-next': 'false' },
         })
 
         const wrapper = mount(PersonViewPage, {
             global: {
                 stubs: {
+                    SlicePaginator: true,
                     Button: {
                         props: ['label'],
                         template: '<button>{{ label }}</button>',
@@ -68,7 +85,8 @@ describe('person view page', () => {
                     ActionButton: true,
                     Column: {
                         props: ['header'],
-                        template: '<div class="column">{{ header }}</div>',
+                        template:
+                            '<div class="column">{{ header }}<slot name="body" :data="{ eventId: \'13\', groupName: \'M21\' }" /></div>',
                     },
                     DataTable: { template: '<div><slot /></div>' },
                     DateFilter: true,
@@ -93,6 +111,7 @@ describe('person view page', () => {
             },
         })
         await flushPromises()
+        await flushPromises()
 
         expect(getPersonProtocolLines).toHaveBeenCalledWith({
             personId: '7',
@@ -101,8 +120,22 @@ describe('person view page', () => {
             page: 1,
             perPage: 20,
         })
+        expect(getCupEventContexts).toHaveBeenCalledWith(['13'])
         expect(wrapper.text()).toContain('Удзел у спаборніцтвах')
-        expect(wrapper.findAll('.column')).toHaveLength(10)
+        expect(wrapper.findAll('.column')).toHaveLength(11)
+        await vi.waitFor(() =>
+            expect(
+                wrapper.findComponent(CupEventBadges).props('contexts'),
+            ).toHaveLength(1),
+        )
+        expect(
+            wrapper.findComponent(CupEventBadges).props('contexts'),
+        ).toMatchObject([
+            {
+                href: '/app/cup-events/20',
+                groups: [{ id: 'M21', name: 'М21' }],
+            },
+        ])
     })
 
     it('shows an empty state', async () => {
@@ -112,6 +145,7 @@ describe('person view page', () => {
         const wrapper = mount(PersonViewPage, {
             global: {
                 stubs: {
+                    SlicePaginator: true,
                     Button: true,
                     ActionButton: true,
                     Column: true,
@@ -153,12 +187,13 @@ describe('person view page', () => {
         }
         getPersonProtocolLines.mockResolvedValue({
             data: [mismatchedLine],
-            headers: { 'x-pagination-total': '1' },
+            headers: { 'x-pagination-has-next': 'false' },
         })
 
         const wrapper = mount(PersonViewPage, {
             global: {
                 stubs: {
+                    SlicePaginator: true,
                     ActionButton: true,
                     Button: true,
                     Column: {
@@ -219,12 +254,13 @@ describe('person view page', () => {
         const mismatchedLine = { ...matchingLine, id: '12', firstname: 'John' }
         getPersonProtocolLines.mockResolvedValue({
             data: [matchingLine, mismatchedLine],
-            headers: { 'x-pagination-total': '2' },
+            headers: { 'x-pagination-has-next': 'false' },
         })
 
         const wrapper = mount(PersonViewPage, {
             global: {
                 stubs: {
+                    SlicePaginator: true,
                     ActionButton: true,
                     Button: true,
                     Column: true,
@@ -272,6 +308,7 @@ describe('person view page', () => {
         const wrapper = mount(PersonViewPage, {
             global: {
                 stubs: {
+                    SlicePaginator: true,
                     Button: true,
                     ActionButton: true,
                     Column: true,

@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import Popover from 'primevue/popover'
 import { t } from '../i18n'
 import type { Impression, User } from '../api/types'
+import { refreshUsers } from '../api/users'
+import { useAuthStore } from '../stores/auth'
 import {
     formatImpressionDate,
     formatImpressionFullDate,
@@ -19,13 +21,39 @@ const props = withDefaults(
 )
 
 const popover = ref<{ toggle: (event: unknown) => void } | null>(null)
+const auth = useAuthStore()
+const refreshedUsers = ref<User[]>([])
+let refreshAttemptedFor: string | null = null
+
+watch(
+    [() => auth.isAuthenticated, () => props.impression?.by, () => props.users],
+    ([authenticated, userId, users]) => {
+        if (!authenticated || !userId) return
+        if (users.some((user) => String(user.id) === userId)) return
+        if (refreshAttemptedFor === userId) return
+
+        refreshAttemptedFor = userId
+        void refreshUsers()
+            .then((result) => {
+                if (auth.isAuthenticated && props.impression?.by === userId) {
+                    refreshedUsers.value = result
+                }
+            })
+            .catch(() => undefined)
+    },
+    { immediate: true },
+)
 
 const userLabel = computed(() => {
     if (!props.impression) return ''
 
+    const knownUser = props.users.some(
+        (user) => String(user.id) === props.impression?.by,
+    )
+
     return impressionUserLabel(
         props.impression,
-        props.users,
+        knownUser ? props.users : refreshedUsers.value,
         t('spa.competitions.unknown_user', { id: props.impression.by }),
     )
 })

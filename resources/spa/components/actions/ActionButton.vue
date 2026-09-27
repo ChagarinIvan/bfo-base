@@ -8,6 +8,7 @@ withDefaults(
         severity?: string
         as?: 'a' | 'button'
         href?: string
+        download?: boolean
         ariaLabel?: string
         disabled?: boolean
         loading?: boolean
@@ -18,6 +19,7 @@ withDefaults(
         severity: 'secondary',
         as: 'button',
         href: undefined,
+        download: false,
         ariaLabel: undefined,
         disabled: false,
         loading: false,
@@ -31,6 +33,7 @@ defineEmits<{ click: [event?: globalThis.MouseEvent] }>()
     <Button
         :as="as"
         :href="href"
+        :download="download ? '' : undefined"
         :label="label"
         :icon="icon"
         :severity="severity"

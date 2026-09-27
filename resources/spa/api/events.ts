@@ -2,6 +2,7 @@ import { api } from './client'
 import type {
     Event,
     EventFormRequest,
+    CupEventOptionQuery,
     GroupEventsQuery,
     PaginatedApiResponse,
 } from './types'
@@ -56,7 +57,10 @@ export async function getEvent(id: string): Promise<Event> {
     return (await api.get<Event>(`/events/${id}`)).data
 }
 
-export async function getEventsByIds(ids: string[]): Promise<Event[]> {
+export async function getEventsByIds(
+    ids: string[],
+    signal?: AbortSignal,
+): Promise<Event[]> {
     if (!ids.length) return []
 
     const response = await api.get<Event[]>('/events', {
@@ -65,9 +69,20 @@ export async function getEventsByIds(ids: string[]): Promise<Event[]> {
             withCompetition: 1,
             perPage: ids.length,
         },
+        signal,
     })
 
     return response.data
+}
+
+export async function getCupEventOptions(
+    query: CupEventOptionQuery,
+): Promise<Event[]> {
+    return (
+        await api.get<Event[]>('/events', {
+            params: { ...query, withCompetition: 1 },
+        })
+    ).data
 }
 
 export async function getCompetitionEvents(
@@ -76,7 +91,7 @@ export async function getCompetitionEvents(
     perPage = 20,
 ): Promise<PaginatedApiResponse<Event>> {
     const response = await api.get<Event[]>('/events', {
-        params: { competitionId, page, perPage },
+        params: { competitionId, page, perPage, withParticipantsCount: 1 },
     })
 
     return {

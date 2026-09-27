@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Api\V1\Rank;
 
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Rank\ListRanksAction;
 use App\Domain\Rank\Rank;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 use function array_map;
+
+/** @see ListRanksAction */
 
 final class ListRanksActionTest extends TestCase
 {

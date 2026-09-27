@@ -28,6 +28,7 @@ final readonly class UniteEventsService
     ) {
     }
 
+    /** @throws EventNotFound */
     public function execute(UniteEvents $command): ViewEventDto
     {
         return $this->transactional->run(function () use ($command): ViewEventDto {

@@ -9,11 +9,13 @@ use App\Domain\Cup\Group\CupGroup;
 use App\Domain\Cup\Group\GroupAge;
 use App\Domain\Cup\Group\GroupMale;
 use App\Domain\ProtocolLine\Criteria\CupEventDistancesProtocolLinesCriteria;
+use App\Domain\Shared\Criteria;
 use Illuminate\Support\Collection;
 
 class ElkPathCup extends EliteCupType
 {
-    protected const GROUPS_MAP = [
+    /** @var array<string, string[]>  */
+    protected const array GROUPS_MAP = [
         'M_0_Elite–M' => ['Elite–Mужчыны', 'EliteTrail-М', '%Elite-М'],
         'W_0_Elite–W' => ['Elite–Жанчыны', 'EliteTrail-Ж', '%Elite-Ж'],
         'M_0_Short–M' => ['ShortTrail-М,15-34', 'Short–Mужчыны', '%Short-М%34'],
@@ -33,7 +35,7 @@ class ElkPathCup extends EliteCupType
         return 'app.cup.type.elk_path';
     }
 
-    public function getGroups(): array|Collection
+    public function groups(): array
     {
         $groups = Collection::make();
 
@@ -50,26 +52,28 @@ class ElkPathCup extends EliteCupType
         $groups->push(new CupGroup(GroupMale::Woman, name: 'OpenTrail-W'));
         $groups->push(new CupGroup(GroupMale::Man, name: 'OpenTrail-M'));
 
-        return $groups;
+        return $groups->all();
     }
 
     protected function getGroupProtocolLines(CupEvent $cupEvent, CupGroup $group): Collection
     {
         $groupMap = $this->getGroupsMap($group);
-        $mainDistance = $this->distanceService->findDistance($groupMap, $cupEvent->event_id);
+        $mainDistance = $this->distanceByGroupNames($groupMap, $cupEvent->event_id);
 
         if ($mainDistance === null) {
             return new Collection();
         }
 
-        return $this->protocolLinesRepository->byCriteria(
-            CupEventDistancesProtocolLinesCriteria::create(collect([$mainDistance]), $cupEvent)
-        );
+        return [$mainDistance]
+            |> collect(...)
+            |> (static fn(Collection $x): Criteria => CupEventDistancesProtocolLinesCriteria::create($x, $cupEvent))
+            |> $this->protocolLinesRepository->byCriteria(...)
+        ;
     }
 
     protected function getGroupsMap(CupGroup $group): array
     {
-        foreach ($this->getGroups() as $cupGroup) {
+        foreach ($this->groups() as $cupGroup) {
             if ($cupGroup->equal($group)) {
                 return self::GROUPS_MAP[$cupGroup->id()];
             }

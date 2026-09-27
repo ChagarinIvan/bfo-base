@@ -40,7 +40,10 @@ final class AllEventsServiceTest extends TestCase
             ->method('byCriteria')
             ->with(
                 new Criteria(['competitionId' => '3']),
-                new EventResources(withCompetitionName: true),
+                new EventResources(
+                    withCompetitionName: true,
+                    withParticipantsCount: true,
+                ),
             )
             ->willReturn(new Collection([$event]))
         ;

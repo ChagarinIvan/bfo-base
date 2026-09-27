@@ -13,9 +13,9 @@ use App\Domain\Club\ClubRepository;
 use App\Domain\ProtocolLine\ProtocolLineRepository;
 use App\Domain\ProtocolLine\ProtocolLineResources;
 use App\Domain\Shared\Criteria;
+use App\Domain\Shared\Pagination\ArraySliceAdapter;
 use App\Domain\Shared\Pagination\Slice;
 use App\Domain\Shared\SymbolNormalizer;
-use Pagerfanta\Adapter\ArrayAdapter;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -36,7 +36,7 @@ final class ListProtocolLinesServiceTest extends TestCase
                 ]),
                 new ProtocolLineResources(withEvent: true, withCompetition: true),
             )
-            ->willReturn(new Slice(new ArrayAdapter([])))
+            ->willReturn(new Slice(new ArraySliceAdapter([])))
         ;
 
         $service = new ListProtocolLinesService(
@@ -65,7 +65,7 @@ final class ListProtocolLinesServiceTest extends TestCase
         $lines->expects($this->once())
             ->method('paginate')
             ->with(new Criteria(['personId' => '7']), new ProtocolLineResources())
-            ->willReturn(new Slice(new ArrayAdapter([])))
+            ->willReturn(new Slice(new ArraySliceAdapter([])))
         ;
 
         $service = new ListProtocolLinesService(

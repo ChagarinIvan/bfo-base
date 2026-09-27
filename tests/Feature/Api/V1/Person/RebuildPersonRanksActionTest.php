@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Api\V1\Person;
 
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\RebuildPersonRanksAction;
 use App\Domain\Person\Person;
 use App\Infrastructure\Sanctum\SanctumUser;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+
+/** @see RebuildPersonRanksAction */
 
 final class RebuildPersonRanksActionTest extends TestCase
 {

@@ -13,6 +13,7 @@ export default tseslint.config(
     files: ['resources/spa/**/*.{ts,vue}'],
     languageOptions: {
       globals: {
+        AbortController: 'readonly',
         Blob: 'readonly',
         document: 'readonly',
         File: 'readonly',

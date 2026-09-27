@@ -32,6 +32,6 @@ final readonly class CalculateCupEventService
         $cupEvent = $this->cupEvents->byId($command->eventId()) ?? throw new CupEventNotFound;
         $points = $cup->calculateEvent($cupEvent, $command->cupGroup());
 
-        return $this->assembler->toViewCalculatedCupEventDto($cup, $cupEvent, $points->all());
+        return $this->assembler->toViewCalculatedCupEventDto($cup, $cupEvent, $points);
     }
 }

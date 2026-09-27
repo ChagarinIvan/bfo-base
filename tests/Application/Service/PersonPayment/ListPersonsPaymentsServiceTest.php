@@ -12,9 +12,9 @@ use App\Application\Service\PersonPayment\ListPersonsPaymentsService;
 use App\Domain\Auth\Impression;
 use App\Domain\PersonPayment\PersonPayment;
 use App\Domain\PersonPayment\PersonPaymentRepository;
+use App\Domain\Shared\Pagination\ArraySliceAdapter;
 use App\Domain\Shared\Pagination\Slice;
 use Carbon\Carbon;
-use Pagerfanta\Adapter\ArrayAdapter;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
@@ -42,7 +42,7 @@ final class ListPersonsPaymentsServiceTest extends TestCase
         $this->payments
             ->expects($this->once())
             ->method('paginate')
-            ->willReturn(new Slice(new ArrayAdapter([])))
+            ->willReturn(new Slice(new ArraySliceAdapter([])))
         ;
 
         $result = $this->service->paginate(new ListPersonsPayments(new SearchPersonPaymentsDto('1')));
@@ -56,7 +56,7 @@ final class ListPersonsPaymentsServiceTest extends TestCase
         $this->payments
             ->expects($this->once())
             ->method('paginate')
-            ->willReturn(new Slice(new ArrayAdapter([$this->paymentMock(), $this->paymentMock()])))
+            ->willReturn(new Slice(new ArraySliceAdapter([$this->paymentMock(), $this->paymentMock()])))
         ;
 
         $result = $this->service->paginate(new ListPersonsPayments(new SearchPersonPaymentsDto('1')));

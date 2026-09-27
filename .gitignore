@@ -28,3 +28,4 @@ docker-compose.yml
 composer.phar
 .phpunit.cache/*
 .php-cs-fixer.cache
+/.zed

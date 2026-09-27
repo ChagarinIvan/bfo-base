@@ -28,5 +28,5 @@ export function impressionUserLabel(
 ): string {
     const user = users.find((item) => String(item.id) === impression.by)
 
-    return user?.name || user?.email || unknownUser
+    return user?.email || user?.name || unknownUser
 }

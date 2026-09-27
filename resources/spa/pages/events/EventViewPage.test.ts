@@ -109,8 +109,7 @@ describe('event view page', () => {
             headers: {
                 'x-pagination-current-page': '1',
                 'x-pagination-per-page': '100',
-                'x-pagination-total': '1',
-                'x-pagination-last-page': '1',
+                'x-pagination-has-next': 'false',
             },
         })
 

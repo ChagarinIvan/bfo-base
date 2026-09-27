@@ -12,7 +12,7 @@ final class Pagination extends AbstractDto
     {
         return [
             'page' => ['integer', 'min:1'],
-            'perPage' => ['integer', 'min:1', 'max:100'],
+            'perPage' => ['integer', 'min:1', 'max:1000'],
         ];
     }
     public function __construct(

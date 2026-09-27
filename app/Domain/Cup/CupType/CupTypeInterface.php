@@ -17,10 +17,9 @@ interface CupTypeInterface
     /** @return array<string, CupEventPoint[]> */
     public function calculateCup(Cup $cup, Collection $cupEvents, CupGroup $mainGroup): array;
 
-    public function calculateEvent(CupEvent $cupEvent, CupGroup $mainGroup): Collection;
+    /** @return array<int|string, CupEventPoint> */
+    public function calculateEvent(CupEvent $cupEvent, CupGroup $mainGroup): array;
 
-    /**
-     * @return Collection|CupGroup[]
-     */
-    public function getGroups(): array|Collection;
+    /** @return CupGroup[] */
+    public function groups(): array;
 }

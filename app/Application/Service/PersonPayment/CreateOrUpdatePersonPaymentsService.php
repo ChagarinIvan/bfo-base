@@ -27,6 +27,7 @@ final readonly class CreateOrUpdatePersonPaymentsService
     ) {
     }
 
+    /** @throws PersonNotFound */
     public function execute(CreateOrUpdatePersonPayments $command): ViewPersonPaymentDto
     {
         $this->persons->byId($command->personId()) ?? throw new PersonNotFound();

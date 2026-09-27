@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Application\Service\CupEvent\Exception;
 
-use RuntimeException;
+use App\Application\Exception\ApplicationException;
+use App\Application\Exception\HttpError;
 
-final class CupEventNotFound extends RuntimeException
+#[HttpError(status: 404, code: 'cup_event_not_found')]
+final class CupEventNotFound extends ApplicationException
 {
 }

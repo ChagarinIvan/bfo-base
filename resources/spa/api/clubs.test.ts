@@ -33,7 +33,9 @@ describe('clubs api', () => {
         await getClubOptions()
 
         expect(api.get).toHaveBeenCalledTimes(1)
-        expect(api.get).toHaveBeenCalledWith('/clubs/all')
+        expect(api.get).toHaveBeenCalledWith('/clubs/all', {
+            signal: undefined,
+        })
     })
 
     it('ignores an invalid cached club option', async () => {
@@ -52,11 +54,13 @@ describe('clubs api', () => {
         await expect(getClubOptions()).resolves.toEqual([
             { id: '1', name: 'Club' },
         ])
-        expect(api.get).toHaveBeenCalledWith('/clubs/all')
+        expect(api.get).toHaveBeenCalledWith('/clubs/all', {
+            signal: undefined,
+        })
     })
 
     it('requests the paginated club listing and returns response metadata', async () => {
-        const headers = { 'x-pagination-total': '2' }
+        const headers = { 'x-pagination-has-next': 'false' }
         vi.mocked(api.get).mockResolvedValue({
             data: [{ id: '1', name: 'Club', personsCount: 0 }],
             headers,

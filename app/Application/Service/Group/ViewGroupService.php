@@ -15,6 +15,7 @@ final readonly class ViewGroupService
     {
     }
 
+    /** @throws GroupNotFound */
     public function execute(int $id): ViewGroupDto
     {
         $group = $this->groups->byId($id) ?? throw new GroupNotFound();

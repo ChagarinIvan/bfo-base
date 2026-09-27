@@ -12,15 +12,12 @@ use App\Domain\Event\Factory\StandardEventFactory;
 use App\Domain\Event\Factory\StandardEventProtocolFactory;
 use App\Domain\Event\Factory\StoreProtocolEventFactory;
 use App\Domain\Event\ProtocolPathResolver;
-use App\Domain\Event\ProtocolProcessingUpdater;
-use App\Domain\Event\ProtocolStorage;
 use App\Domain\Event\ProtocolUpdater;
 use App\Domain\Event\StandardProtocolUpdater;
 use App\Domain\Event\UniteEventDataService;
-use App\Infrastructure\Laravel\Eloquent\Event\EloquentEventProtocolRepository;
+use App\Domain\Shared\Storage;
 use App\Infrastructure\Laravel\Eloquent\Event\EloquentEventRepository;
 use App\Infrastructure\Laravel\Eloquent\Event\EloquentUniteEventDataService;
-use App\Infrastructure\Laravel\Storage\Event\FileProtocolStorage;
 use Illuminate\Support\ServiceProvider;
 
 final class EventProvider extends ServiceProvider
@@ -33,7 +30,6 @@ final class EventProvider extends ServiceProvider
             $this->app->get(EventProtocolRepository::class),
         ));
         $this->app->bind(EventFactory::class, StandardEventFactory::class);
-        $this->app->bind(ProtocolStorage::class, FileProtocolStorage::class);
         $this->app->bind(EventRepository::class, EloquentEventRepository::class);
         $this->app->bind(EventProtocolRepository::class, EloquentEventProtocolRepository::class);
         $this->app->bind(EventProtocolFactory::class, StandardEventProtocolFactory::class);
@@ -42,7 +38,7 @@ final class EventProvider extends ServiceProvider
 
         $this->app->bind(EventFactory::class, fn (): StoreProtocolEventFactory => new StoreProtocolEventFactory(
             $this->app->get(StandardEventFactory::class),
-            $this->app->get(ProtocolStorage::class),
+            $this->app->get(Storage::class),
             $this->app->get(ProtocolPathResolver::class),
         ));
     }

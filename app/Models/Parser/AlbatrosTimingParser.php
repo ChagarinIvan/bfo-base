@@ -9,17 +9,24 @@ use DOMXPath;
 use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use function array_filter;
+use function array_map;
 use function array_slice;
+use function array_values;
 use function count;
 use function explode;
 use function implode;
 use function in_array;
 use function is_numeric;
+use function mb_check_encoding;
+use function mb_convert_encoding;
 use function preg_match;
 use function preg_replace;
+use function preg_replace_callback;
 use function preg_split;
 use function str_contains;
 use function str_replace;
+use function str_starts_with;
 use function strpos;
 use function substr;
 use function trim;
@@ -29,22 +36,34 @@ class AlbatrosTimingParser extends AbstractParser
     public function parse(string $file): Collection
     {
         $doc = new DOMDocument();
-        @$doc->loadHTML($file);
+        $content = $file;
+        if (!mb_check_encoding($content, 'UTF-8')) {
+            $content = mb_convert_encoding($content, 'UTF-8', 'Windows-1251');
+            $content = preg_replace('#(charset\s*=\s*[\'\"]?)windows-1251#i', '${1}UTF-8', $content) ?? $content;
+        }
+        $content = str_replace('&nbsp;', ' ', $content);
+        @$doc->loadHTML($content);
         $xpath = new DOMXPath($doc);
-        $preNodes = $xpath->query('//pre');
         $linesList = new Collection();
-        foreach ($preNodes as $node) {
-            $text = trim($node->nodeValue);
+        foreach ($this->groupBlocks($xpath) as $groupBlock) {
+            $text = trim($groupBlock['text']);
             $text = trim($text, '-');
             $text = trim($text);
+            $text = preg_replace_callback(
+                '/-{20,}/',
+                static fn (array $match): string => "\n{$match[0]}\n",
+                $text,
+            ) ?? $text;
 
-            $groupNode = $xpath->query('preceding::h2[1]', $node);
-            $groupName = $groupNode[0]->nodeValue;
+            $groupName = $groupBlock['group'];
             if (str_contains($groupName, ',')) {
                 $groupName = substr($groupName, 0, strpos($groupName, ','));
             }
 
-            $lines = preg_split('/\n|\r\n?/', $text);
+            $lines = array_values(array_filter(
+                preg_split('/\n|\r\n?/', $text),
+                static fn (string $line): bool => trim($line) !== '',
+            ));
             $linesCount = count($lines);
             $distance = $lines[0];
             $distanceLength = 0;
@@ -65,8 +84,16 @@ class AlbatrosTimingParser extends AbstractParser
                     break;
                 }
                 $preparedLine = preg_replace('#\s+#', ' ', $line);
+                $preparedLine = preg_replace(
+                    '/п\.?\s*п\.?\s*20[.,]10(?:\s+-){2,}/u',
+                    'пп - -',
+                    $preparedLine,
+                ) ?? $preparedLine;
                 $lineData = explode(' ', $preparedLine);
                 $fieldsCount = count($lineData);
+                if ($fieldsCount < 6 || !is_numeric($lineData[0])) {
+                    continue;
+                }
                 $protocolLine = [
                     'group' => $groupName,
                     'distance' => [
@@ -113,7 +140,7 @@ class AlbatrosTimingParser extends AbstractParser
                 $time = null;
                 try {
                     $number = $lineData[$fieldsCount - ($indent + 1)];
-                    if ($number === 'пп') {
+                    if ($number === 'пп' || str_starts_with($number, 'п.п.')) {
                         $indent++;
                         $indent++;
                         throw new Exception();
@@ -136,7 +163,6 @@ class AlbatrosTimingParser extends AbstractParser
                 $protocolLine['lastname'] = $lineData[1];
                 $protocolLine['firstname'] = $lineData[2];
                 $protocolLine['club'] = implode(' ', array_slice($lineData, 3, $fieldsCount - $indent - 3));
-
                 $linesList->push($protocolLine);
             }
         }
@@ -165,5 +191,33 @@ class AlbatrosTimingParser extends AbstractParser
         }
 
         return  false;
+    }
+
+    /** @return list<array{group: string, text: string}> */
+    private function groupBlocks(DOMXPath $xpath): array
+    {
+        $blocks = [];
+        $blockIndex = null;
+
+        foreach ($xpath->query('//h2 | //pre') as $node) {
+            if ($node->nodeName === 'h2') {
+                $blocks[] = [
+                    'group' => trim(str_replace("\u{00A0}", ' ', $node->nodeValue)),
+                    'parts' => [],
+                ];
+                $blockIndex = count($blocks) - 1;
+
+                continue;
+            }
+
+            if ($blockIndex !== null) {
+                $blocks[$blockIndex]['parts'][] = str_replace("\u{00A0}", ' ', $node->nodeValue);
+            }
+        }
+
+        return array_map(static fn (array $block): array => [
+            'group' => $block['group'],
+            'text' => implode("\n", $block['parts']),
+        ], $blocks);
     }
 }

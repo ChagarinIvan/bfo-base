@@ -27,7 +27,7 @@ final class CacheManagerCupsCacheInvalidatorTest extends TestCase
     }
 
     #[Test]
-    public function it_flushes_tagged_cache_for_cup(): void
+    public function it_flushes_the_shared_cups_tag(): void
     {
         $taggedCache = $this->createMock(TaggedCache::class);
         $taggedCache->expects($this->once())->method('flush');
@@ -35,10 +35,10 @@ final class CacheManagerCupsCacheInvalidatorTest extends TestCase
         $this->cache
             ->expects($this->once())
             ->method('tags')
-            ->with(['cups', 42])
+            ->with(['cups'])
             ->willReturn($taggedCache)
         ;
 
-        $this->invalidator->invalidate(42);
+        $this->invalidator->invalidate();
     }
 }

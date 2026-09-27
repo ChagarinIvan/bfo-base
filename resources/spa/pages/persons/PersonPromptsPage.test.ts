@@ -36,12 +36,13 @@ describe('person prompts page', () => {
                     metaphone: 'RNR',
                 },
             ],
-            headers: { 'x-pagination-total': '1' },
+            headers: { 'x-pagination-has-next': 'false' },
         })
 
         const wrapper = mount(PersonPromptsPage, {
             global: {
                 stubs: {
+                    SlicePaginator: true,
                     Button: true,
                     Column: {
                         props: ['header'],

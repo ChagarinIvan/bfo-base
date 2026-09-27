@@ -16,9 +16,9 @@ use App\Domain\Person\PersonRank;
 use App\Domain\Person\PersonRepository;
 use App\Domain\Rank\Rank;
 use App\Domain\Shared\Criteria;
+use App\Domain\Shared\Pagination\ArraySliceAdapter;
 use App\Domain\Shared\Pagination\Slice;
 use Carbon\Carbon;
-use Pagerfanta\Adapter\ArrayAdapter;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
@@ -58,7 +58,7 @@ final class ListPersonsServiceTest extends TestCase
             ->expects($this->once())
             ->method('paginate')
             ->with(new Criteria(['clubId' => 7]))
-            ->willReturn(new Slice(new ArrayAdapter([$person])))
+            ->willReturn(new Slice(new ArraySliceAdapter([$person])))
         ;
         $result = $this->service->execute(
             new ListPersons(new SearchPersonDto(clubId: 7)),
@@ -78,7 +78,7 @@ final class ListPersonsServiceTest extends TestCase
             ->expects($this->once())
             ->method('paginate')
             ->with(new Criteria(['name' => 'Ivan']))
-            ->willReturn(new Slice(new ArrayAdapter([])))
+            ->willReturn(new Slice(new ArraySliceAdapter([])))
         ;
 
         $search = (new SearchPersonDto)->fromArray(
@@ -97,7 +97,7 @@ final class ListPersonsServiceTest extends TestCase
             ->expects($this->once())
             ->method('paginate')
             ->with(new Criteria(['ids' => [7, 8]]))
-            ->willReturn(new Slice(new ArrayAdapter([])))
+            ->willReturn(new Slice(new ArraySliceAdapter([])))
         ;
 
         $result = $this->service->execute(
@@ -114,7 +114,7 @@ final class ListPersonsServiceTest extends TestCase
             ->expects($this->once())
             ->method('paginate')
             ->with(Criteria::empty())
-            ->willReturn(new Slice(new ArrayAdapter([])))
+            ->willReturn(new Slice(new ArraySliceAdapter([])))
         ;
 
         $result = $this->service->execute(new ListPersons(new SearchPersonDto()));
@@ -129,7 +129,7 @@ final class ListPersonsServiceTest extends TestCase
             ->expects($this->once())
             ->method('paginate')
             ->with(new Criteria(['withoutLinesAndPayments' => true]))
-            ->willReturn(new Slice(new ArrayAdapter([])))
+            ->willReturn(new Slice(new ArraySliceAdapter([])))
         ;
 
         $result = $this->service->execute(

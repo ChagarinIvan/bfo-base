@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Api\V1\Club;
 
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Club\CreateClubAction;
 use App\Domain\Club\Club;
 use App\Infrastructure\Sanctum\SanctumUser;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -11,6 +12,8 @@ use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\Sanctum;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+
+/** @see CreateClubAction */
 
 final class CreateClubActionTest extends TestCase
 {

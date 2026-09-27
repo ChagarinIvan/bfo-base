@@ -16,6 +16,7 @@ final readonly class DeleteGroupService
     {
     }
 
+    /** @throws GroupNotFound */
     public function execute(DeleteGroup $command): void
     {
         $this->transactional->run(function () use ($command): void {

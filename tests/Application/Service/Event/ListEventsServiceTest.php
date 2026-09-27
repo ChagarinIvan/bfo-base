@@ -14,8 +14,8 @@ use App\Domain\Event\Event;
 use App\Domain\Event\EventRepository;
 use App\Domain\Event\EventResources;
 use App\Domain\Shared\Criteria;
+use App\Domain\Shared\Pagination\ArraySliceAdapter;
 use App\Domain\Shared\Pagination\Slice;
-use Pagerfanta\Adapter\ArrayAdapter;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
@@ -47,11 +47,17 @@ final class ListEventsServiceTest extends TestCase
         $this->events
             ->expects($this->once())
             ->method('paginate')
-            ->with(new Criteria(['competitionId' => '1']), new EventResources(withActiveProtocol: true))
-            ->willReturn(new Slice(new ArrayAdapter($events)))
+            ->with(
+                new Criteria(['competitionId' => '1']),
+                new EventResources(withParticipantsCount: true),
+            )
+            ->willReturn(new Slice(new ArraySliceAdapter($events)))
         ;
 
-        $result = $this->service->execute(new ListEvents(new SearchEventDto('1'), new UserId(1)));
+        $result = $this->service->execute(new ListEvents(new SearchEventDto(
+            competitionId: '1',
+            withParticipantsCount: '1',
+        )));
         $items = $result->items();
 
         $this->assertInstanceOf(Slice::class, $result);

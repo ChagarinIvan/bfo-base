@@ -27,6 +27,9 @@ final readonly class AllEvents
 
     public function resources(): EventResources
     {
-        return new EventResources(withCompetitionName: $this->search->withCompetition === '1');
+        return new EventResources(
+            withCompetitionName: $this->search->withCompetition === '1',
+            withParticipantsCount: true,
+        );
     }
 }

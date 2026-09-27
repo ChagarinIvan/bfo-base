@@ -69,6 +69,7 @@ final class IdentProtocolLineCommand extends Command
                 $protocolLine->save();
             });
 
+            $protocolLineIdentService->activateRepeatedMasterRanks($protocolLines);
             $this->rebuildRanks($rankService, $personId, $userId);
         } else {
             if ($protocolLines->isEmpty()) {
@@ -107,6 +108,7 @@ final class IdentProtocolLineCommand extends Command
                 $protocolLine->save();
             });
 
+            $protocolLineIdentService->activateRepeatedMasterRanks($protocolLines);
             $this->rebuildRanks($rankService, $personId, $userId);
         }
     }

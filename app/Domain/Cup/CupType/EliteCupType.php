@@ -29,17 +29,19 @@ class EliteCupType extends AbstractCupType
         return 'app.cup.type.elite';
     }
 
-    public function calculateEvent(CupEvent $cupEvent, CupGroup $mainGroup): Collection
+    /** @return array<int|string, CupEventPoint> */
+    public function calculateEvent(CupEvent $cupEvent, CupGroup $mainGroup): array
     {
         $cupEventProtocolLines = $this->getGroupProtocolLines($cupEvent, $mainGroup);
 
         return $this
             ->calculateLines($cupEvent, $cupEventProtocolLines)
             ->sortByDesc(static fn (CupEventPoint $cupEventResult): float|int|string => $cupEventResult->points)
+            ->all()
         ;
     }
 
-    public function getGroups(): array|Collection
+    public function groups(): array
     {
         return CupGroupFactory::getAgeTypeGroups();
     }
@@ -53,12 +55,12 @@ class EliteCupType extends AbstractCupType
     {
         $groupMap = $this->getGroupsMap($group);
 
-        $mainDistance = $this->distanceService->findDistance($groupMap, $cupEvent->event_id);
+        $mainDistance = $this->distanceByGroupNames($groupMap, $cupEvent->event_id);
         if ($mainDistance === null) {
             return new Collection();
         }
 
-        $equalDistances = $this->distanceService->getEqualDistances($mainDistance);
+        $equalDistances = $this->equalDistances($mainDistance);
         $distances = $equalDistances
             ->add($mainDistance)
             ->filter(fn (Distance $distance): bool => in_array($distance->group->name, $this->getAllGroupsMap($group), true))

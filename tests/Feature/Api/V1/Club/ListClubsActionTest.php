@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Api\V1\Club;
 
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Club\ListClubsAction;
 use App\Domain\Club\Club;
 use App\Domain\Person\Person;
 use App\Infrastructure\Sanctum\SanctumUser;
@@ -17,6 +18,8 @@ use Tests\TestCase;
 use function array_filter;
 use function str_contains;
 use function strtolower;
+
+/** @see ListClubsAction */
 
 final class ListClubsActionTest extends TestCase
 {
@@ -90,10 +93,11 @@ final class ListClubsActionTest extends TestCase
 
         $this->getJson('/api/v1/clubs?perPage=2&page=2')
             ->assertOk()
-            ->assertHeader('X-Pagination-Total', '3')
+            ->assertHeader('X-Pagination-Has-Next', 'false')
             ->assertHeader('X-Pagination-Per-Page', '2')
             ->assertHeader('X-Pagination-Current-Page', '2')
-            ->assertHeader('X-Pagination-Last-Page', '2')
+            ->assertHeaderMissing('X-Pagination-Total')
+            ->assertHeaderMissing('X-Pagination-Last-Page')
         ;
     }
 
@@ -153,7 +157,7 @@ final class ListClubsActionTest extends TestCase
 
         $this->getJson('/api/v1/clubs')->assertOk();
 
-        $this->assertCount(2, $queries);
+        $this->assertCount(1, $queries);
         $this->assertCount(1, array_filter(
             $queries,
             static fn (string $sql): bool => str_contains($sql, 'limit'),

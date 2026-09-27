@@ -13,8 +13,8 @@ use App\Domain\Person\Person;
 use App\Domain\Person\PersonRepository;
 use App\Domain\PersonPrompt\PersonPromptRepository;
 use App\Domain\Shared\Criteria;
+use App\Domain\Shared\Pagination\ArraySliceAdapter;
 use App\Domain\Shared\Pagination\Slice;
-use Pagerfanta\Adapter\ArrayAdapter;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -35,7 +35,7 @@ final class ListPersonsPromptsServiceTest extends TestCase
         $repository->expects($this->once())
             ->method('paginate')
             ->with(new Criteria(['personId' => '7', 'activePerson' => true]))
-            ->willReturn(new Slice(new ArrayAdapter([])))
+            ->willReturn(new Slice(new ArraySliceAdapter([])))
         ;
 
         $service = new ListPersonsPromptsService(

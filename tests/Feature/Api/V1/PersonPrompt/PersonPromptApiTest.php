@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Api\V1\PersonPrompt;
 
+use App\Bridge\Laravel\Http\Controllers\Api\V1\PersonPrompt\CreatePersonPromptAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\PersonPrompt\DeletePersonPromptAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\PersonPrompt\ListPersonPromptsAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\PersonPrompt\UpdatePersonPromptAction;
 use App\Domain\Person\Person;
 use App\Domain\PersonPrompt\PersonPrompt;
 use App\Infrastructure\Sanctum\SanctumUser;
@@ -15,6 +19,13 @@ use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 use function array_filter;
 use function str_contains;
+
+/**
+ * @see CreatePersonPromptAction
+ * @see DeletePersonPromptAction
+ * @see ListPersonPromptsAction
+ * @see UpdatePersonPromptAction
+ */
 
 final class PersonPromptApiTest extends TestCase
 {
@@ -34,7 +45,9 @@ final class PersonPromptApiTest extends TestCase
             ->assertOk()
             ->assertJsonCount(1)
             ->assertJsonStructure(['0' => ['id', 'personId', 'prompt', 'metaphone']])
-            ->assertHeader('X-Pagination-Total', '2')
+            ->assertHeader('X-Pagination-Has-Next', 'true')
+            ->assertHeaderMissing('X-Pagination-Total')
+            ->assertHeaderMissing('X-Pagination-Last-Page')
             ->assertJsonPath('0.personId', (string) $person->id);
     }
 
@@ -108,7 +121,7 @@ final class PersonPromptApiTest extends TestCase
     }
 
     #[Test]
-    public function it_uses_only_count_and_page_queries_for_a_prompt_page(): void
+    public function it_uses_only_a_page_query_for_a_prompt_page(): void
     {
         $this->authenticate();
         $person = $this->createPerson();
@@ -123,7 +136,7 @@ final class PersonPromptApiTest extends TestCase
             static fn (array $query): bool => str_contains($query['query'], 'persons_prompt'),
         );
 
-        $this->assertCount(2, $promptQueries);
+        $this->assertCount(1, $promptQueries);
     }
 
     #[Test]

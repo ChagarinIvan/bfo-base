@@ -37,6 +37,18 @@ import EventViewPage from '../pages/events/EventViewPage.vue'
 import CreateEventPage from '../pages/events/CreateEventPage.vue'
 import EditEventPage from '../pages/events/EditEventPage.vue'
 import UniteEventsPage from '../pages/events/UniteEventsPage.vue'
+import RankChecksPage from '../pages/rank-checks/RankChecksPage.vue'
+import RankCheckUploadPage from '../pages/rank-checks/RankCheckUploadPage.vue'
+import RankCheckViewPage from '../pages/rank-checks/RankCheckViewPage.vue'
+import CupsPage from '../pages/cups/CupsPage.vue'
+import CreateCupPage from '../pages/cups/CreateCupPage.vue'
+import EditCupPage from '../pages/cups/EditCupPage.vue'
+import CupViewPage from '../pages/cups/CupViewPage.vue'
+import CupLayoutPage from '../pages/cups/CupLayoutPage.vue'
+import CreateCupEventPage from '../pages/cups/CreateCupEventPage.vue'
+import EditCupEventPage from '../pages/cups/EditCupEventPage.vue'
+import CupEventViewPage from '../pages/cups/CupEventViewPage.vue'
+import CupTablePage from '../pages/cups/CupTablePage.vue'
 
 export function createAppRouter(
     history: RouterHistory = typeof window === 'undefined'
@@ -47,6 +59,57 @@ export function createAppRouter(
         history,
         routes: [
             { path: '/app/competitions', component: CompetitionsPage },
+            { path: '/app/cups', component: CupsPage },
+            {
+                path: '/app/cups/create',
+                component: CreateCupPage,
+                meta: { requiresAuth: true },
+            },
+            {
+                path: '/app/cups/:id/edit',
+                component: EditCupPage,
+                meta: { requiresAuth: true },
+            },
+            {
+                path: '/app/cups/:cupId',
+                component: CupLayoutPage,
+                children: [
+                    { path: '', component: CupViewPage },
+                    {
+                        path: 'table/:groupId',
+                        component: CupTablePage,
+                    },
+                ],
+            },
+            {
+                path: '/app/cup-events/:cupEventId',
+                component: CupEventViewPage,
+            },
+            {
+                path: '/app/cups/:cupId/events/create',
+                component: CreateCupEventPage,
+                meta: { requiresAuth: true },
+            },
+            {
+                path: '/app/cups/:cupId/events/:cupEventId/edit',
+                component: EditCupEventPage,
+                meta: { requiresAuth: true },
+            },
+            {
+                path: '/app/rank-checks',
+                component: RankChecksPage,
+                meta: { requiresAuth: true },
+            },
+            {
+                path: '/app/rank-checks/create',
+                component: RankCheckUploadPage,
+                meta: { requiresAuth: true },
+            },
+            {
+                path: '/app/rank-checks/:rankCheckId',
+                component: RankCheckViewPage,
+                meta: { requiresAuth: true },
+            },
             { path: '/app/events/:eventId', component: EventViewPage },
             {
                 path: '/app/competitions/:competitionId/events/create',

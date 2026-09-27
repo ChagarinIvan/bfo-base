@@ -3,7 +3,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Message from 'primevue/message'
-import Paginator, { type PageState } from 'primevue/paginator'
+import type { PageState } from 'primevue/paginator'
 import Button from 'primevue/button'
 import { useRoute, useRouter } from 'vue-router'
 import { deletePersonPrompt, getPersonPrompts } from '../../api/personPrompts'
@@ -13,6 +13,7 @@ import ConfirmDeleteDialog from '../../components/actions/ConfirmDeleteDialog.vu
 import ImpressionDetails from '../../components/ImpressionDetails.vue'
 import PersonPromptActionMenu from '../../components/actions/PersonPromptActionMenu.vue'
 import ListingTable from '../../components/ListingTable.vue'
+import SlicePaginator from '../../components/SlicePaginator.vue'
 import { t } from '../../i18n'
 import { useAuthStore } from '../../stores/auth'
 import { paginationFromHeaders } from '../listingModels'
@@ -29,8 +30,7 @@ const pending = ref(false)
 const pagination = ref<PaginationHeaders>({
     currentPage: 1,
     perPage: 20,
-    total: 0,
-    lastPage: 1,
+    hasNext: false,
 })
 let latestRequest = 0
 const columns = computed(() => [
@@ -205,11 +205,8 @@ onMounted(async () => {
             </DataTable>
         </template>
     </ListingTable>
-    <Paginator
-        v-if="pagination.total > 0"
-        :first="(pagination.currentPage - 1) * pagination.perPage"
-        :rows="pagination.perPage"
-        :total-records="pagination.total"
+    <SlicePaginator
+        :pagination="pagination"
         :rows-per-page-options="[10, 20, 50]"
         @page="(event: PageState) => void load(event.page + 1, event.rows)"
     />

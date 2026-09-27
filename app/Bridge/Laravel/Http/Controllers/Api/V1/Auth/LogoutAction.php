@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Bridge\Laravel\Http\Controllers\Api\V1\Auth;
 
 use App\Application\Dto\Auth\UserId;
+use App\Application\Service\Auth\EndHorizonSession;
+use App\Application\Service\Auth\EndHorizonSessionService;
 use App\Application\Service\Auth\Logout;
 use App\Application\Service\Auth\LogoutService;
 use App\Bridge\Laravel\Http\Controllers\ApiAction;
@@ -15,9 +17,14 @@ final class LogoutAction extends BaseController
 {
     use ApiAction;
 
-    public function __invoke(UserId $userId, LogoutService $service): Response
+    public function __invoke(
+        UserId $userId,
+        LogoutService $service,
+        EndHorizonSessionService $horizonSession,
+    ): Response
     {
         $service->execute(new Logout($userId));
+        $horizonSession->execute(new EndHorizonSession($userId));
 
         return response()->noContent();
     }

@@ -108,7 +108,11 @@ final class EloquentEventRepository implements EventRepository
     /** @return Slice<Event> */
     public function paginate(Criteria $criteria, EventResources $resources = new EventResources()): Slice
     {
-        $query = $this->buildQuery($criteria)->withCount('protocolLines');
+        $query = $this->buildQuery($criteria);
+
+        if ($resources->withParticipantsCount) {
+            $query->withCount('protocolLines');
+        }
 
         if ($resources->withCompetitionName) {
             $query->with('competition:id,name');
@@ -197,6 +201,7 @@ final class EloquentEventRepository implements EventRepository
             foreach ($criteria->sorting() as $key => $order) {
                 $query->orderBy($key, $order);
             }
+            $query->orderBy('events.id');
         } else {
             $query->orderBy('events.date', 'asc')->orderBy('events.id');
         }

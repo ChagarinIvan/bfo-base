@@ -10,8 +10,7 @@ describe('group listing table', () => {
         const pagination = {
             currentPage: 1,
             perPage: 20,
-            total: 1,
-            lastPage: 1,
+            hasNext: false,
         }
         const ListingTable = {
             props: ['items', 'pagination'],

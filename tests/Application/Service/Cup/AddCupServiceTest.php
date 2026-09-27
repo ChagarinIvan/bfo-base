@@ -17,9 +17,6 @@ use App\Domain\Cup\CupRepository;
 use App\Domain\Cup\CupType;
 use App\Domain\Cup\Factory\CupFactory;
 use App\Domain\Cup\Factory\CupInput;
-use App\Domain\Event\Event;
-use App\Domain\Event\EventRepository;
-use App\Domain\Shared\Criteria;
 use App\Models\Year;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -33,8 +30,6 @@ final class AddCupServiceTest extends TestCase
 
     private CupRepository&MockObject $cups;
 
-    private EventRepository&MockObject $events;
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -43,11 +38,7 @@ final class AddCupServiceTest extends TestCase
         $this->service = new AddCupService(
             $this->factory = $this->createMock(CupFactory::class),
             $this->cups = $this->createMock(CupRepository::class),
-            new CupAssembler(
-                $this->events = $this->createMock(EventRepository::class),
-                new EventAssembler($authAssembler),
-                $authAssembler,
-            ),
+            new CupAssembler($authAssembler, new EventAssembler($authAssembler)),
         );
     }
 
@@ -67,9 +58,6 @@ final class AddCupServiceTest extends TestCase
 
         /** @var Cup $cup */
         $cup = Cup::factory()->makeOne();
-        /** @var Event $event */
-        $event = Event::factory()->makeOne();
-
         $this->factory
             ->expects($this->once())
             ->method('create')
@@ -81,13 +69,6 @@ final class AddCupServiceTest extends TestCase
             ->expects($this->once())
             ->method('add')
             ->with($this->identicalTo($cup))
-        ;
-
-        $this->events
-            ->expects($this->once())
-            ->method('oneByCriteria')
-            ->with(new Criteria(['cupId' => $cup->id], ['date' => 'desc']))
-            ->willReturn($event)
         ;
 
         $dto = new CupDto();
