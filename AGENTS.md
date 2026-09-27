@@ -5,11 +5,15 @@
 1. `CLAUDE.md` — краткие правила, применяемые к каждому запросу.
 2. `.specify/memory/constitution.md` — главный источник архитектурных принципов,
    ограничений стека и Definition of Done.
-3. `.specify/workflows/speckit/workflow.yml` и `.specify/templates/` — правила
+3. `.specify/memory/backend-architecture-manifest.md` — обязательная карта
+   бэкенда, правила агрегатов и событий, паттерны, антипаттерны и реестр долга.
+   Читать перед новой серверной фичей и PR review; при расхождении приоритет
+   у конституции.
+4. `.specify/workflows/speckit/workflow.yml` и `.specify/templates/` — правила
    spec-kit и формат артефактов.
-4. `.agents/skills/speckit-*/SKILL.md` — Codex-версия команд spec-kit. В проекте
+5. `.agents/skills/speckit-*/SKILL.md` — Codex-версия команд spec-kit. В проекте
    также сохранены `.claude/skills/speckit-*/SKILL.md` для Claude Code.
-5. Актуальную фичу в `specs/`. Перед реализацией читать её `spec.md`,
+6. Актуальную фичу в `specs/`. Перед реализацией читать её `spec.md`,
    `plan.md`, `research.md`, `data-model.md`, `contracts/`, `checklists/` и
    `tasks.md`, если он создан.
 
@@ -46,9 +50,15 @@ codex mcp add phpstorm-index --url http://127.0.0.1:29175/index-mcp/streamable-h
   файлов проверять `git status` и минимизировать дифф.
 - Новый код следует целевым слоям `Application / Domain / Bridge /
   Infrastructure`. Новые сценарии оформлять Application-сервисами; не
-  расширять `app/Services` — это слой legacy-кода. Новые `Repositories` не
-  создавать; фасады Laravel не использовать; зависимости передавать через
-  конструктор и интерфейсы, где это разумно.
+  расширять `app/Services` и `app/Repositories` — это legacy-каталоги. Новые
+  repository ports в Domain и реализации в Infrastructure допустимы; фасады
+  Laravel не использовать; зависимости передавать через конструктор и
+  интерфейсы, где это разумно.
+- При новой серверной фиче и ревью применять проверочный список из
+  `.specify/memory/backend-architecture-manifest.md`: граница агрегата,
+  command, транзакция, `Impression updated`, доменное событие, сохранение,
+  доставка после commit и политика удаления. Текущие нарушения из манифеста
+  не считать образцом для нового кода.
 - Для PHP использовать PHP 8.5 / Laravel 13 и импортировать имена через `use`,
   не писать inline-FQCN. Для SPA соблюдать решения и контракты соответствующей
   спецификации.
