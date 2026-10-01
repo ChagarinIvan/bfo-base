@@ -23,7 +23,6 @@ final readonly class ViewEvent
     public function resources(): EventResources
     {
         return new EventResources(
-            withActiveProtocol: $this->userId !== null,
             readyOnly: $this->userId === null,
         );
     }

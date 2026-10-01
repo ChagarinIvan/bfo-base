@@ -10,6 +10,8 @@ use Illuminate\Support\Collection;
 
 interface ProtocolLineRepository
 {
+    public function add(ProtocolLine ...$protocolLines): void;
+
     public function byId(int $id, array $with = []): ?ProtocolLine;
 
     public function lockById(int $id): ?ProtocolLine;

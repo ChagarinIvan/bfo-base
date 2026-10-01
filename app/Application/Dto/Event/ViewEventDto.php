@@ -23,6 +23,8 @@ final readonly class ViewEventDto
         public ?string $competitionName = null,
         #[Groups(['authenticated'])]
         public ?string $processingStatus = null,
+        #[Groups(['authenticated'])]
+        public ?string $errorMessage = null,
     ) {
     }
 }

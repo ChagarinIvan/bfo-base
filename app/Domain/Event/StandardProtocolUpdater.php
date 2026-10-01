@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Event;
 
+use App\Domain\Auth\Impression;
 use App\Domain\Shared\Storage;
 
 final readonly class StandardProtocolUpdater implements ProtocolUpdater

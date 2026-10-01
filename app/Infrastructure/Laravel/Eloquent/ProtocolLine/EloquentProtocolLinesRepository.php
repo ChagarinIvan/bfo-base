@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Laravel\Eloquent\ProtocolLine;
 
+use App\Domain\Event\EventProcessingStatus;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\ProtocolLine\ProtocolLineRepository;
 use App\Domain\ProtocolLine\ProtocolLineResources;
@@ -19,6 +20,13 @@ use function mb_strtolower;
 
 final readonly class EloquentProtocolLinesRepository implements ProtocolLineRepository
 {
+    public function add(ProtocolLine ...$protocolLines): void
+    {
+        foreach ($protocolLines as $protocolLine) {
+            $protocolLine->save();
+        }
+    }
+
     public function byId(int $id, array $with = []): ?ProtocolLine
     {
         $protocolLineQuery = ProtocolLine::where('id', $id);
@@ -54,6 +62,10 @@ final readonly class EloquentProtocolLinesRepository implements ProtocolLineRepo
         ProtocolLineResources $resources = new ProtocolLineResources(),
     ): Slice {
         $query = $this->buildQuery($criteria);
+
+        if ($resources->readyOnly) {
+            $query->whereHas('distance.event', static fn (Builder $query): Builder => $query->where('processing_status', EventProcessingStatus::READY->value));
+        }
 
         if ($criteria->hasParam('distanceId')) {
             $query->orderBy('protocol_lines.id');
@@ -100,16 +112,54 @@ final readonly class EloquentProtocolLinesRepository implements ProtocolLineRepo
         $protocolLine->save();
     }
 
-    public function personIdsForEventProtocol(int $eventProtocolId): array
+    public function unidentifiedForEventAfterId(int $eventId, int $afterId, int $limit): array
     {
         return ProtocolLine::query()
-            ->where('event_protocol_id', $eventProtocolId)
-            ->whereNotNull('person_id')
+            ->join('distances', 'distances.id', '=', 'protocol_lines.distance_id')
+            ->where('distances.event_id', $eventId)
+            ->whereNull('protocol_lines.person_id')
+            ->where('protocol_lines.id', '>', $afterId)
+            ->orderBy('protocol_lines.id')
+            ->limit($limit)
+            ->select('protocol_lines.*')
+            ->get()
+            ->all();
+    }
+
+    public function hasUnidentifiedForEvent(int $eventId): bool
+    {
+        return ProtocolLine::query()
+            ->join('distances', 'distances.id', '=', 'protocol_lines.distance_id')
+            ->where('distances.event_id', $eventId)
+            ->whereNull('protocol_lines.person_id')
+            ->exists();
+    }
+
+    public function personIdForPreparedLine(string $preparedLine): ?int
+    {
+        $id = ProtocolLine::query()
+            ->join('person', 'person.id', '=', 'protocol_lines.person_id')
+            ->where('person.active', true)
+            ->where('protocol_lines.prepared_line', $preparedLine)
+            ->whereNotNull('protocol_lines.person_id')
+            ->orderByDesc('protocol_lines.id')
+            ->value('protocol_lines.person_id');
+
+        return $id === null ? null : (int) $id;
+    }
+
+    public function personIdsForEventAfterId(int $eventId, int $afterId, int $limit): array
+    {
+        return ProtocolLine::query()
+            ->join('distances', 'distances.id', '=', 'protocol_lines.distance_id')
+            ->where('distances.event_id', $eventId)
+            ->where('protocol_lines.person_id', '>', $afterId)
             ->distinct()
-            ->pluck('person_id')
+            ->orderBy('protocol_lines.person_id')
+            ->limit($limit)
+            ->pluck('protocol_lines.person_id')
             ->map(static fn (int $id): int => $id)
-            ->all()
-        ;
+            ->all();
     }
 
     /** @return Builder<ProtocolLine> */
@@ -205,10 +255,6 @@ final readonly class EloquentProtocolLinesRepository implements ProtocolLineRepo
 
         if ($criteria->hasParam('eventId')) {
             $query->where('distances.event_id', $criteria->param('eventId'));
-        }
-
-        if ($criteria->hasParam('eventProtocolId')) {
-            $query->where('protocol_lines.event_protocol_id', $criteria->param('eventProtocolId'));
         }
 
         if ($criteria->hasParam('unidentified') && $criteria->param('unidentified')) {

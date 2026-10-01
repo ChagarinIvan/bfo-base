@@ -14,7 +14,6 @@ class PersonPaymentFactory extends Factory
     public function definition(): array
     {
         return [
-            'id' => $this->faker->numberBetween(1, 100),
             'person_id' => $this->faker->numberBetween(1, 100),
             'year' => (int) $this->faker->year,
             'date' => $this->faker->date,

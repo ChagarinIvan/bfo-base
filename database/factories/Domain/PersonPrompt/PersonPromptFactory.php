@@ -7,6 +7,7 @@ namespace Database\Factories\Domain\PersonPrompt;
 use App\Domain\PersonPrompt\PersonPrompt;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+/** @extends Factory<PersonPrompt> */
 class PersonPromptFactory extends Factory
 {
     protected $model = PersonPrompt::class;

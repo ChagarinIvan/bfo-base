@@ -30,6 +30,11 @@ final readonly class EloquentDistanceRepository implements DistanceRepository
         return $this->buildQuery($criteria)->with('group')->first();
     }
 
+    public function add(Distance $distance): void
+    {
+        $distance->save();
+    }
+
     /** @return Builder<Distance> */
     private function buildQuery(Criteria $criteria): Builder
     {

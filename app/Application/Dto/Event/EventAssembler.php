@@ -32,9 +32,8 @@ final readonly class EventAssembler
             competitionName: $resources->withCompetitionName && $event->relationLoaded('competition')
                 ? $event->competition?->name
                 : null,
-            processingStatus: $resources->withActiveProtocol && $event->relationLoaded('activeProtocol')
-                ? $event->activeProtocol?->status->value
-                : null,
+            processingStatus: $event->processing_status?->value,
+            errorMessage: $event->error_message,
         );
     }
 }

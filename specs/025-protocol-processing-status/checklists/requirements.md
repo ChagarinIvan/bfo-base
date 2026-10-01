@@ -31,4 +31,4 @@
 
 ## Notes
 
-All quality criteria pass. The feature explicitly covers the processing lifecycle and automatic status refresh while leaving protocol parsing rules unchanged.
+All quality criteria pass. The feature covers processing states, automatic refresh, partial identification progress and safe retry while leaving protocol parsing rules unchanged. A manual resume command remains outside this feature.

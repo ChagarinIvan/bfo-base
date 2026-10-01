@@ -7,11 +7,9 @@ namespace App\Application\Service\Event;
 use App\Application\Dto\Event\EventAssembler;
 use App\Application\Dto\Event\ViewEventDto;
 use App\Application\Service\Event\Exception\InvalidProtocol;
-use App\Domain\Event\EventProtocolRepository;
 use App\Domain\Event\EventRepository;
 use App\Domain\Event\Exception\InvalidProtocolContent;
 use App\Domain\Event\Factory\EventFactory;
-use App\Domain\Event\Factory\EventProtocolFactory;
 use App\Domain\Event\Protocol\ProtocolFactory;
 
 final readonly class AddEventService
@@ -21,8 +19,6 @@ final readonly class AddEventService
         private EventRepository $events,
         private EventAssembler $assembler,
         private ProtocolFactory $protocolFactory,
-        private EventProtocolFactory $eventProtocolsFactory,
-        private EventProtocolRepository $eventProtocols,
     ) {
     }
 
@@ -37,13 +33,6 @@ final readonly class AddEventService
 
         $event = $this->factory->create($command->eventInput(), $protocol);
         $this->events->add($event);
-
-        if ($event->file !== '') {
-            $run = $this->eventProtocolsFactory->create($event->id, $event->created);
-            $this->eventProtocols->add($run);
-            $event->activateProtocolRun($run->id, $event->created);
-            $this->events->update($event);
-        }
 
         return $this->assembler->toViewEventDto($event);
     }

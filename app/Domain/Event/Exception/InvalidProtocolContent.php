@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domain\Event\Exception;
 
-use RuntimeException;
+use DomainException;
 
-final class InvalidProtocolContent extends RuntimeException
+final class InvalidProtocolContent extends DomainException
 {
 }

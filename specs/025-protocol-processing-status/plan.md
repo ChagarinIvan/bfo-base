@@ -1,57 +1,91 @@
 # Implementation Plan: Статусы обработки протокола этапа
 
-**Branch**: `025-protocol-processing-status` | **Date**: 2026-09-13 | **Spec**: [spec.md](spec.md)
+**Branch**: `025-protocol-processing-status` | **Date**: 2026-09-28 | **Spec**: [spec.md](spec.md)
 
 ## Summary
 
-Сохранять состояние конкретной загрузки в отдельном `EventProtocol` и менять его в фоновых потоках разбора, идентификации и пересчёта разрядов. `Event` хранит ссылку только на актуальный run. Авторизованный API возвращает состояние в карточке и списке; публичное чтение доступно только готовому актуальному run. SPA показывает локализованный статус и обновляет карточку каждые пять секунд лишь в переходных состояниях.
+Владельцем текущего протокола и его статусов становится `Event`. При создании этапа с протоколом он получает `parsing`; три последовательные фоновые стадии синхронно разбирают файл, идентифицируют строки и пересчитывают разряды. Каждый завершённый переход `Event` публикует событие для запуска следующей стадии после commit. Отдельный `EventProtocol`, очередь `IdentLine` в этом пути и задания пересчёта по одному спортсмену не нужны. Идентификация сохраняет прогресс по строкам, поэтому повторный запуск стадии продолжает оставшиеся строки.
 
 ## Technical Context
 
-PHP 8.5 / Laravel 13, TypeScript / Vue 3 / PrimeVue, MySQL/Eloquent и Redis/Horizon. Состояние, счётчики, уникальные `personId` завершённых rank-job и идентификатор rank batch хранятся в `event_protocols`; `events.active_event_protocol_id` указывает на актуальный run. Покрытие: PHPUnit unit/API/integration и Vitest. Polling ограничен одной открытой карточкой, обновляет и этап, и его строки, прекращается при `ready`, `failed` и unmount; новые read paths не добавляют N+1.
+**Language/Version**: PHP 8.5, TypeScript; Laravel 13, Vue 3, PrimeVue.
+**Storage**: MySQL/Eloquent; protocol files через `Storage`; asynchronous work через Redis/Horizon.
+**Testing**: PHPUnit unit/API/integration, Vitest.
+**Project Type**: Web application, backend API and SPA.
+**Performance Goals**: UI показывает изменение состояния максимум за 5 секунд; тяжелые этапы не выполняются в HTTP request.
+**Constraints**: Обработку запускают domain events after commit; повторная доставка не повторяет завершённый этап. Публичное чтение допускает только готовый Event. Долгоживущий worker не хранит данные идентификации в static cache между заданиями. Только parsing сохраняется одной DB-транзакцией; identification и rank stage удерживают внешний lock без общей DB-транзакции.
+**Scale/Scope**: Один текущий протокол на Event; предыдущие протоколы не сохраняются как отдельные processing runs.
 
 ## Constitution Check
 
 | Gate | Status | Rationale |
 |---|---|---|
-| I. Layering | Pass | Domain state/value object и transition policy; Application commands/use cases; Bridge/Infrastructure adapters. |
-| II. No facades | Pass | Новый код получает зависимости через конструктор. |
-| III. Tests | Pass | Переходы, ready-invariant, API visibility, UI и polling имеют отдельные тесты. |
-| Performance | Pass | Один bounded refresh раз в 5 секунд только в transition state. |
+| Layering | Accepted feature decision; constitution update deferred | Application получает Event и lock; Event вызывает доменные сервисы с Domain repository ports для последовательного сохранения ProtocolLine/Person. Прямой Eloquent в новом доменном коде запрещён. Расхождение с правилом VII об Application-оркестрации persistence принято пользователем; правка конституции относится к отдельной последующей работе и здесь не проводится. |
+| No facades in Application/Domain | Pass | Storage, parser, factory, repositories and transaction manager передаются через constructor. |
+| Aggregate state/events/audit | Pass | Каждый переход Event меняет `updated`, записывает один соответствующий event и сохраняется repository внутри транзакции. |
+| Async after commit | Pass | Создание/замена протокола запускает parsing; `EventParsed` запускает identification; `EventIdentified` запускает один фоновый rank worker. |
+| Retry/idempotency | Operational tradeoff | Все write paths получают один lock на Event; статус и токен текущего протокола сверяются после захвата. TTL больше максимального времени job, lock освобождается в finally, владение проверяется перед записью. Проверка не защищает промежуток до самой записи при истечении TTL; этот остаточный риск принят пользователем. Идентификация выбирает только строки без спортсмена; пересчёт повторно вычисляет состояние из сохранённых фактов. |
+| Data migration | Required | Не применять черновые миграции `EventProtocol`: заменить их схемой полей Event и backfill `ready` для существующих завершённых результатов. Данных active run и старого `failed` для переноса нет. |
+| Tests | Pending implementation | Тесты прерывания и повтора каждой стадии, публичной видимости и замены протокола внесены в tasks.md. |
 
 ## Design
 
-### EventProtocol aggregate
+### Event lifecycle
 
-`EventProtocol` is one immutable-run aggregate per upload: `id`, `eventId`, `runToken`, counters for created/identified lines, rank-batch state, completed rank-job person IDs and `queued`, `parsing`, `identifying`, `rebuildingRanks`, `ready`, `failed` status. Parsing starts only from `queued`; terminal and repeated delivery cannot regress state. `Event` points to the active run; application services ignore parser, identification and rank-start signals for a replaced run.
+`Event` хранит статус текущего протокола: `parsing → identifying → rebuildingRanks → ready`, с переходом из рабочих стадий соответственно в `parsingError`, `identifyingError` или `rebuildingRanksError`. Ошибка сохраняет безопасный `errorMessage`; новый протокол очищает сообщение. Статус и `processing_token` обязательны для каждого Event. Фабрика создаёт обычный этап сразу в `parsing` с новым токеном, а объединённый этап с производными результатами — в `ready` с токеном. Команда и событие несут токен; обработчик сверяет его и ожидаемую стадию. Один статус недостаточен: старая задача parsing может увидеть `parsing` нового файла.
 
-### Target boundaries
+Доменные методы `parse(...)`, `ident(...)`, `updateRanks(...)` и `failProcessing(...)` проверяют допустимость стадии, меняют `updated`, фиксируют переход Event и событие следующего шага. `failProcessing(...)` выводит конкретный error-статус из текущей стадии и принимает только безопасный пользовательский текст; технические детали остаются в логах. `Event::ident()` и `Event::updateRanks()` содержат последовательные циклы и вызывают доменные сервисы через интерфейсы. Сервисы используют Domain repository ports: стандартная реализация может принять `ProtocolLineRepository`, `PersonRepository` и связанные порты; Eloquent-реализации портов остаются в Infrastructure. Каждая обработанная ProtocolLine или Person сохраняется сервисом до следующей итерации. Application получает lock, загружает Event, вызывает его метод и сохраняет итоговое состояние Event. Контракт status API сохраняет поле `processingStatus`.
 
-- `app/Domain/Event/`: `EventProtocol`, its invariants/transitions/domain events, and Event's active-protocol reference.
-- `app/Application/Service/Event/`: commands/use cases, coordinating transitions and persistence.
-- `app/Infrastructure/Laravel/Eloquent/Event/`: migration, cast и query projection.
-- `app/Bridge/Laravel/`: queued handlers, console command и HTTP actions создают commands. Existing `ParserService` and `ProtocolLineIdentService` are legacy adapters only; they receive no new status logic.
+### External Event lock
 
-### Completion orchestration
+Замена протокола, identification и ranks используют один ключ `event-protocol:{eventId}` через Domain port `EventProcessingLock`. Infrastructure adapter использует Redis-backed Symfony Lock. Parsing выполняется один раз в DB-транзакции под блокировкой строки Event через `lockById`, без внешнего lease; проверка токена и статуса под этой блокировкой отсеивает устаревшую доставку. Строки и переход стадии сохраняются атомарно. Ошибка parsing сразу переводит Event в `parsingError` в отдельной транзакции под той же блокировкой строки, без повтора очереди. Для внешнего lock TTL больше жёсткого timeout worker; `retry_after` больше worker timeout. В identification и ranks владение проверяется перед сохранением, потеря lock прерывает работу. Проверка владения не защищает атомарно от истечения TTL между проверкой и записью; этот остаточный риск принят.
 
-`ProtocolLine::setPerson()` publishes its aggregate event with `eventProtocolId`. Application handler records identification only while that run remains active; duplicate delivery does not increment its counter. Once every line is identified, `EventProtocol` creates exactly one event-scoped rank batch and stores its identity. A completion carries the batch identity and `personId`; it is counted once per person, so retry delivery cannot make the run ready early. Completion is scoped to the referenced run and therefore cannot change a newer run. Aggregate calls are followed by repository `update()`; Eloquent persists only dirty aggregates, while the returned transition result gates subsequent side effects such as queue dispatch.
+### Parse flow
 
-### Historical data migration
+После сохранения Event событие `EventParsingStarted` ставит `ParseEventProtocolService` в очередь с `eventId` и `processingToken`. Сервис открывает транзакцию, читает Event через `lockById()`, проверяет токен и `parsing`, получает содержимое текущего файла, вызывает `Event::parse()`, сохраняет полученные ProtocolLine через `ProtocolLineRepository::add(...$lines)` и обновляет Event. Строки и переход в `identifying` фиксируются атомарно. При ошибке транзакция откатывается, затем под блокировкой той же строки сразу записывается `parsingError`. Повторная доставка после перехода не создаёт строк.
 
-The migration creates an `EventProtocol` for every historical event that has persisted protocol results, copies the event audit impression, links its historical protocol lines to that run and makes it active with `ready` status; the status is not inferred merely from elapsed time. Historical events without a protocol stay without an active run and therefore remain unavailable publicly. The migration is idempotent and is covered by integration tests; it must not invent a ready run for partial or ambiguous historical data.
+`ProtocolParser` — Domain port. Его стандартная реализация работает как adapter над существующими `ParserInterface`/`ParserFactory`: она сохраняет их форматный выбор и преобразует результат в `ProtocolLineInput[]`. `ParserInterface` не меняется. Не создавать новые entry points в `app/Services`.
+
+`Event::parse(parser, linesFactory, content, extension, impression)` получает `ProtocolLineInput[]` через parser port, строит `ProtocolLine[]` через factory, переводит Event в `identifying` и записывает `EventParsed` с immutable `eventId` и `processingToken`. Application service сохраняет возвращённые строки и Event атомарно через repositories.
+
+### Identification and rank flow
+
+Обработчик `EventParsed` запускает один `IdentifyProtocolLinesService` в фоне. Сервис захватывает внешний lock, получает Event через `byId()` и проверяет токен/стадию, затем вызывает `Event::ident($identifier, $impression)`. Внутри метода последовательно выполняются быстрое сопоставление и полное сопоставление оставшихся строк через доменный identifier. Он читает строки текущего Event без `person_id` ограниченными порциями через `ProtocolLineRepository`, определяет или создаёт спортсмена через доменные порты и сохраняет каждую ProtocolLine до перехода к следующей. Быстрый поиск может вычислить кандидатов пакетом, но не выполняет bulk update строк. Доменный сервис получает проверку владения lock и токена через узкий интерфейс и прекращает цикл при их потере. Общей транзакции нет; повторное выполнение пропускает сохранённые строки. После запроса, подтверждающего отсутствие неопознанных строк, `Event::ident()` переводит Event в `rebuildingRanks` с `EventIdentified`; Application сохраняет Event и запускает следующую стадию после успешного сохранения. Пользовательский endpoint или CLI для ручного возобновления не добавляется.
+
+Обработчик `EventIdentified` запускает один `UpdateEventRanksService` в фоне. Сервис захватывает внешний lock, получает Event через `byId()`, проверяет токен/стадию и вызывает `Event::updateRanks($rankUpdater, $impression)`. Доменный rank updater через `ProtocolLineRepository` выбирает уникальные `person_id` текущего Event ограниченными порциями, получает факты, вызывает calculator и `Person::updateRanks()`, затем сохраняет Person через `PersonRepository` до следующей итерации. Он проверяет владение lock и токен перед каждым сохранением. Общей транзакции нет; атомарное сохранение одного Person остаётся допустимым. Event фиксирует `ready` и событие завершения только после успешного прохода всех затронутых спортсменов. Повтор стадии безопасен: пересчёт вычисляет состояние из текущих сохранённых фактов и не создаёт накопительных результатов. Задания на каждого спортсмена, rank batch и счётчики завершения удаляются из цепочки 025.
+
+Кеш prompts и нормализованных имён ограничен одним вызовом идентификации; `static` кеш в Horizon worker не используется. Поиск ближайшего совпадения не накапливает коллекцию оценок для каждого имени. Строки и спортсмены читаются ограниченными порциями, а `person_id` дедуплицируется до пересчёта. Размер порции и таймауты выбираются после замера самого большого доступного протокола. Глобальные legacy-команды simple/big/queue identification сейчас работают по всем строкам; до включения нового pipeline их расписание удаляется либо их выборка исключает transitional Event, иначе они могут менять те же строки без Event lock.
+
+### Replacing a protocol and stale events
+
+Замена файла под тем же внешним Event lock очищает старые производные protocol lines по существующей политике, обновляет file, создаёт новый `processing_token`, переводит Event в `parsing` и публикует событие parsing. Identification и rank stage сверяют токен перед каждой записью; старая задача прекращает работу без записи в новый протокол. Вложенные операции с Person сохраняют существующий порядок блокировок при записи. Хранение истории загрузок не входит в 025.
+
+### Existing data and draft migrations
+
+Миграции `2026_09_13_000001_create_event_protocols_table.php` и `2026_09_13_000002_backfill_historical_event_protocols.php` относятся к ещё не применённому черновому варианту. Первая добавляет поля `events.processing_status`, `events.processing_token` и nullable `events.error_message`; вторая помечает завершённые результаты `ready`. Завершающая миграция `2026_09_30_000002_require_event_processing_state.php` назначает каждому существующему Event токен и статус, затем делает первые два поля обязательными. Неполные данные получают соответствующую ошибку обработки и остаются закрыты для гостя. Объединённые этапы с готовыми производными строками получают `ready`. Миграции сохраняют строки и timestamps. Новых Event без протокола создавать нельзя.
 
 ### API and SPA
 
-Authenticated DTO/list projection содержит `processingStatus`. Read commands receive nullable `UserId`, so guest access is represented outside HTTP request objects. Public list/detail requires `ready`; этап без протокола, в обработке или с ошибкой не раскрывается гостю. Shared status component показывает loader, warning, terminal error and ready state. Detail polling keeps the last successful result on a temporary refresh error and refreshes protocol lines together with the event.
+Авторизованные DTO карточки и списка читают `processingStatus` и nullable `errorMessage` непосредственно из Event. Гостевые event/distance/protocol-line запросы фильтруются по `Event.processingStatus = ready`. UI показывает подписи семи статусов и безопасное сообщение для ошибок, использует локализованный текст стадии при пустом сообщении, сохраняет loader и detail/list polling с остановкой при terminal state/unmount. Создание сразу возвращает `parsing`; UI не ждёт появления отдельного EventProtocol.
 
 ## Project Structure
 
 ```text
-app/{Domain/Event,Application/Service/Event,Infrastructure/Laravel/Eloquent/Event,Bridge/Laravel}/
-resources/spa/{components,pages/events}/
-tests/{Domain/Event,Application/Service/Event,Feature/Api/V1/Event}/
+app/Domain/Event/                     # Event transitions, status, events, parser port
+app/Domain/ProtocolLine/              # ProtocolLineInput, line factory/repository port
+app/Application/Service/Event/        # Parse, identify and rank orchestration
+app/Application/Handler/Event/        # after-commit stage handlers
+app/Infrastructure/Laravel/           # ParserInterface adapter and Eloquent repositories
+app/Bridge/Laravel/Provider/          # port bindings and queued event integration
+database/migrations/                  # replace unpublished run migrations with Event-owned state
+resources/spa/                        # existing processing component and polling pages
+tests/                                # domain, application, API, integration and SPA coverage (later)
 ```
 
 ## Complexity Tracking
 
-No constitution violations or justified exceptions.
+| Deviation | Why needed | Follow-up |
+|---|---|---|
+| Event remains Eloquent-backed and Domain model therefore is not framework-free | Existing aggregate model is the current persistence boundary and this change should not expand the refactor to all aggregates | Keep new parsing behind Domain ports; track extracting Event as a plain domain object separately. |
+| Domain services persist ProtocolLine and Person through repository ports | The Event method owns the synchronous processing loops while each completed item must survive a worker crash | Keep repository interfaces in Domain and Eloquent adapters in Infrastructure; Application owns the external lock and saves Event transitions. The user deferred the corresponding Constitution VII update to separate work. |
+| Identification and ranks use an external lock without an overall DB transaction | A transaction over the whole stage would roll back progress on worker failure and hold DB locks for the entire process | Persist each line/person before the next, set TTL above bounded job timeout, release in finally, verify ownership and token, keep Event transitional until completion. The check/write expiry race remains an accepted operational risk. |

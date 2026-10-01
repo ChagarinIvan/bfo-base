@@ -4,72 +4,41 @@ declare(strict_types=1);
 
 namespace App\Application\Service\Event;
 
-use App\Domain\Event\EventProtocol;
-use App\Domain\Event\EventProtocolRepository;
+use App\Application\Service\Event\Exception\EventNotFound;
+use App\Domain\Auth\Impression;
 use App\Domain\Event\EventRepository;
-use App\Domain\Event\ProtocolStorage;
-use App\Domain\ProtocolLine\ProtocolLine;
-use App\Services\ParserService;
-use App\Services\ProtocolLineIdentService;
-use App\Services\ProtocolLineService;
-use Exception;
+use App\Domain\Event\ProtocolParser;
+use App\Domain\ProtocolLine\Factory\ProtocolLinesFactory;
+use App\Domain\ProtocolLine\ProtocolLineRepository;
+use App\Domain\Shared\Clock;
+use App\Domain\Shared\TransactionManager;
 
 final readonly class ParseEventProtocolService
 {
     public function __construct(
-        private ProtocolStorage $storage,
-        private ParserService $parser,
-        private ProtocolLineService $protocolLines,
-        private ProtocolLineIdentService $identification,
-        private EventProtocolRepository $protocolRuns,
+        private ProtocolParser $parser,
+        private ProtocolLinesFactory $protocolLinesFactory,
+        private ProtocolLineRepository $protocolLines,
         private EventRepository $events,
-        private StartEventProtocolRankRebuildService $rankRebuild,
+        private TransactionManager $transactional,
+        private Clock $clock,
     ) {
     }
 
     public function execute(ParseEventProtocol $command): void
     {
-        $run = $this->protocolRuns->byId($command->eventProtocolId());
+        $this->transactional->run(function () use ($command): void {
+            $event = $this->events->lockById($command->eventId) ?? throw new EventNotFound();
 
-        $event = $this->events->byId($command->eventId());
-
-        if (!$run instanceof EventProtocol || $event === null || $run->event_id !== $event->id || $event->active_event_protocol_id !== $run->id) {
-            return;
-        }
-
-        $parsingStarted = $run->startParsing($command->impression());
-        $this->protocolRuns->update($run);
-
-        if (! $parsingStarted) {
-            return;
-        }
-
-        try {
-            $lines = $this->protocolLines->fillProtocolLines(
-                $command->eventId(),
-                $this->parser->parse($this->storage->get($command->path())),
-                $run->id,
+            $lines = $event->parse(
+                $command->processingToken,
+                $this->parser,
+                $this->protocolLinesFactory,
+                new Impression($this->clock->now(), $command->userId),
             );
 
-            $run->startIdentifying($lines->count(), $command->impression());
-
-            $this->identification->identPersons($lines, $command->impression());
-
-            $lines->each(static function (ProtocolLine $line) use ($run, $command): void {
-                $line->refresh();
-
-                if ($line->person_id === null) {
-                    return;
-                }
-
-                $run->recordIdentifiedLine($line->id, $command->impression());
-            });
-
-            $this->rankRebuild->execute(new StartEventProtocolRankRebuild($run->id, $command->impression()));
-        } catch (Exception) {
-            $run->fail($command->impression());
-        }
-
-        $this->protocolRuns->update($run);
+            $this->protocolLines->add(...$lines);
+            $this->events->update($event);
+        });
     }
 }

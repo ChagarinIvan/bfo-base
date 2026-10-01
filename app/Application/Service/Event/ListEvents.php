@@ -34,6 +34,7 @@ final readonly class ListEvents
         return new EventResources(
             withCompetitionName: $this->search->withCompetition === '1',
             withParticipantsCount: $this->search->withParticipantsCount === '1',
+            readyOnly: $this->userId === null,
         );
     }
 }
