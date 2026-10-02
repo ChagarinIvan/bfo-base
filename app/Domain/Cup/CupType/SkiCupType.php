@@ -9,7 +9,7 @@ use App\Domain\Cup\CupEvent\CupEvent;
 use App\Domain\Cup\CupEvent\CupEventPoint;
 use App\Domain\Cup\Group\CupGroup;
 use App\Domain\Cup\Group\GroupMale;
-use App\Models\Year;
+use App\Domain\Shared\Year;
 
 class SkiCupType extends EliteCupType
 {

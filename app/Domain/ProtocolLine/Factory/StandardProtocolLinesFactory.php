@@ -83,7 +83,7 @@ final class StandardProtocolLinesFactory implements ProtocolLinesFactory
     private function getDistance(Event $event, Group $group, ProtocolLineInput $input): Distance
     {
         if (!isset($this->distanceCache[$group->id])) {
-            $distance = $this->distances->oneByCriteria(new Criteria([
+            $distance = $this->distances->lockOneByCriteria(new Criteria([
                 'eventId' => $event->id,
                 'groupId' => $group->id,
                 'length' => $input->distanceLength,

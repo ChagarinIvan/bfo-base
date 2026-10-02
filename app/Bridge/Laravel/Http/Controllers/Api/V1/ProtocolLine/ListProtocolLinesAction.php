@@ -24,7 +24,7 @@ final class ListProtocolLinesAction extends BaseController
         ListProtocolLinesService $service,
     ): Slice {
         return $service
-            ->execute(new ListProtocolLines($search, $this->currentUserId()))
+            ->execute(new ListProtocolLines($search))
             ->setPerPage($pagination->perPage)
             ->setCurrentPage($pagination->page)
         ;

@@ -8,13 +8,13 @@ use App\Bridge\Laravel\Http\Controllers\Api\V1\Event\ListEventsAction;
 use App\Domain\Competition\Competition;
 use App\Domain\Distance\Distance;
 use App\Domain\Event\Event;
-use App\Domain\Event\EventProtocol;
-use App\Domain\Event\EventProtocolStatus;
+use App\Domain\Event\EventProcessingStatus;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Infrastructure\Sanctum\SanctumUser;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\Sanctum;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -148,20 +148,41 @@ final class ListEventsActionTest extends TestCase
         ;
     }
 
+    /** @return iterable<string, array{EventProcessingStatus}> */
+    public static function processingStates(): iterable
+    {
+        foreach (EventProcessingStatus::cases() as $status) {
+            if ($status !== EventProcessingStatus::READY) {
+                yield $status->value => [$status];
+            }
+        }
+    }
+
     #[Test]
-    public function it_hides_events_without_a_ready_protocol_from_guests(): void
+    #[DataProvider('processingStates')]
+    public function it_exposes_processing_states_to_authenticated_clients_and_hides_them_from_guests(EventProcessingStatus $status): void
     {
         $competition = $this->createCompetition();
-        $event = $this->createEvent($competition);
+        $event = $this->createEvent($competition, [
+            'processing_status' => $status,
+            'error_message' => $status->isTerminal() ? 'Processing failed.' : null,
+        ]);
 
         $this->getJson("/api/v1/events?competitionId={$competition->id}")
             ->assertOk()
             ->assertExactJson([]);
 
+        $this->getJson("/api/v1/events/{$event->id}")->assertNotFound();
+
         Sanctum::actingAs($this->createUser());
         $this->getJson("/api/v1/events?competitionId={$competition->id}")
             ->assertOk()
-            ->assertJsonPath('0.id', (string) $event->id);
+            ->assertJsonPath('0.id', (string) $event->id)
+            ->assertJsonPath('0.processingStatus', $status->value);
+        $this->getJson("/api/v1/events/{$event->id}")
+            ->assertOk()
+            ->assertJsonPath('processingStatus', $status->value)
+            ->assertJsonPath('errorMessage', $event->error_message);
     }
 
     /** @param array<string, mixed> $attributes */
@@ -209,12 +230,7 @@ final class ListEventsActionTest extends TestCase
 
     private function makeProtocolReady(Event $event): void
     {
-        $protocol = EventProtocol::queue($event->id, fake()->uuid());
-        $protocol->status = EventProtocolStatus::READY;
-        $protocol->created = $event->created;
-        $protocol->updated = $event->updated;
-        $protocol->save();
-        $event->active_event_protocol_id = $protocol->id;
+        $event->processing_status = EventProcessingStatus::READY;
         $event->save();
     }
 

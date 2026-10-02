@@ -7,11 +7,11 @@ namespace App\Bridge\Laravel\Provider\PersonPrompt;
 use App\Domain\PersonPrompt\Factory\PersonPromptFactory;
 use App\Domain\PersonPrompt\Factory\StandardPersonPromptFactory;
 use App\Domain\PersonPrompt\PersonPromptGenerator;
-use App\Domain\PersonPrompt\PersonPromptMatcher;
 use App\Domain\PersonPrompt\PersonPromptMetaphone;
 use App\Domain\PersonPrompt\PersonPromptRepository;
+use App\Domain\PersonPrompt\PromptIdentifier;
 use App\Domain\PersonPrompt\StandardPersonPromptGenerator;
-use App\Domain\PersonPrompt\StandardPersonPromptMatcher;
+use App\Domain\PersonPrompt\StandardPromptIdentifier;
 use App\Domain\PersonPrompt\TranslitPersonPromptMetaphone;
 use App\Domain\Shared\NameNormalizer;
 use App\Domain\Shared\StandardNameNormalizer;
@@ -27,6 +27,6 @@ final class PersonPromptProvider extends ServiceProvider
         $this->app->bind(NameNormalizer::class, StandardNameNormalizer::class);
         $this->app->bind(PersonPromptGenerator::class, StandardPersonPromptGenerator::class);
         $this->app->bind(PersonPromptMetaphone::class, TranslitPersonPromptMetaphone::class);
-        $this->app->bind(PersonPromptMatcher::class, StandardPersonPromptMatcher::class);
+        $this->app->scoped(PromptIdentifier::class, StandardPromptIdentifier::class);
     }
 }

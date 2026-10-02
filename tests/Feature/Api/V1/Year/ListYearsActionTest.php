@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature\Api\V1\Year;
 
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Year\ListYearsAction;
-use App\Models\Year;
+use App\Domain\Shared\Year;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 use function array_map;

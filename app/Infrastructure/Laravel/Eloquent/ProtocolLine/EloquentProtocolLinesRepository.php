@@ -10,8 +10,8 @@ use App\Domain\ProtocolLine\ProtocolLineRepository;
 use App\Domain\ProtocolLine\ProtocolLineResources;
 use App\Domain\Shared\Criteria;
 use App\Domain\Shared\Pagination\Slice;
+use App\Domain\Shared\Year;
 use App\Infrastructure\Laravel\Eloquent\Pagination\EloquentQueryAdapter;
-use App\Models\Year;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use function array_key_exists;
@@ -29,7 +29,7 @@ final readonly class EloquentProtocolLinesRepository implements ProtocolLineRepo
 
     public function byId(int $id, array $with = []): ?ProtocolLine
     {
-        $protocolLineQuery = ProtocolLine::where('id', $id);
+        $protocolLineQuery = $this->buildQuery(Criteria::empty())->where('protocol_lines.id', $id);
 
         if (count($with) > 0) {
             $protocolLineQuery->with($with);
@@ -40,7 +40,7 @@ final readonly class EloquentProtocolLinesRepository implements ProtocolLineRepo
     public function lockById(int $id): ?ProtocolLine
     {
         /** @var ProtocolLine|null $protocolLine */
-        $protocolLine = ProtocolLine::query()->lockForUpdate()->find($id);
+        $protocolLine = $this->buildQuery(Criteria::empty(), false)->lockForUpdate()->find($id);
 
         return $protocolLine;
     }
@@ -56,16 +56,18 @@ final readonly class EloquentProtocolLinesRepository implements ProtocolLineRepo
         return $query->get();
     }
 
+    /** @return Collection<int, ProtocolLine> */
+    public function lockByCriteria(Criteria $criteria): Collection
+    {
+        return $this->buildQuery($criteria, false)->lockForUpdate()->get();
+    }
+
     /** @return Slice<ProtocolLine> */
     public function paginate(
         Criteria $criteria,
         ProtocolLineResources $resources = new ProtocolLineResources(),
     ): Slice {
         $query = $this->buildQuery($criteria);
-
-        if ($resources->readyOnly) {
-            $query->whereHas('distance.event', static fn (Builder $query): Builder => $query->where('processing_status', EventProcessingStatus::READY->value));
-        }
 
         if ($criteria->hasParam('distanceId')) {
             $query->orderBy('protocol_lines.id');
@@ -88,7 +90,7 @@ final readonly class EloquentProtocolLinesRepository implements ProtocolLineRepo
     {
         /** @var ProtocolLine|null $protocolLine */
         $protocolLine = $this
-            ->buildQuery($criteria)
+            ->buildQuery($criteria, false)
             ->lockForUpdate()
             ->first()
         ;
@@ -107,65 +109,26 @@ final readonly class EloquentProtocolLinesRepository implements ProtocolLineRepo
         return $protocolLine;
     }
 
-    public function update(ProtocolLine $protocolLine): void
+    public function update(ProtocolLine ...$protocolLine): void
     {
-        $protocolLine->save();
-    }
-
-    public function unidentifiedForEventAfterId(int $eventId, int $afterId, int $limit): array
-    {
-        return ProtocolLine::query()
-            ->join('distances', 'distances.id', '=', 'protocol_lines.distance_id')
-            ->where('distances.event_id', $eventId)
-            ->whereNull('protocol_lines.person_id')
-            ->where('protocol_lines.id', '>', $afterId)
-            ->orderBy('protocol_lines.id')
-            ->limit($limit)
-            ->select('protocol_lines.*')
-            ->get()
-            ->all();
-    }
-
-    public function hasUnidentifiedForEvent(int $eventId): bool
-    {
-        return ProtocolLine::query()
-            ->join('distances', 'distances.id', '=', 'protocol_lines.distance_id')
-            ->where('distances.event_id', $eventId)
-            ->whereNull('protocol_lines.person_id')
-            ->exists();
-    }
-
-    public function personIdForPreparedLine(string $preparedLine): ?int
-    {
-        $id = ProtocolLine::query()
-            ->join('person', 'person.id', '=', 'protocol_lines.person_id')
-            ->where('person.active', true)
-            ->where('protocol_lines.prepared_line', $preparedLine)
-            ->whereNotNull('protocol_lines.person_id')
-            ->orderByDesc('protocol_lines.id')
-            ->value('protocol_lines.person_id');
-
-        return $id === null ? null : (int) $id;
-    }
-
-    public function personIdsForEventAfterId(int $eventId, int $afterId, int $limit): array
-    {
-        return ProtocolLine::query()
-            ->join('distances', 'distances.id', '=', 'protocol_lines.distance_id')
-            ->where('distances.event_id', $eventId)
-            ->where('protocol_lines.person_id', '>', $afterId)
-            ->distinct()
-            ->orderBy('protocol_lines.person_id')
-            ->limit($limit)
-            ->pluck('protocol_lines.person_id')
-            ->map(static fn (int $id): int => $id)
-            ->all();
+        foreach ($protocolLine as $line) {
+            $line->save();
+        }
     }
 
     /** @return Builder<ProtocolLine> */
-    private function buildQuery(Criteria $criteria): Builder
+    private function buildQuery(Criteria $criteria, bool $readyOnly = true): Builder
     {
-        $query = ProtocolLine::select('protocol_lines.*');
+        $query = ProtocolLine::select('protocol_lines.*')
+            ->join('distances', 'distances.id', '=', 'protocol_lines.distance_id')
+            ->join('events', 'events.id', '=', 'distances.event_id')
+            ->join('competitions', 'competitions.id', '=', 'events.competition_id')
+            ->where('events.active', true)
+            ->where('competitions.active', true);
+
+        if ($readyOnly) {
+            $query->where('events.processing_status', EventProcessingStatus::READY->value);
+        }
 
         if (array_key_exists('completedRank', $criteria->sorting())) {
             $query->orderByRaw("
@@ -189,19 +152,6 @@ final readonly class EloquentProtocolLinesRepository implements ProtocolLineRepo
                 ->join('person', 'person.id', '=', 'protocol_lines.person_id')
                 ->where('person.active', true)
                 ->where('protocol_lines.person_id', $criteria->param('personId'))
-            ;
-        }
-
-        if (
-            $criteria->hasOneParam(['dateFrom', 'dateTo', 'year', 'date', 'eventId', 'eventIds', 'distanceId', 'distances', 'massCompetition', 'competitionName', 'personId'])
-            || array_key_exists('eventDate', $criteria->sorting())
-        ) {
-            $query
-                ->join('distances', 'distances.id', '=', 'protocol_lines.distance_id')
-                ->join('events', 'events.id', '=', 'distances.event_id')
-                ->join('competitions', 'competitions.id', '=', 'events.competition_id')
-                ->where('events.active', true)
-                ->where('competitions.active', true)
             ;
         }
 
@@ -235,7 +185,9 @@ final readonly class EloquentProtocolLinesRepository implements ProtocolLineRepo
             if ($criteria->param('completedRank')) {
                 $query->whereNotNull('complete_rank')->where('complete_rank', '!=', '');
             } else {
-                $query->whereNull('complete_rank')->orWhere('complete_rank', '');
+                $query->where(static function (Builder $query): void {
+                    $query->whereNull('complete_rank')->orWhere('complete_rank', '');
+                });
             }
         }
 

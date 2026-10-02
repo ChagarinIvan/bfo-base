@@ -16,6 +16,6 @@ final class ListDistancesAction extends BaseController
 
     public function __invoke(DistanceSearchDto $search, ListEventDistancesService $distances): array
     {
-        return $distances->execute(new ListEventDistances($search, $this->currentUserId()));
+        return $distances->execute(new ListEventDistances($search));
     }
 }

@@ -6,7 +6,7 @@ namespace App\Domain\ProtocolLine\Criteria;
 
 use App\Domain\Cup\CupEvent\CupEvent;
 use App\Domain\Shared\Criteria;
-use App\Models\Year;
+use App\Domain\Shared\Year;
 use Illuminate\Support\Collection;
 
 final readonly class CupEventDistancesProtocolLinesCriteria

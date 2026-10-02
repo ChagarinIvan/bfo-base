@@ -6,6 +6,7 @@ namespace App\Infrastructure\Laravel\Eloquent\Distance;
 
 use App\Domain\Distance\Distance;
 use App\Domain\Distance\DistanceRepository;
+use App\Domain\Event\EventProcessingStatus;
 use App\Domain\Shared\Criteria;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
@@ -30,13 +31,18 @@ final readonly class EloquentDistanceRepository implements DistanceRepository
         return $this->buildQuery($criteria)->with('group')->first();
     }
 
+    public function lockOneByCriteria(Criteria $criteria): ?Distance
+    {
+        return $this->buildQuery($criteria, false)->lockForUpdate()->first();
+    }
+
     public function add(Distance $distance): void
     {
         $distance->save();
     }
 
     /** @return Builder<Distance> */
-    private function buildQuery(Criteria $criteria): Builder
+    private function buildQuery(Criteria $criteria, bool $readyOnly = true): Builder
     {
         $query = Distance::query()
             ->select('distances.*')
@@ -44,6 +50,10 @@ final readonly class EloquentDistanceRepository implements DistanceRepository
             ->join('groups', 'groups.id', '=', 'distances.group_id')
             ->where('events.active', true)
         ;
+
+        if ($readyOnly) {
+            $query->where('events.processing_status', EventProcessingStatus::READY->value);
+        }
 
         if ($criteria->hasParam('eventId')) {
             $query->where('distances.event_id', $criteria->param('eventId'));

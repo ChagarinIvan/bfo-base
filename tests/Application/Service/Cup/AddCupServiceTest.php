@@ -17,7 +17,7 @@ use App\Domain\Cup\CupRepository;
 use App\Domain\Cup\CupType;
 use App\Domain\Cup\Factory\CupFactory;
 use App\Domain\Cup\Factory\CupInput;
-use App\Models\Year;
+use App\Domain\Shared\Year;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;

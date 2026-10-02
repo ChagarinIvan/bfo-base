@@ -12,11 +12,7 @@ interface ProtocolLineOperations
 
     public function deleteEventLines(Event $event): void;
 
-    /** @param list<int> $linesIds */
-    public function fastIdent(array $linesIds): void;
+    public function fastIdentByEvent(Event $event): void;
 
-    /** @param list<int> $linesIds
-     * @return list<ProtocolLine>
-     */
-    public function getProtocolLinesInListWithoutPerson(array $linesIds): array;
+    public function activateEventLines(Event $event): void;
 }

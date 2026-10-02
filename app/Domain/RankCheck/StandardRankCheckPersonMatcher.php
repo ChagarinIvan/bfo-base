@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\RankCheck;
 
 use App\Domain\PersonPrompt\PersonPromptRepository;
+use App\Domain\PersonPrompt\PromptIdentifier;
 use App\Domain\Shared\Criteria;
 use App\Services\ProtocolLineIdentService;
 
@@ -12,7 +13,7 @@ final readonly class StandardRankCheckPersonMatcher implements RankCheckPersonMa
 {
     public function __construct(
         private PersonPromptRepository $personPrompts,
-        private ProtocolLineIdentService $identification,
+        private PromptIdentifier $identification,
     ) {
     }
 
@@ -30,7 +31,7 @@ final readonly class StandardRankCheckPersonMatcher implements RankCheckPersonMa
             }
 
             $personId = $this->identification->identPerson($preparedLine);
-            if ($personId > 0) {
+            if ($personId) {
                 $matched[$preparedLine] = $personId;
             }
         }

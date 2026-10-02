@@ -18,6 +18,8 @@ use App\Domain\Event\Event\EventProcessingFailed;
 use App\Domain\Event\Event\EventRanksUpdated;
 use App\Domain\Event\Exception\EventParsingError;
 use App\Domain\Person\EventPersonRankUpdater;
+use App\Domain\Person\Exception\RanksUpdatingError;
+use App\Domain\ProtocolLine\Exception\IdentifyingError;
 use App\Domain\ProtocolLine\Exception\UnableToCreateProtocolLine;
 use App\Domain\ProtocolLine\Factory\ProtocolLinesFactory;
 use App\Domain\ProtocolLine\ProtocolLine;
@@ -120,19 +122,6 @@ class Event extends AggregatedModel
         $this->save();
     }
 
-    public function startProtocolProcessing(string $token, Impression $impression): void
-    {
-        $state = $this->processingState()->start($token);
-        $this->applyProcessingState($state, $impression);
-
-        $this->recordThat(new EventParsingStarted($this->id, $token, $impression));
-    }
-
-    public function completeParsing(string $token, Impression $impression): bool
-    {
-        return $this->advanceProcessing($token, EventProcessingStatus::PARSING, $impression);
-    }
-
     /** @return list<ProtocolLine> */
     public function parse(
         string $token,
@@ -156,7 +145,7 @@ class Event extends AggregatedModel
             $this->error_message = $e->getMessage();
             $lines = [];
 
-            $this->recordThat(new EventProcessingFailed($this->id, $token, $this->processing_status, $impression));
+            $this->recordThat(new EventProcessingFailed($this, $this->processing_status));
         } finally {
             $this->updated = $impression;
         }
@@ -178,49 +167,38 @@ class Event extends AggregatedModel
             $this->processing_status = EventProcessingStatus::REBUILDING_RANKS;
 
             $this->recordThat(new EventIdentified($this->id, $token, $impression));
-        } catch (EventParsingError|UnableToCreateProtocolLine $e) {
+        } catch (IdentifyingError $e) {
             $this->processing_status = EventProcessingStatus::IDENTIFYING_ERROR;
             $this->error_message = $e->getMessage();
 
-            $this->recordThat(new EventProcessingFailed($this->id, $token, $this->processing_status, $impression));
+            $this->recordThat(new EventProcessingFailed($this, $this->processing_status));
         } finally {
             $this->updated = $impression;
         }
     }
 
-    public function completeRankRebuild(string $token, Impression $impression): bool
-    {
-        return $this->advanceProcessing($token, EventProcessingStatus::REBUILDING_RANKS, $impression);
-    }
-
     public function updateRanks(
         string $token,
         EventPersonRankUpdater $updater,
-        EventProcessingLease $lease,
         Impression $impression,
-    ): bool {
+    ): void {
         if ($this->processing_token !== $token || $this->processing_status !== EventProcessingStatus::REBUILDING_RANKS) {
-            return false;
+            return;
         }
 
-        $updater->update($this, $token, $lease, $impression);
-        $lease->assertOwned();
+        try {
+            $updater->update($this, $impression);
+            $this->processing_status = EventProcessingStatus::READY;
 
-        return $this->completeRankRebuild($token, $impression);
-    }
+            $this->recordThat(new EventRanksUpdated($this->id, $token, $impression));
+        } catch (RanksUpdatingError $e) {
+            $this->processing_status = EventProcessingStatus::REBUILDING_RANKS_ERROR;
+            $this->error_message = $e->getMessage();
 
-    public function failProcessing(string $token, string $safeMessage, Impression $impression): bool
-    {
-        $state = $this->processingState()->fail($token, $safeMessage);
-
-        if ($state === null) {
-            return false;
+            $this->recordThat(new EventProcessingFailed($this, $this->processing_status));
+        } finally {
+            $this->updated = $impression;
         }
-
-        $this->applyProcessingState($state, $impression);
-        $this->recordThat(new EventProcessingFailed($this->id, $token, $state->status, $impression));
-
-        return true;
     }
 
     protected function casts(): array
@@ -231,39 +209,5 @@ class Event extends AggregatedModel
             'updated' => ImpressionCast::class,
             'processing_status' => EventProcessingStatus::class,
         ];
-    }
-
-    private function advanceProcessing(string $token, EventProcessingStatus $expected, Impression $impression): bool
-    {
-        $state = $this->processingState()->advance($token, $expected);
-
-        if ($state === null) {
-            return false;
-        }
-
-        $this->applyProcessingState($state, $impression);
-
-        $event = match ($expected) {
-            EventProcessingStatus::PARSING => new EventParsed($this->id, $token, $impression),
-            EventProcessingStatus::IDENTIFYING => new EventIdentified($this->id, $token, $impression),
-            EventProcessingStatus::REBUILDING_RANKS => new EventRanksUpdated($this->id, $token, $impression),
-            default => throw new LogicException('Invalid processing stage.'),
-        };
-        $this->recordThat($event);
-
-        return true;
-    }
-
-    private function processingState(): EventProcessingState
-    {
-        return new EventProcessingState($this->processing_status, $this->processing_token, $this->error_message);
-    }
-
-    private function applyProcessingState(EventProcessingState $state, Impression $impression): void
-    {
-        $this->processing_status = $state->status;
-        $this->processing_token = $state->token;
-        $this->error_message = $state->errorMessage;
-        $this->updated = $impression;
     }
 }

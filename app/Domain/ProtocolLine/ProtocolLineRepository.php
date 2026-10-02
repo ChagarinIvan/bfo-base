@@ -18,6 +18,9 @@ interface ProtocolLineRepository
 
     public function byCriteria(Criteria $criteria): Collection;
 
+    /** @return Collection<int, ProtocolLine> */
+    public function lockByCriteria(Criteria $criteria): Collection;
+
     /** @return Slice<ProtocolLine> */
     public function paginate(
         Criteria $criteria,
@@ -28,8 +31,5 @@ interface ProtocolLineRepository
 
     public function oneByCriteria(Criteria $criteria): ?ProtocolLine;
 
-    public function update(ProtocolLine $protocolLine): void;
-
-    /** @return list<int> */
-    public function personIdsForEventProtocol(int $eventProtocolId): array;
+    public function update(ProtocolLine ...$protocolLine): void;
 }

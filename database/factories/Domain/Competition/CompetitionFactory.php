@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Database\Factories\Domain\Competition;
 
 use App\Domain\Competition\Competition;
-use App\Models\Year;
+use App\Domain\Shared\Year;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 

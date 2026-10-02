@@ -8,6 +8,8 @@ use App\Application\Service\Cup\ClearCupCacheService;
 use App\Application\Service\Person\RebuildPersonRanksService;
 use App\Domain\Distance\DistanceDeleter;
 use App\Domain\Event\Event\EventDisabled;
+use App\Domain\Event\Event\EventProcessingFailed;
+use App\Domain\Event\Exception\EventParsingError;
 use App\Domain\ProtocolLine\ProtocolLineOperations;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
@@ -23,7 +25,7 @@ final readonly class DisableEventHandler implements ShouldQueue
     ) {
     }
 
-    public function handle(EventDisabled $event): void
+    public function handle(EventDisabled|EventProcessingFailed $event): void
     {
         $this->cleanUp($event->event);
     }

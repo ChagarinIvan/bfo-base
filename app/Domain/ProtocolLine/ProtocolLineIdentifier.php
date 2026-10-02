@@ -6,9 +6,10 @@ namespace App\Domain\ProtocolLine;
 
 use App\Domain\Auth\Impression;
 use App\Domain\Event\Event;
+use App\Domain\ProtocolLine\Exception\IdentifyingError;
 
 interface ProtocolLineIdentifier
 {
-    /**  */
-    public function identify(Event $event, Impression $impression): bool;
+    /** @throws IdentifyingError */
+    public function identify(Event $event, Impression $impression): void;
 }

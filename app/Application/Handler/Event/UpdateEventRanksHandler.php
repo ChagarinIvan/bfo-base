@@ -8,7 +8,6 @@ use App\Application\Service\Event\UpdateEventRanks;
 use App\Application\Service\Event\UpdateEventRanksService;
 use App\Domain\Event\Event\EventIdentified;
 use Illuminate\Contracts\Queue\ShouldQueueAfterCommit;
-use Throwable;
 
 final readonly class UpdateEventRanksHandler implements ShouldQueueAfterCommit
 {

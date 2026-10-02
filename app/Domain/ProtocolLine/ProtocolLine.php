@@ -94,7 +94,7 @@ class ProtocolLine extends AggregatedModel
         $this->person_id = $personId;
 //        $this->updated = $impression;
 
-        $this->recordThat(new ProtocolLinePersonSet($this->id, $impression));
+        $this->recordThat(new ProtocolLinePersonSet($this, $impression));
     }
 
     public function extractPerson(PersonExtractor $extractor, Impression $impression): Person

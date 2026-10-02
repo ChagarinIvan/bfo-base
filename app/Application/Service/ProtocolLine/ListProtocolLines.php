@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Application\Service\ProtocolLine;
 
-use App\Application\Dto\Auth\UserId;
 use App\Application\Dto\ProtocolLine\SearchProtocolLineDto;
 use App\Domain\ProtocolLine\ProtocolLineResources;
 use App\Domain\Shared\Criteria;
@@ -12,7 +11,7 @@ use function array_filter;
 
 final readonly class ListProtocolLines
 {
-    public function __construct(private SearchProtocolLineDto $search, private ?UserId $userId = null)
+    public function __construct(private SearchProtocolLineDto $search)
     {
     }
 
@@ -34,7 +33,6 @@ final readonly class ListProtocolLines
             withEvent: $this->search->withEvent === '1',
             withCompetition: $this->search->withCompetition === '1',
             withClub: $this->search->withClub === '1',
-            readyOnly: $this->userId === null,
         );
     }
 }
