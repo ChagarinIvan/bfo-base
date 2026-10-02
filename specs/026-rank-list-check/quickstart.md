@@ -32,3 +32,25 @@
 - SPA tests for upload, pending polling, ready table, failed state and unmount cleanup.
 - Final project gates from the constitution: `composer test`, `composer stan`, `composer cs`,
   Rector dry-run, frontend typecheck/test/build and `git diff --check`.
+
+## Развёртывание исправления timeout
+
+После доставки кода обновить конфигурационный кэш и завершить Horizon, чтобы process manager
+перезапустил его с supervisor для новой очереди:
+
+```sh
+php artisan config:cache
+php artisan horizon:terminate
+```
+
+Проверить, что `supervisor-rank-checks` обслуживает подключение `redis-rank-checks`, очередь
+`rank-checks`. При запуске без Horizon нужен отдельный воркер:
+
+```sh
+php artisan queue:work redis-rank-checks --queue=rank-checks --timeout=330 --tries=3
+```
+
+Старая failed job хранит сериализованные `timeout: null`, исходное подключение `redis` и очередь
+`default`. Retry в Horizon не переносит её в новую очередь и не обновляет лимит. Для проверки
+исправления повторно загрузить исходный CSV через форму, создав новый запуск. Старый запуск
+удаляется штатным retention.

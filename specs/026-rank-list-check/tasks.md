@@ -186,6 +186,13 @@ Tests are written first and verified red, then domain/application code, adapters
 - [x] T054 Return to the listing after upload and keep the result page without a redundant back-to-list action.
 - [x] T055 Poll the paginated rank-check listing while it contains a non-final `PARSING` run and stop the timer on component unmount in `resources/spa/pages/rank-checks/RankChecksPage.vue`; cover the lifecycle in `RankChecksPage.test.ts`.
 
+## Production timeout fix, 2026-10-03
+
+- [x] T056 Воспроизвести отсутствие callback `FAILED` и несогласованность queue budget регрессионными тестами; проверить неизменность результата при отклонении повторной доставки.
+- [x] T057 Добавить отдельные очередь/подключение/supervisor с лимитами 300/330/360 секунд и Application command/service финального сбоя. Сохранить исключения для повторной обработки и отсутствующего запуска по выбору владельца.
+- [x] T058 Проверить регрессионные/API тесты, финальные backend-гейты и обновить инструкции развёртывания. `composer test`: 552 tests / 3800 assertions, 14 существующих PHPUnit notices; PHPStan, CS и Rector dry-run прошли. Локальный API после запуска возвращает ожидаемый `401` без авторизации. SPA-код и контракты не менялись, frontend CI не запускался.
+- [x] T059 Заменить сортировку полного corpus для каждой строки batch-поиском через Domain port и Infrastructure adapter; проверить исторические пороги, ties и пустой corpus.
+
 ## Final scope decision
 
 Фича закрыта для текущего product scope. Незакрытые ранее задачи T001, T002, T007, T011, T012,
