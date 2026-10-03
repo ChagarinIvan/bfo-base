@@ -8,5 +8,7 @@
   the timer is cancelled on `READY`, `FAILED`, route change, or component unmount.
 - `READY` renders the seven historical columns and makes source/database differences visible;
   the table requests server pages using the existing SPA listing pagination conventions.
+- Missing source/database values use a short localized placeholder, such as `пуста`/`пусто`.
+  The empty-check-list message is used only when the list of checks is empty.
 - `FAILED` renders a localized safe error and no partial rows.
 - Network errors during polling show a non-terminal warning and do not disable the next retry.

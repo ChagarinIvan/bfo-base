@@ -212,5 +212,5 @@
     "spa.rank_check.has_person": "Есть в базе",
     "spa.rank_check.no_person": "Нет в базе",
     "spa.rank_check.different": "Отличается",
-    "spa.rank_check.empty": "пусто"
+    "spa.rank_check.empty_value": "пусто"
 }

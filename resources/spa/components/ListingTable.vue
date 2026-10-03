@@ -8,6 +8,11 @@ import type { ListingColumn } from './tableModels'
 import type { PaginationHeaders } from '../api/types'
 import { sanitizeVisibleColumns, tableStorageKey } from './tableModels'
 import SlicePaginator from './SlicePaginator.vue'
+import { useStickyTableHeaders } from './useStickyTableHeaders'
+
+const root = ref<HTMLElement | null>(null)
+const controls = ref<HTMLElement | null>(null)
+useStickyTableHeaders(root, controls)
 
 const props = withDefaults(
     defineProps<{
@@ -90,92 +95,107 @@ watch(visible, (value) => {
 </script>
 
 <template>
-    <div
-        class="filter-card listing-table__controls listing-table__filters--sticky"
-    >
-        <section
-            class="listing-table__columns"
-            :class="{ 'listing-table__columns--with-filters': $slots.filters }"
+    <div ref="root" class="listing-table">
+        <div
+            ref="controls"
+            class="filter-card listing-table__controls listing-table__filters--sticky"
         >
-            <div class="listing-table__column-options">
-                <label v-for="column in configurableColumns" :key="column.key">
-                    <input
-                        type="checkbox"
-                        :checked="isVisible(column.key)"
-                        :disabled="
-                            column.required ||
-                            (visible.length === 1 && isVisible(column.key))
-                        "
-                        @change="
-                            toggle(
-                                column.key,
-                                ($event.target as HTMLInputElement).checked,
-                            )
-                        "
-                    />
-                    {{ column.label }}
-                </label>
-            </div>
-        </section>
-        <div v-if="$slots.filters">
-            <slot name="filters" />
-        </div>
-    </div>
-    <template v-if="items !== undefined">
-        <Message
-            v-if="loading"
-            class="listing-table__message"
-            severity="info"
-            :closable="false"
-        >
-            {{ loadingLabel }}
-        </Message>
-        <Message
-            v-else-if="error"
-            class="listing-table__message"
-            severity="error"
-            :closable="false"
-        >
-            {{ error }}
-        </Message>
-        <Message
-            v-else-if="items.length === 0 && emptyLabel"
-            class="listing-table__message"
-            severity="secondary"
-            :closable="false"
-        >
-            {{ emptyLabel }}
-        </Message>
-        <DataTable
-            v-else-if="items.length"
-            :value="items"
-            striped-rows
-            :class="tableClass"
-        >
-            <Column
-                v-for="column in columns.filter((item) => isVisible(item.key))"
-                :key="column.key"
-                :field="column.field"
+            <section
+                class="listing-table__columns"
+                :class="{
+                    'listing-table__columns--with-filters': $slots.filters,
+                }"
             >
-                <template #header>
-                    <slot
-                        v-if="$slots[`header-${column.key}`]"
-                        :name="`header-${column.key}`"
-                        :column="column"
-                    />
-                    <span v-else :title="column.title">{{ column.label }}</span>
-                </template>
-                <template v-if="$slots[`cell-${column.key}`]" #body="slotProps">
-                    <slot :name="`cell-${column.key}`" v-bind="slotProps" />
-                </template>
-            </Column>
-        </DataTable>
-        <SlicePaginator
-            v-if="pagination"
-            :pagination="pagination"
-            :rows-per-page-options="rowsPerPageOptions"
-            @page="(event) => emit('page', event)"
-        />
-    </template>
-    <slot v-else :is-visible="isVisible" />
+                <div class="listing-table__column-options">
+                    <label
+                        v-for="column in configurableColumns"
+                        :key="column.key"
+                    >
+                        <input
+                            type="checkbox"
+                            :checked="isVisible(column.key)"
+                            :disabled="
+                                column.required ||
+                                (visible.length === 1 && isVisible(column.key))
+                            "
+                            @change="
+                                toggle(
+                                    column.key,
+                                    ($event.target as HTMLInputElement).checked,
+                                )
+                            "
+                        />
+                        {{ column.label }}
+                    </label>
+                </div>
+            </section>
+            <div v-if="$slots.filters">
+                <slot name="filters" />
+            </div>
+        </div>
+        <template v-if="items !== undefined">
+            <Message
+                v-if="loading"
+                class="listing-table__message"
+                severity="info"
+                :closable="false"
+            >
+                {{ loadingLabel }}
+            </Message>
+            <Message
+                v-else-if="error"
+                class="listing-table__message"
+                severity="error"
+                :closable="false"
+            >
+                {{ error }}
+            </Message>
+            <Message
+                v-else-if="items.length === 0 && emptyLabel"
+                class="listing-table__message"
+                severity="secondary"
+                :closable="false"
+            >
+                {{ emptyLabel }}
+            </Message>
+            <DataTable
+                v-else-if="items.length"
+                :value="items"
+                striped-rows
+                :class="tableClass"
+            >
+                <Column
+                    v-for="column in columns.filter((item) =>
+                        isVisible(item.key),
+                    )"
+                    :key="column.key"
+                    :field="column.field"
+                >
+                    <template #header>
+                        <slot
+                            v-if="$slots[`header-${column.key}`]"
+                            :name="`header-${column.key}`"
+                            :column="column"
+                        />
+                        <span v-else :title="column.title">{{
+                            column.label
+                        }}</span>
+                    </template>
+                    <template
+                        v-if="$slots[`cell-${column.key}`]"
+                        #body="slotProps"
+                    >
+                        <slot :name="`cell-${column.key}`" v-bind="slotProps" />
+                    </template>
+                </Column>
+            </DataTable>
+            <SlicePaginator
+                v-if="pagination"
+                :pagination="pagination"
+                :rows-per-page-options="rowsPerPageOptions"
+                @page="(event) => emit('page', event)"
+            />
+        </template>
+        <slot v-else :is-visible="isVisible" />
+    </div>
 </template>

@@ -433,6 +433,15 @@ body {
     background: var(--spa-surface);
 }
 
+.listing-table__header--sticky {
+    z-index: 9;
+    transform: translateY(var(--listing-table-header-offset, 0px));
+}
+
+.listing-table__header--sticky th {
+    background: var(--p-datatable-header-cell-background, var(--spa-surface));
+}
+
 .listing-table__message {
     box-sizing: border-box;
     min-height: 3rem;
@@ -465,7 +474,7 @@ body {
 }
 
 [id^='protocol-line-'] {
-    scroll-margin-top: 12rem;
+    scroll-margin-top: var(--listing-table-scroll-offset, 12rem);
 }
 
 .protocol-line-anchor-highlight {

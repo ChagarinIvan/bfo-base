@@ -66,6 +66,13 @@ button, pending/error и refresh истории.
 - [ ] T022 Запустить `npm run lint && npm run typecheck && npm run test && npm run build:spa`, `composer stan`, `composer cs`, Rector dry-run, `composer test` и `git diff --check`.
 - [ ] T023 Сверить `spec.md`, `plan.md`, `tasks.md`, отметить все задачи и выполнить `$speckit-converge` для `specs/024-unify-spa-tables/`.
 
+## Закрепление заголовков таблиц, 2026-10-03
+
+- [X] T024 Покрыть позиционирование header под панелью, resize, конец таблицы и cleanup тестами общего layout/composable. Также проверены сохранение header action и восстановление после перерендера.
+- [X] T025 Добавить общий контейнер ListingTable, ограниченное смещение существующих headers, наблюдение размеров/DOM и отступ для якорей.
+- [X] T026 Выполнить frontend CI и обновить артефакты. Lint, typecheck, весь Vitest и production build прошли; backend-код не менялся.
+- [ ] T027 Дополнительно проверить вертикальную/горизонтальную прокрутку и темы в браузере. В текущей сессии CUA вернул пустой список браузеров, создание IAB/Chrome завершилось `Browser is not available`; визуальная проверка недоступна.
+
 ## Зависимости и порядок
 
 - T001 → T002–T006 → T007–T011 → T012–T016 → T017–T020 → T021–T023.

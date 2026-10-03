@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Tests\Domain\RankCheck;
 
 use App\Domain\PersonPrompt\PersonPromptRepository;
+use App\Domain\RankCheck\RankCheckSimilarityMatcher;
 use App\Domain\RankCheck\StandardRankCheckPersonMatcher;
 use App\Domain\Shared\Criteria;
-use App\Services\ProtocolLineIdentService;
 use Illuminate\Support\Collection;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -15,7 +15,7 @@ use Tests\TestCase;
 
 final class StandardRankCheckPersonMatcherTest extends TestCase
 {
-    private MockObject&ProtocolLineIdentService $identification;
+    private MockObject&RankCheckSimilarityMatcher $identification;
 
     private MockObject&PersonPromptRepository $personPrompts;
 
@@ -27,7 +27,7 @@ final class StandardRankCheckPersonMatcherTest extends TestCase
 
         $this->matcher = new StandardRankCheckPersonMatcher(
             $this->personPrompts = $this->createMock(PersonPromptRepository::class),
-            $this->identification = $this->createMock(ProtocolLineIdentService::class),
+            $this->identification = $this->createMock(RankCheckSimilarityMatcher::class),
         );
     }
 
@@ -42,9 +42,9 @@ final class StandardRankCheckPersonMatcherTest extends TestCase
         ;
         $this->identification
             ->expects($this->once())
-            ->method('identPerson')
-            ->with('petrov_petr_2001')
-            ->willReturn(12)
+            ->method('match')
+            ->with(['petrov_petr_2001'])
+            ->willReturn(['petrov_petr_2001' => 12])
         ;
 
         $this->assertSame([
@@ -64,9 +64,9 @@ final class StandardRankCheckPersonMatcherTest extends TestCase
         ;
         $this->identification
             ->expects($this->once())
-            ->method('identPerson')
-            ->with('unknown')
-            ->willReturn(0)
+            ->method('match')
+            ->with(['unknown'])
+            ->willReturn([])
         ;
 
         $this->assertSame([], $this->matcher->match(['unknown']));

@@ -98,6 +98,7 @@ return [
 
     'waits' => [
         'redis:default' => 60,
+        'redis-rank-checks:rank-checks' => 60,
     ],
 
     /*
@@ -206,10 +207,25 @@ return [
             'timeout' => 60,
             'nice' => 0,
         ],
+        'supervisor-rank-checks' => [
+            'connection' => 'redis-rank-checks',
+            'queue' => ['rank-checks'],
+            'balance' => 'simple',
+            'maxProcesses' => 1,
+            'maxTime' => 0,
+            'maxJobs' => 0,
+            'memory' => 128,
+            'tries' => 3,
+            'timeout' => 330,
+            'nice' => 0,
+        ],
     ],
 
     'environments' => [
         'production' => [
+            'supervisor-rank-checks' => [
+                'maxProcesses' => 1,
+            ],
             'supervisor-1' => [
                 'connection' => 'redis',
                 'queue' => ['default'],
@@ -221,6 +237,9 @@ return [
         ],
 
         'local' => [
+            'supervisor-rank-checks' => [
+                'maxProcesses' => 1,
+            ],
             'supervisor-1' => [
                 'maxProcesses' => 3,
             ],
