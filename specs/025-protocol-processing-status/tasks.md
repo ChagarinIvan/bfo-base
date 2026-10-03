@@ -64,6 +64,9 @@
 - [X] T019a Перенести нормализацию полей строки в преобразование результата парсера в `ProtocolLineInput`; приватный метод `StandardProtocolLinesFactory` создаёт модель из подготовленных атрибутов. Проверить разбор реального fixture и путь legacy `ProtocolLineService`.
 - [ ] T020 Запустить узкие PHP/Vitest проверки, затем один раз финальные `composer test`, `composer stan`, `composer cs`, `composer rector -- --dry-run`, frontend CI и запуск приложения; сверить все acceptance scenarios, контракт и checklist из `specs/025-protocol-processing-status/`.
 
+- [X] T021 Реализовать `EventPersonRankUpdater` через доменные порты и `Person::updateRanks()`; проверить сохранение нескольких спортсменов, вычисление ранга и отсутствие спортсмена.
+- [ ] T022 Отдельно устранить расхождение с планом порционной обработки без общей транзакции в `UpdateEventRanksService` и `ProtocolLineOperations`.
+
 ## Dependencies & execution order
 
 `T001 → T002–T005 → T006–T011 → T012–T015 → T016–T017 → T018–T020`.

@@ -31,10 +31,7 @@ final readonly class StandardRankCheckPersonMatcher implements RankCheckPersonMa
                 continue;
             }
 
-            $personId = $this->identification->identPerson($preparedLine);
-            if ($personId) {
-                $matched[$preparedLine] = $personId;
-            }
+            $unmatched[] = $preparedLine;
         }
 
         return $matched + $this->identification->match($unmatched);

@@ -64,6 +64,15 @@
 
 Следующий шаг rank stage: `UpdateEventRanksHandler` обрабатывает `EventIdentified` через `ShouldQueueAfterCommit`, формирует `UpdateEventRanks(eventId, processingToken, impression)` и вызывает `UpdateEventRanksService`. Сервис по образцу текущего `IdentifyProtocolLinesService` открывает DB-транзакцию, получает Event через `lockById()`, формирует Impression с текущим временем и исходным актором, вызывает `Event::updateRanks()` и сохраняет Event через repository. Реализация `EventPersonRankUpdater` остаётся отдельной работой; сервис пока использует только доменный интерфейс.
 
+Реализация `StandardEventPersonRankUpdater` получает ID затронутых спортсменов через
+`ProtocolLineOperations`, блокирует каждого через `PersonRepository`, собирает факты
+`RankFactsCollector`, вычисляет состояние `RankCalculator` на дату `Impression` стадии и
+сохраняет `Person::updateRanks()` через repository. Отсутствующий спортсмен даёт безопасный
+`RanksUpdatingError`. Текущий `UpdateEventRanksService` проводит весь проход в одной
+транзакции, а `personIdsForEvent()` возвращает массив. Это расходится с ранним планом
+порционной обработки без общей транзакции; изменение этих контрактов требует отдельной
+доработки Application-сценария и порта чтения.
+
 ### Replacing a protocol and stale events
 
 Уточнение чтения от 2026-10-02: чтения Event сохраняют прежний доступ авторизованного пользователя к активным этапам во всех стадиях обработки. Гостевые list/detail-команды передают `EventResources::readyOnly`; авторизованный фронтенд получает переходные статусы и ошибки для polling. Обычные чтения ProtocolLine и Distance всегда фильтруют `processing_status = ready` вместе с `active`, независимо от пользователя. `readyOnly` удалён из ProtocolLineResources; отдельная проверка Event в `ListEventDistancesService` удалена, список дистанций отсутствующего или скрытого Event пуст. Методы `lock*` сохраняют доступ к активным обрабатываемым данным. Фабрика ProtocolLine ищет существующую Distance через `DistanceRepository::lockOneByCriteria`, чтобы фильтр чтения не создавал дубликаты во время parsing. Условие `completedRank = false` группирует OR, чтобы оно не обходило обязательные фильтры ProtocolLine.

@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Tests\Infrastructure\RankCheck;
+namespace Tests\Domain\PersonPrompt;
 
 use App\Domain\PersonPrompt\PersonPromptMetaphone;
 use App\Domain\PersonPrompt\PersonPromptRepository;
+use App\Domain\PersonPrompt\StandardPromptIdentifier;
 use App\Domain\Shared\Criteria;
-use App\Infrastructure\RankCheck\PromptRankCheckSimilarityMatcher;
 use Illuminate\Support\Collection;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-final class PromptRankCheckSimilarityMatcherTest extends TestCase
+final class StandardPromptIdentifierBatchTest extends TestCase
 {
     #[Test]
     public function it_keeps_legacy_thresholds_and_first_match_ties_with_one_corpus_load(): void
@@ -33,7 +33,7 @@ final class PromptRankCheckSimilarityMatcherTest extends TestCase
             ['xxxxxb', 'BBB'],
         ]);
 
-        $matches = new PromptRankCheckSimilarityMatcher($repository, $metaphone)->match([
+        $matches = new StandardPromptIdentifier($repository, $metaphone)->match([
             'annx', 'anna', 'annz', 'xxxxxx', 'xxxxxb', 'xxxxxx',
         ]);
 
@@ -48,7 +48,7 @@ final class PromptRankCheckSimilarityMatcherTest extends TestCase
         $metaphone = $this->createMock(PersonPromptMetaphone::class);
         $metaphone->expects($this->never())->method('calculate');
 
-        $this->assertSame([], new PromptRankCheckSimilarityMatcher($repository, $metaphone)->match(['unknown']));
+        $this->assertSame([], new StandardPromptIdentifier($repository, $metaphone)->match(['unknown']));
     }
 
     #[Test]
@@ -59,6 +59,6 @@ final class PromptRankCheckSimilarityMatcherTest extends TestCase
         $metaphone = $this->createMock(PersonPromptMetaphone::class);
         $metaphone->expects($this->never())->method('calculate');
 
-        $this->assertSame([], new PromptRankCheckSimilarityMatcher($repository, $metaphone)->match([]));
+        $this->assertSame([], new StandardPromptIdentifier($repository, $metaphone)->match([]));
     }
 }
