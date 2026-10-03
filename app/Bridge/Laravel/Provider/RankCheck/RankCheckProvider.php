@@ -13,6 +13,7 @@ use App\Domain\RankCheck\RankCheckPersonSnapshotReader;
 use App\Domain\RankCheck\RankCheckProcessor;
 use App\Domain\RankCheck\RankCheckRepository;
 use App\Domain\RankCheck\RankCheckRowRepository;
+use App\Domain\RankCheck\RankCheckSimilarityMatcher;
 use App\Domain\RankCheck\RankListParser;
 use App\Domain\RankCheck\StandardRankCheckPersonMatcher;
 use App\Domain\RankCheck\StandardRankCheckProcessor;
@@ -20,6 +21,7 @@ use App\Domain\RankCheck\StandardRankListParser;
 use App\Infrastructure\Laravel\Eloquent\RankCheck\EloquentRankCheckPersonSnapshotReader;
 use App\Infrastructure\Laravel\Eloquent\RankCheck\EloquentRankCheckRepository;
 use App\Infrastructure\Laravel\Eloquent\RankCheck\EloquentRankCheckRowRepository;
+use App\Infrastructure\RankCheck\PromptRankCheckSimilarityMatcher;
 use Illuminate\Support\ServiceProvider;
 
 final class RankCheckProvider extends ServiceProvider
@@ -32,6 +34,7 @@ final class RankCheckProvider extends ServiceProvider
         $this->app->bind(RankCheckRowRepository::class, EloquentRankCheckRowRepository::class);
         $this->app->bind(RankListParser::class, StandardRankListParser::class);
         $this->app->bind(RankCheckPersonMatcher::class, StandardRankCheckPersonMatcher::class);
+        $this->app->bind(RankCheckSimilarityMatcher::class, PromptRankCheckSimilarityMatcher::class);
         $this->app->bind(RankCheckPersonSnapshotReader::class, EloquentRankCheckPersonSnapshotReader::class);
         $this->app->bind(RankCheckProcessor::class, StandardRankCheckProcessor::class);
     }

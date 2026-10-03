@@ -66,6 +66,14 @@ return [
             'retry_after' => 90,
             'block_for' => null,
         ],
+
+        'redis-rank-checks' => [
+            'driver' => 'redis',
+            'connection' => 'default',
+            'queue' => 'rank-checks',
+            'retry_after' => 360,
+            'block_for' => null,
+        ],
     ],
 
     /*

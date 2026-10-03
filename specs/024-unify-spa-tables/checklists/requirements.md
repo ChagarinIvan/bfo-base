@@ -32,3 +32,9 @@
 ## Notes
 
 All quality criteria pass. The listing boundary and local-preference assumption are explicit.
+
+Расширение от 2026-10-03 закрепляет заголовки DataTable под панелью выбора колонок и фильтров
+через общий ListingTable. Автотесты проверяют геометрию при scroll/resize, конец таблицы,
+сохранение header action, асинхронный default slot и cleanup. Frontend CI прошёл.
+Геометрия в тестах задана через DOMRect; визуальная проверка реального браузера остаётся
+отдельной проверкой T027, поскольку в этой сессии браузеры CUA недоступны.

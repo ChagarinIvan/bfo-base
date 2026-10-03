@@ -7,7 +7,7 @@ namespace App\Domain\RankCheck;
 use App\Domain\PersonPrompt\PersonPromptRepository;
 use App\Domain\PersonPrompt\PromptIdentifier;
 use App\Domain\Shared\Criteria;
-use App\Services\ProtocolLineIdentService;
+use function array_unique;
 
 final readonly class StandardRankCheckPersonMatcher implements RankCheckPersonMatcher
 {
@@ -25,7 +25,8 @@ final readonly class StandardRankCheckPersonMatcher implements RankCheckPersonMa
             ->toArray()
         ;
 
-        foreach ($preparedLines as $preparedLine) {
+        $unmatched = [];
+        foreach (array_unique($preparedLines) as $preparedLine) {
             if (isset($matched[$preparedLine])) {
                 continue;
             }
@@ -36,6 +37,6 @@ final readonly class StandardRankCheckPersonMatcher implements RankCheckPersonMa
             }
         }
 
-        return $matched;
+        return $matched + $this->identification->match($unmatched);
     }
 }
