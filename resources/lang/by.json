@@ -534,6 +534,7 @@
     "spa.rank_check.status_failed": "Памылка",
     "spa.rank_check.loading": "Загрузка праверак…",
     "spa.rank_check.empty": "Праверкі разрадаў яшчэ не запускаліся.",
+    "spa.rank_check.empty_value": "пуста",
     "spa.rank_check.list_error": "Не атрымалася загрузіць праверкі разрадаў.",
     "spa.rank_check.select_file": "Выберыце файл",
     "spa.rank_check.submit": "Праверыць разрады",

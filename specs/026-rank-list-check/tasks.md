@@ -193,6 +193,11 @@ Tests are written first and verified red, then domain/application code, adapters
 - [x] T058 Проверить регрессионные/API тесты, финальные backend-гейты и обновить инструкции развёртывания. `composer test`: 552 tests / 3800 assertions, 14 существующих PHPUnit notices; PHPStan, CS и Rector dry-run прошли. Локальный API после запуска возвращает ожидаемый `401` без авторизации. SPA-код и контракты не менялись, frontend CI не запускался.
 - [x] T059 Заменить сортировку полного corpus для каждой строки batch-поиском через Domain port и Infrastructure adapter; проверить исторические пороги, ties и пустой corpus.
 
+## Result placeholder fix, 2026-10-03
+
+- [x] T060 Разделить перевод пустого списка проверок и пустого значения строки результата. Устранить дубликат ключа в `ru.json` и воспроизвести `лично → (пуста)` компонентным тестом.
+- [x] T061 Проверить регрессионный тест и frontend CI. Компонентный тест воспроизводит пустой клуб из базы при `club: лично`; lint, typecheck, все SPA-тесты и production build прошли.
+
 ## Final scope decision
 
 Фича закрыта для текущего product scope. Незакрытые ранее задачи T001, T002, T007, T011, T012,

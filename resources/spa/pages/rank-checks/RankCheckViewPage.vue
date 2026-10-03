@@ -324,10 +324,10 @@ onBeforeUnmount(() => {
                             v-if="data.personId"
                             :to="`/app/persons/${data.personId}`"
                         >
-                            {{ data.name || t('spa.rank_check.empty') }}
+                            {{ data.name || t('spa.rank_check.empty_value') }}
                         </RouterLink>
                         <template v-else>{{
-                            data.name || t('spa.rank_check.empty')
+                            data.name || t('spa.rank_check.empty_value')
                         }}</template>
                     </span>
                     <template
@@ -341,7 +341,7 @@ onBeforeUnmount(() => {
                     >
                         <span class="rank-check-value__arrow">→ (</span>
                         <strong class="rank-check-value__correct">{{
-                            data.databaseName || t('spa.rank_check.empty')
+                            data.databaseName || t('spa.rank_check.empty_value')
                         }}</strong
                         >)
                     </template>
@@ -355,7 +355,9 @@ onBeforeUnmount(() => {
                                 data.hasPerson,
                             )
                         "
-                        >{{ data.club || t('spa.rank_check.empty') }}</span
+                        >{{
+                            data.club || t('spa.rank_check.empty_value')
+                        }}</span
                     >
                     <template
                         v-if="
@@ -368,7 +370,7 @@ onBeforeUnmount(() => {
                     >
                         <span class="rank-check-value__arrow">→ (</span>
                         <strong class="rank-check-value__correct">{{
-                            data.databaseClub || t('spa.rank_check.empty')
+                            data.databaseClub || t('spa.rank_check.empty_value')
                         }}</strong
                         >)
                     </template>
@@ -382,7 +384,9 @@ onBeforeUnmount(() => {
                                 data.hasPerson,
                             )
                         "
-                        >{{ data.rank || t('spa.rank_check.empty') }}</span
+                        >{{
+                            data.rank || t('spa.rank_check.empty_value')
+                        }}</span
                     >
                     <template
                         v-if="
@@ -395,7 +399,7 @@ onBeforeUnmount(() => {
                     >
                         <span class="rank-check-value__arrow">→ (</span>
                         <strong class="rank-check-value__correct">{{
-                            data.databaseRank || t('spa.rank_check.empty')
+                            data.databaseRank || t('spa.rank_check.empty_value')
                         }}</strong
                         >)
                     </template>
@@ -409,7 +413,9 @@ onBeforeUnmount(() => {
                                 data.hasPerson,
                             )
                         "
-                        >{{ data.year || t('spa.rank_check.empty') }}</span
+                        >{{
+                            data.year || t('spa.rank_check.empty_value')
+                        }}</span
                     >
                     <template
                         v-if="
@@ -422,7 +428,7 @@ onBeforeUnmount(() => {
                     >
                         <span class="rank-check-value__arrow">→ (</span>
                         <strong class="rank-check-value__correct">{{
-                            data.databaseYear || t('spa.rank_check.empty')
+                            data.databaseYear || t('spa.rank_check.empty_value')
                         }}</strong
                         >)
                     </template>
