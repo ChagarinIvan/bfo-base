@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Cup;
 
-use App\Models\Year;
+use App\Domain\Shared\Year;
 
 final readonly class CupInfo
 {

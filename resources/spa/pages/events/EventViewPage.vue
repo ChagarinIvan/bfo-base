@@ -12,6 +12,7 @@ import { RouterLink, useRoute, useRouter } from 'vue-router'
 import ActionButton from '../../components/actions/ActionButton.vue'
 import FilterPanel from '../../components/FilterPanel.vue'
 import ImpressionDetails from '../../components/ImpressionDetails.vue'
+import EventProcessingStatus from '../../components/EventProcessingStatus.vue'
 import ListingTable from '../../components/ListingTable.vue'
 import SlicePaginator from '../../components/SlicePaginator.vue'
 import { getEventDistances } from '../../api/distances'
@@ -25,6 +26,7 @@ import type {
     Distance,
     Competition,
     Event,
+    EventProcessingStatus as EventProcessingState,
     PaginationHeaders,
     ProtocolLine,
     User,
@@ -52,6 +54,7 @@ const users = ref<User[]>([])
 const loading = ref(true)
 const linesLoading = ref(false)
 const error = ref('')
+const processingRefreshError = ref(false)
 const name = ref('')
 const pagination = ref<PaginationHeaders>({
     currentPage: 1,
@@ -91,6 +94,50 @@ const columns = computed(() => [
 ])
 let targetScrolled = false
 let targetScrollTimer: number | undefined
+let processingTimer: number | undefined
+
+function needsProcessingPolling(
+    status: EventProcessingState | null | undefined,
+): boolean {
+    return ['queued', 'parsing', 'identifying', 'rebuildingRanks'].includes(
+        status ?? '',
+    )
+}
+
+function stopProcessingPolling(): void {
+    if (processingTimer !== undefined) {
+        window.clearInterval(processingTimer)
+        processingTimer = undefined
+    }
+}
+
+async function refreshProcessing(): Promise<void> {
+    if (!event.value || !needsProcessingPolling(event.value.processingStatus)) {
+        stopProcessingPolling()
+        return
+    }
+
+    try {
+        event.value = await getEvent(event.value.id)
+        processingRefreshError.value = false
+        await loadLines()
+        if (!needsProcessingPolling(event.value.processingStatus)) {
+            stopProcessingPolling()
+        }
+    } catch {
+        processingRefreshError.value = true
+    }
+}
+
+function startProcessingPolling(): void {
+    stopProcessingPolling()
+    if (needsProcessingPolling(event.value?.processingStatus)) {
+        processingTimer = window.setInterval(
+            () => void refreshProcessing(),
+            5000,
+        )
+    }
+}
 const debouncedNameSearch = debounce(() => {
     void loadLines(1)
 })
@@ -222,11 +269,13 @@ async function load(eventId: string): Promise<void> {
             ? requestedId
             : distances.value[0]?.id
         await loadLines()
+        startProcessingPolling()
     } catch (exception: unknown) {
         event.value = null
         competition.value = null
         distances.value = []
         lines.value = []
+        stopProcessingPolling()
         if (isNotFound(exception)) {
             await router.replace({ name: 'not-found' })
             return
@@ -281,6 +330,7 @@ onBeforeUnmount(() => {
     if (targetScrollTimer !== undefined) {
         window.clearInterval(targetScrollTimer)
     }
+    stopProcessingPolling()
 })
 </script>
 
@@ -368,6 +418,12 @@ onBeforeUnmount(() => {
                 </div>
             </template>
         </Card>
+
+        <EventProcessingStatus
+            v-if="auth.isAuthenticated && event.processingStatus"
+            :status="event.processingStatus"
+            :refresh-error="processingRefreshError"
+        />
 
         <h2 class="section-title">Вынікі</h2>
         <Message

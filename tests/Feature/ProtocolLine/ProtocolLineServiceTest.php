@@ -6,9 +6,11 @@ namespace Tests\Feature\ProtocolLine;
 
 use App\Domain\Competition\Competition;
 use App\Domain\Event\Event;
+use App\Domain\Event\EventProtocol;
 use App\Services\ProtocolLineService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -23,6 +25,10 @@ final class ProtocolLineServiceTest extends TestCase
         $competition = Competition::factory()->createOne();
         /** @var Event $event */
         $event = Event::factory()->createOne(['competition_id' => $competition->id]);
+        $eventProtocol = EventProtocol::queue($event->id, (string) Str::uuid());
+        $eventProtocol->created = $event->created;
+        $eventProtocol->updated = $event->updated;
+        $eventProtocol->save();
 
         $lines = app(ProtocolLineService::class)->fillProtocolLines($event->id, new Collection([[
             'serial_number' => 1,
@@ -39,7 +45,7 @@ final class ProtocolLineServiceTest extends TestCase
             'vk' => false,
             'group' => 'M21',
             'distance' => ['length' => 1000, 'points' => 10],
-        ]]));
+        ]]), $eventProtocol->id);
 
         $this->assertSame('', $lines->sole()->rank);
     }

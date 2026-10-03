@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Domain\RankCheck;
 
 use App\Domain\PersonPrompt\PersonPromptRepository;
-use App\Domain\RankCheck\RankCheckSimilarityMatcher;
+use App\Domain\PersonPrompt\PromptIdentifier;
 use App\Domain\RankCheck\StandardRankCheckPersonMatcher;
 use App\Domain\Shared\Criteria;
 use Illuminate\Support\Collection;
@@ -15,7 +15,7 @@ use Tests\TestCase;
 
 final class StandardRankCheckPersonMatcherTest extends TestCase
 {
-    private MockObject&RankCheckSimilarityMatcher $identification;
+    private MockObject&PromptIdentifier $identification;
 
     private MockObject&PersonPromptRepository $personPrompts;
 
@@ -27,7 +27,7 @@ final class StandardRankCheckPersonMatcherTest extends TestCase
 
         $this->matcher = new StandardRankCheckPersonMatcher(
             $this->personPrompts = $this->createMock(PersonPromptRepository::class),
-            $this->identification = $this->createMock(RankCheckSimilarityMatcher::class),
+            $this->identification = $this->createMock(PromptIdentifier::class),
         );
     }
 

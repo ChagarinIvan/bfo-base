@@ -11,7 +11,7 @@ use RuntimeException;
 
 class ParserFactory
 {
-    public const LIST_PARSERS = [
+    public const array LIST_PARSERS = [
         CsvListParser::class,
     ];
     private const array PROTOCOL_PARSERS = [

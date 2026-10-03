@@ -8,11 +8,13 @@ use App\Bridge\Laravel\Http\Controllers\Api\V1\Event\ListEventsAction;
 use App\Domain\Competition\Competition;
 use App\Domain\Distance\Distance;
 use App\Domain\Event\Event;
+use App\Domain\Event\EventProcessingStatus;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Infrastructure\Sanctum\SanctumUser;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\Sanctum;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -46,6 +48,7 @@ final class ListEventsActionTest extends TestCase
         $event = $this->createEvent($competition, ['date' => '2026-05-11']);
         $this->createProtocolLine($event);
         $this->createProtocolLine($event);
+        $this->makeProtocolReady($event);
         $this->createEvent($competition, ['active' => false]);
 
         $this->getJson("/api/v1/events?competitionId={$competition->id}&withParticipantsCount=1")
@@ -62,8 +65,8 @@ final class ListEventsActionTest extends TestCase
     public function it_returns_pagination_headers(): void
     {
         $competition = $this->createCompetition();
-        $this->createEvent($competition, ['date' => '2026-05-10']);
-        $this->createEvent($competition, ['date' => '2026-05-11']);
+        $this->makeProtocolReady($this->createEvent($competition, ['date' => '2026-05-10']));
+        $this->makeProtocolReady($this->createEvent($competition, ['date' => '2026-05-11']));
 
         $this->getJson("/api/v1/events?competitionId={$competition->id}&perPage=1&page=2")
             ->assertOk()
@@ -107,6 +110,7 @@ final class ListEventsActionTest extends TestCase
     {
         $competition = $this->createCompetition(['name' => 'Spring Cup']);
         $event = $this->createEvent($competition);
+        $this->makeProtocolReady($event);
 
         $this->getJson("/api/v1/events?ids[]={$event->id}&withCompetition=1")
             ->assertOk()
@@ -133,13 +137,52 @@ final class ListEventsActionTest extends TestCase
     public function it_includes_impressions_for_an_authenticated_client(): void
     {
         $competition = $this->createCompetition();
-        $this->createEvent($competition);
+        $event = $this->createEvent($competition);
+        $this->makeProtocolReady($event);
         Sanctum::actingAs($this->createUser());
 
         $this->getJson("/api/v1/events?competitionId={$competition->id}")
             ->assertOk()
-            ->assertJsonStructure([['created', 'updated']])
+            ->assertJsonStructure([['created', 'updated', 'processingStatus']])
+            ->assertJsonPath('0.processingStatus', 'ready')
         ;
+    }
+
+    /** @return iterable<string, array{EventProcessingStatus}> */
+    public static function processingStates(): iterable
+    {
+        foreach (EventProcessingStatus::cases() as $status) {
+            if ($status !== EventProcessingStatus::READY) {
+                yield $status->value => [$status];
+            }
+        }
+    }
+
+    #[Test]
+    #[DataProvider('processingStates')]
+    public function it_exposes_processing_states_to_authenticated_clients_and_hides_them_from_guests(EventProcessingStatus $status): void
+    {
+        $competition = $this->createCompetition();
+        $event = $this->createEvent($competition, [
+            'processing_status' => $status,
+            'error_message' => $status->isTerminal() ? 'Processing failed.' : null,
+        ]);
+
+        $this->getJson("/api/v1/events?competitionId={$competition->id}")
+            ->assertOk()
+            ->assertExactJson([]);
+
+        $this->getJson("/api/v1/events/{$event->id}")->assertNotFound();
+
+        Sanctum::actingAs($this->createUser());
+        $this->getJson("/api/v1/events?competitionId={$competition->id}")
+            ->assertOk()
+            ->assertJsonPath('0.id', (string) $event->id)
+            ->assertJsonPath('0.processingStatus', $status->value);
+        $this->getJson("/api/v1/events/{$event->id}")
+            ->assertOk()
+            ->assertJsonPath('processingStatus', $status->value)
+            ->assertJsonPath('errorMessage', $event->error_message);
     }
 
     /** @param array<string, mixed> $attributes */
@@ -183,6 +226,12 @@ final class ListEventsActionTest extends TestCase
         ]);
 
         return $protocolLine;
+    }
+
+    private function makeProtocolReady(Event $event): void
+    {
+        $event->processing_status = EventProcessingStatus::READY;
+        $event->save();
     }
 
     private function createUser(): SanctumUser

@@ -12,9 +12,8 @@ use App\Domain\Distance\Distance;
 use App\Domain\Event\Event;
 use App\Domain\Group\Group;
 use App\Domain\Person\Person;
-use App\Domain\PersonPayment\PersonPayment;
 use App\Domain\ProtocolLine\ProtocolLine;
-use App\Models\Year;
+use App\Domain\Shared\Year;
 use Illuminate\Database\Seeder;
 use Illuminate\Foundation\Testing\WithFaker;
 

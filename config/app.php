@@ -19,7 +19,7 @@ use App\Bridge\Laravel\Provider\Rank\RankProvider;
 use App\Bridge\Laravel\Provider\RankCheck\RankCheckProvider;
 use App\Bridge\Laravel\Provider\Shared\SharedProvider;
 use App\Bridge\Laravel\Provider\User\AuthProvider;
-use App\Providers\HorizonServiceProvider;
+use App\Infrastructure\Laravel\Providers\HorizonServiceProvider;
 use Illuminate\Auth\AuthServiceProvider;
 use Illuminate\Auth\Passwords\PasswordResetServiceProvider;
 use Illuminate\Broadcasting\BroadcastServiceProvider;

@@ -103,27 +103,4 @@ final readonly class ProtocolLinesRepository
             ->get()
         ;
     }
-
-    public function identByEqualPreparedLine(Collection $linesIds): void
-    {
-        $this->db->table('protocol_lines', 'pls')
-            ->join('protocol_lines AS plj', 'plj.prepared_line', '=', 'pls.prepared_line')
-            ->whereNull('pls.person_id')
-            ->whereNotNull('plj.person_id')
-            ->whereIn('pls.id', $linesIds)
-            ->update(['pls.person_id' => new Expression('plj.person_id')])
-        ;
-    }
-
-    public function identByEqualPersonPrompt(Collection $linesIds): void
-    {
-        $this->db->table('protocol_lines', 'pl')
-            ->join('persons_prompt AS pp', 'pl.prepared_line', '=', 'pp.prompt')
-            ->join('person AS p', 'p.id', '=', 'pp.person_id')
-            ->whereNull('pl.person_id')
-            ->where('p.active', true)
-            ->whereIn('pl.id', $linesIds)
-            ->update(['pl.person_id' => new Expression('pp.person_id')])
-        ;
-    }
 }

@@ -7,6 +7,7 @@ namespace Database\Factories\Domain\ProtocolLine;
 use App\Domain\ProtocolLine\ProtocolLine;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+/** @extends Factory<ProtocolLine> */
 class ProtocolLineFactory extends Factory
 {
     protected $model = ProtocolLine::class;

@@ -22,7 +22,7 @@ final class ListEventsAction extends BaseController
         ListEventsService $events,
     ): Slice {
         return $events
-            ->execute(new ListEvents($search))
+            ->execute(new ListEvents($search, $this->currentUserId()))
             ->setPerPage($pagination->perPage)
             ->setCurrentPage($pagination->page)
         ;

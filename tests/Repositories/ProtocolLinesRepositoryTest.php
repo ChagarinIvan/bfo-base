@@ -13,9 +13,8 @@ use App\Domain\PersonPrompt\PersonPrompt;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\Shared\Criteria;
 use App\Infrastructure\Laravel\Eloquent\ProtocolLine\EloquentProtocolLinesRepository;
-use App\Repositories\ProtocolLinesRepository;
+use App\Infrastructure\Laravel\Eloquent\ProtocolLine\EloquentProtocolLineOperations;
 use Database\Seeders\ProtocolLinesSeeder;
-use Illuminate\Database\ConnectionInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use Iterator;
@@ -28,7 +27,6 @@ final class ProtocolLinesRepositoryTest extends TestCase
     use RefreshDatabase;
 
     private EloquentProtocolLinesRepository $repository;
-    private ProtocolLinesRepository $legacyRepository;
 
     public static function criteriaDataProvider(): Iterator
     {
@@ -41,10 +39,9 @@ final class ProtocolLinesRepositoryTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $app = $this->createApplication();
+        $this->createApplication();
         RefreshDatabaseState::$migrated = false;
         $this->repository = new EloquentProtocolLinesRepository();
-        $this->legacyRepository = new ProtocolLinesRepository($app->get(ConnectionInterface::class));
     }
 
     #[Test]
@@ -71,15 +68,15 @@ final class ProtocolLinesRepositoryTest extends TestCase
         Person::factory(state: ['id' => 2, 'active' => true])->createOne();
         PersonPrompt::factory(state: ['person_id' => 1, 'prompt' => 'same prompt'])->createOne();
 
-        $this->createProtocolLine(id: 101, preparedLine: 'same prompt');
+        $event = $this->createProtocolLine(id: 101, preparedLine: 'same prompt');
 
-        $this->legacyRepository->identByEqualPersonPrompt(collect([101]));
+        $this->app->make(EloquentProtocolLineOperations::class)->identByEqualPersonPrompt($event);
 
         $this->assertNull(ProtocolLine::find(101)->person_id);
 
         PersonPrompt::factory(state: ['person_id' => 2, 'prompt' => 'same prompt'])->createOne();
 
-        $this->legacyRepository->identByEqualPersonPrompt(collect([101]));
+        $this->app->make(EloquentProtocolLineOperations::class)->identByEqualPersonPrompt($event);
 
         $this->assertSame(2, ProtocolLine::find(101)->person_id);
     }
@@ -126,10 +123,11 @@ final class ProtocolLinesRepositoryTest extends TestCase
         $this->assertSame([101], $lines->pluck('id')->all());
     }
 
-    private function createProtocolLine(int $id, string $preparedLine): void
+    private function createProtocolLine(int $id, string $preparedLine): Event
     {
         Competition::factory(state: ['id' => 101])->createOne();
-        Event::factory(state: ['id' => 101, 'competition_id' => 101])->createOne();
+        $event = Event::factory(state: ['id' => 101, 'competition_id' => 101])->createOne();
+        $this->assertInstanceOf(Event::class, $event);
         Group::factory(state: ['id' => 101])->createOne();
         Distance::factory(state: ['id' => 101, 'event_id' => 101, 'group_id' => 101])->createOne();
         ProtocolLine::factory(state: [
@@ -138,5 +136,7 @@ final class ProtocolLinesRepositoryTest extends TestCase
             'person_id' => null,
             'prepared_line' => $preparedLine,
         ])->createOne();
+
+        return $event;
     }
 }

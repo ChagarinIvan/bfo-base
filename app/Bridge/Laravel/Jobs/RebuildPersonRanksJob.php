@@ -18,14 +18,15 @@ final class RebuildPersonRanksJob implements ShouldQueue
     public function __construct(
         public readonly array $personIds,
         public readonly Impression $impression,
-    )
-    {
+        public readonly ?int $eventProtocolId = null,
+        public readonly ?string $rankBatchId = null,
+    ) {
     }
 
     public function handle(Queue $queue): void
     {
         foreach (array_unique($this->personIds) as $personId) {
-            $queue->push(new RebuildPersonRankJob($personId, $this->impression));
+            $queue->push(new RebuildPersonRankJob($personId, $this->impression, $this->eventProtocolId, $this->rankBatchId));
         }
     }
 }

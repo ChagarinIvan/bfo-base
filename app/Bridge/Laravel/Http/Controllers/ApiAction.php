@@ -119,4 +119,15 @@ trait ApiAction
 
         return $response;
     }
+
+    protected function currentUserId(): ?UserId
+    {
+        if (! $this->container->bound(UserId::class)) {
+            return null;
+        }
+
+        $userId = $this->container->make(UserId::class);
+
+        return $userId instanceof UserId ? $userId : null;
+    }
 }

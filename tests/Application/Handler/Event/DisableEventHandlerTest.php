@@ -18,9 +18,8 @@ use App\Domain\Person\RankCalculator;
 use App\Domain\Person\RankFactsCollector;
 use App\Domain\ProtocolLine\ProtocolLineOperations;
 use App\Domain\Shared\Clock;
-use App\Domain\Shared\TransactionManager;
+use App\Domain\Shared\DummyTransactional;
 use Carbon\Carbon;
-use Closure;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
@@ -53,9 +52,7 @@ final class DisableEventHandlerTest extends TestCase
         $facts->expects($this->exactly(2))->method('collect')->willReturn([]);
         $clock = $this->createStub(Clock::class);
         $clock->method('now')->willReturn(Carbon::parse('2026-09-02 12:00:00'));
-        $transaction = $this->createMock(TransactionManager::class);
-        $transaction->expects($this->exactly(2))->method('run')->willReturnCallback(static fn (Closure $callback): mixed => $callback());
-        $rebuild = new RebuildPersonRanksService($persons, $facts, new RankCalculator(), $clock, $transaction);
+        $rebuild = new RebuildPersonRanksService($persons, $facts, new RankCalculator(), $clock, new DummyTransactional);
 
         new DisableEventHandler($protocolLines, $distances, new ClearCupCacheService($this->createStub(CupCacheInvalidator::class)), $rebuild)
             ->handle(new EventDisabled($event));

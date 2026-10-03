@@ -10,8 +10,10 @@ use App\Domain\Club\ClubNameNormalizer;
 use App\Domain\Club\ClubRepository;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\ProtocolLine\ProtocolLineRepository;
+use App\Domain\ProtocolLine\ProtocolLineResources;
 use App\Domain\Shared\Criteria;
 use App\Domain\Shared\Pagination\Slice;
+use Closure;
 use function array_map;
 use function array_unique;
 
@@ -31,10 +33,17 @@ final readonly class ListProtocolLinesService
         $resources = $command->resources();
         $lines = $this->lines->paginate($command->criteria(), $resources);
 
+        return $lines->map($this->mapper($lines, $resources));
+    }
+
+    /**
+     * @param Slice<ProtocolLine> $lines
+     * @return Closure(ProtocolLine): ViewProtocolLineDto
+     */
+    private function mapper(Slice $lines, ProtocolLineResources $resources): Closure
+    {
         if (!$resources->withClub) {
-            return $lines->map(
-                fn (ProtocolLine $line): ViewProtocolLineDto => $this->assembler->toViewProtocolLineDto($line),
-            );
+            return fn (ProtocolLine $line): ViewProtocolLineDto => $this->assembler->toViewProtocolLineDto($line);
         }
 
         $clubsByNormalizedName = $this->clubs
@@ -46,10 +55,10 @@ final readonly class ListProtocolLinesService
             ->keyBy('normalize_name')
         ;
 
-        return $lines->map(function (ProtocolLine $line) use ($clubsByNormalizedName): ViewProtocolLineDto {
+        return function (ProtocolLine $line) use ($clubsByNormalizedName): ViewProtocolLineDto {
             $club = $clubsByNormalizedName->get($this->clubNameNormalizer->normalize($line->club));
 
             return $this->assembler->toViewProtocolLineDto($line, $club);
-        });
+        };
     }
 }

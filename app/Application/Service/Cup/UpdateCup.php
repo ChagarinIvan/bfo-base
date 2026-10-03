@@ -9,7 +9,7 @@ use App\Application\Dto\Cup\CupDto;
 use App\Domain\Cup\CupInfo;
 use App\Domain\Cup\CupType;
 use App\Domain\Cup\Factory\CupInput;
-use App\Models\Year;
+use App\Domain\Shared\Year;
 
 final readonly class UpdateCup
 {

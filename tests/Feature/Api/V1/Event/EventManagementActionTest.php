@@ -11,6 +11,8 @@ use App\Bridge\Laravel\Http\Controllers\Api\V1\Event\UpdateEventAction;
 use App\Domain\Competition\Competition;
 use App\Domain\Distance\Distance;
 use App\Domain\Event\Event;
+use App\Domain\Event\EventProtocol;
+use App\Domain\Event\EventProtocolStatus;
 use App\Domain\Group\Group;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Infrastructure\Sanctum\SanctumUser;
@@ -140,7 +142,9 @@ final class EventManagementActionTest extends TestCase
     {
         Sanctum::actingAs($this->createUser());
         $competition = Competition::factory()->createOne();
+        /** @var Event $event */
         $event = Event::factory()->createOne(['competition_id' => $competition->getKey()]);
+        $this->makeProtocolReady($event);
         $data = [
             'name' => 'Updated stage',
             'description' => 'Updated description',
@@ -160,7 +164,9 @@ final class EventManagementActionTest extends TestCase
     public function legacy_event_web_routes_are_not_registered_while_public_event_reads_remain_available(): void
     {
         $competition = Competition::factory()->createOne();
+        /** @var Event $event */
         $event = Event::factory()->createOne(['competition_id' => $competition->getKey()]);
+        $this->makeProtocolReady($event);
 
         $this->get("/events/{$competition->getKey()}/create")->assertNotFound();
         $this->getJson("/api/v1/events/{$event->getKey()}")
@@ -184,5 +190,16 @@ final class EventManagementActionTest extends TestCase
             'email' => fake()->unique()->safeEmail(),
             'password' => 'secret',
         ]);
+    }
+
+    private function makeProtocolReady(Event $event): void
+    {
+        $protocol = EventProtocol::queue($event->id, fake()->uuid());
+        $protocol->status = EventProtocolStatus::READY;
+        $protocol->created = $event->created;
+        $protocol->updated = $event->updated;
+        $protocol->save();
+        $event->active_event_protocol_id = $protocol->id;
+        $event->save();
     }
 }

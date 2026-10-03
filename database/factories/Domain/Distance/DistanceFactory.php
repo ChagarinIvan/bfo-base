@@ -7,6 +7,7 @@ namespace Database\Factories\Domain\Distance;
 use App\Domain\Distance\Distance;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+/** @extends Factory<Distance> */
 class DistanceFactory extends Factory
 {
     protected $model = Distance::class;

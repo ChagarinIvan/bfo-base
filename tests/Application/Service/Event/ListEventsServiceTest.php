@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Application\Service\Event;
 
 use App\Application\Dto\Auth\AuthAssembler;
+use App\Application\Dto\Auth\UserId;
 use App\Application\Dto\Event\EventAssembler;
 use App\Application\Dto\Event\SearchEventDto;
 use App\Application\Service\Event\ListEvents;

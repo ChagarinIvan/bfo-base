@@ -6,12 +6,14 @@ namespace App\Domain\Event\Factory;
 
 use App\Domain\Auth\Impression;
 use App\Domain\Event\Event;
+use App\Domain\Event\EventProcessingStatus;
 use App\Domain\Event\Protocol;
 use App\Domain\Shared\Clock;
+use App\Domain\Shared\UuidGenerator;
 
 final readonly class StandardEventFactory implements EventFactory
 {
-    public function __construct(private Clock $clock)
+    public function __construct(private Clock $clock, private UuidGenerator $tokens)
     {
     }
 
@@ -23,6 +25,8 @@ final readonly class StandardEventFactory implements EventFactory
         $event->description = $input->info->description;
         $event->date = $input->info->date;
         $event->file = $input->file;
+        $event->processing_status = $protocol === null ? EventProcessingStatus::READY : EventProcessingStatus::PARSING;
+        $event->processing_token = $this->tokens->generate();
         $event->created = $event->updated = new Impression($this->clock->now(), $input->userId);
 
         return $event;

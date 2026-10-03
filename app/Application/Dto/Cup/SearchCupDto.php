@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Dto\Cup;
 
 use App\Application\Dto\AbstractDto;
-use App\Models\Year;
+use App\Domain\Shared\Year;
 use Illuminate\Validation\Rules\Enum;
 use function array_key_exists;
 use function array_map;

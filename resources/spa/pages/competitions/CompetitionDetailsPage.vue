@@ -80,6 +80,11 @@ const eventColumns = computed(() => [
     ...(auth.isAuthenticated
         ? [
               {
+                  key: 'processingStatus',
+                  label: 'Статус пратаколу',
+                  defaultVisible: true,
+              },
+              {
                   key: 'created',
                   label: t('spa.competitions.created'),
                   defaultVisible: true,
@@ -317,6 +322,12 @@ async function deleteCurrentEvent(): Promise<void> {
                     :impression="data.created"
                     :users="users"
                     :label="t('spa.competitions.created')"
+                />
+            </template>
+            <template #cell-processingStatus="{ data }">
+                <EventProcessingStatus
+                    v-if="data.processingStatus"
+                    :status="data.processingStatus"
                 />
             </template>
             <template #cell-updated="{ data }">

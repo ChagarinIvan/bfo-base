@@ -39,7 +39,7 @@ final class EventUpdateTest extends TestCase
         $updater = $this->createMock(ProtocolUpdater::class);
         $updater->expects($this->once())
             ->method('update')
-            ->with($event, new Protocol('content', 'html'))
+            ->with($event, new Protocol('content', 'html'), $this->isInstanceOf(Impression::class))
             ->willReturn('protocol.html');
 
         $event->updateProtocol(

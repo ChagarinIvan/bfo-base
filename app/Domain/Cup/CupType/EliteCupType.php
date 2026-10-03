@@ -12,7 +12,7 @@ use App\Domain\Cup\Group\CupGroupFactory;
 use App\Domain\Cup\Group\GroupMale;
 use App\Domain\Distance\Distance;
 use App\Domain\ProtocolLine\Criteria\CupEventDistancesProtocolLinesCriteria;
-use App\Models\Year;
+use App\Domain\Shared\Year;
 use Illuminate\Support\Collection;
 use function array_merge;
 use function in_array;

@@ -28,10 +28,7 @@ class Kernel extends ConsoleKernel
      */
     #[Override]
     protected $commands = [
-        BackfillRepeatMasterRankActivationCommand::class,
-        IdentProtocolLineCommand::class,
         SimpleIndentCommand::class,
-        StartBigIdentCommand::class,
         SyncPersonsCommand::class,
         SyncStoredPersonsCommand::class,
         RefillPersonRanksCommand::class,
@@ -49,15 +46,7 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command(SimpleIndentCommand::class, ['userId' => User::SYSTEM_USER_ID])->dailyAt('01:00')->runInBackground();
         $schedule->command(PruneInactivePersonsCommand::class, ['userId' => User::SYSTEM_USER_ID])->dailyAt('02:00')->runInBackground();
-        $schedule->command(StartBigIdentCommand::class, ['userId' => User::SYSTEM_USER_ID])->dailyAt('03:00')->runInBackground();
         $schedule->command(RebuildExpiredPersonRanksCommand::class, ['userId' => User::SYSTEM_USER_ID])->dailyAt('00:10')->runInBackground();
-        //        $schedule->command(SyncPersonsCommand::class)->weekly()->runInBackground();
-
-        $schedule->command(IdentProtocolLineCommand::class, ['userId' => User::SYSTEM_USER_ID])
-            ->everyThirtySeconds()
-            ->withoutOverlapping(5)
-            ->runInBackground()
-        ;
 
         $schedule->command(CleanupRankChecksCommand::class)->dailyAt('04:00')->runInBackground();
     }
