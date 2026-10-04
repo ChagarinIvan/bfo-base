@@ -23,7 +23,6 @@ final readonly class StandardGroupFactory implements GroupFactory
         $group->created = new Impression($this->clock->now(), $input->userId);
         $group->updated = new Impression($this->clock->now(), $input->userId);
 
-
         return $group;
     }
 }

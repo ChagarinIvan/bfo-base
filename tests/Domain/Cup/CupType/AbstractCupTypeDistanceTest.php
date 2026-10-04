@@ -13,7 +13,6 @@ use App\Domain\Distance\DistanceRepository;
 use App\Domain\Group\GroupRepository;
 use App\Domain\Shared\Criteria;
 use App\Repositories\ProtocolLinesRepository;
-use Illuminate\Database\ConnectionInterface;
 use Illuminate\Support\Collection;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -77,7 +76,7 @@ final class AbstractCupTypeDistanceTest extends TestCase
     {
         return new TestCupType(
             $repository,
-            new ProtocolLinesRepository($this->createStub(ConnectionInterface::class)),
+            new ProtocolLinesRepository(),
             $this->createStub(GroupRepository::class),
             new CupGroupFactory(),
         );

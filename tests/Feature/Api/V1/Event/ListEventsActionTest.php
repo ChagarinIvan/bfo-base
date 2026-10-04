@@ -24,6 +24,16 @@ final class ListEventsActionTest extends TestCase
 {
     use RefreshDatabase;
 
+    /** @return iterable<string, array{EventProcessingStatus}> */
+    public static function processingStates(): iterable
+    {
+        foreach (EventProcessingStatus::cases() as $status) {
+            if ($status !== EventProcessingStatus::READY) {
+                yield $status->value => [$status];
+            }
+        }
+    }
+
     #[Test]
     public function it_requires_a_camel_case_competition_id(): void
     {
@@ -146,16 +156,6 @@ final class ListEventsActionTest extends TestCase
             ->assertJsonStructure([['created', 'updated', 'processingStatus']])
             ->assertJsonPath('0.processingStatus', 'ready')
         ;
-    }
-
-    /** @return iterable<string, array{EventProcessingStatus}> */
-    public static function processingStates(): iterable
-    {
-        foreach (EventProcessingStatus::cases() as $status) {
-            if ($status !== EventProcessingStatus::READY) {
-                yield $status->value => [$status];
-            }
-        }
     }
 
     #[Test]

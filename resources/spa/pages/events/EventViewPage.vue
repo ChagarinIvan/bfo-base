@@ -26,7 +26,6 @@ import type {
     Distance,
     Competition,
     Event,
-    EventProcessingStatus as EventProcessingState,
     PaginationHeaders,
     ProtocolLine,
     User,
@@ -40,6 +39,7 @@ import {
     normaliseNameSearch,
 } from '../listingModels'
 import { useAuthStore } from '../../stores/auth'
+import { isEventProcessing } from './eventModels'
 
 const route = useRoute()
 const router = useRouter()
@@ -55,6 +55,13 @@ const loading = ref(true)
 const linesLoading = ref(false)
 const error = ref('')
 const processingRefreshError = ref(false)
+const readyResultsPending = ref(false)
+const showResults = computed(
+    () =>
+        !readyResultsPending.value &&
+        (!event.value?.processingStatus ||
+            event.value.processingStatus === 'ready'),
+)
 const name = ref('')
 const pagination = ref<PaginationHeaders>({
     currentPage: 1,
@@ -96,14 +103,6 @@ let targetScrolled = false
 let targetScrollTimer: number | undefined
 let processingTimer: number | undefined
 
-function needsProcessingPolling(
-    status: EventProcessingState | null | undefined,
-): boolean {
-    return ['queued', 'parsing', 'identifying', 'rebuildingRanks'].includes(
-        status ?? '',
-    )
-}
-
 function stopProcessingPolling(): void {
     if (processingTimer !== undefined) {
         window.clearInterval(processingTimer)
@@ -112,7 +111,11 @@ function stopProcessingPolling(): void {
 }
 
 async function refreshProcessing(): Promise<void> {
-    if (!event.value || !needsProcessingPolling(event.value.processingStatus)) {
+    if (
+        !event.value ||
+        (!isEventProcessing(event.value.processingStatus) &&
+            !readyResultsPending.value)
+    ) {
         stopProcessingPolling()
         return
     }
@@ -120,8 +123,26 @@ async function refreshProcessing(): Promise<void> {
     try {
         event.value = await getEvent(event.value.id)
         processingRefreshError.value = false
-        await loadLines()
-        if (!needsProcessingPolling(event.value.processingStatus)) {
+        if (event.value.processingStatus !== 'ready') {
+            readyResultsPending.value = false
+        }
+        if (event.value.processingStatus === 'ready') {
+            readyResultsPending.value = true
+            distances.value = await getEventDistances(event.value.id)
+            if (
+                !distances.value.some(
+                    (distance) => distance.id === distanceId.value,
+                )
+            ) {
+                distanceId.value = distances.value[0]?.id
+            }
+            await loadLines()
+            readyResultsPending.value = false
+        }
+        if (
+            !isEventProcessing(event.value.processingStatus) &&
+            !readyResultsPending.value
+        ) {
             stopProcessingPolling()
         }
     } catch {
@@ -131,7 +152,7 @@ async function refreshProcessing(): Promise<void> {
 
 function startProcessingPolling(): void {
     stopProcessingPolling()
-    if (needsProcessingPolling(event.value?.processingStatus)) {
+    if (isEventProcessing(event.value?.processingStatus)) {
         processingTimer = window.setInterval(
             () => void refreshProcessing(),
             5000,
@@ -248,6 +269,7 @@ async function loadLines(
 async function load(eventId: string): Promise<void> {
     loading.value = true
     error.value = ''
+    readyResultsPending.value = false
     try {
         event.value = await getEvent(eventId)
         void getCupEventContexts([event.value.id])
@@ -268,7 +290,12 @@ async function load(eventId: string): Promise<void> {
         )
             ? requestedId
             : distances.value[0]?.id
-        await loadLines()
+        if (
+            !event.value.processingStatus ||
+            event.value.processingStatus === 'ready'
+        ) {
+            await loadLines()
+        }
         startProcessingPolling()
     } catch (exception: unknown) {
         event.value = null
@@ -422,18 +449,19 @@ onBeforeUnmount(() => {
         <EventProcessingStatus
             v-if="auth.isAuthenticated && event.processingStatus"
             :status="event.processingStatus"
+            :error-message="event.errorMessage"
             :refresh-error="processingRefreshError"
         />
 
-        <h2 class="section-title">Вынікі</h2>
+        <h2 v-if="showResults" class="section-title">Вынікі</h2>
         <Message
-            v-if="!distances.length"
+            v-if="showResults && !distances.length"
             severity="secondary"
             :closable="false"
             class="mt-3"
             >Няма дыстанцый.</Message
         >
-        <template v-else>
+        <template v-else-if="showResults && distances.length">
             <ListingTable
                 table-id="event-protocol-lines"
                 :columns="columns"

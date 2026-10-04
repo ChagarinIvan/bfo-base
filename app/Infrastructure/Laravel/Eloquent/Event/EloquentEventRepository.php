@@ -41,9 +41,15 @@ final class EloquentEventRepository implements EventRepository
         return $query->find($id);
     }
 
-    public function lockById(int $id): ?Event
+    public function lockById(int $id, bool $includeInactive = false): ?Event
     {
-        return Event::where('active', true)->lockForUpdate()->find($id);
+        $query = Event::query();
+
+        if (!$includeInactive) {
+            $query->where('active', true);
+        }
+
+        return $query->lockForUpdate()->find($id);
     }
 
     public function lockByCriteria(Criteria $criteria, EventResources $resources = new EventResources()): Collection

@@ -13,6 +13,7 @@ use App\Domain\PersonPrompt\PersonPrompt;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\Rank\Rank;
 use App\Infrastructure\Laravel\Eloquent\ProtocolLine\EloquentProtocolLineOperations;
+use Carbon\Carbon;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -23,6 +24,26 @@ use Tests\TestCase;
 final class EloquentProtocolLineOperationsTest extends TestCase
 {
     use RefreshDatabase;
+
+    /** @return iterable<string, array{Rank}> */
+    public static function repeatedRanks(): iterable
+    {
+        yield 'KMS' => [Rank::CandidateMaster];
+        yield 'MS' => [Rank::MasterOfSport];
+    }
+
+    /** @return iterable<string, array{bool, string, string|null, string, int|null, string|null}> */
+    public static function linesThatMustRemainUnchanged(): iterable
+    {
+        yield 'first achievement' => [false, 'МС', null, '2024-06-01', 1, null];
+        yield 'unactivated history' => [true, 'МС', null, '2024-06-01', 1, null];
+        yield 'different rank' => [true, 'КМС', '2024-06-01', '2024-06-01', 1, null];
+        yield 'same event date' => [true, 'МС', '2026-06-10', '2026-06-10', 1, null];
+        yield 'future achievement' => [true, 'МС', '2027-06-10', '2027-06-10', 1, null];
+        yield 'another person' => [true, 'МС', '2024-06-01', '2024-06-01', 2, null];
+        yield 'unidentified line' => [true, 'МС', '2024-06-01', '2024-06-01', null, null];
+        yield 'already activated' => [true, 'МС', '2024-06-01', '2024-06-01', 1, '2026-06-15'];
+    }
 
     #[Test]
     public function prepared_line_match_updates_only_the_requested_event(): void
@@ -79,13 +100,6 @@ final class EloquentProtocolLineOperationsTest extends TestCase
         $this->assertNull($otherLine->fresh()->person_id);
     }
 
-    /** @return iterable<string, array{Rank}> */
-    public static function repeatedRanks(): iterable
-    {
-        yield 'KMS' => [Rank::CandidateMaster];
-        yield 'MS' => [Rank::MasterOfSport];
-    }
-
     #[Test]
     #[DataProvider('repeatedRanks')]
     public function it_activates_repeated_ranks_only_in_the_requested_event_with_one_update(Rank $rank): void
@@ -123,25 +137,12 @@ final class EloquentProtocolLineOperationsTest extends TestCase
 
         $this->assertCount(1, $queries);
         $this->assertStringStartsWith('update ', $queries[0]);
-        $this->assertSame('2026-06-10', $currentLine->fresh()->activate_rank?->toDateString());
+        $this->assertSame('2026-06-10', $currentLine->fresh()->activate_rank->toDateString());
         $this->assertNull($otherLine->fresh()->activate_rank);
 
         $operations->activateEventLines($current);
 
         $this->assertSame('2026-06-10', $currentLine->fresh()->activate_rank?->toDateString());
-    }
-
-    /** @return iterable<string, array{bool, string, string|null, string, int|null, string|null}> */
-    public static function linesThatMustRemainUnchanged(): iterable
-    {
-        yield 'first achievement' => [false, 'МС', null, '2024-06-01', 1, null];
-        yield 'unactivated history' => [true, 'МС', null, '2024-06-01', 1, null];
-        yield 'different rank' => [true, 'КМС', '2024-06-01', '2024-06-01', 1, null];
-        yield 'same event date' => [true, 'МС', '2026-06-10', '2026-06-10', 1, null];
-        yield 'future achievement' => [true, 'МС', '2027-06-10', '2027-06-10', 1, null];
-        yield 'another person' => [true, 'МС', '2024-06-01', '2024-06-01', 2, null];
-        yield 'unidentified line' => [true, 'МС', '2024-06-01', '2024-06-01', null, null];
-        yield 'already activated' => [true, 'МС', '2024-06-01', '2024-06-01', 1, '2026-06-15'];
     }
 
     #[Test]
@@ -158,7 +159,7 @@ final class EloquentProtocolLineOperationsTest extends TestCase
         Person::factory()->createOne(['id' => 1]);
         Person::factory()->createOne(['id' => 2]);
         $previous = $previousDistance->event;
-        $previous->date = $previousDate;
+        $previous->date = Carbon::parse($previousDate);
         $previous->save();
         if ($withHistory) {
             ProtocolLine::factory()->createOne([

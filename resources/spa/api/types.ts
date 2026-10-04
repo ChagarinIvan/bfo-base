@@ -167,17 +167,19 @@ export interface Event {
     participantsCount: number
     competitionName?: string | null
     processingStatus?: EventProcessingStatus | null
+    errorMessage?: string | null
     created?: Impression
     updated?: Impression
 }
 
 export type EventProcessingStatus =
-    | 'queued'
     | 'parsing'
     | 'identifying'
     | 'rebuildingRanks'
     | 'ready'
-    | 'failed'
+    | 'parsingError'
+    | 'identifyingError'
+    | 'rebuildingRanksError'
 
 export interface EventFormRequest {
     name: string

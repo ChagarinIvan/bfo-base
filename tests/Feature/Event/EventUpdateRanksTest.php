@@ -22,6 +22,13 @@ final class EventUpdateRanksTest extends TestCase
 {
     use RefreshDatabase;
 
+    /** @return iterable<string, array{EventProcessingStatus, string}> */
+    public static function obsoleteCalls(): iterable
+    {
+        yield 'wrong stage' => [EventProcessingStatus::IDENTIFYING, 'current-token'];
+        yield 'stale token' => [EventProcessingStatus::REBUILDING_RANKS, 'stale-token'];
+    }
+
     #[Test]
     public function it_marks_the_event_ready_after_the_updater_succeeds_and_ignores_a_repeat(): void
     {
@@ -62,13 +69,6 @@ final class EventUpdateRanksTest extends TestCase
         $this->assertSame($event->id, $recorded->eventId);
         $this->assertSame($event->processing_token, $recorded->processingToken);
         $this->assertSame(EventProcessingStatus::REBUILDING_RANKS_ERROR, $recorded->status);
-    }
-
-    /** @return iterable<string, array{EventProcessingStatus, string}> */
-    public static function obsoleteCalls(): iterable
-    {
-        yield 'wrong stage' => [EventProcessingStatus::IDENTIFYING, 'current-token'];
-        yield 'stale token' => [EventProcessingStatus::REBUILDING_RANKS, 'stale-token'];
     }
 
     #[Test]

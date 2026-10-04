@@ -12,6 +12,11 @@ use App\Domain\Rank\RankNormalizer;
 use App\Domain\Shared\IdentLineGenerator;
 use App\Domain\Shared\Storage;
 use App\Models\Parser\ParserFactory;
+use function count;
+use function implode;
+use function sprintf;
+use function str_replace;
+use function trim;
 
 final readonly class StandardProtocolParser implements ProtocolParser
 {
@@ -55,17 +60,17 @@ final readonly class StandardProtocolParser implements ProtocolParser
     {
         $distance = $line['distance'] ?? [];
         $rank = $this->ranks->normalize(isset($line['complete_rank']) ? (string) $line['complete_rank'] : null);
-        $lastname = $line['lastname'] ?? throw new EventParsingError('Empty lastname in line ' . implode($line));
-        $firstname = $line['firstname'] ?? throw new EventParsingError('Empty firstname in line ' . implode($line));
+        $lastname = $line['lastname'] ?? throw new EventParsingError('Empty lastname in line ' . implode('', $line));
+        $firstname = $line['firstname'] ?? throw new EventParsingError('Empty firstname in line ' . implode('', $line));
         $year = isset($line['year']) ? (int) $line['year'] : null;
-        $groupName = $line['group']  ?? throw new EventParsingError('Empty group name in line ' . implode($line));
+        $groupName = $line['group']  ?? throw new EventParsingError('Empty group name in line ' . implode('', $line));
         $normalizedGroupName = $this->groupNameNormalizer->normalize(str_replace(' ', '', $groupName));
 
         return new ProtocolLineInput(
             serialNumber: (int) ($line['serial_number'] ?? 0),
             lastname: $lastname,
             firstname: $firstname,
-            club: (string) ($line['club'] ?? ''),
+            club: trim((string) ($line['club'] ?? '')),
             year: $year,
             rank: trim((string) ($line['rank'] ?? '')),
             runnerNumber: (int) ($line['runner_number'] ?? 0),

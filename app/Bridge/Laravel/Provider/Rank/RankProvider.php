@@ -7,9 +7,7 @@ namespace App\Bridge\Laravel\Provider\Rank;
 use App\Domain\Person\EventPersonRankUpdater;
 use App\Domain\Person\RankFactsCollector;
 use App\Domain\Person\StandardEventPersonRankUpdater;
-use App\Domain\Rank\RepeatedMasterRankActivator;
 use App\Infrastructure\Laravel\Eloquent\Rank\EloquentRankFactsCollector;
-use App\Infrastructure\Laravel\Eloquent\Rank\EloquentRepeatedMasterRankActivator;
 use Illuminate\Support\ServiceProvider;
 
 final class RankProvider extends ServiceProvider
@@ -18,6 +16,5 @@ final class RankProvider extends ServiceProvider
     {
         $this->app->bind(RankFactsCollector::class, EloquentRankFactsCollector::class);
         $this->app->bind(EventPersonRankUpdater::class, StandardEventPersonRankUpdater::class);
-        $this->app->bind(RepeatedMasterRankActivator::class, EloquentRepeatedMasterRankActivator::class);
     }
 }

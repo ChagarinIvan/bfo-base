@@ -12,11 +12,10 @@ use App\Domain\Person\Person;
 use App\Domain\PersonPrompt\PersonPrompt;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\Shared\Criteria;
-use App\Infrastructure\Laravel\Eloquent\ProtocolLine\EloquentProtocolLinesRepository;
 use App\Infrastructure\Laravel\Eloquent\ProtocolLine\EloquentProtocolLineOperations;
+use App\Infrastructure\Laravel\Eloquent\ProtocolLine\EloquentProtocolLinesRepository;
 use Database\Seeders\ProtocolLinesSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use Iterator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -39,8 +38,6 @@ final class ProtocolLinesRepositoryTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->createApplication();
-        RefreshDatabaseState::$migrated = false;
         $this->repository = new EloquentProtocolLinesRepository();
     }
 

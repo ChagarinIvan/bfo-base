@@ -4,6 +4,8 @@
 
 The Event owns one current protocol and its processing lifecycle. A newly created ordinary Event starts in `parsing`; an aggregate Event starts in `ready` with results derived from its source Events. Both status and processing token are mandatory. Replacing the protocol resets processing to `parsing`; 025 does not retain prior uploads as separate runs.
 
+The aggregate Event and its derived distances and lines are saved in one synchronous transaction. Its save does not emit `EventCreated` or start processing. Derived lines retain combined results but have empty `complete_rank` and null `activate_rank`, so they do not award ranks.
+
 | Data | Purpose |
 |---|---|
 | `processing_status` | Required: `parsing`, `identifying`, `rebuildingRanks`, `ready`, `parsingError`, `identifyingError`, `rebuildingRanksError`. |
@@ -35,8 +37,9 @@ aggregate derived results -------------------------------------------> ready
 - Parsing accepts only an Event in `parsing`; it stores the parsed lines atomically and emits `EventParsed` as the Event moves to `identifying`.
 - Identification starts only from `identifying`; Event holds an external lock while each line assignment is saved before the next line without a stage-wide transaction. After all current lines have people, Event moves to `rebuildingRanks`.
 - One background rank stage processes unique people from current lines sequentially. Event moves to `ready` only when the full pass succeeds. A repeated pass recomputes ranks from persisted facts.
-- All three stage error statuses and `ready` are terminal until a new protocol replaces the current one. A parsing failure records `parsingError` immediately and parsing is not retried. Identification and rank errors are recorded after exhausted queue attempts.
+- All three stage error statuses and `ready` are terminal until a new protocol replaces the current one. A stage failure records its error status; processing resumes only after protocol replacement.
 - Old queued events must not move the Event backwards or mutate a later protocol's status. Parsing checks status and token under an Event row lock. Identification and ranks check both while owning the external Event lock; its TTL exceeds the configured maximum job duration and it is released in `finally`. Ownership checks abort work on a detected loss, but do not fence a write if the lock expires between check and save.
+- On replacement, the cleanup job removes the previous Event distances before parsing. Event records `EventProtocolCleaned` in the cleanup transaction; its queued handler starts the parser after commit. Foreign keys remove protocol lines and rank history rows. Previously linked people are recalculated from surviving results; person and group records remain. A stale token is rejected before cleanup.
 
 ## Migration invariants
 

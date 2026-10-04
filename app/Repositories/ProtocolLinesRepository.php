@@ -9,8 +9,6 @@ use App\Domain\Person\Citizenship;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\Shared\Criteria;
 use App\Infrastructure\Laravel\Eloquent\ProtocolLine\EloquentProtocolLinesRepository;
-use Illuminate\Database\ConnectionInterface;
-use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Collection;
 
 /**
@@ -21,7 +19,7 @@ final readonly class ProtocolLinesRepository
 {
     private EloquentProtocolLinesRepository $repository;
 
-    public function __construct(private ConnectionInterface $db)
+    public function __construct()
     {
         $this->repository = new EloquentProtocolLinesRepository();
     }

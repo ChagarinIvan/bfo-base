@@ -1,5 +1,5 @@
 import type { AxiosError } from 'axios'
-import type { ApiErrorResponse } from '../../api/types'
+import type { ApiErrorResponse, EventProcessingStatus } from '../../api/types'
 import { t, type TranslationKey } from '../../i18n'
 
 export function eventErrorMessage(
@@ -12,4 +12,14 @@ export function eventErrorMessage(
     return code === 'invalid_protocol'
         ? t('spa.errors.invalid_protocol')
         : t(fallback)
+}
+
+export function isEventProcessing(
+    status: EventProcessingStatus | null | undefined,
+): boolean {
+    return (
+        status === 'parsing' ||
+        status === 'identifying' ||
+        status === 'rebuildingRanks'
+    )
 }

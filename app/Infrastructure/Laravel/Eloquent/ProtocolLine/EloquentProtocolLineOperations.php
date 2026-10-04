@@ -17,7 +17,6 @@ final readonly class EloquentProtocolLineOperations implements ProtocolLineOpera
     ) {
     }
 
-
     public function deleteEventLines(Event $event): void
     {
         $event->protocolLines()->delete();

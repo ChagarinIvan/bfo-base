@@ -7,6 +7,7 @@ namespace App\Application\Handler\Event;
 use App\Application\Service\Event\ParseEventProtocol;
 use App\Application\Service\Event\ParseEventProtocolService;
 use App\Domain\Event\Event\EventParsingStarted;
+use App\Domain\Event\Event\EventProtocolCleaned;
 use Illuminate\Contracts\Queue\ShouldQueueAfterCommit;
 
 final readonly class ParseEventProtocolHandler implements ShouldQueueAfterCommit
@@ -15,7 +16,7 @@ final readonly class ParseEventProtocolHandler implements ShouldQueueAfterCommit
     {
     }
 
-    public function handle(EventParsingStarted $event): void
+    public function handle(EventParsingStarted|EventProtocolCleaned $event): void
     {
         $this->parser->execute(new ParseEventProtocol(
             $event->eventId,

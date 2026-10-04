@@ -82,6 +82,7 @@ final class EventProcessingVisibilityTest extends TestCase
             $this->assertSame([$hiddenLine->id], $lines->lockByCriteria(new Criteria(['eventId' => $hidden->id]))->pluck('id')->all());
         } else {
             $this->assertNull($events->lockById($hidden->id));
+            $this->assertSame($hidden->id, $events->lockById($hidden->id, includeInactive: true)?->id);
             $this->assertNull($distances->lockOneByCriteria(new Criteria(['id' => $hiddenDistance->id])));
             $this->assertNull($lines->lockById($hiddenLine->id));
         }

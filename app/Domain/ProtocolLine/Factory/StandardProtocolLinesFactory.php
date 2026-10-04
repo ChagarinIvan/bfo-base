@@ -18,6 +18,7 @@ use App\Domain\ProtocolLine\Exception\UnableToCreateProtocolLine;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\ProtocolLine\ProtocolLineInput;
 use App\Domain\Shared\Criteria;
+use Carbon\Carbon;
 use Throwable;
 
 final class StandardProtocolLinesFactory implements ProtocolLinesFactory
@@ -37,9 +38,9 @@ final class StandardProtocolLinesFactory implements ProtocolLinesFactory
     }
 
     /**
-     * @throws UnableToCreateProtocolLine
      *
      * @param list<ProtocolLineInput> $inputs
+     * @throws UnableToCreateProtocolLine
      * @return list<ProtocolLine>
      */
     public function create(Event $event, array $inputs): array
@@ -54,7 +55,7 @@ final class StandardProtocolLinesFactory implements ProtocolLinesFactory
                 $protocolLines[] = $this->createLine($event, $input, $distance->id);
             }
         } catch (Throwable $e) {
-            throw new UnableToCreateProtocolLine($e->getMessage());
+            throw new UnableToCreateProtocolLine($e->getMessage(), $e->getCode(), $e);
         }
 
         return $protocolLines;
@@ -117,7 +118,7 @@ final class StandardProtocolLinesFactory implements ProtocolLinesFactory
         $line->year = $input->year;
         $line->rank = $input->rank ?? '';
         $line->runner_number = $input->runnerNumber;
-        $line->time = $input->time;
+        $line->time = $input->time === null ? null : Carbon::parse($input->time);
         $line->place = $input->place;
         $line->complete_rank = $input->completeRank ?? '';
         $line->points = $input->points;

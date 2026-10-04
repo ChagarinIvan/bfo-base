@@ -6,6 +6,7 @@ namespace App\Domain\Event;
 
 use App\Domain\Auth\Impression;
 use App\Domain\Competition\Competition;
+use App\Domain\Cup\CupCacheInvalidator;
 use App\Domain\Cup\CupEvent\CupEvent;
 use App\Domain\Distance\Distance;
 use App\Domain\Event\Event\EventCreated;
@@ -15,6 +16,8 @@ use App\Domain\Event\Event\EventInfoUpdated;
 use App\Domain\Event\Event\EventParsed;
 use App\Domain\Event\Event\EventParsingStarted;
 use App\Domain\Event\Event\EventProcessingFailed;
+use App\Domain\Event\Event\EventProtocolCleaned;
+use App\Domain\Event\Event\EventProtocolUpdated;
 use App\Domain\Event\Event\EventRanksUpdated;
 use App\Domain\Event\Exception\EventParsingError;
 use App\Domain\Person\EventPersonRankUpdater;
@@ -25,6 +28,7 @@ use App\Domain\ProtocolLine\Factory\ProtocolLinesFactory;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\ProtocolLine\ProtocolLineIdentifier;
 use App\Domain\Shared\AggregatedModel;
+use App\Domain\Shared\UuidGenerator;
 use App\Infrastructure\Laravel\Eloquent\Auth\ImpressionCast;
 use Carbon\Carbon;
 use Database\Factories\Domain\Event\EventFactory;
@@ -35,7 +39,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Collection;
-use LogicException;
 
 /**
  * @property int $id
@@ -105,14 +108,44 @@ class Event extends AggregatedModel
         $this->recordThat(new EventInfoUpdated($this));
     }
 
-    public function updateProtocol(ProtocolUpdater $updater, Protocol $protocol, Impression $impression): void
+    public function updateProtocol(ProtocolUpdater $updater, Protocol $protocol, UuidGenerator $tokens, Impression $impression): void
     {
         $this->file = $updater->update($this, $protocol, $impression);
+        $this->processing_status = EventProcessingStatus::PARSING;
+        $this->processing_token = $tokens->generate();
+        $this->error_message = null;
         $this->updated = $impression;
+
+        $this->recordThat(new EventProtocolUpdated($this->id, $this->processing_token, $impression));
+    }
+
+    public function isParsing(string $token): bool
+    {
+        return $this->processing_token === $token && $this->processing_status === EventProcessingStatus::PARSING;
+    }
+
+    public function protocolResultsCleaned(string $token, Impression $impression, CupCacheInvalidator $invalidator): void
+    {
+        if ($this->cups->isNotEmpty()) {
+            $invalidator->invalidate();
+        }
+
+        if (!$this->active || !$this->isParsing($token)) {
+            return;
+        }
+
+        $this->updated = $impression;
+        $this->recordThat(new EventProtocolCleaned($this->id, $token, $impression));
     }
 
     public function create(): void
     {
+        $this->save();
+
+        if ($this->processing_status === EventProcessingStatus::READY) {
+            return;
+        }
+
         $this->recordThat(new EventCreated($this));
 
         if ($this->processing_status === EventProcessingStatus::PARSING) {
@@ -129,7 +162,7 @@ class Event extends AggregatedModel
         ProtocolLinesFactory $linesFactory,
         Impression $impression,
     ): array {
-        if ($this->processing_token !== $token || $this->processing_status !== EventProcessingStatus::PARSING) {
+        if (!$this->isParsing($token)) {
             return [];
         }
 

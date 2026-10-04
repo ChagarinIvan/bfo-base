@@ -36,6 +36,13 @@ final class StandardProtocolLineIdentifierTest extends TestCase
 {
     use RefreshDatabase;
 
+    /** @return iterable<string, array{bool}> */
+    public static function identificationPaths(): iterable
+    {
+        yield 'fast matching only' => [true];
+        yield 'prompt matching' => [false];
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -96,22 +103,15 @@ final class StandardProtocolLineIdentifierTest extends TestCase
         $this->assertInstanceOf(EventIdentified::class, $event->releasedEvents()[0]);
     }
 
-    /** @return iterable<string, array{bool}> */
-    public static function identificationPaths(): iterable
-    {
-        yield 'fast matching only' => [true];
-        yield 'prompt matching' => [false];
-    }
-
     #[Test]
     #[DataProvider('identificationPaths')]
     public function it_saves_repeat_activation_before_identification_completes(bool $fastMatching): void
     {
         [$event, $distance] = $this->eventAndDistance();
         [$previous, $previousDistance] = $this->eventAndDistance();
-        $previous->date = '2024-06-01';
+        $previous->date = Carbon::parse('2024-06-01');
         $previous->save();
-        $event->date = '2026-06-10';
+        $event->date = Carbon::parse('2026-06-10');
         $event->processing_status = EventProcessingStatus::IDENTIFYING;
         $event->save();
         /** @var Person $person */

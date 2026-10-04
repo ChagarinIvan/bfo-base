@@ -21,7 +21,7 @@
 
 **Goal**: Event сразу показывает parsing и последовательно проходит фоновые стадии до идентификации.
 
-**Independent Test**: создание Event с файлом даёт parsing; после commit фоновые стадии записывают строки и показывают identifying, а прерывание идентификации не теряет уже сохранённые связи.
+**Independent Test**: создание Event с файлом даёт parsing; после commit фоновые стадии записывают строки и показывают identifying, а зафиксированная ошибка идентификации удаляет результаты неудачного протокола.
 
 - [X] T006 [US1] Написать integration-тесты создания/замены, старого токена, однократного parsing, атомарной записи строк и немедленной ошибки в `tests/Feature/Event/ProcessEventProtocolTest.php` и `tests/Application/Handler/Event/ProcessEventProtocolHandlerTest.php`.
 - [X] T007 [US1] Создавать Event сразу с `parsing` и токеном через фабрику; после сохранения запускать parsing, замена получает внешний Event lock в `app/Application/Service/Event/AddEventService.php`, `app/Application/Service/Event/UpdateEventService.php`, `app/Application/Handler/Event/` и `app/Bridge/Laravel/Provider/Event/EventProvider.php`; отключить глобальные legacy-ident задания.
@@ -38,7 +38,7 @@
 
 - [X] T012 [US2] Написать integration-тесты уникального набора спортсменов, сохранения каждого без общей транзакции, прерывания rank stage, повтора, потери lock, замены протокола во время работы и перехода ready в `tests/Feature/Event/UpdateEventRanksTest.php`.
 - [X] T013 [US2] Реализовать один фоновый UpdateEventRanksService, который получает внешний lock до `byId()` и вызывает `Event::updateRanks()` в `app/Domain/Event/Event.php`; доменный rank updater в `app/Domain/Person/` через `ProtocolLineRepository`, calculator и `PersonRepository` последовательно обходит уникальных person_id, обновляет и сохраняет каждого до следующего шага без общей транзакции и прямого Eloquent, проверяет token и владение lock, ограничивает память и только после полного прохода выставляет ready; убрать per-person rank jobs из цепочки 025 в `app/Application/Service/Event/` и `app/Application/Handler/Event/`.
-- [X] T014 [US2] Parsing error сохранять сразу без повтора; для identification и ranks разделить временный сбой с повтором очереди и окончательную ошибку. Вызывать `Event::failProcessing()` с безопасным `errorMessage`, техническую причину логировать отдельно; проверить три стадии и очистку сообщения новым протоколом в `tests/Feature/Event/ProcessEventProtocolTest.php`.
+- [X] T014 [US2] Ошибка каждой стадии завершает текущую обработку без повторного запуска стадии; сохранить соответствующий error-статус и `errorMessage`, отправить `EventProcessingFailed`, проверить три стадии и очистку сообщения при обновлении протокола.
 - [X] T015 [US2] Переключить event DTO, публичные event/distance/protocol-line запросы и гостевые фильтры на `Event.processing_status` в `app/Application/Dto/Event/`, `app/Application/Service/`, `app/Infrastructure/Laravel/Eloquent/`; вернуть nullable `errorMessage` только авторизованным клиентам; проверить `ready`, переходные и все три ошибочных состояния, отсутствие сообщения в гостевых ответах в `tests/Feature/Api/V1/`.
 
 ## Phase 5: User Story 3 — Контролировать обработку в списке этапов (P2)
@@ -66,6 +66,13 @@
 
 - [X] T021 Реализовать `EventPersonRankUpdater` через доменные порты и `Person::updateRanks()`; проверить сохранение нескольких спортсменов, вычисление ранга и отсутствие спортсмена.
 - [ ] T022 Отдельно устранить расхождение с планом порционной обработки без общей транзакции в `UpdateEventRanksService` и `ProtocolLineOperations`.
+- [X] T023 Согласовать SPA создания и просмотра этапа с фактическим контрактом `processingStatus`/`errorMessage`: три статуса ошибки, локализованные сообщения, скрытие пустых результатов до готовности, загрузка дистанций после готовности и polling карточки/списка; покрыть сценарий создания и завершения обработки Vitest.
+- [X] T024 Обновить `Event::updateProtocol()` для нового токена и `parsing`, запустить прежнюю цепочку через отдельное событие `EventProtocolUpdated` и `UpdateEventProtocolHandler`; перед parsing удалить старые дистанции/строки, пересчитать разряды прежних участников и отвергнуть старый токен до очистки. Проверить замену и полный переход до `ready` интеграционным тестом.
+- [X] T025 Вернуть единое `EventProcessingFailed` в обработчик очистки для ошибки любой стадии; проверять токен после commit до удаления данных, покрыть очистку текущего протокола и защиту нового протокола от запоздалой ошибки. Зафиксировать, что новый запуск возможен только после обновления протокола.
+- [X] T026 Перенести блокировку Event, проверку токена, удаление производных результатов и пересчёт разрядов из `DisableEventHandler`/trait в `CleanupEventResultsService`; оставить обработчик преобразователем обоих событий в одну команду. Для внутренней очистки отключённого Event использовать флаг `includeInactive` в `EventRepository::lockById()` с прежним фильтром по умолчанию. Отсутствующий Event завершает сценарий `EventNotFound`. Проверить отключение, ошибку и запоздавшую ошибку интеграционными тестами.
+- [X] T027 Убрать очистку из `ParseEventProtocolService`: `EventProtocolUpdated` запускает `CleanupEventResultsService`, метод Event после очистки выпускает `EventProtocolCleaned`, а `ParseEventProtocolHandler` запускает прежний разбор после commit. Покрыть порядок стадий и повторную доставку интеграционным тестом.
+- [X] T028 Вернуть `Event::protocolResultsCleaned(): void` и безусловное сохранение Event после очистки. Доменный метод решает, нужно ли публиковать `EventProtocolCleaned` для парсинга и вызывать `CupCacheInvalidator` для сброса кеша кубков. Проверить ошибку, выключение и сброс кеша интеграционным тестом.
+- [X] T029 Сохранять объединённый Event сразу в `ready` без `EventCreated` и стадий обработки. При заполнении производных строк не переносить `complete_rank` и `activate_rank`; проверить отсутствие нового факта разряда интеграционным тестом.
 
 ## Dependencies & execution order
 

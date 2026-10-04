@@ -49,7 +49,8 @@ final class RebuildRanksAfterProtocolProcessingTest extends TestCase
         $firstPerson->refresh();
         $this->assertSame(Rank::FirstRank, $firstPerson->current_rank);
 
-        $line->update(['person_id' => $secondPerson->id]);
+        $line->person_id = $secondPerson->id;
+        $line->save();
         $this->rebuild($firstPerson->id);
         $this->rebuild($secondPerson->id);
 
@@ -58,7 +59,8 @@ final class RebuildRanksAfterProtocolProcessingTest extends TestCase
         $this->assertSame(Rank::WithoutRank, $firstPerson->current_rank);
         $this->assertSame(Rank::FirstRank, $secondPerson->current_rank);
 
-        $line->update(['person_id' => null]);
+        $line->person_id = null;
+        $line->save();
         $this->rebuild($secondPerson->id);
 
         $secondPerson->refresh();
