@@ -7,6 +7,9 @@ namespace App\Domain\Event;
 use App\Domain\Event\Factory\EventInput;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
+use function pathinfo;
+use function strrpos;
+use function substr;
 
 final readonly class ProtocolPathResolver
 {
@@ -18,5 +21,12 @@ final readonly class ProtocolPathResolver
     public function fromInput(EventInput $input, Protocol $protocol): string
     {
         return $this->protocolPath($input->info->date, $input->info->name, $protocol->extension);
+    }
+
+    public function extensionFromPath(string $path): string
+    {
+        $separator = strrpos($path, '@@');
+
+        return $separator === false ? pathinfo($path, PATHINFO_EXTENSION) : substr($path, $separator + 2);
     }
 }

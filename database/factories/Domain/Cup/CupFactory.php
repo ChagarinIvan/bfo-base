@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Database\Factories\Domain\Cup;
 
-use App\Domain\Competition\Competition;
 use App\Domain\Cup\Cup;
 use App\Domain\Cup\CupType;
-use App\Models\Year;
+use App\Domain\Shared\Year;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class CupFactory extends Factory

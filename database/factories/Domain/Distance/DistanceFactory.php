@@ -7,6 +7,7 @@ namespace Database\Factories\Domain\Distance;
 use App\Domain\Distance\Distance;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+/** @extends Factory<Distance> */
 class DistanceFactory extends Factory
 {
     protected $model = Distance::class;
@@ -14,7 +15,6 @@ class DistanceFactory extends Factory
     public function definition(): array
     {
         return [
-            'id' => $this->faker->numberBetween(1, 100),
             'group_id' => $this->faker->numberBetween(1, 100),
             'event_id' => $this->faker->numberBetween(1, 100),
             'length' => $this->faker->numberBetween(1000, 2000),

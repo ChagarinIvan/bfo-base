@@ -21,6 +21,10 @@ final readonly class ViewEventDto
         public ImpressionDto $updated,
         public int $participantsCount = 0,
         public ?string $competitionName = null,
+        #[Groups(['authenticated'])]
+        public ?string $processingStatus = null,
+        #[Groups(['authenticated'])]
+        public ?string $errorMessage = null,
     ) {
     }
 }

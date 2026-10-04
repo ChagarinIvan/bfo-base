@@ -10,11 +10,16 @@ use Illuminate\Support\Collection;
 
 interface ProtocolLineRepository
 {
+    public function add(ProtocolLine ...$protocolLines): void;
+
     public function byId(int $id, array $with = []): ?ProtocolLine;
 
     public function lockById(int $id): ?ProtocolLine;
 
     public function byCriteria(Criteria $criteria): Collection;
+
+    /** @return Collection<int, ProtocolLine> */
+    public function lockByCriteria(Criteria $criteria): Collection;
 
     /** @return Slice<ProtocolLine> */
     public function paginate(
@@ -26,5 +31,5 @@ interface ProtocolLineRepository
 
     public function oneByCriteria(Criteria $criteria): ?ProtocolLine;
 
-    public function update(ProtocolLine $protocolLine): void;
+    public function update(ProtocolLine ...$protocolLine): void;
 }

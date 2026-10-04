@@ -6,7 +6,7 @@ namespace App\Application\Dto\Cup;
 
 use App\Application\Dto\AbstractDto;
 use App\Domain\Cup\CupType;
-use App\Models\Year;
+use App\Domain\Shared\Year;
 use Illuminate\Validation\Rules\Enum;
 use function array_key_exists;
 use function filter_var;

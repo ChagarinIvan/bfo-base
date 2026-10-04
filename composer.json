@@ -11,6 +11,7 @@
     "require": {
         "php": "^8.5",
         "ext-dom": "*",
+        "ext-intl": "*",
         "ext-mbstring": "*",
         "ext-pdo": "*",
         "guzzlehttp/guzzle": "^7.10",
@@ -20,8 +21,7 @@
         "mav/slovo": "^0.2.3",
         "phpoffice/phpspreadsheet": "^5.0",
         "predis/predis": "^2.3 || ^3.0",
-        "sentry/sentry-laravel": "^4.27",
-        "ext-intl": "*"
+        "sentry/sentry-laravel": "^4.27"
     },
     "config": {
         "optimize-autoloader": true,

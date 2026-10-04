@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Service\Event;
 
+use App\Application\Dto\Auth\UserId;
 use App\Application\Dto\Event\SearchEventDto;
 use App\Domain\Event\EventResources;
 use App\Domain\Shared\Criteria;
@@ -13,8 +14,10 @@ use function in_array;
 
 final readonly class ListEvents
 {
-    public function __construct(private SearchEventDto $search)
-    {
+    public function __construct(
+        private SearchEventDto $search,
+        private ?UserId $userId = null,
+    ) {
     }
 
     public function criteria(): Criteria
@@ -31,6 +34,7 @@ final readonly class ListEvents
         return new EventResources(
             withCompetitionName: $this->search->withCompetition === '1',
             withParticipantsCount: $this->search->withParticipantsCount === '1',
+            readyOnly: $this->userId === null,
         );
     }
 }

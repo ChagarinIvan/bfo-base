@@ -11,6 +11,7 @@ const {
     auth,
     deleteEvent,
     getCompetition,
+    getCupEventContexts,
     getEvent,
     getEventDistances,
     getPersonProtocolLines,
@@ -19,6 +20,7 @@ const {
     auth: { isAuthenticated: false },
     deleteEvent: vi.fn(),
     getCompetition: vi.fn(),
+    getCupEventContexts: vi.fn().mockResolvedValue([]),
     getEvent: vi.fn(),
     getEventDistances: vi.fn(),
     getPersonProtocolLines: vi.fn(),
@@ -26,6 +28,7 @@ const {
 }))
 
 vi.mock('../../api/competitions', () => ({ getCompetition }))
+vi.mock('../../api/cups', () => ({ getCupEventContexts }))
 vi.mock('../../api/events', () => ({
     getEvent,
     deleteEvent,
@@ -280,5 +283,258 @@ describe('event view page', () => {
                 ?.classList.contains('protocol-line-anchor-highlight'),
         ).toBe(false)
         wrapper.unmount()
+    })
+
+    it('polls a transitional protocol every five seconds and stops at ready', async () => {
+        vi.useFakeTimers()
+        auth.isAuthenticated = true
+        getEvent.mockReset()
+        getEventDistances.mockReset()
+        getEventDistances.mockResolvedValueOnce([]).mockResolvedValueOnce([
+            {
+                id: '7',
+                eventId: '42',
+                groupName: 'M21',
+                length: 10,
+                points: 100,
+                disqual: false,
+            },
+        ])
+        getEvent
+            .mockResolvedValueOnce({
+                id: '42',
+                competitionId: '9',
+                name: 'Этап',
+                description: 'Апісанне',
+                date: '2026-05-10',
+                participantsCount: 1,
+                processingStatus: 'parsing',
+            })
+            .mockResolvedValueOnce({
+                id: '42',
+                competitionId: '9',
+                name: 'Этап',
+                description: 'Апісанне',
+                date: '2026-05-10',
+                participantsCount: 1,
+                processingStatus: 'ready',
+            })
+
+        const wrapper = mount(EventViewPage, {
+            global: { plugins: [PrimeVue] },
+        })
+        await flushPromises()
+
+        expect(wrapper.text()).toContain('Пратакол у апрацоўцы')
+        expect(
+            wrapper
+                .get('.competition-details-card .event-processing-badge')
+                .text(),
+        ).toBe('Parsing')
+        expect(wrapper.text()).not.toContain('Няма дыстанцый')
+        const lineRequestsBeforeRefresh =
+            getPersonProtocolLines.mock.calls.length
+        await vi.advanceTimersByTimeAsync(5000)
+        await flushPromises()
+        expect(getEvent).toHaveBeenCalledTimes(2)
+        expect(getPersonProtocolLines).toHaveBeenCalledTimes(
+            lineRequestsBeforeRefresh + 1,
+        )
+        expect(getEventDistances).toHaveBeenCalledTimes(2)
+        expect(wrapper.text()).toContain('Вынікі')
+        expect(
+            wrapper
+                .get('.competition-details-card .event-processing-badge')
+                .text(),
+        ).toBe('Ready')
+        expect(wrapper.text()).not.toContain('Пратакол гатовы.')
+
+        await vi.advanceTimersByTimeAsync(5000)
+        expect(getEvent).toHaveBeenCalledTimes(2)
+        wrapper.unmount()
+    })
+
+    it('keeps one status request in flight when responses are delayed', async () => {
+        vi.useFakeTimers()
+        auth.isAuthenticated = true
+        getEvent.mockReset()
+        getEventDistances.mockResolvedValue([])
+        let completeRefresh!: (value: unknown) => void
+        const delayedRefresh = new Promise((resolve) => {
+            completeRefresh = resolve
+        })
+        const base = {
+            id: '42',
+            competitionId: '9',
+            name: 'Этап',
+            description: '',
+            date: '2026-05-10',
+            participantsCount: 0,
+        }
+        getEvent.mockResolvedValueOnce({ ...base, processingStatus: 'parsing' })
+        getEvent.mockReturnValueOnce(delayedRefresh)
+        getEvent.mockResolvedValue({ ...base, processingStatus: 'identifying' })
+
+        const wrapper = mount(EventViewPage, {
+            global: { plugins: [PrimeVue] },
+        })
+        await flushPromises()
+        await vi.advanceTimersByTimeAsync(10_000)
+        expect(getEvent).toHaveBeenCalledTimes(2)
+
+        completeRefresh({ ...base, processingStatus: 'ready' })
+        await flushPromises()
+        expect(wrapper.text()).toContain('Вынікі')
+        await vi.advanceTimersByTimeAsync(5000)
+        expect(getEvent).toHaveBeenCalledTimes(2)
+        wrapper.unmount()
+    })
+
+    it('does not load distances after a pending status request resolves on unmount', async () => {
+        vi.useFakeTimers()
+        auth.isAuthenticated = true
+        getEvent.mockReset()
+        getEventDistances.mockReset().mockResolvedValue([])
+        let completeRefresh!: (value: unknown) => void
+        getEvent
+            .mockResolvedValueOnce({
+                id: '42',
+                competitionId: '9',
+                name: 'Этап',
+                date: '2026-05-10',
+                processingStatus: 'parsing',
+            })
+            .mockReturnValueOnce(
+                new Promise((resolve) => {
+                    completeRefresh = resolve
+                }),
+            )
+
+        const wrapper = mount(EventViewPage, {
+            global: { plugins: [PrimeVue] },
+        })
+        await flushPromises()
+        await vi.advanceTimersByTimeAsync(5000)
+        wrapper.unmount()
+        completeRefresh({ id: '42', processingStatus: 'ready' })
+        await flushPromises()
+
+        expect(getEventDistances).toHaveBeenCalledTimes(1)
+    })
+
+    it.each([
+        'parsingError',
+        'identifyingError',
+        'rebuildingRanksError',
+    ] as const)(
+        'stops polling on %s and shows the safe message',
+        async (status) => {
+            vi.useFakeTimers()
+            auth.isAuthenticated = true
+            getEvent.mockReset()
+            getEventDistances.mockResolvedValue([])
+            getEvent
+                .mockResolvedValueOnce({
+                    id: '42',
+                    competitionId: '9',
+                    name: 'Этап',
+                    description: 'Апісанне',
+                    date: '2026-05-10',
+                    participantsCount: 0,
+                    processingStatus: 'parsing',
+                })
+                .mockResolvedValueOnce({
+                    id: '42',
+                    competitionId: '9',
+                    name: 'Этап',
+                    description: 'Апісанне',
+                    date: '2026-05-10',
+                    participantsCount: 0,
+                    processingStatus: status,
+                    errorMessage: 'Апрацоўка спынена.',
+                })
+
+            const wrapper = mount(EventViewPage, {
+                global: { plugins: [PrimeVue] },
+            })
+            await flushPromises()
+            await vi.advanceTimersByTimeAsync(5000)
+            await flushPromises()
+
+            expect(wrapper.text()).toContain('Апрацоўка спынена.')
+            expect(wrapper.text()).not.toContain('Няма дыстанцый')
+            await vi.advanceTimersByTimeAsync(5000)
+            expect(getEvent).toHaveBeenCalledTimes(2)
+            wrapper.unmount()
+        },
+    )
+
+    it('retries loading finished results after a temporary failure', async () => {
+        vi.useFakeTimers()
+        auth.isAuthenticated = true
+        getEvent.mockReset()
+        getEventDistances.mockReset()
+        getEvent
+            .mockResolvedValueOnce({
+                id: '42',
+                competitionId: '9',
+                name: 'Этап',
+                description: 'Апісанне',
+                date: '2026-05-10',
+                participantsCount: 0,
+                processingStatus: 'parsing',
+            })
+            .mockResolvedValue({
+                id: '42',
+                competitionId: '9',
+                name: 'Этап',
+                description: 'Апісанне',
+                date: '2026-05-10',
+                participantsCount: 0,
+                processingStatus: 'ready',
+            })
+        getEventDistances
+            .mockResolvedValueOnce([])
+            .mockRejectedValueOnce(new Error('Temporary failure'))
+            .mockResolvedValueOnce([])
+
+        const wrapper = mount(EventViewPage, {
+            global: { plugins: [PrimeVue] },
+        })
+        await flushPromises()
+        await vi.advanceTimersByTimeAsync(5000)
+        await flushPromises()
+        expect(wrapper.text()).toContain('Паўторная спроба')
+        expect(wrapper.text()).not.toContain('Няма дыстанцый')
+
+        await vi.advanceTimersByTimeAsync(5000)
+        await flushPromises()
+        expect(getEventDistances).toHaveBeenCalledTimes(3)
+        expect(wrapper.text()).not.toContain('Паўторная спроба')
+        wrapper.unmount()
+    })
+
+    it('cleans the processing timer up when leaving the page', async () => {
+        vi.useFakeTimers()
+        auth.isAuthenticated = true
+        getEvent.mockReset()
+        getEvent.mockResolvedValue({
+            id: '42',
+            competitionId: '9',
+            name: 'Этап',
+            description: 'Апісанне',
+            date: '2026-05-10',
+            participantsCount: 1,
+            processingStatus: 'parsing',
+        })
+
+        const wrapper = mount(EventViewPage, {
+            global: { plugins: [PrimeVue] },
+        })
+        await flushPromises()
+        wrapper.unmount()
+        await vi.advanceTimersByTimeAsync(5000)
+
+        expect(getEvent).toHaveBeenCalledTimes(1)
     })
 })

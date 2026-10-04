@@ -4,27 +4,23 @@ declare(strict_types=1);
 
 namespace App\Application\Handler\Event;
 
-use App\Application\Service\Cup\ClearCupCacheService;
-use App\Application\Service\Person\RebuildPersonRanksService;
-use App\Domain\Distance\DistanceDeleter;
+use App\Application\Service\Event\CleanupEventResults;
+use App\Application\Service\Event\CleanupEventResultsService;
 use App\Domain\Event\Event\EventDisabled;
-use App\Domain\ProtocolLine\ProtocolLineOperations;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use App\Domain\Event\Event\EventProcessingFailed;
+use Illuminate\Contracts\Queue\ShouldQueueAfterCommit;
 
-final readonly class DisableEventHandler implements ShouldQueue
+final readonly class DisableEventHandler implements ShouldQueueAfterCommit
 {
-    use DisableEventHandlerTrait;
-
-    public function __construct(
-        private ProtocolLineOperations $protocolLineService,
-        private DistanceDeleter $distanceDeleter,
-        private ClearCupCacheService $clearCupCacheService,
-        private RebuildPersonRanksService $rebuildPersonRanksService,
-    ) {
+    public function __construct(private CleanupEventResultsService $cleanup)
+    {
     }
 
-    public function handle(EventDisabled $event): void
+    public function handle(EventDisabled|EventProcessingFailed $event): void
     {
-        $this->cleanUp($event->event);
+        $this->cleanup->execute(new CleanupEventResults(
+            $event->eventId,
+            $event->processingToken,
+        ));
     }
 }

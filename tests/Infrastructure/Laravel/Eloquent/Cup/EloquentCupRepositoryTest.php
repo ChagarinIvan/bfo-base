@@ -6,8 +6,8 @@ namespace Tests\Infrastructure\Laravel\Eloquent\Cup;
 
 use App\Domain\Cup\Cup;
 use App\Domain\Shared\Criteria;
+use App\Domain\Shared\Year;
 use App\Infrastructure\Laravel\Eloquent\Cup\EloquentCupRepository;
-use App\Models\Year;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;

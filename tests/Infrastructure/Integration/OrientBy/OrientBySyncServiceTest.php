@@ -17,10 +17,10 @@ use App\Domain\PersonPayment\PersonPaymentRepository;
 use App\Domain\Rank\Rank;
 use App\Domain\RankCheck\RankCheckPersonMatcher;
 use App\Domain\Shared\Clock;
+use App\Domain\Shared\DummyTransactional;
 use App\Domain\Shared\StandardIdentLineGenerator;
 use App\Domain\Shared\StandardNameNormalizer;
 use App\Domain\Shared\SymbolNormalizer;
-use App\Domain\Shared\TransactionManager;
 use App\Infrastructure\Integration\OrientBy\OrientByPersonDto;
 use App\Infrastructure\Integration\OrientBy\OrientBySyncService;
 use App\Services\PersonsService;
@@ -83,7 +83,7 @@ final class OrientBySyncServiceTest extends TestCase
                 $this->createStub(PersonPaymentFactory::class),
                 new PersonPaymentAssembler(new AuthAssembler),
                 $this->createStub(PersonRepository::class),
-                $this->createStub(TransactionManager::class),
+                new DummyTransactional,
                 $clock,
             ),
             $clock,

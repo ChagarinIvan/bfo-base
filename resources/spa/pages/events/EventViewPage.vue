@@ -12,6 +12,8 @@ import { RouterLink, useRoute, useRouter } from 'vue-router'
 import ActionButton from '../../components/actions/ActionButton.vue'
 import FilterPanel from '../../components/FilterPanel.vue'
 import ImpressionDetails from '../../components/ImpressionDetails.vue'
+import EventProcessingStatus from '../../components/EventProcessingStatus.vue'
+import EventProcessingStatusBadge from '../../components/EventProcessingStatusBadge.vue'
 import ListingTable from '../../components/ListingTable.vue'
 import SlicePaginator from '../../components/SlicePaginator.vue'
 import { getEventDistances } from '../../api/distances'
@@ -38,6 +40,7 @@ import {
     normaliseNameSearch,
 } from '../listingModels'
 import { useAuthStore } from '../../stores/auth'
+import { isEventProcessing } from './eventModels'
 
 const route = useRoute()
 const router = useRouter()
@@ -52,6 +55,14 @@ const users = ref<User[]>([])
 const loading = ref(true)
 const linesLoading = ref(false)
 const error = ref('')
+const processingRefreshError = ref(false)
+const readyResultsPending = ref(false)
+const showResults = computed(
+    () =>
+        !readyResultsPending.value &&
+        (!event.value?.processingStatus ||
+            event.value.processingStatus === 'ready'),
+)
 const name = ref('')
 const pagination = ref<PaginationHeaders>({
     currentPage: 1,
@@ -91,6 +102,76 @@ const columns = computed(() => [
 ])
 let targetScrolled = false
 let targetScrollTimer: number | undefined
+let processingTimer: number | undefined
+let processingRefreshInFlight = false
+let active = true
+
+function stopProcessingPolling(): void {
+    if (processingTimer !== undefined) {
+        window.clearInterval(processingTimer)
+        processingTimer = undefined
+    }
+}
+
+async function refreshProcessing(): Promise<void> {
+    if (
+        !active ||
+        processingRefreshInFlight ||
+        !event.value ||
+        (!isEventProcessing(event.value.processingStatus) &&
+            !readyResultsPending.value)
+    ) {
+        stopProcessingPolling()
+        return
+    }
+
+    processingRefreshInFlight = true
+    try {
+        const refreshedEvent = await getEvent(event.value.id)
+        if (!active) return
+        event.value = refreshedEvent
+        processingRefreshError.value = false
+        if (event.value.processingStatus !== 'ready') {
+            readyResultsPending.value = false
+        }
+        if (event.value.processingStatus === 'ready') {
+            readyResultsPending.value = true
+            const refreshedDistances = await getEventDistances(event.value.id)
+            if (!active) return
+            distances.value = refreshedDistances
+            if (
+                !distances.value.some(
+                    (distance) => distance.id === distanceId.value,
+                )
+            ) {
+                distanceId.value = distances.value[0]?.id
+            }
+            await loadLines()
+            if (!active) return
+            readyResultsPending.value = false
+        }
+        if (
+            !isEventProcessing(event.value.processingStatus) &&
+            !readyResultsPending.value
+        ) {
+            stopProcessingPolling()
+        }
+    } catch {
+        if (active) processingRefreshError.value = true
+    } finally {
+        processingRefreshInFlight = false
+    }
+}
+
+function startProcessingPolling(): void {
+    stopProcessingPolling()
+    if (isEventProcessing(event.value?.processingStatus)) {
+        processingTimer = window.setInterval(
+            () => void refreshProcessing(),
+            5000,
+        )
+    }
+}
 const debouncedNameSearch = debounce(() => {
     void loadLines(1)
 })
@@ -190,6 +271,7 @@ async function loadLines(
             page,
             perPage,
         })
+        if (!active) return
         lines.value = response.data
         pagination.value = paginationFromHeaders(response.headers)
         scheduleTargetProtocolLineScroll()
@@ -201,6 +283,7 @@ async function loadLines(
 async function load(eventId: string): Promise<void> {
     loading.value = true
     error.value = ''
+    readyResultsPending.value = false
     try {
         event.value = await getEvent(eventId)
         void getCupEventContexts([event.value.id])
@@ -221,12 +304,19 @@ async function load(eventId: string): Promise<void> {
         )
             ? requestedId
             : distances.value[0]?.id
-        await loadLines()
+        if (
+            !event.value.processingStatus ||
+            event.value.processingStatus === 'ready'
+        ) {
+            await loadLines()
+        }
+        startProcessingPolling()
     } catch (exception: unknown) {
         event.value = null
         competition.value = null
         distances.value = []
         lines.value = []
+        stopProcessingPolling()
         if (isNotFound(exception)) {
             await router.replace({ name: 'not-found' })
             return
@@ -277,10 +367,12 @@ watch(
 )
 
 onBeforeUnmount(() => {
+    active = false
     debouncedNameSearch.cancel()
     if (targetScrollTimer !== undefined) {
         window.clearInterval(targetScrollTimer)
     }
+    stopProcessingPolling()
 })
 </script>
 
@@ -309,6 +401,18 @@ onBeforeUnmount(() => {
                         <tr>
                             <th scope="row">Апісанне</th>
                             <td>{{ event.description }}</td>
+                        </tr>
+                        <tr
+                            v-if="
+                                auth.isAuthenticated && event.processingStatus
+                            "
+                        >
+                            <th scope="row">Статус пратаколу</th>
+                            <td>
+                                <EventProcessingStatusBadge
+                                    :status="event.processingStatus"
+                                />
+                            </td>
                         </tr>
                         <tr v-if="cupEventContexts.length">
                             <th scope="row">
@@ -369,15 +473,22 @@ onBeforeUnmount(() => {
             </template>
         </Card>
 
-        <h2 class="section-title">Вынікі</h2>
+        <EventProcessingStatus
+            v-if="auth.isAuthenticated && event.processingStatus"
+            :status="event.processingStatus"
+            :error-message="event.errorMessage"
+            :refresh-error="processingRefreshError"
+        />
+
+        <h2 v-if="showResults" class="section-title">Вынікі</h2>
         <Message
-            v-if="!distances.length"
+            v-if="showResults && !distances.length"
             severity="secondary"
             :closable="false"
             class="mt-3"
             >Няма дыстанцый.</Message
         >
-        <template v-else>
+        <template v-else-if="showResults && distances.length">
             <ListingTable
                 table-id="event-protocol-lines"
                 :columns="columns"

@@ -48,7 +48,7 @@ final class ListEventsServiceTest extends TestCase
             ->method('paginate')
             ->with(
                 new Criteria(['competitionId' => '1']),
-                new EventResources(withParticipantsCount: true),
+                new EventResources(withParticipantsCount: true, readyOnly: true),
             )
             ->willReturn(new Slice(new ArraySliceAdapter($events)))
         ;

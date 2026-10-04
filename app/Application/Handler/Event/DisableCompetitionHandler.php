@@ -11,9 +11,9 @@ use App\Application\Service\Event\AllEventsService;
 use App\Application\Service\Event\DisableEvent;
 use App\Application\Service\Event\DisableEventService;
 use App\Domain\Competition\Event\CompetitionDisabled;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Contracts\Queue\ShouldQueueAfterCommit;
 
-final readonly class DisableCompetitionHandler implements ShouldQueue
+final readonly class DisableCompetitionHandler implements ShouldQueueAfterCommit
 {
     public function __construct(
         private AllEventsService $events,

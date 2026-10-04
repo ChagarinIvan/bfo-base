@@ -14,15 +14,18 @@ use App\Application\Service\Event\Exception\EventNotFound;
 use App\Application\Service\Event\Exception\InvalidProtocol;
 use App\Application\Service\Event\UpdateEvent;
 use App\Application\Service\Event\UpdateEventService;
+use App\Domain\Auth\Impression;
 use App\Domain\Event\Event;
 use App\Domain\Event\Event\EventInfoUpdated;
 use App\Domain\Event\Event\EventProtocolUpdated;
+use App\Domain\Event\EventProcessingStatus;
 use App\Domain\Event\EventRepository;
 use App\Domain\Event\Protocol;
 use App\Domain\Event\Protocol\ProtocolFactory;
 use App\Domain\Event\ProtocolUpdater;
 use App\Domain\Shared\DummyTransactional;
 use App\Domain\Shared\FrozenClock;
+use App\Domain\Shared\UuidGenerator;
 use Carbon\Carbon;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -37,6 +40,8 @@ final class UpdateEventServiceTest extends TestCase
 
     private EventRepository&MockObject $events;
 
+    private MockObject&UuidGenerator $tokens;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -48,6 +53,7 @@ final class UpdateEventServiceTest extends TestCase
             new EventAssembler(new AuthAssembler),
             new DummyTransactional,
             new ProtocolFactory,
+            $this->tokens = $this->createMock(UuidGenerator::class),
         );
     }
 
@@ -64,6 +70,7 @@ final class UpdateEventServiceTest extends TestCase
         ;
 
         $this->updater->expects($this->never())->method('update');
+        $this->tokens->expects($this->never())->method('generate');
 
         $info = new EventInfoDto;
         $info->name = 'title';
@@ -92,6 +99,7 @@ final class UpdateEventServiceTest extends TestCase
 
         $this->events->expects($this->once())->method('update');
         $this->updater->expects($this->never())->method('update');
+        $this->tokens->expects($this->never())->method('generate');
 
         $info = new EventInfoDto;
         $info->name = 'title';
@@ -120,6 +128,9 @@ final class UpdateEventServiceTest extends TestCase
     {
         /** @var Event $event */
         $event = Event::factory()->makeOne();
+        $event->id = 1;
+        $event->error_message = 'Old failure';
+        $previousToken = $event->processing_token;
 
         $this->events
             ->expects($this->once())
@@ -129,10 +140,11 @@ final class UpdateEventServiceTest extends TestCase
         ;
 
         $this->events->expects($this->once())->method('update');
+        $this->tokens->expects($this->once())->method('generate')->willReturn('replacement-token');
         $this->updater
             ->expects($this->once())
             ->method('update')
-            ->with($this->identicalTo($event), new Protocol('content', 'html'))
+            ->with($this->identicalTo($event), new Protocol('content', 'html'), $this->isInstanceOf(Impression::class))
             ->willReturn('2023/2023-01-01_test_event.text/html')
         ;
 
@@ -157,6 +169,10 @@ final class UpdateEventServiceTest extends TestCase
         $this->assertCount(2, $events);
         $this->assertInstanceOf(EventInfoUpdated::class, $events[0]);
         $this->assertInstanceOf(EventProtocolUpdated::class, $events[1]);
+        $this->assertSame('replacement-token', $events[1]->processingToken);
+        $this->assertSame(EventProcessingStatus::PARSING, $event->processing_status);
+        $this->assertNotSame($previousToken, $event->processing_token);
+        $this->assertNull($event->error_message);
     }
 
     #[Test]
@@ -173,6 +189,7 @@ final class UpdateEventServiceTest extends TestCase
             ->willReturn($event)
         ;
         $this->updater->expects($this->never())->method('update');
+        $this->tokens->expects($this->never())->method('generate');
 
         $info = new EventInfoDto;
         $info->name = 'title';

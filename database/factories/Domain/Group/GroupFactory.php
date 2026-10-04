@@ -9,6 +9,7 @@ use App\Domain\Group\GroupNameNormalizer;
 use App\Domain\Shared\SymbolNormalizer;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+/** @extends Factory<Group> */
 class GroupFactory extends Factory
 {
     protected $model = Group::class;

@@ -10,9 +10,9 @@ use App\Application\Service\PersonPrompt\DeletePersonPromptService;
 use App\Domain\Person\Event\PersonDisabled;
 use App\Domain\PersonPrompt\PersonPromptRepository;
 use App\Domain\Shared\Criteria;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Contracts\Queue\ShouldQueueAfterCommit;
 
-final readonly class DeletePersonPromptsOnDisablePersonHandler implements ShouldQueue
+final readonly class DeletePersonPromptsOnDisablePersonHandler implements ShouldQueueAfterCommit
 {
     public function __construct(private PersonPromptRepository $prompts, private DeletePersonPromptService $service)
     {

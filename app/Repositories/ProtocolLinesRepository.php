@@ -9,8 +9,6 @@ use App\Domain\Person\Citizenship;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\Shared\Criteria;
 use App\Infrastructure\Laravel\Eloquent\ProtocolLine\EloquentProtocolLinesRepository;
-use Illuminate\Database\ConnectionInterface;
-use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Collection;
 
 /**
@@ -21,7 +19,7 @@ final readonly class ProtocolLinesRepository
 {
     private EloquentProtocolLinesRepository $repository;
 
-    public function __construct(private ConnectionInterface $db)
+    public function __construct()
     {
         $this->repository = new EloquentProtocolLinesRepository();
     }
@@ -101,29 +99,6 @@ final readonly class ProtocolLinesRepository
             ->where('person.active', true)
             ->where('person.citizenship', Citizenship::BELARUS->value)
             ->get()
-        ;
-    }
-
-    public function identByEqualPreparedLine(Collection $linesIds): void
-    {
-        $this->db->table('protocol_lines', 'pls')
-            ->join('protocol_lines AS plj', 'plj.prepared_line', '=', 'pls.prepared_line')
-            ->whereNull('pls.person_id')
-            ->whereNotNull('plj.person_id')
-            ->whereIn('pls.id', $linesIds)
-            ->update(['pls.person_id' => new Expression('plj.person_id')])
-        ;
-    }
-
-    public function identByEqualPersonPrompt(Collection $linesIds): void
-    {
-        $this->db->table('protocol_lines', 'pl')
-            ->join('persons_prompt AS pp', 'pl.prepared_line', '=', 'pp.prompt')
-            ->join('person AS p', 'p.id', '=', 'pp.person_id')
-            ->whereNull('pl.person_id')
-            ->where('p.active', true)
-            ->whereIn('pl.id', $linesIds)
-            ->update(['pl.person_id' => new Expression('pp.person_id')])
         ;
     }
 }

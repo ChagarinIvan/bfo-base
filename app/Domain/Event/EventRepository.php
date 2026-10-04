@@ -12,7 +12,7 @@ interface EventRepository
 {
     public function add(Event $event): void;
 
-    public function lockById(int $id): ?Event;
+    public function lockById(int $id, bool $includeInactive = false): ?Event;
 
     /** @return Collection<int, Event> */
     public function lockByCriteria(Criteria $criteria, EventResources $resources = new EventResources()): Collection;

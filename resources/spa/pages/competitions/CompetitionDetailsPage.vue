@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import type { AxiosError } from 'axios'
 import Card from 'primevue/card'
 import Message from 'primevue/message'
@@ -26,7 +26,9 @@ import ActionButton from '../../components/actions/ActionButton.vue'
 import ListingTable from '../../components/ListingTable.vue'
 import MassCompetitionIndicator from '../../components/MassCompetitionIndicator.vue'
 import CupEventBadges from '../../components/CupEventBadges.vue'
+import EventProcessingStatusBadge from '../../components/EventProcessingStatusBadge.vue'
 import { contextsByEventId } from '../../components/cupEventContextModels'
+import { isEventProcessing } from '../events/eventModels'
 
 const route = useRoute()
 const router = useRouter()
@@ -48,6 +50,59 @@ const deleteDialogVisible = ref(false)
 const selectedEvent = ref<Event | null>(null)
 const eventDeleting = ref(false)
 const auth = useAuthStore()
+let processingTimer: number | undefined
+let refreshingEvents = false
+let disposed = false
+
+function stopProcessingPolling(): void {
+    if (processingTimer !== undefined) {
+        window.clearInterval(processingTimer)
+        processingTimer = undefined
+    }
+}
+
+function startProcessingPolling(): void {
+    stopProcessingPolling()
+    if (
+        !disposed &&
+        auth.isAuthenticated &&
+        events.value.some((event) => isEventProcessing(event.processingStatus))
+    ) {
+        processingTimer = window.setInterval(
+            () => void refreshProcessing(),
+            5000,
+        )
+    }
+}
+
+async function refreshProcessing(): Promise<void> {
+    if (refreshingEvents) return
+    if (
+        !events.value.some((event) => isEventProcessing(event.processingStatus))
+    ) {
+        stopProcessingPolling()
+        return
+    }
+
+    refreshingEvents = true
+    try {
+        await loadEvents(
+            String(route.params.id),
+            eventPagination.value.currentPage,
+            eventPagination.value.perPage,
+            false,
+        )
+    } catch {
+        // Keep the current rows and retry at the next interval.
+    } finally {
+        refreshingEvents = false
+    }
+}
+
+onBeforeUnmount(() => {
+    disposed = true
+    stopProcessingPolling()
+})
 const eventColumns = computed(() => [
     {
         key: 'name',
@@ -79,6 +134,11 @@ const eventColumns = computed(() => [
     },
     ...(auth.isAuthenticated
         ? [
+              {
+                  key: 'processingStatus',
+                  label: 'Статус пратаколу',
+                  defaultVisible: true,
+              },
               {
                   key: 'created',
                   label: t('spa.competitions.created'),
@@ -112,18 +172,23 @@ async function loadEvents(
     id: string,
     page = 1,
     perPage = eventPagination.value.perPage,
+    refreshContexts = true,
 ): Promise<void> {
     const response = await getCompetitionEvents(id, page, perPage)
     events.value = response.data
-    void getCupEventContexts(events.value.map((event) => event.id))
-        .then((contexts) => {
-            cupEventContexts.value = contextsByEventId(contexts)
-        })
-        .catch(() => undefined)
+    if (refreshContexts) {
+        void getCupEventContexts(events.value.map((event) => event.id))
+            .then((contexts) => {
+                cupEventContexts.value = contextsByEventId(contexts)
+            })
+            .catch(() => undefined)
+    }
     eventPagination.value = paginationFromHeaders(response.headers)
+    startProcessingPolling()
 }
 
 async function load(id: string): Promise<void> {
+    stopProcessingPolling()
     loading.value = true
     error.value = ''
 
@@ -317,6 +382,12 @@ async function deleteCurrentEvent(): Promise<void> {
                     :impression="data.created"
                     :users="users"
                     :label="t('spa.competitions.created')"
+                />
+            </template>
+            <template #cell-processingStatus="{ data }">
+                <EventProcessingStatusBadge
+                    v-if="data.processingStatus"
+                    :status="data.processingStatus"
                 />
             </template>
             <template #cell-updated="{ data }">

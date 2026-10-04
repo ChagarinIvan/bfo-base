@@ -13,4 +13,8 @@ interface DistanceRepository
     public function byCriteria(Criteria $criteria): Collection;
 
     public function oneByCriteria(Criteria $criteria): ?Distance;
+
+    public function lockOneByCriteria(Criteria $criteria): ?Distance;
+
+    public function add(Distance $distance): void;
 }

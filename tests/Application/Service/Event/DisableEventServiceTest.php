@@ -8,6 +8,7 @@ use App\Application\Dto\Auth\UserId;
 use App\Application\Service\Event\DisableEvent;
 use App\Application\Service\Event\DisableEventService;
 use App\Application\Service\Event\Exception\EventNotFound;
+use App\Domain\Auth\Impression;
 use App\Domain\Event\Event;
 use App\Domain\Event\EventRepository;
 use App\Domain\Shared\DummyTransactional;
@@ -52,8 +53,8 @@ final class DisableEventServiceTest extends TestCase
     #[Test]
     public function it_disables_event(): void
     {
-        /** @var Event $event */
-        $event = Event::factory()->makeOne();
+        $event = $this->createMock(Event::class);
+        $event->expects($this->once())->method('disable')->with($this->isInstanceOf(Impression::class));
 
         $this->events
             ->expects($this->once())
@@ -70,7 +71,5 @@ final class DisableEventServiceTest extends TestCase
 
         $command = new DisableEvent('1', new UserId(1));
         $this->service->execute($command);
-
-        $this->assertFalse($event->active);
     }
 }

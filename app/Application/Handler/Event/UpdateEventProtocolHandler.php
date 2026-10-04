@@ -4,40 +4,23 @@ declare(strict_types=1);
 
 namespace App\Application\Handler\Event;
 
-use App\Application\Service\Cup\ClearCupCacheService;
-use App\Application\Service\Person\RebuildPersonRanksService;
-use App\Domain\Distance\DistanceDeleter;
+use App\Application\Service\Event\CleanupEventResults;
+use App\Application\Service\Event\CleanupEventResultsService;
 use App\Domain\Event\Event\EventProtocolUpdated;
-use App\Domain\Shared\Storage;
-use App\Services\ParserService;
-use App\Services\ProtocolLineIdentService;
-use App\Services\ProtocolLineService;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Contracts\Queue\ShouldQueueAfterCommit;
 
-final class UpdateEventProtocolHandler extends ParseProtocolHandler implements ShouldQueue
+final readonly class UpdateEventProtocolHandler implements ShouldQueueAfterCommit
 {
-    use DisableEventHandlerTrait;
-
-    public function __construct(
-        Storage $storage,
-        ParserService $parser,
-        ProtocolLineService $protocolLineService,
-        ProtocolLineIdentService $identService,
-        protected readonly DistanceDeleter $distanceDeleter,
-        protected readonly ClearCupCacheService $clearCupCacheService,
-        protected readonly RebuildPersonRanksService $rebuildPersonRanksService,
-    ) {
-        parent::__construct(
-            storage: $storage,
-            parser: $parser,
-            protocolLineService: $protocolLineService,
-            identService: $identService,
-        );
+    public function __construct(private CleanupEventResultsService $cleanup)
+    {
     }
 
-    public function handle(EventProtocolUpdated $systemEvent): void
+    public function handle(EventProtocolUpdated $event): void
     {
-        $this->cleanUp($systemEvent->event);
-        $this->parse($systemEvent->event->file, $systemEvent->event->id, $systemEvent->event->updated);
+        $this->cleanup->execute(new CleanupEventResults(
+            $event->eventId,
+            $event->processingToken,
+            startParsing: true,
+        ));
     }
 }

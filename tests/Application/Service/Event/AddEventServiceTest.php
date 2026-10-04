@@ -12,8 +12,10 @@ use App\Application\Dto\Event\EventInfoDto;
 use App\Application\Dto\Event\EventProtocolDto;
 use App\Application\Service\Event\AddEvent;
 use App\Application\Service\Event\AddEventService;
+use App\Domain\Auth\Impression;
 use App\Domain\Event\Event;
 use App\Domain\Event\EventInfo;
+use App\Domain\Event\EventProcessingStatus;
 use App\Domain\Event\EventRepository;
 use App\Domain\Event\Factory\EventFactory;
 use App\Domain\Event\Factory\EventInput;
@@ -48,34 +50,26 @@ final class AddEventServiceTest extends TestCase
     #[Test]
     public function it_creates_event(): void
     {
-        $info = new EventInfo(
-            name: 'test event',
-            description: 'test event description',
-            date: new Carbon('2023-01-01'),
-        );
+        $info = new EventInfo('test event', 'test event description', Carbon::parse('2023-01-01'));
+        $input = new EventInput($info, 1, 1);
+        $protocol = new Protocol('content', 'text/html');
+        $impression = new Impression(Carbon::parse('2023-01-01'), 1);
+        $event = $this->createMock(Event::class);
+        $event->expects($this->atLeast(9))->method('__get')->willReturnMap([
+            ['id', 10],
+            ['competition_id', 1],
+            ['name', 'test event'],
+            ['description', 'test event description'],
+            ['date', $info->date],
+            ['created', $impression],
+            ['updated', $impression],
+            ['processing_status', EventProcessingStatus::PARSING],
+            ['error_message', null],
+        ]);
 
-        $input = new EventInput(
-            $info,
-            1,
-            1,
-        );
-        $eventProtocol = new Protocol('content', 'text/html');
-
-        /** @var Event $event */
-        $event = Event::factory()->makeOne();
-
-        $this->factory
-            ->expects($this->once())
-            ->method('create')
-            ->with($input, $eventProtocol)
-            ->willReturn($event)
-        ;
-
-        $this->events
-            ->expects($this->once())
-            ->method('add')
-            ->with($this->identicalTo($event))
-        ;
+        $this->factory->expects($this->once())->method('create')->with($input, $protocol)->willReturn($event);
+        $this->events->expects($this->once())->method('add')->with($this->identicalTo($event));
+        $this->events->expects($this->never())->method('update');
 
         $dto = new EventDto();
         $infoDto = new EventInfoDto();
@@ -83,16 +77,15 @@ final class AddEventServiceTest extends TestCase
         $infoDto->description = 'test event description';
         $infoDto->date = '2023-01-01';
         $dto->info = $infoDto;
-        $protocol = $this->createStub(UploadedFile::class);
-        $protocol->method('getContent')->willReturn('content');
-        $protocol->method('getMimeType')->willReturn('text/html');
+        $file = $this->createStub(UploadedFile::class);
+        $file->method('getContent')->willReturn('content');
+        $file->method('getMimeType')->willReturn('text/html');
+        $protocolDto = new EventProtocolDto();
+        $protocolDto->protocol = $file;
 
-        $protocolDto = new EventProtocolDto;
-        $protocolDto->protocol = $protocol;
+        $result = $this->service->execute(new AddEvent(1, $dto, $protocolDto, new UserId(1)));
 
-        $command = new AddEvent(1, $dto, $protocolDto, new UserId(1));
-        $eventDto = $this->service->execute($command);
-
-        $this->assertEquals($event->id, $eventDto->id);
+        $this->assertSame('10', $result->id);
+        $this->assertSame('parsing', $result->processingStatus);
     }
 }

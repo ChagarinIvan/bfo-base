@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\RankCheck;
 
 use App\Domain\PersonPrompt\PersonPromptRepository;
+use App\Domain\PersonPrompt\PromptIdentifier;
 use App\Domain\Shared\Criteria;
 use function array_unique;
 
@@ -12,7 +13,7 @@ final readonly class StandardRankCheckPersonMatcher implements RankCheckPersonMa
 {
     public function __construct(
         private PersonPromptRepository $personPrompts,
-        private RankCheckSimilarityMatcher $identification,
+        private PromptIdentifier $identification,
     ) {
     }
 

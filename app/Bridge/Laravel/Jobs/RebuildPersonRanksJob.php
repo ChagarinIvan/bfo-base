@@ -18,8 +18,7 @@ final class RebuildPersonRanksJob implements ShouldQueue
     public function __construct(
         public readonly array $personIds,
         public readonly Impression $impression,
-    )
-    {
+    ) {
     }
 
     public function handle(Queue $queue): void

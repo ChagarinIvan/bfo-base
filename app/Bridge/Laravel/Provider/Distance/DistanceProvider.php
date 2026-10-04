@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Bridge\Laravel\Provider\Distance;
 
 use App\Domain\Distance\DistanceDeleter;
+use App\Domain\Distance\DistanceFactory;
 use App\Domain\Distance\DistanceRepository;
+use App\Domain\Distance\StandardDistanceFactory;
 use App\Infrastructure\Laravel\Eloquent\Distance\EloquentDistanceDeleter;
 use App\Infrastructure\Laravel\Eloquent\Distance\EloquentDistanceRepository;
 use Illuminate\Support\ServiceProvider;
@@ -15,6 +17,7 @@ final class DistanceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(DistanceRepository::class, EloquentDistanceRepository::class);
+        $this->app->bind(DistanceFactory::class, StandardDistanceFactory::class);
         $this->app->bind(DistanceDeleter::class, EloquentDistanceDeleter::class);
     }
 }

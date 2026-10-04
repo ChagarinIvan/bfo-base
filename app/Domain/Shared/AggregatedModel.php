@@ -15,7 +15,10 @@ abstract class AggregatedModel extends Model
     public function save(array $options = []): bool
     {
         $result = parent::save($options);
-        $this->releaseEvents();
+
+        if ($result) {
+            $this->releaseEvents();
+        }
 
         return $result;
     }
@@ -33,6 +36,9 @@ abstract class AggregatedModel extends Model
 
     private function releaseEvents(): void
     {
-        array_map(event(...), $this->modelEvents);
+        $events = $this->modelEvents;
+        $this->modelEvents = [];
+
+        array_map(event(...), $events);
     }
 }

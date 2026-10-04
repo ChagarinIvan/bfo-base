@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Application\Service\Event;
 
 use App\Application\Dto\Auth\AuthAssembler;
+use App\Application\Dto\Auth\UserId;
 use App\Application\Dto\Event\EventAssembler;
 use App\Application\Dto\Event\ViewEventDto;
 use App\Application\Service\Event\Exception\EventNotFound;
@@ -44,7 +45,7 @@ final class ViewEventServiceTest extends TestCase
             ->willReturn(null)
         ;
 
-        $command = new ViewEvent('1');
+        $command = new ViewEvent('1', new UserId(1));
         $this->service->execute($command);
     }
 
@@ -61,7 +62,7 @@ final class ViewEventServiceTest extends TestCase
             ->willReturn($event)
         ;
 
-        $command = new ViewEvent('1');
+        $command = new ViewEvent('1', new UserId(1));
         $result = $this->service->execute($command);
 
         $this->assertInstanceOf(ViewEventDto::class, $result);

@@ -120,6 +120,9 @@ function submit(): void {
                 option-value="value"
                 :allow-empty="false"
             />
+            <small v-if="localError" class="field-error">{{
+                localError
+            }}</small>
         </div>
         <div v-if="protocolSource === 'file'" class="form-field">
             <label>{{ t('spa.event.form.protocol') }}</label>
@@ -148,11 +151,8 @@ function submit(): void {
             severity="success"
             :loading="pending"
         />
-        <Message
-            v-if="localError || error"
-            severity="error"
-            :closable="false"
-            >{{ localError || error }}</Message
-        >
+        <Message v-if="error" severity="error" :closable="false">{{
+            error
+        }}</Message>
     </form>
 </template>

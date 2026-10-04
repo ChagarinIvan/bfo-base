@@ -6,9 +6,9 @@ namespace App\Application\Handler\Event;
 
 use App\Application\Service\Cup\ClearCupCacheService;
 use App\Domain\Event\Event\EventInfoUpdated;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Contracts\Queue\ShouldQueueAfterCommit;
 
-final readonly class UpdateEventInfoHandler implements ShouldQueue
+final readonly class UpdateEventInfoHandler implements ShouldQueueAfterCommit
 {
     public function __construct(private ClearCupCacheService $clearCupCacheService)
     {

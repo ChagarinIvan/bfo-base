@@ -27,7 +27,13 @@ docker compose up -d --force-recreate app webserver
 docker compose exec app php artisan migrate --force
 ```
 
-5. Check the routes and SPA shell:
+5. Restart Horizon workers so queued handlers use the new code and container bindings. The Supervisor configuration in `enviroment/supervisor/` restarts Horizon after it exits:
+
+```bash
+docker compose exec app php artisan horizon:terminate
+```
+
+6. Check the routes and SPA shell:
 
 ```bash
 docker compose exec app php artisan route:list

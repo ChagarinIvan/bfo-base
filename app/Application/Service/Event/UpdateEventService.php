@@ -16,6 +16,7 @@ use App\Domain\Event\Protocol\ProtocolSource;
 use App\Domain\Event\ProtocolUpdater;
 use App\Domain\Shared\Clock;
 use App\Domain\Shared\TransactionManager;
+use App\Domain\Shared\UuidGenerator;
 
 final readonly class UpdateEventService
 {
@@ -26,6 +27,7 @@ final readonly class UpdateEventService
         private EventAssembler $assembler,
         private TransactionManager $transactional,
         private ProtocolFactory $protocolFactory,
+        private UuidGenerator $tokens,
     ) {
     }
 
@@ -42,6 +44,7 @@ final readonly class UpdateEventService
             $event->updateInfo($command->input(), $impression);
 
             $protocolSource = $command->protocolSource();
+
             if ($protocolSource instanceof ProtocolSource) {
                 try {
                     $protocol = $this->protocolFactory->create($protocolSource);
@@ -49,7 +52,7 @@ final readonly class UpdateEventService
                     throw new InvalidProtocol($exception);
                 }
 
-                $event->updateProtocol($this->protocolUpdater, $protocol, $impression);
+                $event->updateProtocol($this->protocolUpdater, $protocol, $this->tokens, $impression);
             }
 
             $this->events->update($event);

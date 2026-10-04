@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Laravel\Eloquent\Event;
 
 use App\Domain\Event\Event;
+use App\Domain\Event\EventProcessingStatus;
 use App\Domain\Event\EventRepository;
 use App\Domain\Event\EventResources;
 use App\Domain\Shared\Criteria;
@@ -29,6 +30,10 @@ final class EloquentEventRepository implements EventRepository
             $query->with('competition:id,name');
         }
 
+        if ($resources->readyOnly) {
+            $query->where('processing_status', EventProcessingStatus::READY->value);
+        }
+
         if ($resources->withDistances) {
             $query->with('distances.group');
         }
@@ -36,9 +41,15 @@ final class EloquentEventRepository implements EventRepository
         return $query->find($id);
     }
 
-    public function lockById(int $id): ?Event
+    public function lockById(int $id, bool $includeInactive = false): ?Event
     {
-        return Event::where('active', true)->lockForUpdate()->find($id);
+        $query = Event::query();
+
+        if (!$includeInactive) {
+            $query->where('active', true);
+        }
+
+        return $query->lockForUpdate()->find($id);
     }
 
     public function lockByCriteria(Criteria $criteria, EventResources $resources = new EventResources()): Collection
@@ -51,6 +62,10 @@ final class EloquentEventRepository implements EventRepository
 
         if ($resources->withProtocolLines) {
             $query->with('protocolLines.distance');
+        }
+
+        if ($resources->readyOnly) {
+            $query->where('processing_status', EventProcessingStatus::READY->value);
         }
 
         return $query->get();
@@ -77,6 +92,10 @@ final class EloquentEventRepository implements EventRepository
             $query->with('protocolLines.distance');
         }
 
+        if ($resources->readyOnly) {
+            $query->where('processing_status', EventProcessingStatus::READY->value);
+        }
+
         return $query->get();
     }
 
@@ -91,6 +110,10 @@ final class EloquentEventRepository implements EventRepository
 
         if ($resources->withCompetitionName) {
             $query->with('competition:id,name');
+        }
+
+        if ($resources->readyOnly) {
+            $query->where('processing_status', EventProcessingStatus::READY->value);
         }
 
         return new Slice(new EloquentQueryAdapter($query));

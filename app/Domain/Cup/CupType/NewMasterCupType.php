@@ -16,7 +16,7 @@ use App\Domain\Group\Group;
 use App\Domain\ProtocolLine\Criteria\CupEventDistancesProtocolLinesCriteria;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\Shared\Criteria;
-use App\Models\Year;
+use App\Domain\Shared\Year;
 use Illuminate\Support\Collection;
 use function array_key_exists;
 use function in_array;

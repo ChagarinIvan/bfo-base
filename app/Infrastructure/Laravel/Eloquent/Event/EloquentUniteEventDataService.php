@@ -83,7 +83,9 @@ final readonly class EloquentUniteEventDataService implements UniteEventDataServ
             foreach ($groupProtocolLines->sortBy(static fn (ProtocolLine $line): float => $line->time ? $line->time->secondsSinceMidnight() : 86400.0) as $line) {
                 $line->place = $line->time === null ? $place : $place++;
                 $line->points = null;
-                new ProtocolLine($line->toArray())->save();
+                $line->complete_rank = '';
+                $line->activate_rank = null;
+                $line->replicate()->save();
             }
         }
     }

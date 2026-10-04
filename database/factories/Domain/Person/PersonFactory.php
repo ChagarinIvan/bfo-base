@@ -8,6 +8,7 @@ use App\Domain\Person\Citizenship;
 use App\Domain\Person\Person;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+/** @extends Factory<Person> */
 final class PersonFactory extends Factory
 {
     protected $model = Person::class;
