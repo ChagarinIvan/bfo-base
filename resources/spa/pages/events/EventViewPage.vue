@@ -102,6 +102,8 @@ const columns = computed(() => [
 let targetScrolled = false
 let targetScrollTimer: number | undefined
 let processingTimer: number | undefined
+let processingRefreshInFlight = false
+let active = true
 
 function stopProcessingPolling(): void {
     if (processingTimer !== undefined) {
@@ -112,6 +114,8 @@ function stopProcessingPolling(): void {
 
 async function refreshProcessing(): Promise<void> {
     if (
+        !active ||
+        processingRefreshInFlight ||
         !event.value ||
         (!isEventProcessing(event.value.processingStatus) &&
             !readyResultsPending.value)
@@ -120,15 +124,20 @@ async function refreshProcessing(): Promise<void> {
         return
     }
 
+    processingRefreshInFlight = true
     try {
-        event.value = await getEvent(event.value.id)
+        const refreshedEvent = await getEvent(event.value.id)
+        if (!active) return
+        event.value = refreshedEvent
         processingRefreshError.value = false
         if (event.value.processingStatus !== 'ready') {
             readyResultsPending.value = false
         }
         if (event.value.processingStatus === 'ready') {
             readyResultsPending.value = true
-            distances.value = await getEventDistances(event.value.id)
+            const refreshedDistances = await getEventDistances(event.value.id)
+            if (!active) return
+            distances.value = refreshedDistances
             if (
                 !distances.value.some(
                     (distance) => distance.id === distanceId.value,
@@ -137,6 +146,7 @@ async function refreshProcessing(): Promise<void> {
                 distanceId.value = distances.value[0]?.id
             }
             await loadLines()
+            if (!active) return
             readyResultsPending.value = false
         }
         if (
@@ -146,7 +156,9 @@ async function refreshProcessing(): Promise<void> {
             stopProcessingPolling()
         }
     } catch {
-        processingRefreshError.value = true
+        if (active) processingRefreshError.value = true
+    } finally {
+        processingRefreshInFlight = false
     }
 }
 
@@ -258,6 +270,7 @@ async function loadLines(
             page,
             perPage,
         })
+        if (!active) return
         lines.value = response.data
         pagination.value = paginationFromHeaders(response.headers)
         scheduleTargetProtocolLineScroll()
@@ -353,6 +366,7 @@ watch(
 )
 
 onBeforeUnmount(() => {
+    active = false
     debouncedNameSearch.cancel()
     if (targetScrollTimer !== undefined) {
         window.clearInterval(targetScrollTimer)

@@ -21,8 +21,7 @@
         "mav/slovo": "^0.2.3",
         "phpoffice/phpspreadsheet": "^5.0",
         "predis/predis": "^2.3 || ^3.0",
-        "sentry/sentry-laravel": "^4.27",
-        "symfony/lock": "^8.0"
+        "sentry/sentry-laravel": "^4.27"
     },
     "config": {
         "optimize-autoloader": true,

@@ -343,6 +343,74 @@ describe('event view page', () => {
         wrapper.unmount()
     })
 
+    it('keeps one status request in flight when responses are delayed', async () => {
+        vi.useFakeTimers()
+        auth.isAuthenticated = true
+        getEvent.mockReset()
+        getEventDistances.mockResolvedValue([])
+        let completeRefresh!: (value: unknown) => void
+        const delayedRefresh = new Promise((resolve) => {
+            completeRefresh = resolve
+        })
+        const base = {
+            id: '42',
+            competitionId: '9',
+            name: 'Этап',
+            description: '',
+            date: '2026-05-10',
+            participantsCount: 0,
+        }
+        getEvent.mockResolvedValueOnce({ ...base, processingStatus: 'parsing' })
+        getEvent.mockReturnValueOnce(delayedRefresh)
+        getEvent.mockResolvedValue({ ...base, processingStatus: 'identifying' })
+
+        const wrapper = mount(EventViewPage, {
+            global: { plugins: [PrimeVue] },
+        })
+        await flushPromises()
+        await vi.advanceTimersByTimeAsync(10_000)
+        expect(getEvent).toHaveBeenCalledTimes(2)
+
+        completeRefresh({ ...base, processingStatus: 'ready' })
+        await flushPromises()
+        expect(wrapper.text()).toContain('Вынікі')
+        await vi.advanceTimersByTimeAsync(5000)
+        expect(getEvent).toHaveBeenCalledTimes(2)
+        wrapper.unmount()
+    })
+
+    it('does not load distances after a pending status request resolves on unmount', async () => {
+        vi.useFakeTimers()
+        auth.isAuthenticated = true
+        getEvent.mockReset()
+        getEventDistances.mockReset().mockResolvedValue([])
+        let completeRefresh!: (value: unknown) => void
+        getEvent
+            .mockResolvedValueOnce({
+                id: '42',
+                competitionId: '9',
+                name: 'Этап',
+                date: '2026-05-10',
+                processingStatus: 'parsing',
+            })
+            .mockReturnValueOnce(
+                new Promise((resolve) => {
+                    completeRefresh = resolve
+                }),
+            )
+
+        const wrapper = mount(EventViewPage, {
+            global: { plugins: [PrimeVue] },
+        })
+        await flushPromises()
+        await vi.advanceTimersByTimeAsync(5000)
+        wrapper.unmount()
+        completeRefresh({ id: '42', processingStatus: 'ready' })
+        await flushPromises()
+
+        expect(getEventDistances).toHaveBeenCalledTimes(1)
+    })
+
     it.each([
         'parsingError',
         'identifyingError',

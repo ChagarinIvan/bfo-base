@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\Parser;
 
+use App\Domain\Event\Exception\EventParsingError;
 use App\Domain\Rank\RankNormalizer;
 use App\Models\Parser\List\CsvListParser;
 use Illuminate\Support\Collection;
@@ -45,7 +46,7 @@ class ParserFactory
             }
         }
 
-        throw new RuntimeException('нету подходящего парсера!!');
+        throw new EventParsingError('Не удалось распознать формат протокола.');
     }
 
     public static function createListParser(string $list, string $extension = 'csv'): ParserInterface

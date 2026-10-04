@@ -14,7 +14,7 @@ The aggregate Event and its derived distances and lines are saved in one synchro
 | `file` | Path for the current protocol, already owned by Event. |
 | `updated` | Actor and time of the latest processing transition. |
 
-Identification completion is determined from current protocol lines through a bounded repository existence query for lines without `person_id`; no per-line ID list or identification counter is required on Event. Each saved `person_id` is durable progress. A failed worker leaves Event in `identifying`; replay selects only unassigned current lines. The external Event lock is coordination state, not a persisted aggregate field.
+Identification completes after all current protocol lines have a `person_id`; Event needs no per-line ID list or counter. Event catches errors during the stage and records `identifyingError` with `EventProcessingFailed`; cleanup removes derived results after commit. A worker killed before the domain catch can leave Event transitional.
 
 ## ProtocolLineInput
 
@@ -35,10 +35,10 @@ aggregate derived results -------------------------------------------> ready
 ```
 
 - Parsing accepts only an Event in `parsing`; it stores the parsed lines atomically and emits `EventParsed` as the Event moves to `identifying`.
-- Identification starts only from `identifying`; Event holds an external lock while each line assignment is saved before the next line without a stage-wide transaction. After all current lines have people, Event moves to `rebuildingRanks`.
+- Identification starts only from `identifying`; a transaction locks the Event row and commits line assignments together with the transition to `rebuildingRanks`.
 - One background rank stage processes unique people from current lines sequentially. Event moves to `ready` only when the full pass succeeds. A repeated pass recomputes ranks from persisted facts.
 - All three stage error statuses and `ready` are terminal until a new protocol replaces the current one. A stage failure records its error status; processing resumes only after protocol replacement.
-- Old queued events must not move the Event backwards or mutate a later protocol's status. Parsing checks status and token under an Event row lock. Identification and ranks check both while owning the external Event lock; its TTL exceeds the configured maximum job duration and it is released in `finally`. Ownership checks abort work on a detected loss, but do not fence a write if the lock expires between check and save.
+- Old queued events must not move the Event backwards or mutate a later protocol's status. Every stage checks status and token under an Event row lock. Event catches stage errors and records an error for the current token. Forced worker termination before the catch remains an open case.
 - On replacement, the cleanup job removes the previous Event distances before parsing. Event records `EventProtocolCleaned` in the cleanup transaction; its queued handler starts the parser after commit. Foreign keys remove protocol lines and rank history rows. Previously linked people are recalculated from surviving results; person and group records remain. A stale token is rejected before cleanup.
 
 ## Migration invariants

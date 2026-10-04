@@ -20,37 +20,25 @@
 - Change `ParserInterface` output: rejected because it is a shared legacy contract.
 - Pass raw parser arrays through Application and factories: rejected because it leaks undocumented shapes across layers.
 
-## Decision: stage transitions are aggregate methods and events
+## Decision: transaction per stage
 
-**Decision**: `Event::parse()` owns `parsing → identifying` and publishes `EventParsed`; `Event::ident()` completes `identifying → rebuildingRanks` after all current lines have a person; `Event::updateRanks()` completes `rebuildingRanks → ready` after all affected people have been recalculated. `Event::failProcessing()` records `parsingError`, `identifyingError`, or `rebuildingRanksError` according to the current stage, together with a safe `errorMessage`.
+**Decision**: Parsing, identification and rank rebuilding each run in one database transaction with the Event row locked. The Event checks stage and generation token before calling the domain worker. Identification loads the remaining lines and saves them after the loop. The rank updater loads affected person IDs and saves each Person inside the same transaction. Event catches errors during a stage and records failure; `EventProcessingFailed` starts cleanup after commit.
 
-**Rationale**: Application acquires the external lock and loads Event; Event owns each stage loop and transition. Domain services called from Event use Domain repository ports to save each completed ProtocolLine or Person before the next iteration. New domain code has no direct Eloquent access; adapters remain in Infrastructure. This is the user's chosen exception to the current Application persistence orchestration rule in Constitution VII; the constitution update is deferred to separate work. Parsing saves lines and status in one transaction. Identification and rank work save each result without a stage-wide transaction, so a crash does not erase earlier progress. The next handler starts after Event's successful save.
+**Rationale**: The user chose the existing transaction model. It prevents concurrent deliveries from changing the same Event and makes each stage atomic. A worker crash loses the current stage's progress; the only new run starts after protocol replacement. This trades lock duration and memory for simpler consistency.
 
-## Decision: save identification progress per line
+## Decision: error contract
 
-**Decision**: Hold one external Event lock through identification and save each identified line before the next line without a stage-wide transaction. Leave Event in `identifying` until an existence check finds no unassigned current lines. Replay skips assigned lines. Do not use `IdentLine` for this pipeline; a separate manual resume command is outside 025.
+**Decision**: An unrecognized file format raises `EventParsingError`. Event catches domain and unexpected parser, repository and calculator exceptions, records a safe message and emits `EventProcessingFailed`. Parsing saves lines inside `Event::parse()` so a persistence failure follows the same path. There is no separate failure method or handler.
 
-**Rationale**: A single transaction for all lines would lose all progress on interruption. The line's persisted `person_id` is sufficient progress state and avoids another queue or per-line counter.
+**Rationale**: Technical exception text must not reach the UI. Cleanup removes results from a failed stage after commit. A worker killed before the domain catch cannot record an error by this path; that case remains open.
 
-## Decision: recalculate ranks in one background stage
+## Decision: rank work and public status
 
-**Decision**: Hold the same external Event lock and iterate unique people from the current protocol in one background process. Reuse the existing rank calculator and Person update policy, saving each person before the next. Mark Event `ready` only after the entire pass succeeds; replay recomputes from persisted rank facts.
+**Decision**: One rank stage iterates people in the current protocol and marks Event `ready` only after all updates commit. Authenticated projections expose status and safe `errorMessage`; guest queries require `ready`. The detail page sends at most one status request at a time and ignores responses after unmount.
 
-**Rationale**: This removes per-person rank jobs, batch tracking and completion races. Event still validates its processing token before writes, so a delayed stage cannot finish a replacement protocol.
+## Operational bounds
 
-## Decision: status remains the public contract
-
-**Decision**: Authenticated projections read status and nullable `errorMessage` from Event; guest event, distance and protocol-line queries require `ready` and never expose the message. Creation returns `parsing` with a cleared message because Event itself owns the state.
-
-**Rationale**: API and SPA behavior stays stable except removing the obsolete queued/null-wait phase introduced only to wait for EventProtocol creation.
-
-The draft `EventProtocol` migrations have not been applied; there are no historical `failed` runs to translate. The replacement Event schema writes only the three stage-specific error statuses. Existing completed protocol results still need the normal `ready` backfill.
-
-## Operational risk to validate in plan review
-
-The external lock is an application-level port backed by a Redis adapter for replacement, identification and ranks. Parsing instead runs once in a DB transaction with the Event row locked. A parse failure rolls back partial lines and records `parsingError` immediately under a new row lock transaction. Identification and ranks hold the external lock through their loops without a stage-wide transaction. The lock TTL exceeds the hard worker timeout, `retry_after` exceeds that timeout, and release happens in `finally`; a detected loss of ownership aborts work. Refresh can be used during a long loop. This does not fence a write if expiry occurs between the ownership check and save, so timeout/TTL configuration and monitoring are required and the remaining race is explicitly accepted. Generation tokens and idempotent writes help with delivery, but do not make the check/write pair atomic. Verify query count, worker duration and memory with the largest available fixture. A per-run cache must not be static in a long-lived worker.
-
-Current legacy consumers of `IdentLine` are `ProtocolLineIdentService`, `IdentProtocolLineCommand` and `StartBigIdentCommand`. `Console/Kernel.php` schedules queue identification every 30 seconds, global simple identification daily and big identification daily. These global commands can mutate lines while Event is `identifying`; the schedule must be removed or scoped away from transitional events before the new pipeline is enabled. `BackfillRepeatMasterRankActivationCommand`, `RankCheck` matching and existing tests also use methods of `ProtocolLineIdentService`, so deleting that class requires migrating those consumers first.
+Default Horizon workers have a 300 second timeout and 128 MiB memory limit; Redis `retry_after` is 360 seconds. The largest available fixture has 130 lines, but that is not a proven maximum for production protocols. Measure longer files before raising these limits. The domain's current parser adapter still imports legacy `ParserFactory`; the user explicitly accepted that dependency for this change.
 
 ## Existing call sites and migration inventory (T001)
 

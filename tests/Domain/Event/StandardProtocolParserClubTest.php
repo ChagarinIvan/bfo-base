@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Domain\Event;
 
 use App\Domain\Event\Event;
+use App\Domain\Event\Exception\EventParsingError;
 use App\Domain\Event\ProtocolPathResolver;
 use App\Domain\Event\StandardProtocolParser;
 use App\Domain\Group\GroupNameNormalizer;
@@ -20,6 +21,28 @@ use Tests\TestCase;
 
 final class StandardProtocolParserClubTest extends TestCase
 {
+    #[Test]
+    public function it_reports_an_unknown_format_as_a_domain_parsing_error(): void
+    {
+        $event = $this->createMock(Event::class);
+        $event->expects($this->exactly(2))->method('__get')->willReturn('protocol.unknown');
+        $storage = $this->createMock(Storage::class);
+        $storage->expects($this->once())->method('get')->willReturn('unrecognised protocol');
+        $groups = $this->createMock(GroupRepository::class);
+        $groups->expects($this->once())->method('all')->willReturn(new Collection());
+        $parser = new StandardProtocolParser(
+            $storage,
+            new ProtocolPathResolver(),
+            $groups,
+            new RankNormalizer(),
+            new StandardIdentLineGenerator(new StandardNameNormalizer()),
+            new GroupNameNormalizer(new SymbolNormalizer()),
+        );
+
+        $this->expectException(EventParsingError::class);
+        $parser->parse($event);
+    }
+
     #[Test]
     public function it_trims_club_names_from_protocol_parsers(): void
     {
