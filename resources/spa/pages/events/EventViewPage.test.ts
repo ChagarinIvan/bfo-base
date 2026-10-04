@@ -326,6 +326,11 @@ describe('event view page', () => {
         await flushPromises()
 
         expect(wrapper.text()).toContain('Пратакол у апрацоўцы')
+        expect(
+            wrapper
+                .get('.competition-details-card .event-processing-badge')
+                .text(),
+        ).toBe('Parsing')
         expect(wrapper.text()).not.toContain('Няма дыстанцый')
         const lineRequestsBeforeRefresh =
             getPersonProtocolLines.mock.calls.length
@@ -337,6 +342,12 @@ describe('event view page', () => {
         )
         expect(getEventDistances).toHaveBeenCalledTimes(2)
         expect(wrapper.text()).toContain('Вынікі')
+        expect(
+            wrapper
+                .get('.competition-details-card .event-processing-badge')
+                .text(),
+        ).toBe('Ready')
+        expect(wrapper.text()).not.toContain('Пратакол гатовы.')
 
         await vi.advanceTimersByTimeAsync(5000)
         expect(getEvent).toHaveBeenCalledTimes(2)

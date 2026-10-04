@@ -13,6 +13,7 @@ import ActionButton from '../../components/actions/ActionButton.vue'
 import FilterPanel from '../../components/FilterPanel.vue'
 import ImpressionDetails from '../../components/ImpressionDetails.vue'
 import EventProcessingStatus from '../../components/EventProcessingStatus.vue'
+import EventProcessingStatusBadge from '../../components/EventProcessingStatusBadge.vue'
 import ListingTable from '../../components/ListingTable.vue'
 import SlicePaginator from '../../components/SlicePaginator.vue'
 import { getEventDistances } from '../../api/distances'
@@ -400,6 +401,18 @@ onBeforeUnmount(() => {
                         <tr>
                             <th scope="row">Апісанне</th>
                             <td>{{ event.description }}</td>
+                        </tr>
+                        <tr
+                            v-if="
+                                auth.isAuthenticated && event.processingStatus
+                            "
+                        >
+                            <th scope="row">Статус пратаколу</th>
+                            <td>
+                                <EventProcessingStatusBadge
+                                    :status="event.processingStatus"
+                                />
+                            </td>
                         </tr>
                         <tr v-if="cupEventContexts.length">
                             <th scope="row">

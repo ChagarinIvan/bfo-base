@@ -33,7 +33,12 @@ const severity = computed(() => {
 </script>
 
 <template>
-    <Message :severity="severity" :closable="false" class="mt-3">
+    <Message
+        v-if="status !== 'ready'"
+        :severity="severity"
+        :closable="false"
+        class="mt-3"
+    >
         <ProgressSpinner v-if="waiting" style="width: 1rem; height: 1rem" />
         {{
             status.endsWith('Error') && errorMessage

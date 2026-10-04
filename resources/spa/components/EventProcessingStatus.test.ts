@@ -6,6 +6,15 @@ import { describe, expect, it } from 'vitest'
 import EventProcessingStatus from './EventProcessingStatus.vue'
 
 describe('event processing status', () => {
+    it('does not show a hint when the protocol is ready', () => {
+        const wrapper = mount(EventProcessingStatus, {
+            props: { status: 'ready' },
+            global: { plugins: [PrimeVue] },
+        })
+
+        expect(wrapper.find('.p-message').exists()).toBe(false)
+    })
+
     it('shows a warning while athlete identification is pending', () => {
         const wrapper = mount(EventProcessingStatus, {
             props: { status: 'identifying' },

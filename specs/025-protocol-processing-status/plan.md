@@ -74,7 +74,7 @@ Parsing, identification и пересчёт выполняются в отдел
 
 ### API and SPA
 
-Авторизованные DTO карточки и списка читают `processingStatus` и nullable `errorMessage` непосредственно из Event. Гостевые event/distance/protocol-line запросы фильтруются по `Event.processingStatus = ready`. Колонка списка показывает семь коротких английских меток с разными цветами без сообщения об ошибке. Карточка этапа показывает локализованное сообщение стадии и безопасное сообщение для ошибок, сохраняет loader и detail/list polling с остановкой при terminal state/unmount. Создание сразу возвращает `parsing`; UI не ждёт появления отдельного EventProtocol.
+Авторизованные DTO карточки и списка читают `processingStatus` и nullable `errorMessage` непосредственно из Event. Гостевые event/distance/protocol-line запросы фильтруются по `Event.processingStatus = ready`. Колонка списка и карточка этапа показывают одинаковые короткие английские метки с разными цветами. Колонка не показывает сообщение об ошибке. Над результатами карточки остаётся локализованная подсказка для переходной или ошибочной стадии, но для `ready` отдельного сообщения нет. UI сохраняет loader и detail/list polling с остановкой при terminal state/unmount. Создание сразу возвращает `parsing`; UI не ждёт появления отдельного EventProtocol.
 
 ## Project Structure
 
