@@ -60,6 +60,25 @@ final class EventProcessingFailureTest extends TestCase
     }
 
     #[Test]
+    public function an_unexpected_parser_failure_records_a_safe_parsing_error(): void
+    {
+        EventFacade::fake();
+        $event = $this->event(EventProcessingStatus::PARSING);
+        $parser = $this->createMock(ProtocolParser::class);
+        $parser->expects($this->once())->method('parse')->willThrowException(new RuntimeException('private detail'));
+        $factory = $this->createMock(ProtocolLinesFactory::class);
+        $factory->expects($this->never())->method('create');
+        $lines = $this->createMock(ProtocolLineRepository::class);
+        $lines->expects($this->once())->method('add');
+        $service = new ParseEventProtocolService($parser, $factory, $lines, $this->events(), $this->transactional(), $this->clock());
+        $service->execute(new ParseEventProtocol($event->id, $event->processing_token, 42));
+
+        $this->assertSame(EventProcessingStatus::PARSING_ERROR, $event->fresh()->processing_status);
+        $this->assertSame('Ошибка парсинга протокола. Свяжитесь с администратором.', $event->fresh()->error_message);
+        EventFacade::assertDispatchedTimes(EventProcessingFailed::class, 1);
+    }
+
+    #[Test]
     public function an_unexpected_identification_failure_records_identifying_error(): void
     {
         EventFacade::fake();
@@ -70,6 +89,7 @@ final class EventProcessingFailureTest extends TestCase
         $service->execute(new IdentifyProtocolLines($event->id, $event->processing_token, $this->impression()));
 
         $this->assertSame(EventProcessingStatus::IDENTIFYING_ERROR, $event->fresh()->processing_status);
+        $this->assertSame('Ошибка идентификации протокола. Свяжитесь с администратором.', $event->fresh()->error_message);
         EventFacade::assertDispatchedTimes(EventProcessingFailed::class, 1);
     }
 
@@ -84,6 +104,7 @@ final class EventProcessingFailureTest extends TestCase
         $service->execute(new UpdateEventRanks($event->id, $event->processing_token, $this->impression()));
 
         $this->assertSame(EventProcessingStatus::REBUILDING_RANKS_ERROR, $event->fresh()->processing_status);
+        $this->assertSame('Ошибка обновления разрядов. Свяжитесь с администратором.', $event->fresh()->error_message);
         EventFacade::assertDispatchedTimes(EventProcessingFailed::class, 1);
     }
 

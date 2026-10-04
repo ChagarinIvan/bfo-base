@@ -39,6 +39,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Collection;
+use Throwable;
 
 /**
  * @property int $id
@@ -179,6 +180,12 @@ class Event extends AggregatedModel
             $lines = [];
 
             $this->recordThat(new EventProcessingFailed($this, $this->processing_status));
+        } catch (Throwable) {
+            $this->processing_status = EventProcessingStatus::PARSING_ERROR;
+            $this->error_message = 'Ошибка парсинга протокола. Свяжитесь с администратором.';
+            $lines = [];
+
+            $this->recordThat(new EventProcessingFailed($this, $this->processing_status));
         } finally {
             $this->updated = $impression;
         }
@@ -205,6 +212,11 @@ class Event extends AggregatedModel
             $this->error_message = $e->getMessage();
 
             $this->recordThat(new EventProcessingFailed($this, $this->processing_status));
+        } catch (Throwable) {
+            $this->processing_status = EventProcessingStatus::IDENTIFYING_ERROR;
+            $this->error_message = 'Ошибка идентификации протокола. Свяжитесь с администратором.';
+
+            $this->recordThat(new EventProcessingFailed($this, $this->processing_status));
         } finally {
             $this->updated = $impression;
         }
@@ -227,6 +239,11 @@ class Event extends AggregatedModel
         } catch (RanksUpdatingError $e) {
             $this->processing_status = EventProcessingStatus::REBUILDING_RANKS_ERROR;
             $this->error_message = $e->getMessage();
+
+            $this->recordThat(new EventProcessingFailed($this, $this->processing_status));
+        } catch (Throwable) {
+            $this->processing_status = EventProcessingStatus::REBUILDING_RANKS_ERROR;
+            $this->error_message = 'Ошибка обновления разрядов. Свяжитесь с администратором.';
 
             $this->recordThat(new EventProcessingFailed($this, $this->processing_status));
         } finally {
