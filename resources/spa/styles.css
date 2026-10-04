@@ -138,6 +138,46 @@ body {
     height: 1rem;
 }
 
+.event-processing-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.3rem 0.65rem;
+    border-radius: 999px;
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 600;
+    line-height: 1.25;
+    white-space: nowrap;
+}
+
+.event-processing-badge--parsing {
+    background: #1d4ed8;
+}
+
+.event-processing-badge--identifying {
+    background: #7c3aed;
+}
+
+.event-processing-badge--rebuildingRanks {
+    background: #0f766e;
+}
+
+.event-processing-badge--ready {
+    background: #15803d;
+}
+
+.event-processing-badge--parsingError {
+    background: #b91c1c;
+}
+
+.event-processing-badge--identifyingError {
+    background: #c2410c;
+}
+
+.event-processing-badge--rebuildingRanksError {
+    background: #a21caf;
+}
+
 .app-header {
     position: sticky;
     top: 0;

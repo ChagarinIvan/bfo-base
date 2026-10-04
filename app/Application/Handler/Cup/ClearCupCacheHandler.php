@@ -8,9 +8,9 @@ use App\Application\Service\Cup\ClearCupCacheService;
 use App\Domain\Cup\CupEvent\Event\CupEventCreated;
 use App\Domain\Cup\CupEvent\Event\CupEventDisabled;
 use App\Domain\Cup\CupEvent\Event\CupEventUpdated;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Contracts\Queue\ShouldQueueAfterCommit;
 
-final readonly class ClearCupCacheHandler implements ShouldQueue
+final readonly class ClearCupCacheHandler implements ShouldQueueAfterCommit
 {
     public function __construct(
         private ClearCupCacheService $service,

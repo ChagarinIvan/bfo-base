@@ -26,7 +26,7 @@ import ActionButton from '../../components/actions/ActionButton.vue'
 import ListingTable from '../../components/ListingTable.vue'
 import MassCompetitionIndicator from '../../components/MassCompetitionIndicator.vue'
 import CupEventBadges from '../../components/CupEventBadges.vue'
-import EventProcessingStatus from '../../components/EventProcessingStatus.vue'
+import EventProcessingStatusBadge from '../../components/EventProcessingStatusBadge.vue'
 import { contextsByEventId } from '../../components/cupEventContextModels'
 import { isEventProcessing } from '../events/eventModels'
 
@@ -385,10 +385,9 @@ async function deleteCurrentEvent(): Promise<void> {
                 />
             </template>
             <template #cell-processingStatus="{ data }">
-                <EventProcessingStatus
+                <EventProcessingStatusBadge
                     v-if="data.processingStatus"
                     :status="data.processingStatus"
-                    :error-message="data.errorMessage"
                 />
             </template>
             <template #cell-updated="{ data }">

@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Application\Handler\PersonPrompt;
 
 use App\Domain\Person\Event\PersonCreated;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Contracts\Queue\ShouldQueueAfterCommit;
 
-final readonly class PersonCreatedHandler extends AbstractCreatePersonPromptsHandler implements ShouldQueue
+final readonly class PersonCreatedHandler extends AbstractCreatePersonPromptsHandler implements ShouldQueueAfterCommit
 {
     public function handle(PersonCreated $event): void
     {

@@ -6,9 +6,9 @@ namespace App\Application\Handler\Person;
 
 use App\Domain\Person\Event\PersonDisabled;
 use App\Domain\ProtocolLine\ProtocolLine;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Contracts\Queue\ShouldQueueAfterCommit;
 
-final readonly class PersonDisabledHandler implements ShouldQueue
+final readonly class PersonDisabledHandler implements ShouldQueueAfterCommit
 {
     public function handle(PersonDisabled $event): void
     {
