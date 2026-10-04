@@ -14,7 +14,7 @@ use Tests\TestCase;
 final class HistoricalEventProtocolBackfillTest extends TestCase
 {
     #[Test]
-    public function it_repairs_a_database_that_already_applied_the_earlier_backfill(): void
+    public function it_migrates_an_empty_database_and_restores_the_old_schema_on_rollback(): void
     {
         $previous = DB::getDefaultConnection();
         config()->set('database.connections.protocol_migration_test', ['driver' => 'sqlite', 'database' => ':memory:', 'prefix' => '']);
@@ -34,28 +34,25 @@ final class HistoricalEventProtocolBackfillTest extends TestCase
                 $table->unsignedBigInteger('distance_id');
                 $table->unsignedBigInteger('person_id')->nullable();
             });
-            DB::table('events')->insert([
-                ['id' => 1, 'file' => 'ready.html'],
-                ['id' => 2, 'file' => 'partial.html'],
-                ['id' => 3, 'file' => null],
-            ]);
-            DB::table('distances')->insert([
-                ['id' => 11, 'event_id' => 1],
-                ['id' => 12, 'event_id' => 2],
-            ]);
-            DB::table('protocol_lines')->insert([
-                ['distance_id' => 11, 'person_id' => 101],
-                ['distance_id' => 12, 'person_id' => null],
-            ]);
+            Schema::create('protocol_ident_queue', static function (Blueprint $table): void {
+                $table->id();
+                $table->string('ident_line')->unique()->default('')->index();
+            });
 
-            (require database_path('migrations/2026_09_13_000001_create_event_protocols_table.php'))->up();
-            DB::table('events')->where('id', 1)->update(['processing_status' => 'ready']);
-            (require database_path('migrations/2026_09_13_000003_require_event_processing_state.php'))->up();
+            $migration = require database_path('migrations/2026_09_13_000001_add_event_processing_state.php');
+            $migration->up();
 
-            $events = DB::table('events')->orderBy('id')->get();
-            $this->assertSame(['ready', 'identifyingError', 'parsingError'], $events->pluck('processing_status')->all());
-            $this->assertCount(3, $events->pluck('processing_token')->unique());
-            $this->assertNotNull($events[0]->processing_token);
+            $this->assertFalse(Schema::hasTable('protocol_ident_queue'));
+            $this->assertTrue(Schema::hasColumn('events', 'processing_status'));
+            $this->assertTrue(Schema::hasColumn('events', 'processing_token'));
+            $this->assertTrue(Schema::hasColumn('events', 'error_message'));
+
+            $migration->down();
+
+            $this->assertTrue(Schema::hasTable('protocol_ident_queue'));
+            $this->assertFalse(Schema::hasColumn('events', 'processing_status'));
+            $this->assertFalse(Schema::hasColumn('events', 'processing_token'));
+            $this->assertFalse(Schema::hasColumn('events', 'error_message'));
         } finally {
             DB::setDefaultConnection($previous);
             DB::disconnect('protocol_migration_test');
@@ -83,6 +80,10 @@ final class HistoricalEventProtocolBackfillTest extends TestCase
                 $table->unsignedBigInteger('distance_id');
                 $table->unsignedBigInteger('person_id')->nullable();
             });
+            Schema::create('protocol_ident_queue', static function (Blueprint $table): void {
+                $table->id();
+                $table->string('ident_line')->unique()->default('')->index();
+            });
 
             DB::table('events')->insert([
                 ['id' => 1, 'file' => 'complete.html'],
@@ -102,9 +103,7 @@ final class HistoricalEventProtocolBackfillTest extends TestCase
                 ['distance_id' => 13, 'person_id' => 105],
             ]);
 
-            (require database_path('migrations/2026_09_13_000001_create_event_protocols_table.php'))->up();
-            (require database_path('migrations/2026_09_13_000002_backfill_historical_event_protocols.php'))->up();
-            (require database_path('migrations/2026_09_13_000003_require_event_processing_state.php'))->up();
+            (require database_path('migrations/2026_09_13_000001_add_event_processing_state.php'))->up();
 
             $events = DB::table('events')->orderBy('id')->get();
             $this->assertSame(['ready', 'identifyingError', 'parsingError', 'parsingError', 'ready'], $events->pluck('processing_status')->all());
@@ -114,6 +113,8 @@ final class HistoricalEventProtocolBackfillTest extends TestCase
             }
             $this->assertNull($events[0]->error_message);
             $this->assertNotNull($events[1]->error_message);
+            $this->assertNotNull($events[2]->error_message);
+            $this->assertFalse(Schema::hasTable('protocol_ident_queue'));
 
             $this->expectException(QueryException::class);
             DB::table('events')->insert(['id' => 6, 'file' => null, 'processing_status' => null, 'processing_token' => null]);

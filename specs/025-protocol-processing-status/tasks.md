@@ -12,7 +12,7 @@
 
 ## Phase 2: Foundational
 
-- [X] T002 Заменить ещё не применённые миграции `2026_09_13_000001_create_event_protocols_table.php` и `2026_09_13_000002_backfill_historical_event_protocols.php` схемой Event-owned status/token/error; завершающей миграцией назначить историческим Event статус и токен, затем сделать status/token обязательными. Проверить пустую и существующую базу в `tests/Feature/Event/HistoricalEventProtocolBackfillTest.php`.
+- [X] T002 Объединить четыре ещё не применённые миграции в `2026_09_13_000001_add_event_processing_state.php`: добавить Event-owned status/token/error, классифицировать исторические Event, назначить токены, сделать status/token обязательными и удалить `protocol_ident_queue`. Проверить пустую и существующую базу в `tests/Feature/Event/HistoricalEventProtocolBackfillTest.php`.
 - [X] T003 Покрыть переходы Event, три error-статуса по текущей стадии, установку/очистку `errorMessage`, смену токена, повторную доставку и запоздалую стадию unit-тестами в `tests/Domain/Event/EventTest.php`; перенести актуальные сценарии из `tests/Domain/Event/EventProtocolTest.php`.
 - [X] T004 Перенести статусы, токен, audit impression и immutable stage events в `app/Domain/Event/Event.php` и `app/Domain/Event/Event/`; удаление старого агрегата и repository отложить до переключения потребителей в T018.
 - [X] T005 Адаптировать `ProtocolParser` и `ProtocolLinesFactory` к Event без eventProtocolId; сохранить parser fixtures. Внешний lock для 025 не нужен; убрать неиспользуемый `symfony/lock` из зависимостей.

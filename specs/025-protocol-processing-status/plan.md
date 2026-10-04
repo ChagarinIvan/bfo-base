@@ -68,9 +68,9 @@ Parsing, identification и пересчёт выполняются в отдел
 
 После любой очистки `Event::protocolResultsCleaned()` вызывает `CupCacheInvalidator`, если Event связан с кубком. Метод записывает `EventProtocolCleaned` для запуска парсинга только если Event активен, токен совпадает и статус равен `parsing`. Repository вызывает `save()` после метода; без изменённых атрибутов Eloquent не выполняет SQL `UPDATE`, но публикует записанное доменное событие.
 
-### Existing data and draft migrations
+### Existing data and migration
 
-Миграция `2026_09_13_000001_create_event_protocols_table.php` добавляет nullable-поля как промежуточный шаг. `2026_09_13_000002_backfill_historical_event_protocols.php` классифицирует все исторические Event: готовые результаты получают `ready`, строки без спортсмена получают `identifyingError`, остальные получают `parsingError`. Она назначает каждому Event уникальный токен без изменения timestamps. `2026_09_13_000003_require_event_processing_state.php` заполняет оставшиеся null в БД, где прежний backfill уже был применён, затем делает status/token обязательными. Миграционный тест проверяет оба порядка применения.
+Одна миграция `2026_09_13_000001_add_event_processing_state.php` добавляет поля в Event, классифицирует исторические записи и назначает каждой уникальный токен без изменения timestamps. Готовые результаты получают `ready`, строки без спортсмена получают `identifyingError`, остальные получают `parsingError`. После заполнения полей миграция делает status/token обязательными и удаляет старую таблицу `protocol_ident_queue`. Миграционный тест проверяет пустую и заполненную БД, а также откат схемы.
 
 ### API and SPA
 
