@@ -450,6 +450,7 @@ body {
 
 .update-entry summary {
     display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
     gap: 0.3rem;
     padding: 1rem 1.25rem;
     cursor: pointer;

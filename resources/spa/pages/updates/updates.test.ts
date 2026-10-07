@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync } from 'node:fs'
+import { readdirSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import { createMemoryHistory } from 'vue-router'
 import { createAppRouter } from '../../router'
@@ -33,7 +33,7 @@ describe('static updates catalog', () => {
         expect(updates[0]?.spec).toBe('041-site-updates')
     })
 
-    it('links to existing SPA routes or checked replacement tasks', () => {
+    it('links only to existing SPA routes when a destination is useful', () => {
         const router = createAppRouter(createMemoryHistory())
 
         for (const entry of updates) {
@@ -44,30 +44,24 @@ describe('static updates catalog', () => {
 
             if (!entry.link) continue
 
-            if (entry.link.kind === 'site') {
-                const route = router.resolve(entry.link.href)
-                expect(route.matched.length).toBeGreaterThan(0)
-                expect(route.matched.at(-1)?.path).not.toContain(':pathMatch')
-                continue
-            }
+            expect(entry.link.href).toMatch(/^\/app\//)
+            const route = router.resolve(entry.link.href)
+            expect(route.matched.length).toBeGreaterThan(0)
+            expect(route.matched.at(-1)?.path).not.toContain(':pathMatch')
+        }
+    })
 
-            const match = entry.link.href.match(
-                /^https:\/\/github\.com\/ChagarinIvan\/bfo-base\/blob\/master\/specs\/([^/]+)\/tasks\.md#L(\d+)$/,
-            )
-            expect(match, entry.spec).not.toBeNull()
-            if (!match) continue
-
-            const [, laterSpec, line] = match
-            const taskFile = readFileSync(
-                new URL(
-                    `../../../../specs/${laterSpec}/tasks.md`,
-                    import.meta.url,
-                ),
-                'utf8',
-            )
-            expect(taskFile.split('\n')[Number(line) - 1]).toMatch(
-                /^- \[X\] T\d+/,
-            )
+    it('does not invent navigation for parser fixes', () => {
+        for (const spec of [
+            '010-winorient-parser-nonstarter',
+            '023-obelarus-parser-groups',
+            '034-albatros-word-html',
+            '035-albatros-20260919-parser',
+            '036-albatros-20260718-p-p-20-10',
+        ]) {
+            const entry = updates.find((item) => item.spec === spec)
+            expect(entry?.example).toBeUndefined()
+            expect(entry?.link).toBeUndefined()
         }
     })
 })

@@ -6,11 +6,11 @@ Use the latest Git commit date touching each historical `spec.md` as a **documen
 
 ## Decision: catalog and identity
 
-Use the full directory slug, such as `030-cup-view-spa`, as unique ID. There are 41 current spec directories and duplicate numeric prefixes 030 and 034. Source records are curated instead of generated at runtime, so prose, examples and replacement links can be reviewed. Raw spec files are developer-oriented and lack user-ready summaries.
+Use the full directory slug, such as `030-cup-view-spa`, as unique ID. There are 41 current spec directories and duplicate numeric prefixes 030 and 034. Source records are curated instead of generated at runtime, so prose and optional examples and links can be reviewed. Raw spec files are developer-oriented and lack user-ready summaries.
 
 ## Decision: replacement references
 
-Use existing `/app/*` list pages for current functionality; object-specific screens require a real ID. For a superseded approach link to a concrete checked task in GitHub, for example 039 T011/T012 for final legacy Web removal. Do not link to deleted Web routes. Internal changes explain their effect without an artificial site destination.
+Use existing `/app/*` list pages when they help users reach current functionality; object-specific screens require a real ID. Explain superseded approaches in text without a GitHub link. Do not link to deleted Web routes. Parser and other internal changes explain their effect without an artificial example or site destination.
 
 ## Decision: access and interaction
 

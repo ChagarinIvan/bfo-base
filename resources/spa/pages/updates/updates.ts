@@ -6,22 +6,13 @@ export interface UpdateEntry {
     details: string
     example?: string
     link?: {
-        kind: 'site' | 'task'
         label: string
         href: string
     }
 }
 
 function site(href: string, label: string): UpdateEntry['link'] {
-    return { kind: 'site', href, label }
-}
-
-function task(spec: string, line: number, label: string): UpdateEntry['link'] {
-    return {
-        kind: 'task',
-        href: `https://github.com/ChagarinIvan/bfo-base/blob/master/specs/${spec}/tasks.md#L${line}`,
-        label,
-    }
+    return { href, label }
 }
 
 const entries: UpdateEntry[] = [
@@ -57,11 +48,6 @@ const entries: UpdateEntry[] = [
         details:
             'З’явіліся агульная навігацыя, уваход і першыя старонкі. Пераходны змешаны інтэрфейс пазней прыбралі.',
         example: 'Цяпер адкрывайце спаборніцтвы ў адзіным інтэрфейсе.',
-        link: task(
-            '039-retire-legacy-web',
-            27,
-            'Задача T012: выдаленне старога інтэрфейсу',
-        ),
     },
     {
         spec: '005-competition-spa-management',
@@ -120,8 +106,6 @@ const entries: UpdateEntry[] = [
         summary: 'Пратаколы WinOrient карэктна апрацоўваюць радкі без старту.',
         details:
             'Адсутнасць старту больш не перашкаджае імпартаваць астатнія вынікі пратакола.',
-        example: 'Адкрыйце этап і загрузіце пратакол WinOrient.',
-        link: site('/app/competitions', 'Знайсці этап'),
     },
     {
         spec: '011-competition-links-to-spa',
@@ -130,11 +114,6 @@ const entries: UpdateEntry[] = [
         summary: 'Пераходы да спаборніцтваў перанакіраваны ў новы інтэрфейс.',
         details:
             'Гэта быў пераходны крок: старыя старонкі спаборніцтваў пазней выдалілі цалкам.',
-        link: task(
-            '013-remove-legacy-competition',
-            64,
-            'Задача T013: выдаленне старых маршрутаў спаборніцтваў',
-        ),
     },
     {
         spec: '012-persons-spa',
@@ -227,11 +206,6 @@ const entries: UpdateEntry[] = [
         summary: 'Кіраванне ўдзельнікамі і ўваход перайшлі ў новы інтэрфейс.',
         details:
             'Гэта быў этап ачысткі старых старонак; канчаткова стары вэб-пласт прыбралі пазней.',
-        link: task(
-            '039-retire-legacy-web',
-            26,
-            'Задача T011: канчатковае выдаленне вэб-маршрутаў',
-        ),
     },
     {
         spec: '021-event-view-spa',
@@ -263,8 +237,6 @@ const entries: UpdateEntry[] = [
             'Імпарт пратаколаў OBelarus.net захоўвае вынікі ў патрэбных групах.',
         details:
             'Пры апрацоўцы пратакола назвы груп распазнаюцца паслядоўна без страты сумяшчальнасці.',
-        example: 'Загрузіце пратакол OBelarus.net у патрэбным этапе.',
-        link: site('/app/competitions', 'Знайсці этап'),
     },
     {
         spec: '024-unify-spa-tables',
@@ -386,8 +358,6 @@ const entries: UpdateEntry[] = [
         summary: 'Пратаколы ў фармаце Word HTML падтрымліваюцца пры імпарце.',
         details:
             'Вынікі гэтага фармату распазнаюцца разам з раней падтрымліваемымі пратаколамі.',
-        example: 'Загрузіце Word HTML пратакол у картцы этапу.',
-        link: site('/app/competitions', 'Знайсці этап'),
     },
     {
         spec: '034-cup-event-view-spa',
@@ -406,8 +376,6 @@ const entries: UpdateEntry[] = [
         summary: 'Імпарт падтрымлівае пратакол фармату верасня 2026 года.',
         details:
             'Парсер распазнае змененыя радкі вынікаў без парушэння ранейшых фарматаў.',
-        example: 'Загрузіце пратакол Albatros-Timing у картцы этапу.',
-        link: site('/app/competitions', 'Знайсці этап'),
     },
     {
         spec: '036-albatros-20260718-p-p-20-10',
@@ -416,9 +384,6 @@ const entries: UpdateEntry[] = [
         summary: 'Радкі «п.п. 20.10» апрацоўваюцца карэктна.',
         details:
             'Выпраўлены разбор гэтага запісу ў пратаколе пры захаванні сумяшчальнасці з іншымі вынікамі.',
-        example:
-            'Загрузіце пратакол Albatros-Timing з такім радком у картцы этапу.',
-        link: site('/app/competitions', 'Знайсці этап'),
     },
     {
         spec: '037-cup-table-spa',
@@ -438,7 +403,6 @@ const entries: UpdateEntry[] = [
         details:
             'Выбар захоўваецца паміж наведваннямі; пераключальнік даступны ў верхнім меню.',
         example: 'Націсніце кнопку з месяца або сонцам у шапцы сайта.',
-        link: site('/app/competitions', 'Паглядзець інтэрфейс'),
     },
     {
         spec: '039-retire-legacy-web',
@@ -465,9 +429,7 @@ const entries: UpdateEntry[] = [
         title: 'Гісторыя абнаўленняў',
         summary: 'З’явілася старонка, дзе можна ўбачыць, як змяняўся сайт.',
         details:
-            'Кожная фіча мае кароткае апісанне і падрабязнасці. Актуальныя магчымасці вядуць у адпаведныя раздзелы, а замененыя рашэнні — да задач, якія іх змянілі.',
-        example: 'Раскрыйце запіс ніжэй, каб даведацца больш пра змяненне.',
-        link: site('/app/updates', 'Адкрыць гісторыю абнаўленняў'),
+            'Кожная фіча мае кароткае апісанне і падрабязнасці. Для актуальных магчымасцяў паказаны пераходы ў адпаведныя раздзелы, калі яны дапамагаюць адкрыць функцыю.',
     },
 ]
 

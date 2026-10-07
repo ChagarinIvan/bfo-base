@@ -45,23 +45,12 @@ function formatDate(date: string): string {
                             {{ entry.example }}
                         </p>
                         <RouterLink
-                            v-if="entry.link?.kind === 'site'"
+                            v-if="entry.link"
                             :to="entry.link.href"
                             class="update-entry__link"
                         >
                             {{ entry.link.label }}
-                            <i class="pi pi-arrow-right" aria-hidden="true" />
                         </RouterLink>
-                        <a
-                            v-else-if="entry.link?.kind === 'task'"
-                            :href="entry.link.href"
-                            class="update-entry__link"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            {{ entry.link.label }}
-                            <i class="pi pi-external-link" aria-hidden="true" />
-                        </a>
                     </div>
                 </details>
             </li>

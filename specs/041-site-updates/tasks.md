@@ -66,3 +66,4 @@ Ship US1 first for access and ordering, then US2 for detailed navigation, then U
 - `DB_DATABASE=bfo_base_test composer test` passed: 613 tests, 4402 assertions, 16 PHPUnit notices.
 - Vite dev server started; direct `/app/updates` returned HTML 200. The existing Nginx `/app/*` fallback serves the SPA in production, so no Laravel route was added.
 - Catalog coverage test found 42 unique entries for 42 spec directories. Route and replacement-task links passed validation. No new API/database query path or N+1 risk was introduced. `git diff --check` passed.
+- 2026-10-07: user review removed GitHub links and decorative link arrows. Parser fixes now use description alone; examples and SPA links remain optional where they help users reach a feature. The earlier task-link checks above record the original implementation and are superseded by this editorial change.

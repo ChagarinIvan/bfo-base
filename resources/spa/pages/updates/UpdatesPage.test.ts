@@ -26,7 +26,7 @@ describe('updates page', () => {
         expect(wrapper.text()).toContain('не дата публікацыі')
     })
 
-    it('renders current destinations and checked replacement tasks', () => {
+    it('renders only useful site destinations without arrow icons', () => {
         const wrapper = mount(UpdatesPage, {
             global: {
                 stubs: {
@@ -39,11 +39,17 @@ describe('updates page', () => {
         })
 
         expect(wrapper.find('a[href="/app/cups"]').exists()).toBe(true)
-        expect(
-            wrapper
-                .find('a[href*="specs/039-retire-legacy-web/tasks.md#L26"]')
-                .exists(),
-        ).toBe(true)
+        expect(wrapper.find('a[href^="https://github.com/"]').exists()).toBe(
+            false,
+        )
+        expect(wrapper.find('.update-entry__link .pi').exists()).toBe(false)
+        const parserEntry = wrapper
+            .findAll('.update-entry')
+            .find((entry) =>
+                entry.text().includes('Правільныя групы з OBelarus.net'),
+            )
+        expect(parserEntry?.find('.update-entry__example').exists()).toBe(false)
+        expect(parserEntry?.find('.update-entry__link').exists()).toBe(false)
         expect(wrapper.find('.update-entry__example').exists()).toBe(true)
     })
 })

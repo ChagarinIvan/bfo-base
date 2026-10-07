@@ -10,7 +10,7 @@
 | `summary` | string | One concise sentence |
 | `details` | string | More context, plain text |
 | `example` | optional string | Concrete action/outcome when relevant |
-| `link` | optional `{label, href, kind}` | `site` for current route, `task` for superseding task |
+| `link` | optional `{label, href}` | Current SPA route when navigation helps use the feature |
 
 All entries are immutable source data. Rendering sorts by date descending and full spec slug descending for equal dates; source order does not affect display. There is no user state or database lifecycle.
 
@@ -18,5 +18,5 @@ All entries are immutable source data. Rendering sorts by date descending and fu
 
 - Exactly one entry per spec directory, including 041.
 - Every `site` link points to a route that exists in the SPA without a placeholder ID.
-- Every `task` link identifies a checked task in a later spec and names the replacing change.
-- A replaced entry uses a task link, never an obsolete site route.
+- Parser and other internal fixes need no artificial example or destination.
+- A replaced entry explains the change in text and never links to GitHub or an obsolete route.

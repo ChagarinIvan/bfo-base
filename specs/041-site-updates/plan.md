@@ -6,7 +6,7 @@
 
 ## Summary
 
-Add `/app/updates` to the existing SPA auth guard and authenticated menu. Keep human-written Belarusian entries in a typed static module. Render date, summary, native accessible disclosure and links. Backfill all 41 existing specs plus this one. Record a mandatory update step in the architecture manifest. No API or migration.
+Add `/app/updates` to the existing SPA auth guard and authenticated menu. Keep human-written Belarusian entries in a typed static module. Render date, summary, native accessible disclosure and useful SPA links. Backfill all 41 existing specs plus this one. Record a mandatory update step in the architecture manifest. No API or migration.
 
 ## Technical Context
 
