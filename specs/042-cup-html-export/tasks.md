@@ -27,6 +27,9 @@
 
 - [X] T010 Добавить запись 042 в `resources/spa/pages/updates/updates.ts` и сверить `resources/spa/pages/updates/updates.test.ts`.
 - [X] T011 Сверить [spec.md](spec.md), [contracts/export.md](contracts/export.md), [quickstart.md](quickstart.md) и [checklists/requirements.md](checklists/requirements.md) с реализацией; выполнить узкие тесты, финальные гейты, запуск приложения и проверку числа запросов.
+- [X] T012 Добавить жирное выделение зачётных ячеек в HTML и регрессионный тест сериализатора.
+- [X] T013 Передавать необязательный `groupId` через DTO и command; строить одну группу в сервисе, проверить CSV/HTML и ошибки API.
+- [X] T014 Исправить цвета очков в ночном режиме и добавить индикатор загрузки с блокировкой повторного экспорта; проверить API и компонентные сценарии.
 
 ## Dependencies
 
@@ -34,6 +37,8 @@ T001 предшествует T002–T004. T004–T005 предшествуют 
 
 ## Validation record
 
+- 2026-10-07: Параметр экспорта переименован в `groupId`; при наличии он проверяется через `required`, `string` и шаблон ID группы. API-тесты прошли (6 тестов, 102 проверки), SPA-тесты (10), TypeScript, PHPStan, стиль PHP и `git diff --check` прошли.
+- 2026-10-07: Выделение зачётных ячеек HTML, экспорт одной группы и состояние загрузки прошли узкие PHP и SPA тесты. Полный PHP-набор прошёл: 615 тестов, 4475 проверок, 16 PHPUnit notices. Frontend CI прошёл: 84 файла, 249 тестов и production-сборка. PHPStan, PHP CS Fixer и Rector dry-run прошли; ночные цвета заданы для обоих видов очков. Браузер для ручного просмотра темы в этой сессии недоступен.
 - 2026-10-07: CSV serialization adds UTF-8 BOM for Excel on Windows. Regression test failed before the fix and passed after it; API export tests passed (5 tests, 88 assertions). CSV rows, delimiter and CRLF remain unchanged after the BOM.
 - 2026-10-07: HTML/CSV request tests passed (5 tests, 84 assertions); serializer unit test passed. The HTML and CSV rows match the JSON table for two groups. Warm HTML and CSV exports use the same number of SQL queries.
 - `npm run ci` passed: 84 files, 247 tests and production build. `composer cs`, `composer stan` and `composer rector -- --dry-run` passed.

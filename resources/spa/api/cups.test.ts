@@ -49,6 +49,13 @@ describe('cups API', () => {
             params: { format: 'html' },
             responseType: 'blob',
         })
+
+        await exportCupTable('42', 'html', 'W_45_')
+
+        expect(api.get).toHaveBeenLastCalledWith('/cups/42/export', {
+            params: { format: 'html', groupId: 'W_45_' },
+            responseType: 'blob',
+        })
     })
 
     it('uses V1 API calls for cup maintenance', async () => {

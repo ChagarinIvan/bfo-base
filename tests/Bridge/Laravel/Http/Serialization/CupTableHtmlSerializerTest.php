@@ -23,6 +23,7 @@ final class CupTableHtmlSerializerTest extends TestCase
             new ExportCupTableSectionDto('М21 & Ж21', [
                 new ExportCupTableStageDto(12, '2026-10-07'),
                 new ExportCupTableStageDto(13, '2026-10-08'),
+                new ExportCupTableStageDto(14, '2026-10-09'),
             ], [
                 new ViewCupTableRowDto(
                     1,
@@ -30,7 +31,10 @@ final class CupTableHtmlSerializerTest extends TestCase
                     'Іванов <script>alert("x")</script>',
                     2000,
                     'Клуб & сябры',
-                    [12 => new ViewCupTableStageCellDto(12, '75', true, '1', '2')],
+                    [
+                        12 => new ViewCupTableStageCellDto(12, '75', true, '1', '2'),
+                        13 => new ViewCupTableStageCellDto(13, '25', false, '3', '4'),
+                    ],
                     '75',
                     '75',
                 ),
@@ -46,8 +50,10 @@ final class CupTableHtmlSerializerTest extends TestCase
         $this->assertStringContainsString('Іванов &lt;script&gt;alert(&quot;x&quot;)&lt;/script&gt;', $html);
         $this->assertStringContainsString('Клуб &amp; сябры', $html);
         $this->assertStringContainsString('<th scope="col">2026-10-07</th>', $html);
-        $this->assertStringContainsString('<td>75</td>', $html);
+        $this->assertStringContainsString('<td class="cup-table-result--counted">75</td>', $html);
+        $this->assertStringContainsString('<td>25</td>', $html);
         $this->assertStringContainsString('<td></td>', $html);
+        $this->assertStringNotContainsString('<td class="cup-table-result--counted">25</td>', $html);
         $this->assertStringContainsString('<h2>Ж35</h2>', $html);
         $this->assertSame(2, substr_count($html, '<table>'));
         $this->assertStringNotContainsString('<script>', $html);

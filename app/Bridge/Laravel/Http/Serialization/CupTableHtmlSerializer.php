@@ -23,7 +23,7 @@ final readonly class CupTableHtmlSerializer
             '<head>',
             '<meta charset="UTF-8">',
             '<title>' . $this->escape($export->cupName) . '</title>',
-            '<style>body{font:16px/1.4 sans-serif;margin:2rem;color:#222}table{border-collapse:collapse;width:100%;margin:1rem 0 2rem}th,td{border:1px solid #aaa;padding:.4rem;text-align:left}th{background:#eee}td:nth-child(n+5){text-align:right}@media print{body{margin:0}thead{display:table-header-group}}</style>',
+            '<style>body{font:16px/1.4 sans-serif;margin:2rem;color:#222}table{border-collapse:collapse;width:100%;margin:1rem 0 2rem}th,td{border:1px solid #aaa;padding:.4rem;text-align:left}th{background:#eee}td:nth-child(n+5){text-align:right}.cup-table-result--counted{font-weight:700}@media print{body{margin:0}thead{display:table-header-group}}</style>',
             '</head>',
             '<body>',
             '<h1>' . $this->escape($export->cupName) . '</h1>',
@@ -82,7 +82,9 @@ final readonly class CupTableHtmlSerializer
         ];
 
         foreach ($stages as $stage) {
-            $html[] = '<td>' . $this->escape($row->stages[$stage->stageId]->points ?? '') . '</td>';
+            $cell = $row->stages[$stage->stageId] ?? null;
+            $class = $cell?->counted ? ' class="cup-table-result--counted"' : '';
+            $html[] = '<td' . $class . '>' . $this->escape($cell->points ?? '') . '</td>';
         }
 
         $html[] = '</tr>';

@@ -12,6 +12,7 @@ const props = defineProps<{ cupId: string; firstGroupId?: string }>()
 const route = useRoute()
 const auth = useAuthStore()
 const error = ref('')
+const exportLoading = ref(false)
 const exportMenu = ref<InstanceType<typeof Menu> | null>(null)
 const emit = defineEmits<{ deleteCup: [] }>()
 const exportItems = [
@@ -42,25 +43,32 @@ const eventsUrl = computed(() =>
 )
 
 function toggleExportMenu(event?: globalThis.MouseEvent): void {
-    if (event) {
+    if (event && !exportLoading.value) {
         exportMenu.value?.toggle(event)
     }
 }
 
 async function downloadCupTable(format: 'csv' | 'html') {
+    if (exportLoading.value) return
     error.value = ''
+    exportLoading.value = true
     try {
-        const response = await exportCupTable(props.cupId, format)
+        const groupId = route.params.groupId
+            ? String(route.params.groupId)
+            : undefined
+        const response = await exportCupTable(props.cupId, format, groupId)
         const url = URL.createObjectURL(response.data)
         const link = document.createElement('a')
         link.href = url
-        link.download = `cup-${props.cupId}.${format}`
+        link.download = `cup-${props.cupId}${groupId ? `-${groupId}` : ''}.${format}`
         document.body.append(link)
         link.click()
         link.remove()
         URL.revokeObjectURL(url)
     } catch {
         error.value = t('spa.cups.error')
+    } finally {
+        exportLoading.value = false
     }
 }
 
@@ -124,6 +132,8 @@ async function clearCache() {
             icon="pi pi-download"
             :label="t('app.cup.table.export')"
             severity="info"
+            :disabled="exportLoading"
+            :loading="exportLoading"
             aria-haspopup="menu"
             aria-controls="cup-export-menu"
             @click="toggleExportMenu"

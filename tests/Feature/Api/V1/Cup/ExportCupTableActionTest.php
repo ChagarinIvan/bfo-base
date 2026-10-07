@@ -178,7 +178,39 @@ final class ExportCupTableActionTest extends TestCase
             ->assertUnprocessable()
             ->assertJsonPath('errors.0.field', 'format')
             ->assertHeaderMissing('Content-Disposition');
+        $this->getJson('/api/v1/cups/101/export?format=csv&groupId=M_13_')
+            ->assertUnprocessable()
+            ->assertJsonPath('errors.0.field', 'groupId');
+        $this->getJson('/api/v1/cups/101/export?format=csv&groupId=')
+            ->assertUnprocessable()
+            ->assertJsonPath('errors.0.field', 'groupId');
+        $this->getJson('/api/v1/cups/101/export?format=html&groupId=M_12_')
+            ->assertBadRequest()
+            ->assertJsonPath('errors.0.code', 'cup_group_not_supported');
         $this->getJson('/api/v1/cups/101/tables/M_0_/export')->assertNotFound();
+    }
+
+    #[Test]
+    public function it_exports_only_the_requested_group_in_both_formats(): void
+    {
+        $this->seed(SprintCupLineSeeder::class);
+        Sanctum::actingAs(SanctumUser::query()->create([
+            'email' => fake()->unique()->safeEmail(),
+            'password' => Hash::make('secret'),
+        ]));
+
+        $csv = (string) $this->get('/api/v1/cups/101/export?format=csv&groupId=W_0_')->assertOk()->getContent();
+        $this->assertStringContainsString('Ж', $csv);
+        $this->assertStringNotContainsString("М\r\n", $csv);
+
+        $html = $this->get('/api/v1/cups/101/export?format=html&groupId=W_0_')->assertOk()->getContent();
+        $document = new DOMDocument();
+        $this->assertTrue($document->loadHTML($html, LIBXML_NONET | LIBXML_NOERROR | LIBXML_NOWARNING));
+        $sections = $document->getElementsByTagName('section');
+        $this->assertCount(1, $sections);
+        $section = $sections->item(0);
+        $this->assertInstanceOf(DOMElement::class, $section);
+        $this->assertSame('Ж', $section->getElementsByTagName('h2')->item(0)?->textContent);
     }
 
     #[Test]

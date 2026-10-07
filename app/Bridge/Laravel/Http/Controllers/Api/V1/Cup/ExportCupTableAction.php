@@ -22,7 +22,7 @@ final class ExportCupTableAction extends BaseController
         ExportCupTableService $service,
         CupTableExportResponseAssembler $assembler,
     ): Response {
-        $export = $service->execute(new ExportCupTable($cupId));
+        $export = $service->execute(new ExportCupTable($cupId, $dto->groupId));
 
         return $assembler->toResponse($export, $dto);
     }
