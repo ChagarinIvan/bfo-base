@@ -30,7 +30,7 @@ describe('static updates catalog', () => {
                     b.spec.localeCompare(a.spec),
             ),
         )
-        expect(updates[0]?.spec).toBe('041-site-updates')
+        expect(updates[0]?.spec).toBe('042-cup-html-export')
     })
 
     it('links only to existing SPA routes when a destination is useful', () => {

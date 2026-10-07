@@ -36,6 +36,7 @@ final class CupTableCsvSerializerTest extends TestCase
 
         $csv = new CupTableCsvSerializer()->serialize($export);
 
+        $this->assertStringStartsWith("\xEF\xBB\xBF", $csv);
         $this->assertStringContainsString("Место;ФИО;Год;Клуб;Очки;2026-09-26\r\n", $csv);
         $this->assertStringContainsString('"Last; ""First"""', $csv);
         $this->assertStringContainsString("\"Club\r\nNorth\"", $csv);

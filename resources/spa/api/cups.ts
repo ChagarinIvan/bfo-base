@@ -61,8 +61,11 @@ export async function getCupTable(
     return response
 }
 
-export async function exportCupTable(cupId: string) {
-    return api.get<Blob>(`/cups/${cupId}/export`, { responseType: 'blob' })
+export async function exportCupTable(cupId: string, format: 'csv' | 'html') {
+    return api.get<Blob>(`/cups/${cupId}/export`, {
+        params: { format },
+        responseType: 'blob',
+    })
 }
 
 export async function deleteCup(cupId: string) {

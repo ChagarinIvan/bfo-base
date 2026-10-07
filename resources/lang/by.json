@@ -27,6 +27,8 @@
     "app.rank.activate": "Актываваць разрад?",
     "app.rank.submit": "Актываваць",
     "app.cup.table.export": "Экспарт",
+    "app.cup.table.export.csv": "CSV",
+    "app.cup.table.export.html": "HTML",
     "app.rank.activation": "Актывацыя разраду",
     "app.rank.activation.edit": "Змяніць актывацыю",
     "app.common.name": "Імя",
