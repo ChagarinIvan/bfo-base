@@ -613,6 +613,16 @@ body {
     color: #c62828 !important;
 }
 
+.app-night-mode .cup-table-result--counted {
+    background-color: #123b32;
+    color: #a7f3d0 !important;
+}
+
+.app-night-mode .cup-table-result--not-counted {
+    background-color: #4b252d;
+    color: #fecaca !important;
+}
+
 [id^='protocol-line-'] {
     scroll-margin-top: var(--listing-table-scroll-offset, 12rem);
 }

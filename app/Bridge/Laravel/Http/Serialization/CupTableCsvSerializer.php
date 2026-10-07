@@ -11,6 +11,7 @@ use function array_map;
 use function fclose;
 use function fopen;
 use function fputcsv;
+use function fwrite;
 use function rewind;
 use function str_replace;
 use function stream_get_contents;
@@ -24,6 +25,8 @@ final readonly class CupTableCsvSerializer
         if ($stream === false) {
             throw new RuntimeException('Unable to open CSV stream.');
         }
+
+        fwrite($stream, "\xEF\xBB\xBF");
 
         foreach ($export->sections as $section) {
             fputcsv($stream, [$section->groupName], ';', '"', '');

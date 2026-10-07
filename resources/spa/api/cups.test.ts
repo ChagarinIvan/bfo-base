@@ -36,9 +36,24 @@ describe('cups API', () => {
     it('downloads the cup export through the authenticated API client', async () => {
         vi.mocked(api.get).mockResolvedValue({ data: new Blob(['csv']) })
 
-        await exportCupTable('42')
+        await exportCupTable('42', 'csv')
 
         expect(api.get).toHaveBeenCalledWith('/cups/42/export', {
+            params: { format: 'csv' },
+            responseType: 'blob',
+        })
+
+        await exportCupTable('42', 'html')
+
+        expect(api.get).toHaveBeenCalledWith('/cups/42/export', {
+            params: { format: 'html' },
+            responseType: 'blob',
+        })
+
+        await exportCupTable('42', 'html', 'W_45_')
+
+        expect(api.get).toHaveBeenLastCalledWith('/cups/42/export', {
+            params: { format: 'html', groupId: 'W_45_' },
             responseType: 'blob',
         })
     })

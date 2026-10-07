@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import Message from 'primevue/message'
+import Menu from 'primevue/menu'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import { t } from '../i18n'
@@ -11,7 +12,19 @@ const props = defineProps<{ cupId: string; firstGroupId?: string }>()
 const route = useRoute()
 const auth = useAuthStore()
 const error = ref('')
+const exportLoading = ref(false)
+const exportMenu = ref<InstanceType<typeof Menu> | null>(null)
 const emit = defineEmits<{ deleteCup: [] }>()
+const exportItems = [
+    {
+        label: t('app.cup.table.export.csv'),
+        command: () => void downloadCupTable('csv'),
+    },
+    {
+        label: t('app.cup.table.export.html'),
+        command: () => void downloadCupTable('html'),
+    },
+]
 const selectedGroupId = computed(() =>
     String(
         route.params.groupId ?? route.query.groupId ?? props.firstGroupId ?? '',
@@ -29,20 +42,33 @@ const eventsUrl = computed(() =>
         : `/app/cups/${props.cupId}`,
 )
 
-async function downloadCupTable() {
+function toggleExportMenu(event?: globalThis.MouseEvent): void {
+    if (event && !exportLoading.value) {
+        exportMenu.value?.toggle(event)
+    }
+}
+
+async function downloadCupTable(format: 'csv' | 'html') {
+    if (exportLoading.value) return
     error.value = ''
+    exportLoading.value = true
     try {
-        const response = await exportCupTable(props.cupId)
+        const groupId = route.params.groupId
+            ? String(route.params.groupId)
+            : undefined
+        const response = await exportCupTable(props.cupId, format, groupId)
         const url = URL.createObjectURL(response.data)
         const link = document.createElement('a')
         link.href = url
-        link.download = `cup-${props.cupId}.csv`
+        link.download = `cup-${props.cupId}${groupId ? `-${groupId}` : ''}.${format}`
         document.body.append(link)
         link.click()
         link.remove()
         URL.revokeObjectURL(url)
     } catch {
         error.value = t('spa.cups.error')
+    } finally {
+        exportLoading.value = false
     }
 }
 
@@ -106,7 +132,18 @@ async function clearCache() {
             icon="pi pi-download"
             :label="t('app.cup.table.export')"
             severity="info"
-            @click="downloadCupTable"
+            :disabled="exportLoading"
+            :loading="exportLoading"
+            aria-haspopup="menu"
+            aria-controls="cup-export-menu"
+            @click="toggleExportMenu"
+        />
+        <Menu
+            v-if="auth.isAuthenticated"
+            id="cup-export-menu"
+            ref="exportMenu"
+            :model="exportItems"
+            popup
         />
         <ActionButton
             v-if="auth.isAuthenticated"

@@ -15,6 +15,8 @@ use App\Domain\PersonPayment\PersonPayment;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Infrastructure\Sanctum\SanctumUser;
 use Database\Seeders\SprintCupLineSeeder;
+use DOMDocument;
+use DOMElement;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -26,8 +28,12 @@ use function count;
 use function fclose;
 use function fgetcsv;
 use function fopen;
+use function fread;
 use function fwrite;
 use function rewind;
+use const LIBXML_NOERROR;
+use const LIBXML_NONET;
+use const LIBXML_NOWARNING;
 
 /**
  * @see ExportCupTableAction
@@ -40,6 +46,7 @@ final class ExportCupTableActionTest extends TestCase
     public function it_requires_authentication_and_returns_the_csv_export(): void
     {
         $this->get('/api/v1/cups/101/export')->assertUnauthorized();
+        $this->get('/api/v1/cups/101/export?format=html')->assertUnauthorized();
 
         $this->seed(SprintCupLineSeeder::class);
         Sanctum::actingAs(SanctumUser::query()->create([
@@ -47,7 +54,7 @@ final class ExportCupTableActionTest extends TestCase
             'password' => Hash::make('secret'),
         ]));
 
-        $this->get('/api/v1/cups/101/export')
+        $csv = $this->get('/api/v1/cups/101/export')
             ->assertOk()
             ->assertHeader('Content-Type', 'text/csv; charset=UTF-8')
             ->assertHeader('Content-Disposition')
@@ -56,6 +63,22 @@ final class ExportCupTableActionTest extends TestCase
             ->assertSeeText(new CupGroup(GroupMale::Man)->name())
             ->assertSeeText(new CupGroup(GroupMale::Woman)->name())
         ;
+
+        $explicitCsv = $this->get('/api/v1/cups/101/export?format=csv')
+            ->assertOk()
+            ->assertHeader('Content-Type', 'text/csv; charset=UTF-8');
+        $this->assertStringStartsWith("\xEF\xBB\xBF", $csv->getContent());
+        $this->assertSame($csv->getContent(), $explicitCsv->getContent());
+
+        $html = $this->get('/api/v1/cups/101/export?format=html')
+            ->assertOk()
+            ->assertHeader('Content-Type', 'text/html; charset=UTF-8')
+            ->assertHeader('Content-Disposition')
+            ->assertSee('<!doctype html>', false)
+            ->assertSeeText(new CupGroup(GroupMale::Man)->name())
+            ->assertSeeText(new CupGroup(GroupMale::Woman)->name())
+            ->assertSeeText('Миссюревич Алексей');
+        $this->assertStringContainsString('.html', (string) $html->headers->get('Content-Disposition'));
     }
 
     #[Test]
@@ -92,22 +115,44 @@ final class ExportCupTableActionTest extends TestCase
         $this->assertNotFalse($csv);
         fwrite($csv, $export->getContent());
         rewind($csv);
+        $this->assertSame("\xEF\xBB\xBF", fread($csv, 3));
 
-        foreach ([new CupGroup(GroupMale::Man), new CupGroup(GroupMale::Woman)] as $group) {
+        $html = $this->get('/api/v1/cups/101/export?format=html')->assertOk();
+        $document = new DOMDocument();
+        $this->assertTrue($document->loadHTML($html->getContent(), LIBXML_NONET | LIBXML_NOERROR | LIBXML_NOWARNING));
+        $sections = $document->getElementsByTagName('section');
+        $this->assertCount(2, $sections);
+
+        foreach ([new CupGroup(GroupMale::Man), new CupGroup(GroupMale::Woman)] as $sectionIndex => $group) {
             $table = $this->getJson('/api/v1/cups/101/tables/' . $group->id())->assertOk()->json();
             $this->assertNotEmpty($table);
+            $section = $sections->item($sectionIndex);
+            $this->assertInstanceOf(DOMElement::class, $section);
+            $this->assertSame($group->name(), $section->getElementsByTagName('h2')->item(0)?->textContent);
+            $body = $section->getElementsByTagName('tbody')->item(0);
+            $this->assertInstanceOf(DOMElement::class, $body);
+            $htmlRows = $body->getElementsByTagName('tr');
+            $this->assertCount(count($table), $htmlRows);
             $this->assertSame([$group->name()], fgetcsv($csv, 0, ';', '"', ''));
             $this->assertSame(['Место', 'ФИО', 'Год', 'Клуб', 'Очки', '2024-04-12'], fgetcsv($csv, 0, ';', '"', ''));
 
-            foreach ($table as $row) {
-                $this->assertSame([
+            foreach ($table as $rowIndex => $row) {
+                $expected = [
                     (string) $row['place'],
                     $row['personName'],
                     (string) $row['personYear'],
                     $row['clubName'],
                     $row['totalPoints'],
                     $row['stages']['101']['points'],
-                ], fgetcsv($csv, 0, ';', '"', ''));
+                ];
+                $this->assertSame($expected, fgetcsv($csv, 0, ';', '"', ''));
+                $htmlRow = $htmlRows->item($rowIndex);
+                $this->assertInstanceOf(DOMElement::class, $htmlRow);
+                $htmlValues = [];
+                foreach ($htmlRow->getElementsByTagName('td') as $cell) {
+                    $htmlValues[] = $cell->textContent;
+                }
+                $this->assertSame($expected, $htmlValues);
             }
 
             $this->assertSame([null], fgetcsv($csv, 0, ';', '"', ''));
@@ -128,7 +173,44 @@ final class ExportCupTableActionTest extends TestCase
         ]));
 
         $this->getJson('/api/v1/cups/999999/export')->assertNotFound()->assertJsonPath('errors.0.code', 'cup_not_found');
+        $this->getJson('/api/v1/cups/999999/export?format=html')->assertNotFound()->assertJsonPath('errors.0.code', 'cup_not_found');
+        $this->getJson('/api/v1/cups/101/export?format=pdf')
+            ->assertUnprocessable()
+            ->assertJsonPath('errors.0.field', 'format')
+            ->assertHeaderMissing('Content-Disposition');
+        $this->getJson('/api/v1/cups/101/export?format=csv&groupId=M_13_')
+            ->assertUnprocessable()
+            ->assertJsonPath('errors.0.field', 'groupId');
+        $this->getJson('/api/v1/cups/101/export?format=csv&groupId=')
+            ->assertUnprocessable()
+            ->assertJsonPath('errors.0.field', 'groupId');
+        $this->getJson('/api/v1/cups/101/export?format=html&groupId=M_12_')
+            ->assertBadRequest()
+            ->assertJsonPath('errors.0.code', 'cup_group_not_supported');
         $this->getJson('/api/v1/cups/101/tables/M_0_/export')->assertNotFound();
+    }
+
+    #[Test]
+    public function it_exports_only_the_requested_group_in_both_formats(): void
+    {
+        $this->seed(SprintCupLineSeeder::class);
+        Sanctum::actingAs(SanctumUser::query()->create([
+            'email' => fake()->unique()->safeEmail(),
+            'password' => Hash::make('secret'),
+        ]));
+
+        $csv = (string) $this->get('/api/v1/cups/101/export?format=csv&groupId=W_0_')->assertOk()->getContent();
+        $this->assertStringContainsString('Ж', $csv);
+        $this->assertStringNotContainsString("М\r\n", $csv);
+
+        $html = $this->get('/api/v1/cups/101/export?format=html&groupId=W_0_')->assertOk()->getContent();
+        $document = new DOMDocument();
+        $this->assertTrue($document->loadHTML($html, LIBXML_NONET | LIBXML_NOERROR | LIBXML_NOWARNING));
+        $sections = $document->getElementsByTagName('section');
+        $this->assertCount(1, $sections);
+        $section = $sections->item(0);
+        $this->assertInstanceOf(DOMElement::class, $section);
+        $this->assertSame('Ж', $section->getElementsByTagName('h2')->item(0)?->textContent);
     }
 
     #[Test]
@@ -144,6 +226,12 @@ final class ExportCupTableActionTest extends TestCase
         $this->get('/api/v1/cups/101/export')
             ->assertOk()
             ->assertSeeText('Место;ФИО;Год;Клуб;Очки')
+            ->assertDontSeeText('Миссюревич Алексей');
+
+        $this->get('/api/v1/cups/101/export?format=html')
+            ->assertOk()
+            ->assertSeeText('Место')
+            ->assertSeeText(new CupGroup(GroupMale::Man)->name())
             ->assertDontSeeText('Миссюревич Алексей');
     }
 
@@ -163,8 +251,12 @@ final class ExportCupTableActionTest extends TestCase
         DB::flushQueryLog();
         $this->get('/api/v1/cups/101/export')->assertOk();
         $warmQueries = count(DB::getQueryLog());
+        DB::flushQueryLog();
+        $this->get('/api/v1/cups/101/export?format=html')->assertOk();
+        $htmlQueries = count(DB::getQueryLog());
         DB::disableQueryLog();
 
         $this->assertLessThan($coldQueries, $warmQueries);
+        $this->assertSame($warmQueries, $htmlQueries);
     }
 }
