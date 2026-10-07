@@ -7,8 +7,10 @@ export interface NavigationItem {
         | 'spa.nav.groups'
         | 'spa.nav.registration'
         | 'spa.nav.rank_checks'
+        | 'spa.nav.updates'
     href: string
     spa?: boolean
+    icon?: string
 }
 
 export const competitionNavigation: NavigationItem[] = [
@@ -30,4 +32,10 @@ export const authenticatedCompetitionNavigation: NavigationItem[] = []
 
 export const authenticatedAccountNavigation: NavigationItem[] = [
     { label: 'spa.nav.registration', href: '/app/registration', spa: true },
+    {
+        label: 'spa.nav.updates',
+        href: '/app/updates',
+        spa: true,
+        icon: 'pi pi-history',
+    },
 ]

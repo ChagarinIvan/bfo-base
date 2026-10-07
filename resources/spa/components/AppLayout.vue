@@ -227,10 +227,12 @@ async function openHorizon(): Promise<void> {
                             class="app-nav-link"
                             :to="item.href"
                         >
-                            <i class="pi pi-user-plus" /> {{ t(item.label) }}
+                            <i :class="item.icon ?? 'pi pi-user-plus'" />
+                            {{ t(item.label) }}
                         </RouterLink>
                         <a v-else class="app-nav-link" :href="item.href">
-                            <i class="pi pi-user-plus" /> {{ t(item.label) }}
+                            <i :class="item.icon ?? 'pi pi-user-plus'" />
+                            {{ t(item.label) }}
                         </a>
                     </template>
                     <button

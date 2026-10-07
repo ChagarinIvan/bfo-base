@@ -49,6 +49,7 @@ import CreateCupEventPage from '../pages/cups/CreateCupEventPage.vue'
 import EditCupEventPage from '../pages/cups/EditCupEventPage.vue'
 import CupEventViewPage from '../pages/cups/CupEventViewPage.vue'
 import CupTablePage from '../pages/cups/CupTablePage.vue'
+import UpdatesPage from '../pages/updates/UpdatesPage.vue'
 
 export function createAppRouter(
     history: RouterHistory = typeof window === 'undefined'
@@ -58,6 +59,11 @@ export function createAppRouter(
     const router = createRouter({
         history,
         routes: [
+            {
+                path: '/app/updates',
+                component: UpdatesPage,
+                meta: { requiresAuth: true },
+            },
             { path: '/app/competitions', component: CompetitionsPage },
             { path: '/app/cups', component: CupsPage },
             {
