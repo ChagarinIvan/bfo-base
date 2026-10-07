@@ -57,6 +57,13 @@ beforeEach(() => {
 })
 
 describe('hybrid SPA navbar', () => {
+    it('shows updates only in the authenticated menu', () => {
+        expect(mountLayout().find('a[href="/app/updates"]').exists()).toBe(
+            false,
+        )
+        auth.isAuthenticated = true
+        expect(mountLayout().find('a[href="/app/updates"]').exists()).toBe(true)
+    })
     it('shows the appearance control for anonymous visitors', () => {
         const wrapper = mountLayout()
         const toggle = wrapper.get('.app-appearance-toggle')
@@ -123,7 +130,7 @@ describe('hybrid SPA navbar', () => {
             ['/app/rank-checks'],
         )
         expect(authenticatedAccountNavigation.map((item) => item.href)).toEqual(
-            ['/app/registration'],
+            ['/app/registration', '/app/updates'],
         )
         expect(
             [

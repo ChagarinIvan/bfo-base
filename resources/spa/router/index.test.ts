@@ -1,6 +1,7 @@
 import { createMemoryHistory } from 'vue-router'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { createPinia, setActivePinia } from 'pinia'
+import { useAuthStore } from '../stores/auth'
 import {
     authenticatedAccountNavigation,
     authenticatedCompetitionNavigation,
@@ -58,6 +59,22 @@ describe('SPA navigation guard', () => {
         expect(router.currentRoute.value.query.return).toBe(
             '/app/competitions/create',
         )
+    })
+
+    it('protects updates and preserves the return path', async () => {
+        const router = createAppRouter(createMemoryHistory())
+
+        await router.push('/app/updates')
+        expect(router.currentRoute.value.path).toBe('/app/login')
+        expect(router.currentRoute.value.query.return).toBe('/app/updates')
+
+        setActivePinia(createPinia())
+        const auth = useAuthStore()
+        auth.token = 'test-token'
+        auth.horizonAccessCheckedFor = 'test-token'
+        const authenticatedRouter = createAppRouter(createMemoryHistory())
+        await authenticatedRouter.push('/app/updates')
+        expect(authenticatedRouter.currentRoute.value.path).toBe('/app/updates')
     })
 
     it('resolves the public competition details route', async () => {
