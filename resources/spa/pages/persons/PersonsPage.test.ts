@@ -157,7 +157,7 @@ describe('persons page', () => {
         await flushPromises()
         const exportButton = wrapper
             .findAll('button')
-            .find((button) => button.text() === 'Экспарт CSV')
+            .find((button) => button.text() === 'Экспарт')
         expect(exportButton).toBeDefined()
         await exportButton?.trigger('click')
         await flushPromises()

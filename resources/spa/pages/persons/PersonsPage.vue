@@ -179,7 +179,8 @@ onBeforeUnmount(() => debouncedNameSearch.cancel())
             <Button
                 v-if="auth.isAuthenticated"
                 type="button"
-                :label="t('spa.person.export_csv')"
+                class="persons-export-button"
+                :label="t('spa.person.export')"
                 icon="pi pi-download"
                 severity="info"
                 :disabled="exportLoading"

@@ -290,7 +290,7 @@
     "spa.person.all_options": "Усе",
     "spa.person.loading": "Загрузка…",
     "spa.person.error": "Не атрымалася загрузіць удзельнікаў.",
-    "spa.person.export_csv": "Экспарт CSV",
+    "spa.person.export": "Экспарт",
     "spa.person.export_error": "Не атрымалася спампаваць CSV з разрадамі.",
     "spa.person.retry": "Паўтарыць",
     "spa.person.empty": "Удзельнікі не знойдзены.",
