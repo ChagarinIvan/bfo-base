@@ -40,6 +40,7 @@
 - [X] T016 Перенести исключение нулевых строк в `app/Domain/Cup/Table/StandardCupTableBuilder.php`, добавить флаг в `app/Domain/Cup/Table/CupTableBuilder.php` и отдельный вариант кэша в `app/Infrastructure/Laravel/Cache/CachedCupTableBuilder.php`; проверить сохранение мест, вызов из сервиса и API.
 - [X] T017 Убрать отдельные `PersonSearchQuery` и `EloquentPersonRankExportRepository`; перенести построение запроса и `exportByCriteria()` в `EloquentPersonRepository` и проверить список и CSV.
 - [X] T018 Убрать `PersonRankExportRepository`, объявить `exportByCriteria()` в `PersonRepository` и перевести сервис экспорта на этот интерфейс.
+- [X] T019 Защитить поля CSV персон, которые Excel может интерпретировать как формулы, в `app/Bridge/Laravel/Http/Serialization/PersonRanksCsvSerializer.php`; добавить request-тест и уточнить контракт.
 
 ## Dependencies
 
@@ -65,3 +66,4 @@ T018 завершает объединение репозитория персо
 - 2026-10-09: После переноса фильтра в билдер прошли 5 узких unit-тестов (79 проверок), 10 API-тестов (68 проверок), PHPStan, PHP CS Fixer, Rector dry-run и `git diff --check`.
 - 2026-10-09: После объединения реализации поиска и экспорта персон прошли 9 узких тестов репозитория и API (95 проверок), PHPStan, PHP CS Fixer, Rector dry-run и `git diff --check`.
 - 2026-10-09: После удаления отдельного интерфейса экспорта полный PHPUnit прошёл 619 тестов и 4549 проверок, зафиксировано 15 notices. Frontend CI прошёл 84 файла и 251 тест, lint, typecheck и production-сборку. PHPStan, PHP CS Fixer, Rector dry-run и `git diff --check` прошли.
+- 2026-10-09: Защитный префикс CSV проверен узким request-набором: 4 теста, 89 проверок. PHPStan, PHP CS Fixer, Rector dry-run и `git diff --check` прошли.

@@ -8,13 +8,25 @@ use App\Domain\Person\PersonRankExportRow;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use function array_map;
 use function fopen;
 use function fputcsv;
 use function fwrite;
+use function in_array;
 use function is_resource;
+use function mb_substr;
 
 final readonly class PersonRanksCsvSerializer
 {
+    private static function asSpreadsheetText(string $value): string
+    {
+        $first = mb_substr($value, 0, 1);
+        if (in_array($first, ['=', '+', '-', '@', "\t", "\r", "\n", "\0", '＝', '＋', '－', '＠'], true)) {
+            return "\t" . $value;
+        }
+
+        return $value;
+    }
     /** @param iterable<PersonRankExportRow> $rows */
     public function toResponse(iterable $rows): StreamedResponse
     {
@@ -27,7 +39,12 @@ final readonly class PersonRanksCsvSerializer
             fwrite($stream, "\xEF\xBB\xBF");
             fputcsv($stream, ['lastname', 'firstname', 'birthday', 'rank'], ';', '"', '', "\r\n");
             foreach ($rows as $row) {
-                fputcsv($stream, [$row->lastname, $row->firstname, $row->birthYear, $row->rank], ';', '"', '', "\r\n");
+                fputcsv($stream, array_map(self::asSpreadsheetText(...), [
+                    $row->lastname,
+                    $row->firstname,
+                    $row->birthYear,
+                    $row->rank,
+                ]), ';', '"', '', "\r\n");
             }
         }, 200, ['Content-Type' => 'text/csv; charset=UTF-8']);
         $response->headers->set('Content-Disposition', $response->headers->makeDisposition(

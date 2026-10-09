@@ -22,7 +22,7 @@
 
 ## Constitution Check
 
-- Новый сценарий персон: Bridge action создаёт command, Application service получает `Criteria` через command и вызывает `PersonRepository::exportByCriteria()`. `EloquentPersonRepository` строит общий запрос для списка и экспорта, а строки экспорта читает порциями.
+- Новый сценарий персон: Bridge action создаёт command, Application service получает `Criteria` через command и вызывает `PersonRepository::exportByCriteria()`. `EloquentPersonRepository` строит общий запрос для списка и экспорта, а строки экспорта читает порциями. Bridge-сериализатор защищает ячейки CSV, похожие на формулы Excel.
 - Экспорт кубка: существующие Application service и общий DTO остаются источником данных. Сервис передаёт билдеру таблицы флаг исключения нулевых итогов только для выбранной группы. Кэш использует отдельный ключ для отфильтрованной таблицы. XLSX и HTML сериализуются на Bridge boundary.
 - Запись данных, мутация агрегата, событие, транзакция и политика удаления не применяются. N+1 исключается выборкой только нужных полей CSV и существующим кэшем таблиц кубка.
 - API request-тесты имеют `@see` на action. Поведение покрывают PHP и SPA тесты.

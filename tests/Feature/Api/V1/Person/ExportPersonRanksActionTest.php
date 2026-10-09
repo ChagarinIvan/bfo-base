@@ -107,4 +107,43 @@ final class ExportPersonRanksActionTest extends TestCase
         );
         $this->assertStringContainsString(';;б/р', $this->get('/api/v1/persons/export')->assertOk()->streamedContent());
     }
+
+    #[Test]
+    public function it_exports_formula_like_names_as_spreadsheet_text(): void
+    {
+        foreach (['=1+1', '+2', '-3', '@SUM(1;1)', "\t=4", "\r=5", "\n=6", '＝7', 'Альфа'] as $index => $lastname) {
+            Person::factory()->createOne([
+                'id' => $index + 1,
+                'lastname' => $lastname,
+                'firstname' => $index === 0 ? '+8' : 'Ян',
+            ]);
+        }
+        Sanctum::actingAs(SanctumUser::query()->create([
+            'email' => fake()->unique()->safeEmail(),
+            'password' => 'secret',
+        ]));
+
+        $csv = $this->get('/api/v1/persons/export')->assertOk()->streamedContent();
+        $this->assertStringContainsString("\"\t=1+1\";\"\t+8\"", $csv);
+
+        $stream = fopen('php://temp', 'w+b');
+        $this->assertNotFalse($stream);
+        fwrite($stream, $csv);
+        rewind($stream);
+        fread($stream, 3);
+        fgetcsv($stream, 0, ';', '"', '');
+        $lastnames = [];
+        while (($row = fgetcsv($stream, 0, ';', '"', '')) !== false) {
+            $lastnames[] = $row[0];
+            if ($row[0] === "\t=1+1") {
+                $this->assertSame("\t+8", $row[1]);
+            }
+        }
+        fclose($stream);
+
+        $this->assertEqualsCanonicalizing(
+            ["\t=1+1", "\t+2", "\t-3", "\t@SUM(1;1)", "\t\t=4", "\t\r=5", "\t\n=6", "\t＝7", 'Альфа'],
+            $lastnames,
+        );
+    }
 }
