@@ -8,13 +8,13 @@ use App\Application\Dto\AbstractDto;
 
 final class ExportCupTableRequestDto extends AbstractDto
 {
-    public string $format = 'csv';
+    public string $format = 'xlsx';
     public ?string $groupId = null;
 
     public static function requestValidationRules(): array
     {
         return [
-            'format' => 'sometimes|required|string|in:csv,html',
+            'format' => 'sometimes|required|string|in:xlsx,html',
             'groupId' => [
                 'sometimes',
                 'required',

@@ -28,11 +28,11 @@ final readonly class ExportCupTableService
     public function execute(ExportCupTable $command): ExportCupTableDto
     {
         $cup = $this->cups->byId($command->cupId()) ?? throw new CupNotFound();
-        $group = $command->group();
+        $requestedGroup = $command->group();
 
-        if ($group !== null) {
+        if ($requestedGroup !== null) {
             try {
-                $cup->assertGroupSupported($group);
+                $cup->assertGroupSupported($requestedGroup);
             } catch (DomainCupGroupNotSupported $exception) {
                 throw new UnsupportedCupGroup($exception);
             }
@@ -45,10 +45,15 @@ final readonly class ExportCupTableService
 
         $sections = [];
 
-        foreach ($group === null ? $cup->groups() : [$group] as $group) {
+        foreach ($requestedGroup === null ? $cup->groups() : [$requestedGroup] as $group) {
             $sections[] = [
                 'group' => $group,
-                'table' => $this->builder->build($cup, $events, $group),
+                'table' => $this->builder->build(
+                    $cup,
+                    $events,
+                    $group,
+                    excludeZeroPointRows: $requestedGroup !== null,
+                ),
             ];
         }
 

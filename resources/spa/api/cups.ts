@@ -63,7 +63,7 @@ export async function getCupTable(
 
 export async function exportCupTable(
     cupId: string,
-    format: 'csv' | 'html',
+    format: 'xlsx' | 'html',
     groupId?: string,
 ) {
     return api.get<Blob>(`/cups/${cupId}/export`, {

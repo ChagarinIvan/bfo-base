@@ -9,6 +9,7 @@ use App\Application\Dto\Cup\ExportCupTableSectionDto;
 use App\Application\Dto\Cup\ExportCupTableStageDto;
 use App\Application\Dto\Cup\ViewCupTableRowDto;
 use App\Application\Dto\Cup\ViewCupTableStageCellDto;
+use App\Bridge\Laravel\Http\Serialization\CupTableExportLayout;
 use App\Bridge\Laravel\Http\Serialization\CupTableHtmlSerializer;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -42,14 +43,15 @@ final class CupTableHtmlSerializerTest extends TestCase
             new ExportCupTableSectionDto('Ж35', [], []),
         ]);
 
-        $html = new CupTableHtmlSerializer()->serialize($export);
+        $html = new CupTableHtmlSerializer(new CupTableExportLayout())->serialize($export);
 
         $this->assertStringContainsString('<!doctype html>', $html);
         $this->assertStringContainsString('Кубок &lt;восень&gt;', $html);
         $this->assertStringContainsString('М21 &amp; Ж21', $html);
         $this->assertStringContainsString('Іванов &lt;script&gt;alert(&quot;x&quot;)&lt;/script&gt;', $html);
-        $this->assertStringContainsString('Клуб &amp; сябры', $html);
-        $this->assertStringContainsString('<th scope="col">2026-10-07</th>', $html);
+        $this->assertStringNotContainsString('Клуб &amp; сябры', $html);
+        $this->assertStringContainsString('<th scope="col">07.10</th>', $html);
+        $this->assertStringContainsString('<th scope="col">Сярэдняе</th>', $html);
         $this->assertStringContainsString('<td class="cup-table-result--counted">75</td>', $html);
         $this->assertStringContainsString('<td>25</td>', $html);
         $this->assertStringContainsString('<td></td>', $html);

@@ -17,8 +17,8 @@ const exportMenu = ref<InstanceType<typeof Menu> | null>(null)
 const emit = defineEmits<{ deleteCup: [] }>()
 const exportItems = [
     {
-        label: t('app.cup.table.export.csv'),
-        command: () => void downloadCupTable('csv'),
+        label: t('app.cup.table.export.xlsx'),
+        command: () => void downloadCupTable('xlsx'),
     },
     {
         label: t('app.cup.table.export.html'),
@@ -48,7 +48,7 @@ function toggleExportMenu(event?: globalThis.MouseEvent): void {
     }
 }
 
-async function downloadCupTable(format: 'csv' | 'html') {
+async function downloadCupTable(format: 'xlsx' | 'html') {
     if (exportLoading.value) return
     error.value = ''
     exportLoading.value = true

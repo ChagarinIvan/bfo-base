@@ -91,7 +91,10 @@ describe('cup info navigation', () => {
             label: string
             command: () => void
         }>
-        expect(items.map((item) => item.label)).toEqual(['CSV', 'HTML'])
+        expect(items.map((item) => item.label)).toEqual([
+            'Excel (XLSX)',
+            'HTML',
+        ])
 
         vi.mocked(exportCupTable).mockResolvedValue({
             data: new Blob(['table']),
@@ -116,10 +119,10 @@ describe('cup info navigation', () => {
         items[1]?.command()
         await flushPromises()
 
-        expect(exportCupTable).toHaveBeenCalledWith('42', 'csv', 'M_0_')
+        expect(exportCupTable).toHaveBeenCalledWith('42', 'xlsx', 'M_0_')
         expect(exportCupTable).toHaveBeenCalledWith('42', 'html', 'M_0_')
         expect(click).toHaveBeenCalledTimes(2)
-        expect(downloads).toEqual(['cup-42-M_0_.csv', 'cup-42-M_0_.html'])
+        expect(downloads).toEqual(['cup-42-M_0_.xlsx', 'cup-42-M_0_.html'])
 
         vi.mocked(exportCupTable).mockRejectedValueOnce(
             new Error('download failed'),
@@ -160,7 +163,7 @@ describe('cup info navigation', () => {
         items[0]?.command()
         await flushPromises()
 
-        expect(exportCupTable).toHaveBeenCalledWith('42', 'csv', undefined)
+        expect(exportCupTable).toHaveBeenCalledWith('42', 'xlsx', undefined)
         click.mockRestore()
         route.params.groupId = 'M_0_'
     })

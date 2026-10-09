@@ -4,15 +4,17 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import PersonsPage from './PersonsPage.vue'
 
-const { getClubOptions, getPersons, getRanks, getUsers } = vi.hoisted(() => ({
-    getClubOptions: vi.fn(),
-    getPersons: vi.fn(),
-    getRanks: vi.fn(),
-    getUsers: vi.fn(),
-}))
+const { exportPersonRanks, getClubOptions, getPersons, getRanks, getUsers } =
+    vi.hoisted(() => ({
+        exportPersonRanks: vi.fn(),
+        getClubOptions: vi.fn(),
+        getPersons: vi.fn(),
+        getRanks: vi.fn(),
+        getUsers: vi.fn(),
+    }))
 
 vi.mock('../../api/clubs', () => ({ getClubOptions }))
-vi.mock('../../api/persons', () => ({ getPersons }))
+vi.mock('../../api/persons', () => ({ getPersons, exportPersonRanks }))
 vi.mock('../../api/ranks', () => ({ getRanks }))
 vi.mock('../../api/users', () => ({ getUsers }))
 vi.mock('../../stores/auth', () => ({
@@ -118,5 +120,50 @@ describe('persons page', () => {
         )
         expect(getRanks.mock.calls.length).toBe(initialRankCalls + 1)
         expect(getPersons).toHaveBeenCalledOnce()
+    })
+
+    it('downloads CSV with the current rank filter and no page limit', async () => {
+        getClubOptions.mockResolvedValue([])
+        getRanks.mockResolvedValue([{ id: 6, label: 'I' }])
+        getUsers.mockResolvedValue([])
+        getPersons.mockResolvedValue({ data: [], headers: {} })
+        exportPersonRanks.mockResolvedValue({ data: new Blob(['csv']) })
+        Object.defineProperty(URL, 'createObjectURL', {
+            configurable: true,
+            value: vi.fn(() => 'blob:ranks'),
+        })
+        Object.defineProperty(URL, 'revokeObjectURL', {
+            configurable: true,
+            value: vi.fn(),
+        })
+        const click = vi
+            .spyOn(HTMLAnchorElement.prototype, 'click')
+            .mockImplementation(() => undefined)
+
+        const wrapper = mount(PersonsPage, {
+            global: {
+                stubs: {
+                    Button: {
+                        props: ['label'],
+                        template: '<button type="button">{{ label }}</button>',
+                    },
+                    PersonTable: true,
+                    Paginator: true,
+                    RouterLink: { template: '<span><slot /></span>' },
+                    Toolbar: { template: '<div><slot name="end" /></div>' },
+                },
+            },
+        })
+        await flushPromises()
+        const exportButton = wrapper
+            .findAll('button')
+            .find((button) => button.text() === 'Экспарт CSV')
+        expect(exportButton).toBeDefined()
+        await exportButton?.trigger('click')
+        await flushPromises()
+
+        expect(exportPersonRanks).toHaveBeenCalledWith({})
+        expect(click).toHaveBeenCalledOnce()
+        click.mockRestore()
     })
 })

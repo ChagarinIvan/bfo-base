@@ -34,12 +34,12 @@ describe('cups API', () => {
     })
 
     it('downloads the cup export through the authenticated API client', async () => {
-        vi.mocked(api.get).mockResolvedValue({ data: new Blob(['csv']) })
+        vi.mocked(api.get).mockResolvedValue({ data: new Blob(['xlsx']) })
 
-        await exportCupTable('42', 'csv')
+        await exportCupTable('42', 'xlsx')
 
         expect(api.get).toHaveBeenCalledWith('/cups/42/export', {
-            params: { format: 'csv' },
+            params: { format: 'xlsx' },
             responseType: 'blob',
         })
 
