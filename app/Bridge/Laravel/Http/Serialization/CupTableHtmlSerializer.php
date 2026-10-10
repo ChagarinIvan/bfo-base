@@ -6,6 +6,7 @@ namespace App\Bridge\Laravel\Http\Serialization;
 
 use App\Application\Dto\Cup\ExportCupTableDto;
 use App\Application\Dto\Cup\ExportCupTableSectionDto;
+use function count;
 use function htmlspecialchars;
 use function implode;
 use const ENT_QUOTES;
@@ -61,8 +62,10 @@ final readonly class CupTableHtmlSerializer
                 $stage = $section->stages[$column - 3] ?? null;
                 $cell = $stage === null ? null : ($row->stages[$stage->stageId] ?? null);
                 $counted = $column >= 3 && $cell?->counted === true;
-                $class = $counted ? ' class="cup-table-result--counted"' : '';
-                $html[] = '<td' . $class . '>' . $this->escape((string) $value) . '</td>';
+                $attributes = $counted
+                    ? ' class="cup-table-result--counted" style="font-weight:700;color:#2e7d32;background-color:#e8f5e9"'
+                    : '';
+                $html[] = '<td' . $attributes . '>' . $this->escape((string) $value) . '</td>';
             }
             $html[] = '</tr>';
         }

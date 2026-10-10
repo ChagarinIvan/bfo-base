@@ -52,10 +52,10 @@ final class CupTableHtmlSerializerTest extends TestCase
         $this->assertStringNotContainsString('Клуб &amp; сябры', $html);
         $this->assertStringContainsString('<th scope="col">07.10</th>', $html);
         $this->assertStringContainsString('<th scope="col">Сярэдняе</th>', $html);
-        $this->assertStringContainsString('<td class="cup-table-result--counted">75</td>', $html);
+        $this->assertStringContainsString('<td class="cup-table-result--counted" style="font-weight:700;color:#2e7d32;background-color:#e8f5e9">75</td>', $html);
         $this->assertStringContainsString('<td>25</td>', $html);
         $this->assertStringContainsString('<td></td>', $html);
-        $this->assertStringNotContainsString('<td class="cup-table-result--counted">25</td>', $html);
+        $this->assertStringNotContainsString('style="font-weight:700;color:#2e7d32;background-color:#e8f5e9">25</td>', $html);
         $this->assertStringContainsString('<h2>Ж35</h2>', $html);
         $this->assertSame(2, substr_count($html, '<h2>'));
         $this->assertSame(2, substr_count($html, '<table>'));
