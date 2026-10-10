@@ -79,7 +79,7 @@ final class ExportCupTableActionTest extends TestCase
         $document = new DOMDocument();
         $this->assertTrue($document->loadHTML('<?xml encoding="UTF-8"?>' . $html, LIBXML_NONET | LIBXML_NOERROR | LIBXML_NOWARNING));
         $this->assertCount(1, $document->getElementsByTagName('section'));
-        $this->assertCount(0, $document->getElementsByTagName('h2'));
+        $this->assertSame('М', $document->getElementsByTagName('h2')->item(0)?->textContent);
 
         $response = $this->get('/api/v1/cups/101/export?format=xlsx&groupId=M_0_')->assertOk();
         $this->assertStringContainsString("filename*=utf-8''" . rawurlencode('Кубак 2024.xlsx'), $response->headers->get('Content-Disposition'));

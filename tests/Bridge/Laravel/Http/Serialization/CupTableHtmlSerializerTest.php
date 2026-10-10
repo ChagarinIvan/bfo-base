@@ -70,7 +70,7 @@ final class CupTableHtmlSerializerTest extends TestCase
     }
 
     #[Test]
-    public function it_omits_the_group_heading_for_a_single_section(): void
+    public function it_renders_the_group_heading_for_a_single_section(): void
     {
         $export = new ExportCupTableDto('Кубок', 42, [
             new ExportCupTableSectionDto('М21', [], []),
@@ -80,7 +80,8 @@ final class CupTableHtmlSerializerTest extends TestCase
 
         $this->assertSame(1, substr_count($html, '<section>'));
         $this->assertSame(1, substr_count($html, '<table>'));
-        $this->assertStringNotContainsString('<h2>', $html);
+        $this->assertStringContainsString('<h2>М21</h2>', $html);
+        $this->assertSame(1, substr_count($html, '<h2>'));
         $this->assertStringContainsString('<th scope="col" style="text-align:center">№</th>', $html);
     }
 }
