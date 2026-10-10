@@ -49,8 +49,9 @@ final readonly class CupTableHtmlSerializer
         $html[] = '<table>';
         $html[] = '<thead><tr>';
 
-        foreach ($this->layout->headings($section) as $label) {
-            $html[] = '<th scope="col">' . $this->escape($label) . '</th>';
+        foreach ($this->layout->headings($section) as $column => $label) {
+            $alignment = $column === 1 ? '' : ' style="text-align:center"';
+            $html[] = '<th scope="col"' . $alignment . '>' . $this->escape($label) . '</th>';
         }
 
         $html[] = '</tr></thead>';
@@ -62,9 +63,7 @@ final readonly class CupTableHtmlSerializer
                 $stage = $section->stages[$column - 3] ?? null;
                 $cell = $stage === null ? null : ($row->stages[$stage->stageId] ?? null);
                 $counted = $column >= 3 && $cell?->counted === true;
-                $attributes = $counted
-                    ? ' class="cup-table-result--counted" style="font-weight:700;color:#2e7d32;background-color:#e8f5e9"'
-                    : '';
+                $attributes = $column === 1 ? '' : ' style="text-align:center' . ($counted ? ';font-weight:700' : '') . '"';
                 $html[] = '<td' . $attributes . '>' . $this->escape((string) $value) . '</td>';
             }
             $html[] = '</tr>';
