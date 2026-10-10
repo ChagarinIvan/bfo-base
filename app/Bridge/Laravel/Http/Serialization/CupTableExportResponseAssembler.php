@@ -28,10 +28,12 @@ final readonly class CupTableExportResponseAssembler
         }
 
         $response = new Response($contents, Response::HTTP_OK, ['Content-Type' => $contentType]);
+        $groupName = $dto->groupId === null ? null : $export->sections[0]->groupName;
+        $filename = $export->cupName . ($groupName === null ? '' : ' - ' . $groupName) . '.' . $dto->format;
 
         $response->headers->set('Content-Disposition', $response->headers->makeDisposition(
             ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-            $export->cupName . '.' . $dto->format,
+            $filename,
             'export.' . $dto->format,
         ));
 

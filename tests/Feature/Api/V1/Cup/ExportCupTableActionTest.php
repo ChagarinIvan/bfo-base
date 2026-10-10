@@ -44,6 +44,7 @@ final class ExportCupTableActionTest extends TestCase
         $response = $this->get('/api/v1/cups/101/export')->assertOk()
             ->assertHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
             ->assertHeader('Content-Disposition');
+        $this->assertStringContainsString("filename*=utf-8''" . rawurlencode('Sprint Cup 2024.xlsx'), $response->headers->get('Content-Disposition'));
         $book = $this->readWorkbook((string) $response->getContent());
 
         $this->assertSame(['М', 'Ж'], $book->getSheetNames());
@@ -74,15 +75,15 @@ final class ExportCupTableActionTest extends TestCase
             ->assertSeeText('12.04')
             ->assertSeeText('Сярэдняе');
         $this->assertStringContainsString('filename=export.html', $htmlResponse->headers->get('Content-Disposition'));
-        $this->assertStringContainsString("filename*=utf-8''" . rawurlencode('Кубак 2024.html'), $htmlResponse->headers->get('Content-Disposition'));
+        $this->assertStringContainsString("filename*=utf-8''" . rawurlencode('Кубак 2024 - М.html'), $htmlResponse->headers->get('Content-Disposition'));
         $html = $htmlResponse->getContent();
         $document = new DOMDocument();
         $this->assertTrue($document->loadHTML('<?xml encoding="UTF-8"?>' . $html, LIBXML_NONET | LIBXML_NOERROR | LIBXML_NOWARNING));
         $this->assertCount(1, $document->getElementsByTagName('section'));
-        $this->assertSame('М', $document->getElementsByTagName('h2')->item(0)?->textContent);
+        $this->assertCount(0, $document->getElementsByTagName('h2'));
 
         $response = $this->get('/api/v1/cups/101/export?format=xlsx&groupId=M_0_')->assertOk();
-        $this->assertStringContainsString("filename*=utf-8''" . rawurlencode('Кубак 2024.xlsx'), $response->headers->get('Content-Disposition'));
+        $this->assertStringContainsString("filename*=utf-8''" . rawurlencode('Кубак 2024 - М.xlsx'), $response->headers->get('Content-Disposition'));
         $book = $this->readWorkbook((string) $response->getContent());
         $this->assertSame(['М'], $book->getSheetNames());
         $this->assertSame(

@@ -25,8 +25,9 @@ final readonly class CupTableHtmlSerializer
             '<body>',
         ];
 
+        $multi = count($export->sections) > 1;
         foreach ($export->sections as $section) {
-            $html[] = $this->section($section);
+            $html[] = $this->section($section, $multi);
         }
 
         $html[] = '</body>';
@@ -35,14 +36,18 @@ final readonly class CupTableHtmlSerializer
         return implode("\n", $html) . "\n";
     }
 
-    private function section(ExportCupTableSectionDto $section): string
+    private function section(ExportCupTableSectionDto $section, bool $withHeader): string
     {
         $html = [
             '<section>',
-            '<h2>' . $this->escape($section->groupName) . '</h2>',
-            '<table>',
-            '<thead><tr>',
         ];
+
+        if ($withHeader) {
+            $html[] = '<h2>' . $this->escape($section->groupName) . '</h2>';
+        }
+
+        $html[] = '<table>';
+        $html[] = '<thead><tr>';
 
         foreach ($this->layout->headings($section) as $column => $label) {
             $alignment = $column === 1 ? '' : ' style="text-align:center"';

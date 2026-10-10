@@ -5,12 +5,14 @@ import Menu from 'primevue/menu'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import { t } from '../i18n'
+import type { CupGroup } from '../api/types'
 import ActionButton from './actions/ActionButton.vue'
 import { clearCupCache, exportCupTable } from '../api/cups'
 
 const props = defineProps<{
     cupId: string
     cupName: string
+    groups: CupGroup[]
     firstGroupId?: string
 }>()
 const route = useRoute()
@@ -61,10 +63,13 @@ async function downloadCupTable(format: 'xlsx' | 'html') {
             ? String(route.params.groupId)
             : undefined
         const response = await exportCupTable(props.cupId, format, groupId)
+        const groupName = groupId
+            ? props.groups.find((group) => group.id === groupId)?.name
+            : undefined
         const url = URL.createObjectURL(response.data)
         const link = document.createElement('a')
         link.href = url
-        link.download = `${props.cupName}.${format}`
+        link.download = `${props.cupName}${groupName ? ` - ${groupName}` : ''}.${format}`
         document.body.append(link)
         link.click()
         link.remove()
