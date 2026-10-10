@@ -28,4 +28,7 @@ interface PersonRepository
 
     /** @return Slice<Person> */
     public function paginate(Criteria $criteria): Slice;
+
+    /** @return iterable<PersonRankExportRow> */
+    public function exportByCriteria(Criteria $criteria): iterable;
 }

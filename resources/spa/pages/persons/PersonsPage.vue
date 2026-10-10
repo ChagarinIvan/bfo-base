@@ -5,7 +5,7 @@ import Message from 'primevue/message'
 import type { PageState } from 'primevue/paginator'
 import Toolbar from 'primevue/toolbar'
 import { getClubOptions } from '../../api/clubs'
-import { getPersons } from '../../api/persons'
+import { exportPersonRanks, getPersons } from '../../api/persons'
 import { getRanks, type RankOption } from '../../api/ranks'
 import { getUsers } from '../../api/users'
 import type {
@@ -44,6 +44,7 @@ const pagination = ref<PaginationHeaders>({
     hasNext: false,
 })
 const loading = ref(false)
+const exportLoading = ref(false)
 const error = ref('')
 const fieldErrors = reactive<Record<string, string>>({})
 const auth = useAuthStore()
@@ -82,6 +83,34 @@ function onFilterChange(): void {
 
 async function onPage(event: PageState): Promise<void> {
     await load(event.page + 1, event.rows)
+}
+
+async function downloadRanks(): Promise<void> {
+    if (exportLoading.value) return
+    exportLoading.value = true
+    error.value = ''
+    try {
+        const response = await exportPersonRanks(
+            personQuery({
+                name: name.value,
+                clubId: clubId.value ? Number(clubId.value) : undefined,
+                rankId: rankId.value ?? undefined,
+                birthYear: birthYear.value ?? undefined,
+            }),
+        )
+        const url = URL.createObjectURL(response.data)
+        const link = document.createElement('a')
+        link.href = url
+        link.download = 'persons-ranks.csv'
+        document.body.append(link)
+        link.click()
+        link.remove()
+        URL.revokeObjectURL(url)
+    } catch {
+        error.value = t('spa.person.export_error')
+    } finally {
+        exportLoading.value = false
+    }
 }
 
 async function load(
@@ -147,6 +176,17 @@ onBeforeUnmount(() => debouncedNameSearch.cancel())
             <h1 class="page-title">{{ t('spa.nav.persons') }}</h1>
         </template>
         <template #end>
+            <Button
+                v-if="auth.isAuthenticated"
+                type="button"
+                class="persons-export-button"
+                :label="t('spa.person.export')"
+                icon="pi pi-download"
+                severity="info"
+                :disabled="exportLoading"
+                :loading="exportLoading"
+                @click="downloadRanks"
+            />
             <RouterLink v-if="auth.isAuthenticated" to="/app/persons/create">
                 <Button
                     :label="t('spa.person.create')"

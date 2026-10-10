@@ -67,6 +67,35 @@ final class StandardCupTableBuilderTest extends TestCase
         $this->assertSame(12, $cells[2]->stageId);
     }
 
+    #[Test]
+    public function it_excludes_zero_point_rows_when_requested_without_changing_places(): void
+    {
+        $group = CupGroupFactory::fromId('M_0_');
+        $events = new Collection();
+        $zeroLine = $this->protocolLineStub(100, 42, 'Zero', 'Runner', 1990, '', 501);
+        $winnerLine = $this->protocolLineStub(101, 43, 'Winner', 'Runner', 1991, '', 501);
+        $cup = $this->getMockBuilder(Cup::class)
+            ->onlyMethods(['calculateGroupEvents'])
+            ->getMock();
+        $cup->expects($this->exactly(2))
+            ->method('calculateGroupEvents')
+            ->with($group, $events)
+            ->willReturn([
+                42 => [new CupEventPoint(11, $zeroLine, 0)],
+                43 => [new CupEventPoint(11, $winnerLine, 12)],
+            ]);
+        $cup->setAttribute('events_count', 1);
+        $builder = new StandardCupTableBuilder();
+
+        $full = $builder->build($cup, $events, $group);
+        $filtered = $builder->build($cup, $events, $group, excludeZeroPointRows: true);
+
+        $this->assertCount(2, $full->rows);
+        $this->assertCount(1, $filtered->rows);
+        $this->assertSame('Winner Runner', $filtered->rows[0]->personName);
+        $this->assertSame(2, $filtered->rows[0]->place);
+    }
+
     private function protocolLineStub(
         int $id,
         ?int $personId,
@@ -82,6 +111,7 @@ final class StandardCupTableBuilderTest extends TestCase
             ->getMock()
         ;
         $protocolLine
+            ->expects($this->atLeastOnce())
             ->method('getAttribute')
             ->willReturnMap([
                 ['id', $id],

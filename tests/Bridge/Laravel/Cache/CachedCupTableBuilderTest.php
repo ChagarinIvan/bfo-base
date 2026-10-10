@@ -18,36 +18,53 @@ use Tests\TestCase;
 final class CachedCupTableBuilderTest extends TestCase
 {
     #[Test]
-    public function it_caches_tables_with_the_shared_cups_tag(): void
+    public function it_caches_filtered_and_full_tables_separately_with_the_shared_cups_tag(): void
     {
         $cup = new Cup();
         $cup->setAttribute('id', 42);
         $group = CupGroupFactory::fromId('M_0_');
         $events = new Collection();
         $table = new CupTable([], []);
+        $filteredTable = new CupTable([], []);
+        $flags = [];
         $builder = $this->createMock(CupTableBuilder::class);
-        $builder->expects($this->once())
+        $builder->expects($this->exactly(2))
             ->method('build')
-            ->with($cup, $events, $group)
-            ->willReturn($table)
+            ->willReturnCallback(function (Cup $builtCup, Collection $builtEvents, object $builtGroup, bool $excludeZeroPointRows) use ($cup, $events, $group, $table, $filteredTable, &$flags): CupTable {
+                $this->assertSame($cup, $builtCup);
+                $this->assertSame($events, $builtEvents);
+                $this->assertSame($group, $builtGroup);
+                $flags[] = $excludeZeroPointRows;
+
+                return $excludeZeroPointRows ? $filteredTable : $table;
+            })
         ;
 
+        $keys = [];
         $taggedCache = $this->createMock(TaggedCache::class);
-        $taggedCache->expects($this->once())
+        $taggedCache->expects($this->exactly(2))
             ->method('remember')
-            ->with('table_42_M_0_', 1000000, $this->callback('is_callable'))
-            ->willReturnCallback(static fn (string $key, int $ttl, callable $callback): CupTable => $callback())
+            ->willReturnCallback(static function (string $key, int $ttl, callable $callback) use (&$keys): CupTable {
+                $keys[] = $key;
+
+                return $callback();
+            })
         ;
 
         $cache = $this->createMock(CacheManager::class);
-        $cache->expects($this->once())
+        $cache->expects($this->exactly(2))
             ->method('tags')
             ->with(['cups'])
             ->willReturn($taggedCache)
         ;
 
-        $result = new CachedCupTableBuilder($cache, $builder)->build($cup, $events, $group);
+        $cached = new CachedCupTableBuilder($cache, $builder);
+        $result = $cached->build($cup, $events, $group);
+        $filteredResult = $cached->build($cup, $events, $group, excludeZeroPointRows: true);
 
         $this->assertSame($table, $result);
+        $this->assertSame($filteredTable, $filteredResult);
+        $this->assertSame([false, true], $flags);
+        $this->assertSame(['table_42_M_0_', 'table_42_M_0__nonzero'], $keys);
     }
 }

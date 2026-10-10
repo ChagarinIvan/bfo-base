@@ -49,6 +49,7 @@ use App\Bridge\Laravel\Http\Controllers\Api\V1\Group\UpdateGroupAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Group\ViewGroupAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\CreatePersonAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\DeletePersonAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\ExportPersonRanksAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\ListPersonsAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\PersonRankHistory\ActivatePersonRankAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\PersonRankHistory\ListPersonRankHistoryAction;
@@ -93,6 +94,7 @@ final class ApiV1RoutesServiceProvider extends ServiceProvider
             $router->prefix('api/v1')->middleware(AuthenticateApiV1::class)->group(static function () use ($router): void {
                 $router->get('persons/payments', ListPersonPaymentsAction::class);
                 $router->post('persons/payments', CreateOrUpdatePersonPaymentAction::class);
+                $router->get('persons/export', ExportPersonRanksAction::class);
             });
 
             $router->prefix('api/v1')->middleware(OptionalAuthenticateApiV1::class)->group(static function () use ($router): void {

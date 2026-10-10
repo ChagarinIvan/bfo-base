@@ -48,3 +48,12 @@ export async function getPersons(
         headers: response.headers as Record<string, unknown>,
     }
 }
+
+export async function exportPersonRanks(
+    query: Omit<PersonSearchQuery, 'page' | 'perPage'>,
+) {
+    return api.get<Blob>('/persons/export', {
+        params: query,
+        responseType: 'blob',
+    })
+}
