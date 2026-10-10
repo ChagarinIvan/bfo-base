@@ -193,6 +193,7 @@ onBeforeUnmount(() => controller.value?.abort())
                 </table>
                 <CupInfoNavigation
                     :cup-id="cup.id"
+                    :cup-name="cup.name"
                     :first-group-id="cup.groups[0]?.id"
                     @delete-cup="deleteCupVisible = true"
                 />

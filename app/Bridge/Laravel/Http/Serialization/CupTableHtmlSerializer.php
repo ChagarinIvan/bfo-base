@@ -21,18 +21,12 @@ final readonly class CupTableHtmlSerializer
     {
         $html = [
             '<!doctype html>',
-            '<html lang="be">',
-            '<head>',
-            '<meta charset="UTF-8">',
-            '<title>' . $this->escape($export->cupName) . '</title>',
-            '<style>body{font:16px/1.4 sans-serif;margin:2rem;color:#222}table{border-collapse:collapse;width:100%;margin:1rem 0 2rem}th,td{border:1px solid #aaa;padding:.4rem;text-align:left}th{background:#eee}.cup-table-result--counted{font-weight:700}@media print{body{margin:0}thead{display:table-header-group}}</style>',
-            '</head>',
             '<body>',
-            '<h1>' . $this->escape($export->cupName) . '</h1>',
         ];
 
+        $multi = count($export->sections) > 1;
         foreach ($export->sections as $section) {
-            $html[] = $this->section($section);
+            $html[] = $this->section($section, $multi);
         }
 
         $html[] = '</body>';
@@ -40,14 +34,19 @@ final readonly class CupTableHtmlSerializer
 
         return implode("\n", $html) . "\n";
     }
-    private function section(ExportCupTableSectionDto $section): string
+
+    private function section(ExportCupTableSectionDto $section, bool $withHeader): string
     {
         $html = [
             '<section>',
-            '<h2>' . $this->escape($section->groupName) . '</h2>',
-            '<table>',
-            '<thead><tr>',
         ];
+
+        if ($withHeader) {
+            $html[] = '<h2>' . $this->escape($section->groupName) . '</h2>';
+        }
+
+        $html[] = '<table>';
+        $html[] = '<thead><tr>';
 
         foreach ($this->layout->headings($section) as $label) {
             $html[] = '<th scope="col">' . $this->escape($label) . '</th>';

@@ -41,6 +41,7 @@
 - [X] T017 Убрать отдельные `PersonSearchQuery` и `EloquentPersonRankExportRepository`; перенести построение запроса и `exportByCriteria()` в `EloquentPersonRepository` и проверить список и CSV.
 - [X] T018 Убрать `PersonRankExportRepository`, объявить `exportByCriteria()` в `PersonRepository` и перевести сервис экспорта на этот интерфейс.
 - [X] T019 Защитить поля CSV персон, которые Excel может интерпретировать как формулы, в `app/Bridge/Laravel/Http/Serialization/PersonRanksCsvSerializer.php`; добавить request-тест и уточнить контракт.
+- [X] T020 Привести имя XLSX/HTML файла к названию кубка в SPA и HTTP-ответе, проверить полный и групповой экспорт, а также обновить тесты HTML после изменения сериализатора.
 
 ## Dependencies
 

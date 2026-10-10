@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature\Api\V1\Cup;
 
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\ExportCupTableAction;
+use App\Domain\Cup\Cup;
 use App\Domain\Cup\CupEvent\CupEvent;
 use App\Infrastructure\Sanctum\SanctumUser;
 use Database\Seeders\SprintCupLineSeeder;
@@ -20,6 +21,7 @@ use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 use function count;
 use function file_put_contents;
+use function rawurlencode;
 use function sys_get_temp_dir;
 use function tempnam;
 use function unlink;
@@ -62,22 +64,25 @@ final class ExportCupTableActionTest extends TestCase
     public function it_exports_html_with_the_same_columns_and_a_single_group_on_request(): void
     {
         $this->seed(SprintCupLineSeeder::class);
+        Cup::query()->whereKey(101)->update(['name' => 'Кубак 2024']);
         $this->authenticate();
 
-        $html = $this->get('/api/v1/cups/101/export?format=html&groupId=M_0_')
+        $htmlResponse = $this->get('/api/v1/cups/101/export?format=html&groupId=M_0_')
             ->assertOk()
             ->assertHeader('Content-Type', 'text/html; charset=UTF-8')
-            ->assertSee('lang="be"', false)
             ->assertSeeText('Прозвішча, Імя')
             ->assertSeeText('12.04')
-            ->assertSeeText('Сярэдняе')
-            ->getContent();
+            ->assertSeeText('Сярэдняе');
+        $this->assertStringContainsString('filename=export.html', $htmlResponse->headers->get('Content-Disposition'));
+        $this->assertStringContainsString("filename*=utf-8''" . rawurlencode('Кубак 2024.html'), $htmlResponse->headers->get('Content-Disposition'));
+        $html = $htmlResponse->getContent();
         $document = new DOMDocument();
-        $this->assertTrue($document->loadHTML((string) $html, LIBXML_NONET | LIBXML_NOERROR | LIBXML_NOWARNING));
+        $this->assertTrue($document->loadHTML('<?xml encoding="UTF-8"?>' . $html, LIBXML_NONET | LIBXML_NOERROR | LIBXML_NOWARNING));
         $this->assertCount(1, $document->getElementsByTagName('section'));
-        $this->assertSame('М', $document->getElementsByTagName('h2')->item(0)?->textContent);
+        $this->assertCount(0, $document->getElementsByTagName('h2'));
 
         $response = $this->get('/api/v1/cups/101/export?format=xlsx&groupId=M_0_')->assertOk();
+        $this->assertStringContainsString("filename*=utf-8''" . rawurlencode('Кубак 2024.xlsx'), $response->headers->get('Content-Disposition'));
         $book = $this->readWorkbook((string) $response->getContent());
         $this->assertSame(['М'], $book->getSheetNames());
         $this->assertSame(

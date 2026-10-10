@@ -32,7 +32,7 @@ final readonly class CupTableExportResponseAssembler
         $response->headers->set('Content-Disposition', $response->headers->makeDisposition(
             ResponseHeaderBag::DISPOSITION_ATTACHMENT,
             $export->cupName . '.' . $dto->format,
-            'cup-' . $export->cupId . '.' . $dto->format,
+            'export.' . $dto->format,
         ));
 
         return $response;

@@ -8,7 +8,11 @@ import { t } from '../i18n'
 import ActionButton from './actions/ActionButton.vue'
 import { clearCupCache, exportCupTable } from '../api/cups'
 
-const props = defineProps<{ cupId: string; firstGroupId?: string }>()
+const props = defineProps<{
+    cupId: string
+    cupName: string
+    firstGroupId?: string
+}>()
 const route = useRoute()
 const auth = useAuthStore()
 const error = ref('')
@@ -60,7 +64,7 @@ async function downloadCupTable(format: 'xlsx' | 'html') {
         const url = URL.createObjectURL(response.data)
         const link = document.createElement('a')
         link.href = url
-        link.download = `cup-${props.cupId}${groupId ? `-${groupId}` : ''}.${format}`
+        link.download = `${props.cupName}.${format}`
         document.body.append(link)
         link.click()
         link.remove()

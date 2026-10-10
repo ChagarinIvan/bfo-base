@@ -48,7 +48,7 @@ const RouterLink = defineComponent({
 describe('cup info navigation', () => {
     it('keeps edit, event, tab, export, cache, delete actions in order', () => {
         const wrapper = mount(CupInfoNavigation, {
-            props: { cupId: '42', firstGroupId: 'M_0_' },
+            props: { cupId: '42', cupName: 'Кубак 2024', firstGroupId: 'M_0_' },
             global: {
                 components: { RouterLink },
                 stubs: {
@@ -75,7 +75,7 @@ describe('cup info navigation', () => {
 
     it('opens a format menu and downloads the selected format', async () => {
         const wrapper = mount(CupInfoNavigation, {
-            props: { cupId: '42', firstGroupId: 'M_0_' },
+            props: { cupId: '42', cupName: 'Кубак 2024', firstGroupId: 'M_0_' },
             global: { components: { RouterLink } },
         })
         const button = wrapper
@@ -122,7 +122,7 @@ describe('cup info navigation', () => {
         expect(exportCupTable).toHaveBeenCalledWith('42', 'xlsx', 'M_0_')
         expect(exportCupTable).toHaveBeenCalledWith('42', 'html', 'M_0_')
         expect(click).toHaveBeenCalledTimes(2)
-        expect(downloads).toEqual(['cup-42-M_0_.xlsx', 'cup-42-M_0_.html'])
+        expect(downloads).toEqual(['Кубак 2024.xlsx', 'Кубак 2024.html'])
 
         vi.mocked(exportCupTable).mockRejectedValueOnce(
             new Error('download failed'),
@@ -149,12 +149,15 @@ describe('cup info navigation', () => {
             configurable: true,
             value: vi.fn(() => 'blob:table'),
         })
+        const downloads: string[] = []
         const click = vi
             .spyOn(HTMLAnchorElement.prototype, 'click')
-            .mockImplementation(() => undefined)
+            .mockImplementation(function (this: HTMLAnchorElement) {
+                downloads.push(this.download)
+            })
 
         const wrapper = mount(CupInfoNavigation, {
-            props: { cupId: '42', firstGroupId: 'M_0_' },
+            props: { cupId: '42', cupName: 'Кубак 2024', firstGroupId: 'M_0_' },
             global: { components: { RouterLink } },
         })
         const items = wrapper.findComponent(Menu).props('model') as Array<{
@@ -164,6 +167,7 @@ describe('cup info navigation', () => {
         await flushPromises()
 
         expect(exportCupTable).toHaveBeenCalledWith('42', 'xlsx', undefined)
+        expect(downloads).toEqual(['Кубак 2024.xlsx'])
         click.mockRestore()
         route.params.groupId = 'M_0_'
     })
@@ -189,7 +193,7 @@ describe('cup info navigation', () => {
             .mockImplementation(() => undefined)
 
         const wrapper = mount(CupInfoNavigation, {
-            props: { cupId: '42', firstGroupId: 'M_0_' },
+            props: { cupId: '42', cupName: 'Кубак 2024', firstGroupId: 'M_0_' },
             global: { components: { RouterLink } },
         })
         const menu = wrapper.findComponent(Menu)

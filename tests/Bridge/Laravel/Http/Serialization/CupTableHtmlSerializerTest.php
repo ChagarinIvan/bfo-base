@@ -46,7 +46,7 @@ final class CupTableHtmlSerializerTest extends TestCase
         $html = new CupTableHtmlSerializer(new CupTableExportLayout())->serialize($export);
 
         $this->assertStringContainsString('<!doctype html>', $html);
-        $this->assertStringContainsString('Кубок &lt;восень&gt;', $html);
+        $this->assertStringNotContainsString('Кубок &lt;восень&gt;', $html);
         $this->assertStringContainsString('М21 &amp; Ж21', $html);
         $this->assertStringContainsString('Іванов &lt;script&gt;alert(&quot;x&quot;)&lt;/script&gt;', $html);
         $this->assertStringNotContainsString('Клуб &amp; сябры', $html);
@@ -57,7 +57,23 @@ final class CupTableHtmlSerializerTest extends TestCase
         $this->assertStringContainsString('<td></td>', $html);
         $this->assertStringNotContainsString('<td class="cup-table-result--counted">25</td>', $html);
         $this->assertStringContainsString('<h2>Ж35</h2>', $html);
+        $this->assertSame(2, substr_count($html, '<h2>'));
         $this->assertSame(2, substr_count($html, '<table>'));
         $this->assertStringNotContainsString('<script>', $html);
+    }
+
+    #[Test]
+    public function it_omits_the_group_heading_for_a_single_section(): void
+    {
+        $export = new ExportCupTableDto('Кубок', 42, [
+            new ExportCupTableSectionDto('М21', [], []),
+        ]);
+
+        $html = new CupTableHtmlSerializer(new CupTableExportLayout())->serialize($export);
+
+        $this->assertSame(1, substr_count($html, '<section>'));
+        $this->assertSame(1, substr_count($html, '<table>'));
+        $this->assertStringNotContainsString('<h2>', $html);
+        $this->assertStringContainsString('<th scope="col">№</th>', $html);
     }
 }
