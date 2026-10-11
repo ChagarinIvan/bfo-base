@@ -3,14 +3,8 @@ import { computed, reactive, ref, watch } from 'vue'
 import Button from 'primevue/button'
 import InputNumber from 'primevue/inputnumber'
 import Message from 'primevue/message'
-import type { PageState } from 'primevue/paginator'
 import Select from 'primevue/select'
-import type {
-    CupEventFormRequest,
-    Event,
-    PaginationHeaders,
-} from '../../api/types'
-import SlicePaginator from '../../components/SlicePaginator.vue'
+import type { CupEventFormRequest, Event } from '../../api/types'
 import { t } from '../../i18n'
 import { hasTooShortNameSearch } from '../listingModels'
 
@@ -24,7 +18,6 @@ const props = withDefaults(
         error?: string
         remoteSearch?: boolean
         search?: string
-        pagination?: PaginationHeaders
         optionsLoading?: boolean
         optionsError?: string
     }>(),
@@ -35,7 +28,6 @@ const props = withDefaults(
         error: '',
         remoteSearch: false,
         search: '',
-        pagination: undefined,
         optionsLoading: false,
         optionsError: '',
     },
@@ -44,7 +36,6 @@ const props = withDefaults(
 const emit = defineEmits<{
     submit: [value: CupEventFormRequest]
     'update:search': [value: string]
-    page: [event: PageState]
 }>()
 const form = reactive<CupEventFormRequest>({ eventId: 0, points: 0 })
 const selectedOption = ref<Event | null>(null)
@@ -153,14 +144,6 @@ function submit(): void {
                 <template v-if="remoteSearch" #emptyfilter>{{
                     emptyOptionsMessage()
                 }}</template>
-                <template v-if="remoteSearch" #footer>
-                    <SlicePaginator
-                        v-if="pagination && !hasTooShortNameSearch(search)"
-                        :pagination="pagination"
-                        :rows-per-page-options="[20]"
-                        @page="emit('page', $event)"
-                    />
-                </template>
             </Select>
             <small v-if="errors.eventId" class="field-error">{{
                 errors.eventId

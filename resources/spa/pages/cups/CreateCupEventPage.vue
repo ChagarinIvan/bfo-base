@@ -3,17 +3,15 @@ import { onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import type { AxiosError } from 'axios'
 import Card from 'primevue/card'
 import Message from 'primevue/message'
-import type { PageState } from 'primevue/paginator'
 import { useToast } from 'primevue/usetoast'
 import { useRoute, useRouter } from 'vue-router'
 import { createCupEvent, getCup } from '../../api/cups'
-import { getCupEventOptionsPage } from '../../api/events'
+import { getCupEventOptions } from '../../api/events'
 import type {
     ApiErrorResponse,
     Cup,
     CupEventFormRequest,
     Event,
-    PaginationHeaders,
 } from '../../api/types'
 import { t } from '../../i18n'
 import {
@@ -21,7 +19,6 @@ import {
     debounce,
     hasTooShortNameSearch,
     normaliseNameSearch,
-    paginationFromHeaders,
 } from '../listingModels'
 import CupEventForm from './CupEventForm.vue'
 
@@ -31,11 +28,6 @@ const toast = useToast()
 const cup = ref<Cup | null>(null)
 const events = ref<Event[]>([])
 const search = ref('')
-const pagination = ref<PaginationHeaders>({
-    currentPage: 1,
-    perPage: 20,
-    hasNext: false,
-})
 const optionsLoading = ref(false)
 const optionsError = ref('')
 const loading = ref(true)
@@ -43,7 +35,7 @@ const pending = ref(false)
 const error = ref('')
 const fieldErrors = reactive<Record<string, string>>({})
 let optionsRequestVersion = 0
-const debouncedSearch = debounce(() => void loadOptions(1))
+const debouncedSearch = debounce(() => void loadOptions())
 
 onBeforeUnmount(() => {
     optionsRequestVersion++
@@ -66,7 +58,7 @@ function isApiError(
 async function load(): Promise<void> {
     try {
         cup.value = await getCup(String(route.params.cupId))
-        await loadOptions(1)
+        await loadOptions()
     } catch (exception) {
         error.value = isApiError(exception, 404)
             ? t('spa.cup.form.not_found')
@@ -76,7 +68,7 @@ async function load(): Promise<void> {
     }
 }
 
-async function loadOptions(page: number): Promise<void> {
+async function loadOptions(): Promise<void> {
     if (!cup.value) return
 
     const version = ++optionsRequestVersion
@@ -84,19 +76,18 @@ async function loadOptions(page: number): Promise<void> {
     optionsLoading.value = true
     optionsError.value = ''
     try {
-        const response = await getCupEventOptionsPage({
+        const response = await getCupEventOptions({
             year: cup.value.year,
             notRelatedToCup: cup.value.id,
             sortBy: 'date',
             sort: 'desc',
-            page,
+            page: 1,
             perPage: 20,
             ...(name ? { competitionOrEventName: name } : {}),
         })
         if (version !== optionsRequestVersion) return
 
-        events.value = response.data
-        pagination.value = paginationFromHeaders(response.headers)
+        events.value = response
     } catch {
         if (version !== optionsRequestVersion) return
         events.value = []
@@ -113,15 +104,10 @@ function onSearch(value: string): void {
     optionsLoading.value = false
     optionsError.value = ''
     events.value = []
-    pagination.value = { currentPage: 1, perPage: 20, hasNext: false }
     if (!hasTooShortNameSearch(value)) {
         optionsLoading.value = true
         debouncedSearch()
     }
-}
-
-function onPage(event: PageState): void {
-    void loadOptions(event.page + 1)
 }
 
 async function submit(value: CupEventFormRequest): Promise<void> {
@@ -169,11 +155,9 @@ onMounted(load)
                 :submit-label="t('spa.cup_event.create.submit')"
                 remote-search
                 :search="search"
-                :pagination="pagination"
                 :options-loading="optionsLoading"
                 :options-error="optionsError"
                 @update:search="onSearch"
-                @page="onPage"
                 @submit="submit"
         /></template>
     </Card>

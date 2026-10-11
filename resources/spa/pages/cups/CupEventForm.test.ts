@@ -50,7 +50,7 @@ describe('cup event form', () => {
         ])
     })
 
-    it('uses server search and keeps the selected label when the page changes', async () => {
+    it('uses server search without pagination and keeps the selected label when options change', async () => {
         const event = {
             id: '9',
             competitionId: '1',
@@ -66,7 +66,6 @@ describe('cup event form', () => {
                 submitLabel: 'Захаваць',
                 remoteSearch: true,
                 search: '',
-                pagination: { currentPage: 1, perPage: 20, hasNext: true },
             },
             global: { plugins: [PrimeVue] },
         })
@@ -86,11 +85,7 @@ describe('cup event form', () => {
 
         picker.vm.show()
         await wrapper.vm.$nextTick()
-        wrapper.findComponent(SlicePaginator).vm.$emit('page', {
-            page: 1,
-            rows: 20,
-        })
-        expect(wrapper.emitted('page')).toHaveLength(1)
+        expect(wrapper.findComponent(SlicePaginator).exists()).toBe(false)
     })
 
     it('does not re-filter server results inside the picker', async () => {
