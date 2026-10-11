@@ -30,7 +30,7 @@ describe('static updates catalog', () => {
                     b.spec.localeCompare(a.spec),
             ),
         )
-        expect(updates[0]?.spec).toBe('043-person-rank-csv-cup-xlsx')
+        expect(updates[0]?.spec).toBe('044-event-distance-details')
     })
 
     it('links only to existing SPA routes when a destination is useful', () => {
