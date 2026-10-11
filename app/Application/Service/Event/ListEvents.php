@@ -22,11 +22,14 @@ final readonly class ListEvents
 
     public function criteria(): Criteria
     {
-        return new Criteria(array_filter(
-            get_object_vars($this->search),
-            static fn (mixed $value, string $key): bool => !in_array($key, ['withCompetition', 'withParticipantsCount'], true) && $value !== null,
-            ARRAY_FILTER_USE_BOTH,
-        ));
+        return new Criteria(
+            array_filter(
+                get_object_vars($this->search),
+                static fn (mixed $value, string $key): bool => !in_array($key, ['withCompetition', 'withParticipantsCount', 'sortBy', 'sort'], true) && $value !== null,
+                ARRAY_FILTER_USE_BOTH,
+            ),
+            $this->search->sortBy === 'date' ? ['events.date' => $this->search->sort ?? 'asc'] : [],
+        );
     }
 
     public function resources(): EventResources

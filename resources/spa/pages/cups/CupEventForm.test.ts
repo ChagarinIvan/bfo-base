@@ -4,6 +4,7 @@ import { mount } from '@vue/test-utils'
 import PrimeVue from 'primevue/config'
 import Select from 'primevue/select'
 import { describe, expect, it } from 'vitest'
+import SlicePaginator from '../../components/SlicePaginator.vue'
 import CupEventForm from './CupEventForm.vue'
 
 describe('cup event form', () => {
@@ -47,5 +48,108 @@ describe('cup event form', () => {
         expect(wrapper.emitted('submit')).toEqual([
             [{ eventId: 9, points: 75 }],
         ])
+    })
+
+    it('uses server search without pagination and keeps the selected label when options change', async () => {
+        const event = {
+            id: '9',
+            competitionId: '1',
+            name: 'Sprint',
+            description: '',
+            date: '2026-01-01',
+            participantsCount: 0,
+            competitionName: 'Forest Cup',
+        }
+        const wrapper = mount(CupEventForm, {
+            props: {
+                events: [event],
+                submitLabel: 'Захаваць',
+                remoteSearch: true,
+                search: '',
+            },
+            global: { plugins: [PrimeVue] },
+        })
+
+        const picker = wrapper.findComponent(Select)
+        expect(picker.props('filter')).toBe(true)
+        expect(wrapper.find('#cup-event-search').exists()).toBe(false)
+        picker.vm.$emit('filter', { value: 'Forest' })
+        expect(wrapper.emitted('update:search')).toEqual([['Forest']])
+
+        picker.vm.$emit('update:modelValue', '9')
+        await wrapper.vm.$nextTick()
+        await wrapper.setProps({ events: [] })
+        expect(wrapper.text()).toContain('Forest Cup — Sprint')
+        expect(wrapper.text()).not.toContain('(2026-01-01)')
+        await wrapper.find('form').trigger('submit')
+        expect(wrapper.emitted('submit')).toEqual([[{ eventId: 9, points: 0 }]])
+
+        picker.vm.show()
+        await wrapper.vm.$nextTick()
+        expect(wrapper.findComponent(SlicePaginator).exists()).toBe(false)
+    })
+
+    it('does not re-filter server results inside the picker', async () => {
+        const wrapper = mount(CupEventForm, {
+            props: {
+                events: [
+                    {
+                        id: '9',
+                        competitionId: '1',
+                        name: 'Forest Sprint',
+                        description: '',
+                        date: '2026-01-01',
+                        participantsCount: 0,
+                        competitionName: 'Forest Cup',
+                    },
+                ],
+                submitLabel: 'Захаваць',
+                remoteSearch: true,
+                search: ' Forest ',
+            },
+            global: { plugins: [PrimeVue] },
+        })
+        const picker = wrapper.findComponent(Select)
+
+        await picker.setData({ filterValue: ' Forest ' })
+
+        expect(
+            (picker.vm as unknown as { visibleOptions: unknown[] })
+                .visibleOptions,
+        ).toHaveLength(1)
+    })
+
+    it('shows the event date in the create picker options', async () => {
+        const wrapper = mount(CupEventForm, {
+            props: {
+                events: [
+                    {
+                        id: '9',
+                        competitionId: '1',
+                        name: 'Sprint',
+                        description: '',
+                        date: '2026-01-01',
+                        participantsCount: 0,
+                        competitionName: 'Forest Cup',
+                    },
+                ],
+                submitLabel: 'Захаваць',
+                remoteSearch: true,
+            },
+            global: { plugins: [PrimeVue] },
+        })
+
+        wrapper.findComponent(Select).vm.show()
+        await wrapper.vm.$nextTick()
+
+        expect(document.body.textContent).toContain(
+            'Forest Cup — Sprint (2026-01-01)',
+        )
+
+        await wrapper.setProps({ remoteSearch: false })
+        expect(document.body.textContent).toContain('Forest Cup — Sprint')
+        expect(document.body.textContent).not.toContain(
+            'Forest Cup — Sprint (2026-01-01)',
+        )
     })
 })

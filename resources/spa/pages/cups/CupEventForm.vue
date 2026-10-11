@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { reactive, watch } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import Button from 'primevue/button'
 import InputNumber from 'primevue/inputnumber'
 import Message from 'primevue/message'
 import Select from 'primevue/select'
 import type { CupEventFormRequest, Event } from '../../api/types'
 import { t } from '../../i18n'
+import { hasTooShortNameSearch } from '../listingModels'
 
 const props = withDefaults(
     defineProps<{
@@ -15,12 +16,37 @@ const props = withDefaults(
         submitLabel: string
         pending?: boolean
         error?: string
+        remoteSearch?: boolean
+        search?: string
+        optionsLoading?: boolean
+        optionsError?: string
     }>(),
-    { initialValue: () => ({}), errors: () => ({}), pending: false, error: '' },
+    {
+        initialValue: () => ({}),
+        errors: () => ({}),
+        pending: false,
+        error: '',
+        remoteSearch: false,
+        search: '',
+        optionsLoading: false,
+        optionsError: '',
+    },
 )
 
-const emit = defineEmits<{ submit: [value: CupEventFormRequest] }>()
+const emit = defineEmits<{
+    submit: [value: CupEventFormRequest]
+    'update:search': [value: string]
+}>()
 const form = reactive<CupEventFormRequest>({ eventId: 0, points: 0 })
+const selectedOption = ref<Event | null>(null)
+const selectOptions = computed(() =>
+    props.remoteSearch
+        ? props.events.map((event) => ({
+              ...event,
+              remoteSearchValue: props.search,
+          }))
+        : props.events,
+)
 
 watch(
     () => props.initialValue,
@@ -32,12 +58,51 @@ watch(
     { immediate: true },
 )
 
+watch(
+    [() => form.eventId, () => props.events],
+    ([id, events]) => {
+        const option = events.find((event) => event.id === String(id))
+        if (option) {
+            selectedOption.value = option
+        } else if (selectedOption.value?.id !== String(id)) {
+            selectedOption.value = null
+        }
+    },
+    { immediate: true },
+)
+
+function selectedEvent(value: unknown): Event | undefined {
+    return (
+        props.events.find((event) => event.id === String(value)) ??
+        (selectedOption.value?.id === String(value)
+            ? selectedOption.value
+            : undefined)
+    )
+}
+
 function label(event: Event): string {
     return `${event.competitionName ?? ''} — ${event.name}`
 }
 
+function optionLabel(event: Event): string {
+    return props.remoteSearch ? `${label(event)} (${event.date})` : label(event)
+}
+
+function onFilter(event: { value: string }): void {
+    if (props.remoteSearch) emit('update:search', event.value)
+}
+
+function emptyOptionsMessage(): string {
+    if (props.optionsLoading) return t('spa.cup_event.form.options_loading')
+    if (props.optionsError) return props.optionsError
+    if (hasTooShortNameSearch(props.search))
+        return t('spa.competitions.name_hint')
+
+    return t('spa.cup_event.form.options_empty')
+}
+
 function submit(): void {
-    emit('submit', { ...form })
+    emit('submit', { ...form, eventId: Number(form.eventId) })
 }
 </script>
 
@@ -50,30 +115,57 @@ function submit(): void {
             <Select
                 id="cup-event-event"
                 v-model="form.eventId"
-                :options="events"
+                :options="selectOptions"
                 option-value="id"
-                :filter="true"
-                :filter-fields="['name', 'competitionName']"
+                filter
+                :filter-fields="
+                    remoteSearch
+                        ? ['remoteSearchValue']
+                        : ['name', 'competitionName']
+                "
+                :filter-placeholder="
+                    remoteSearch
+                        ? t('spa.cup_event.form.search_placeholder')
+                        : undefined
+                "
+                :loading="remoteSearch && optionsLoading"
                 :placeholder="t('spa.cup_event.form.event_placeholder')"
                 :invalid="Boolean(errors.eventId)"
                 required
+                @filter="onFilter"
             >
                 <template #value="{ value, placeholder }">
                     {{
-                        events.find((event) => event.id === String(value))
-                            ? label(
-                                  events.find(
-                                      (event) => event.id === String(value),
-                                  )!,
-                              )
+                        selectedEvent(value)
+                            ? label(selectedEvent(value)!)
                             : placeholder
                     }}
                 </template>
-                <template #option="{ option }">{{ label(option) }}</template>
+                <template #option="{ option }">{{
+                    optionLabel(option)
+                }}</template>
+                <template v-if="remoteSearch" #empty>{{
+                    emptyOptionsMessage()
+                }}</template>
+                <template v-if="remoteSearch" #emptyfilter>{{
+                    emptyOptionsMessage()
+                }}</template>
             </Select>
             <small v-if="errors.eventId" class="field-error">{{
                 errors.eventId
             }}</small>
+            <small
+                v-if="remoteSearch && hasTooShortNameSearch(search)"
+                class="filter-hint"
+            >
+                {{ t('spa.competitions.name_hint') }}
+            </small>
+            <Message
+                v-if="remoteSearch && optionsError"
+                severity="error"
+                :closable="false"
+                >{{ optionsError }}</Message
+            >
         </div>
         <div class="form-field">
             <label for="cup-event-points">{{

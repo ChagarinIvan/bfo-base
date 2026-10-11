@@ -19,9 +19,12 @@ final class SearchEventDto extends AbstractDto
             'withCompetition' => 'nullable|boolean',
             'withParticipantsCount' => 'nullable|boolean',
             'competitionName' => 'nullable|string|min:3|max:255',
+            'competitionOrEventName' => 'nullable|string|min:3|max:255',
             'year' => 'nullable|numeric|digits:4',
             'date' => 'nullable|date_format:Y-m-d',
             'notRelatedToCup' => 'nullable|numeric',
+            'sortBy' => 'nullable|in:date',
+            'sort' => 'nullable|in:asc,desc',
         ];
     }
 
@@ -36,6 +39,9 @@ final class SearchEventDto extends AbstractDto
         public ?string $year = null,
         public ?string $date = null,
         public ?string $notRelatedToCup = null,
+        public ?string $competitionOrEventName = null,
+        public ?string $sortBy = null,
+        public ?string $sort = null,
     ) {
     }
 
@@ -50,6 +56,9 @@ final class SearchEventDto extends AbstractDto
         $this->setStringParam('year', $data);
         $this->setStringParam('date', $data);
         $this->setStringParam('notRelatedToCup', $data);
+        $this->setStringParam('competitionOrEventName', $data);
+        $this->setStringParam('sortBy', $data);
+        $this->setStringParam('sort', $data);
 
         return $this;
     }

@@ -2,7 +2,8 @@
 
 import { flushPromises, mount } from '@vue/test-utils'
 import PrimeVue from 'primevue/config'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import Select from 'primevue/select'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import CreateCupEventPage from './CreateCupEventPage.vue'
 import CupEventForm from './CupEventForm.vue'
 
@@ -23,6 +24,7 @@ vi.mock('primevue/usetoast', () => ({ useToast: () => ({ add: vi.fn() }) }))
 
 describe('create cup event page', () => {
     beforeEach(() => vi.resetAllMocks())
+    afterEach(() => vi.useRealTimers())
 
     it('creates a stage for the route cup and returns to its detail page', async () => {
         getCup.mockResolvedValue({ id: '42', year: 2026 })
@@ -83,5 +85,90 @@ describe('create cup event page', () => {
         await flushPromises()
 
         expect(wrapper.text()).toContain('Кубак не знойдзены.')
+    })
+
+    it('loads the first 20 sorted options and searches beyond them', async () => {
+        vi.useFakeTimers()
+        getCup.mockResolvedValue({ id: '42', year: 2026 })
+        getCupEventOptions
+            .mockResolvedValueOnce([{ id: '9', name: 'Sprint' }])
+            .mockResolvedValueOnce([{ id: '30', name: 'Forest Sprint' }])
+            .mockResolvedValueOnce([{ id: '9', name: 'Sprint' }])
+
+        const wrapper = mount(CreateCupEventPage, {
+            global: { plugins: [PrimeVue] },
+        })
+        await flushPromises()
+
+        expect(getCupEventOptions).toHaveBeenCalledWith({
+            year: 2026,
+            notRelatedToCup: '42',
+            sortBy: 'date',
+            sort: 'desc',
+            page: 1,
+            perPage: 20,
+        })
+        const form = wrapper.findComponent(CupEventForm)
+        expect(form.props('remoteSearch')).toBe(true)
+        expect(form.props('events')).toHaveLength(1)
+
+        form.findComponent(Select).vm.$emit('filter', { value: 'Forest' })
+        await vi.advanceTimersByTimeAsync(300)
+        await flushPromises()
+        expect(getCupEventOptions).toHaveBeenLastCalledWith(
+            expect.objectContaining({
+                competitionOrEventName: 'Forest',
+                page: 1,
+            }),
+        )
+        expect(form.props('events')).toEqual([
+            expect.objectContaining({ id: '30' }),
+        ])
+
+        form.findComponent(Select).vm.$emit('filter', { value: '' })
+        await vi.advanceTimersByTimeAsync(300)
+        await flushPromises()
+        expect(getCupEventOptions).toHaveBeenLastCalledWith({
+            year: 2026,
+            notRelatedToCup: '42',
+            sortBy: 'date',
+            sort: 'desc',
+            page: 1,
+            perPage: 20,
+        })
+    })
+
+    it('does not search on short input and ignores an older response', async () => {
+        vi.useFakeTimers()
+        getCup.mockResolvedValue({ id: '42', year: 2026 })
+        getCupEventOptions.mockResolvedValueOnce([])
+        const pending: Array<(value: unknown) => void> = []
+        getCupEventOptions.mockImplementation(
+            () => new Promise((resolve) => pending.push(resolve)),
+        )
+
+        const wrapper = mount(CreateCupEventPage, {
+            global: { plugins: [PrimeVue] },
+        })
+        await flushPromises()
+        const form = wrapper.findComponent(CupEventForm)
+
+        form.findComponent(Select).vm.$emit('filter', { value: 'Fo' })
+        await vi.advanceTimersByTimeAsync(300)
+        expect(getCupEventOptions).toHaveBeenCalledTimes(1)
+
+        form.findComponent(Select).vm.$emit('filter', { value: 'Forest' })
+        await vi.advanceTimersByTimeAsync(300)
+        form.findComponent(Select).vm.$emit('filter', { value: 'City' })
+        await vi.advanceTimersByTimeAsync(300)
+
+        pending[1]?.([{ id: '8', name: 'City Race' }])
+        await flushPromises()
+        pending[0]?.([{ id: '9', name: 'Forest Race' }])
+        await flushPromises()
+
+        expect(form.props('events')).toEqual([
+            expect.objectContaining({ id: '8' }),
+        ])
     })
 })
