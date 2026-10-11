@@ -50,6 +50,15 @@ const cupEventContexts = ref<import('../../api/types').CupEventContext[]>([])
 const competition = ref<Competition | null>(null)
 const distances = ref<Distance[]>([])
 const distanceId = ref<string>()
+const selectedDistance = computed(() =>
+    distances.value.find((distance) => distance.id === distanceId.value),
+)
+const distanceLengthFormatter = new Intl.NumberFormat('be-BY', {
+    maximumFractionDigits: 3,
+})
+function formatDistanceLength(length: number): string {
+    return distanceLengthFormatter.format(length / 1000)
+}
 const lines = ref<ProtocolLine[]>([])
 const users = ref<User[]>([])
 const loading = ref(true)
@@ -508,6 +517,21 @@ onBeforeUnmount(() => {
                                 filter-match-mode="contains"
                                 @change="onDistanceChange"
                             />
+                            <div
+                                v-if="selectedDistance"
+                                class="event-distance-parameters"
+                                aria-live="polite"
+                            >
+                                Даўжыня:
+                                {{
+                                    formatDistanceLength(
+                                        selectedDistance.length,
+                                    )
+                                }}
+                                {{ t('app.distance.length') }} ·
+                                {{ selectedDistance.points }}
+                                {{ t('app.distance.points') }}
+                            </div>
                         </div>
                         <div class="filter-field">
                             <label for="event-name-filter"

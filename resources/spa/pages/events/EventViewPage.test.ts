@@ -4,6 +4,7 @@ import { flushPromises, mount } from '@vue/test-utils'
 import PrimeVue from 'primevue/config'
 import Select from 'primevue/select'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import type { Distance } from '../../api/types'
 import ActionButton from '../../components/actions/ActionButton.vue'
 import EventViewPage from './EventViewPage.vue'
 
@@ -45,6 +46,27 @@ vi.mock('vue-router', () => ({
     useRouter: () => ({ replace: vi.fn() }),
 }))
 
+function mockEventDistances(distances: Distance[]): void {
+    getEvent.mockReset().mockResolvedValue({
+        id: '42',
+        competitionId: '9',
+        name: 'Этап',
+        description: 'Апісанне',
+        date: '2026-05-10',
+        participantsCount: 0,
+    })
+    getCompetition.mockResolvedValue({ id: '9', name: 'Спаборніцтва' })
+    getEventDistances.mockReset().mockResolvedValue(distances)
+    getPersonProtocolLines.mockReset().mockResolvedValue({
+        data: [],
+        headers: {
+            'x-pagination-current-page': '1',
+            'x-pagination-per-page': '100',
+            'x-pagination-has-next': 'false',
+        },
+    })
+}
+
 describe('event view page', () => {
     afterEach(() => {
         auth.isAuthenticated = false
@@ -67,8 +89,8 @@ describe('event view page', () => {
                 id: '7',
                 eventId: '42',
                 groupName: 'M21',
-                length: 10,
-                points: 100,
+                length: 2600,
+                points: 26,
                 disqual: false,
             },
         ])
@@ -148,6 +170,9 @@ describe('event view page', () => {
             filter: true,
             filterMatchMode: 'contains',
         })
+        expect(wrapper.get('.event-distance-parameters').text()).toBe(
+            'Даўжыня: 2,6 км · 26 КП',
+        )
         expect(wrapper.text()).not.toContain('Кубкі')
         expect(wrapper.text()).not.toContain('Рэдагаваць')
         expect(wrapper.text()).not.toContain('Актывацыя разраду')
@@ -326,6 +351,7 @@ describe('event view page', () => {
         await flushPromises()
 
         expect(wrapper.text()).toContain('Пратакол у апрацоўцы')
+        expect(wrapper.find('.event-distance-parameters').exists()).toBe(false)
         expect(
             wrapper
                 .get('.competition-details-card .event-processing-badge')
@@ -342,6 +368,7 @@ describe('event view page', () => {
         )
         expect(getEventDistances).toHaveBeenCalledTimes(2)
         expect(wrapper.text()).toContain('Вынікі')
+        expect(wrapper.find('.event-distance-parameters').exists()).toBe(true)
         expect(
             wrapper
                 .get('.competition-details-card .event-processing-badge')
@@ -536,5 +563,83 @@ describe('event view page', () => {
         await vi.advanceTimersByTimeAsync(5000)
 
         expect(getEvent).toHaveBeenCalledTimes(1)
+    })
+
+    it('shows the linked group details and updates them when the group changes', async () => {
+        mockEventDistances([
+            {
+                id: '7',
+                eventId: '42',
+                groupName: 'М21',
+                length: 2600,
+                points: 26,
+                disqual: false,
+            },
+            {
+                id: '8',
+                eventId: '42',
+                groupName: 'Ж21',
+                length: 3100,
+                points: 18,
+                disqual: false,
+            },
+        ])
+        route.query = { distanceId: '8' }
+
+        const wrapper = mount(EventViewPage, {
+            global: { plugins: [PrimeVue] },
+        })
+        await flushPromises()
+
+        expect(wrapper.get('.event-distance-parameters').text()).toBe(
+            'Даўжыня: 3,1 км · 18 КП',
+        )
+        expect(getPersonProtocolLines).toHaveBeenLastCalledWith(
+            expect.objectContaining({ distanceId: '8' }),
+        )
+
+        const selector = wrapper.findComponent(Select)
+        selector.vm.$emit('update:modelValue', '7')
+        selector.vm.$emit('change')
+        await flushPromises()
+
+        expect(wrapper.get('.event-distance-parameters').text()).toBe(
+            'Даўжыня: 2,6 км · 26 КП',
+        )
+        expect(getPersonProtocolLines).toHaveBeenLastCalledWith(
+            expect.objectContaining({ distanceId: '7' }),
+        )
+        expect(getEventDistances).toHaveBeenCalledTimes(1)
+    })
+
+    it('hides details without a distance and displays zero values', async () => {
+        mockEventDistances([])
+        const empty = mount(EventViewPage, {
+            global: { plugins: [PrimeVue] },
+        })
+        await flushPromises()
+
+        expect(empty.text()).toContain('Няма дыстанцый.')
+        expect(empty.find('.event-distance-parameters').exists()).toBe(false)
+        empty.unmount()
+
+        mockEventDistances([
+            {
+                id: '7',
+                eventId: '42',
+                groupName: 'М21',
+                length: 0,
+                points: 0,
+                disqual: false,
+            },
+        ])
+        const zero = mount(EventViewPage, {
+            global: { plugins: [PrimeVue] },
+        })
+        await flushPromises()
+
+        expect(zero.get('.event-distance-parameters').text()).toBe(
+            'Даўжыня: 0 км · 0 КП',
+        )
     })
 })
