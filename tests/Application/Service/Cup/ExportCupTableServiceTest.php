@@ -15,6 +15,7 @@ use App\Domain\Cup\Group\CupGroup;
 use App\Domain\Cup\Group\GroupMale;
 use App\Domain\Cup\Table\CupTable;
 use App\Domain\Cup\Table\CupTableBuilder;
+use App\Domain\Cup\Table\CupTableRow;
 use App\Domain\Shared\Criteria;
 use Illuminate\Support\Collection;
 use PHPUnit\Framework\Attributes\Test;
@@ -42,7 +43,7 @@ final class ExportCupTableServiceTest extends TestCase
         });
         $table = new CupTable([], []);
         $builder = $this->createMock(CupTableBuilder::class);
-        $builder->expects($this->once())->method('build')->with($cup, $events, $group)->willReturn($table);
+        $builder->expects($this->once())->method('build')->with($cup, $events, $group, false)->willReturn($table);
         $assembler = new CupExportAssembler(new CupTableAssembler());
 
         $result = new ExportCupTableService($cups, $cupEvents, $builder, $assembler)->execute(new ExportCupTable('101'));
@@ -50,5 +51,43 @@ final class ExportCupTableServiceTest extends TestCase
         $this->assertSame('Cup', $result->cupName);
         $this->assertSame(101, $result->cupId);
         $this->assertSame($group->name(), $result->sections[0]->groupName);
+    }
+
+    #[Test]
+    public function it_requests_zero_point_filtering_only_for_a_group_export(): void
+    {
+        $group = new CupGroup(GroupMale::Man);
+        $cup = $this->createMock(Cup::class);
+        $cup->expects($this->atLeast(2))->method('__get')->willReturnMap([['name', 'Cup'], ['id', 101]]);
+        $cup->method('groups')->willReturn([$group]);
+        $cups = $this->createMock(CupRepository::class);
+        $cups->expects($this->exactly(2))->method('byId')->with(101)->willReturn($cup);
+        $events = Collection::empty();
+        $cupEvents = $this->createMock(CupEventRepository::class);
+        $cupEvents->expects($this->exactly(2))->method('byCriteria')->willReturn($events);
+        $builder = $this->createMock(CupTableBuilder::class);
+        $flags = [];
+        $builder->expects($this->exactly(2))->method('build')->willReturnCallback(function (Cup $builtCup, Collection $builtEvents, CupGroup $builtGroup, bool $excludeZeroPointRows) use ($cup, $events, $group, &$flags): CupTable {
+            $this->assertSame($cup, $builtCup);
+            $this->assertSame($events, $builtEvents);
+            $this->assertSame($group->id(), $builtGroup->id());
+            $flags[] = $excludeZeroPointRows;
+            $rows = [
+                new CupTableRow(1, '1', 'Zero', 2000, '', [], '0', '0'),
+                new CupTableRow(2, '2', 'Winner', 2000, '', [], '12', '12'),
+            ];
+
+            return new CupTable([], $excludeZeroPointRows ? [$rows[1]] : $rows);
+        });
+        $service = new ExportCupTableService($cups, $cupEvents, $builder, new CupExportAssembler(new CupTableAssembler()));
+
+        $full = $service->execute(new ExportCupTable('101'));
+        $grouped = $service->execute(new ExportCupTable('101', $group->id()));
+
+        $this->assertCount(2, $full->sections[0]->rows);
+        $this->assertCount(1, $grouped->sections[0]->rows);
+        $this->assertSame('Winner', $grouped->sections[0]->rows[0]->personName);
+        $this->assertSame(2, $grouped->sections[0]->rows[0]->place);
+        $this->assertSame([false, true], $flags);
     }
 }

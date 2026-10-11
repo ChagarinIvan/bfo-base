@@ -19,12 +19,14 @@ final readonly class CachedCupTableBuilder implements CupTableBuilder
     ) {
     }
 
-    public function build(Cup $cup, Collection $events, CupGroup $group): CupTable
+    public function build(Cup $cup, Collection $events, CupGroup $group, bool $excludeZeroPointRows = false): CupTable
     {
+        $key = "table_{$cup->id}_{$group->id()}" . ($excludeZeroPointRows ? '_nonzero' : '');
+
         return $this->cache->tags(['cups'])->remember(
-            "table_{$cup->id}_{$group->id()}",
+            $key,
             1000000,
-            fn (): CupTable => $this->builder->build($cup, $events, $group),
+            fn (): CupTable => $this->builder->build($cup, $events, $group, $excludeZeroPointRows),
         );
     }
 }

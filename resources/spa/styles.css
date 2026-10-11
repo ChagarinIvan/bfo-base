@@ -521,6 +521,10 @@ body {
     background: transparent;
 }
 
+.persons-export-button {
+    margin-right: 0.75rem;
+}
+
 .page-title {
     margin: 0;
     font-size: clamp(1.65rem, 3vw, 2.25rem);

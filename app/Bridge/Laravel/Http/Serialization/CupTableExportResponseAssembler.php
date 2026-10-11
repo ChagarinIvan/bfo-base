@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 final readonly class CupTableExportResponseAssembler
 {
     public function __construct(
-        private CupTableCsvSerializer $csv,
+        private CupTableXlsxSerializer $xlsx,
         private CupTableHtmlSerializer $html,
     ) {
     }
@@ -23,16 +23,18 @@ final readonly class CupTableExportResponseAssembler
             $contents = $this->html->serialize($export);
             $contentType = 'text/html; charset=UTF-8';
         } else {
-            $contents = $this->csv->serialize($export);
-            $contentType = 'text/csv; charset=UTF-8';
+            $contents = $this->xlsx->serialize($export);
+            $contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
         }
 
         $response = new Response($contents, Response::HTTP_OK, ['Content-Type' => $contentType]);
+        $groupName = $dto->groupId === null ? null : $export->sections[0]->groupName;
+        $filename = $export->cupName . ($groupName === null ? '' : ' - ' . $groupName) . '.' . $dto->format;
 
         $response->headers->set('Content-Disposition', $response->headers->makeDisposition(
             ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-            $export->cupName . '.' . $dto->format,
-            'cup-' . $export->cupId . '.' . $dto->format,
+            $filename,
+            'export.' . $dto->format,
         ));
 
         return $response;

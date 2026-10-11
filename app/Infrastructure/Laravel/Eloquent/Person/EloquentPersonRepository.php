@@ -6,6 +6,7 @@ namespace App\Infrastructure\Laravel\Eloquent\Person;
 
 use App\Domain\Person\Person;
 use App\Domain\Person\PersonInfo;
+use App\Domain\Person\PersonRankExportRow;
 use App\Domain\Person\PersonRankHistory;
 use App\Domain\Person\PersonRepository;
 use App\Domain\Shared\Criteria;
@@ -17,7 +18,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
 use function mb_strtolower;
 
-final class EloquentPersonRepository implements PersonRepository
+final readonly class EloquentPersonRepository implements PersonRepository
 {
     use EscapesLikePatterns;
 
@@ -87,7 +88,66 @@ final class EloquentPersonRepository implements PersonRepository
     /** @return Slice<Person> */
     public function paginate(Criteria $criteria): Slice
     {
-        return new Slice(new EloquentQueryAdapter($this->createPaginatedQuery($criteria)));
+        return new Slice(new EloquentQueryAdapter($this->searchQuery($criteria)));
+    }
+
+    /** @return LazyCollection<int, PersonRankExportRow> */
+    public function exportByCriteria(Criteria $criteria): LazyCollection
+    {
+        return $this->searchQuery($criteria)
+            ->select(['person.id', 'person.lastname', 'person.firstname', 'person.birthday', 'person.current_rank'])
+            ->lazy(500)
+            ->map(static fn (Person $person): PersonRankExportRow => new PersonRankExportRow(
+                $person->lastname,
+                $person->firstname,
+                $person->birthday?->format('Y') ?? '',
+                $person->currentRank()->rank->label(),
+            ));
+    }
+
+    /** @return Builder<Person> */
+    private function searchQuery(Criteria $criteria): Builder
+    {
+        $query = Person::query()
+            ->where('person.active', true)
+            ->select('person.*')
+            ->orderBy('person.lastname')
+            ->orderBy('person.firstname')
+            ->orderBy('person.id');
+
+        if ($criteria->hasParam('ids')) {
+            $query->whereIn('person.id', $criteria->param('ids'));
+        }
+        if ($criteria->hasParam('clubId')) {
+            $query
+                ->join('club', 'club.id', '=', 'person.club_id')
+                ->where('club.active', true)
+                ->where('person.club_id', $criteria->param('clubId'));
+        }
+        if ($criteria->hasParam('rankId')) {
+            $query->where('person.current_rank', $criteria->param('rankId'));
+        }
+        if ($criteria->hasParam('name')) {
+            $name = $this->escapeLikePattern(mb_strtolower((string) $criteria->param('name')));
+            $pattern = '%' . $name . '%';
+            $query->where(static function (Builder $query) use ($pattern): void {
+                $query
+                    ->whereRaw("LOWER(person.lastname) LIKE ? ESCAPE '!'", [$pattern])
+                    ->orWhereRaw("LOWER(person.firstname) LIKE ? ESCAPE '!'", [$pattern]);
+            });
+        }
+        if ($criteria->hasParam('birthYear')) {
+            $query->whereYear('person.birthday', (int) $criteria->param('birthYear'));
+        }
+        if ($criteria->hasParam('withoutLinesAndPayments')) {
+            $query
+                ->leftJoin('protocol_lines', 'protocol_lines.person_id', '=', 'person.id')
+                ->whereNull('protocol_lines.id')
+                ->leftJoin('persons_payments', 'persons_payments.person_id', '=', 'person.id')
+                ->whereNull('persons_payments.id');
+        }
+
+        return $query;
     }
 
     /** @return Builder<Person> */
@@ -119,60 +179,6 @@ final class EloquentPersonRepository implements PersonRepository
 
         if ($criteria->hasParam('lastname')) {
             $query->where('person.lastname', $criteria->param('lastname'));
-        }
-
-        return $query;
-    }
-
-    /** @return Builder<Person> */
-    private function createPaginatedQuery(Criteria $criteria): Builder
-    {
-        $query = Person::query()
-            ->where('person.active', true)
-            ->select('person.*')
-            ->orderBy('person.lastname')
-            ->orderBy('person.firstname')
-            ->orderBy('person.id');
-
-        if ($criteria->hasParam('ids')) {
-            $query->whereIn('person.id', $criteria->param('ids'));
-        }
-
-        if ($criteria->hasParam('clubId')) {
-            $query
-                ->join('club', 'club.id', '=', 'person.club_id')
-                ->where('club.active', true)
-                ->where('person.club_id', $criteria->param('clubId'))
-            ;
-        }
-
-        if ($criteria->hasParam('rankId')) {
-            $query->where('person.current_rank', $criteria->param('rankId'));
-        }
-
-        if ($criteria->hasParam('name')) {
-            $name = $this->escapeLikePattern(mb_strtolower((string) $criteria->param('name')));
-
-            $pattern = '%' . $name . '%';
-            $query->where(static function (Builder $query) use ($pattern): void {
-                $query
-                    ->whereRaw("LOWER(person.lastname) LIKE ? ESCAPE '!'", [$pattern])
-                    ->orWhereRaw("LOWER(person.firstname) LIKE ? ESCAPE '!'", [$pattern])
-                ;
-            });
-        }
-
-        if ($criteria->hasParam('birthYear')) {
-            $query->whereYear('person.birthday', (int) $criteria->param('birthYear'));
-        }
-
-        if ($criteria->hasParam('withoutLinesAndPayments')) {
-            $query
-                ->leftJoin('protocol_lines', 'protocol_lines.person_id', '=', 'person.id')
-                ->whereNull('protocol_lines.id')
-                ->leftJoin('persons_payments', 'persons_payments.person_id', '=', 'person.id')
-                ->whereNull('persons_payments.id')
-            ;
         }
 
         return $query;

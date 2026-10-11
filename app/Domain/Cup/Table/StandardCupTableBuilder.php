@@ -13,7 +13,7 @@ use function round;
 
 final readonly class StandardCupTableBuilder implements CupTableBuilder
 {
-    public function build(Cup $cup, Collection $events, CupGroup $group): CupTable
+    public function build(Cup $cup, Collection $events, CupGroup $group, bool $excludeZeroPointRows = false): CupTable
     {
         $calculated = $cup->calculateGroupEvents($group, $events);
         $rows = [];
@@ -58,9 +58,14 @@ final readonly class StandardCupTableBuilder implements CupTableBuilder
                 }
             }
 
+            $rowPlace = $place++;
+            if ($excludeZeroPointRows && $total === 0.0) {
+                continue;
+            }
+
             /** @var array<string, CupTableStageCell> $cells */
             $rows[] = new CupTableRow(
-                place: $place++,
+                place: $rowPlace,
                 personId: (string) $personId,
                 personName: $firstLine->getFullName(),
                 personYear: $firstLine->year ?? 0,

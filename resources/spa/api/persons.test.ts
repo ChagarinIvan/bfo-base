@@ -1,6 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { api } from './client'
-import { getPerson, getPersons, rebuildPersonRanks } from './persons'
+import {
+    exportPersonRanks,
+    getPerson,
+    getPersons,
+    rebuildPersonRanks,
+} from './persons'
 
 vi.mock('./client', () => ({
     api: { get: vi.fn(), post: vi.fn() },
@@ -83,5 +88,16 @@ describe('persons api', () => {
         await rebuildPersonRanks('42')
 
         expect(api.post).toHaveBeenCalledWith('/persons/42/ranks/rebuild')
+    })
+
+    it('downloads rank CSV using the active filters without pagination', async () => {
+        vi.mocked(api.get).mockResolvedValue({ data: new Blob(['csv']) })
+
+        await exportPersonRanks({ rankId: 6, birthYear: 2001 })
+
+        expect(api.get).toHaveBeenCalledWith('/persons/export', {
+            params: { rankId: 6, birthYear: 2001 },
+            responseType: 'blob',
+        })
     })
 })

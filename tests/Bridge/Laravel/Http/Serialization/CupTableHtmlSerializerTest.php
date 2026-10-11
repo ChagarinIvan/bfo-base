@@ -9,6 +9,7 @@ use App\Application\Dto\Cup\ExportCupTableSectionDto;
 use App\Application\Dto\Cup\ExportCupTableStageDto;
 use App\Application\Dto\Cup\ViewCupTableRowDto;
 use App\Application\Dto\Cup\ViewCupTableStageCellDto;
+use App\Bridge\Laravel\Http\Serialization\CupTableExportLayout;
 use App\Bridge\Laravel\Http\Serialization\CupTableHtmlSerializer;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -42,20 +43,44 @@ final class CupTableHtmlSerializerTest extends TestCase
             new ExportCupTableSectionDto('Ж35', [], []),
         ]);
 
-        $html = new CupTableHtmlSerializer()->serialize($export);
+        $html = new CupTableHtmlSerializer(new CupTableExportLayout())->serialize($export);
 
         $this->assertStringContainsString('<!doctype html>', $html);
-        $this->assertStringContainsString('Кубок &lt;восень&gt;', $html);
+        $this->assertStringNotContainsString('Кубок &lt;восень&gt;', $html);
         $this->assertStringContainsString('М21 &amp; Ж21', $html);
-        $this->assertStringContainsString('Іванов &lt;script&gt;alert(&quot;x&quot;)&lt;/script&gt;', $html);
-        $this->assertStringContainsString('Клуб &amp; сябры', $html);
-        $this->assertStringContainsString('<th scope="col">2026-10-07</th>', $html);
-        $this->assertStringContainsString('<td class="cup-table-result--counted">75</td>', $html);
-        $this->assertStringContainsString('<td>25</td>', $html);
-        $this->assertStringContainsString('<td></td>', $html);
-        $this->assertStringNotContainsString('<td class="cup-table-result--counted">25</td>', $html);
+        $this->assertStringContainsString('<td>Іванов &lt;script&gt;alert(&quot;x&quot;)&lt;/script&gt;</td>', $html);
+        $this->assertStringNotContainsString('Клуб &amp; сябры', $html);
+        $this->assertStringContainsString('<th scope="col" style="text-align:center">07.10</th>', $html);
+        $this->assertStringContainsString('<th scope="col" style="text-align:center">Сярэдняе</th>', $html);
+        $this->assertStringContainsString('<th scope="col">Прозвішча, Імя</th>', $html);
+        $this->assertStringContainsString('<td style="text-align:center">1</td>', $html);
+        $this->assertStringContainsString('<td style="text-align:center">2000</td>', $html);
+        $this->assertStringContainsString('<td style="text-align:center;font-weight:700">75</td>', $html);
+        $this->assertSame(2, substr_count($html, '<td style="text-align:center">75</td>'));
+        $this->assertSame(2, substr_count($html, '<td style="text-align:center">1</td>'));
+        $this->assertStringContainsString('<td style="text-align:center">25</td>', $html);
+        $this->assertStringContainsString('<td style="text-align:center"></td>', $html);
+        $this->assertStringNotContainsString('style="text-align:center;font-weight:700">25</td>', $html);
+        $this->assertStringNotContainsString('color:', $html);
+        $this->assertStringNotContainsString('background-color:', $html);
         $this->assertStringContainsString('<h2>Ж35</h2>', $html);
+        $this->assertSame(2, substr_count($html, '<h2>'));
         $this->assertSame(2, substr_count($html, '<table>'));
         $this->assertStringNotContainsString('<script>', $html);
+    }
+
+    #[Test]
+    public function it_omits_the_group_heading_for_a_single_section(): void
+    {
+        $export = new ExportCupTableDto('Кубок', 42, [
+            new ExportCupTableSectionDto('М21', [], []),
+        ]);
+
+        $html = new CupTableHtmlSerializer(new CupTableExportLayout())->serialize($export);
+
+        $this->assertSame(1, substr_count($html, '<section>'));
+        $this->assertSame(1, substr_count($html, '<table>'));
+        $this->assertStringNotContainsString('<h2>', $html);
+        $this->assertStringContainsString('<th scope="col" style="text-align:center">№</th>', $html);
     }
 }

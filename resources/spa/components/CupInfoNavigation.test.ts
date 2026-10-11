@@ -45,10 +45,17 @@ const RouterLink = defineComponent({
     },
 })
 
+const groups = [{ id: 'M_0_', name: 'М' }]
+
 describe('cup info navigation', () => {
     it('keeps edit, event, tab, export, cache, delete actions in order', () => {
         const wrapper = mount(CupInfoNavigation, {
-            props: { cupId: '42', firstGroupId: 'M_0_' },
+            props: {
+                cupId: '42',
+                cupName: 'Кубак 2024',
+                groups,
+                firstGroupId: 'M_0_',
+            },
             global: {
                 components: { RouterLink },
                 stubs: {
@@ -75,7 +82,12 @@ describe('cup info navigation', () => {
 
     it('opens a format menu and downloads the selected format', async () => {
         const wrapper = mount(CupInfoNavigation, {
-            props: { cupId: '42', firstGroupId: 'M_0_' },
+            props: {
+                cupId: '42',
+                cupName: 'Кубак 2024',
+                groups,
+                firstGroupId: 'M_0_',
+            },
             global: { components: { RouterLink } },
         })
         const button = wrapper
@@ -91,7 +103,10 @@ describe('cup info navigation', () => {
             label: string
             command: () => void
         }>
-        expect(items.map((item) => item.label)).toEqual(['CSV', 'HTML'])
+        expect(items.map((item) => item.label)).toEqual([
+            'Excel (XLSX)',
+            'HTML',
+        ])
 
         vi.mocked(exportCupTable).mockResolvedValue({
             data: new Blob(['table']),
@@ -116,10 +131,13 @@ describe('cup info navigation', () => {
         items[1]?.command()
         await flushPromises()
 
-        expect(exportCupTable).toHaveBeenCalledWith('42', 'csv', 'M_0_')
+        expect(exportCupTable).toHaveBeenCalledWith('42', 'xlsx', 'M_0_')
         expect(exportCupTable).toHaveBeenCalledWith('42', 'html', 'M_0_')
         expect(click).toHaveBeenCalledTimes(2)
-        expect(downloads).toEqual(['cup-42-M_0_.csv', 'cup-42-M_0_.html'])
+        expect(downloads).toEqual([
+            'Кубак 2024 - М.xlsx',
+            'Кубак 2024 - М.html',
+        ])
 
         vi.mocked(exportCupTable).mockRejectedValueOnce(
             new Error('download failed'),
@@ -146,12 +164,20 @@ describe('cup info navigation', () => {
             configurable: true,
             value: vi.fn(() => 'blob:table'),
         })
+        const downloads: string[] = []
         const click = vi
             .spyOn(HTMLAnchorElement.prototype, 'click')
-            .mockImplementation(() => undefined)
+            .mockImplementation(function (this: HTMLAnchorElement) {
+                downloads.push(this.download)
+            })
 
         const wrapper = mount(CupInfoNavigation, {
-            props: { cupId: '42', firstGroupId: 'M_0_' },
+            props: {
+                cupId: '42',
+                cupName: 'Кубак 2024',
+                groups,
+                firstGroupId: 'M_0_',
+            },
             global: { components: { RouterLink } },
         })
         const items = wrapper.findComponent(Menu).props('model') as Array<{
@@ -160,7 +186,8 @@ describe('cup info navigation', () => {
         items[0]?.command()
         await flushPromises()
 
-        expect(exportCupTable).toHaveBeenCalledWith('42', 'csv', undefined)
+        expect(exportCupTable).toHaveBeenCalledWith('42', 'xlsx', undefined)
+        expect(downloads).toEqual(['Кубак 2024.xlsx'])
         click.mockRestore()
         route.params.groupId = 'M_0_'
     })
@@ -186,7 +213,12 @@ describe('cup info navigation', () => {
             .mockImplementation(() => undefined)
 
         const wrapper = mount(CupInfoNavigation, {
-            props: { cupId: '42', firstGroupId: 'M_0_' },
+            props: {
+                cupId: '42',
+                cupName: 'Кубак 2024',
+                groups,
+                firstGroupId: 'M_0_',
+            },
             global: { components: { RouterLink } },
         })
         const menu = wrapper.findComponent(Menu)

@@ -10,5 +10,5 @@ use Illuminate\Support\Collection;
 
 interface CupTableBuilder
 {
-    public function build(Cup $cup, Collection $events, CupGroup $group): CupTable;
+    public function build(Cup $cup, Collection $events, CupGroup $group, bool $excludeZeroPointRows = false): CupTable;
 }

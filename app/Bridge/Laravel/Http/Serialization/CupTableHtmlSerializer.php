@@ -6,8 +6,7 @@ namespace App\Bridge\Laravel\Http\Serialization;
 
 use App\Application\Dto\Cup\ExportCupTableDto;
 use App\Application\Dto\Cup\ExportCupTableSectionDto;
-use App\Application\Dto\Cup\ExportCupTableStageDto;
-use App\Application\Dto\Cup\ViewCupTableRowDto;
+use function count;
 use function htmlspecialchars;
 use function implode;
 use const ENT_QUOTES;
@@ -15,22 +14,20 @@ use const ENT_SUBSTITUTE;
 
 final readonly class CupTableHtmlSerializer
 {
+    public function __construct(private CupTableExportLayout $layout)
+    {
+    }
+
     public function serialize(ExportCupTableDto $export): string
     {
         $html = [
             '<!doctype html>',
-            '<html lang="ru">',
-            '<head>',
-            '<meta charset="UTF-8">',
-            '<title>' . $this->escape($export->cupName) . '</title>',
-            '<style>body{font:16px/1.4 sans-serif;margin:2rem;color:#222}table{border-collapse:collapse;width:100%;margin:1rem 0 2rem}th,td{border:1px solid #aaa;padding:.4rem;text-align:left}th{background:#eee}td:nth-child(n+5){text-align:right}.cup-table-result--counted{font-weight:700}@media print{body{margin:0}thead{display:table-header-group}}</style>',
-            '</head>',
             '<body>',
-            '<h1>' . $this->escape($export->cupName) . '</h1>',
         ];
 
+        $multi = count($export->sections) > 1;
         foreach ($export->sections as $section) {
-            $html[] = $this->section($section);
+            $html[] = $this->section($section, $multi);
         }
 
         $html[] = '</body>';
@@ -38,28 +35,38 @@ final readonly class CupTableHtmlSerializer
 
         return implode("\n", $html) . "\n";
     }
-    private function section(ExportCupTableSectionDto $section): string
+
+    private function section(ExportCupTableSectionDto $section, bool $withHeader): string
     {
         $html = [
             '<section>',
-            '<h2>' . $this->escape($section->groupName) . '</h2>',
-            '<table>',
-            '<thead><tr>',
         ];
 
-        foreach (['Место', 'ФИО', 'Год', 'Клуб', 'Очки'] as $label) {
-            $html[] = '<th scope="col">' . $label . '</th>';
+        if ($withHeader) {
+            $html[] = '<h2>' . $this->escape($section->groupName) . '</h2>';
         }
 
-        foreach ($section->stages as $stage) {
-            $html[] = '<th scope="col">' . $this->escape($stage->date) . '</th>';
+        $html[] = '<table>';
+        $html[] = '<thead><tr>';
+
+        foreach ($this->layout->headings($section) as $column => $label) {
+            $alignment = $column === 1 ? '' : ' style="text-align:center"';
+            $html[] = '<th scope="col"' . $alignment . '>' . $this->escape($label) . '</th>';
         }
 
         $html[] = '</tr></thead>';
         $html[] = '<tbody>';
 
-        foreach ($section->rows as $row) {
-            $html[] = $this->row($row, $section->stages);
+        foreach ($section->rows as $index => $row) {
+            $html[] = '<tr>';
+            foreach ($this->layout->values($row, $section, $index + 1) as $column => $value) {
+                $stage = $section->stages[$column - 3] ?? null;
+                $cell = $stage === null ? null : ($row->stages[$stage->stageId] ?? null);
+                $counted = $column >= 3 && $cell?->counted === true;
+                $attributes = $column === 1 ? '' : ' style="text-align:center' . ($counted ? ';font-weight:700' : '') . '"';
+                $html[] = '<td' . $attributes . '>' . $this->escape((string) $value) . '</td>';
+            }
+            $html[] = '</tr>';
         }
 
         $html[] = '</tbody>';
@@ -67,29 +74,6 @@ final readonly class CupTableHtmlSerializer
         $html[] = '</section>';
 
         return implode("\n", $html);
-    }
-
-    /** @param list<ExportCupTableStageDto> $stages */
-    private function row(ViewCupTableRowDto $row, array $stages): string
-    {
-        $html = [
-            '<tr>',
-            '<td>' . $row->place . '</td>',
-            '<td>' . $this->escape($row->personName) . '</td>',
-            '<td>' . $row->personYear . '</td>',
-            '<td>' . $this->escape($row->clubName) . '</td>',
-            '<td>' . $this->escape($row->totalPoints) . '</td>',
-        ];
-
-        foreach ($stages as $stage) {
-            $cell = $row->stages[$stage->stageId] ?? null;
-            $class = $cell?->counted ? ' class="cup-table-result--counted"' : '';
-            $html[] = '<td' . $class . '>' . $this->escape($cell->points ?? '') . '</td>';
-        }
-
-        $html[] = '</tr>';
-
-        return implode('', $html);
     }
 
     private function escape(string $value): string
