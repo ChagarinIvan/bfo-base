@@ -3,7 +3,9 @@
 import { mount } from '@vue/test-utils'
 import PrimeVue from 'primevue/config'
 import Select from 'primevue/select'
+import InputText from 'primevue/inputtext'
 import { describe, expect, it } from 'vitest'
+import SlicePaginator from '../../components/SlicePaginator.vue'
 import CupEventForm from './CupEventForm.vue'
 
 describe('cup event form', () => {
@@ -47,5 +49,44 @@ describe('cup event form', () => {
         expect(wrapper.emitted('submit')).toEqual([
             [{ eventId: 9, points: 75 }],
         ])
+    })
+
+    it('uses server search and keeps the selected label when the page changes', async () => {
+        const event = {
+            id: '9',
+            competitionId: '1',
+            name: 'Sprint',
+            description: '',
+            date: '2026-01-01',
+            participantsCount: 0,
+            competitionName: 'Forest Cup',
+        }
+        const wrapper = mount(CupEventForm, {
+            props: {
+                events: [event],
+                submitLabel: 'Захаваць',
+                remoteSearch: true,
+                search: '',
+                pagination: { currentPage: 1, perPage: 20, hasNext: true },
+            },
+            global: { plugins: [PrimeVue] },
+        })
+
+        expect(wrapper.findComponent(Select).props('filter')).toBe(false)
+        wrapper.findComponent(InputText).vm.$emit('update:modelValue', 'Forest')
+        expect(wrapper.emitted('update:search')).toEqual([['Forest']])
+
+        wrapper.findComponent(Select).vm.$emit('update:modelValue', '9')
+        await wrapper.vm.$nextTick()
+        await wrapper.setProps({ events: [] })
+        expect(wrapper.text()).toContain('Forest Cup — Sprint')
+        await wrapper.find('form').trigger('submit')
+        expect(wrapper.emitted('submit')).toEqual([[{ eventId: 9, points: 0 }]])
+
+        wrapper.findComponent(SlicePaginator).vm.$emit('page', {
+            page: 1,
+            rows: 20,
+        })
+        expect(wrapper.emitted('page')).toHaveLength(1)
     })
 })

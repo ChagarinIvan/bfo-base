@@ -85,6 +85,19 @@ export async function getCupEventOptions(
     ).data
 }
 
+export async function getCupEventOptionsPage(
+    query: CupEventOptionQuery,
+): Promise<PaginatedApiResponse<Event>> {
+    const response = await api.get<Event[]>('/events', {
+        params: { ...query, withCompetition: 1 },
+    })
+
+    return {
+        data: response.data,
+        headers: response.headers as Record<string, unknown>,
+    }
+}
+
 export async function getCompetitionEvents(
     competitionId: string,
     page = 1,

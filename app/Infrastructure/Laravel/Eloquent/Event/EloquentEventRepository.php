@@ -12,6 +12,7 @@ use App\Domain\Shared\Criteria;
 use App\Domain\Shared\Pagination\Slice;
 use App\Infrastructure\Laravel\Eloquent\Pagination\EloquentQueryAdapter;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Collection;
 use function mb_strtolower;
 
@@ -148,12 +149,21 @@ final class EloquentEventRepository implements EventRepository
                 ->where('distances.group_id', $criteria->param('groupId'));
         }
 
-        if ($criteria->hasParam('competitionName')) {
+        if ($criteria->hasOneParam(['competitionName', 'competitionOrEventName'])) {
             $query->join('competitions', 'competitions.id', '=', 'events.competition_id');
         }
 
         if ($criteria->hasParam('competitionName')) {
             $query->whereRaw('LOWER(competitions.name) LIKE ?', ['%' . mb_strtolower((string) $criteria->param('competitionName')) . '%']);
+        }
+
+        if ($criteria->hasParam('competitionOrEventName')) {
+            $name = '%' . mb_strtolower((string) $criteria->param('competitionOrEventName')) . '%';
+            $query->where(static function (Builder $query) use ($name): void {
+                $query
+                    ->whereRaw('LOWER(competitions.name) LIKE ?', [$name])
+                    ->orWhereRaw('LOWER(events.name) LIKE ?', [$name]);
+            });
         }
 
         if ($criteria->hasParam('year')) {
@@ -165,26 +175,14 @@ final class EloquentEventRepository implements EventRepository
         }
 
         if ($criteria->hasParam('notRelatedToCup')) {
-            $query
-                ->leftjoin('cup_events', 'cup_events.event_id', '=', 'events.id')
-                ->where(static function ($query) use ($criteria): void {
-                    $query
-                        ->whereNull('cup_events.id')
-                        ->orWhere(static function ($query): void {
-                            $query
-                                ->where('cup_events.active', false)
-                                ->whereNotNull('cup_events.id')
-                            ;
-                        })
-                        ->orWhere(static function ($query) use ($criteria): void {
-                            $query
-                                ->where('cup_events.active', true)
-                                ->whereNot('cup_events.cup_id', $criteria->param('notRelatedToCup'))
-                            ;
-                        })
-                    ;
-                })
-            ;
+            $query->whereNotExists(static function (QueryBuilder $subquery) use ($criteria): void {
+                $subquery
+                    ->selectRaw('1')
+                    ->from('cup_events')
+                    ->whereColumn('cup_events.event_id', 'events.id')
+                    ->where('cup_events.cup_id', $criteria->param('notRelatedToCup'))
+                    ->where('cup_events.active', true);
+            });
         }
 
         if ($criteria->sorting()) {

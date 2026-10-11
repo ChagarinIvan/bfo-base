@@ -2,19 +2,21 @@
 
 import { flushPromises, mount } from '@vue/test-utils'
 import PrimeVue from 'primevue/config'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import CreateCupEventPage from './CreateCupEventPage.vue'
 import CupEventForm from './CupEventForm.vue'
 
-const { createCupEvent, getCup, getCupEventOptions, push } = vi.hoisted(() => ({
-    createCupEvent: vi.fn(),
-    getCup: vi.fn(),
-    getCupEventOptions: vi.fn(),
-    push: vi.fn(),
-}))
+const { createCupEvent, getCup, getCupEventOptionsPage, push } = vi.hoisted(
+    () => ({
+        createCupEvent: vi.fn(),
+        getCup: vi.fn(),
+        getCupEventOptionsPage: vi.fn(),
+        push: vi.fn(),
+    }),
+)
 
 vi.mock('../../api/cups', () => ({ createCupEvent, getCup }))
-vi.mock('../../api/events', () => ({ getCupEventOptions }))
+vi.mock('../../api/events', () => ({ getCupEventOptionsPage }))
 vi.mock('vue-router', () => ({
     useRoute: () => ({ params: { cupId: '42' } }),
     useRouter: () => ({ push }),
@@ -23,10 +25,11 @@ vi.mock('primevue/usetoast', () => ({ useToast: () => ({ add: vi.fn() }) }))
 
 describe('create cup event page', () => {
     beforeEach(() => vi.resetAllMocks())
+    afterEach(() => vi.useRealTimers())
 
     it('creates a stage for the route cup and returns to its detail page', async () => {
         getCup.mockResolvedValue({ id: '42', year: 2026 })
-        getCupEventOptions.mockResolvedValue([])
+        getCupEventOptionsPage.mockResolvedValue({ data: [], headers: {} })
         createCupEvent.mockResolvedValue({ id: '7' })
 
         const wrapper = mount(CreateCupEventPage, {
@@ -48,7 +51,7 @@ describe('create cup event page', () => {
 
     it('shows field validation errors from the create request', async () => {
         getCup.mockResolvedValue({ id: '42', year: 2026 })
-        getCupEventOptions.mockResolvedValue([])
+        getCupEventOptionsPage.mockResolvedValue({ data: [], headers: {} })
         createCupEvent.mockRejectedValue({
             isAxiosError: true,
             response: {
@@ -83,5 +86,103 @@ describe('create cup event page', () => {
         await flushPromises()
 
         expect(wrapper.text()).toContain('Кубак не знойдзены.')
+    })
+
+    it('loads sorted pages of 20 and searches across the server result', async () => {
+        vi.useFakeTimers()
+        getCup.mockResolvedValue({ id: '42', year: 2026 })
+        getCupEventOptionsPage.mockResolvedValue({
+            data: [{ id: '9', name: 'Sprint', competitionName: 'Forest Cup' }],
+            headers: {
+                'x-pagination-current-page': '1',
+                'x-pagination-per-page': '20',
+                'x-pagination-has-next': 'true',
+            },
+        })
+
+        const wrapper = mount(CreateCupEventPage, {
+            global: { plugins: [PrimeVue] },
+        })
+        await flushPromises()
+
+        expect(getCupEventOptionsPage).toHaveBeenCalledWith({
+            year: 2026,
+            notRelatedToCup: '42',
+            sortBy: 'date',
+            sort: 'desc',
+            page: 1,
+            perPage: 20,
+        })
+        const form = wrapper.findComponent(CupEventForm)
+        expect(form.props('remoteSearch')).toBe(true)
+        expect(form.props('events')).toHaveLength(1)
+
+        form.vm.$emit('page', { page: 1, rows: 20 })
+        await flushPromises()
+        expect(getCupEventOptionsPage).toHaveBeenLastCalledWith(
+            expect.objectContaining({ page: 2, perPage: 20 }),
+        )
+
+        form.vm.$emit('update:search', 'Forest')
+        await vi.advanceTimersByTimeAsync(300)
+        await flushPromises()
+        expect(getCupEventOptionsPage).toHaveBeenLastCalledWith(
+            expect.objectContaining({
+                competitionOrEventName: 'Forest',
+                page: 1,
+            }),
+        )
+
+        form.vm.$emit('update:search', '')
+        await vi.advanceTimersByTimeAsync(300)
+        await flushPromises()
+        expect(getCupEventOptionsPage).toHaveBeenLastCalledWith({
+            year: 2026,
+            notRelatedToCup: '42',
+            sortBy: 'date',
+            sort: 'desc',
+            page: 1,
+            perPage: 20,
+        })
+    })
+
+    it('does not search on short input and ignores an older response', async () => {
+        vi.useFakeTimers()
+        getCup.mockResolvedValue({ id: '42', year: 2026 })
+        getCupEventOptionsPage.mockResolvedValueOnce({ data: [], headers: {} })
+        const pending: Array<(value: unknown) => void> = []
+        getCupEventOptionsPage.mockImplementation(
+            () => new Promise((resolve) => pending.push(resolve)),
+        )
+
+        const wrapper = mount(CreateCupEventPage, {
+            global: { plugins: [PrimeVue] },
+        })
+        await flushPromises()
+        const form = wrapper.findComponent(CupEventForm)
+
+        form.vm.$emit('update:search', 'Fo')
+        await vi.advanceTimersByTimeAsync(300)
+        expect(getCupEventOptionsPage).toHaveBeenCalledTimes(1)
+
+        form.vm.$emit('update:search', 'Forest')
+        await vi.advanceTimersByTimeAsync(300)
+        form.vm.$emit('update:search', 'City')
+        await vi.advanceTimersByTimeAsync(300)
+
+        pending[1]?.({
+            data: [{ id: '8', name: 'City Race' }],
+            headers: {},
+        })
+        await flushPromises()
+        pending[0]?.({
+            data: [{ id: '9', name: 'Forest Race' }],
+            headers: {},
+        })
+        await flushPromises()
+
+        expect(form.props('events')).toEqual([
+            expect.objectContaining({ id: '8' }),
+        ])
     })
 })

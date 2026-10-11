@@ -6,6 +6,7 @@ import {
     createEvent,
     getCompetitionEvents,
     getEventsByIds,
+    getCupEventOptionsPage,
     updateEvent,
 } from './events'
 
@@ -44,6 +45,40 @@ describe('events API', () => {
                 page: 1,
                 perPage: 20,
                 withParticipantsCount: 1,
+            },
+        })
+    })
+
+    it('requests a sorted page of cup event options with server search', async () => {
+        vi.mocked(api.get).mockResolvedValue({
+            data: [{ id: '9' }],
+            headers: { 'x-pagination-has-next': 'true' },
+        })
+
+        await expect(
+            getCupEventOptionsPage({
+                year: 2026,
+                notRelatedToCup: '42',
+                competitionOrEventName: 'Forest',
+                sortBy: 'date',
+                sort: 'desc',
+                page: 2,
+                perPage: 20,
+            }),
+        ).resolves.toMatchObject({
+            data: [{ id: '9' }],
+            headers: { 'x-pagination-has-next': 'true' },
+        })
+        expect(api.get).toHaveBeenCalledWith('/events', {
+            params: {
+                year: 2026,
+                notRelatedToCup: '42',
+                competitionOrEventName: 'Forest',
+                sortBy: 'date',
+                sort: 'desc',
+                page: 2,
+                perPage: 20,
+                withCompetition: 1,
             },
         })
     })

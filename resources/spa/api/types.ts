@@ -143,6 +143,9 @@ export interface CreateCupEventRequest extends CupEventFormRequest {
 export interface CupEventOptionQuery {
     year: number
     notRelatedToCup?: string
+    competitionOrEventName?: string
+    sortBy?: 'date'
+    sort?: 'asc' | 'desc'
     page?: number
     perPage?: number
 }

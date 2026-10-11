@@ -6,6 +6,8 @@ namespace Tests\Feature\Api\V1\Event;
 
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Event\ListEventsAction;
 use App\Domain\Competition\Competition;
+use App\Domain\Cup\Cup;
+use App\Domain\Cup\CupEvent\CupEvent;
 use App\Domain\Distance\Distance;
 use App\Domain\Event\Event;
 use App\Domain\Event\EventProcessingStatus;
@@ -141,6 +143,74 @@ final class ListEventsActionTest extends TestCase
             ->assertJsonPath('0.id', (string) $event->id)
             ->assertJsonPath('0.competitionName', 'Spring Cup')
         ;
+    }
+
+    #[Test]
+    public function it_searches_cup_stage_options_by_competition_or_event_name_before_pagination(): void
+    {
+        $cup = Cup::factory()->createOne(['id' => 101]);
+        self::assertInstanceOf(Cup::class, $cup);
+        $namedCompetition = $this->createCompetition(['name' => 'Forest League']);
+        $otherCompetition = $this->createCompetition(['name' => 'City League']);
+        $byCompetition = $this->createEvent($namedCompetition, ['name' => 'Round One', 'date' => '2026-05-11']);
+        $byEvent = $this->createEvent($otherCompetition, ['name' => 'Forest Sprint', 'date' => '2026-05-12']);
+        $alreadyRelated = $this->createEvent($otherCompetition, ['name' => 'Forest Relay', 'date' => '2026-05-13']);
+        CupEvent::factory()->createOne(['cup_id' => $cup->id, 'event_id' => $alreadyRelated->id]);
+        $otherCup = Cup::factory()->createOne(['id' => 102]);
+        self::assertInstanceOf(Cup::class, $otherCup);
+        CupEvent::factory()->createOne(['cup_id' => $otherCup->id, 'event_id' => $alreadyRelated->id]);
+        $this->createEvent($namedCompetition, ['name' => 'Old Round', 'date' => '2025-05-14']);
+
+        $base = "/api/v1/events?year=2026&notRelatedToCup={$cup->id}&withCompetition=1&competitionOrEventName=FoReSt&sortBy=date&sort=desc&perPage=1";
+
+        $this->getJson("{$base}&page=1")
+            ->assertOk()
+            ->assertJsonCount(1)
+            ->assertJsonPath('0.id', (string) $byEvent->id)
+            ->assertHeader('X-Pagination-Has-Next', 'true');
+
+        $this->getJson("{$base}&page=2")
+            ->assertOk()
+            ->assertJsonCount(1)
+            ->assertJsonPath('0.id', (string) $byCompetition->id)
+            ->assertHeader('X-Pagination-Has-Next', 'false');
+
+        $this->getJson("/api/v1/events?year=2026&competitionOrEventName=Sprint&sortBy=date&sort=desc")
+            ->assertOk()
+            ->assertJsonCount(1)
+            ->assertJsonPath('0.id', (string) $byEvent->id);
+    }
+
+    #[Test]
+    public function it_rejects_invalid_event_option_sort_and_short_search(): void
+    {
+        $this->getJson('/api/v1/events?year=2026&sortBy=name&sort=desc')
+            ->assertUnprocessable()
+            ->assertJsonPath('errors.0.field', 'sortBy');
+
+        $this->getJson('/api/v1/events?year=2026&sortBy=date&sort=sideways')
+            ->assertUnprocessable()
+            ->assertJsonPath('errors.0.field', 'sort');
+
+        $this->getJson('/api/v1/events?year=2026&competitionOrEventName=ab')
+            ->assertUnprocessable()
+            ->assertJsonPath('errors.0.field', 'competitionOrEventName');
+    }
+
+    #[Test]
+    public function it_orders_equal_event_dates_by_id_when_sorting_descending(): void
+    {
+        $competition = $this->createCompetition();
+        $first = $this->createEvent($competition, ['date' => '2026-05-11']);
+        $second = $this->createEvent($competition, ['date' => '2026-05-11']);
+
+        $base = "/api/v1/events?competitionId={$competition->id}&sortBy=date&sort=desc&perPage=1";
+        $this->getJson("{$base}&page=1")
+            ->assertOk()
+            ->assertJsonPath('0.id', (string) $first->id);
+        $this->getJson("{$base}&page=2")
+            ->assertOk()
+            ->assertJsonPath('0.id', (string) $second->id);
     }
 
     #[Test]
