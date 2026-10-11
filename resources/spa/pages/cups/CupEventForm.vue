@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { reactive, ref, watch } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import Button from 'primevue/button'
 import InputNumber from 'primevue/inputnumber'
-import InputText from 'primevue/inputtext'
 import Message from 'primevue/message'
 import type { PageState } from 'primevue/paginator'
 import Select from 'primevue/select'
@@ -49,6 +48,14 @@ const emit = defineEmits<{
 }>()
 const form = reactive<CupEventFormRequest>({ eventId: 0, points: 0 })
 const selectedOption = ref<Event | null>(null)
+const selectOptions = computed(() =>
+    props.remoteSearch
+        ? props.events.map((event) => ({
+              ...event,
+              remoteSearchValue: props.search,
+          }))
+        : props.events,
+)
 
 watch(
     () => props.initialValue,
@@ -86,6 +93,19 @@ function label(event: Event): string {
     return `${event.competitionName ?? ''} — ${event.name}`
 }
 
+function onFilter(event: { value: string }): void {
+    if (props.remoteSearch) emit('update:search', event.value)
+}
+
+function emptyOptionsMessage(): string {
+    if (props.optionsLoading) return t('spa.cup_event.form.options_loading')
+    if (props.optionsError) return props.optionsError
+    if (hasTooShortNameSearch(props.search))
+        return t('spa.competitions.name_hint')
+
+    return t('spa.cup_event.form.options_empty')
+}
+
 function submit(): void {
     emit('submit', { ...form, eventId: Number(form.eventId) })
 }
@@ -93,22 +113,6 @@ function submit(): void {
 
 <template>
     <form class="spa-form" @submit.prevent="submit">
-        <div v-if="remoteSearch" class="form-field">
-            <label for="cup-event-search">{{
-                t('spa.cup_event.form.search')
-            }}</label>
-            <InputText
-                id="cup-event-search"
-                :model-value="search"
-                :placeholder="t('spa.cup_event.form.search_placeholder')"
-                @update:model-value="
-                    emit('update:search', String($event ?? ''))
-                "
-            />
-            <small v-if="hasTooShortNameSearch(search)" class="filter-hint">
-                {{ t('spa.competitions.name_hint') }}
-            </small>
-        </div>
         <div class="form-field">
             <label for="cup-event-event">{{
                 t('spa.cup_event.form.event')
@@ -116,13 +120,24 @@ function submit(): void {
             <Select
                 id="cup-event-event"
                 v-model="form.eventId"
-                :options="events"
+                :options="selectOptions"
                 option-value="id"
-                :filter="!remoteSearch"
-                :filter-fields="['name', 'competitionName']"
+                filter
+                :filter-fields="
+                    remoteSearch
+                        ? ['remoteSearchValue']
+                        : ['name', 'competitionName']
+                "
+                :filter-placeholder="
+                    remoteSearch
+                        ? t('spa.cup_event.form.search_placeholder')
+                        : undefined
+                "
+                :loading="remoteSearch && optionsLoading"
                 :placeholder="t('spa.cup_event.form.event_placeholder')"
                 :invalid="Boolean(errors.eventId)"
                 required
+                @filter="onFilter"
             >
                 <template #value="{ value, placeholder }">
                     {{
@@ -132,40 +147,36 @@ function submit(): void {
                     }}
                 </template>
                 <template #option="{ option }">{{ label(option) }}</template>
+                <template v-if="remoteSearch" #empty>{{
+                    emptyOptionsMessage()
+                }}</template>
+                <template v-if="remoteSearch" #emptyfilter>{{
+                    emptyOptionsMessage()
+                }}</template>
+                <template v-if="remoteSearch" #footer>
+                    <SlicePaginator
+                        v-if="pagination && !hasTooShortNameSearch(search)"
+                        :pagination="pagination"
+                        :rows-per-page-options="[20]"
+                        @page="emit('page', $event)"
+                    />
+                </template>
             </Select>
             <small v-if="errors.eventId" class="field-error">{{
                 errors.eventId
             }}</small>
-            <Message
-                v-if="remoteSearch && optionsLoading"
-                severity="info"
-                :closable="false"
-                >{{ t('spa.cup_event.form.options_loading') }}</Message
+            <small
+                v-if="remoteSearch && hasTooShortNameSearch(search)"
+                class="filter-hint"
             >
+                {{ t('spa.competitions.name_hint') }}
+            </small>
             <Message
-                v-else-if="remoteSearch && optionsError"
+                v-if="remoteSearch && optionsError"
                 severity="error"
                 :closable="false"
                 >{{ optionsError }}</Message
             >
-            <Message
-                v-else-if="
-                    remoteSearch &&
-                    !events.length &&
-                    !hasTooShortNameSearch(search)
-                "
-                severity="secondary"
-                :closable="false"
-                >{{ t('spa.cup_event.form.options_empty') }}</Message
-            >
-            <SlicePaginator
-                v-if="
-                    remoteSearch && pagination && !hasTooShortNameSearch(search)
-                "
-                :pagination="pagination"
-                :rows-per-page-options="[20]"
-                @page="emit('page', $event)"
-            />
         </div>
         <div class="form-field">
             <label for="cup-event-points">{{

@@ -2,6 +2,7 @@
 
 import { flushPromises, mount } from '@vue/test-utils'
 import PrimeVue from 'primevue/config'
+import Select from 'primevue/select'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import CreateCupEventPage from './CreateCupEventPage.vue'
 import CupEventForm from './CupEventForm.vue'
@@ -123,7 +124,7 @@ describe('create cup event page', () => {
             expect.objectContaining({ page: 2, perPage: 20 }),
         )
 
-        form.vm.$emit('update:search', 'Forest')
+        form.findComponent(Select).vm.$emit('filter', { value: 'Forest' })
         await vi.advanceTimersByTimeAsync(300)
         await flushPromises()
         expect(getCupEventOptionsPage).toHaveBeenLastCalledWith(
@@ -133,7 +134,7 @@ describe('create cup event page', () => {
             }),
         )
 
-        form.vm.$emit('update:search', '')
+        form.findComponent(Select).vm.$emit('filter', { value: '' })
         await vi.advanceTimersByTimeAsync(300)
         await flushPromises()
         expect(getCupEventOptionsPage).toHaveBeenLastCalledWith({
@@ -161,13 +162,13 @@ describe('create cup event page', () => {
         await flushPromises()
         const form = wrapper.findComponent(CupEventForm)
 
-        form.vm.$emit('update:search', 'Fo')
+        form.findComponent(Select).vm.$emit('filter', { value: 'Fo' })
         await vi.advanceTimersByTimeAsync(300)
         expect(getCupEventOptionsPage).toHaveBeenCalledTimes(1)
 
-        form.vm.$emit('update:search', 'Forest')
+        form.findComponent(Select).vm.$emit('filter', { value: 'Forest' })
         await vi.advanceTimersByTimeAsync(300)
-        form.vm.$emit('update:search', 'City')
+        form.findComponent(Select).vm.$emit('filter', { value: 'City' })
         await vi.advanceTimersByTimeAsync(300)
 
         pending[1]?.({

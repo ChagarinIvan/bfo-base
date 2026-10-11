@@ -6,7 +6,7 @@
 
 ## Summary
 
-Расширить существующий `GET /api/v1/events` проверенными параметрами `sortBy=date`, `sort=desc`, `competitionOrEventName`. Преобразовать сортировку в `Criteria`, а поиск выполнить в Eloquent query до `Slice`. Страница создания использует ответ с заголовками пагинации, отдельное поле поиска и `SlicePaginator`. Форма редактирования сохраняет локальный выбор.
+Расширить существующий `GET /api/v1/events` проверенными параметрами `sortBy=date`, `sort=desc`, `competitionOrEventName`. Преобразовать сортировку в `Criteria`, а поиск выполнить в Eloquent query до `Slice`. Страница создания передаёт ввод фильтра `Select` серверу и показывает `SlicePaginator` в раскрытом списке. Форма редактирования сохраняет локальный выбор.
 
 ## Technical Context
 

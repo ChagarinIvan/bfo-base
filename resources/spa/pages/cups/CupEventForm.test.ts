@@ -3,7 +3,6 @@
 import { mount } from '@vue/test-utils'
 import PrimeVue from 'primevue/config'
 import Select from 'primevue/select'
-import InputText from 'primevue/inputtext'
 import { describe, expect, it } from 'vitest'
 import SlicePaginator from '../../components/SlicePaginator.vue'
 import CupEventForm from './CupEventForm.vue'
@@ -72,21 +71,55 @@ describe('cup event form', () => {
             global: { plugins: [PrimeVue] },
         })
 
-        expect(wrapper.findComponent(Select).props('filter')).toBe(false)
-        wrapper.findComponent(InputText).vm.$emit('update:modelValue', 'Forest')
+        const picker = wrapper.findComponent(Select)
+        expect(picker.props('filter')).toBe(true)
+        expect(wrapper.find('#cup-event-search').exists()).toBe(false)
+        picker.vm.$emit('filter', { value: 'Forest' })
         expect(wrapper.emitted('update:search')).toEqual([['Forest']])
 
-        wrapper.findComponent(Select).vm.$emit('update:modelValue', '9')
+        picker.vm.$emit('update:modelValue', '9')
         await wrapper.vm.$nextTick()
         await wrapper.setProps({ events: [] })
         expect(wrapper.text()).toContain('Forest Cup — Sprint')
         await wrapper.find('form').trigger('submit')
         expect(wrapper.emitted('submit')).toEqual([[{ eventId: 9, points: 0 }]])
 
+        picker.vm.show()
+        await wrapper.vm.$nextTick()
         wrapper.findComponent(SlicePaginator).vm.$emit('page', {
             page: 1,
             rows: 20,
         })
         expect(wrapper.emitted('page')).toHaveLength(1)
+    })
+
+    it('does not re-filter server results inside the picker', async () => {
+        const wrapper = mount(CupEventForm, {
+            props: {
+                events: [
+                    {
+                        id: '9',
+                        competitionId: '1',
+                        name: 'Forest Sprint',
+                        description: '',
+                        date: '2026-01-01',
+                        participantsCount: 0,
+                        competitionName: 'Forest Cup',
+                    },
+                ],
+                submitLabel: 'Захаваць',
+                remoteSearch: true,
+                search: ' Forest ',
+            },
+            global: { plugins: [PrimeVue] },
+        })
+        const picker = wrapper.findComponent(Select)
+
+        await picker.setData({ filterValue: ' Forest ' })
+
+        expect(
+            (picker.vm as unknown as { visibleOptions: unknown[] })
+                .visibleOptions,
+        ).toHaveLength(1)
     })
 })
