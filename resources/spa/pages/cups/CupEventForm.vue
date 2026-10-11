@@ -84,6 +84,10 @@ function label(event: Event): string {
     return `${event.competitionName ?? ''} — ${event.name}`
 }
 
+function optionLabel(event: Event): string {
+    return props.remoteSearch ? `${label(event)} (${event.date})` : label(event)
+}
+
 function onFilter(event: { value: string }): void {
     if (props.remoteSearch) emit('update:search', event.value)
 }
@@ -137,7 +141,9 @@ function submit(): void {
                             : placeholder
                     }}
                 </template>
-                <template #option="{ option }">{{ label(option) }}</template>
+                <template #option="{ option }">{{
+                    optionLabel(option)
+                }}</template>
                 <template v-if="remoteSearch" #empty>{{
                     emptyOptionsMessage()
                 }}</template>

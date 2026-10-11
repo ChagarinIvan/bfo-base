@@ -80,6 +80,7 @@ describe('cup event form', () => {
         await wrapper.vm.$nextTick()
         await wrapper.setProps({ events: [] })
         expect(wrapper.text()).toContain('Forest Cup — Sprint')
+        expect(wrapper.text()).not.toContain('(2026-01-01)')
         await wrapper.find('form').trigger('submit')
         expect(wrapper.emitted('submit')).toEqual([[{ eventId: 9, points: 0 }]])
 
@@ -116,5 +117,39 @@ describe('cup event form', () => {
             (picker.vm as unknown as { visibleOptions: unknown[] })
                 .visibleOptions,
         ).toHaveLength(1)
+    })
+
+    it('shows the event date in the create picker options', async () => {
+        const wrapper = mount(CupEventForm, {
+            props: {
+                events: [
+                    {
+                        id: '9',
+                        competitionId: '1',
+                        name: 'Sprint',
+                        description: '',
+                        date: '2026-01-01',
+                        participantsCount: 0,
+                        competitionName: 'Forest Cup',
+                    },
+                ],
+                submitLabel: 'Захаваць',
+                remoteSearch: true,
+            },
+            global: { plugins: [PrimeVue] },
+        })
+
+        wrapper.findComponent(Select).vm.show()
+        await wrapper.vm.$nextTick()
+
+        expect(document.body.textContent).toContain(
+            'Forest Cup — Sprint (2026-01-01)',
+        )
+
+        await wrapper.setProps({ remoteSearch: false })
+        expect(document.body.textContent).toContain('Forest Cup — Sprint')
+        expect(document.body.textContent).not.toContain(
+            'Forest Cup — Sprint (2026-01-01)',
+        )
     })
 })
