@@ -149,7 +149,7 @@ final class ListEventsActionTest extends TestCase
     public function it_searches_cup_stage_options_by_competition_or_event_name_before_pagination(): void
     {
         $cup = Cup::factory()->createOne(['id' => 101]);
-        self::assertInstanceOf(Cup::class, $cup);
+        $this->assertInstanceOf(Cup::class, $cup);
         $namedCompetition = $this->createCompetition(['name' => 'Forest League']);
         $otherCompetition = $this->createCompetition(['name' => 'City League']);
         $byCompetition = $this->createEvent($namedCompetition, ['name' => 'Round One', 'date' => '2026-05-11']);
@@ -157,7 +157,7 @@ final class ListEventsActionTest extends TestCase
         $alreadyRelated = $this->createEvent($otherCompetition, ['name' => 'Forest Relay', 'date' => '2026-05-13']);
         CupEvent::factory()->createOne(['cup_id' => $cup->id, 'event_id' => $alreadyRelated->id]);
         $otherCup = Cup::factory()->createOne(['id' => 102]);
-        self::assertInstanceOf(Cup::class, $otherCup);
+        $this->assertInstanceOf(Cup::class, $otherCup);
         CupEvent::factory()->createOne(['cup_id' => $otherCup->id, 'event_id' => $alreadyRelated->id]);
         $this->createEvent($namedCompetition, ['name' => 'Old Round', 'date' => '2025-05-14']);
 
