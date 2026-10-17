@@ -84,7 +84,7 @@ final readonly class StandardProtocolParser implements ProtocolParser
             distanceLength: (int) ($distance['length'] ?? 0),
             distancePoints: (int) ($distance['points'] ?? 0),
             preparedLine: $this->identLines->generate($lastname, $firstname, $year),
-            activateRank: $rank?->isAutomaticallyActivated() ?? false,
+            activateRank: $rank !== null && $rank->isAutomaticallyActivated() && !$rank->usesDelayedActivation(),
             delayedRankActivation: $rank?->usesDelayedActivation() ?? false,
         );
     }

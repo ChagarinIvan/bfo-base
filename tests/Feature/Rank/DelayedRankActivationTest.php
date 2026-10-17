@@ -12,15 +12,16 @@ use App\Application\Service\Person\RebuildPersonRanksService;
 use App\Domain\Competition\Competition;
 use App\Domain\Distance\Distance;
 use App\Domain\Event\Event;
+use App\Domain\Event\StandardProtocolParser;
 use App\Domain\Group\Group;
 use App\Domain\Person\Person;
 use App\Domain\Person\PersonRankHistory;
 use App\Domain\ProtocolLine\Factory\StandardProtocolLinesFactory;
 use App\Domain\ProtocolLine\ProtocolLine;
-use App\Domain\ProtocolLine\ProtocolLineInput;
 use App\Domain\Rank\Rank;
 use App\Domain\Shared\Clock;
 use App\Domain\Shared\FrozenClock;
+use App\Domain\Shared\Storage;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
@@ -33,34 +34,26 @@ final class DelayedRankActivationTest extends TestCase
     private int $nextDistanceId = 1000;
 
     #[Test]
-    public function a_new_protocol_input_persists_its_delay_policy_without_an_activation_date(): void
+    public function a_parsed_protocol_persists_its_delay_policy_without_an_activation_date(): void
     {
         $distance = $this->distance('2026-01-10');
         $event = $distance->event;
-        $group = $distance->group;
-        $input = new ProtocolLineInput(
-            serialNumber: 1,
-            lastname: 'Runner',
-            firstname: 'One',
-            club: '',
-            year: 2010,
-            rank: null,
-            runnerNumber: 10,
-            time: '00:20:00',
-            place: 1,
-            completeRank: Rank::SecondRank->label(),
-            points: null,
-            vk: false,
-            group: $group->name,
-            normalizedGroupName: $group->normalize_name,
-            distanceLength: $distance->length,
-            distancePoints: $distance->points,
-            delayedRankActivation: true,
-        );
+        $event->file = 'protocol.html';
+        $storage = $this->createMock(Storage::class);
+        $storage->expects($this->once())->method('get')->with('protocol.html')->willReturn(<<<'HTML'
+<div class="sportorg-table"></div>
+<script>
+var race = {"persons":[{"id":1,"group_id":1,"organization_id":1,"year":2000,"is_out_of_competition":false,"bib":1,"qual":1,"surname":"Тэст","name":"Спартсмен"}],"courses":[{"id":1,"length":1000,"controls":[1,2]}],"organizations":[{"id":1,"name":"  Тэст клуб  "}],"groups":[{"id":1,"name":"М21","course_id":1}],"results":[{"person_id":1,"result":"00:10:00","place":1,"assigned_rank":1,"status_comment":""}]};
+var Qualification = {1:'II'};
+</script>
+HTML);
+        $this->app->instance(Storage::class, $storage);
+        $inputs = $this->app->make(StandardProtocolParser::class)->parse($event);
 
-        $line = $this->app->make(StandardProtocolLinesFactory::class)->create($event, [$input])[0];
+        $line = $this->app->make(StandardProtocolLinesFactory::class)->create($event, $inputs)[0];
         $line->save();
 
+        $this->assertSame(Rank::SecondRank->label(), $line->fresh()->complete_rank);
         $this->assertTrue($line->fresh()->delayed_rank_activation);
         $this->assertNull($line->fresh()->activate_rank);
     }
