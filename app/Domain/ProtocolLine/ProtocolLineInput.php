@@ -25,6 +25,7 @@ final readonly class ProtocolLineInput
         public int $distancePoints,
         public string $preparedLine = '',
         public bool $activateRank = false,
+        public bool $delayedRankActivation = false,
     ) {
     }
 }

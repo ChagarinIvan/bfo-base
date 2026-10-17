@@ -45,6 +45,11 @@ enum Rank: int
         return !in_array($this, [self::FirstRank, self::CandidateMaster, self::MasterOfSport, self::WorldClassMaster], true);
     }
 
+    public function usesDelayedActivation(): bool
+    {
+        return in_array($this, [self::SecondRank, self::ThirdRank, self::JuniorFirstRank, self::JuniorSecondRank, self::JuniorThirdRank], true);
+    }
+
     /** @return list<self> */
     public function strongerRanks(): array
     {

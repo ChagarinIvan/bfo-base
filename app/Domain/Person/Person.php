@@ -36,6 +36,7 @@ use Illuminate\Support\Collection;
  * @property Carbon|null $current_rank_started_on
  * @property Carbon|null $current_rank_activated_on
  * @property Carbon|null $current_rank_finished_on
+ * @property Carbon|null $next_rank_activation_on
  *
  * @property Impression $created
  * @property Impression $updated
@@ -47,7 +48,7 @@ use Illuminate\Support\Collection;
  *
  * @see PersonFactory
  */
-#[Fillable(['lastname', 'firstname', 'birthday', 'club_id', 'from_base', 'created', 'updated', 'current_rank', 'current_rank_started_on', 'current_rank_activated_on', 'current_rank_finished_on'])]
+#[Fillable(['lastname', 'firstname', 'birthday', 'club_id', 'from_base', 'created', 'updated', 'current_rank', 'current_rank_started_on', 'current_rank_activated_on', 'current_rank_finished_on', 'next_rank_activation_on'])]
 #[Table(name: 'person')]
 class Person extends AggregatedModel
 {
@@ -110,6 +111,7 @@ class Person extends AggregatedModel
         $this->current_rank_started_on = $rankState->current->startedOn;
         $this->current_rank_activated_on = $rankState->current->activatedOn;
         $this->current_rank_finished_on = $rankState->current->finishedOn;
+        $this->next_rank_activation_on = $rankState->nextActivationOn;
         $this->updated = $impression;
 
         $this->rankHistoryToPersist = $rankState->history;
@@ -143,6 +145,7 @@ class Person extends AggregatedModel
             'current_rank_started_on' => 'datetime:Y-m-d',
             'current_rank_activated_on' => 'datetime:Y-m-d',
             'current_rank_finished_on' => 'datetime:Y-m-d',
+            'next_rank_activation_on' => 'datetime:Y-m-d',
             'created' => ImpressionCast::class,
             'updated' => ImpressionCast::class,
         ];

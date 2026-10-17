@@ -16,11 +16,20 @@ use App\Domain\Shared\StandardNameNormalizer;
 use App\Domain\Shared\Storage;
 use App\Domain\Shared\SymbolNormalizer;
 use Illuminate\Support\Collection;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+use function str_replace;
 
 final class StandardProtocolParserClubTest extends TestCase
 {
+    /** @return iterable<string, array{string}> */
+    public static function delayedRanks(): iterable
+    {
+        foreach (['II', 'III', 'Iю', 'IIю', 'IIIю'] as $rank) {
+            yield $rank => [$rank];
+        }
+    }
     #[Test]
     public function it_reports_an_unknown_format_as_a_domain_parsing_error(): void
     {
@@ -66,6 +75,32 @@ final class StandardProtocolParserClubTest extends TestCase
         $this->assertSame('Тэст клуб', $lines[0]->club);
         $this->assertSame('I', $lines[0]->completeRank);
         $this->assertFalse($lines[0]->activateRank);
+        $this->assertFalse($lines[0]->delayedRankActivation);
+    }
+
+    #[Test]
+    #[DataProvider('delayedRanks')]
+    public function it_marks_new_lower_ranks_for_delayed_activation(string $rank): void
+    {
+        $event = $this->createMock(Event::class);
+        $event->expects($this->exactly(2))->method('__get')->with('file')->willReturn('protocol.html');
+        $storage = $this->createMock(Storage::class);
+        $storage->expects($this->once())->method('get')->with('protocol.html')->willReturn(str_replace("Qualification = {1:'I'}", "Qualification = {1:'{$rank}'}", $this->protocol()));
+        $groups = $this->createMock(GroupRepository::class);
+        $groups->expects($this->once())->method('all')->willReturn(new Collection());
+        $parser = new StandardProtocolParser(
+            $storage,
+            new ProtocolPathResolver(),
+            $groups,
+            new RankNormalizer(),
+            new StandardIdentLineGenerator(new StandardNameNormalizer()),
+            new GroupNameNormalizer(new SymbolNormalizer()),
+        );
+
+        $line = $parser->parse($event)[0];
+        $this->assertSame($rank, $line->completeRank);
+        $this->assertFalse($line->activateRank);
+        $this->assertTrue($line->delayedRankActivation);
     }
 
     private function protocol(): string

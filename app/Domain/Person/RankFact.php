@@ -7,7 +7,7 @@ namespace App\Domain\Person;
 use App\Domain\Rank\Rank;
 use Carbon\Carbon;
 
-/** Факт что в протоколы был выполненный разряд */
+/** Факт что в протоколе был выполненный разряд */
 final readonly class RankFact
 {
     public function __construct(
@@ -18,6 +18,7 @@ final readonly class RankFact
         public Rank $rank,
         public Carbon $achievedOn,
         public ?Carbon $activatedOn,
+        public bool $delayedActivation = false,
     ) {
     }
 }

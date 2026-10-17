@@ -98,6 +98,31 @@ final class ActivatePersonRankActionTest extends TestCase
         ])->assertNotFound();
     }
 
+    #[Test]
+    public function it_rejects_activation_before_the_protocol_date_without_changing_the_line(): void
+    {
+        $this->authenticate();
+        $this->seed(ProtocolLinesSeeder::class);
+        Event::query()->whereKey(102)->update(['date' => '2026-01-10']);
+        ProtocolLine::factory()->createOne([
+            'id' => 107,
+            'distance_id' => 104,
+            'complete_rank' => Rank::SecondRank->label(),
+            'activate_rank' => null,
+            'delayed_rank_activation' => true,
+            'person_id' => 102,
+        ]);
+
+        $this->postJson('/api/v1/person-rank-history/107/activation', ['date' => '2026-01-09'])
+            ->assertUnprocessable()
+            ->assertJsonPath('errors.0.code', 'rank_activation_before_achievement');
+        $this->assertNull(ProtocolLine::query()->findOrFail(107)->activate_rank);
+
+        $this->postJson('/api/v1/person-rank-history/107/activation', ['date' => '2026-01-10'])
+            ->assertOk()
+            ->assertJsonPath('activateRank', '2026-01-10');
+    }
+
     private function authenticate(): void
     {
         $user = SanctumUser::query()->create([

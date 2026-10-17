@@ -7,7 +7,9 @@ namespace App\Application\Service\Person;
 use App\Application\Dto\ProtocolLine\ProtocolLineAssembler;
 use App\Application\Dto\ProtocolLine\ViewProtocolLineDto;
 use App\Application\Service\Person\Exception\ProtocolLineNotFound;
+use App\Application\Service\Person\Exception\RankActivationBeforeAchievement;
 use App\Domain\Auth\Impression;
+use App\Domain\ProtocolLine\Exception\UnableToActivateRank;
 use App\Domain\ProtocolLine\ProtocolLineRepository;
 use App\Domain\Shared\Clock;
 use App\Domain\Shared\TransactionManager;
@@ -27,7 +29,11 @@ final readonly class UpdatePersonRankActivationDateService
     {
         return $this->transaction->run(function () use ($command): ViewProtocolLineDto {
             $line = $this->protocolLines->lockById($command->protocolLine()) ?? throw new ProtocolLineNotFound();
-            $line->activateRank($command->date(), new Impression($this->clock->now(), $command->userId()));
+            try {
+                $line->activateRank($command->date(), new Impression($this->clock->now(), $command->userId()));
+            } catch (UnableToActivateRank) {
+                throw new RankActivationBeforeAchievement();
+            }
             $this->protocolLines->update($line);
 
             return $this->assembler->toViewProtocolLineDto($line);

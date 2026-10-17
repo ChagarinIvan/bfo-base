@@ -13,6 +13,7 @@ use App\Domain\ProtocolLine\Event\PersonFromProtocolLineExtracted;
 use App\Domain\ProtocolLine\Event\ProtocolLinePersonAssigned;
 use App\Domain\ProtocolLine\Event\ProtocolLinePersonSet;
 use App\Domain\ProtocolLine\Event\ProtocolLineRankActivated;
+use App\Domain\ProtocolLine\Exception\UnableToActivateRank;
 use App\Domain\Shared\AggregatedModel;
 use Carbon\Carbon;
 use Database\Factories\Domain\ProtocolLine\ProtocolLineFactory;
@@ -40,6 +41,7 @@ use function trim;
  * @property string $prepared_line
  * @property bool $vk
  * @property null|Carbon $activate_rank
+ * @property bool $delayed_rank_activation
  *
  * @property-read Event $event
  * @property-read Distance $distance
@@ -74,6 +76,10 @@ class ProtocolLine extends AggregatedModel
 
     public function activateRank(?Carbon $date, Impression $impression): void
     {
+        if ($date !== null && $date->toDateString() < $this->distance->event->date->toDateString()) {
+            throw new UnableToActivateRank();
+        }
+
         $this->activate_rank = $date;
 //        $this->updated = $impression;
 
@@ -110,6 +116,7 @@ class ProtocolLine extends AggregatedModel
             'time' => 'datetime',
             'activate_rank' => 'datetime:Y-m-d',
             'vk' => 'boolean',
+            'delayed_rank_activation' => 'boolean',
         ];
     }
 }

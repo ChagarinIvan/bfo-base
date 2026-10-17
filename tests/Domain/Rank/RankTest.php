@@ -26,6 +26,12 @@ final class RankTest extends TestCase
         $this->assertFalse(Rank::FirstRank->isAutomaticallyActivated());
         $this->assertTrue(Rank::SecondRank->isAutomaticallyActivated());
         $this->assertTrue(Rank::JuniorFirstRank->isAutomaticallyActivated());
+        foreach ([Rank::SecondRank, Rank::ThirdRank, Rank::JuniorFirstRank, Rank::JuniorSecondRank, Rank::JuniorThirdRank] as $rank) {
+            $this->assertTrue($rank->usesDelayedActivation());
+        }
+        foreach ([Rank::WithoutRank, Rank::FirstRank, Rank::CandidateMaster, Rank::MasterOfSport, Rank::WorldClassMaster] as $rank) {
+            $this->assertFalse($rank->usesDelayedActivation());
+        }
         $this->assertSame([Rank::SecondRank, Rank::FirstRank, Rank::CandidateMaster, Rank::MasterOfSport, Rank::WorldClassMaster], Rank::ThirdRank->strongerRanks());
     }
 }
