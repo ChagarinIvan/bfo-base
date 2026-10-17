@@ -42,7 +42,7 @@ enum Rank: int
 
     public function isAutomaticallyActivated(): bool
     {
-        return !in_array($this, [self::CandidateMaster, self::MasterOfSport, self::WorldClassMaster], true);
+        return !in_array($this, [self::FirstRank, self::CandidateMaster, self::MasterOfSport, self::WorldClassMaster], true);
     }
 
     /** @return list<self> */

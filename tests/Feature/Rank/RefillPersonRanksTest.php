@@ -40,7 +40,7 @@ final class RefillPersonRanksTest extends TestCase
             'distance_id' => $distance->id,
             'person_id' => $person->id,
             'complete_rank' => 'I',
-            'activate_rank' => null,
+            'activate_rank' => '2026-01-10',
         ]);
         ProtocolLine::factory()->createOne([
             'id' => 2,

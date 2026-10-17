@@ -64,6 +64,8 @@ final class StandardProtocolParserClubTest extends TestCase
         $lines = $parser->parse($event);
 
         $this->assertSame('Тэст клуб', $lines[0]->club);
+        $this->assertSame('I', $lines[0]->completeRank);
+        $this->assertFalse($lines[0]->activateRank);
     }
 
     private function protocol(): string
