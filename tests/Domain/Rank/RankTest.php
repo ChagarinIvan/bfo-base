@@ -23,7 +23,9 @@ final class RankTest extends TestCase
     public function it_knows_activation_and_stronger_rank_rules(): void
     {
         $this->assertFalse(Rank::MasterOfSport->isAutomaticallyActivated());
-        $this->assertTrue(Rank::FirstRank->isAutomaticallyActivated());
+        $this->assertFalse(Rank::FirstRank->isAutomaticallyActivated());
+        $this->assertTrue(Rank::SecondRank->isAutomaticallyActivated());
+        $this->assertTrue(Rank::JuniorFirstRank->isAutomaticallyActivated());
         $this->assertSame([Rank::SecondRank, Rank::FirstRank, Rank::CandidateMaster, Rank::MasterOfSport, Rank::WorldClassMaster], Rank::ThirdRank->strongerRanks());
     }
 }

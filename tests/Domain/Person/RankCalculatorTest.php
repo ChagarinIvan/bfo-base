@@ -24,8 +24,8 @@ final class RankCalculatorTest extends TestCase
         $calculator = new RankCalculator();
 
         $result = $calculator->calculate([
-            new RankFact(10, 20, 30, 40, Rank::FirstRank, Carbon::parse('2026-01-01'), null),
-            new RankFact(11, 21, 31, 41, Rank::FirstRank, Carbon::parse('2026-03-01'), null),
+            new RankFact(10, 20, 30, 40, Rank::FirstRank, Carbon::parse('2026-01-01'), Carbon::parse('2026-01-01')),
+            new RankFact(11, 21, 31, 41, Rank::FirstRank, Carbon::parse('2026-03-01'), Carbon::parse('2026-03-01')),
         ], new Person(), Carbon::parse('2026-07-01'));
 
         $this->assertSame(Rank::FirstRank, $result->current->rank);
@@ -83,12 +83,39 @@ final class RankCalculatorTest extends TestCase
     #[Test]
     public function it_activates_ordinary_ranks_on_the_event_date(): void
     {
-        $result = $this->calculate([$this->achievement(Rank::FirstRank, '2026-01-10')]);
+        $result = $this->calculate([$this->achievement(Rank::SecondRank, '2026-01-10')]);
 
-        $this->assertSame(Rank::FirstRank, $result->current->rank);
+        $this->assertSame(Rank::SecondRank, $result->current->rank);
         $this->assertSame('2026-01-10', $result->current->activatedOn?->format('Y-m-d'));
         $this->assertSame('2028-01-10', $result->current->finishedOn?->format('Y-m-d'));
         $this->assertSame(RankChangeType::Completion, $result->history[0]->change_type);
+    }
+
+    #[Test]
+    public function it_keeps_a_new_first_rank_pending_even_after_a_previous_activated_first_rank(): void
+    {
+        $result = $this->calculate([
+            $this->achievement(Rank::FirstRank, '2025-01-10', 1, '2025-02-01'),
+            $this->achievement(Rank::FirstRank, '2026-01-10', 2),
+        ]);
+
+        $this->assertSame(Rank::FirstRank, $result->current->rank);
+        $this->assertSame('2025-02-01', $result->history[0]->activated_on?->format('Y-m-d'));
+        $this->assertSame('2027-02-01', $result->history[0]->finished_on?->format('Y-m-d'));
+        $this->assertNull($result->history[1]->activated_on);
+        $this->assertNull($result->history[1]->finished_on);
+    }
+
+    #[Test]
+    public function it_activates_first_rank_only_from_an_explicit_date(): void
+    {
+        $pending = $this->calculate([$this->achievement(Rank::FirstRank, '2026-01-10')]);
+        $activated = $this->calculate([$this->achievement(Rank::FirstRank, '2026-01-10', activatedOn: '2026-02-01')]);
+
+        $this->assertSame(Rank::WithoutRank, $pending->current->rank);
+        $this->assertNull($pending->history[0]->activated_on);
+        $this->assertSame(Rank::FirstRank, $activated->current->rank);
+        $this->assertSame('2026-02-01', $activated->current->startedOn?->format('Y-m-d'));
     }
 
     #[Test]
@@ -133,7 +160,7 @@ final class RankCalculatorTest extends TestCase
     public function it_records_a_lower_achievement_during_a_higher_rank_as_lower_qualification(): void
     {
         $result = $this->calculate([
-            $this->achievement(Rank::FirstRank, '2025-01-10', 1),
+            $this->achievement(Rank::FirstRank, '2025-01-10', 1, '2025-01-10'),
             $this->achievement(Rank::SecondRank, '2026-01-10', 2),
         ]);
 
@@ -144,10 +171,10 @@ final class RankCalculatorTest extends TestCase
     public function it_ends_a_lower_rank_period_when_a_higher_rank_is_achieved(): void
     {
         $result = new RankCalculator()->calculate([
-            $this->achievement(Rank::FirstRank, '2019-03-07', 1),
+            $this->achievement(Rank::FirstRank, '2019-03-07', 1, '2019-03-07'),
             $this->achievement(Rank::CandidateMaster, '2019-10-27', 2, '2019-10-27'),
-            $this->achievement(Rank::FirstRank, '2019-11-07', 3),
-            $this->achievement(Rank::FirstRank, '2020-03-15', 4),
+            $this->achievement(Rank::FirstRank, '2019-11-07', 3, '2019-11-07'),
+            $this->achievement(Rank::FirstRank, '2020-03-15', 4, '2020-03-15'),
         ], $this->person(null), Carbon::parse('2021-11-01'));
 
         $this->assertSame('2019-10-27', $result->history[0]->finished_on?->format('Y-m-d'));
@@ -191,7 +218,7 @@ final class RankCalculatorTest extends TestCase
     #[Test]
     public function it_expires_rank_after_two_years_without_a_new_achievement(): void
     {
-        $result = $this->calculate([$this->achievement(Rank::FirstRank, '2024-01-10')]);
+        $result = $this->calculate([$this->achievement(Rank::FirstRank, '2024-01-10', activatedOn: '2024-01-10')]);
 
         $this->assertSame(Rank::WithoutRank, $result->current->rank);
     }

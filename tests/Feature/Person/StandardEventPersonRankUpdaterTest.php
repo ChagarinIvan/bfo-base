@@ -77,7 +77,7 @@ final class StandardEventPersonRankUpdaterTest extends TestCase
         $operations->method('personIdsForEvent')->willReturn([$person->id]);
         $facts = $this->createMock(RankFactsCollector::class);
         $facts->expects($this->once())->method('collect')->with($person->id)->willReturn([
-            new RankFact(10, 20, $event->id, $event->competition_id, Rank::FirstRank, Carbon::parse('2026-01-01'), null),
+            new RankFact(10, 20, $event->id, $event->competition_id, Rank::FirstRank, Carbon::parse('2026-01-01'), Carbon::parse('2026-01-01')),
         ]);
         $persons = $this->createMock(PersonRepository::class);
         $persons->expects($this->once())->method('lockById')->with($person->id)->willReturn($person);

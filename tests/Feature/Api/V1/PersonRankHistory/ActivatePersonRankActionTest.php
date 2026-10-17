@@ -4,7 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Api\V1\PersonRankHistory;
 
+use App\Application\Dto\Auth\UserId;
+use App\Application\Service\Person\RebuildPersonRanks;
+use App\Application\Service\Person\RebuildPersonRanksService;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\PersonRankHistory\ActivatePersonRankAction;
+use App\Domain\Event\Event;
+use App\Domain\Person\Person;
+use App\Domain\Person\PersonRankHistory;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\Rank\Rank;
 use App\Infrastructure\Sanctum\SanctumUser;
@@ -56,6 +62,30 @@ final class ActivatePersonRankActionTest extends TestCase
             'person_id' => 102,
             'activate_rank' => '2024-06-15',
         ]);
+    }
+
+    #[Test]
+    public function it_accepts_manual_activation_of_first_rank(): void
+    {
+        $this->authenticate();
+        $this->seed(ProtocolLinesSeeder::class);
+        Event::query()->whereKey(102)->update(['date' => '2026-01-10']);
+        ProtocolLine::factory()->createOne([
+            'id' => 107,
+            'distance_id' => 104,
+            'complete_rank' => Rank::FirstRank->label(),
+            'activate_rank' => null,
+            'person_id' => 102,
+        ]);
+
+        $this->postJson('/api/v1/person-rank-history/107/activation', [
+            'date' => '2026-02-01',
+        ])->assertOk()->assertJsonPath('activateRank', '2026-02-01');
+
+        $this->assertSame('2026-02-01', ProtocolLine::query()->findOrFail(107)->activate_rank?->toDateString());
+        $this->app->make(RebuildPersonRanksService::class)->execute(new RebuildPersonRanks(102, new UserId(1)));
+        $this->assertSame(Rank::FirstRank, Person::query()->findOrFail(102)->current_rank);
+        $this->assertSame('2026-02-01', PersonRankHistory::query()->where('protocol_line_id', 107)->sole()->activated_on?->toDateString());
     }
 
     #[Test]
