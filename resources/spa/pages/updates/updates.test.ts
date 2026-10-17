@@ -30,7 +30,7 @@ describe('static updates catalog', () => {
                     b.spec.localeCompare(a.spec),
             ),
         )
-        expect(updates[0]?.spec).toBe('046-first-rank-activation')
+        expect(updates[0]?.spec).toBe('047-delayed-lower-rank-activation')
     })
 
     it('links only to existing SPA routes when a destination is useful', () => {

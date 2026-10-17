@@ -70,8 +70,15 @@ final readonly class EloquentPersonRepository implements PersonRepository
             ->orderBy('person.id')
         ;
 
-        if ($criteria->hasParam('rankFinishedBefore')) {
+        if ($criteria->hasParam('rankFinishedBefore') && $criteria->hasParam('rankActivationDueBy')) {
+            $query->where(static function (Builder $query) use ($criteria): void {
+                $query->where('person.current_rank_finished_on', '<', $criteria->param('rankFinishedBefore'))
+                    ->orWhere('person.next_rank_activation_on', '<=', $criteria->param('rankActivationDueBy'));
+            });
+        } elseif ($criteria->hasParam('rankFinishedBefore')) {
             $query->where('person.current_rank_finished_on', '<', $criteria->param('rankFinishedBefore'));
+        } elseif ($criteria->hasParam('rankActivationDueBy')) {
+            $query->where('person.next_rank_activation_on', '<=', $criteria->param('rankActivationDueBy'));
         }
 
         return $query->lazyById()->map(static fn (Person $person): int => $person->id);

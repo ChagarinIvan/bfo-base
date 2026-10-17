@@ -20,7 +20,10 @@ final class RebuildExpiredPersonRanksCommand extends Command
     {
         $count = $service->execute(new RebuildExpiredPersonRanks(
             userId: new UserId((int) $this->argument('userId')),
-            criteria: ['rankFinishedBefore' => $clock->now()->copy()->startOfDay()],
+            criteria: [
+                'rankFinishedBefore' => $clock->now()->copy()->startOfDay(),
+                'rankActivationDueBy' => $clock->now()->copy()->startOfDay(),
+            ],
         ));
 
         $this->info("Finished expired person-rank rebuild: {$count} people rebuilt.");

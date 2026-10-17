@@ -20,12 +20,35 @@ final class RankCalculator
     /** @param list<RankFact> $rankFacts */
     public function calculate(array $rankFacts, Person $person, Carbon $on): PersonRankState
     {
-        $history = $this->buildHistory($this->calculationFacts($rankFacts, $person->birthday), $person->id);
+        $facts = $this->calculationFacts($rankFacts, $person->birthday);
+        $history = $this->buildHistory($facts, $person->id, $on);
 
         return new PersonRankState(
             current: $this->currentRank($history, $on),
             history: $history,
+            nextActivationOn: $this->nextActivationOn($facts, $on),
         );
+    }
+
+    /** @param list<RankFact> $facts */
+    private function nextActivationOn(array $facts, Carbon $on): ?Carbon
+    {
+        $next = null;
+        foreach ($facts as $fact) {
+            if (!$fact->delayedActivation || !$fact->rank->usesDelayedActivation()) {
+                continue;
+            }
+
+            $due = $fact->activatedOn ?? $fact->achievedOn->copy()->addMonthNoOverflow();
+            if ($due <= $on) {
+                continue;
+            }
+            if ($next === null || $due < $next) {
+                $next = $due;
+            }
+        }
+
+        return $next;
     }
 
     /** @param list<RankFact> $rankFacts
@@ -67,11 +90,11 @@ final class RankCalculator
     /** @param list<RankFact> $facts
      * @return list<PersonRankHistory>
      */
-    private function buildHistory(array $facts, ?int $personId): array
+    private function buildHistory(array $facts, ?int $personId, Carbon $on): array
     {
         $history = [];
         foreach ($facts as $fact) {
-            $history = $this->appendHistoryFact($history, $fact, $personId);
+            $history = $this->appendHistoryFact($history, $fact, $personId, $on);
         }
 
         return $history;
@@ -81,9 +104,15 @@ final class RankCalculator
      * @param list<PersonRankHistory> $history
      * @return list<PersonRankHistory>
      */
-    private function appendHistoryFact(array $history, RankFact $fact, ?int $personId): array
+    private function appendHistoryFact(array $history, RankFact $fact, ?int $personId, Carbon $on): array
     {
-        $activatedOn = $fact->activatedOn ?? ($fact->rank->isAutomaticallyActivated() ? $fact->achievedOn : null);
+        $activatedOn = $fact->activatedOn;
+        if ($activatedOn === null && $fact->delayedActivation && $fact->rank->usesDelayedActivation()) {
+            $due = $fact->achievedOn->copy()->addMonthNoOverflow();
+            $activatedOn = $due <= $on ? $due : null;
+        } elseif ($activatedOn === null && $fact->rank->isAutomaticallyActivated()) {
+            $activatedOn = $fact->achievedOn;
+        }
         $startedOn = $activatedOn ?? $fact->achievedOn;
         $finishedOn = $activatedOn?->copy()->addYears(2);
         $previous = $history === [] ? null : array_last($history);

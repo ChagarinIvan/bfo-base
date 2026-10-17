@@ -18,6 +18,7 @@ use App\Domain\Shared\SymbolNormalizer;
 use Illuminate\Support\Collection;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+use function str_replace;
 
 final class StandardProtocolParserClubTest extends TestCase
 {
@@ -66,6 +67,31 @@ final class StandardProtocolParserClubTest extends TestCase
         $this->assertSame('Тэст клуб', $lines[0]->club);
         $this->assertSame('I', $lines[0]->completeRank);
         $this->assertFalse($lines[0]->activateRank);
+        $this->assertFalse($lines[0]->delayedRankActivation);
+    }
+
+    #[Test]
+    public function it_marks_a_new_second_rank_for_delayed_activation(): void
+    {
+        $event = $this->createMock(Event::class);
+        $event->method('__get')->willReturn('protocol.html');
+        $storage = $this->createMock(Storage::class);
+        $storage->method('get')->willReturn(str_replace("Qualification = {1:'I'}", "Qualification = {1:'II'}", $this->protocol()));
+        $groups = $this->createMock(GroupRepository::class);
+        $groups->method('all')->willReturn(new Collection());
+        $parser = new StandardProtocolParser(
+            $storage,
+            new ProtocolPathResolver(),
+            $groups,
+            new RankNormalizer(),
+            new StandardIdentLineGenerator(new StandardNameNormalizer()),
+            new GroupNameNormalizer(new SymbolNormalizer()),
+        );
+
+        $line = $parser->parse($event)[0];
+        $this->assertSame('II', $line->completeRank);
+        $this->assertFalse($line->activateRank);
+        $this->assertTrue($line->delayedRankActivation);
     }
 
     private function protocol(): string

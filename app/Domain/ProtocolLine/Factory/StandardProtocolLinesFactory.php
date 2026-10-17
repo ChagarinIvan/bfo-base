@@ -127,6 +127,7 @@ final class StandardProtocolLinesFactory implements ProtocolLinesFactory
         $line->prepared_line = $input->preparedLine;
         $line->person_id = null;
         $line->activate_rank = $input->activateRank ? $event->date : null;
+        $line->delayed_rank_activation = $input->delayedRankActivation;
 
         return $line;
     }

@@ -36,6 +36,8 @@ final class StandardProtocolLineIdentifierTest extends TestCase
 {
     use RefreshDatabase;
 
+    private int $nextFixtureId = 1000;
+
     /** @return iterable<string, array{bool}> */
     public static function identificationPaths(): iterable
     {
@@ -250,14 +252,15 @@ final class StandardProtocolLineIdentifierTest extends TestCase
     /** @return array{Event, Distance} */
     private function eventAndDistance(): array
     {
+        $id = ++$this->nextFixtureId;
         /** @var Competition $competition */
-        $competition = Competition::factory()->createOne(['active' => true]);
+        $competition = Competition::factory()->createOne(['id' => $id, 'active' => true]);
         /** @var Event $event */
-        $event = Event::factory()->createOne(['competition_id' => $competition->id, 'active' => true]);
+        $event = Event::factory()->createOne(['id' => $id, 'competition_id' => $competition->id, 'active' => true]);
         /** @var Group $group */
-        $group = Group::factory()->createOne();
+        $group = Group::factory()->createOne(['id' => $id]);
         /** @var Distance $distance */
-        $distance = Distance::factory()->createOne(['event_id' => $event->id, 'group_id' => $group->id]);
+        $distance = Distance::factory()->createOne(['id' => $id, 'event_id' => $event->id, 'group_id' => $group->id]);
 
         return [$event, $distance];
     }
