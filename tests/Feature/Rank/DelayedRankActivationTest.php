@@ -16,6 +16,7 @@ use App\Domain\Event\StandardProtocolParser;
 use App\Domain\Group\Group;
 use App\Domain\Person\Person;
 use App\Domain\Person\PersonRankHistory;
+use App\Domain\Person\RankFactsCollector;
 use App\Domain\ProtocolLine\Factory\StandardProtocolLinesFactory;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\Rank\Rank;
@@ -23,6 +24,7 @@ use App\Domain\Shared\Clock;
 use App\Domain\Shared\FrozenClock;
 use App\Domain\Shared\Storage;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -32,6 +34,31 @@ final class DelayedRankActivationTest extends TestCase
     use RefreshDatabase;
 
     private int $nextDistanceId = 1000;
+
+    #[Test]
+    public function a_legacy_null_delay_policy_keeps_the_existing_activation_date(): void
+    {
+        $distance = $this->distance('2026-01-10');
+        $person = Person::factory()->createOne();
+        $line = $this->line($distance, $person, Rank::FirstRank, false, '2026-01-10');
+        $scopes = ProtocolLine::getAllGlobalScopes();
+        ProtocolLine::addGlobalScope('legacy-delay-policy', static function (Builder $query): void {
+            $query->select('protocol_lines.*')->selectRaw('NULL AS delayed_rank_activation');
+        });
+
+        try {
+            $this->assertNull(ProtocolLine::query()->findOrFail($line->id)->delayed_rank_activation);
+            $facts = $this->app->make(RankFactsCollector::class)->collect($person->id);
+            $this->assertCount(1, $facts);
+            $this->assertFalse($facts[0]->delayedActivation);
+            $this->assertSame('2026-01-10', $facts[0]->activatedOn?->toDateString());
+            $this->at('2026-01-20');
+            $this->rebuild($person);
+            $this->assertSame(Rank::FirstRank, $person->fresh()->current_rank);
+        } finally {
+            ProtocolLine::setAllGlobalScopes($scopes);
+        }
+    }
 
     #[Test]
     public function a_parsed_protocol_persists_its_delay_policy_without_an_activation_date(): void

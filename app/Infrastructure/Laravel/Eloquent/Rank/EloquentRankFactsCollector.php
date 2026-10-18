@@ -51,7 +51,7 @@ final readonly class EloquentRankFactsCollector implements RankFactsCollector
                     rank: $rank,
                     achievedOn: Carbon::instance($line->distance->event->date),
                     activatedOn: $line->activate_rank === null ? null : Carbon::instance($line->activate_rank),
-                    delayedActivation: $line->delayed_rank_activation,
+                    delayedActivation: $line->delayed_rank_activation ?? false,
                 );
             })
             ->filter()

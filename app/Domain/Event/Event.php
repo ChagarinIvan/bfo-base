@@ -6,7 +6,6 @@ namespace App\Domain\Event;
 
 use App\Domain\Auth\Impression;
 use App\Domain\Competition\Competition;
-use App\Domain\Cup\CupCacheInvalidator;
 use App\Domain\Cup\CupEvent\CupEvent;
 use App\Domain\Distance\Distance;
 use App\Domain\Event\Event\EventCreated;
@@ -20,6 +19,7 @@ use App\Domain\Event\Event\EventProtocolCleaned;
 use App\Domain\Event\Event\EventProtocolUpdated;
 use App\Domain\Event\Event\EventRanksUpdated;
 use App\Domain\Event\Exception\EventParsingError;
+use App\Domain\Event\Exception\EventResultsCleanupError;
 use App\Domain\Person\EventPersonRankUpdater;
 use App\Domain\Person\Exception\RanksUpdatingError;
 use App\Domain\ProtocolLine\Exception\IdentifyingError;
@@ -125,18 +125,29 @@ class Event extends AggregatedModel
         return $this->processing_token === $token && $this->processing_status === EventProcessingStatus::PARSING;
     }
 
-    public function protocolResultsCleaned(string $token, Impression $impression, CupCacheInvalidator $invalidator): void
+    public function cleanResults(string $token, bool $startParsing, EventResultsCleaner $cleaner, Impression $impression): void
     {
-        if ($this->cups->isNotEmpty()) {
-            $invalidator->invalidate();
-        }
-
-        if (!$this->active || !$this->isParsing($token)) {
+        if ($this->processing_token !== $token || ($startParsing && (!$this->active || !$this->isParsing($token)))) {
             return;
         }
 
-        $this->updated = $impression;
-        $this->recordThat(new EventProtocolCleaned($this->id, $token, $impression));
+        try {
+            $cleaner->clean($this, $impression);
+
+            if ($this->active && $this->isParsing($token)) {
+                $this->recordThat(new EventProtocolCleaned($this->id, $token, $impression));
+            }
+        } catch (EventResultsCleanupError $exception) {
+            if (!$startParsing) {
+                throw $exception;
+            }
+
+            $this->processing_status = EventProcessingStatus::PARSING_ERROR;
+            $this->error_message = $exception->getMessage();
+            $this->recordThat(new EventProcessingFailed($this, $this->processing_status));
+        } finally {
+            $this->updated = $impression;
+        }
     }
 
     public function create(): void

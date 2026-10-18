@@ -1,5 +1,11 @@
 # Research
 
+## Replacement cleanup failure, 2026-10-18
+
+`Event::cleanResults()` owns token/state checks, invokes `EventResultsCleaner`, records `EventProtocolCleaned` on success and catches only `EventResultsCleanupError` during replacement cleanup to record `parsingError`, a safe message and `EventProcessingFailed`. It updates the audit impression like `Event::parse()`. `CleanupEventResultsService` only locks Event, invokes the domain method and saves through the repository in a transaction.
+
+`StandardEventResultsCleaner` deletes derived results, rebuilds former participants through Domain repository/calculator ports and invalidates cup caches. A nested transaction/savepoint rolls back cleanup changes before Event catches a failure, allowing the error state to be saved by the outer transaction. The cleaner translates execution exceptions into `EventResultsCleanupError` with a safe message and the original exception in `previous`. Programming errors such as `TypeError` are not translated and are not caught by `Event::cleanResults()`. Missing/disabled former participants are skipped. Failure while cleaning a disabled or already failed Event is rethrown without generating a recursive failure event. Redelivery of a failed replacement and stale tokens cannot restart parsing. Forced worker termination remains tracked by T035.
+
 ## Decision: Event owns the current protocol lifecycle
 
 **Decision**: Put the processing status and stage transitions on `Event`; do not create a separate `EventProtocol` aggregate or keep a history of processing runs in 025.

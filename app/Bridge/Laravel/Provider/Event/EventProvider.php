@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace App\Bridge\Laravel\Provider\Event;
 
 use App\Domain\Event\EventRepository;
+use App\Domain\Event\EventResultsCleaner;
 use App\Domain\Event\Factory\EventFactory;
 use App\Domain\Event\Factory\StandardEventFactory;
 use App\Domain\Event\Factory\StoreProtocolEventFactory;
 use App\Domain\Event\ProtocolParser;
 use App\Domain\Event\ProtocolPathResolver;
 use App\Domain\Event\ProtocolUpdater;
+use App\Domain\Event\StandardEventResultsCleaner;
 use App\Domain\Event\StandardProtocolParser;
 use App\Domain\Event\StandardProtocolUpdater;
 use App\Domain\Event\UniteEventDataService;
@@ -26,6 +28,7 @@ final class EventProvider extends ServiceProvider
         $this->app->bind(ProtocolUpdater::class, StandardProtocolUpdater::class);
         $this->app->bind(EventFactory::class, StandardEventFactory::class);
         $this->app->bind(EventRepository::class, EloquentEventRepository::class);
+        $this->app->bind(EventResultsCleaner::class, StandardEventResultsCleaner::class);
         $this->app->bind(ProtocolParser::class, StandardProtocolParser::class);
         $this->app->bind(UniteEventDataService::class, EloquentUniteEventDataService::class);
         $this->app->bind(StandardEventFactory::class, StandardEventFactory::class);
