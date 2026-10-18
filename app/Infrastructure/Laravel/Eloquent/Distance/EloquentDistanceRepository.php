@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use function implode;
 use function str_contains;
+use function str_replace;
 
 final readonly class EloquentDistanceRepository implements DistanceRepository
 {
@@ -82,6 +83,19 @@ final readonly class EloquentDistanceRepository implements DistanceRepository
                 });
             } else {
                 $query->whereIn('groups.name', $groupNames);
+            }
+        }
+
+        if ($criteria->hasParam('groupNamesIgnoringSpaces')) {
+            $groupNames = $criteria->param('groupNamesIgnoringSpaces');
+            if ($groupNames === []) {
+                $query->whereRaw('0 = 1');
+            } else {
+                $query->where(static function (Builder $query) use ($groupNames): void {
+                    foreach ($groupNames as $name) {
+                        $query->orWhereRaw("REPLACE(groups.name, ' ', '') LIKE ?", [str_replace(' ', '', $name)]);
+                    }
+                });
             }
         }
 
