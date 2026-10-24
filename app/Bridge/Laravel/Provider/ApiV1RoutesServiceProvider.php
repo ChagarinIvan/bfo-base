@@ -54,6 +54,7 @@ use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\ListPersonsAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\PersonRankHistory\ActivatePersonRankAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\PersonRankHistory\ListPersonRankHistoryAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\PersonRankHistory\UpdatePersonRankActivationAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\RankAudit\ListRankAuditAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\RebuildPersonRanksAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\UpdatePersonAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\ViewPersonAction;
@@ -145,6 +146,7 @@ final class ApiV1RoutesServiceProvider extends ServiceProvider
                 $router->put('persons/{personId}', UpdatePersonAction::class);
                 $router->delete('persons/{personId}', DeletePersonAction::class);
                 $router->post('persons/{personId}/ranks/rebuild', RebuildPersonRanksAction::class);
+                $router->get('persons/{personId}/rank-audit', ListRankAuditAction::class);
                 $router->post('protocol-lines/{protocolLineId}/extract-person', ExtractPersonAction::class);
                 $router->put('protocol-lines/{protocolLineId}/person', AssignPersonToProtocolLineAction::class);
                 $router->post('clubs', CreateClubAction::class);

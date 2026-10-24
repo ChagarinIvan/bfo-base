@@ -51,8 +51,6 @@ final readonly class StandardProtocolLineIdentifier implements ProtocolLineIdent
         }
 
         $this->protocolLines->update(...$lines);
-
-        $this->operations->activateEventLines($event);
     }
 
     private function createPerson(ProtocolLine $line, Impression $impression): int

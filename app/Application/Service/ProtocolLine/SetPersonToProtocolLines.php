@@ -13,6 +13,7 @@ final readonly class SetPersonToProtocolLines
         private string $preparedProtocolLine,
         private int $personId,
         private UserId $userId,
+        public ?int $previousPersonId = null,
     ) {
     }
 

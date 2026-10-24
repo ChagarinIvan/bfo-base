@@ -169,10 +169,9 @@ class Event extends AggregatedModel
 
         try {
             $protocolLinesInputs = $parser->parse($this);
-            $lines = $linesFactory->create($this, $protocolLinesInputs);
+            $lines = $linesFactory->create($this, $protocolLinesInputs, $impression);
             $this->processing_status = EventProcessingStatus::IDENTIFYING;
 
-            // когда протокол лайны будут иметь Impression, то надо брать с последнего протокол лайна ->created
             $this->recordThat(new EventParsed($this->id, $token, $impression));
         } catch (EventParsingError|UnableToCreateProtocolLine $e) {
             $this->processing_status = EventProcessingStatus::PARSING_ERROR;

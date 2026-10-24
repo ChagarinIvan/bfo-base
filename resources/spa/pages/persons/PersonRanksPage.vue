@@ -23,6 +23,7 @@ import { contextsByEventId } from '../../components/cupEventContextModels'
 import { protocolLineEventUrl } from '../../components/tableModels'
 import { t } from '../../i18n'
 import { useAuthStore } from '../../stores/auth'
+import PersonRankAudit from './PersonRankAudit.vue'
 
 interface RankHistoryGroup {
     id: string
@@ -49,6 +50,7 @@ const dateError = ref('')
 const saving = ref(false)
 const rebuilding = ref(false)
 const rebuildError = ref('')
+const auditRefresh = ref(0)
 const expandedRankIds = ref<Set<string>>(new Set())
 let latestRequest = 0
 const columns = computed(() => [
@@ -228,6 +230,7 @@ async function loadHistory(): Promise<void> {
             ...new Set(loadedHistory.map((item) => item.eventId)),
         ])
         if (requestId !== latestRequest) return
+        auditRefresh.value++
         history.value = loadedHistory
         cupEventContexts.value = {}
         loadedCupEventIds.value = new Set()
@@ -544,6 +547,13 @@ onBeforeUnmount(() => {
             </div>
         </template>
     </ListingTable>
+
+    <PersonRankAudit
+        v-if="auth.isAuthenticated"
+        :person-id="personId()"
+        :refresh="auditRefresh"
+        :rank-label="rankLabel"
+    />
 
     <Dialog
         v-model:visible="dialogVisible"

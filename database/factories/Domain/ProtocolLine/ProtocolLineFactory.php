@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Database\Factories\Domain\ProtocolLine;
 
+use App\Domain\Auth\Impression;
 use App\Domain\ProtocolLine\ProtocolLine;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /** @extends Factory<ProtocolLine> */
@@ -14,7 +16,11 @@ class ProtocolLineFactory extends Factory
 
     public function definition(): array
     {
+        $impression = new Impression(Carbon::now(), 1);
+
         return [
+            'created' => $impression,
+            'updated' => $impression,
             'serial_number' => $this->faker->numberBetween(1, 100),
             'lastname' => $this->faker->lastName,
             'firstname' => $this->faker->firstName,

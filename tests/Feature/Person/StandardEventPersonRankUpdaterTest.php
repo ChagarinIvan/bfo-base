@@ -7,8 +7,10 @@ namespace Tests\Feature\Person;
 use App\Domain\Auth\Impression;
 use App\Domain\Competition\Competition;
 use App\Domain\Event\Event;
+use App\Domain\Person\Audit\RankAuditRepository;
 use App\Domain\Person\Exception\RanksUpdatingError;
 use App\Domain\Person\Person;
+use App\Domain\Person\PersonRanksUpdater;
 use App\Domain\Person\PersonRepository;
 use App\Domain\Person\RankCalculator;
 use App\Domain\Person\RankFact;
@@ -16,6 +18,7 @@ use App\Domain\Person\RankFactsCollector;
 use App\Domain\Person\StandardEventPersonRankUpdater;
 use App\Domain\ProtocolLine\ProtocolLineOperations;
 use App\Domain\Rank\Rank;
+use App\Domain\Shared\TransactionManager;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
@@ -28,8 +31,8 @@ final class StandardEventPersonRankUpdaterTest extends TestCase
     #[Test]
     public function it_rebuilds_each_affected_person_using_the_stage_impression(): void
     {
-        $first = Person::factory()->createOne(['id' => 501, 'active' => true]);
-        $second = Person::factory()->createOne(['id' => 502, 'active' => true]);
+        $first = Person::factory()->createOne(['id' => 501, 'active' => true, 'current_rank' => Rank::FirstRank]);
+        $second = Person::factory()->createOne(['id' => 502, 'active' => true, 'current_rank' => Rank::FirstRank]);
         $event = Event::factory()->createOne(['competition_id' => Competition::factory()->createOne()->id]);
         $impression = new Impression(Carbon::parse('2026-10-03 12:00:00'), 42);
         $operations = $this->createMock(ProtocolLineOperations::class);
@@ -89,17 +92,24 @@ final class StandardEventPersonRankUpdaterTest extends TestCase
             self::assertCount(1, $updated->rankHistoryToPersist());
         });
 
-        new StandardEventPersonRankUpdater($operations, $persons, $facts, new RankCalculator())
+        new StandardEventPersonRankUpdater(
+            $operations,
+            $persons,
+            new PersonRanksUpdater($persons, $facts, new RankCalculator(), $this->app->make(RankAuditRepository::class)),
+            $this->app->make(TransactionManager::class)
+        )
             ->update($event, $impression);
     }
 
     private function updater(ProtocolLineOperations $operations, RankFactsCollector $facts): StandardEventPersonRankUpdater
     {
+        $persons = $this->app->make(PersonRepository::class);
+
         return new StandardEventPersonRankUpdater(
             $operations,
-            $this->app->make(PersonRepository::class),
-            $facts,
-            new RankCalculator(),
+            $persons,
+            new PersonRanksUpdater($persons, $facts, new RankCalculator(), $this->app->make(RankAuditRepository::class)),
+            $this->app->make(TransactionManager::class)
         );
     }
 }

@@ -70,6 +70,10 @@ final readonly class EloquentPersonRepository implements PersonRepository
             ->orderBy('person.id')
         ;
 
+        if ($criteria->hasParam('ids')) {
+            $query->whereIn('person.id', $criteria->param('ids'));
+        }
+
         if ($criteria->hasParam('rankFinishedBefore') && $criteria->hasParam('rankActivationDueBy')) {
             $query->where(static function (Builder $query) use ($criteria): void {
                 $query->where('person.current_rank_finished_on', '<', $criteria->param('rankFinishedBefore'))

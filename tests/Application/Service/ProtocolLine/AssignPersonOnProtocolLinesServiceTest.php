@@ -10,7 +10,11 @@ use App\Application\Service\PersonPrompt\ChangePersonPromptService;
 use App\Application\Service\ProtocolLine\SetPersonToProtocolLines;
 use App\Application\Service\ProtocolLine\SetPersonToProtocolLinesService;
 use App\Domain\Auth\Impression;
+use App\Domain\Person\Audit\RankAuditRepository;
+use App\Domain\Person\Audit\RankSnapshot;
 use App\Domain\Person\Person;
+use App\Domain\Person\PersonRank;
+use App\Domain\Person\PersonRanksUpdater;
 use App\Domain\Person\PersonRepository;
 use App\Domain\Person\RankCalculator;
 use App\Domain\Person\RankFactsCollector;
@@ -19,6 +23,7 @@ use App\Domain\PersonPrompt\PersonPrompt;
 use App\Domain\PersonPrompt\PersonPromptRepository;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\ProtocolLine\ProtocolLineRepository;
+use App\Domain\Rank\Rank;
 use App\Domain\Shared\DummyTransactional;
 use App\Domain\Shared\FrozenClock;
 use Carbon\Carbon;
@@ -62,10 +67,12 @@ final class AssignPersonOnProtocolLinesServiceTest extends TestCase
         $rankFacts->expects($this->once())->method('collect')->with(42)->willReturn([]);
         $clock = new FrozenClock(Carbon::parse('2026-09-09'));
 
+        $audit = $this->createStub(RankAuditRepository::class);
+        $audit->method('snapshot')->willReturn(new RankSnapshot(new PersonRank(Rank::FirstRank, null, null, null), [], null));
         new SetPersonToProtocolLinesService(
             $lines,
             new ChangePersonPromptService($promptRepository, $promptFactory, $clock),
-            new RebuildPersonRanksService($persons, $rankFacts, new RankCalculator(), $clock, new DummyTransactional()),
+            new RebuildPersonRanksService($persons, new PersonRanksUpdater($persons, $rankFacts, new RankCalculator(), $audit), $clock, new DummyTransactional()),
             $clock,
         )->execute(new SetPersonToProtocolLines(
             'ivanou-jan-2001',

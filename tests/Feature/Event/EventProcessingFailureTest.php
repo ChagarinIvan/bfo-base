@@ -23,6 +23,7 @@ use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\ProtocolLine\ProtocolLineIdentifier;
 use App\Domain\ProtocolLine\ProtocolLineRepository;
 use App\Domain\Shared\Clock;
+use App\Domain\Shared\FrozenClock;
 use App\Domain\Shared\TransactionManager;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -43,10 +44,10 @@ final class EventProcessingFailureTest extends TestCase
         $parser = $this->createMock(ProtocolParser::class);
         $parser->expects($this->once())->method('parse')->willReturn([]);
         $factory = $this->createMock(ProtocolLinesFactory::class);
-        $factory->expects($this->once())->method('create')->willReturn([new ProtocolLine]);
+        $factory->expects($this->once())->method('create')->with($this->isInstanceOf(Event::class), [], $this->impression())->willReturn([new ProtocolLine]);
         $lines = $this->createMock(ProtocolLineRepository::class);
         $lines->expects($this->once())->method('add')->willThrowException(new RuntimeException('database detail'));
-        $service = new ParseEventProtocolService($parser, $factory, $lines, $this->events(), $this->transactional(), $this->clock());
+        $service = new ParseEventProtocolService($parser, $factory, $lines, $this->events(), $this->transactional(), new FrozenClock($this->impression()->at));
         try {
             $service->execute(new ParseEventProtocol($event->id, $event->processing_token, 42));
             self::fail('Expected a line save failure.');

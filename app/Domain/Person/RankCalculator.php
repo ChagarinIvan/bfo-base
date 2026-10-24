@@ -20,8 +20,15 @@ final class RankCalculator
     /** @param list<RankFact> $rankFacts */
     public function calculate(array $rankFacts, Person $person, Carbon $on): PersonRankState
     {
-        $facts = $this->calculationFacts($rankFacts, $person->birthday);
-        $history = $this->buildHistory($facts, $person->id, $on);
+        return $this->calculateFor($rankFacts, $person->id, $person->birthday, $on);
+    }
+
+    /** @param list<RankFact> $rankFacts */
+    public function calculateFor(array $rankFacts, ?int $personId, ?Carbon $birthday, Carbon $on): PersonRankState
+    {
+        $on = $on->copy()->startOfDay();
+        $facts = $this->calculationFacts(new RankActivationPolicy()->apply($rankFacts), $birthday);
+        $history = $this->buildHistory($facts, $personId, $on);
 
         return new PersonRankState(
             current: $this->currentRank($history, $on),
@@ -35,11 +42,13 @@ final class RankCalculator
     {
         $next = null;
         foreach ($facts as $fact) {
-            if (!$fact->delayedActivation || !$fact->rank->usesDelayedActivation()) {
+            $due = $fact->activatedOn;
+            if ($due === null && $fact->delayedActivation && $fact->rank->usesDelayedActivation()) {
+                $due = $fact->achievedOn->copy()->addMonthNoOverflow();
+            }
+            if ($due === null) {
                 continue;
             }
-
-            $due = $fact->activatedOn ?? $fact->achievedOn->copy()->addMonthNoOverflow();
             if ($due <= $on) {
                 continue;
             }
@@ -61,7 +70,14 @@ final class RankCalculator
             callback: fn (RankFact $fact): bool => $this->isEligibleForCalculation($fact, $birthday),
         ));
 
-        return $this->sortFactsByAchievement($facts);
+        usort($facts, static function (RankFact $left, RankFact $right): int {
+            $leftDate = $left->activatedOn ?? ($left->delayedActivation && $left->rank->usesDelayedActivation() ? $left->achievedOn->copy()->addMonthNoOverflow() : $left->achievedOn);
+            $rightDate = $right->activatedOn ?? ($right->delayedActivation && $right->rank->usesDelayedActivation() ? $right->achievedOn->copy()->addMonthNoOverflow() : $right->achievedOn);
+
+            return $leftDate <=> $rightDate ?: $left->protocolLineId <=> $right->protocolLineId;
+        });
+
+        return $facts;
     }
 
     private function isEligibleForCalculation(RankFact $fact, ?Carbon $birthday): bool
@@ -121,10 +137,10 @@ final class RankCalculator
             $startedOn = $strongerRank->finished_on;
         }
 
-        if ($activatedOn !== null) {
+        if ($activatedOn !== null && $activatedOn <= $on) {
             $history = $this->endLowerRankPeriods($history, $fact, $startedOn, $personId);
+            $history = $this->extendActivePeriods($history, $fact, $startedOn, $finishedOn, $personId);
         }
-        $history = $this->extendActivePeriods($history, $fact, $startedOn, $finishedOn, $personId);
 
         $history[] = PersonRankHistory::fromValues(
             personId: $personId,
@@ -221,7 +237,7 @@ final class RankCalculator
 
         return array_map(
             function (PersonRankHistory $entry) use ($achievement, $startedOn, $finishedOn, $personId): PersonRankHistory {
-                if (!$this->shouldExtendPeriod($entry, $achievement, $startedOn)) {
+                if (!$this->shouldExtendPeriod($entry, $achievement, $startedOn) || $entry->finished_on >= $finishedOn) {
                     return $entry;
                 }
 

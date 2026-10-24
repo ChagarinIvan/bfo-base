@@ -46,7 +46,7 @@ final class FirstRankActivationTest extends TestCase
     }
 
     #[Test]
-    public function an_existing_activated_first_rank_remains_active_without_activating_a_new_result(): void
+    public function a_prior_confirmed_first_rank_automatically_activates_the_next_result_without_changing_manual_input(): void
     {
         [$person, $distance] = $this->personAndDistance();
         $oldLine = ProtocolLine::factory()->createOne([
@@ -77,8 +77,8 @@ final class FirstRankActivationTest extends TestCase
         $this->assertSame('2026-01-10', $oldLine->fresh()->activate_rank?->toDateString());
         $this->assertNull($pendingLine->fresh()->activate_rank);
         $this->assertSame('2026-01-10', PersonRankHistory::query()->where('protocol_line_id', $oldLine->id)->sole()->activated_on?->toDateString());
-        $this->assertSame('2028-01-10', PersonRankHistory::query()->where('protocol_line_id', $oldLine->id)->sole()->finished_on?->toDateString());
-        $this->assertNull(PersonRankHistory::query()->where('protocol_line_id', $pendingLine->id)->sole()->activated_on);
+        $this->assertSame('2028-03-10', PersonRankHistory::query()->where('protocol_line_id', $oldLine->id)->sole()->finished_on?->toDateString());
+        $this->assertSame('2026-03-10', PersonRankHistory::query()->where('protocol_line_id', $pendingLine->id)->sole()->activated_on?->toDateString());
     }
 
     /** @return array{Person, Distance} */

@@ -92,7 +92,7 @@ final class RankCalculatorTest extends TestCase
     }
 
     #[Test]
-    public function it_keeps_a_new_first_rank_pending_even_after_a_previous_activated_first_rank(): void
+    public function it_activates_a_repeated_first_rank_after_previous_confirmation(): void
     {
         $result = $this->calculate([
             $this->achievement(Rank::FirstRank, '2025-01-10', 1, '2025-02-01'),
@@ -101,9 +101,9 @@ final class RankCalculatorTest extends TestCase
 
         $this->assertSame(Rank::FirstRank, $result->current->rank);
         $this->assertSame('2025-02-01', $result->history[0]->activated_on?->format('Y-m-d'));
-        $this->assertSame('2027-02-01', $result->history[0]->finished_on?->format('Y-m-d'));
-        $this->assertNull($result->history[1]->activated_on);
-        $this->assertNull($result->history[1]->finished_on);
+        $this->assertSame('2028-01-10', $result->history[0]->finished_on?->format('Y-m-d'));
+        $this->assertSame('2026-01-10', $result->history[1]->activated_on?->toDateString());
+        $this->assertSame('2028-01-10', $result->history[1]->finished_on?->toDateString());
     }
 
     #[Test]

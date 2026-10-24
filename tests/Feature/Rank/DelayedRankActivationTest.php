@@ -9,6 +9,7 @@ use App\Application\Service\Person\RebuildExpiredPersonRanks;
 use App\Application\Service\Person\RebuildExpiredPersonRanksService;
 use App\Application\Service\Person\RebuildPersonRanks;
 use App\Application\Service\Person\RebuildPersonRanksService;
+use App\Domain\Auth\Impression;
 use App\Domain\Competition\Competition;
 use App\Domain\Distance\Distance;
 use App\Domain\Event\Event;
@@ -50,7 +51,7 @@ HTML);
         $this->app->instance(Storage::class, $storage);
         $inputs = $this->app->make(StandardProtocolParser::class)->parse($event);
 
-        $line = $this->app->make(StandardProtocolLinesFactory::class)->create($event, $inputs)[0];
+        $line = $this->app->make(StandardProtocolLinesFactory::class)->create($event, $inputs, new Impression(Carbon::parse('2026-10-24 10:30:00'), 42))[0];
         $line->save();
 
         $this->assertSame(Rank::SecondRank->label(), $line->fresh()->complete_rank);

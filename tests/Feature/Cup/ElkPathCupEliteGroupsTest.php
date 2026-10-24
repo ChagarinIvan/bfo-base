@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature\Cup;
 
 use App\Application\Service\Cup\ClearCupCacheService;
+use App\Domain\Auth\Impression;
 use App\Domain\Competition\Competition;
 use App\Domain\Cup\Cup;
 use App\Domain\Cup\CupEvent\CupEvent;
@@ -25,6 +26,7 @@ use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\ProtocolLine\ProtocolLineRepository;
 use App\Domain\Shared\Criteria;
 use App\Domain\Shared\Storage;
+use Carbon\Carbon;
 use Illuminate\Cache\Repository as CacheManager;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -219,7 +221,7 @@ final class ElkPathCupEliteGroupsTest extends TestCase
             ->willReturn(file_get_contents(__DIR__ . '/../../Fixtures/Protocols/2026/Results_night_cup.xlsx'));
         $this->app->instance(Storage::class, $storage);
         $inputs = $this->app->make(StandardProtocolParser::class)->parse($event);
-        $lines = $this->app->make(StandardProtocolLinesFactory::class)->create($event, $inputs);
+        $lines = $this->app->make(StandardProtocolLinesFactory::class)->create($event, $inputs, new Impression(Carbon::parse('2026-10-24 10:30:00'), 42));
         foreach ($lines as $line) {
             $person = Person::factory()->createOne(['id' => ++$this->nextPersonId, 'active' => true]);
             $line->person_id = $person->id;

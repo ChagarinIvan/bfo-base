@@ -22,6 +22,10 @@ const {
     routerReplace: vi.fn(),
 }))
 
+vi.mock('./PersonRankAudit.vue', () => ({
+    default: { name: 'PersonRankAudit', template: '<div />' },
+}))
+
 vi.mock('../../api/cups', () => ({ getCupEventContexts }))
 vi.mock('../../api/events', () => ({ getEventsByIds }))
 vi.mock('../../api/personRankHistory', async () => ({

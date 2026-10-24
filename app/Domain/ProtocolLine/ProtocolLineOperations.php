@@ -13,6 +13,4 @@ interface ProtocolLineOperations
     public function deleteEventLines(Event $event): void;
 
     public function fastIdentByEvent(Event $event): void;
-
-    public function activateEventLines(Event $event): void;
 }

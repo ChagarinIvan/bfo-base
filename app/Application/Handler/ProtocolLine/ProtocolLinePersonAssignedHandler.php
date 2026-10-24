@@ -28,9 +28,10 @@ final readonly class ProtocolLinePersonAssignedHandler implements ShouldQueueAft
         $userId = new UserId($event->impression->by);
 
         $this->service->execute(new SetPersonToProtocolLines(
-            $event->protocolLine->prepared_line,
-            $event->protocolLine->person_id,
+            $event->preparedLine,
+            $event->newPersonId,
             $userId,
+            $event->oldPersonId,
         ));
 
         if ($event->oldPersonId !== null && $this->lines->byCriteria(new Criteria(['personId' => $event->oldPersonId]))->isEmpty()) {

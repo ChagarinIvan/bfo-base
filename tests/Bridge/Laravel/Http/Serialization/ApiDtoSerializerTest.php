@@ -7,11 +7,23 @@ namespace Tests\Bridge\Laravel\Http\Serialization;
 use App\Application\Dto\Auth\ImpressionDto;
 use App\Application\Dto\Competition\ViewCompetitionDto;
 use App\Bridge\Laravel\Http\Serialization\ApiDtoSerializer;
+use App\Domain\Person\Audit\RankAuditTrigger;
+use App\Domain\Rank\Rank;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 final class ApiDtoSerializerTest extends TestCase
 {
+    #[Test]
+    public function backed_enums_serialize_to_their_wire_values_instead_of_reflection_fields(): void
+    {
+        $serializer = new ApiDtoSerializer();
+        $this->assertSame(['trigger' => 'manual', 'rankId' => 7], $serializer->serialize(
+            ['trigger' => RankAuditTrigger::Manual, 'rankId' => Rank::CandidateMaster],
+            'authenticated',
+        ));
+    }
+
     #[Test]
     public function public_group_hides_audit_fields(): void
     {

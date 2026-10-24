@@ -6,6 +6,7 @@ namespace App\Bridge\Laravel\Http\Serialization;
 
 use App\Application\Dto\Serialization\Groups;
 use App\Domain\Shared\Pagination\Slice;
+use BackedEnum;
 use JsonSerializable;
 use ReflectionObject;
 use function array_map;
@@ -30,6 +31,10 @@ final class ApiDtoSerializer
 
     private function serializeObject(object $value, string $group): mixed
     {
+        if ($value instanceof BackedEnum) {
+            return $value->value;
+        }
+
         if ($value instanceof Slice) {
             return $this->serialize($value->items(), $group);
         }

@@ -10,6 +10,7 @@ use App\Application\Service\Person\RebuildPersonRanksService;
 use App\Application\Service\PersonPrompt\ChangePersonPrompt;
 use App\Application\Service\PersonPrompt\ChangePersonPromptService;
 use App\Domain\Auth\Impression;
+use App\Domain\Person\Audit\RankAuditTrigger;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\ProtocolLine\ProtocolLineRepository;
 use App\Domain\Shared\Clock;
@@ -27,7 +28,11 @@ final readonly class SetPersonToProtocolLinesService
     public function execute(SetPersonToProtocolLines $command): void
     {
         $lines = $this->lines->byCriteria($command->criteria());
-        $oldPersonIds = $lines->pluck('person_id')->filter()->unique();
+        $oldPersonIds = $lines->pluck('person_id')->filter();
+        if ($command->previousPersonId !== null) {
+            $oldPersonIds->push($command->previousPersonId);
+        }
+        $oldPersonIds = $oldPersonIds->unique();
 
         $lines->each(function (ProtocolLine $line) use ($command): void {
             $line->setPerson($command->personId(), new Impression($this->clock->now(), $command->userId()->id));
@@ -40,11 +45,11 @@ final readonly class SetPersonToProtocolLinesService
             $command->userId(),
         ));
 
-        $this->ranks->execute(new RebuildPersonRanks($command->personId(), $command->userId()));
+        $this->ranks->execute(new RebuildPersonRanks($command->personId(), $command->userId(), RankAuditTrigger::Reassignment));
 
         $oldPersonIds->each(function (int $personId) use ($command): void {
             try {
-                $this->ranks->execute(new RebuildPersonRanks($personId, $command->userId()));
+                $this->ranks->execute(new RebuildPersonRanks($personId, $command->userId(), RankAuditTrigger::Reassignment));
             } catch (PersonNotFound) {
                 // A former person can be deleted concurrently with reassignment.
             }

@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Feature\ProtocolLine;
 
+use App\Application\Dto\Auth\UserId;
+use App\Application\Service\Person\RebuildPersonRanks;
+use App\Application\Service\Person\RebuildPersonRanksService;
 use App\Domain\Auth\Impression;
 use App\Domain\Club\Club;
 use App\Domain\Competition\Competition;
@@ -107,7 +110,7 @@ final class StandardProtocolLineIdentifierTest extends TestCase
 
     #[Test]
     #[DataProvider('identificationPaths')]
-    public function it_saves_repeat_activation_before_identification_completes(bool $fastMatching): void
+    public function it_identifies_without_storing_computed_activation_and_rebuild_applies_the_common_policy(bool $fastMatching): void
     {
         [$event, $distance] = $this->eventAndDistance();
         [$previous, $previousDistance] = $this->eventAndDistance();
@@ -143,7 +146,10 @@ final class StandardProtocolLineIdentifierTest extends TestCase
         $event->ident($event->processing_token, $this->app->make(ProtocolLineIdentifier::class), $this->impression());
 
         $this->assertSame($person->id, $line->fresh()->person_id);
-        $this->assertSame('2026-06-10', $line->fresh()->activate_rank?->toDateString());
+        $this->assertNull($line->fresh()->activate_rank);
+        $this->app->make(RebuildPersonRanksService::class)->execute(new RebuildPersonRanks($person->id, new UserId(1), on: Carbon::parse('2026-07-01')));
+        $this->assertDatabaseHas('person_rank_histories', ['protocol_line_id' => $line->id, 'activated_on' => '2026-06-10 00:00:00']);
+        $this->assertNull($line->fresh()->activate_rank);
         $this->assertSame(EventProcessingStatus::REBUILDING_RANKS, $event->processing_status);
         $this->assertInstanceOf(EventIdentified::class, $event->releasedEvents()[0]);
     }

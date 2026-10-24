@@ -30,7 +30,7 @@ describe('static updates catalog', () => {
                     b.spec.localeCompare(a.spec),
             ),
         )
-        expect(updates[0]?.spec).toBe('048-elk-path-elite-groups')
+        expect(updates[0]?.spec).toBe('049-rank-calculation-audit')
     })
 
     it('links only to existing SPA routes when a destination is useful', () => {

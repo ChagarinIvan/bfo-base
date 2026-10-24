@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\ProtocolLine\Factory;
 
+use App\Domain\Auth\Impression;
 use App\Domain\Distance\Distance;
 use App\Domain\Distance\DistanceFactory;
 use App\Domain\Distance\DistanceInput;
@@ -43,7 +44,7 @@ final class StandardProtocolLinesFactory implements ProtocolLinesFactory
      * @throws UnableToCreateProtocolLine
      * @return list<ProtocolLine>
      */
-    public function create(Event $event, array $inputs): array
+    public function create(Event $event, array $inputs, Impression $impression): array
     {
         $protocolLines = [];
 
@@ -52,7 +53,7 @@ final class StandardProtocolLinesFactory implements ProtocolLinesFactory
                 $group = $this->getGroup($event, $input);
                 $distance = $this->getDistance($event, $group, $input);
 
-                $protocolLines[] = $this->createLine($event, $input, $distance->id);
+                $protocolLines[] = $this->createLine($event, $input, $distance->id, $impression);
             }
         } catch (Throwable $e) {
             throw new UnableToCreateProtocolLine($e->getMessage(), $e->getCode(), $e);
@@ -108,9 +109,11 @@ final class StandardProtocolLinesFactory implements ProtocolLinesFactory
         return $this->distanceCache[$group->id];
     }
 
-    private function createLine(Event $event, ProtocolLineInput $input, int $distanceId): ProtocolLine
+    private function createLine(Event $event, ProtocolLineInput $input, int $distanceId, Impression $impression): ProtocolLine
     {
         $line = new ProtocolLine();
+        $line->created = $impression;
+        $line->updated = $impression;
         $line->serial_number = $input->serialNumber;
         $line->lastname = $input->lastname;
         $line->firstname = $input->firstname;
