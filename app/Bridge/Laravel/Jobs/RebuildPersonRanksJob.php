@@ -19,7 +19,7 @@ final class RebuildPersonRanksJob implements ShouldQueue
     public function __construct(
         public readonly array $personIds,
         public readonly Impression $impression,
-        public readonly RankAuditTrigger $trigger = RankAuditTrigger::Queued,
+        public readonly RankAuditTrigger $trigger,
     ) {
     }
 

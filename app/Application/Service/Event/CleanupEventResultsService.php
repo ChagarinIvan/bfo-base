@@ -13,9 +13,7 @@ use App\Domain\Auth\Impression;
 use App\Domain\Cup\CupCacheInvalidator;
 use App\Domain\Distance\DistanceDeleter;
 use App\Domain\Event\EventRepository;
-use App\Domain\Person\Audit\RankAuditRepository;
 use App\Domain\Person\Audit\RankAuditTrigger;
-use App\Domain\Person\Audit\RankRebuildFailure;
 use App\Domain\ProtocolLine\ProtocolLineOperations;
 use App\Domain\Shared\Clock;
 use App\Domain\Shared\TransactionManager;
@@ -23,55 +21,49 @@ use App\Domain\Shared\TransactionManager;
 final readonly class CleanupEventResultsService
 {
     public function __construct(
-        private EventRepository           $events,
-        private ProtocolLineOperations    $protocolLines,
-        private DistanceDeleter           $distances,
+        private EventRepository $events,
+        private ProtocolLineOperations $protocolLines,
+        private DistanceDeleter $distances,
         private RebuildPersonRanksService $rebuildPersonRanks,
-        private CupCacheInvalidator       $invalidator,
-        private TransactionManager        $transactional,
-        private Clock                     $clock,
-        private RankAuditRepository       $audit,
+        private CupCacheInvalidator $invalidator,
+        private TransactionManager $transactional,
+        private Clock $clock,
     )
     {
     }
 
     public function execute(CleanupEventResults $command): void
     {
-        try {
-            $this->transactional->run(function () use ($command): void {
-                $event = $this->events->lockById($command->eventId, includeInactive: true) ?? throw new EventNotFound();
+        $this->transactional->run(function () use ($command): void {
+            $event = $this->events->lockById($command->eventId, includeInactive: true) ?? throw new EventNotFound();
 
-                if ($event->processing_token !== $command->processingToken) {
-                    return;
+            if ($event->processing_token !== $command->processingToken) {
+                return;
+            }
+
+            if ($command->startParsing && !$event->isParsing($command->processingToken)) {
+                return;
+            }
+
+            $personIds = $this->protocolLines->personIdsForEvent($event);
+            $this->distances->deleteForEvent($event->id);
+            $this->protocolLines->deleteEventLines($event);
+
+            foreach ($personIds as $personId) {
+                try {
+                    $this->rebuildPersonRanks->execute(new RebuildPersonRanks($personId, new UserId($event->updated->by), RankAuditTrigger::ProtocolCleanup));
+                } catch (PersonNotFound) {
+                    // A former participant may have been disabled since the protocol was processed.
                 }
+            }
 
-                if ($command->startParsing && !$event->isParsing($command->processingToken)) {
-                    return;
-                }
+            $event->protocolResultsCleaned(
+                $command->processingToken,
+                new Impression($this->clock->now(), $event->updated->by),
+                $this->invalidator,
+            );
 
-                $personIds = $this->protocolLines->personIdsForEvent($event);
-                $this->distances->deleteForEvent($event->id);
-                $this->protocolLines->deleteEventLines($event);
-
-                foreach ($personIds as $personId) {
-                    try {
-                        $this->rebuildPersonRanks->execute(new RebuildPersonRanks($personId, new UserId($event->updated->by), RankAuditTrigger::ProtocolCleanup));
-                    } catch (PersonNotFound) {
-                        // A former participant may have been disabled since the protocol was processed.
-                    }
-                }
-
-                $event->protocolResultsCleaned(
-                    $command->processingToken,
-                    new Impression($this->clock->now(), $event->updated->by),
-                    $this->invalidator,
-                );
-
-                $this->events->update($event);
-            });
-        } catch (RankRebuildFailure $error) {
-            $this->audit->add($error->entry);
-            throw $error;
-        }
+            $this->events->update($event);
+        });
     }
 }

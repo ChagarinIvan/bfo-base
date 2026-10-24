@@ -15,24 +15,11 @@ const entry: RankAuditEntry = {
     personId: 7,
     trigger: 'manual',
     created: { at: '2026-10-24T12:00:00+00:00', by: '42' },
-    before: {
-        current: {
-            rankId: 6,
-            startedOn: null,
-            activatedOn: null,
-            finishedOn: null,
-        },
-        history: [],
-        nextActivationOn: null,
-    },
-    after: {
-        current: {
-            rankId: 7,
-            startedOn: '2026-01-01',
-            activatedOn: '2026-01-01',
-            finishedOn: '2028-01-01',
-        },
-        history: [],
+    applied: {
+        rankId: 7,
+        startedOn: '2026-01-01',
+        activatedOn: '2026-01-01',
+        finishedOn: '2028-01-01',
         nextActivationOn: null,
     },
 }
@@ -63,54 +50,49 @@ describe('rank audit', () => {
             pagination: { currentPage: 1, perPage: 20, hasNext: true },
         })
     })
-    it('shows summary, actor, reason and before/after without raw JSON', async () => {
+    it('shows the trigger, author and applied rank dates', async () => {
         const wrapper = render()
         await flushPromises()
         expect(wrapper.text()).toContain('КМС')
         expect(wrapper.text()).toContain('Карыстальнік #42')
         expect(wrapper.text()).toContain('Ручны пераразлік')
-        expect(wrapper.text()).toContain('Гісторыя не змянілася')
+        expect(wrapper.text()).toContain('2028-01-01')
         expect(wrapper.find('pre').exists()).toBe(false)
         wrapper.unmount()
     })
-    it('shows history changes and failed attempts from before/after without extra metadata', async () => {
-        const row = {
-            protocolLineId: 10,
-            distanceId: 20,
-            eventId: 30,
-            competitionId: 40,
-            rankId: 7,
-            changeType: 'completion',
-            achievedOn: '2026-01-01',
-            activatedOn: null,
-            startedOn: '2026-01-01',
-            finishedOn: null,
-        }
+    it('keeps repeated applications as separate entries in the chain', async () => {
         getRankAudit.mockResolvedValue({
-            data: [
-                {
-                    ...entry,
-                    before: { ...entry.before!, history: [row] },
-                    after: {
-                        ...entry.after!,
-                        history: [{ ...row, activatedOn: '2026-02-01' }],
-                    },
-                },
-            ],
+            data: [entry, { ...entry, id: '2', trigger: 'activation' }],
             pagination: { currentPage: 1, perPage: 20, hasNext: false },
         })
         const wrapper = render()
         await flushPromises()
-        expect(wrapper.findAll('table')).toHaveLength(2)
-        expect(wrapper.text()).toContain('2026-02-01')
-        expect(wrapper.text()).toContain('#10')
-        getRankAudit.mockResolvedValue({
-            data: [{ ...entry, after: null }],
+        expect(wrapper.findAll('details')).toHaveLength(2)
+        expect(wrapper.text()).toContain('Змена актывацыі')
+        expect(
+            wrapper.findAll('dd').filter((node) => node.text() === 'КМС'),
+        ).toHaveLength(2)
+        wrapper.unmount()
+    })
+
+    it('ignores an outdated response after selecting another person', async () => {
+        let finishFirst!: (value: unknown) => void
+        getRankAudit.mockImplementationOnce(
+            () =>
+                new Promise((resolve) => {
+                    finishFirst = resolve
+                }),
+        )
+        const wrapper = render()
+        await wrapper.setProps({ personId: '8' })
+        await flushPromises()
+        finishFirst({
+            data: [],
             pagination: { currentPage: 1, perPage: 20, hasNext: false },
         })
-        await wrapper.setProps({ refresh: 1 })
         await flushPromises()
-        expect(wrapper.text()).toContain('Разлік не завершаны')
+        expect(wrapper.text()).toContain('КМС')
+        expect(wrapper.findAll('details')).toHaveLength(1)
         wrapper.unmount()
     })
 

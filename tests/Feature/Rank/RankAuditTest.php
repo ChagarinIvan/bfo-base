@@ -7,85 +7,133 @@ namespace Tests\Feature\Rank;
 use App\Application\Dto\Auth\UserId;
 use App\Application\Service\Person\RebuildPersonRanks;
 use App\Application\Service\Person\RebuildPersonRanksService;
-use App\Domain\Person\Audit\RankAuditEntry;
+use App\Domain\Auth\Impression;
+use App\Domain\Person\Audit\RankAuditAction;
 use App\Domain\Person\Audit\RankAuditRepository;
 use App\Domain\Person\Audit\RankAuditTrigger;
-use App\Domain\Person\Audit\RankRebuildFailure;
 use App\Domain\Person\Person;
+use App\Domain\Person\PersonRank;
+use App\Domain\Person\PersonRankHistory;
+use App\Domain\Person\PersonRankState;
+use App\Domain\Person\PersonRanksUpdater;
+use App\Domain\Person\PersonRepository;
 use App\Domain\Person\RankFactsCollector;
 use App\Domain\Rank\Rank;
 use App\Domain\Shared\Criteria;
 use App\Infrastructure\Laravel\Eloquent\Person\RankAudit\RankAuditModel;
+use Carbon\Carbon;
+use Database\Seeders\ProtocolLinesSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use RuntimeException;
 use Tests\TestCase;
-use function json_encode;
+use function array_map;
 
 final class RankAuditTest extends TestCase
 {
     use RefreshDatabase;
 
     #[Test]
-    public function repeated_delivery_is_deduplicated_and_a_new_noop_does_not_modify_person(): void
+    public function each_successful_application_records_its_trigger_and_applied_result(): void
     {
         $person = Person::factory()->createOne(['current_rank' => Rank::FirstRank]);
         $service = $this->app->make(RebuildPersonRanksService::class);
-        $command = new RebuildPersonRanks($person->id, new UserId(1), RankAuditTrigger::Manual);
-        $service->execute($command);
-        $updated = $person->fresh()->updated->at;
-        $service->execute($command);
-        $this->assertSame(1, RankAuditModel::query()->count());
-        $service->execute(new RebuildPersonRanks($person->id, new UserId(2)));
-        $this->assertSame(1, RankAuditModel::query()->count());
-        $this->assertTrue($person->fresh()->updated->at->equalTo($updated));
-        $entry = $this->app->make(RankAuditRepository::class)->byCriteria(new Criteria(['personId' => $person->id]))->items()[0];
-        $this->assertSame(RankAuditTrigger::Manual, $entry->trigger);
-        $this->assertSame(Rank::FirstRank, $entry->before->current->rank);
-        $this->assertSame(Rank::WithoutRank, $entry->after->current->rank);
-    }
+        $service->execute(new RebuildPersonRanks($person->id, new UserId(1)));
+        $service->execute(new RebuildPersonRanks($person->id, new UserId(2), RankAuditTrigger::Scheduled));
+        $service->execute(new RebuildPersonRanks($person->id, new UserId(3)));
 
-    #[Test]
-    public function failure_to_append_success_rolls_back_projection_before_recording_failure(): void
-    {
-        $person = Person::factory()->createOne(['current_rank' => Rank::CandidateMaster]);
-        $real = $this->app->make(RankAuditRepository::class);
-        $audit = $this->createMock(RankAuditRepository::class);
-        $audit->method('snapshot')->willReturnCallback($real->snapshot(...));
-        $calls = 0;
-        $audit->expects($this->exactly(2))->method('add')->willReturnCallback(static function (RankAuditEntry $entry) use (&$calls, $real): void {
-            if ($calls++ === 0) {
-                throw new RuntimeException('Simulated audit storage failure');
-            }
-            $real->add($entry);
-        });
-        $this->app->instance(RankAuditRepository::class, $audit);
-        try {
-            $this->app->make(RebuildPersonRanksService::class)->execute(new RebuildPersonRanks($person->id, new UserId(1)));
-            self::fail('Expected failure');
-        } catch (RankRebuildFailure) {
-            $this->assertSame(Rank::CandidateMaster, $person->fresh()->current_rank);
-            $this->assertNull(RankAuditModel::query()->sole()->after_state);
+        $this->assertSame(3, RankAuditModel::query()->count());
+        $entries = $this->app->make(RankAuditRepository::class)->byCriteria(new Criteria(['personId' => $person->id]))->items();
+        $this->assertSame([3, 2, 1], array_map(static fn (RankAuditAction $entry): int => $entry->created->by, $entries));
+        $this->assertSame(RankAuditTrigger::Scheduled, $entries[1]->trigger);
+        foreach ($entries as $entry) {
+            $this->assertSame(Rank::WithoutRank, $entry->current->rank);
+            $this->assertNull($entry->nextActivationOn);
         }
     }
 
     #[Test]
-    public function failure_preserves_projection_and_records_safe_reason(): void
+    public function the_applied_result_round_trips_all_five_rank_fields(): void
+    {
+        $person = Person::factory()->createOne();
+        $current = new PersonRank(
+            Rank::CandidateMaster,
+            Carbon::parse('2026-01-01'),
+            Carbon::parse('2026-02-01'),
+            Carbon::parse('2028-02-01'),
+        );
+        $next = Carbon::parse('2027-01-01');
+        $person->updateRanks(new PersonRankState($current, [], $next), new Impression(Carbon::now(), 42), RankAuditTrigger::Activation);
+        $this->app->make(PersonRepository::class)->update($person);
+
+        $entry = $this->app->make(RankAuditRepository::class)->byCriteria(new Criteria(['personId' => $person->id]))->items()[0];
+        $this->assertEquals($current, $entry->current);
+        $this->assertEquals($next, $entry->nextActivationOn);
+        $this->assertSame(RankAuditTrigger::Activation, $entry->trigger);
+        $this->assertSame(42, $entry->created->by);
+    }
+
+    #[Test]
+    public function saving_person_again_without_applying_ranks_does_not_duplicate_pending_audit(): void
+    {
+        $this->seed(ProtocolLinesSeeder::class);
+        $person = Person::query()->findOrFail(101);
+        $this->app->make(PersonRanksUpdater::class)->update($person, new Impression(Carbon::now(), 1), RankAuditTrigger::Manual);
+        $this->assertSame([], $person->rankAudit);
+        $this->assertNull($person->rankHistoryToPersist());
+        $history = PersonRankHistory::query()->where('person_id', 101)->get()->toArray();
+        $this->assertNotEmpty($history);
+        $this->app->make(PersonRepository::class)->update($person);
+        $this->assertSame($history, PersonRankHistory::query()->where('person_id', 101)->get()->toArray());
+
+        $this->assertSame(1, RankAuditModel::query()->count());
+    }
+
+    #[Test]
+    public function audit_storage_failure_rolls_back_projection_and_replaced_history_without_an_error_entry(): void
+    {
+        $this->seed(ProtocolLinesSeeder::class);
+        $service = $this->app->make(RebuildPersonRanksService::class);
+        $service->execute(new RebuildPersonRanks(101, new UserId(1)));
+        $history = PersonRankHistory::query()->where('person_id', 101)->orderBy('id')->get()->toArray();
+        $this->assertNotEmpty($history);
+        $person = Person::query()->findOrFail(101);
+        $person->current_rank = Rank::CandidateMaster;
+        $person->save();
+        $oldUpdated = $person->updated;
+        RankAuditModel::creating(static function (): never {
+            throw new RuntimeException('Simulated audit storage failure');
+        });
+
+        try {
+            $service->execute(new RebuildPersonRanks(101, new UserId(2)));
+            self::fail('Expected audit storage failure');
+        } catch (RuntimeException $error) {
+            $this->assertSame('Simulated audit storage failure', $error->getMessage());
+            $this->assertSame(Rank::CandidateMaster, $person->fresh()->current_rank);
+            $this->assertEquals($oldUpdated, $person->fresh()->updated);
+            $this->assertSame($history, PersonRankHistory::query()->where('person_id', 101)->orderBy('id')->get()->toArray());
+            $this->assertSame(1, RankAuditModel::query()->count());
+        } finally {
+            RankAuditModel::flushEventListeners();
+        }
+    }
+
+    #[Test]
+    public function calculation_failure_propagates_without_a_business_audit_entry(): void
     {
         $person = Person::factory()->createOne(['current_rank' => Rank::CandidateMaster]);
         $facts = $this->createStub(RankFactsCollector::class);
-        $facts->method('collect')->willThrowException(new RuntimeException('private SQL and personal input'));
+        $facts->method('collect')->willThrowException(new RuntimeException('Calculation failed'));
         $this->app->instance(RankFactsCollector::class, $facts);
+
         try {
             $this->app->make(RebuildPersonRanksService::class)->execute(new RebuildPersonRanks($person->id, new UserId(1)));
             self::fail('Expected processing failure');
-        } catch (RankRebuildFailure) {
+        } catch (RuntimeException $error) {
+            $this->assertSame('Calculation failed', $error->getMessage());
             $this->assertSame(Rank::CandidateMaster, $person->fresh()->current_rank);
-            $entry = RankAuditModel::query()->sole();
-            $this->assertSame(RankAuditTrigger::Manual, $entry->trigger);
-            $this->assertNull($entry->after_state);
-            $this->assertSame(1, $entry->created->by);
-            $this->assertStringNotContainsString('private SQL', (string) json_encode($entry->attributesToArray()));
+            $this->assertSame(0, RankAuditModel::query()->count());
         }
     }
 }

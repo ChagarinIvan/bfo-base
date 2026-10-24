@@ -17,8 +17,7 @@ return new class extends Migration
             $table->string('trigger', 32);
             $table->timestamp('created_at');
             $table->unsignedInteger('created_by');
-            $table->json('before_state')->nullable();
-            $table->json('after_state')->nullable();
+            $table->json('applied');
             $table->index(['person_id', 'id']);
         });
 

@@ -7,6 +7,7 @@ namespace App\Bridge\Laravel\Console\Commands;
 use App\Application\Dto\Auth\UserId;
 use App\Application\Service\Person\RebuildExpiredPersonRanks;
 use App\Application\Service\Person\RebuildExpiredPersonRanksService;
+use App\Domain\Person\Audit\RankAuditTrigger;
 use App\Domain\Shared\Clock;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
@@ -18,11 +19,13 @@ final class RebuildExpiredPersonRanksCommand extends Command
 {
     public function handle(RebuildExpiredPersonRanksService $service, Clock $clock): int
     {
+        $on = $clock->now()->startOfDay();
         $count = $service->execute(new RebuildExpiredPersonRanks(
             userId: new UserId((int) $this->argument('userId')),
+            trigger: RankAuditTrigger::Scheduled,
             criteria: [
-                'rankFinishedBefore' => $clock->now()->copy()->startOfDay(),
-                'rankActivationDueBy' => $clock->now()->copy()->startOfDay(),
+                'rankFinishedBefore' => $on,
+                'rankActivationDueBy' => $on,
             ],
         ));
 

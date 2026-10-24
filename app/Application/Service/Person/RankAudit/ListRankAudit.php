@@ -6,14 +6,12 @@ namespace App\Application\Service\Person\RankAudit;
 
 use App\Domain\Shared\Criteria;
 
-final readonly class ListRankAudit
+final class ListRankAudit
 {
-    public function __construct(public int $personId)
-    {
+    public Criteria $criteria {
+        get => new Criteria(['personId' => $this->personId]);
     }
-
-    public function criteria(): Criteria
+    public function __construct(public readonly int $personId)
     {
-        return new Criteria(['personId' => $this->personId]);
     }
 }

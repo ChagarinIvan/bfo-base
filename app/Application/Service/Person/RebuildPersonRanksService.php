@@ -6,7 +6,6 @@ namespace App\Application\Service\Person;
 
 use App\Application\Service\Person\Exception\PersonNotFound;
 use App\Domain\Auth\Impression;
-use App\Domain\Person\Audit\RankRebuildFailure;
 use App\Domain\Person\PersonRanksUpdater;
 use App\Domain\Person\PersonRepository;
 use App\Domain\Shared\Clock;
@@ -25,14 +24,9 @@ final readonly class RebuildPersonRanksService
     /** @throws PersonNotFound */
     public function execute(RebuildPersonRanks $command): void
     {
-        try {
-            $this->transactional->run(function () use ($command): void {
-                $person = $this->persons->lockById($command->personId) ?? throw new PersonNotFound();
-                $this->updater->update($person, new Impression($this->clock->now(), $command->userId->id), $command->trigger, $command->on);
-            });
-        } catch (RankRebuildFailure $error) {
-            $this->updater->recordFailure($error);
-            throw $error;
-        }
+        $this->transactional->run(function () use ($command): void {
+            $person = $this->persons->lockById($command->personId) ?? throw new PersonNotFound();
+            $this->updater->update($person, new Impression($this->clock->now(), $command->userId->id), $command->trigger);
+        });
     }
 }

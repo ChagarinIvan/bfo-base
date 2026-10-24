@@ -7,6 +7,7 @@ namespace Tests\Feature\Rank;
 use App\Application\Dto\Auth\UserId;
 use App\Application\Service\Person\RebuildExpiredPersonRanks;
 use App\Application\Service\Person\RebuildExpiredPersonRanksService;
+use App\Domain\Person\Audit\RankAuditTrigger;
 use App\Domain\Person\Person;
 use App\Domain\Rank\Rank;
 use Carbon\Carbon;
@@ -36,6 +37,7 @@ final class RebuildExpiredPersonRanksTest extends TestCase
 
         app(RebuildExpiredPersonRanksService::class)->execute(new RebuildExpiredPersonRanks(
             userId: new UserId(1),
+            trigger: RankAuditTrigger::Scheduled,
             criteria: ['rankFinishedBefore' => Carbon::today()],
         ));
 

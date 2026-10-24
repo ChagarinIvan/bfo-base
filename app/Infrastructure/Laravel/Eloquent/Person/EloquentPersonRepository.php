@@ -12,6 +12,7 @@ use App\Domain\Person\PersonRepository;
 use App\Domain\Shared\Criteria;
 use App\Domain\Shared\Pagination\Slice;
 use App\Infrastructure\Laravel\Eloquent\Pagination\EloquentQueryAdapter;
+use App\Infrastructure\Laravel\Eloquent\Person\RankAudit\RankAuditModel;
 use App\Infrastructure\Laravel\Eloquent\Shared\EscapesLikePatterns;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
@@ -54,6 +55,11 @@ final readonly class EloquentPersonRepository implements PersonRepository
             /** @var PersonRankHistory $row */
             $row->save();
         }
+
+        foreach ($person->rankAudit as $action) {
+            RankAuditModel::fromAction($action)->save();
+        }
+        $person->ranksPersisted();
     }
 
     public function byCriteria(Criteria $criteria): Collection

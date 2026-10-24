@@ -5,10 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Dto\Person\RankAudit;
 
 use App\Application\Dto\Auth\AuthAssembler;
-use App\Domain\Person\Audit\RankAuditEntry;
-use App\Domain\Person\Audit\RankHistorySnapshot;
-use App\Domain\Person\Audit\RankSnapshot;
-use function array_map;
+use App\Domain\Person\Audit\RankAuditAction;
 
 final readonly class RankAuditAssembler
 {
@@ -16,40 +13,20 @@ final readonly class RankAuditAssembler
     {
     }
 
-    public function toDto(RankAuditEntry $entry): RankAuditDto
+    public function toDto(RankAuditAction $action): RankAuditDto
     {
         return new RankAuditDto(
-            (string) $entry->id,
-            $entry->personId,
-            $entry->trigger,
-            $this->auth->toImpressionDto($entry->created),
-            $this->snapshot($entry->before),
-            $this->snapshot($entry->after)
+            (string) $action->id,
+            $action->personId,
+            $action->trigger,
+            $this->auth->toImpressionDto($action->created),
+            new AppliedRankDto(
+                $action->current->rank->value,
+                $action->current->startedOn?->toDateString(),
+                $action->current->activatedOn?->toDateString(),
+                $action->current->finishedOn?->toDateString(),
+                $action->nextActivationOn?->toDateString(),
+            ),
         );
-    }
-
-    /** @return array<string, mixed>|null */
-    public function snapshot(?RankSnapshot $snapshot): ?array
-    {
-        if ($snapshot === null) {
-            return null;
-        }
-
-        return [
-            'current' => [
-                'rankId' => $snapshot->current->rank->value,
-                'startedOn' => $snapshot->current->startedOn?->toDateString(),
-                'activatedOn' => $snapshot->current->activatedOn?->toDateString(),
-                'finishedOn' => $snapshot->current->finishedOn?->toDateString(),
-            ],
-            'history' => array_map(static fn (RankHistorySnapshot $row): array => [
-                'protocolLineId' => $row->protocolLineId, 'distanceId' => $row->distanceId,
-                'eventId' => $row->eventId, 'competitionId' => $row->competitionId,
-                'rankId' => $row->rank->value, 'changeType' => $row->changeType->value,
-                'achievedOn' => $row->achievedOn->toDateString(), 'activatedOn' => $row->activatedOn?->toDateString(),
-                'startedOn' => $row->startedOn->toDateString(), 'finishedOn' => $row->finishedOn?->toDateString(),
-            ], $snapshot->history),
-            'nextActivationOn' => $snapshot->nextActivationOn?->toDateString(),
-        ];
     }
 }

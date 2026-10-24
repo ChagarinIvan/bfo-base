@@ -7,7 +7,6 @@ namespace App\Domain\Person;
 use App\Domain\Auth\Impression;
 use App\Domain\Event\Event;
 use App\Domain\Person\Audit\RankAuditTrigger;
-use App\Domain\Person\Audit\RankRebuildFailure;
 use App\Domain\Person\Exception\RanksUpdatingError;
 use App\Domain\ProtocolLine\ProtocolLineOperations;
 use App\Domain\Shared\TransactionManager;
@@ -25,15 +24,10 @@ final readonly class StandardEventPersonRankUpdater implements EventPersonRankUp
     public function update(Event $event, Impression $impression): void
     {
         foreach ($this->operations->personIdsForEvent($event) as $personId) {
-            try {
-                $this->transactional->run(function () use ($personId, $impression): void {
-                    $person = $this->persons->lockById($personId) ?? throw new RanksUpdatingError('Не удалось обновить разряды спортсменов.');
-                    $this->updater->update($person, $impression, RankAuditTrigger::ProtocolImport);
-                });
-            } catch (RankRebuildFailure $error) {
-                $this->updater->recordFailure($error);
-                throw $error;
-            }
+            $this->transactional->run(function () use ($personId, $impression): void {
+                $person = $this->persons->lockById($personId) ?? throw new RanksUpdatingError('Не удалось обновить разряды спортсменов.');
+                $this->updater->update($person, $impression, RankAuditTrigger::ProtocolImport);
+            });
         }
     }
 }

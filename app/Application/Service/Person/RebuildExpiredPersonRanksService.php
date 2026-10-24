@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Application\Service\Person;
 
 use App\Application\Service\Person\Exception\PersonNotFound;
-use App\Domain\Person\Audit\RankAuditTrigger;
 use App\Domain\Person\PersonRepository;
 use App\Domain\Shared\Criteria;
 
@@ -19,11 +18,10 @@ final readonly class RebuildExpiredPersonRanksService
 
     public function execute(RebuildExpiredPersonRanks $command): int
     {
-        $trigger = $command->criteria === [] ? RankAuditTrigger::Refill : RankAuditTrigger::Scheduled;
         $count = 0;
         foreach ($this->persons->idsByCriteria(new Criteria($command->criteria)) as $personId) {
             try {
-                $this->rebuild->execute(new RebuildPersonRanks($personId, $command->userId, $trigger));
+                $this->rebuild->execute(new RebuildPersonRanks($personId, $command->userId, $command->trigger));
                 $count++;
             } catch (PersonNotFound) {
                 // The projection can disappear between criteria lookup and locking.

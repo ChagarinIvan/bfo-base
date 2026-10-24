@@ -10,10 +10,7 @@ use App\Application\Service\PersonPrompt\ChangePersonPromptService;
 use App\Application\Service\ProtocolLine\SetPersonToProtocolLines;
 use App\Application\Service\ProtocolLine\SetPersonToProtocolLinesService;
 use App\Domain\Auth\Impression;
-use App\Domain\Person\Audit\RankAuditRepository;
-use App\Domain\Person\Audit\RankSnapshot;
 use App\Domain\Person\Person;
-use App\Domain\Person\PersonRank;
 use App\Domain\Person\PersonRanksUpdater;
 use App\Domain\Person\PersonRepository;
 use App\Domain\Person\RankCalculator;
@@ -23,7 +20,6 @@ use App\Domain\PersonPrompt\PersonPrompt;
 use App\Domain\PersonPrompt\PersonPromptRepository;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\ProtocolLine\ProtocolLineRepository;
-use App\Domain\Rank\Rank;
 use App\Domain\Shared\DummyTransactional;
 use App\Domain\Shared\FrozenClock;
 use Carbon\Carbon;
@@ -31,6 +27,7 @@ use Illuminate\Support\Collection;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
+use function array_map;
 
 final class AssignPersonOnProtocolLinesServiceTest extends TestCase
 {
@@ -59,7 +56,7 @@ final class AssignPersonOnProtocolLinesServiceTest extends TestCase
         ]);
         $person->expects($this->once())->method('updateRanks');
         $persons = $this->createMock(PersonRepository::class);
-        $persons->expects($this->once())
+        $persons->expects($this->exactly(3))
             ->method('lockById')
             ->willReturnCallback(static fn (int $personId): ?Person => $personId === 42 ? $person : null);
         $persons->expects($this->once())->method('update')->with($person);
@@ -67,18 +64,31 @@ final class AssignPersonOnProtocolLinesServiceTest extends TestCase
         $rankFacts->expects($this->once())->method('collect')->with(42)->willReturn([]);
         $clock = new FrozenClock(Carbon::parse('2026-09-09'));
 
-        $audit = $this->createStub(RankAuditRepository::class);
-        $audit->method('snapshot')->willReturn(new RankSnapshot(new PersonRank(Rank::FirstRank, null, null, null), [], null));
         new SetPersonToProtocolLinesService(
             $lines,
             new ChangePersonPromptService($promptRepository, $promptFactory, $clock),
-            new RebuildPersonRanksService($persons, new PersonRanksUpdater($persons, $rankFacts, new RankCalculator(), $audit), $clock, new DummyTransactional()),
+            new RebuildPersonRanksService($persons, new PersonRanksUpdater($persons, $rankFacts, new RankCalculator()), $clock, new DummyTransactional()),
             $clock,
         )->execute(new SetPersonToProtocolLines(
             'ivanou-jan-2001',
             42,
             new UserId(7),
         ));
+    }
+
+    #[Test]
+    public function previous_people_are_unique_and_exclude_the_new_owner(): void
+    {
+        $command = new SetPersonToProtocolLines('line', 42, new UserId(7), 10);
+        $lines = array_map(function (?int $personId): ProtocolLine {
+            $line = $this->createStub(ProtocolLine::class);
+            $line->method('__get')->willReturnMap([['person_id', $personId]]);
+
+            return $line;
+        }, [42, 10, null, 11, 11]);
+        $ids = $command->previousPersonIds($lines);
+
+        $this->assertSame([10, 11], $ids);
     }
 
     /** @return ProtocolLine&MockObject */

@@ -6,6 +6,8 @@ namespace App\Domain\Person;
 
 use App\Domain\Auth\Impression;
 use App\Domain\Club\Club;
+use App\Domain\Person\Audit\RankAuditAction;
+use App\Domain\Person\Audit\RankAuditTrigger;
 use App\Domain\Person\Event\PersonCreated;
 use App\Domain\Person\Event\PersonDisabled;
 use App\Domain\Person\Event\PersonInfoUpdated;
@@ -55,8 +57,17 @@ class Person extends AggregatedModel
     /** @see PersonFactory */
     use HasFactory;
 
+    /** @var list<RankAuditAction> Actions awaiting persistence, not the stored journal. */
+    public private(set) array $rankAudit = [];
+
     /** @var list<PersonRankHistory>|null */
     private ?array $rankHistoryToPersist = null;
+
+    public function ranksPersisted(): void
+    {
+        $this->rankHistoryToPersist = null;
+        $this->rankAudit = [];
+    }
 
     public function protocolLines(): HasMany
     {
@@ -105,7 +116,7 @@ class Person extends AggregatedModel
         $this->recordThat(new PersonDisabled($this));
     }
 
-    public function updateRanks(PersonRankState $rankState, Impression $impression): void
+    public function updateRanks(PersonRankState $rankState, Impression $impression, RankAuditTrigger $trigger): void
     {
         $this->current_rank = $rankState->current->rank;
         $this->current_rank_started_on = $rankState->current->startedOn;
@@ -115,6 +126,7 @@ class Person extends AggregatedModel
         $this->updated = $impression;
 
         $this->rankHistoryToPersist = $rankState->history;
+        $this->rankAudit[] = new RankAuditAction($this->id, $trigger, $impression, $rankState->current, $rankState->nextActivationOn);
 
         $this->recordThat(new PersonRanksUpdated($this));
     }

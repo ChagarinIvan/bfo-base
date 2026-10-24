@@ -1,9 +1,21 @@
-# Контракт простого журнала разрядов
+# Контракт журнала применений разряда
 
-GET /api/v1/persons/{personId}/rank-audit. Авторизация обязательна; page/perPage и стандартные X-Pagination-* headers. Сортировка id DESC; неизвестный/неактивный спортсмен: 404; аноним: 401.
+## GET /api/v1/persons/{personId}/rank-audit
 
-Одна запись содержит только id, personId, trigger, created, before, after. created использует стандартный ImpressionDto: at и by. Trigger принимает manual, queued, scheduled, refill, protocol_import, protocol_cleanup, activation, reassignment или correction. Снимки содержат current, history, nextActivationOn, даты спортивных фактов YYYY-MM-DD. При ошибке after=null. Отдельного summary endpoint нет.
+Авторизация обязательна. page/perPage и стандартные X-Pagination-* headers; сортировка id DESC, выборка perPage+1. Аноним: 401; неизвестный/неактивный спортсмен: 200 и пустой список. Невалидная пагинация: 422.
 
-Фронт показывает trigger, created и различия двух состояний. Для анализа удалённого протокола остаются сохранённые значения/IDs в истории. Предусмотрены загрузка, пустой журнал с пояснением о начале аудита, ошибка/retry, постраничный просмотр и защита от устаревшего ответа при смене спортсмена. Пересчёт без изменений не добавляет запись.
+Каждый элемент: id:string, personId:number, trigger:string, created:{at,by}, applied:{rankId,startedOn,activatedOn,finishedOn,nextActivationOn}. applied обязателен. rankId использует существующие IDs разрядов; отсутствие разряда представлено обычным ID WithoutRank. Спортивные даты nullable, иначе YYYY-MM-DD. created использует стандартный ImpressionDto.
 
-CLI: persons:ranks:correct {userId} {--personId=} {--apply}. По умолчанию preview без записи; вывод IDs и состояний до/после без ФИО. Apply сохраняет отличающуюся проекцию по общей политике, журналирует trigger correction, не меняет ручные даты и повторно не создаёт изменений.
+trigger: manual, scheduled, protocol_import, protocol_cleanup, activation, reassignment. Триггер доставки очередью и специальный correction отсутствуют. Ошибок и двух снимков в ответе нет. Список типизирован DTO; summary endpoint не нужен.
+
+## UI
+
+Карточка авторизованного спортсмена показывает последовательность причин, время/автора и применённые разряд/даты/ближайшую активацию. Повтор успешного применения виден отдельной записью с теми же значениями, без утверждения о новом выполнении. Существующая спортивная история остаётся на странице. Loading/empty/error/retry/pagination и защита от устаревших ответов сохраняются. Интерфейс на белорусском.
+
+## CLI
+
+persons:ranks:refill {userId}: полный rebuild всех активных спортсменов по исходным фактам, trigger manual. Полностью заменяет пять производных полей и историю каждого внутри его транзакции. Источники, ручные активации и прежний аудит сохраняются. Успешные применения добавляют аудит. Ошибка откатывает текущего спортсмена и останавливает команду; ранее завершённые сохраняются. Автоматически при выпуске не запускается.
+
+persons:ranks:rebuild-expired {userId}: существующий daily отбор с наступившей активацией/истёкшим сроком, trigger scheduled. Оба CLI используют один обычный расчёт, дата берётся из Clock сервиса.
+
+persons:ranks:correct и preview/apply удаляются. Новой команды для выборочного поиска расхождений нет.

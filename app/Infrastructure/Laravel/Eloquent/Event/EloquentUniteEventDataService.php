@@ -85,7 +85,10 @@ final readonly class EloquentUniteEventDataService implements UniteEventDataServ
                 $line->points = null;
                 $line->complete_rank = '';
                 $line->activate_rank = null;
-                $line->replicate()->save();
+                $line = $line->replicate();
+                $line->created = $newEvent->created;
+                $line->updated = $newEvent->created;
+                $line->save();
             }
         }
     }

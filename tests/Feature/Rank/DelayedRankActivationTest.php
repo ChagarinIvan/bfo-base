@@ -15,6 +15,7 @@ use App\Domain\Distance\Distance;
 use App\Domain\Event\Event;
 use App\Domain\Event\StandardProtocolParser;
 use App\Domain\Group\Group;
+use App\Domain\Person\Audit\RankAuditTrigger;
 use App\Domain\Person\Person;
 use App\Domain\Person\PersonRankHistory;
 use App\Domain\ProtocolLine\Factory\StandardProtocolLinesFactory;
@@ -85,6 +86,7 @@ HTML);
         $this->at('2026-03-02');
         $count = $this->app->make(RebuildExpiredPersonRanksService::class)->execute(new RebuildExpiredPersonRanks(
             new UserId(1),
+            RankAuditTrigger::Scheduled,
             ['rankFinishedBefore' => Carbon::parse('2026-03-02'), 'rankActivationDueBy' => Carbon::parse('2026-03-02')],
         ));
 
@@ -98,6 +100,7 @@ HTML);
         }
         $this->assertSame(0, $this->app->make(RebuildExpiredPersonRanksService::class)->execute(new RebuildExpiredPersonRanks(
             new UserId(1),
+            RankAuditTrigger::Scheduled,
             ['rankFinishedBefore' => Carbon::parse('2026-03-02'), 'rankActivationDueBy' => Carbon::parse('2026-03-02')],
         )));
     }
@@ -115,6 +118,7 @@ HTML);
         $this->at('2026-02-10');
         $count = $this->app->make(RebuildExpiredPersonRanksService::class)->execute(new RebuildExpiredPersonRanks(
             new UserId(1),
+            RankAuditTrigger::Scheduled,
             ['rankFinishedBefore' => Carbon::parse('2026-02-10'), 'rankActivationDueBy' => Carbon::parse('2026-02-10')],
         ));
 
@@ -165,6 +169,7 @@ HTML);
         $this->at('2026-01-20');
         $count = $this->app->make(RebuildExpiredPersonRanksService::class)->execute(new RebuildExpiredPersonRanks(
             new UserId(1),
+            RankAuditTrigger::Scheduled,
             ['rankFinishedBefore' => Carbon::parse('2026-01-20'), 'rankActivationDueBy' => Carbon::parse('2026-01-20')],
         ));
 

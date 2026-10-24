@@ -1,77 +1,63 @@
-# Tasks: корректность расчёта и аудит разрядов
+# Tasks: упрощение 049 после ревью PR #175
 
-**Input**: spec.md, plan.md, research.md, data-model.md, contracts/rank-audit.md.
+**Input**: spec.md, plan.md, research.md, data-model.md, contracts/rank-audit.md, review.md.
+**History**: выполненные T001–T028 предыдущей модели сохранены в [tasks-history.md](tasks-history.md). Здесь только работа новой редакции.
 
 ## Phase 1: Setup
 
-- [x] T001 Проверить существующие правила и составить карту входов в specs/049-rank-calculation-audit/research.md (FR-001, FR-002).
-- [x] T002 Проверить ignore-файлы и подготовить миграцию database/migrations/*rank_audit* (FR-008, FR-013, FR-016).
+- [x] T029 Пересмотреть требования и дизайн по всем 19 комментариям в specs/049-rank-calculation-audit/spec.md, review.md, plan.md и связанных артефактах; подтвердить отсутствие новых архитектурных исключений (FR-001–FR-014).
 
 ## Phase 2: Foundation
 
-- [x] T003 Добавить чистые RankAuditTrigger, RankAuditEntry, типизированные снимки и repository port в app/Domain/Person/Audit/ (FR-008–FR-013).
-- [x] T004 Добавить append-only хранение и indexed Slice в app/Infrastructure/Laravel/Eloquent/Person/RankAudit/ и binding в app/Bridge/Laravel/Provider/Rank/RankProvider.php (FR-008–FR-016).
+- [x] T030 Добавить тесты чистого RankAuditAction в tests/Domain/Person/Audit/RankAuditActionTest.php; заменить снимки обязательными PersonRank/nextActivationOn в app/Domain/Person/Audit/RankAuditAction.php, сохранить enum шести причин (FR-004–FR-008, FR-013).
+- [x] T031 Добавить pending rankAudit в app/Domain/Person/Person.php, минимальную запись applied JSON в app/Infrastructure/Laravel/Eloquent/Person/RankAudit/RankAuditModel.php и сохранение через EloquentPersonRepository.php; удалить snapshot/failure классы; изменить миграцию и проверить integration запись/rollback в tests/Feature/Rank/RankAuditTest.php (FR-004–FR-009).
 
-## Phase 3: US1, корректный расчёт
+## Phase 3: US1, расчёт и точки применения
 
-Независимая проверка: будущая активация, конец календарного дня, иной порядок выполнения/активации и повторный расчёт.
+Независимая проверка: прежние regression examples проходят, ошибки откатываются без failed audit, каждая бизнес-причина приходит из инициатора.
 
-- [x] T005 [US1] Добавить regression-first тесты tests/Domain/Person/RankCalculationRegressionTest.php с чистыми входами (FR-002–FR-004, FR-018).
-- [x] T006 [US1] Исправить сортировку, будущие активации и временные границы в app/Domain/Person/RankCalculator.php (FR-002–FR-004).
-- [x] T007 [US1] Свести app/Domain/Person/StandardEventPersonRankUpdater.php к общему audited Application пути через доменный PersonRanksUpdater, обеспечить no-op и rollback в app/Application/Service/Person/RebuildPersonRanksService.php (FR-001, FR-003, FR-008–FR-013).
+- [x] T032 [US1] Упростить app/Domain/Person/PersonRanksUpdater.php, StandardEventPersonRankUpdater.php, app/Application/Service/Person/RebuildPersonRanksService.php и app/Application/Service/Event/CleanupEventResultsService.php; удалить catches ради аудита и внешнюю дату команды, обновить tests/Application/Service/Rank/RebuildPersonRanksServiceTest.php и интеграционные tests/Feature/Person/StandardEventPersonRankUpdaterTest.php (FR-001–FR-002, FR-004, FR-008).
+- [x] T033 [US1] Передавать trigger явно из CLI/handlers/jobs через app/Application/Service/Person/RebuildExpiredPersonRanks.php; убрать Queued/Refill/Correction, обновить tests/Bridge/Laravel/Jobs/RebuildPersonRanksJobTest.php и связанные проверки (FR-001, FR-007).
+- [x] T034 [US1] Инкапсулировать уникальные прежние person IDs в app/Application/Service/ProtocolLine/SetPersonToProtocolLines.php; упростить service и проверить старого/нового владельцев в tests/Application/Service/ProtocolLine/AssignPersonOnProtocolLinesServiceTest.php (FR-001, FR-004).
+- [x] T035 [US1] Согласовать обязательные ProtocolLine Impression и backfill в database/migrations/2026_10_24_000001_add_rank_audit.php; заменить nullable legacy test тестом миграции в tests/Feature/ProtocolLine/ProtocolLineImpressionsTest.php или отдельном migration test; проверить сохранность created, включая копии в app/Infrastructure/Laravel/Eloquent/Event/EloquentUniteEventDataService.php и tests/Feature/Event/UniteEventsTest.php (FR-012).
 
-## Phase 4: US2, равное/высшее подтверждение
+## Phase 4: US2, общее подтверждение
 
-Независимая проверка: каждый подтверждаемый разряд после равного/высшего, истёкшее основание, отсутствие/отзыв основания и ручная дата.
+Независимая проверка: матрица I/КМС/МС/МСМК, истёкшее основание, ручная дата и отрицательные случаи.
 
-- [x] T008 [US2] Добавить чистые policy tests и tests/Feature/Rank/RankActivationTest.php (FR-005–FR-007, FR-018).
-- [x] T009 [US2] Добавить общую app/Domain/Person/RankActivationPolicy.php по фактам без признака применимости в ProtocolLine; исключить SQL-запись вычисляемой активации при идентификации (FR-005–FR-007).
-- [x] T010 [US2] Обеспечить audit Impression изменяемых методов app/Domain/ProtocolLine/ProtocolLine.php и проверить сохранение ручных дат (FR-006, FR-012).
+- [x] T036 [US2] Сохранить app/Domain/Person/RankActivationPolicy.php и расчётные исправления; перевести вызовы с on на FrozenClock в tests/Feature/Rank/RankActivationTest.php и tests/Feature/ProtocolLine/StandardProtocolLineIdentifierTest.php; выполнить узкие policy/regression тесты (FR-002–FR-003).
 
-## Phase 5: US3, журнал
+## Phase 5: US3, простой журнал
 
-Независимая проверка: увидеть trigger, created и различия двух состояний в карточке; проверить ошибки, авторизацию и отсутствие новых записей при no-op.
+Независимая проверка: обязательный applied, несколько записей повторного применения, пустой список неизвестного/неактивного Person, без ошибки в аудите.
 
-- [x] T011 [US3] Добавить persistence/rollback/dedup tests в tests/Feature/Rank/RankAuditTest.php (FR-008–FR-013, FR-016, FR-018).
-- [x] T012 [US3] Передать enum триггера через app/Application/Handler/Rank/ProtocolLineRankActivatedHandler.php, rank jobs, daily/refill, CleanupEventResultsService и SetPersonToProtocolLinesService (FR-001, FR-008–FR-011).
-- [x] T013 [US3] Добавить API regression tests в tests/Feature/Api/V1/PersonRankAudit/RankAuditApiTest.php (FR-014–FR-016, FR-018).
-- [x] T014 [US3] Добавить read commands/services/assembler/DTO в app/Application/Service/Person/RankAudit/ и app/Application/Dto/Person/RankAudit/; actions и authenticated routes (FR-014–FR-016).
-- [x] T015 [P] [US3] Добавить tests resources/spa/pages/persons/PersonRankAudit.test.ts (FR-014, FR-015, FR-018).
-- [x] T016 [US3] Добавить resources/spa/api/personRankAudit.ts, PersonRankAudit.vue, подключение PersonRanksPage.vue и белорусские тексты resources/lang/by.json (FR-014–FR-016).
+- [x] T037 [US3] Заменить dedup/failure-entry проверки в tests/Feature/Rank/RankAuditTest.php на повторные успешные применения, отсутствие дубля при обычном save, сохранность аудита и атомарный rollback (FR-004–FR-009).
+- [x] T038 [US3] Упростить app/Domain/Person/Audit/RankAuditRepository.php и Infrastructure EloquentRankAuditRepository.php до indexed read-only query с active Person; ListRankAudit использует criteria property hook, ListRankAuditService не проверяет Person отдельно (FR-009–FR-010).
+- [x] T039 [US3] Добавить app/Application/Dto/Person/RankAudit/AppliedRankDto.php; обновить RankAuditDto/Assembler и tests/Feature/Api/V1/PersonRankAudit/RankAuditApiTest.php под applied, пустые результаты и пагинацию (FR-005–FR-006, FR-010, FR-013–FR-014).
+- [x] T040 [P] [US3] Упростить resources/spa/api/personRankAudit.ts и resources/spa/pages/persons/PersonRankAudit.vue; обновить UI tests и resources/lang/by.json, сохранив загрузку, retry, пагинацию и защиту от устаревших ответов (FR-005–FR-006, FR-010, FR-014).
 
-## Phase 6: US4, коррекция
+## Phase 6: US4, полный пересчёт
 
-Независимая проверка: preview ничего не меняет, apply соответствует preview и повтор идемпотентен.
+Независимая проверка: refill восстанавливает испорченные производные данные, сохраняет источники и аудит; повтор спортивно одинаков и добавляет успешные применения.
 
-- [x] T017 [US4] Добавить tests/Feature/Rank/CorrectPersonRanksTest.php (FR-017, FR-018).
-- [x] T018 [US4] Добавить preview/apply command/service и Bridge CLI в app/Application/Service/Person/CorrectPersonRanksService.php и app/Bridge/Laravel/Console/Commands/CorrectPersonRanksCommand.php (FR-017).
+- [x] T041 [US4] Удалить app/Application/Service/Person/CorrectPersonRanks*.php, app/Bridge/Laravel/Console/Commands/CorrectPersonRanksCommand.php и прежний tests/Feature/Rank/CorrectPersonRanksTest.php; обновить существующий RefillPersonRanksCommand.php как полный rebuild (FR-007, FR-011).
+- [x] T042 [US4] Добавить/обновить tests/Feature/Rank/RefillPersonRanksTest.php: CLI, несколько активных спортсменов и прежняя область отбора, ручные даты, прежний аудит, повтор и rollback на спортсмена (FR-002, FR-004, FR-009, FR-011).
 
-## Phase 7: Polish
+## Phase 7: Polish and validation
 
-- [x] T019 Адаптировать изменённые collaborator tests и выполнить узкие backend/SPA проверки в tests/ и resources/spa/ (FR-018).
-- [x] T020 Выполнить полный quality gate из specs/049-rank-calculation-audit/quickstart.md, проверить запуск приложения и bounded/indexed queries (FR-018, SC-001–SC-007).
-- [x] T021 Сверить acceptance scenarios и обновить итог исследования/статус в specs/049-rank-calculation-audit/research.md и spec.md (FR-001, FR-002, FR-018).
+- [x] T043 Обновить существующую запись 049 resources/spa/pages/updates/updates.ts и связанные ожидания; удалить оставшиеся production references старой модели, проверить карту specs/049-rank-calculation-audit/review.md (FR-001–FR-014).
+- [x] T044 Выполнить узкие integration/API/SPA проверки изменённого поведения; исправить найденные несогласованности и сверить acceptance scenarios specs/049-rank-calculation-audit/spec.md (FR-001–FR-014).
+- [x] T045 Однократно выполнить финальные composer test/stan/cs/rector dry-run, npm run ci, локальный HTTP smoke, git diff --check и проверить indexed list без N+1 согласно specs/049-rank-calculation-audit/quickstart.md (FR-001–FR-014).
+- [x] T046 Обновить статус/результаты в specs/049-rank-calculation-audit/spec.md, plan.md, tasks.md и research.md; подтвердить отсутствие запуска rebuild рабочих данных (SC-001–SC-007).
 
 ## Dependencies and execution
 
-T001 → T002 → T003 → T004. US1 после Foundation; US2 после исправления расчёта; US3 интегрирует общую запись и входы; US4 использует расчёт и аудит. Тесты каждого сценария пишутся перед реализацией. T015 может выполняться независимо от backend API tests T013 при готовом контракте; интеграция T016 после T014. Полные проверки только в T020.
+T029 → T030 → T031 → US1 → US2 → US3 → US4 → polish. Тесты изменения поведения выполняются перед/вместе с реализацией и должны подтверждать новую модель. T037 дополняет первоначальные integration проверки T031 после переключения callers. T040 может выполняться независимо от backend T038–T039 после фиксации контрактов. Изменения общих файлов выполняются последовательно. Полные гейты только T045; между фазами узкие тесты.
 
 ## Implementation strategy
 
-Первый проверяемый результат: исправленный расчёт US1. Затем политика I и аудит, защищённый просмотр, управляемая историческая коррекция. Все пользовательские истории обязательны для завершения 049.
+Первый результат: одно атомарное успешное применение с одним действием Person. Затем все причины/входы и API/UI, после них полный refill. Не вводить новые сервисы ради переноса снимков или ошибок; удалять освобождённые классы и тесты прежней модели. Все четыре истории обязательны для завершения фичи.
 
-## Уточнение пользователя: общее правило без флага
+## Итог
 
-- [x] T022 [US2] Проверить матрицу равного/высшего подтверждения для I/КМС/МС/МСМК в tests/Domain/Person/RankActivationPolicyTest.php и tests/Feature/Rank/RankActivationTest.php.
-- [x] T023 [US2] Заменить FirstRankActivationPolicy на RankActivationPolicy; удалить флаг, порт коррекции флага и SQL-автоактивацию из app/Domain/ProtocolLine/ProtocolLineOperations.php и app/Infrastructure/Laravel/Eloquent/ProtocolLine/EloquentProtocolLineOperations.php.
-- [x] T024 [US2] Согласовать historical preview/apply, аудит, миграцию, документацию и существующие тесты с единым правилом; выполнить узкие и финальные проверки.
-
-## Полный аудит ProtocolLine
-
-- [x] T025 Добавить created вместе с updated в app/Domain/ProtocolLine/ProtocolLine.php, схему и nullable cast; передавать Impression текущего импорта через ProtocolLinesFactory, покрыть сохранение и неизменность created в tests/Feature/ProtocolLine/ProtocolLineImpressionsTest.php и связанных проверках импорта.
-
-## Уточнение структуры и архитектуры аудита
-
-- [x] T026 Заменить словарь в Domain RankAuditEntry типизированными trigger/created/before/after; JSON оставить в RankSnapshotMapper и транспортном assembler.
-- [x] T027 Вернуть RebuildPersonRanksService к оркестрации, удалить PersonRanksRebuilder port и вынести общий расчёт/запись аудита в Domain PersonRanksUpdater.
-- [x] T028 Сократить схему, API и фронт до trigger, created и двух состояний; удалить summary, дублирующие метаданные и no-op записи. Проверить все сценарии и финальные гейты.
+Все 18 задач T029–T046 выполнены. Результаты финальных проверок и обнаруженный/исправленный путь объединения событий описаны в plan.md. Прежняя модель не является текущим контрактом; tasks-history.md хранит только историю.

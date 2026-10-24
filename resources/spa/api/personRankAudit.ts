@@ -2,42 +2,26 @@ import { api } from './client'
 import type { Impression } from './types'
 import { paginationFromHeaders } from '../pages/listingModels'
 
-export interface AuditRank {
+export interface AppliedRank {
     rankId: number
     startedOn: string | null
     activatedOn: string | null
     finishedOn: string | null
-}
-export interface AuditHistory extends AuditRank {
-    protocolLineId: number
-    eventId: number
-    competitionId: number
-    distanceId: number
-    achievedOn: string
-    changeType: string
-}
-export interface AuditSnapshot {
-    current: AuditRank
-    history: AuditHistory[]
     nextActivationOn: string | null
 }
 export type RankAuditTrigger =
     | 'manual'
-    | 'queued'
     | 'scheduled'
-    | 'refill'
     | 'protocol_import'
     | 'protocol_cleanup'
     | 'activation'
     | 'reassignment'
-    | 'correction'
 export interface RankAuditEntry {
     id: string
     personId: number
     trigger: RankAuditTrigger
     created: Impression
-    before: AuditSnapshot | null
-    after: AuditSnapshot | null
+    applied: AppliedRank
 }
 
 export async function getRankAudit(personId: string, page = 1, perPage = 20) {

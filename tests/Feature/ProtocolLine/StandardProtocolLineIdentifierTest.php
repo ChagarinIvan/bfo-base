@@ -28,6 +28,8 @@ use App\Domain\ProtocolLine\Exception\IdentifyingError;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\ProtocolLine\ProtocolLineIdentifier;
 use App\Domain\Rank\Rank;
+use App\Domain\Shared\Clock;
+use App\Domain\Shared\FrozenClock;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event as EventFacade;
@@ -147,7 +149,8 @@ final class StandardProtocolLineIdentifierTest extends TestCase
 
         $this->assertSame($person->id, $line->fresh()->person_id);
         $this->assertNull($line->fresh()->activate_rank);
-        $this->app->make(RebuildPersonRanksService::class)->execute(new RebuildPersonRanks($person->id, new UserId(1), on: Carbon::parse('2026-07-01')));
+        $this->app->instance(Clock::class, new FrozenClock(Carbon::parse('2026-07-01')));
+        $this->app->make(RebuildPersonRanksService::class)->execute(new RebuildPersonRanks($person->id, new UserId(1)));
         $this->assertDatabaseHas('person_rank_histories', ['protocol_line_id' => $line->id, 'activated_on' => '2026-06-10 00:00:00']);
         $this->assertNull($line->fresh()->activate_rank);
         $this->assertSame(EventProcessingStatus::REBUILDING_RANKS, $event->processing_status);

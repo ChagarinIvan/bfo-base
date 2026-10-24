@@ -7,7 +7,6 @@ namespace Tests\Feature\Person;
 use App\Domain\Auth\Impression;
 use App\Domain\Competition\Competition;
 use App\Domain\Event\Event;
-use App\Domain\Person\Audit\RankAuditRepository;
 use App\Domain\Person\Exception\RanksUpdatingError;
 use App\Domain\Person\Person;
 use App\Domain\Person\PersonRanksUpdater;
@@ -95,7 +94,7 @@ final class StandardEventPersonRankUpdaterTest extends TestCase
         new StandardEventPersonRankUpdater(
             $operations,
             $persons,
-            new PersonRanksUpdater($persons, $facts, new RankCalculator(), $this->app->make(RankAuditRepository::class)),
+            new PersonRanksUpdater($persons, $facts, new RankCalculator()),
             $this->app->make(TransactionManager::class)
         )
             ->update($event, $impression);
@@ -108,7 +107,7 @@ final class StandardEventPersonRankUpdaterTest extends TestCase
         return new StandardEventPersonRankUpdater(
             $operations,
             $persons,
-            new PersonRanksUpdater($persons, $facts, new RankCalculator(), $this->app->make(RankAuditRepository::class)),
+            new PersonRanksUpdater($persons, $facts, new RankCalculator()),
             $this->app->make(TransactionManager::class)
         );
     }

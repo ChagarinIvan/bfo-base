@@ -9,10 +9,6 @@ use App\Domain\Shared\Pagination\Slice;
 
 interface RankAuditRepository
 {
-    public function snapshot(int $personId): RankSnapshot;
-
-    public function add(RankAuditEntry $entry): void;
-
-    /** @return Slice<RankAuditEntry> */
+    /** @return Slice<RankAuditAction> */
     public function byCriteria(Criteria $criteria): Slice;
 }

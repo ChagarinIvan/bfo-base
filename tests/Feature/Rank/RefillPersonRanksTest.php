@@ -11,10 +11,12 @@ use App\Domain\Competition\Competition;
 use App\Domain\Distance\Distance;
 use App\Domain\Event\Event;
 use App\Domain\Group\Group;
+use App\Domain\Person\Audit\RankAuditTrigger;
 use App\Domain\Person\Person;
 use App\Domain\Person\PersonRankHistory;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\Rank\Rank;
+use App\Infrastructure\Laravel\Eloquent\Person\RankAudit\RankAuditModel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -24,7 +26,7 @@ final class RefillPersonRanksTest extends TestCase
     use RefreshDatabase;
 
     #[Test]
-    public function it_rebuilds_idempotently_from_identified_protocol_lines_only(): void
+    public function full_refill_replaces_all_active_projections_and_preserves_sources_and_existing_audit(): void
     {
         /** @var Person $person */
         $person = Person::factory()->createOne(['id' => 1, 'birthday' => '2000-01-01']);
@@ -50,7 +52,22 @@ final class RefillPersonRanksTest extends TestCase
             'activate_rank' => null,
         ]);
 
+        $empty = Person::factory()->createOne(['id' => 2, 'current_rank' => Rank::CandidateMaster]);
+        $inactive = Person::factory()->createOne(['id' => 3, 'active' => false, 'current_rank' => Rank::MasterOfSport]);
         $this->rebuild($person->id);
+        $person->refresh();
+        $person->current_rank = Rank::WorldClassMaster;
+        $person->save();
+        PersonRankHistory::query()->where('person_id', $person->id)->update(['rank' => Rank::WorldClassMaster->value]);
+        $this->assertSame(1, RankAuditModel::query()->count());
+
+        $this->artisan('persons:ranks:refill', ['userId' => 42])->assertSuccessful();
+        $this->assertSame(Rank::WithoutRank, $empty->fresh()->current_rank);
+        $this->assertSame(Rank::MasterOfSport, $inactive->fresh()->current_rank);
+        $this->assertSame(3, RankAuditModel::query()->count());
+        $this->assertSame(RankAuditTrigger::Manual, RankAuditModel::query()->orderByDesc('id')->first()->trigger);
+        $this->assertSame(42, RankAuditModel::query()->orderByDesc('id')->first()->created->by);
+        $this->assertSame('2026-01-10', ProtocolLine::query()->findOrFail(1)->activate_rank->toDateString());
 
         $person->refresh();
         $this->assertSame(Rank::FirstRank, $person->current_rank);
@@ -66,7 +83,8 @@ final class RefillPersonRanksTest extends TestCase
         $firstHistory = PersonRankHistory::query()->sole()->getRawOriginal();
         unset($firstHistory['id']);
 
-        $this->rebuild($person->id);
+        $this->artisan('persons:ranks:refill', ['userId' => 42])->assertSuccessful();
+        $this->assertSame(5, RankAuditModel::query()->count());
 
         self::assertDatabaseCount('person_rank_histories', 1);
         $secondHistory = PersonRankHistory::query()->sole()->getRawOriginal();

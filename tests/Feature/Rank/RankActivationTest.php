@@ -15,6 +15,8 @@ use App\Domain\Person\Person;
 use App\Domain\Person\PersonRankHistory;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\Rank\Rank;
+use App\Domain\Shared\Clock;
+use App\Domain\Shared\FrozenClock;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -43,6 +45,12 @@ final class RankActivationTest extends TestCase
         }
     }
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->app->instance(Clock::class, new FrozenClock(Carbon::parse('2026-07-01')));
+    }
+
     #[Test]
     #[DataProvider('confirmations')]
     public function equal_or_higher_confirmation_activates_the_result_without_a_protocol_flag_and_withdrawal_removes_the_basis(Rank $basisRank, Rank $targetRank, string $basisDate): void
@@ -60,16 +68,16 @@ final class RankActivationTest extends TestCase
             ]);
         }
         $rebuild = $this->app->make(RebuildPersonRanksService::class);
-        $rebuild->execute(new RebuildPersonRanks($person->id, new UserId(1), on: Carbon::parse('2026-07-01')));
+        $rebuild->execute(new RebuildPersonRanks($person->id, new UserId(1)));
         $this->assertSame($basisDate === '2020-01-01' ? $targetRank : $basisRank, $person->fresh()->current_rank);
         $this->assertSame('2026-01-01', PersonRankHistory::query()->where('protocol_line_id', $lines[1]->id)->sole()->activated_on?->toDateString());
         $lines[0]->activate_rank = null;
         $lines[0]->save();
-        $rebuild->execute(new RebuildPersonRanks($person->id, new UserId(1), on: Carbon::parse('2026-07-01')));
+        $rebuild->execute(new RebuildPersonRanks($person->id, new UserId(1)));
         $this->assertNull(PersonRankHistory::query()->where('protocol_line_id', $lines[1]->id)->sole()->activated_on);
         $lines[1]->activate_rank = Carbon::parse('2026-02-01');
         $lines[1]->save();
-        $rebuild->execute(new RebuildPersonRanks($person->id, new UserId(1), on: Carbon::parse('2026-07-01')));
+        $rebuild->execute(new RebuildPersonRanks($person->id, new UserId(1)));
         $this->assertDatabaseHas('person_rank_histories', ['protocol_line_id' => $lines[1]->id, 'activated_on' => '2026-02-01 00:00:00']);
     }
 
@@ -109,7 +117,7 @@ final class RankActivationTest extends TestCase
             $source->person_id = Person::factory()->createOne(['id' => null])->id;
             $source->save();
         }
-        $this->app->make(RebuildPersonRanksService::class)->execute(new RebuildPersonRanks($person->id, new UserId(1), on: Carbon::parse('2026-07-01')));
+        $this->app->make(RebuildPersonRanksService::class)->execute(new RebuildPersonRanks($person->id, new UserId(1)));
         $this->assertNull(PersonRankHistory::query()->where('protocol_line_id', $lines[1]->id)->sole()->activated_on);
         $this->assertNull($lines[1]->fresh()->activate_rank);
     }

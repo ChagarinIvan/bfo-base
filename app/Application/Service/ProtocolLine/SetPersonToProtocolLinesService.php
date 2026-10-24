@@ -28,11 +28,7 @@ final readonly class SetPersonToProtocolLinesService
     public function execute(SetPersonToProtocolLines $command): void
     {
         $lines = $this->lines->byCriteria($command->criteria());
-        $oldPersonIds = $lines->pluck('person_id')->filter();
-        if ($command->previousPersonId !== null) {
-            $oldPersonIds->push($command->previousPersonId);
-        }
-        $oldPersonIds = $oldPersonIds->unique();
+        $oldPersonIds = $command->previousPersonIds($lines);
 
         $lines->each(function (ProtocolLine $line) use ($command): void {
             $line->setPerson($command->personId(), new Impression($this->clock->now(), $command->userId()->id));
@@ -47,12 +43,12 @@ final readonly class SetPersonToProtocolLinesService
 
         $this->ranks->execute(new RebuildPersonRanks($command->personId(), $command->userId(), RankAuditTrigger::Reassignment));
 
-        $oldPersonIds->each(function (int $personId) use ($command): void {
+        foreach ($oldPersonIds as $personId) {
             try {
                 $this->ranks->execute(new RebuildPersonRanks($personId, $command->userId(), RankAuditTrigger::Reassignment));
             } catch (PersonNotFound) {
                 // A former person can be deleted concurrently with reassignment.
             }
-        });
+        }
     }
 }

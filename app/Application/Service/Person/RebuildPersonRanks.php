@@ -6,7 +6,6 @@ namespace App\Application\Service\Person;
 
 use App\Application\Dto\Auth\UserId;
 use App\Domain\Person\Audit\RankAuditTrigger;
-use Carbon\Carbon;
 
 final readonly class RebuildPersonRanks
 {
@@ -14,7 +13,6 @@ final readonly class RebuildPersonRanks
         public int $personId,
         public UserId $userId,
         public RankAuditTrigger $trigger = RankAuditTrigger::Manual,
-        public ?Carbon $on = null,
     ) {
     }
 }

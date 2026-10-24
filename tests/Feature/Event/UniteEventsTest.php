@@ -87,6 +87,9 @@ final class UniteEventsTest extends TestCase
             ->whereHas('distance', static fn ($query) => $query->where('event_id', $merged->id))
             ->sole();
         $this->assertSame($person->getKey(), $mergedLine->person_id);
+        $this->assertEquals($merged->created, $mergedLine->created);
+        $this->assertEquals($merged->created, $mergedLine->updated);
+        $this->assertSame(17, $mergedLine->created->by);
         $this->assertSame('', $mergedLine->complete_rank);
         $this->assertNull($mergedLine->activate_rank);
         $this->assertCount(2, $this->app->make(RankFactsCollector::class)->collect($person->getKey()));

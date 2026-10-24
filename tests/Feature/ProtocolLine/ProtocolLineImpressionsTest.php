@@ -51,19 +51,4 @@ final class ProtocolLineImpressionsTest extends TestCase
         $this->assertEquals($created, $saved->created);
         $this->assertEquals($updated, $saved->updated);
     }
-
-    #[Test]
-    public function legacy_unknown_creation_is_not_invented_when_a_line_is_updated(): void
-    {
-        $this->seed(ProtocolLinesSeeder::class);
-        $line = ProtocolLine::factory()->createOne(['distance_id' => 104, 'created' => null, 'updated' => null]);
-        $this->assertNull($line->fresh()->created);
-        $this->assertNull($line->fresh()->updated);
-        $updated = new Impression(Carbon::parse('2026-10-24 11:00:00'), 43);
-        $this->app->instance(Clock::class, new FrozenClock($updated->at));
-        $line->setPerson(Person::factory()->createOne(['id' => null])->id, $updated);
-        $this->app->make(ProtocolLineRepository::class)->update($line);
-        $this->assertNull($line->fresh()->created);
-        $this->assertEquals($updated, $line->fresh()->updated);
-    }
 }

@@ -3,11 +3,7 @@ import { onBeforeUnmount, ref, watch } from 'vue'
 import Button from 'primevue/button'
 import Message from 'primevue/message'
 import SlicePaginator from '../../components/SlicePaginator.vue'
-import {
-    getRankAudit,
-    type AuditHistory,
-    type RankAuditEntry,
-} from '../../api/personRankAudit'
+import { getRankAudit, type RankAuditEntry } from '../../api/personRankAudit'
 import type { PaginationHeaders } from '../../api/types'
 import { t, type TranslationKey } from '../../i18n'
 
@@ -32,41 +28,12 @@ function label(key: string): string {
 function value(input: string | number | null | undefined): string {
     return input == null ? '—' : String(input)
 }
-function changes(entry: RankAuditEntry) {
-    const before = new Map(
-        (entry.before?.history ?? []).map((row) => [
-            `${row.protocolLineId}:${row.rankId}`,
-            row,
-        ]),
-    )
-    const after = new Map(
-        (entry.after?.history ?? []).map((row) => [
-            `${row.protocolLineId}:${row.rankId}`,
-            row,
-        ]),
-    )
-    return [...new Set([...before.keys(), ...after.keys()])].flatMap((key) => {
-        const old = before.get(key)
-        const next = after.get(key)
-        return JSON.stringify(old) === JSON.stringify(next)
-            ? []
-            : [{ key, before: old, after: next }]
-    })
-}
-const historyFields: (keyof AuditHistory)[] = [
-    'rankId',
-    'achievedOn',
-    'activatedOn',
+const dateFields = [
     'startedOn',
+    'activatedOn',
     'finishedOn',
-]
-function fieldValue(
-    row: AuditHistory | undefined,
-    key: keyof AuditHistory,
-): string {
-    if (!row) return '—'
-    return key === 'rankId' ? props.rankLabel(row.rankId) : value(row[key])
-}
+    'nextActivationOn',
+] as const
 
 async function load(
     page = 1,
@@ -140,128 +107,14 @@ onBeforeUnmount(() => {
                                 : `${label('user')} #${entry.created.by}`
                         }}
                     </p>
-                    <Message
-                        v-if="entry.after === null"
-                        severity="error"
-                        :closable="false"
-                        >{{ label('processing_failed') }}</Message
-                    >
-                    <table
-                        v-if="entry.before || entry.after"
-                        class="rank-audit-values"
-                    >
-                        <caption>
-                            {{
-                                label('current')
-                            }}
-                        </caption>
-                        <thead>
-                            <tr>
-                                <th>{{ label('field') }}</th>
-                                <th>{{ label('before') }}</th>
-                                <th>{{ label('after') }}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <th>{{ label('rankId') }}</th>
-                                <td>
-                                    {{
-                                        entry.before
-                                            ? rankLabel(
-                                                  entry.before.current.rankId,
-                                              )
-                                            : '—'
-                                    }}
-                                </td>
-                                <td>
-                                    {{
-                                        entry.after
-                                            ? rankLabel(
-                                                  entry.after.current.rankId,
-                                              )
-                                            : '—'
-                                    }}
-                                </td>
-                            </tr>
-                            <tr
-                                v-for="key in [
-                                    'activatedOn',
-                                    'startedOn',
-                                    'finishedOn',
-                                ] as const"
-                                :key="key"
-                            >
-                                <th>{{ label(key) }}</th>
-                                <td>{{ value(entry.before?.current[key]) }}</td>
-                                <td>{{ value(entry.after?.current[key]) }}</td>
-                            </tr>
-                            <tr>
-                                <th>{{ label('nextActivationOn') }}</th>
-                                <td>
-                                    {{ value(entry.before?.nextActivationOn) }}
-                                </td>
-                                <td>
-                                    {{ value(entry.after?.nextActivationOn) }}
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <template v-if="entry.after">
-                        <h3>{{ label('history_changes') }}</h3>
-                        <p v-if="!changes(entry).length">
-                            {{ label('history_unchanged') }}
-                        </p>
-                        <p v-else>{{ label('saved_sources') }}</p>
-                        <table
-                            v-for="change in changes(entry)"
-                            :key="change.key"
-                            class="rank-audit-values"
-                        >
-                            <caption>
-                                {{
-                                    label('protocolLineId')
-                                }}
-                                #{{
-                                    (change.after ?? change.before)
-                                        ?.protocolLineId
-                                }}
-                                ·
-                                {{
-                                    label('event')
-                                }}
-                                #{{
-                                    (change.after ?? change.before)?.eventId
-                                }}
-                                ·
-                                {{
-                                    label(
-                                        change.before
-                                            ? change.after
-                                                ? 'modified'
-                                                : 'removed'
-                                            : 'added',
-                                    )
-                                }}
-                            </caption>
-                            <thead>
-                                <tr>
-                                    <th>{{ label('field') }}</th>
-                                    <th>{{ label('before') }}</th>
-                                    <th>{{ label('after') }}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="key in historyFields" :key="key">
-                                    <th>{{ label(key) }}</th>
-                                    <td>
-                                        {{ fieldValue(change.before, key) }}
-                                    </td>
-                                    <td>{{ fieldValue(change.after, key) }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </template>
+                    <dl class="rank-audit-values">
+                        <dt>{{ label('rankId') }}</dt>
+                        <dd>{{ rankLabel(entry.applied.rankId) }}</dd>
+                        <template v-for="key in dateFields" :key="key">
+                            <dt>{{ label(key) }}</dt>
+                            <dd>{{ value(entry.applied[key]) }}</dd>
+                        </template>
+                    </dl>
                 </details>
             </template>
             <SlicePaginator
@@ -285,14 +138,11 @@ onBeforeUnmount(() => {
     cursor: pointer;
 }
 .rank-audit-values {
-    width: 100%;
-    margin: 1rem 0;
-    border-collapse: collapse;
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0.4rem 1rem;
 }
-.rank-audit-values th,
-.rank-audit-values td {
-    text-align: left;
-    padding: 0.4rem;
-    border-bottom: 1px solid var(--p-content-border-color, #ddd);
+.rank-audit-values dd {
+    margin: 0;
 }
 </style>

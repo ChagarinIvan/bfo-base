@@ -1,37 +1,60 @@
-# Implementation Plan: расчёт и простой аудит разрядов
+# Implementation Plan: простой аудит применений разряда
 
-**Branch**: `master` | **Date**: 2026-10-24 | **Spec**: [spec.md](spec.md)
+**Branch**: `049-rank-calculation-audit` | **Date**: 2026-10-25 | **Spec**: [spec.md](spec.md)
+**Input**: уточнённая 049 и [19 замечаний ревью](review.md). Уточнение пройдено без вопросов: значимые решения уже заданы пользователем.
 
 ## Summary
 
-Общая RankActivationPolicy применяет правило подтверждённого равного/высшего разряда. PersonRanksUpdater в Domain собирает факты, рассчитывает состояние, меняет Person и сохраняет аудит. RebuildPersonRanksService в Application только блокирует спортсмена и координирует транзакцию; импорт использует тот же доменный updater. Журнал содержит trigger, created и два состояния, без дублирующей диагностики.
+Person::updateRanks принимает причину, изменяет пять полей проекции, updated и спортивную историю, записывает PersonRanksUpdated и добавляет чистый RankAuditAction в список ожидающих сохранения. EloquentPersonRepository сохраняет проекцию, заменённую историю и новые действия в общей транзакции. Прежние snapshots, equality/dedup, failed entries, correction preview/apply удаляются. Чтение возвращает DTO с обязательным applied, UI показывает последовательность результатов.
 
 ## Technical Context
 
-PHP 8.5 / Laravel 13, Vue 3 / TypeScript / PrimeVue, MySQL 8.4. Новых зависимостей нет. PHPUnit покрывает политику, доменные значения, оркестрацию и реальные persistence/API сценарии; Vitest проверяет журнал. Чтение через индекс person_id/id и Slice perPage+1 без COUNT. Обход спортсменов для коррекции потоковый.
+**Language/Version**: PHP 8.5, TypeScript.
+**Primary Dependencies**: Laravel 13, Vue 3, PrimeVue; новых зависимостей нет.
+**Storage**: MySQL 8.4; Redis 8 для существующей очереди.
+**Testing**: PHPUnit для чистых значений/command orchestration и persistence/API; Vitest для интерфейса.
+**Target Platform**: существующее приложение Linux/PHP и SPA.
+**Project Type**: web application с CLI и queue workers.
+**Performance Goals**: одна индексированная выборка perPage+1 для журнала, без COUNT и запроса Person перед списком; без запросов автора для каждой записи. Полный пересчёт читает ID потоково.
+**Constraints**: сохранять существующие расчётные исправления, правила активации, права и after-commit обработку; не менять исходные факты и старый аудит при rebuild.
+**Scale/Scope**: одна фича 049, одна таблица аудита, один защищённый список; область массового rebuild остаётся прежней, активные спортсмены.
 
 ## Constitution Check
 
-- Новые domain value objects типизированы и не используют произвольные словари. Trigger является enum.
-- Application не реализует Domain port и не содержит расчёт/формирование аудита.
-- В транзакции блокируется Person; доменный updater изменяет его через updateRanks с Impression и событием, затем сохраняет Person и аудит. При равном результате нет мутации/записи.
-- Ошибка оборачивается типизированным RankRebuildFailure. После отката координатор вызывает доменную запись ошибки; в журнал не попадает текст внутренних исключений.
-- Импортный updater работает в своей границе на одного спортсмена, сохраняя existing after-commit pipeline.
-- Новая техническая запись аудита не наследует Eloquent; модель хранения только в Infrastructure. Удаление производной истории не удаляет аудит.
-- ProtocolLine создаётся с created/updated из Impression текущей операции. Общий ImpressionCast возвращает null для старых неизвестных значений.
-- API action тонкий; command/service/assembler, стандартный AuthAssembler для created и Slice для списка. SPA на белорусском; доступ к журналу требует авторизации.
-- Финальные backend/frontend гейты, локальная запускаемость, отсутствие новых N+1 и проверка acceptance обязательны.
+- Aggregate: существующий Person владеет проекцией, историей и ожидающими действиями. Новые RankAuditAction и его PersonRank являются чистыми типизированными значениями. Не вводим Eloquent-модель в Domain или новую ссылку Domain на Infrastructure.
+- Command: причины передаются явно с точек запуска; обычный rebuild берёт текущую дату из Clock в сервисе. Read command criteria использует property hook.
+- Transaction/lock: Application блокирует Person и выполняет расчёт/сохранение в транзакции. Импорт сохраняет существующую границу на спортсмена. Проекция, история и аудит откатываются вместе.
+- Impression/event: updateRanks сохраняет updated и PersonRanksUpdated; created действия совпадает с Impression применения. Существующая after-commit доставка не меняется.
+- Persistence: Infrastructure model хранит JSON только пяти применённых значений. PersonRepository сохраняет pending actions и очищает их после успешной записи. Read-only RankAuditRepository не собирает состояние и не пишет аудит.
+- Errors: стандартные исключения доходят до диагностики, без RankRebuildFailure/catch/recordFailure.
+- Deletion: история производная и заменяется; аудит технический append-only без FK на удаляемые строки истории/протокола, при rebuild не удаляется. Неактивный Person скрыт query журнала.
+- ProtocolLine: backfill created/updated из Event через Distance, затем NOT NULL; стандартный ImpressionCast. Новые строки получают автора импорта.
+- Переходный долг: существующий Eloquent Person/PersonRankHistory остаётся; pending audit повторяет существующую границу передачи истории в repository, не добавляя фреймворк в новые значения. Разделение Person остаётся REF-13 манифеста.
+- DoD: сценарии и узкие тесты каждого шага, затем однократно полный backend/frontend CI, PHPStan/CS/Rector, HTTP smoke и проверка отсутствия новых N+1. Запись 049 в обновлениях изменяется, вторая не добавляется.
+
+Проверка до исследования и после дизайна пройдена. Новых архитектурных исключений нет.
 
 ## Project Structure
 
-- Domain/Person: RankCalculator, RankActivationPolicy, PersonRanksUpdater.
-- Domain/Person/Audit: RankAuditEntry, RankAuditTrigger, RankSnapshot, RankHistorySnapshot, RankAuditRepository, RankRebuildFailure.
-- Application/Service/Person: короткий RebuildPersonRanksService, preview/apply коррекция и paginated read.
-- Infrastructure/Laravel/Eloquent/Person/RankAudit: модель, repository и mapper снимков для JSON; без бизнес-решений.
-- Bridge: API списка журнала, rank jobs/CLI и маршруты; передают enum триггера.
-- resources/spa/pages/persons/PersonRankAudit.vue и api/personRankAudit.ts: created, trigger, до/после и постраничный просмотр.
-- database/migrations/2026_10_24_000001_add_rank_audit.php: минимальная таблица журнала и полный аудит ProtocolLine.
+- app/Domain/Person/Audit/RankAuditAction.php: personId, trigger, created, current: PersonRank, nextActivationOn, технический id. Применённое состояние обязательно; RankAuditTrigger содержит шесть бизнес-причин.
+- app/Domain/Person/Person.php: pending rankAudit и updateRanks с причиной; выдача списка и очистка после сохранения. Domain PersonRanksUpdater остаётся коротким общим расчётом без audit repository.
+- app/Infrastructure/Laravel/Eloquent/Person/RankAudit/: RankAuditModel с прикладным JSON и явным преобразованием в чистый action; EloquentRankAuditRepository только читает. Отдельный mapper снимков удаляется.
+- app/Infrastructure/Laravel/Eloquent/Person/EloquentPersonRepository.php: сохранение pending действий после проекции/истории, очистка после успеха.
+- app/Application/Dto/Person/RankAudit/: RankAuditDto, AppliedRankDto, assembler без массивов смешанного состава.
+- app/Application/Service/Person/: rebuild с Clock, явные причины массового сценария, удаление CorrectPersonRanks*. Read service без предварительного запроса Person.
+- app/Bridge/Laravel/: jobs требуют исходный trigger; refill передаёт Manual, daily CLI Scheduled; correction CLI удаляется.
+- resources/spa/api/personRankAudit.ts, pages/persons/PersonRankAudit.vue: обязательный applied и список результата каждого применения, без before/after diff и failed states.
+- database/migrations/2026_10_24_000001_add_rank_audit.php: id/person_id/trigger/created_at/created_by/applied JSON NOT NULL, индекс person_id/id; backfill ProtocolLine. Миграция фичи ещё не выпускалась, изменяется на месте.
+- tests/: чистые action/command tests, integration audit/rollback/refill/backfill, API list и SPA states.
 
-## Validation
+## Delivery
 
-Regression-first для дат и активации, затем persistence/rollback/no-op, API authorization/pagination, UI states, preview/apply и сохранность created. Полный набор один раз после последних изменений; повтор узких проверок при выявленных ошибках.
+Сначала foundation записи успешных применений, затем переключение сценариев и query/API/UI, затем полный refill и удаление коррекции. Каждая фаза проверяет независимый результат. Старые задачи сохранены в [tasks-history.md](tasks-history.md), текущие T029–T046 выполнены. Изменения рабочих данных или запуск полного rebuild на рабочей базе не входят в выполнение.
+
+## Итоговая проверка 2026-10-25
+
+Полный backend-набор прошёл: 694 теста, 5000 assertions, exit 0, 2:37. В полном запуске было 16 PHPUnit notices; после него новое предупреждение из теста команды устранено заменой mock на stub. Узкий повтор этих двух Application test classes: 4 теста, 28 assertions, без notices. Остальные notices относятся к прежнему набору. Повтор полного набора понадобился после обнаруженного им пропуска Impression при объединении событий; этот сценарий исправлен и подтверждён 9 узкими тестами.
+
+Полный frontend CI: 85 файлов, 264 теста; lint/typecheck/build прошли. Полные PHPStan, CS и Rector dry-run прошли; последние исправленные файлы дополнительно проверены узко теми же инструментами. Локальный HTTP справочника разрядов вернул 200. Зарегистрирован один rank-audit endpoint и два существующих CLI refill/rebuild-expired; correction удалён. Чтение журнала использует один индексированный JOIN и perPage+1 без COUNT/запросов в цикле.
+
+Acceptance проверены: общая активация и регрессии, повторные применения, все пять полей applied, rollback проекции/истории/аудита, отсутствие дубля при обычном save, доступ/пустые результаты/пагинация, UI retry/race, backfill старых строк и новые строки объединения, полный refill с сохранением источников и прежнего аудита. Документационные ссылки и git diff --check прошли. Качество требований: 20/20; задачи новой редакции: 18/18. Рабочие данные и полный rebuild рабочей базы не запускались.

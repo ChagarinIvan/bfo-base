@@ -27,7 +27,7 @@ final class RankAuditApiTest extends TestCase
     }
 
     #[Test]
-    public function operator_can_page_minimal_change_records_and_noop_does_not_add_a_record(): void
+    public function operator_can_page_each_application_with_a_required_typed_result(): void
     {
         $user = SanctumUser::query()->create(['email' => 'audit@example.test', 'password' => 'secret']);
         Sanctum::actingAs($user);
@@ -42,9 +42,17 @@ final class RankAuditApiTest extends TestCase
         $response = $this->getJson("{$url}/rank-audit?perPage=1&page=1")
             ->assertOk()->assertJsonCount(1)->assertHeader('X-Pagination-Has-Next', 'true');
         $response->assertJsonPath('0.trigger', 'manual')->assertJsonPath('0.created.by', (string) $user->id);
-        $this->assertSame(['id', 'personId', 'trigger', 'created', 'before', 'after'], array_keys($response->json('0')));
+        $this->assertSame(['id', 'personId', 'trigger', 'created', 'applied'], array_keys($response->json('0')));
         $this->getJson("{$url}/rank-audit?page=2&perPage=1")->assertOk()->assertJsonCount(1);
-        $this->getJson('/api/v1/persons/999999/rank-audit')->assertNotFound();
+        $response->assertJsonPath('0.applied.rankId', Rank::WithoutRank->value)
+            ->assertJsonPath('0.applied.startedOn', null)
+            ->assertJsonPath('0.applied.nextActivationOn', null);
+        $this->getJson("{$url}/rank-audit?page=3&perPage=1")->assertOk()->assertJsonCount(1);
+        $this->getJson("{$url}/rank-audit?page=4&perPage=1")->assertOk()->assertJsonCount(0);
+        $this->getJson('/api/v1/persons/999999/rank-audit')->assertOk()->assertExactJson([]);
+        $person->active = false;
+        $person->save();
+        $this->getJson("{$url}/rank-audit")->assertOk()->assertExactJson([]);
         $this->getJson("{$url}/rank-audit?perPage=0")->assertUnprocessable();
     }
 }
