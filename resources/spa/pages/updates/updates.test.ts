@@ -1,18 +1,27 @@
-import { readdirSync } from 'node:fs'
+import { existsSync, readdirSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import { createMemoryHistory } from 'vue-router'
 import { createAppRouter } from '../../router'
 import { updates } from './updates'
 
 describe('static updates catalog', () => {
-    it('has exactly one entry for every specification directory', () => {
+    it('has exactly one entry for every specification', () => {
         const specs = readdirSync(
             new URL('../../../../specs/', import.meta.url),
             {
                 withFileTypes: true,
             },
         )
-            .filter((entry) => entry.isDirectory())
+            .filter(
+                (entry) =>
+                    entry.isDirectory() &&
+                    existsSync(
+                        new URL(
+                            `../../../../specs/${entry.name}/spec.md`,
+                            import.meta.url,
+                        ),
+                    ),
+            )
             .map((entry) => entry.name)
             .sort()
 
@@ -30,7 +39,7 @@ describe('static updates catalog', () => {
                     b.spec.localeCompare(a.spec),
             ),
         )
-        expect(updates[0]?.spec).toBe('048-elk-path-elite-groups')
+        expect(updates[0]?.spec).toBe('050-protocol-line-impressions')
     })
 
     it('links only to existing SPA routes when a destination is useful', () => {

@@ -219,7 +219,7 @@ final class ElkPathCupEliteGroupsTest extends TestCase
             ->willReturn(file_get_contents(__DIR__ . '/../../Fixtures/Protocols/2026/Results_night_cup.xlsx'));
         $this->app->instance(Storage::class, $storage);
         $inputs = $this->app->make(StandardProtocolParser::class)->parse($event);
-        $lines = $this->app->make(StandardProtocolLinesFactory::class)->create($event, $inputs);
+        $lines = $this->app->make(StandardProtocolLinesFactory::class)->create($event, $inputs, $event->created_by);
         foreach ($lines as $line) {
             $person = Person::factory()->createOne(['id' => ++$this->nextPersonId, 'active' => true]);
             $line->person_id = $person->id;

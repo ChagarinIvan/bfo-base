@@ -14,5 +14,5 @@ interface ProtocolLinesFactory
      * @param list<ProtocolLineInput> $inputs
      * @return list<ProtocolLine>
      */
-    public function create(Event $event, array $inputs): array;
+    public function create(Event $event, array $inputs, int $userId): array;
 }

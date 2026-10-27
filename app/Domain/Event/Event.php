@@ -40,6 +40,8 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Collection;
 use Throwable;
+use function array_pop;
+use function count;
 
 /**
  * @property int $id
@@ -169,11 +171,16 @@ class Event extends AggregatedModel
 
         try {
             $protocolLinesInputs = $parser->parse($this);
-            $lines = $linesFactory->create($this, $protocolLinesInputs);
+            $lines = $linesFactory->create($this, $protocolLinesInputs, $impression->by);
+
+            if (count($lines) === 0) {
+                throw new EventParsingError('Empty lines list.');
+            }
+
+            $this->updated = array_pop($lines)->created;
             $this->processing_status = EventProcessingStatus::IDENTIFYING;
 
-            // когда протокол лайны будут иметь Impression, то надо брать с последнего протокол лайна ->created
-            $this->recordThat(new EventParsed($this->id, $token, $impression));
+            $this->recordThat(new EventParsed($this->id, $token, $this->updated));
         } catch (EventParsingError|UnableToCreateProtocolLine $e) {
             $this->processing_status = EventProcessingStatus::PARSING_ERROR;
             $this->error_message = $e->getMessage();

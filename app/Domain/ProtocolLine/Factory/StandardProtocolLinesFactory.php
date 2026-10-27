@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\ProtocolLine\Factory;
 
+use App\Domain\Auth\Impression;
 use App\Domain\Distance\Distance;
 use App\Domain\Distance\DistanceFactory;
 use App\Domain\Distance\DistanceInput;
@@ -17,6 +18,7 @@ use App\Domain\Group\GroupRepository;
 use App\Domain\ProtocolLine\Exception\UnableToCreateProtocolLine;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\ProtocolLine\ProtocolLineInput;
+use App\Domain\Shared\Clock;
 use App\Domain\Shared\Criteria;
 use Carbon\Carbon;
 use Throwable;
@@ -34,6 +36,7 @@ final class StandardProtocolLinesFactory implements ProtocolLinesFactory
         private readonly GroupFactory $groupFactory,
         private readonly DistanceRepository $distances,
         private readonly DistanceFactory $distanceFactory,
+        private readonly Clock $clock,
     ) {
     }
 
@@ -43,7 +46,7 @@ final class StandardProtocolLinesFactory implements ProtocolLinesFactory
      * @throws UnableToCreateProtocolLine
      * @return list<ProtocolLine>
      */
-    public function create(Event $event, array $inputs): array
+    public function create(Event $event, array $inputs, int $userId): array
     {
         $protocolLines = [];
 
@@ -52,7 +55,7 @@ final class StandardProtocolLinesFactory implements ProtocolLinesFactory
                 $group = $this->getGroup($event, $input);
                 $distance = $this->getDistance($event, $group, $input);
 
-                $protocolLines[] = $this->createLine($event, $input, $distance->id);
+                $protocolLines[] = $this->createLine($event, $input, $distance->id, $userId);
             }
         } catch (Throwable $e) {
             throw new UnableToCreateProtocolLine($e->getMessage(), $e->getCode(), $e);
@@ -108,9 +111,13 @@ final class StandardProtocolLinesFactory implements ProtocolLinesFactory
         return $this->distanceCache[$group->id];
     }
 
-    private function createLine(Event $event, ProtocolLineInput $input, int $distanceId): ProtocolLine
+    private function createLine(Event $event, ProtocolLineInput $input, int $distanceId, int $userId): ProtocolLine
     {
+        $impression = new Impression($this->clock->now(), $userId);
         $line = new ProtocolLine();
+
+        $line->created = $impression;
+        $line->updated = $impression;
         $line->serial_number = $input->serialNumber;
         $line->lastname = $input->lastname;
         $line->firstname = $input->firstname;

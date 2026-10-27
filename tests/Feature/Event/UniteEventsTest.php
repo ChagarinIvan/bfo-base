@@ -19,6 +19,9 @@ use App\Domain\Group\Group;
 use App\Domain\Person\Person;
 use App\Domain\Person\RankFactsCollector;
 use App\Domain\ProtocolLine\ProtocolLine;
+use App\Domain\Shared\Clock;
+use App\Domain\Shared\FrozenClock;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event as EventBus;
 use PHPUnit\Framework\Attributes\Test;
@@ -48,6 +51,7 @@ final class UniteEventsTest extends TestCase
     #[Test]
     public function merged_event_is_ready_without_creation_events_or_earned_ranks(): void
     {
+        $this->app->instance(Clock::class, new FrozenClock(Carbon::parse('2026-10-27 15:00:00')));
         $competition = Competition::factory()->createOne();
         $person = Person::factory()->createOne();
         $group = Group::factory()->createOne();
@@ -86,6 +90,10 @@ final class UniteEventsTest extends TestCase
         $mergedLine = ProtocolLine::query()
             ->whereHas('distance', static fn ($query) => $query->where('event_id', $merged->id))
             ->sole();
+        $this->assertSame(17, $mergedLine->created->by);
+        $this->assertSame('2026-10-27 15:00:00', $mergedLine->created->at->toDateTimeString());
+        $this->assertEquals($merged->created, $mergedLine->created);
+        $this->assertEquals($mergedLine->created, $mergedLine->updated);
         $this->assertSame($person->getKey(), $mergedLine->person_id);
         $this->assertSame('', $mergedLine->complete_rank);
         $this->assertNull($mergedLine->activate_rank);
