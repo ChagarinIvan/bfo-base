@@ -16,6 +16,9 @@ use Iterator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+use function mb_check_encoding;
+use function mb_convert_encoding;
+use function preg_replace;
 
 abstract class AbstractParser extends TestCase
 {
@@ -24,10 +27,16 @@ abstract class AbstractParser extends TestCase
 
     #[DataProvider('dataProvider')]
     #[Test]
-    public function parse(string $filePath, int $linesCount, array $expectedResults, string $extension = 'html'): void
+    public function parse(string $filePath, int $linesCount, array $expectedResults, string $extension = 'html', bool $asUtf8 = false): void
     {
         $storageManager = new FilesystemManager($this->app);
         $protocolContent = $storageManager->disk('tests')->get($filePath);
+        if ($asUtf8) {
+            if (!mb_check_encoding($protocolContent, 'UTF-8')) {
+                $protocolContent = mb_convert_encoding($protocolContent, 'UTF-8', 'Windows-1251');
+            }
+            $protocolContent = preg_replace('#(charset\s*=\s*[\'"]?)windows-1251#i', '${1}UTF-8', $protocolContent) ?? $protocolContent;
+        }
 
         $parserClass = $this->getParser();
 
