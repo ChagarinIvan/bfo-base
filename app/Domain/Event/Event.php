@@ -40,7 +40,7 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Collection;
 use Throwable;
-use function array_pop;
+use function array_key_last;
 use function count;
 
 /**
@@ -177,7 +177,7 @@ class Event extends AggregatedModel
                 throw new EventParsingError('Empty lines list.');
             }
 
-            $this->updated = array_pop($lines)->created;
+            $this->updated = $lines[array_key_last($lines)]->created;
             $this->processing_status = EventProcessingStatus::IDENTIFYING;
 
             $this->recordThat(new EventParsed($this->id, $token, $this->updated));

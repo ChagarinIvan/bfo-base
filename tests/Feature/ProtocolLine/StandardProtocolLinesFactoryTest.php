@@ -19,12 +19,20 @@ use App\Domain\Shared\FrozenClock;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Testing\Fakes\EventFake;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+use function array_fill;
 
 final class StandardProtocolLinesFactoryTest extends TestCase
 {
     use RefreshDatabase;
+
+    public static function parsedLineCounts(): iterable
+    {
+        yield 'single line' => [1];
+        yield 'multiple lines' => [2];
+    }
 
     #[Test]
     public function it_accepts_a_missing_athlete_rank_from_a_protocol(): void
@@ -100,7 +108,8 @@ final class StandardProtocolLinesFactoryTest extends TestCase
     }
 
     #[Test]
-    public function parsing_passes_the_operation_actor_to_the_line_factory(): void
+    #[DataProvider('parsedLineCounts')]
+    public function parsing_passes_the_operation_actor_to_the_line_factory(int $lineCount): void
     {
         $this->app->instance('events', new EventFake($this->app->make('events')));
         $competition = Competition::factory()->createOne();
@@ -110,7 +119,7 @@ final class StandardProtocolLinesFactoryTest extends TestCase
             'created_by' => 7,
         ]);
         $parser = $this->createMock(ProtocolParser::class);
-        $parser->expects($this->once())->method('parse')->willReturn([$this->input()]);
+        $parser->expects($this->once())->method('parse')->willReturn(array_fill(0, $lineCount, $this->input()));
         $this->app->instance(ProtocolParser::class, $parser);
         $this->app->instance(Clock::class, new FrozenClock(Carbon::parse('2026-10-27 12:34:56')));
 
@@ -118,11 +127,14 @@ final class StandardProtocolLinesFactoryTest extends TestCase
             new ParseEventProtocol($event->id, $event->processing_token, 42),
         );
 
-        $line = $event->protocolLines()->firstOrFail();
-        $this->assertInstanceOf(ProtocolLine::class, $line);
-        $this->assertSame(42, $line->created->by);
-        $this->assertSame('2026-10-27 12:34:56', $line->created->at->toDateTimeString());
-        $this->assertEquals($line->created, $line->updated);
+        $lines = $event->protocolLines()->get();
+        $this->assertCount($lineCount, $lines);
+        foreach ($lines as $line) {
+            $this->assertInstanceOf(ProtocolLine::class, $line);
+            $this->assertSame(42, $line->created->by);
+            $this->assertSame('2026-10-27 12:34:56', $line->created->at->toDateTimeString());
+            $this->assertEquals($line->created, $line->updated);
+        }
         $this->assertSame(EventProcessingStatus::IDENTIFYING, $event->fresh()->processing_status);
     }
 

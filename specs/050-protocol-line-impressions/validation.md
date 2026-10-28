@@ -71,3 +71,16 @@ Converged. После исправления T014 и повторных гейт
 5 SC, 11 acceptance scenarios, решения плана и применимые правила конституции.
 Оставшихся missing/partial/contradicts/unrequested findings нет. Новые задачи
 converge не добавлены. Все 15 задач реализации завершены.
+
+## Регрессия потери последней строки, 2026-10-28
+
+Падение parsing_passes_the_operation_actor_to_the_line_factory воспроизведено
+как ModelNotFoundException. В Event.parse вызов array_pop для получения created
+удалял последнюю строку из возвращаемого массива. Чтение заменено на доступ
+по array_key_last без изменения массива.
+
+Тест расширен сценариями с одной и двумя строками. Проверяются количество
+сохранённых строк и аудит каждой строки. Узкий прогон
+StandardProtocolLinesFactoryTest + EventProcessingFailureTest прошёл:
+9 tests, 55 assertions. Стиль изменённых PHP-файлов обработан php-cs-fixer;
+git diff --check прошёл.
