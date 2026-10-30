@@ -15,6 +15,7 @@ use function count;
 use function explode;
 use function implode;
 use function is_numeric;
+use function mb_check_encoding;
 use function mb_convert_encoding;
 use function mb_strtolower;
 use function preg_match;
@@ -30,9 +31,10 @@ class SimplyParser extends AbstractParser
     public function parse(string $file): Collection
     {
         $doc = new DOMDocument();
-        $content = mb_convert_encoding($file, 'utf-8', 'windows-1251');
+        $content = mb_check_encoding($file, 'UTF-8') ? $file : mb_convert_encoding($file, 'UTF-8', 'Windows-1251');
+        $content = preg_replace('#(charset\s*=\s*[\'"]?)windows-1251#i', '${1}UTF-8', $content) ?? $content;
         $content = str_replace(["&laquo;", "&raquo;", " "], ['«', '»', ' '], $content);
-        @$doc->loadHTML($content);
+        @$doc->loadHTML('<meta charset="UTF-8">' . $content);
         $xpath = new DOMXPath($doc);
         $nodes = $xpath->query('//h2|//p[not(./b)]|//p/b|//pre[not(./p[@class])]');
         $linesList = new Collection();
@@ -41,8 +43,7 @@ class SimplyParser extends AbstractParser
         $groupHeaderData = [];
         foreach ($nodes as $node) {
             /** @var DOMElement $node */
-            $line = mb_convert_encoding($node->nodeValue, 'iso-8859-1', 'utf-8');
-            $line = str_replace(" ", ' ', $line);
+            $line = $node->nodeValue;
             if (empty($line)) {
                 continue;
             }

@@ -50,7 +50,7 @@ HTML);
         $this->app->instance(Storage::class, $storage);
         $inputs = $this->app->make(StandardProtocolParser::class)->parse($event);
 
-        $line = $this->app->make(StandardProtocolLinesFactory::class)->create($event, $inputs)[0];
+        $line = $this->app->make(StandardProtocolLinesFactory::class)->create($event, $inputs, $event->created_by)[0];
         $line->save();
 
         $this->assertSame(Rank::SecondRank->label(), $line->fresh()->complete_rank);

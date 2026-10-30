@@ -15,6 +15,7 @@ use App\Domain\ProtocolLine\Event\ProtocolLinePersonSet;
 use App\Domain\ProtocolLine\Event\ProtocolLineRankActivated;
 use App\Domain\ProtocolLine\Exception\UnableToActivateRank;
 use App\Domain\Shared\AggregatedModel;
+use App\Infrastructure\Laravel\Eloquent\Auth\ImpressionCast;
 use Carbon\Carbon;
 use Database\Factories\Domain\ProtocolLine\ProtocolLineFactory;
 use Illuminate\Database\Eloquent\Attributes\Table;
@@ -42,6 +43,8 @@ use function trim;
  * @property bool $vk
  * @property null|Carbon $activate_rank
  * @property bool $delayed_rank_activation
+ * @property Impression $created
+ * @property Impression $updated
  *
  * @property-read Event $event
  * @property-read Distance $distance
@@ -81,7 +84,7 @@ class ProtocolLine extends AggregatedModel
         }
 
         $this->activate_rank = $date;
-//        $this->updated = $impression;
+        $this->updated = $impression;
 
         $this->recordThat(new ProtocolLineRankActivated($this, $impression));
     }
@@ -90,7 +93,7 @@ class ProtocolLine extends AggregatedModel
     {
         $oldPersonId = $this->person_id;
         $this->person_id = $personId;
-//        $this->updated = $impression;
+        $this->updated = $impression;
 
         $this->recordThat(new ProtocolLinePersonAssigned($this, $oldPersonId, $impression));
     }
@@ -98,7 +101,7 @@ class ProtocolLine extends AggregatedModel
     public function setPerson(int $personId, Impression $impression): void
     {
         $this->person_id = $personId;
-//        $this->updated = $impression;
+        $this->updated = $impression;
 
         $this->recordThat(new ProtocolLinePersonSet($this, $impression));
     }
@@ -113,6 +116,8 @@ class ProtocolLine extends AggregatedModel
     protected function casts(): array
     {
         return [
+            'created' => ImpressionCast::class,
+            'updated' => ImpressionCast::class,
             'time' => 'datetime',
             'activate_rank' => 'datetime:Y-m-d',
             'vk' => 'boolean',

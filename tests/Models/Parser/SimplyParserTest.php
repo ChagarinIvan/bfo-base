@@ -11,6 +11,14 @@ final class SimplyParserTest extends AbstractParser
 {
     public static function dataProvider(): Iterator
     {
+        yield from self::fixtureCases();
+        foreach (self::fixtureCases() as $index => $case) {
+            yield "UTF-8 {$index}" => [...$case, 'html', true];
+        }
+    }
+
+    private static function fixtureCases(): Iterator
+    {
         yield [
             '2019/protocol_191026_otkrytyy-kubok-minskogo-rayona-po-sportivnomu-orientirovaniyu-belaya-rus-2019_72004.htm',
             319,

@@ -14,13 +14,14 @@ use function explode;
 use function implode;
 use function in_array;
 use function is_numeric;
+use function mb_check_encoding;
+use function mb_convert_encoding;
 use function mb_strtolower;
 use function preg_match;
 use function preg_replace;
 use function preg_split;
 use function str_contains;
 use function str_replace;
-use function str_starts_with;
 use function strpos;
 use function substr;
 use function trim;
@@ -30,10 +31,11 @@ class AlbatrosRelayParser extends AbstractParser
     public function parse(string $file): Collection
     {
         $doc = new DOMDocument();
-        if (!str_starts_with($file, '<html lang="ru">')) {
-            $file = '<?xml encoding="UTF-8">' . $file . '</xml>';
+        if (!mb_check_encoding($file, 'UTF-8')) {
+            $file = mb_convert_encoding($file, 'UTF-8', 'Windows-1251');
         }
-        @$doc->loadHTML($file);
+        $file = preg_replace('#(charset\s*=\s*[\'"]?)windows-1251#i', '${1}UTF-8', $file) ?? $file;
+        @$doc->loadHTML('<meta charset="UTF-8">' . $file);
         $xpath = new DOMXPath($doc);
         $preNodes = $xpath->query('//pre');
         $linesList = new Collection();

@@ -11,6 +11,14 @@ final class AlbatrosRelayParserTest extends AbstractParser
 {
     public static function dataProvider(): Iterator
     {
+        yield from self::fixtureCases();
+        foreach (self::fixtureCases() as $index => $case) {
+            yield "UTF-8 {$index}" => [...$case, 'html', true];
+        }
+    }
+
+    private static function fixtureCases(): Iterator
+    {
         yield [
             '2021/210822r-official.htm',
             124,
