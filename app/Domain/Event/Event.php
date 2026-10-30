@@ -40,6 +40,7 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Collection;
 use Throwable;
+use function array_last;
 use function count;
 
 /**
