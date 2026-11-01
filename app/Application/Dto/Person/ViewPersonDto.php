@@ -15,6 +15,10 @@ final readonly class ViewPersonDto
         public string $firstname,
         public ?string $birthday,
         public int $rankId,
+        #[Groups(['authenticated'])]
+        public ?string $rankCalculatedAt,
+        #[Groups(['authenticated'])]
+        public ?string $rankCalculationReason,
         public string $citizenship,
         public ?string $clubId,
         #[Groups(['authenticated'])]

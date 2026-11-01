@@ -265,7 +265,9 @@ final class ReplaceEventProtocolTest extends TestCase
             $this->assertDatabaseMissing('protocol_lines', ['id' => $line->id]);
             $this->assertDatabaseHas('protocol_lines', ['id' => $otherLine->id]);
             $this->assertSame(Rank::SecondRank, $person->fresh()->current_rank);
-            $this->assertSame(Rank::WithoutRank, $removedPerson->fresh()->current_rank);
+            $this->assertSame('protocol', $removedPerson->fresh()->rank_calculation_reason?->value);
+        $this->assertSame('protocol', $person->fresh()->rank_calculation_reason?->value);
+        $this->assertSame(Rank::WithoutRank, $removedPerson->fresh()->current_rank);
 
             return [new ProtocolLineInput(
                 serialNumber: 1,
@@ -300,6 +302,8 @@ final class ReplaceEventProtocolTest extends TestCase
         $this->assertDatabaseMissing('distances', ['id' => $distance->id]);
         $this->assertDatabaseMissing('protocol_lines', ['id' => $line->id]);
         $this->assertSame(Rank::SecondRank, $person->fresh()->current_rank);
+        $this->assertSame('protocol', $removedPerson->fresh()->rank_calculation_reason?->value);
+        $this->assertSame('protocol', $person->fresh()->rank_calculation_reason?->value);
         $this->assertSame(Rank::WithoutRank, $removedPerson->fresh()->current_rank);
         Queue::assertPushed(CallQueuedListener::class, static fn (CallQueuedListener $job): bool => $job->class === ParseEventProtocolHandler::class);
 

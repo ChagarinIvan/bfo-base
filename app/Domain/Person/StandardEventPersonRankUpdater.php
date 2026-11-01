@@ -34,6 +34,7 @@ final readonly class StandardEventPersonRankUpdater implements EventPersonRankUp
             $person->updateRanks(
                 $rankState,
                 new Impression($impression->at->clone(), $impression->by),
+                RankCalculationReason::Protocol,
             );
 
             $this->persons->update($person);

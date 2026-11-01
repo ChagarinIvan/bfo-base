@@ -1,0 +1,57 @@
+# Research
+
+## Причины и источники
+
+Decision: RankCalculationReason, string backed enum из четырёх значений.
+
+| Reason | Существующий источник |
+| --- | --- |
+| manual | RebuildPersonRanksAction; ProtocolLineRankActivatedHandler после ручной активации/изменения даты |
+| protocol | StandardEventPersonRankUpdater; CleanupEventResultsService; SetPersonToProtocolLinesService для нового и прежнего Person |
+| daily | RebuildExpiredPersonRanksCommand, ежедневная проверка истечения/активации |
+| refill | RefillPersonRanksCommand, полный административный пересчёт |
+
+Generic bulk/atomic jobs не имеют production caller, но остаются публичным путём:
+принимают reason, default manual, bulk передаёт atomic, atomic передаёт command.
+Старые serialized jobs не содержат reason. Настоящий default свойства manual
+инициализируется при unserialize старого payload; default параметра конструктора нет.
+
+Rationale: причины описывают источник, а не изменение разряда. Дополнительные
+assignment/activation/cleanup не нужны для текущего запроса; соответствие явно
+зафиксировано. Не делать вывод о причине из userId, criteria или текущего времени.
+Исследование всех callers выполнено отдельным research agent по plan skill.
+
+## Время и атомарность
+
+Decision: Person.updateRanks получает reason и пишет оба metadata из Impression.
+Оба реальных mutation paths найдены: RebuildPersonRanksService и
+StandardEventPersonRankUpdater. Первый использует Clock.now при execution, второй
+получает свежую Impression от UpdateEventRanksService. Queue impression используется
+для автора, timestamp берётся заново service. Существующие transaction/lock и
+repository сохранение projection/history не меняются.
+
+Rejected: observer/save hook, updated_at как время расчёта, backfill по неизвестным
+старым данным, присвоение до calculator, обновление только когда изменился rank.
+
+## Read contract
+
+Decision: rankCalculatedAt ISO8601 ATOM и rankCalculationReason string|null в
+ViewPersonDto, оба Groups authenticated рядом с rankId. Используется тот же
+serializer, что для created/updated, поля отсутствуют у guest. TypeScript Person
+получает optional nullable поля и union reason. UI не изменяется по ответу пользователя.
+
+## Хранение
+
+Decision: nullable datetime и nullable varchar(32), enum cast в модели. Пара null/null
+при миграции, без backfill. Up/down не затрагивают current rank. Индекс не нужен,
+по этим metadata нет query/filter сценария. DB-native enum отвергнут: усложняет
+эволюцию списка, Domain enum и typed commands контролируют допустимые значения.
+
+## Queue compatibility and Rector
+
+Jobs сохраняют настоящий default свойства reason. Точечные исключения
+ClassPropertyAssignToConstructorPromotionRector и
+RemoveDefaultValueFromAssignedPropertyRector только для двух job classes
+не позволяют удалить runtime default, необходимый старым serialized jobs.
+Old-job regression проверяет исполнение payload без поля. Остальные правила
+Rector активны, базовые типы не расширяются, global skips не добавлены.

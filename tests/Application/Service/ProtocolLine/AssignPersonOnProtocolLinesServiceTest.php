@@ -11,7 +11,9 @@ use App\Application\Service\ProtocolLine\SetPersonToProtocolLines;
 use App\Application\Service\ProtocolLine\SetPersonToProtocolLinesService;
 use App\Domain\Auth\Impression;
 use App\Domain\Person\Person;
+use App\Domain\Person\PersonRankState;
 use App\Domain\Person\PersonRepository;
+use App\Domain\Person\RankCalculationReason;
 use App\Domain\Person\RankCalculator;
 use App\Domain\Person\RankFactsCollector;
 use App\Domain\PersonPrompt\Factory\PersonPromptFactory;
@@ -52,7 +54,7 @@ final class AssignPersonOnProtocolLinesServiceTest extends TestCase
             ['id', 42],
             ['birthday', null],
         ]);
-        $person->expects($this->once())->method('updateRanks');
+        $person->expects($this->once())->method('updateRanks')->with($this->isInstanceOf(PersonRankState::class), $this->isInstanceOf(Impression::class), RankCalculationReason::Protocol);
         $persons = $this->createMock(PersonRepository::class);
         $persons->expects($this->once())
             ->method('lockById')

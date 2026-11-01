@@ -224,12 +224,16 @@ export interface ClubOption {
     name: string
 }
 
+export type RankCalculationReason = 'manual' | 'protocol' | 'daily' | 'refill'
+
 export interface Person {
     id: string
     lastname: string
     firstname: string
     birthday: string | null
     rankId: number
+    rankCalculatedAt?: string | null
+    rankCalculationReason?: RankCalculationReason | null
     citizenship: string
     clubId: string | null
     created?: Impression

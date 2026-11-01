@@ -39,7 +39,7 @@ describe('static updates catalog', () => {
                     b.spec.localeCompare(a.spec),
             ),
         )
-        expect(updates[0]?.spec).toBe('053-sentry-issue-remediation')
+        expect(updates[0]?.spec).toBe('054-person-rank-calculation')
     })
 
     it('links only to existing SPA routes when a destination is useful', () => {

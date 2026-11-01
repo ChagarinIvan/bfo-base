@@ -8,8 +8,11 @@ use App\Application\Dto\Auth\UserId;
 use App\Application\Service\Person\Exception\PersonNotFound;
 use App\Application\Service\Person\RebuildPersonRanks;
 use App\Application\Service\Person\RebuildPersonRanksService;
+use App\Domain\Auth\Impression;
 use App\Domain\Person\Person;
+use App\Domain\Person\PersonRankState;
 use App\Domain\Person\PersonRepository;
+use App\Domain\Person\RankCalculationReason;
 use App\Domain\Person\RankCalculator;
 use App\Domain\Person\RankFactsCollector;
 use App\Domain\Shared\Clock;
@@ -23,7 +26,12 @@ final class RebuildPersonRanksServiceTest extends TestCase
     #[Test]
     public function it_rebuilds_one_person_and_persists_the_projection(): void
     {
-        $person = $this->createStub(Person::class);
+        $person = $this->createMock(Person::class);
+        $person->expects($this->once())->method('updateRanks')->with(
+            $this->isInstanceOf(PersonRankState::class),
+            new Impression(Carbon::parse('2026-07-01'), 1),
+            RankCalculationReason::Protocol,
+        );
         $persons = $this->createMock(PersonRepository::class);
         $facts = $this->createMock(RankFactsCollector::class);
         $calculator = new RankCalculator();
@@ -34,7 +42,7 @@ final class RebuildPersonRanksServiceTest extends TestCase
         $persons->expects($this->once())->method('update')->with($person);
 
         $service = new RebuildPersonRanksService($persons, $facts, $calculator, $clock, new DummyTransactional);
-        $service->execute(new RebuildPersonRanks(42, new UserId(1)));
+        $service->execute(new RebuildPersonRanks(42, new UserId(1), RankCalculationReason::Protocol));
     }
 
     #[Test]
