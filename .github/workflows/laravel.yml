@@ -27,8 +27,9 @@ jobs:
     - uses: actions/checkout@v5
     - uses: shivammathur/setup-php@v2
       with:
-        php-version: '8.5'
-        extensions: dom, mbstring, pdo_mysql, zip, gd, exif, pcntl, bcmath
+        php-version: '8.5.12'
+        extensions: dom, intl, mbstring, pdo_mysql, zip, gd, exif, pcntl, bcmath
+        ini-values: session.upload_progress.enabled=0
         coverage: none
     - name: Copy .env
       run: |
@@ -40,6 +41,11 @@ jobs:
         echo "DB_PASSWORD=secret" >> .env
     - name: Install Dependencies
       run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+    - name: Verify platform and production dependency security
+      run: |
+        composer validate --strict
+        composer check-platform-reqs
+        composer audit --locked --no-dev --no-interaction
     - name: Generate key
       run: php artisan key:generate
     - name: Directory Permissions

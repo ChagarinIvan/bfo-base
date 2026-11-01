@@ -39,7 +39,7 @@ describe('static updates catalog', () => {
                     b.spec.localeCompare(a.spec),
             ),
         )
-        expect(updates[0]?.spec).toBe('051-protocol-line-impression-columns')
+        expect(updates[0]?.spec).toBe('052-php-security-update')
     })
 
     it('links only to existing SPA routes when a destination is useful', () => {
