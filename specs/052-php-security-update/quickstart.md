@@ -12,8 +12,19 @@ composer install --no-interaction --no-progress
 ```
 
 Полный audit отдельно сообщает об abandoned dev package; это не security advisory.
-После install сравнить SHA-256 composer.lock. Долгие локальные suites не запускались
-по уточнению пользователя. CI сохраняет существующие проверки на PHP 8.5.12.
+После install сравнить SHA-256 composer.lock. По последующему поручению пользователя
+после применения Rector выполняются все локальные quality gates:
+
+```sh
+composer cs
+composer stan
+composer rector -- --dry-run
+DB_DATABASE=bfo_base_test composer test
+npm run ci
+```
+
+Локальный runtime сохраняется 8.5.10, CI использует PHP 8.5.12. Тесты с MySQL
+выполняются только в отдельной bfo_base_test, без изменения рабочей базы.
 
 ## Серверная выкладка пользователем
 

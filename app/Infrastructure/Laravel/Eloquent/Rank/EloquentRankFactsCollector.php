@@ -34,7 +34,7 @@ final readonly class EloquentRankFactsCollector implements RankFactsCollector
             ->map(function (ProtocolLine $line): ?RankFact {
                 $rank = $this->normalizer->normalize($line->complete_rank);
 
-                if ($rank === null
+                if (!$rank instanceof Rank
                     || $rank === Rank::WithoutRank
                     || $line->person_id === null
                     || $line->distance->event->competition->mass

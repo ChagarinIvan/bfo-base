@@ -25,7 +25,7 @@ final readonly class StandardEventFactory implements EventFactory
         $event->description = $input->info->description;
         $event->date = $input->info->date;
         $event->file = $input->file;
-        $event->processing_status = $protocol === null ? EventProcessingStatus::READY : EventProcessingStatus::PARSING;
+        $event->processing_status = $protocol instanceof Protocol ? EventProcessingStatus::PARSING : EventProcessingStatus::READY;
         $event->processing_token = $this->tokens->generate();
         $event->created = $event->updated = new Impression($this->clock->now(), $input->userId);
 

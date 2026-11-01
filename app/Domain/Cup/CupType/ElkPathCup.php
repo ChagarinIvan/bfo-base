@@ -8,6 +8,7 @@ use App\Domain\Cup\CupEvent\CupEvent;
 use App\Domain\Cup\Group\CupGroup;
 use App\Domain\Cup\Group\GroupAge;
 use App\Domain\Cup\Group\GroupMale;
+use App\Domain\Distance\Distance;
 use App\Domain\ProtocolLine\Criteria\CupEventDistancesProtocolLinesCriteria;
 use App\Domain\Shared\Criteria;
 use Illuminate\Support\Collection;
@@ -63,7 +64,7 @@ class ElkPathCup extends EliteCupType
             'groupNamesIgnoringSpaces' => $groupMap,
         ]));
 
-        if ($mainDistance === null) {
+        if (!$mainDistance instanceof Distance) {
             return new Collection();
         }
 

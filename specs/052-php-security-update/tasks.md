@@ -52,11 +52,17 @@ Production deploy и локальное переустройство PHP не в
 
 ## Completion
 
-Все 15 задач реализации, подготовки PR и исправления совместимости CI выполнены. Полные локальные гейты
-отменены пользователем; CI/server verification не объявляется выполненной.
+Все 18 задач реализации, совместимости и итоговых локальных гейтов выполнены. По последующему поручению все локальные гейты после Rector выполнены и прошли.
+CI/server verification не объявляется выполненной.
 Evidence и ограничения в [validation.md](validation.md).
 
 ## Phase 5: CI compatibility
 
 - [x] T014 Исправить return type distances() в app/Domain/Group/Group.php и повторное сужение в tests/Feature/Event/EventAggregateDispatchTest.php без подавлений ошибок анализа.
 - [x] T015 Проверить полный composer stan, узкие regression tests и стиль двух файлов; записать evidence в specs/052-php-security-update/validation.md и отправить исправление в ту же ветку PR.
+
+## Phase 6: Apply Rector and pass all gates
+
+- [x] T016 Применить Rector к PHP-коду, удалить deprecated skips и сохранить архитектурно обоснованное точечное исключение в rector.php; проверить дифф и применить CS Fixer.
+- [x] T017 Получить зелёные composer cs, composer stan, composer rector -- --dry-run, полный composer test и npm run ci; записать результаты в specs/052-php-security-update/validation.md.
+- [x] T018 Сверить результат с обновлённым spec/plan, закоммитить и отправить изменения в ветку PR #178.

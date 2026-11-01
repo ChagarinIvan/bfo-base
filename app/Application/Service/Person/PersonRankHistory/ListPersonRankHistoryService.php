@@ -6,6 +6,7 @@ namespace App\Application\Service\Person\PersonRankHistory;
 
 use App\Application\Dto\Person\PersonAssembler;
 use App\Application\Dto\Person\ViewPersonRankHistoryDto;
+use App\Domain\Person\Person;
 use App\Domain\Person\PersonRepository;
 
 final readonly class ListPersonRankHistoryService
@@ -21,7 +22,7 @@ final readonly class ListPersonRankHistoryService
     {
         $person = $this->persons->byId($command->personId());
 
-        if ($person === null) {
+        if (!$person instanceof Person) {
             return [];
         }
 

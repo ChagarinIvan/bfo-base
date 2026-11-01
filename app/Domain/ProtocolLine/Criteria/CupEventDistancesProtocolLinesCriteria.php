@@ -18,7 +18,7 @@ final readonly class CupEventDistancesProtocolLinesCriteria
             'eventDate' => $cupEvent->event->date,
         ];
 
-        if ($paymentYear !== null) {
+        if ($paymentYear instanceof Year) {
             $params['paymentYear'] = $paymentYear;
         }
 

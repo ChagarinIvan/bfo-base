@@ -20,7 +20,7 @@ final readonly class StoreProtocolEventFactory implements EventFactory
 
     public function create(EventInput $input, ?Protocol $protocol = null): Event
     {
-        if ($protocol === null) {
+        if (!$protocol instanceof Protocol) {
             return $this->decorated->create($input);
         }
 

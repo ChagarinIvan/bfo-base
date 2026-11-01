@@ -23,7 +23,7 @@ final readonly class ViewEvent
     public function resources(): EventResources
     {
         return new EventResources(
-            readyOnly: $this->userId === null,
+            readyOnly: !$this->userId instanceof UserId,
         );
     }
 }
