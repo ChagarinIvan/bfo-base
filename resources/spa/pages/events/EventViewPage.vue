@@ -101,6 +101,16 @@ const columns = computed(() => [
     ...(auth.isAuthenticated
         ? [
               {
+                  key: 'created',
+                  label: t('spa.competitions.created'),
+                  defaultVisible: false,
+              },
+              {
+                  key: 'updated',
+                  label: t('spa.competitions.updated'),
+                  defaultVisible: false,
+              },
+              {
                   key: 'activateRank',
                   label: 'Актывацыя разраду',
                   defaultVisible: true,
@@ -306,7 +316,9 @@ async function load(eventId: string): Promise<void> {
         ])
         competition.value = loadedCompetition
         distances.value = loadedDistances
-        users.value = auth.isAuthenticated ? await getUsers() : []
+        users.value = auth.isAuthenticated
+            ? await getUsers().catch(() => [])
+            : []
         const requestedId = requestedDistanceId()
         distanceId.value = distances.value.some(
             (distance) => distance.id === requestedId,
@@ -663,6 +675,34 @@ onBeforeUnmount(() => {
                                 field="activateRank"
                                 header="Актывацыя разраду"
                             />
+                            <Column
+                                v-if="
+                                    auth.isAuthenticated && isVisible('created')
+                                "
+                                :header="t('spa.competitions.created')"
+                            >
+                                <template #body="{ data }">
+                                    <ImpressionDetails
+                                        :impression="data.created"
+                                        :users="users"
+                                        :label="t('spa.competitions.created')"
+                                    />
+                                </template>
+                            </Column>
+                            <Column
+                                v-if="
+                                    auth.isAuthenticated && isVisible('updated')
+                                "
+                                :header="t('spa.competitions.updated')"
+                            >
+                                <template #body="{ data }">
+                                    <ImpressionDetails
+                                        :impression="data.updated"
+                                        :users="users"
+                                        :label="t('spa.competitions.updated')"
+                                    />
+                                </template>
+                            </Column>
                             <Column
                                 v-if="
                                     auth.isAuthenticated && isVisible('actions')

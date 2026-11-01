@@ -72,6 +72,8 @@ export interface CupEventPoint {
     personYear: number
     personClubId: string | null
     time: string
+    created?: Impression
+    updated?: Impression
 }
 
 export interface CupEventPointSearchQuery {
@@ -314,6 +316,8 @@ export interface ProtocolLine {
     points?: number | null
     vk?: boolean
     activateRank?: string | null
+    created?: Impression
+    updated?: Impression
 }
 
 export interface ProtocolLineSearchQuery {
