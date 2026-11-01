@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature\Api\V1\ProtocolLine;
 
 use App\Bridge\Laravel\Http\Controllers\Api\V1\ProtocolLine\ListProtocolLinesAction;
+use App\Domain\Auth\Impression;
 use App\Domain\Club\Club;
 use App\Domain\Competition\Competition;
 use App\Domain\Distance\Distance;
@@ -12,12 +13,15 @@ use App\Domain\Event\Event;
 use App\Domain\Group\Group;
 use App\Domain\Person\Person;
 use App\Domain\ProtocolLine\ProtocolLine;
+use App\Infrastructure\Sanctum\SanctumUser;
+use Carbon\Carbon;
 use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 use function array_filter;
+use function count;
 use function str_contains;
 use function strtolower;
 
@@ -26,6 +30,60 @@ use function strtolower;
 final class ListProtocolLinesActionTest extends TestCase
 {
     use RefreshDatabase;
+
+    #[Test]
+    public function it_loads_fifty_authenticated_rows_with_the_same_number_of_result_queries_as_one(): void
+    {
+        $person = $this->createPerson();
+        $line = $this->createProtocolLine($person, 'Audit Cup', '2026-05-10');
+        $user = SanctumUser::query()->create(['email' => 'queries@example.test', 'password' => 'secret']);
+        $this->withToken($user->createToken('audit')->plainTextToken);
+        $this->getJson("/api/v1/protocol-lines?distanceId={$line->distance_id}&perPage=50")->assertOk();
+        $queries = [];
+        DB::listen(static function (QueryExecuted $query) use (&$queries): void {
+            if (str_contains(strtolower($query->sql), 'select')) {
+                $queries[] = $query->sql;
+            }
+        });
+        $url = "/api/v1/protocol-lines?distanceId={$line->distance_id}&perPage=50";
+        $this->getJson($url)->assertOk()->assertJsonCount(1)->assertJsonStructure(['*' => ['created', 'updated']]);
+        $singleCount = count($queries);
+        ProtocolLine::factory()->count(49)->create(['distance_id' => $line->distance_id, 'person_id' => $person->id]);
+        $queries = [];
+
+        $this->getJson($url)->assertOk()->assertJsonCount(50)->assertJsonStructure(['*' => ['created', 'updated']]);
+        $this->assertCount($singleCount, $queries);
+    }
+
+    #[Test]
+    public function it_exposes_the_lines_own_impressions_only_to_bearer_authenticated_users(): void
+    {
+        $person = $this->createPerson();
+        $user = SanctumUser::query()->create(['email' => 'audit@example.test', 'password' => 'secret']);
+        $created = new Impression(Carbon::parse('2026-10-27T10:00:00+00:00'), $user->id);
+        $updated = new Impression(Carbon::parse('2026-11-01T12:30:00+00:00'), $user->id);
+        $line = $this->createProtocolLine($person, 'Audit Cup', '2026-05-10', [
+            'created' => $created,
+            'updated' => $updated,
+        ]);
+        $urls = [
+            "/api/v1/protocol-lines?distanceId={$line->distance_id}",
+            "/api/v1/protocol-lines?personId={$person->id}&withEvent=1&withCompetition=1",
+        ];
+
+        foreach ($urls as $url) {
+            $this->getJson($url)->assertOk()->assertJsonMissingPath('0.created')->assertJsonMissingPath('0.updated');
+        }
+
+        $this->withToken($user->createToken('audit')->plainTextToken);
+        foreach ($urls as $url) {
+            $this->getJson($url)->assertOk()
+                ->assertJsonPath('0.created', ['at' => $created->at->toAtomString(), 'by' => (string) $created->by])
+                ->assertJsonPath('0.updated', ['at' => $updated->at->toAtomString(), 'by' => (string) $updated->by]);
+        }
+        $this->assertEquals($created, $line->fresh()->created);
+        $this->assertEquals($updated, $line->fresh()->updated);
+    }
 
     #[Test]
     public function it_lists_person_protocol_lines_with_event_and_competition(): void

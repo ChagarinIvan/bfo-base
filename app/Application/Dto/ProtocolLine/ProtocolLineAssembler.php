@@ -4,11 +4,17 @@ declare(strict_types=1);
 
 namespace App\Application\Dto\ProtocolLine;
 
+use App\Application\Dto\Auth\AuthAssembler;
 use App\Domain\Club\Club;
 use App\Domain\ProtocolLine\ProtocolLine;
 
 final readonly class ProtocolLineAssembler
 {
+    public function __construct(
+        private AuthAssembler $authAssembler,
+    ) {
+    }
+
     public function toViewProtocolLineDto(ProtocolLine $line, ?Club $club = null): ViewProtocolLineDto
     {
         $distance = $line->relationLoaded('distance') ? $line->distance : null;
@@ -40,6 +46,8 @@ final readonly class ProtocolLineAssembler
             points: $line->points,
             vk: (bool) $line->vk,
             activateRank: $line->activate_rank?->format('Y-m-d'),
+            created: $this->authAssembler->toImpressionDto($line->created),
+            updated: $this->authAssembler->toImpressionDto($line->updated),
         );
     }
 }

@@ -18,14 +18,17 @@ import { useRoute, useRouter } from 'vue-router'
 import { extractPerson, getPersonProtocolLines } from '../../api/protocolLines'
 import { getCupEventContexts } from '../../api/cups'
 import { getYears } from '../../api/years'
+import { getUsers } from '../../api/users'
 import type {
     CupEventContext,
     PaginationHeaders,
     ProtocolLine,
+    User,
 } from '../../api/types'
 import DateFilter from '../../components/DateFilter.vue'
 import FilterPanel from '../../components/FilterPanel.vue'
 import ListingTable from '../../components/ListingTable.vue'
+import ImpressionDetails from '../../components/ImpressionDetails.vue'
 import SlicePaginator from '../../components/SlicePaginator.vue'
 import { protocolLineEventUrl } from '../../components/tableModels'
 import YearFilter from '../../components/YearFilter.vue'
@@ -51,6 +54,7 @@ const router = useRouter()
 const auth = useAuthStore()
 const person = inject(personContextKey, ref(null))
 const lines = ref<ProtocolLine[]>([])
+const users = ref<User[]>([])
 const cupEventContexts = ref<Record<string, CupEventContext[]>>({})
 const years = ref<number[]>([])
 const year = ref<number | null>(null)
@@ -89,6 +93,16 @@ const columns = computed(() => [
     },
     ...(auth.isAuthenticated
         ? [
+              {
+                  key: 'created',
+                  label: t('spa.competitions.created'),
+                  defaultVisible: false,
+              },
+              {
+                  key: 'updated',
+                  label: t('spa.competitions.updated'),
+                  defaultVisible: false,
+              },
               {
                   key: 'actions',
                   label: t('spa.person_view.actions'),
@@ -168,6 +182,9 @@ async function load(
 
 async function initialize(): Promise<void> {
     try {
+        users.value = auth.isAuthenticated
+            ? await getUsers().catch(() => [])
+            : []
         years.value = await getYears()
         await load()
     } catch {
@@ -406,6 +423,30 @@ onBeforeUnmount(() => debouncedCompetitionSearch.cancel())
                     <template #body="{ data }">{{
                         display(data.completeRank)
                     }}</template>
+                </Column>
+                <Column
+                    v-if="auth.isAuthenticated && isVisible('created')"
+                    :header="t('spa.competitions.created')"
+                >
+                    <template #body="{ data }">
+                        <ImpressionDetails
+                            :impression="data.created"
+                            :users="users"
+                            :label="t('spa.competitions.created')"
+                        />
+                    </template>
+                </Column>
+                <Column
+                    v-if="auth.isAuthenticated && isVisible('updated')"
+                    :header="t('spa.competitions.updated')"
+                >
+                    <template #body="{ data }">
+                        <ImpressionDetails
+                            :impression="data.updated"
+                            :users="users"
+                            :label="t('spa.competitions.updated')"
+                        />
+                    </template>
                 </Column>
                 <Column
                     v-if="auth.isAuthenticated && isVisible('actions')"

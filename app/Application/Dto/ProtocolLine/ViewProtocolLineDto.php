@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Application\Dto\ProtocolLine;
 
+use App\Application\Dto\Auth\ImpressionDto;
+use App\Application\Dto\Serialization\Groups;
+
 final readonly class ViewProtocolLineDto
 {
     public function __construct(
@@ -30,6 +33,10 @@ final readonly class ViewProtocolLineDto
         public ?int $points,
         public bool $vk,
         public ?string $activateRank,
+        #[Groups(['authenticated'])]
+        public ImpressionDto $created,
+        #[Groups(['authenticated'])]
+        public ImpressionDto $updated,
     ) {
     }
 }

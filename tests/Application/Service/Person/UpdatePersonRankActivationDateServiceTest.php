@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Application\Service\Person;
 
+use App\Application\Dto\Auth\AuthAssembler;
 use App\Application\Dto\Auth\UserId;
 use App\Application\Dto\Person\UpdatePersonRankActivationDateDto;
 use App\Application\Dto\ProtocolLine\ProtocolLineAssembler;
@@ -11,6 +12,7 @@ use App\Application\Dto\ProtocolLine\ViewProtocolLineDto;
 use App\Application\Service\Person\Exception\ProtocolLineNotFound;
 use App\Application\Service\Person\UpdatePersonRankActivationDate;
 use App\Application\Service\Person\UpdatePersonRankActivationDateService;
+use App\Domain\Auth\Impression;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\ProtocolLine\ProtocolLineRepository;
 use App\Domain\Shared\DummyTransactional;
@@ -32,7 +34,7 @@ final class UpdatePersonRankActivationDateServiceTest extends TestCase
             $repository,
             new FrozenClock(Carbon::parse('2026-09-03')),
             new DummyTransactional(),
-            new ProtocolLineAssembler(),
+            new ProtocolLineAssembler(new AuthAssembler()),
         );
 
         $this->expectException(ProtocolLineNotFound::class);
@@ -45,6 +47,8 @@ final class UpdatePersonRankActivationDateServiceTest extends TestCase
         /** @var ProtocolLine&MockObject $line */
         $line = $this->createMock(ProtocolLine::class);
         $line->expects($this->atLeast(9))->method('__get')->willReturnMap([
+            ['created', new Impression(Carbon::parse('2026-09-01'), 5)],
+            ['updated', new Impression(Carbon::parse('2026-09-03'), 5)],
             ['id', 7],
             ['person_id', 42],
             ['firstname', 'Jane'],
@@ -75,7 +79,7 @@ final class UpdatePersonRankActivationDateServiceTest extends TestCase
             $repository,
             new FrozenClock(Carbon::parse('2026-09-03')),
             new DummyTransactional(),
-            new ProtocolLineAssembler(),
+            new ProtocolLineAssembler(new AuthAssembler()),
         );
 
         $result = $service->execute($this->command('2026-09-10'));

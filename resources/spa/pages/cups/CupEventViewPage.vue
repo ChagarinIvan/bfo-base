@@ -25,6 +25,7 @@ import CupTypeIcon from '../../components/CupTypeIcon.vue'
 import FilterPanel from '../../components/FilterPanel.vue'
 import ImpressionDetails from '../../components/ImpressionDetails.vue'
 import ListingTable from '../../components/ListingTable.vue'
+import { tableStorageKey } from '../../components/tableModels'
 import { t } from '../../i18n'
 import { useAuthStore } from '../../stores/auth'
 import {
@@ -58,6 +59,45 @@ let pointsController: AbortController | null = null
 let loadRequestId = 0
 let loadController: AbortController | null = null
 
+// Before auth-specific preferences existed, this table stored all choices as guest.
+watch(
+    () => auth.isAuthenticated,
+    (authenticated) => {
+        if (!authenticated) {
+            return
+        }
+        try {
+            const key = tableStorageKey('cup-event-points', true)
+            if (window.localStorage.getItem(key) !== null) {
+                return
+            }
+            const saved: unknown = JSON.parse(
+                window.localStorage.getItem(
+                    tableStorageKey('cup-event-points', false),
+                ) ?? 'null',
+            )
+            if (!Array.isArray(saved)) {
+                return
+            }
+            const publicKeys = [
+                'place',
+                'person',
+                'year',
+                'club',
+                'time',
+                'points',
+            ]
+            const visible = saved.filter((key) => publicKeys.includes(key))
+            if (visible.length) {
+                window.localStorage.setItem(key, JSON.stringify(visible))
+            }
+        } catch {
+            // Unavailable or invalid storage leaves the standard columns visible.
+        }
+    },
+    { immediate: true },
+)
+
 const columns = computed(() => [
     { key: 'place', label: '№', defaultVisible: true },
     { key: 'person', label: t('app.common.fio'), defaultVisible: true },
@@ -65,6 +105,20 @@ const columns = computed(() => [
     { key: 'club', label: t('app.club.name'), defaultVisible: true },
     { key: 'time', label: t('app.common.time'), defaultVisible: true },
     { key: 'points', label: t('app.common.points'), defaultVisible: true },
+    ...(auth.isAuthenticated
+        ? [
+              {
+                  key: 'created',
+                  label: t('spa.competitions.created'),
+                  defaultVisible: false,
+              },
+              {
+                  key: 'updated',
+                  label: t('spa.competitions.updated'),
+                  defaultVisible: false,
+              },
+          ]
+        : []),
 ])
 
 function isNotFound(exception: unknown): boolean {
@@ -136,7 +190,7 @@ async function load(cupEventId: string): Promise<void> {
                 getEventsByIds([cupEvent.value.eventId], controller.signal),
                 getClubOptions(controller.signal),
                 auth.isAuthenticated
-                    ? getUsers(controller.signal)
+                    ? getUsers(controller.signal).catch(() => [])
                     : Promise.resolve([]),
             ])
         if (requestId !== loadRequestId) return
@@ -270,6 +324,7 @@ onBeforeUnmount(() => {
         <h2 class="section-title">{{ t('spa.cup_event.standings') }}</h2>
         <ListingTable
             table-id="cup-event-points"
+            :authenticated="auth.isAuthenticated"
             :columns="columns"
             :items="points"
             :pagination="pagination"
@@ -337,6 +392,22 @@ onBeforeUnmount(() => {
                 </RouterLink>
             </template>
             <template #cell-time="{ data }">{{ data.time }}</template>
+            <template #cell-created="{ data }">
+                <ImpressionDetails
+                    v-if="auth.isAuthenticated"
+                    :impression="data.created"
+                    :users="users"
+                    :label="t('spa.competitions.created')"
+                />
+            </template>
+            <template #cell-updated="{ data }">
+                <ImpressionDetails
+                    v-if="auth.isAuthenticated"
+                    :impression="data.updated"
+                    :users="users"
+                    :label="t('spa.competitions.updated')"
+                />
+            </template>
             <template #cell-points="{ data }">
                 <strong
                     v-if="data.points === cupEvent.points"

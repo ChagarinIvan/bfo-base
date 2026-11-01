@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Application\Service\ProtocolLine;
 
+use App\Application\Dto\Auth\AuthAssembler;
 use App\Application\Dto\ProtocolLine\ProtocolLineAssembler;
 use App\Application\Dto\ProtocolLine\SearchProtocolLineDto;
 use App\Application\Service\ProtocolLine\ListProtocolLines;
@@ -43,7 +44,7 @@ final class ListProtocolLinesServiceTest extends TestCase
             $lines,
             $this->createStub(ClubRepository::class),
             new ClubNameNormalizer(new SymbolNormalizer()),
-            new ProtocolLineAssembler(),
+            new ProtocolLineAssembler(new AuthAssembler()),
         );
 
         $result = $service->execute(new ListProtocolLines(new SearchProtocolLineDto(
@@ -72,7 +73,7 @@ final class ListProtocolLinesServiceTest extends TestCase
             $lines,
             $this->createStub(ClubRepository::class),
             new ClubNameNormalizer(new SymbolNormalizer()),
-            new ProtocolLineAssembler(),
+            new ProtocolLineAssembler(new AuthAssembler()),
         );
 
         $result = $service->execute(new ListProtocolLines(new SearchProtocolLineDto(personId: '7')));

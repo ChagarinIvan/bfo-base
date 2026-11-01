@@ -19,6 +19,7 @@ const { auth, getCupEventContexts, getPersonProtocolLines, getYears, push } =
 vi.mock('../../api/cups', () => ({ getCupEventContexts }))
 vi.mock('../../api/protocolLines', () => ({ getPersonProtocolLines }))
 vi.mock('../../api/years', () => ({ getYears }))
+vi.mock('../../api/users', () => ({ getUsers: async () => [] }))
 vi.mock('vue-router', () => ({
     useRoute: () => ({ params: { personId: '7' } }),
     useRouter: () => ({ push }),

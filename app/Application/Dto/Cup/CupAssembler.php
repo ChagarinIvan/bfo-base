@@ -76,6 +76,8 @@ final readonly class CupAssembler
             personYear: $protocolLine->year ?? 0,
             personClubId: $protocolLine->person?->club_id ? (string) $protocolLine->person->club_id : null,
             time: $protocolLine->time ? $protocolLine->time->format('H:i:s') : '-',
+            created: $this->authAssembler->toImpressionDto($protocolLine->created),
+            updated: $this->authAssembler->toImpressionDto($protocolLine->updated),
         );
     }
 }
