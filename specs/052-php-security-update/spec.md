@@ -87,7 +87,8 @@ Reviewer получает спецификацию, план, задачи, ко
 - **FR-006**: Локальный runtime MUST не переустанавливаться повторно;
   platform overrides и игнорирование PHP requirements запрещены.
 - **FR-007**: API, бизнес-правила и схема БД MUST сохраняться. Правки ограничены
-  версиями, startup configuration, CI и документацией, без нового application behavior.
+  версиями, startup configuration, CI, документацией и необходимой совместимостью
+  статического анализа, без нового application behavior.
 - **FR-008**: README MUST описывать сборку, install из lock, проверку фактического
   runtime и перезапуск FPM/queue workers при выкладке.
 - **FR-009**: Фича MUST иметь полный комплект spec-kit артефактов и одну запись updates.

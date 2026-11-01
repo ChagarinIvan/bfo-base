@@ -45,7 +45,7 @@ Production install --no-dev этот пакет не устанавливает;
 | FR-004, SC-003, US2/AC2/4 | validate/platform/install; hash lock до и после install совпадает |
 | FR-005, SC-002, US2/AC3 | Полный audit без advisories; dev warning отражён, production audit чист |
 | FR-006, SC-005, US1/AC4 | Работа выполнена на имеющемся PHP 8.5.10, без повторного Homebrew/Docker и подмены платформы |
-| FR-007 | Application/Domain/Bridge/Infrastructure source и схема БД не менялись |
+| FR-007 | Бизнес-поведение и схема БД не менялись; последующее исправление CI уточняет type metadata и устраняет повторный assertion |
 | FR-008, US3/AC2 | README и quickstart с build/install/runtime check/restart |
 | FR-009, SC-004, US3/AC1 | Полный каталог specs/052, запись updates, latest catalog assertion обновлён |
 | FR-010, US3/AC3 | Этот validation разделяет выполненные проверки и отложенные suites/deploy |
@@ -56,8 +56,9 @@ server runtime и полных regression suites этим выводом не п
 
 ## Что не проверялось локально
 
-По прямому уточнению пользователя не выполнялись полный composer test, STAN,
-CS, Rector, frontend CI и повторная установка локального PHP. Ранее начатый
+При подготовке dependency update по уточнению пользователя не выполнялись полный
+composer test, STAN, CS, Rector, frontend CI и повторная установка локального PHP.
+Последующая проверка после сообщения об ошибках CI описана ниже. Ранее начатый
 frontend прогон до отмены большого локального обновления завершился двумя
 таймаутами на фоне сборки Homebrew; он не является результатом проверки нового lock.
 Существующие полные CI jobs сохранены и запускаются на PHP 8.5.12.
@@ -146,3 +147,24 @@ frontend прогон до отмены большого локального о
 | theseer/tokenizer | 2.0.1 | удалён resolver-ом |
 
 Composer.lock SHA-256 после install: `006a17c78aa84c65ed3593bf88091829063fc8aea061b6d250f0c0d51f05c23f`.
+
+## Исправление PHPStan после CI
+
+Обновлённые Larastan/PHPStan выявили две неточности, воспроизведённые узким
+анализом EloquentGroupRepository.php и EventAggregateDispatchTest.php до правок.
+
+- Group::distances() фактически возвращает HasMany; прежний union с Query Builder
+  заменён точным HasMany<Distance, $this>, неиспользуемый import удалён. Runtime
+  связи, foreign key и запрос withCount не изменились.
+- В тесте отправки события удалена промежуточная проверка пустой очереди.
+  Тест по-прежнему проверяет pending event до записи, два save, ровно одну отправку
+  и пустую очередь после обоих сохранений. Нет повторного assertSame, который
+  новый анализатор считает заведомо истинным из-за предыдущего сужения.
+- Полный composer stan: exit 0, No errors, 968 файлов.
+- EventAggregateDispatchTest, CupGroupFactoryTest и AbstractCupTypeDistanceTest:
+  exit 0, 6 tests, 19 assertions на локальном PHP 8.5.10 и тестовой MySQL.
+- PHP CS Fixer check двух изменённых PHP-файлов с явным config: exit 0.
+- Нет ignore-комментариев, baseline entries, понижения уровня или изменения правил анализа.
+
+Остальные полные локальные гейты не повторялись. Исправления предназначены для
+существующей ветки и PR #178; результат удалённого CI отдельно не заявляется.

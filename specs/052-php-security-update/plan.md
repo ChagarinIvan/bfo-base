@@ -17,7 +17,8 @@ composer.json constraints сохраняются, resolver работает на
 ## Constitution check
 
 PASS для области реализации. Обновление идёт в рамках разрешённых constraints;
-модели, write/read services, repositories, transactions и events не затрагиваются.
+бизнес-поведение моделей, write/read services, repositories, transactions и events не меняется.
+Допустимы точные исправления type metadata и тестов при новых ошибках статического анализа.
 Нет изменений сохранения, Impression или удаления. Новых N+1 queries не добавляется.
 Исключение из локального Definition of Done дано пользователем явно: полные
 CS/STAN/Rector/test/frontend gates здесь не повторяются, состояние проверяется CI.

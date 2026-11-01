@@ -29,8 +29,6 @@ final class EventAggregateDispatchTest extends TestCase
         $this->assertCount(1, $event->releasedEvents());
 
         $event->save();
-        $this->assertSame([], $event->releasedEvents());
-
         $event->save();
         EventFacade::assertDispatchedTimes(EventDisabled::class, 1);
         $this->assertSame([], $event->releasedEvents());

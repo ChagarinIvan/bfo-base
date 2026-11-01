@@ -14,7 +14,6 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 
 /**
@@ -34,7 +33,8 @@ class Group extends AggregatedModel
 {
     use HasFactory;
 
-    public function distances(): Builder|HasMany
+    /** @return HasMany<Distance, $this> */
+    public function distances(): HasMany
     {
         return $this->hasMany(Distance::class, 'group_id', 'id');
     }

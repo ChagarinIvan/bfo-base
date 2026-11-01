@@ -52,6 +52,11 @@ Production deploy и локальное переустройство PHP не в
 
 ## Completion
 
-Все 13 задач реализации и подготовки PR выполнены. Полные локальные гейты
+Все 15 задач реализации, подготовки PR и исправления совместимости CI выполнены. Полные локальные гейты
 отменены пользователем; CI/server verification не объявляется выполненной.
 Evidence и ограничения в [validation.md](validation.md).
+
+## Phase 5: CI compatibility
+
+- [x] T014 Исправить return type distances() в app/Domain/Group/Group.php и повторное сужение в tests/Feature/Event/EventAggregateDispatchTest.php без подавлений ошибок анализа.
+- [x] T015 Проверить полный composer stan, узкие regression tests и стиль двух файлов; записать evidence в specs/052-php-security-update/validation.md и отправить исправление в ту же ветку PR.
