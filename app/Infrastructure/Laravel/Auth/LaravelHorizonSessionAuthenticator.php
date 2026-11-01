@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Laravel\Auth;
 
 use App\Domain\Auth\HorizonSessionAuthenticator;
+use App\Domain\Auth\User;
 use App\Domain\Auth\UserRepository;
 use Illuminate\Contracts\Auth\Factory as AuthFactory;
 use Illuminate\Contracts\Auth\StatefulGuard;
@@ -24,7 +25,7 @@ final readonly class LaravelHorizonSessionAuthenticator implements HorizonSessio
     {
         $guard = $this->guard();
         $user = $this->users->byId($userId);
-        if ($user === null) {
+        if (!$user instanceof User) {
             throw new LogicException('The authenticated user no longer exists.');
         }
 

@@ -40,7 +40,7 @@ final readonly class ProtocolLineAssembler
             place: $line->place === null ? null : (string) $line->place,
             completeRank: $line->complete_rank ?: null,
             club: $line->club ?? '',
-            clubId: $club === null ? null : (string) $club->id,
+            clubId: $club instanceof Club ? (string) $club->id : null,
             clubName: $club?->name,
             rank: $line->rank ?? '',
             points: $line->points,

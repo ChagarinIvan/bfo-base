@@ -2,14 +2,13 @@
 
 declare(strict_types=1);
 
-use Rector\CodeQuality\Rector\Identical\FlipTypeControlToUseExclusiveTypeRector;
+use Rector\CodeQuality\Rector\If_\ExplicitNullableObjectInstanceRector;
 use Rector\Config\RectorConfig;
 use Rector\Php81\Rector\Property\ReadOnlyPropertyRector;
 use Rector\PHPUnit\CodeQuality\Rector\MethodCall\AssertEmptyNullableObjectToAssertInstanceofRector;
 use Rector\PHPUnit\Set\PHPUnitSetList;
 use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
 use Rector\Renaming\Rector\PropertyFetch\RenamePropertyRector;
-use Rector\Transform\Rector\String_\StringToClassConstantRector;
 use RectorLaravel\Rector\MethodCall\AssertSeeToAssertSeeHtmlRector;
 use RectorLaravel\Set\LaravelLevelSetList;
 
@@ -53,8 +52,11 @@ return RectorConfig::configure()
         // генерируемые Laravel файлы кэша — не линтим (как в .php-cs-fixer.php)
         __DIR__ . '/bootstrap/cache',
         AssertSeeToAssertSeeHtmlRector::class,
-        FlipTypeControlToUseExclusiveTypeRector::class,
-        StringToClassConstantRector::class,
+        // Keep the null check here: importing an HTTP UploadedFile class into
+        // this Domain factory would deepen the legacy transport dependency.
+        ExplicitNullableObjectInstanceRector::class => [
+            __DIR__ . '/app/Domain/Event/Protocol/ProtocolFactory.php',
+        ],
         // `assertNull()` is the precise assertion for nullable values; keeping it
         // avoids Rector rewriting it to the less explicit `assertNotInstanceOf()`.
         AssertEmptyNullableObjectToAssertInstanceofRector::class,

@@ -36,7 +36,7 @@ final readonly class CreateOrUpdatePersonPaymentsService
             function () use ($command): PersonPayment {
                 $personPayment = $this->payments->lockOneByCriteria($command->criteria());
 
-                if ($personPayment === null) {
+                if (!$personPayment instanceof PersonPayment) {
                     $personPayment = $this->factory->create($command->input());
                     $this->payments->add($personPayment);
                 } elseif (!$personPayment->sameDate($command->date())) {

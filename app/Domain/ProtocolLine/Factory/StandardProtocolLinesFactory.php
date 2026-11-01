@@ -69,7 +69,7 @@ final class StandardProtocolLinesFactory implements ProtocolLinesFactory
         if (!isset($this->groupCache[$input->normalizedGroupName])) {
             $group = $this->groups->oneByCriteria(new Criteria(['normalizedName' => $input->normalizedGroupName]));
 
-            if ($group === null) {
+            if (!$group instanceof Group) {
                 $group = $this->groupFactory->create(new GroupInput(
                     info: new GroupInfo(name: $input->group, normalizeName: $input->normalizedGroupName),
                     userId: $event->created_by,
@@ -94,7 +94,7 @@ final class StandardProtocolLinesFactory implements ProtocolLinesFactory
                 'points' => $input->distancePoints,
             ]));
 
-            if ($distance === null) {
+            if (!$distance instanceof Distance) {
                 $distance = $this->distanceFactory->create(new DistanceInput(
                     eventId: $event->id,
                     groupId: $group->id,

@@ -72,7 +72,7 @@ final class RankCalculator
 
     private function isJuniorOnAchievementDate(?Carbon $birthday, Carbon $achievedOn): bool
     {
-        return $birthday !== null
+        return $birthday instanceof Carbon
             && $achievedOn->year - $birthday->year <= self::MAX_JUNIOR_AGE;
     }
 
@@ -107,17 +107,17 @@ final class RankCalculator
     private function appendHistoryFact(array $history, RankFact $fact, ?int $personId, Carbon $on): array
     {
         $activatedOn = $fact->activatedOn;
-        if ($activatedOn === null && $fact->delayedActivation && $fact->rank->usesDelayedActivation()) {
+        if (!$activatedOn instanceof Carbon && $fact->delayedActivation && $fact->rank->usesDelayedActivation()) {
             $due = $fact->achievedOn->copy()->addMonthNoOverflow();
             $activatedOn = $due <= $on ? $due : null;
-        } elseif ($activatedOn === null && $fact->rank->isAutomaticallyActivated()) {
+        } elseif (!$activatedOn instanceof Carbon && $fact->rank->isAutomaticallyActivated()) {
             $activatedOn = $fact->achievedOn;
         }
         $startedOn = $activatedOn ?? $fact->achievedOn;
         $finishedOn = $activatedOn?->copy()->addYears(2);
         $previous = $history === [] ? null : array_last($history);
         $strongerRank = $this->strongerRankActiveOn($history, $fact, $startedOn);
-        if ($strongerRank !== null) {
+        if ($strongerRank instanceof PersonRankHistory) {
             $startedOn = $strongerRank->finished_on;
         }
 
@@ -146,7 +146,7 @@ final class RankCalculator
     private function changeType(RankFact $fact, ?PersonRankHistory $previous): RankChangeType
     {
         return match (true) {
-            $previous === null => RankChangeType::Completion,
+            !$previous instanceof PersonRankHistory => RankChangeType::Completion,
             $previous->rank === $fact->rank => RankChangeType::Extension,
             $previous->rank->value > $fact->rank->value => RankChangeType::LowerQualification,
             default => RankChangeType::Promotion,
@@ -178,7 +178,7 @@ final class RankCalculator
         $current = $sorted[0] ?? null;
 
         return new PersonRank(
-            rank: $current === null ? Rank::WithoutRank : $current->rank,
+            rank: $current->rank ?? Rank::WithoutRank,
             startedOn: $current?->started_on,
             activatedOn: $current?->activated_on,
             finishedOn: $current?->finished_on,
@@ -215,7 +215,7 @@ final class RankCalculator
      */
     private function extendActivePeriods(array $history, RankFact $achievement, Carbon $startedOn, ?Carbon $finishedOn, ?int $personId): array
     {
-        if ($finishedOn === null) {
+        if (!$finishedOn instanceof Carbon) {
             return $history;
         }
 
@@ -298,7 +298,7 @@ final class RankCalculator
      */
     private function addJuniorThirdRankFacts(array $facts, ?Carbon $birthday): array
     {
-        if ($birthday === null) {
+        if (!$birthday instanceof Carbon) {
             return $facts;
         }
 

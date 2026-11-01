@@ -4,7 +4,7 @@ Laravel API и Vue SPA для платформы спортивного орие
 
 ## Требования
 
-- PHP 8.5+
+- PHP 8.5 для разработки, PHP 8.5.12+ с исправлениями безопасности для сервера
 - Composer
 - Node.js 22+ и npm 10+
 - MySQL 8.4 и Redis 8
@@ -43,8 +43,36 @@ DB_USERNAME=root
 DB_PASSWORD=root_password
 ```
 
-Команду `composer update laravel/sanctum --with-all-dependencies` достаточно выполнить
-один раз после добавления Sanctum; она синхронизирует `composer.lock`.
+Для обновления зависимостей разработчик выполняет `composer update --with-all-dependencies`
+и фиксирует проверенный `composer.lock`. Для обычной установки и выкладки используется
+`composer install`. После обновления проверьте `composer validate --strict`,
+`composer check-platform-reqs` и `composer audit --locked`.
+
+## Обновление PHP на сервере
+
+Серверный Dockerfile и CI используют PHP 8.5.12 с
+[исправлениями безопасности](https://www.php.net/archive/2026.php#2026-10-21-5).
+Файл `enviroment/php/99-security.ini` отключает session upload progress согласно
+[дополнительной рекомендации PHP](https://www.php.net/archive/2026.php#2026-10-23-1).
+Он копируется в образ и доступен при монтировании каталога `enviroment/php` через
+Docker Compose. Обычная загрузка файлов сохраняется.
+
+При выкладке пересоберите образ с обновлением базового образа, пересоздайте
+контейнер приложения и установите зависимости из зафиксированного lock-файла:
+
+```bash
+docker compose build --pull app
+docker compose up -d --no-deps app
+docker compose exec app composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader
+docker compose exec app php --version
+docker compose exec app php -r 'echo "session.upload_progress.enabled=", ini_get("session.upload_progress.enabled"), PHP_EOL;'
+```
+
+Ожидаются PHP 8.5.12 и значение `0`. Перезапустите Horizon и остальные queue workers
+штатным механизмом сервера, чтобы они использовали новый интерпретатор.
+Изменение Dockerfile не обновляет уже работающие процессы. Локальный PHP для
+этого серверного обновления переустанавливать не требуется; `composer.json`
+сохраняет совместимость с веткой 8.5 и не подменяет версию через `config.platform`.
 
 ## Запуск SPA в dev-режиме
 

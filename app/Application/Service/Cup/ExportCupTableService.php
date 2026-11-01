@@ -12,6 +12,7 @@ use App\Domain\Cup\CupEvent\CupEventRepository;
 use App\Domain\Cup\CupEvent\CupEventResources;
 use App\Domain\Cup\CupRepository;
 use App\Domain\Cup\Exception\CupGroupNotSupported as DomainCupGroupNotSupported;
+use App\Domain\Cup\Group\CupGroup;
 use App\Domain\Cup\Table\CupTableBuilder;
 use App\Domain\Shared\Criteria;
 
@@ -30,7 +31,7 @@ final readonly class ExportCupTableService
         $cup = $this->cups->byId($command->cupId()) ?? throw new CupNotFound();
         $requestedGroup = $command->group();
 
-        if ($requestedGroup !== null) {
+        if ($requestedGroup instanceof CupGroup) {
             try {
                 $cup->assertGroupSupported($requestedGroup);
             } catch (DomainCupGroupNotSupported $exception) {
@@ -45,14 +46,14 @@ final readonly class ExportCupTableService
 
         $sections = [];
 
-        foreach ($requestedGroup === null ? $cup->groups() : [$requestedGroup] as $group) {
+        foreach ($requestedGroup instanceof CupGroup ? [$requestedGroup] : $cup->groups() as $group) {
             $sections[] = [
                 'group' => $group,
                 'table' => $this->builder->build(
                     $cup,
                     $events,
                     $group,
-                    excludeZeroPointRows: $requestedGroup !== null,
+                    excludeZeroPointRows: $requestedGroup instanceof CupGroup,
                 ),
             ];
         }

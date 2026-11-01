@@ -41,6 +41,6 @@ final class RankNormalizer
 
     public function isValid(string $value): bool
     {
-        return $this->normalize($value) !== null;
+        return $this->normalize($value) instanceof Rank;
     }
 }

@@ -56,7 +56,7 @@ class EliteCupType extends AbstractCupType
         $groupMap = $this->getGroupsMap($group);
 
         $mainDistance = $this->distanceByGroupNames($groupMap, $cupEvent->event_id);
-        if ($mainDistance === null) {
+        if (!$mainDistance instanceof Distance) {
             return new Collection();
         }
 

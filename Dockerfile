@@ -11,7 +11,9 @@ COPY resources/lang/by.json ./resources/lang/by.json
 COPY vite.config.ts tsconfig.json ./
 RUN npm run build:spa
 
-FROM php:8.5-fpm
+FROM php:8.5.12-fpm
+
+COPY enviroment/php/99-security.ini /usr/local/etc/php/conf.d/99-security.ini
 
 # Copy composer.lock and composer.json
 COPY composer.lock composer.json /var/www/

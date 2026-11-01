@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\RankCheck\Factory;
 
 use App\Domain\Rank\Rank;
+use App\Domain\RankCheck\RankCheckPersonSnapshot;
 use App\Domain\RankCheck\RankCheckRow;
 
 final readonly class StandardRankCheckRowFactory implements RankCheckRowFactory
@@ -15,7 +16,7 @@ final readonly class StandardRankCheckRowFactory implements RankCheckRowFactory
         $person = $input->person;
         $sourceRank = $line->rank->label();
         $databaseRank = $person?->rank;
-        $isEqual = $person !== null
+        $isEqual = $person instanceof RankCheckPersonSnapshot
             && $person->name === $line->name
             && $line->club === $person->club
             && $this->yearsEqual($line->year, $person->year)
@@ -35,7 +36,7 @@ final readonly class StandardRankCheckRowFactory implements RankCheckRowFactory
         $row->database_club = $person?->club;
         $row->database_rank = $databaseRank;
         $row->database_year = $person?->year;
-        $row->has_person = $person !== null;
+        $row->has_person = $person instanceof RankCheckPersonSnapshot;
         $row->is_equal = $isEqual;
 
         return $row;

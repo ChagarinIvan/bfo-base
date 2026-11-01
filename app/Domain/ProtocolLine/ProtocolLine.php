@@ -79,7 +79,7 @@ class ProtocolLine extends AggregatedModel
 
     public function activateRank(?Carbon $date, Impression $impression): void
     {
-        if ($date !== null && $date->toDateString() < $this->distance->event->date->toDateString()) {
+        if ($date instanceof Carbon && $date->toDateString() < $this->distance->event->date->toDateString()) {
             throw new UnableToActivateRank();
         }
 
