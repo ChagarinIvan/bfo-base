@@ -7,6 +7,7 @@ namespace App\Application\Handler\ProtocolLine;
 use App\Application\Dto\Auth\UserId;
 use App\Application\Service\Person\DisablePerson;
 use App\Application\Service\Person\DisablePersonService;
+use App\Application\Service\Person\Exception\PersonNotFound;
 use App\Application\Service\ProtocolLine\SetPersonToProtocolLines;
 use App\Application\Service\ProtocolLine\SetPersonToProtocolLinesService;
 use App\Domain\ProtocolLine\Event\ProtocolLinePersonAssigned;
@@ -34,7 +35,11 @@ final readonly class ProtocolLinePersonAssignedHandler implements ShouldQueueAft
         ));
 
         if ($event->oldPersonId !== null && $this->lines->byCriteria(new Criteria(['personId' => $event->oldPersonId]))->isEmpty()) {
-            $this->persons->execute(new DisablePerson((string) $event->oldPersonId, $userId));
+            try {
+                $this->persons->execute(new DisablePerson((string) $event->oldPersonId, $userId));
+            } catch (PersonNotFound) {
+                // A previous delivery or concurrent cleanup already disabled this person.
+            }
         }
     }
 }

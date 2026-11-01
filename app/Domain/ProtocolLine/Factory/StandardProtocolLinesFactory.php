@@ -22,6 +22,8 @@ use App\Domain\Shared\Clock;
 use App\Domain\Shared\Criteria;
 use Carbon\Carbon;
 use Throwable;
+use function array_map;
+use function array_unique;
 
 final class StandardProtocolLinesFactory implements ProtocolLinesFactory
 {
@@ -49,8 +51,17 @@ final class StandardProtocolLinesFactory implements ProtocolLinesFactory
     public function create(Event $event, array $inputs, int $userId): array
     {
         $protocolLines = [];
+        $this->groupCache = [];
+        $this->distanceCache = [];
 
         try {
+            if ($inputs !== []) {
+                $names = array_unique(array_map(static fn (ProtocolLineInput $input): string => $input->normalizedGroupName, $inputs));
+                foreach ($this->groups->byCriteria(new Criteria(['names' => $names])) as $group) {
+                    $this->groupCache[$group->normalize_name] ??= $group;
+                }
+            }
+
             foreach ($inputs as $input) {
                 $group = $this->getGroup($event, $input);
                 $distance = $this->getDistance($event, $group, $input);
@@ -67,16 +78,12 @@ final class StandardProtocolLinesFactory implements ProtocolLinesFactory
     private function getGroup(Event $event, ProtocolLineInput $input): Group
     {
         if (!isset($this->groupCache[$input->normalizedGroupName])) {
-            $group = $this->groups->oneByCriteria(new Criteria(['normalizedName' => $input->normalizedGroupName]));
+            $group = $this->groupFactory->create(new GroupInput(
+                info: new GroupInfo(name: $input->group, normalizeName: $input->normalizedGroupName),
+                userId: $event->created_by,
+            ));
 
-            if (!$group instanceof Group) {
-                $group = $this->groupFactory->create(new GroupInput(
-                    info: new GroupInfo(name: $input->group, normalizeName: $input->normalizedGroupName),
-                    userId: $event->created_by,
-                ));
-
-                $this->groups->add($group);
-            }
+            $this->groups->add($group);
 
             $this->groupCache[$input->normalizedGroupName] = $group;
         }

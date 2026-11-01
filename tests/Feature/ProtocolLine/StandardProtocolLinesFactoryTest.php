@@ -7,9 +7,12 @@ namespace Tests\Feature\ProtocolLine;
 use App\Application\Service\Event\ParseEventProtocol;
 use App\Application\Service\Event\ParseEventProtocolService;
 use App\Domain\Competition\Competition;
+use App\Domain\Distance\Distance;
 use App\Domain\Event\Event;
 use App\Domain\Event\EventProcessingStatus;
 use App\Domain\Event\ProtocolParser;
+use App\Domain\Group\Group;
+use App\Domain\Group\GroupNameNormalizer;
 use App\Domain\ProtocolLine\Factory\StandardProtocolLinesFactory;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\ProtocolLine\ProtocolLineInput;
@@ -17,12 +20,15 @@ use App\Domain\ProtocolLine\ProtocolLineRepository;
 use App\Domain\Shared\Clock;
 use App\Domain\Shared\FrozenClock;
 use Carbon\Carbon;
+use Illuminate\Database\Connection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Testing\Fakes\EventFake;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 use function array_fill;
+use function array_filter;
+use function str_contains;
 
 final class StandardProtocolLinesFactoryTest extends TestCase
 {
@@ -32,6 +38,12 @@ final class StandardProtocolLinesFactoryTest extends TestCase
     {
         yield 'single line' => [1];
         yield 'multiple lines' => [2];
+    }
+
+    public static function distinctGroupCounts(): iterable
+    {
+        yield 'one group' => [1];
+        yield 'fifty groups' => [50];
     }
 
     #[Test]
@@ -138,7 +150,103 @@ final class StandardProtocolLinesFactoryTest extends TestCase
         $this->assertSame(EventProcessingStatus::IDENTIFYING, $event->fresh()->processing_status);
     }
 
-    private function input(): ProtocolLineInput
+    #[Test]
+    #[DataProvider('distinctGroupCounts')]
+    public function existing_groups_are_loaded_in_one_query(int $count): void
+    {
+        $event = Event::factory()->createOne(['competition_id' => Competition::factory()->createOne()->id]);
+        $inputs = [];
+        for ($i = 1; $i <= $count; ++$i) {
+            Group::factory()->createOne(['id' => 1000 + $i, 'name' => 'Group ' . $i]);
+            $inputs[] = $this->input('Group ' . $i, $this->app->make(GroupNameNormalizer::class)->normalize('Group ' . $i));
+        }
+        $connection = $this->app->make(Connection::class);
+        $connection->enableQueryLog();
+        $connection->flushQueryLog();
+        try {
+            $lines = $this->app->make(StandardProtocolLinesFactory::class)->create($event, $inputs, 42);
+            $queries = array_filter($connection->getQueryLog(), static fn (array $query): bool => str_contains($query['query'], 'from `groups`'));
+            $this->assertCount(1, $queries);
+            $this->assertCount($count, $lines);
+            foreach ($lines as $i => $line) {
+                $distance = Distance::query()->findOrFail($line->distance_id);
+                $this->assertSame($inputs[$i]->normalizedGroupName, $distance->group->normalize_name);
+            }
+        } finally {
+            $connection->disableQueryLog();
+            $connection->flushQueryLog();
+        }
+    }
+
+    #[Test]
+    public function a_repeated_unknown_group_is_created_once_and_an_inactive_one_is_not_reused(): void
+    {
+        $event = Event::factory()->createOne(['competition_id' => Competition::factory()->createOne()->id]);
+        $inactive = Group::factory()->createOne(['name' => 'M21', 'normalize_name' => 'm21', 'active' => false]);
+        $lines = $this->app->make(StandardProtocolLinesFactory::class)->create($event, [$this->input(), $this->input()], 42);
+
+        $this->assertCount(2, $lines);
+        $this->assertSame($lines[0]->distance_id, $lines[1]->distance_id);
+        $groupId = Distance::query()->findOrFail($lines[0]->distance_id)->group_id;
+        $this->assertNotSame($inactive->id, $groupId);
+        $this->assertSame(1, Group::query()->where('normalize_name', 'm21')->where('active', true)->count());
+    }
+
+    #[Test]
+    public function caches_do_not_reuse_a_previous_events_distance_or_a_disabled_group(): void
+    {
+        $competition = Competition::factory()->createOne();
+        $first = Event::factory()->createOne(['competition_id' => $competition->id]);
+        $second = Event::factory()->createOne(['competition_id' => $competition->id]);
+        $factory = $this->app->make(StandardProtocolLinesFactory::class);
+        $firstLine = $factory->create($first, [$this->input()], 42)[0];
+        $firstDistance = Distance::query()->findOrFail($firstLine->distance_id);
+        Group::query()->whereKey($firstDistance->group_id)->update(['active' => false]);
+
+        $secondLine = $factory->create($second, [$this->input()], 42)[0];
+        $secondDistance = Distance::query()->findOrFail($secondLine->distance_id);
+        $this->assertSame($second->id, $secondDistance->event_id);
+        $this->assertNotSame($firstDistance->group_id, $secondDistance->group_id);
+    }
+
+    #[Test]
+    public function the_same_active_group_gets_a_separate_distance_for_each_event(): void
+    {
+        $competition = Competition::factory()->createOne();
+        $first = Event::factory()->createOne(['competition_id' => $competition->id]);
+        $second = Event::factory()->createOne(['competition_id' => $competition->id]);
+        $group = Group::factory()->createOne(['name' => 'M21', 'normalize_name' => 'm21']);
+        $factory = $this->app->make(StandardProtocolLinesFactory::class);
+        $firstLine = $factory->create($first, [$this->input()], 42)[0];
+        $secondLine = $factory->create($second, [$this->input()], 42)[0];
+
+        $firstDistance = Distance::query()->findOrFail($firstLine->distance_id);
+        $secondDistance = Distance::query()->findOrFail($secondLine->distance_id);
+        $this->assertSame($group->id, $firstDistance->group_id);
+        $this->assertSame($group->id, $secondDistance->group_id);
+        $this->assertSame($first->id, $firstDistance->event_id);
+        $this->assertSame($second->id, $secondDistance->event_id);
+        $this->assertNotSame($firstLine->distance_id, $secondLine->distance_id);
+    }
+
+    #[Test]
+    public function empty_input_does_not_query_groups(): void
+    {
+        $event = Event::factory()->createOne(['competition_id' => Competition::factory()->createOne()->id]);
+        $connection = $this->app->make(Connection::class);
+        $connection->enableQueryLog();
+        $connection->flushQueryLog();
+        try {
+            $this->app->make(StandardProtocolLinesFactory::class)->create($event, [], 42);
+            $queries = array_filter($connection->getQueryLog(), static fn (array $query): bool => str_contains($query['query'], 'from `groups`'));
+            $this->assertCount(0, $queries);
+        } finally {
+            $connection->disableQueryLog();
+            $connection->flushQueryLog();
+        }
+    }
+
+    private function input(string $group = 'M21', string $normalizedName = 'm21'): ProtocolLineInput
     {
         return new ProtocolLineInput(
             serialNumber: 1,
@@ -153,8 +261,8 @@ final class StandardProtocolLinesFactoryTest extends TestCase
             completeRank: null,
             points: null,
             vk: false,
-            group: 'M21',
-            normalizedGroupName: 'm21',
+            group: $group,
+            normalizedGroupName: $normalizedName,
             distanceLength: 1000,
             distancePoints: 10,
         );
