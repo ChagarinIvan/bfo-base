@@ -5,7 +5,7 @@
 **Status**: Implemented and locally validated
 **Input**: Полный spec-kit. Хранить у Person время последнего перерасчёта разряда
 и причину. Новые поля являются частью PersonView рядом с текущим разрядом,
-доступны только авторизованным пользователям. Новый блок UI не нужен.
+доступны только авторизованным пользователям. В карточке Person под текущим разрядом показываются время и причина перерасчёта только авторизованным.
 
 ## User scenarios and testing
 
@@ -63,7 +63,7 @@ Independent test: сравнить guest/auth ответы существующ�
   Миграция MUST добавить NOT NULL reason с временным default unknown и затем убрать default.
   Новые Person MUST явно получать Unknown при создании в приложении.
 - **FR-006**: Новые поля MUST входить в существующий PersonView вместе с rankId,
-  но сериализоваться только для authenticated, в camelCase. Нового endpoint/UI нет.
+  но сериализоваться только для authenticated, в camelCase. Нового endpoint нет; карточка Person показывает эти поля под текущим разрядом для authenticated.
 - **FR-007**: Commands, транзакции, lock, Impression updated и PersonRanksUpdated MUST сохранять контракты.
 - **FR-008**: Изменения MUST иметь unit/integration/API tests, полный quality run и updates запись.
 
@@ -82,7 +82,7 @@ Independent test: сравнить guest/auth ответы существующ�
 
 ## Assumptions and clarifications
 
-- Пользователь выбрал БД/API без UI и явно ограничил доступ authenticated.
+- Пользователь добавил отображение в карточке Person к БД/API и явно ограничил доступ authenticated.
 - Это поля существующего PersonView, не отдельный resource.
 - Историческое время неизвестно, поэтому null вместо фиктивной даты миграции.
 - Полный прогон включает specify/review/plan/review/tasks/analyze/implement/converge.
@@ -103,3 +103,10 @@ Independent test: сравнить guest/auth ответы существующ�
 
 Причина описывает источник операции; пользовательский request не выбирает её.
 Generic queue jobs сохраняют переданную причину, старые payload без неё используют manual.
+
+## Карточка Person, уточнение 2026-11-06
+
+Авторизованный пользователь видит под текущим разрядом дату/время последнего
+перерасчёта и локализованную причину. При неизвестной дате показывается «Невядома».
+Каждый reason, включая historical protocol и unknown, имеет белорусскую подпись.
+Гость не видит обе строки даже при наличии metadata в ответе. Новых запросов нет.

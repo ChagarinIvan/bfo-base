@@ -106,3 +106,17 @@ schema, HTTP startup и N+1. Полный набор повторно не за�
 Финальные CS, STAN и Rector dry-run PASS. Новых запросов в production нет.
 Spec/contract/checklist сверены, T018–T019 выполнены. Изменена исходная миграция;
 на уже мигрированных БД эта правка автоматически не выполняется.
+
+## Карточка Person, 2026-11-06
+
+Regression-first: до реализации 9 новых auth/date/reason tests FAIL, guest PASS.
+После реализации PersonPromptPersonInfo: 15/15 PASS. Проверены все восемь reasons,
+положение сразу под текущим разрядом, время с секундами, null timestamp,
+unknown reason и отсутствие строк у guest даже при populated API response.
+Используются существующие данные getPerson и формат даты impressionModels,
+новых запросов/relations нет. PHP-код и API-контракт не менялись.
+
+Frontend CI PASS: ESLint/Prettier, vue-tsc, 85 files / 293 tests, Vite build.
+git diff --check PASS. Backend suites не повторялись: PHP и зависимости неизменны.
+Spec/contract/checklist сверены, T020–T021 выполнены, одна существующая updates
+запись 054 обновлена. Commit/push не выполнялись.

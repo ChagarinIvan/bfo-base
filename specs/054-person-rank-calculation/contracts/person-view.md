@@ -19,3 +19,8 @@ research.md; API POST rebuild использует manual, status 204 не ме�
 
 rankCalculationReason всегда string для authenticated, включая unknown до первого
 расчёта. rankCalculatedAt остаётся nullable; у guest оба поля отсутствуют.
+
+Карточка Person использует эти поля без дополнительных запросов. Только authenticated
+видит две строки сразу под разрядом: время с секундами и локализованную причину.
+Дата null отображается как «Невядома», unknown и исторический protocol имеют подписи.
+У guest строки скрыты независимо от содержимого ответа API.

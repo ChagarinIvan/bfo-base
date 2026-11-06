@@ -74,3 +74,11 @@ Spec/plan review PASS по запросу пользователя: измени
 NOT NULL reason с временным default unknown, затем снять default. Person задаёт
 Unknown при создании; дата остаётся nullable. Обновить DTO/assembler/API union
 и тесты миграции: backfill, NOT NULL, отсутствие default, rollback.
+
+## Карточка Person, уточнение 2026-11-06
+
+Spec/plan review PASS по явному запросу пользователя. Общая карточка PersonLayout
+использует PersonPromptPersonInfo: добавить две auth-only строки сразу после rank,
+формат даты из impressionModels, подписи восьми reasons из by.json. Данные уже
+приходят из getPerson, новых запросов нет. Component regressions: auth/guest,
+порядок строк, все причины, неизвестная дата. Затем frontend CI.

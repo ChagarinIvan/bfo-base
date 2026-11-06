@@ -41,7 +41,7 @@ Rejected: observer/save hook, updated_at как время расчёта, backf
 Decision: rankCalculatedAt ISO8601 ATOM и rankCalculationReason string в
 ViewPersonDto, оба Groups authenticated рядом с rankId. Используется тот же
 serializer, что для created/updated, поля отсутствуют у guest. TypeScript Person
-получает optional nullable timestamp и optional non-null reason union. UI не изменяется по ответу пользователя.
+получает optional nullable timestamp и optional non-null reason union. По последующему запросу пользователя карточка Person показывает metadata только authenticated.
 
 ## Хранение
 

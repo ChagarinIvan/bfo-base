@@ -59,3 +59,8 @@ US2 покрывает все источники, US3 обеспечивает �
 
 - [x] T018 Сделать reason NOT NULL, временный DB default unknown снять в той же миграции; инициализировать Person.
 - [x] T019 Обновить контракты и регрессии migration/API/creation; пройти quality gates.
+
+## Карточка Person
+
+- [x] T020 Добавить auth-only время и локализованную причину под текущим разрядом в PersonPromptPersonInfo.
+- [x] T021 Проверить component regressions и frontend CI; обновить контракт, updates и validation.
