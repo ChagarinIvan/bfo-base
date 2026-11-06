@@ -10,6 +10,7 @@ use App\Application\Service\Person\RebuildPersonRanksService;
 use App\Application\Service\PersonPrompt\ChangePersonPrompt;
 use App\Application\Service\PersonPrompt\ChangePersonPromptService;
 use App\Domain\Auth\Impression;
+use App\Domain\Person\RankCalculationReason;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Domain\ProtocolLine\ProtocolLineRepository;
 use App\Domain\Shared\Clock;
@@ -40,11 +41,11 @@ final readonly class SetPersonToProtocolLinesService
             $command->userId(),
         ));
 
-        $this->ranks->execute(new RebuildPersonRanks($command->personId(), $command->userId()));
+        $this->ranks->execute(new RebuildPersonRanks($command->personId(), $command->userId(), RankCalculationReason::ProtocolPersonChanged));
 
         $oldPersonIds->each(function (int $personId) use ($command): void {
             try {
-                $this->ranks->execute(new RebuildPersonRanks($personId, $command->userId()));
+                $this->ranks->execute(new RebuildPersonRanks($personId, $command->userId(), RankCalculationReason::ProtocolPersonChanged));
             } catch (PersonNotFound) {
                 // A former person can be deleted concurrently with reassignment.
             }

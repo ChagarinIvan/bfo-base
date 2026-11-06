@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Collection;
+use Override;
 
 /**
  * @property int $id
@@ -36,6 +37,8 @@ use Illuminate\Support\Collection;
  * @property Carbon|null $current_rank_started_on
  * @property Carbon|null $current_rank_activated_on
  * @property Carbon|null $current_rank_finished_on
+ * @property Carbon|null $rank_calculated_at
+ * @property RankCalculationReason $rank_calculation_reason
  * @property Carbon|null $next_rank_activation_on
  *
  * @property Impression $created
@@ -48,12 +51,16 @@ use Illuminate\Support\Collection;
  *
  * @see PersonFactory
  */
-#[Fillable(['lastname', 'firstname', 'birthday', 'club_id', 'from_base', 'created', 'updated', 'current_rank', 'current_rank_started_on', 'current_rank_activated_on', 'current_rank_finished_on', 'next_rank_activation_on'])]
+#[Fillable(['lastname', 'firstname', 'birthday', 'club_id', 'from_base', 'created', 'updated', 'current_rank', 'current_rank_started_on', 'current_rank_activated_on', 'current_rank_finished_on', 'next_rank_activation_on', 'rank_calculated_at', 'rank_calculation_reason'])]
 #[Table(name: 'person')]
 class Person extends AggregatedModel
 {
     /** @see PersonFactory */
     use HasFactory;
+
+    /** @var array<string, mixed> */
+    #[Override]
+    protected $attributes = ['rank_calculation_reason' => RankCalculationReason::Unknown->value];
 
     /** @var list<PersonRankHistory>|null */
     private ?array $rankHistoryToPersist = null;
@@ -105,13 +112,15 @@ class Person extends AggregatedModel
         $this->recordThat(new PersonDisabled($this));
     }
 
-    public function updateRanks(PersonRankState $rankState, Impression $impression): void
+    public function updateRanks(PersonRankState $rankState, Impression $impression, RankCalculationReason $reason): void
     {
         $this->current_rank = $rankState->current->rank;
         $this->current_rank_started_on = $rankState->current->startedOn;
         $this->current_rank_activated_on = $rankState->current->activatedOn;
         $this->current_rank_finished_on = $rankState->current->finishedOn;
         $this->next_rank_activation_on = $rankState->nextActivationOn;
+        $this->rank_calculated_at = $impression->at->copy();
+        $this->rank_calculation_reason = $reason;
         $this->updated = $impression;
 
         $this->rankHistoryToPersist = $rankState->history;
@@ -146,6 +155,8 @@ class Person extends AggregatedModel
             'current_rank_activated_on' => 'datetime:Y-m-d',
             'current_rank_finished_on' => 'datetime:Y-m-d',
             'next_rank_activation_on' => 'datetime:Y-m-d',
+            'rank_calculated_at' => 'datetime',
+            'rank_calculation_reason' => RankCalculationReason::class,
             'created' => ImpressionCast::class,
             'updated' => ImpressionCast::class,
         ];

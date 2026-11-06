@@ -15,6 +15,7 @@ use App\Domain\Person\Citizenship;
 use App\Domain\Person\Person;
 use App\Domain\Person\PersonRank;
 use App\Domain\Person\PersonRepository;
+use App\Domain\Person\RankCalculationReason;
 use App\Domain\Rank\Rank;
 use Carbon\Carbon;
 use PHPUnit\Framework\Attributes\Test;
@@ -53,19 +54,16 @@ final class ViewPersonServiceTest extends TestCase
     #[Test]
     public function it_views_person(): void
     {
-        /** @var Person&MockObject $person */
-        $person = $this->getMockBuilder(Person::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['currentRank'])
-            ->getMock();
-        $person->id = 42;
-        $person->lastname = 'Doe';
-        $person->firstname = 'Jane';
-        $person->birthday = null;
-        $person->citizenship = Citizenship::BELARUS;
-        $person->club_id = null;
-        $person->created = new Impression(Carbon::parse('2026-01-01'), 1);
-        $person->updated = new Impression(Carbon::parse('2026-01-02'), 1);
+        $person = $this->createMock(Person::class);
+        $person->expects($this->atLeastOnce())->method('__get')->willReturnMap([
+            ['id', 42],
+            ['lastname', 'Doe'],
+            ['firstname', 'Jane'],
+            ['citizenship', Citizenship::BELARUS],
+            ['rank_calculation_reason', RankCalculationReason::Unknown],
+            ['created', new Impression(Carbon::parse('2026-01-01'), 1)],
+            ['updated', new Impression(Carbon::parse('2026-01-02'), 1)],
+        ]);
         $person
             ->expects($this->once())
             ->method('currentRank')
@@ -81,6 +79,7 @@ final class ViewPersonServiceTest extends TestCase
         $dto = $this->service->execute(new ViewPerson((string) $person->id));
 
         $this->assertInstanceOf(ViewPersonDto::class, $dto);
-        $this->assertSame($person->lastname, $dto->lastname);
+        $this->assertSame('Doe', $dto->lastname);
+        $this->assertSame('unknown', $dto->rankCalculationReason);
     }
 }

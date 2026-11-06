@@ -224,12 +224,24 @@ export interface ClubOption {
     name: string
 }
 
+export type RankCalculationReason =
+    | 'unknown'
+    | 'manual'
+    | 'protocol'
+    | 'event_results_processed'
+    | 'event_results_cleared'
+    | 'protocol_person_changed'
+    | 'daily'
+    | 'refill'
+
 export interface Person {
     id: string
     lastname: string
     firstname: string
     birthday: string | null
     rankId: number
+    rankCalculatedAt?: string | null
+    rankCalculationReason?: RankCalculationReason
     citizenship: string
     clubId: string | null
     created?: Impression

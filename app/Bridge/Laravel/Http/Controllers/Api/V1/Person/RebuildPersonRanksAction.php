@@ -8,6 +8,7 @@ use App\Application\Dto\Auth\UserId;
 use App\Application\Service\Person\RebuildPersonRanks;
 use App\Application\Service\Person\RebuildPersonRanksService;
 use App\Bridge\Laravel\Http\Controllers\ApiAction;
+use App\Domain\Person\RankCalculationReason;
 use Illuminate\Routing\Controller as BaseController;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -20,7 +21,7 @@ final class RebuildPersonRanksAction extends BaseController
         RebuildPersonRanksService $service,
         UserId $userId,
     ): Response {
-        $service->execute(new RebuildPersonRanks((int) $personId, $userId));
+        $service->execute(new RebuildPersonRanks((int) $personId, $userId, RankCalculationReason::Manual));
 
         return new Response(status: Response::HTTP_NO_CONTENT);
     }

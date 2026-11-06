@@ -72,6 +72,86 @@ describe('person prompt person info', () => {
         getUsers.mockResolvedValue([])
     })
 
+    function mountCard() {
+        return mount(PersonPromptPersonInfo, {
+            props: { personId: '1' },
+            global: {
+                stubs: {
+                    Card: {
+                        template:
+                            '<div><slot name="title" /><slot name="content" /></div>',
+                    },
+                    ImpressionDetails: true,
+                    Message: { template: '<div><slot /></div>' },
+                    RouterLink: routerLinkStub,
+                },
+            },
+        })
+    }
+
+    it.each([
+        ['unknown', 'Невядома'],
+        ['manual', 'Ручны пераразлік'],
+        ['protocol', 'Апрацоўка пратакола'],
+        ['event_results_processed', 'Апрацоўка вынікаў этапу'],
+        ['event_results_cleared', 'Ачыстка вынікаў этапу'],
+        ['protocol_person_changed', 'Змена прывязкі вынікаў да спартсмена'],
+        ['daily', 'Штодзённая праверка'],
+        ['refill', 'Поўны пераразлік'],
+    ] as const)(
+        'shows calculation time and %s below the current rank for authenticated users',
+        async (reason, label) => {
+            getPerson.mockResolvedValue({
+                ...person('1', 'Runner'),
+                rankCalculatedAt: '2026-11-06T12:34:56+00:00',
+                rankCalculationReason: reason,
+            })
+            const wrapper = mountCard()
+            await flushPromises()
+
+            const rows = wrapper.findAll('tr')
+            expect(rows[3].text()).toContain('Разрад')
+            expect(rows[4].text()).toContain('Апошні пераразлік разраду')
+            expect(rows[4].text()).toContain('2026-11-06 12:34:56')
+            expect(rows[4].get('time').attributes('datetime')).toBe(
+                '2026-11-06T12:34:56+00:00',
+            )
+            expect(rows[5].text()).toContain('Прычына пераразліку')
+            expect(rows[5].text()).toContain(label)
+        },
+    )
+
+    it('shows unknown metadata before the first calculation', async () => {
+        getPerson.mockResolvedValue({
+            ...person('1', 'Runner'),
+            rankCalculatedAt: null,
+            rankCalculationReason: 'unknown',
+        })
+        const wrapper = mountCard()
+        await flushPromises()
+
+        const rows = wrapper.findAll('tr')
+        expect(rows[4].text()).toContain('Невядома')
+        expect(rows[5].text()).toContain('Невядома')
+        expect(wrapper.find('time').exists()).toBe(false)
+    })
+
+    it('hides calculation metadata from guests even when supplied by the API', async () => {
+        auth.isAuthenticated = false
+        getPerson.mockResolvedValue({
+            ...person('1', 'Runner'),
+            rankCalculatedAt: '2026-11-06T12:34:56+00:00',
+            rankCalculationReason: 'manual',
+        })
+        const wrapper = mountCard()
+        await flushPromises()
+
+        expect(wrapper.text()).not.toContain('Апошні пераразлік разраду')
+        expect(wrapper.text()).not.toContain('Прычына пераразліку')
+        expect(wrapper.text()).not.toContain('2026-11-06')
+        expect(wrapper.text()).not.toContain('Ручны пераразлік')
+    })
+
     it('does not let an older person response overwrite the current one', async () => {
         const first = deferred<Person>()
         const second = deferred<Person>()

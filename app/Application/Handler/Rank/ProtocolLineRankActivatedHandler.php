@@ -8,6 +8,7 @@ use App\Application\Dto\Auth\UserId;
 use App\Application\Service\Person\Exception\PersonNotFound;
 use App\Application\Service\Person\RebuildPersonRanks;
 use App\Application\Service\Person\RebuildPersonRanksService;
+use App\Domain\Person\RankCalculationReason;
 use App\Domain\ProtocolLine\Event\ProtocolLineRankActivated;
 use Illuminate\Contracts\Queue\ShouldQueueAfterCommit;
 
@@ -21,7 +22,7 @@ final readonly class ProtocolLineRankActivatedHandler implements ShouldQueueAfte
     {
         if ($event->protocolLine->person_id) {
             try {
-                $this->service->execute(new RebuildPersonRanks($event->protocolLine->person_id, new UserId($event->impression->by)));
+                $this->service->execute(new RebuildPersonRanks($event->protocolLine->person_id, new UserId($event->impression->by), RankCalculationReason::Manual));
             } catch (PersonNotFound) {
                 // The queued activation no longer has a person to update.
             }

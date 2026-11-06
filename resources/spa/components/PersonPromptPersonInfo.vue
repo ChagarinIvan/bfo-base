@@ -7,8 +7,14 @@ import { getClubOptions } from '../api/clubs'
 import { getPerson } from '../api/persons'
 import { getRanks, type RankOption } from '../api/ranks'
 import { getUsers } from '../api/users'
-import type { ClubOption, Person, User } from '../api/types'
+import type {
+    ClubOption,
+    Person,
+    RankCalculationReason,
+    User,
+} from '../api/types'
 import ImpressionDetails from './ImpressionDetails.vue'
+import { formatImpressionFullDate } from './impressionModels'
 import { t } from '../i18n'
 import { useAuthStore } from '../stores/auth'
 
@@ -68,6 +74,10 @@ function rankLabel(rankId: number): string {
     )
 }
 
+function calculationReasonLabel(reason?: RankCalculationReason): string {
+    return t(`spa.person.rank_reason_${reason ?? 'unknown'}`)
+}
+
 function clubLabel(clubId: string | null): string {
     return clubs.value.find((club) => club.id === clubId)?.name ?? '—'
 }
@@ -117,6 +127,34 @@ watch(
                     <tr>
                         <th>{{ t('spa.person.rank') }}</th>
                         <td>{{ rankLabel(person.rankId) }}</td>
+                    </tr>
+                    <tr v-if="auth.isAuthenticated">
+                        <th>{{ t('spa.person.rank_calculated_at') }}</th>
+                        <td>
+                            <time
+                                v-if="person.rankCalculatedAt"
+                                :datetime="person.rankCalculatedAt"
+                            >
+                                {{
+                                    formatImpressionFullDate(
+                                        person.rankCalculatedAt,
+                                    )
+                                }}
+                            </time>
+                            <span v-else>{{
+                                t('spa.person.rank_reason_unknown')
+                            }}</span>
+                        </td>
+                    </tr>
+                    <tr v-if="auth.isAuthenticated">
+                        <th>{{ t('spa.person.rank_calculation_reason') }}</th>
+                        <td>
+                            {{
+                                calculationReasonLabel(
+                                    person.rankCalculationReason,
+                                )
+                            }}
+                        </td>
                     </tr>
                     <tr>
                         <th>{{ t('spa.person.club') }}</th>
