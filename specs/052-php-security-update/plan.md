@@ -66,3 +66,10 @@ ExplicitNullableObjectInstanceRector: существующая null-провер
 конкретный HTTP UploadedFile в Domain. Остальные правила/пути не отключаются.
 После автоматической правки выполнить cs-fix, review diff и все финальные гейты.
 Локальный runtime не переустанавливается. Server image собирает пользователь.
+
+## Security maintenance 2026-11-06
+
+Spec/plan review PASS: patch update четырёх Symfony packages с minimal-changes,
+без обновления несвязанных dependencies. Validate, platform, production/full
+audit и финальные quality gates; существующее abandoned dev warning отразить
+отдельно. Серверную установку и отправку изменений не выполнять автоматически.
