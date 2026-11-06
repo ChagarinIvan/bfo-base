@@ -2,12 +2,15 @@
 
 ## Причины и источники
 
-Decision: RankCalculationReason, string backed enum из четырёх значений.
+Decision: RankCalculationReason, string backed enum с отдельными причинами бизнес-сценариев.
 
 | Reason | Существующий источник |
 | --- | --- |
 | manual | RebuildPersonRanksAction; ProtocolLineRankActivatedHandler после ручной активации/изменения даты |
-| protocol | StandardEventPersonRankUpdater; CleanupEventResultsService; SetPersonToProtocolLinesService для нового и прежнего Person |
+| event_results_processed | StandardEventPersonRankUpdater |
+| event_results_cleared | CleanupEventResultsService |
+| protocol_person_changed | SetPersonToProtocolLinesService для нового и прежнего Person |
+| protocol | Совместимость существующих записей и старых заданий |
 | daily | RebuildExpiredPersonRanksCommand, ежедневная проверка истечения/активации |
 | refill | RefillPersonRanksCommand, полный административный пересчёт |
 
@@ -16,9 +19,8 @@ Generic bulk/atomic jobs не имеют production caller, но остаютс�
 Старые serialized jobs не содержат reason. Настоящий default свойства manual
 инициализируется при unserialize старого payload; default параметра конструктора нет.
 
-Rationale: причины описывают источник, а не изменение разряда. Дополнительные
-assignment/activation/cleanup не нужны для текущего запроса; соответствие явно
-зафиксировано. Не делать вывод о причине из userId, criteria или текущего времени.
+Rationale: причины различают обработку результатов, очистку и смену спортсмена.
+Не делать вывод о причине из userId, criteria или текущего времени.
 Исследование всех callers выполнено отдельным research agent по plan skill.
 
 ## Время и атомарность

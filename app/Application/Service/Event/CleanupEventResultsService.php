@@ -50,7 +50,7 @@ final readonly class CleanupEventResultsService
 
             foreach ($personIds as $personId) {
                 try {
-                    $this->rebuildPersonRanks->execute(new RebuildPersonRanks($personId, new UserId($event->updated->by), RankCalculationReason::Protocol));
+                    $this->rebuildPersonRanks->execute(new RebuildPersonRanks($personId, new UserId($event->updated->by), RankCalculationReason::EventResultsCleared));
                 } catch (PersonNotFound) {
                     // A former participant may have been disabled since the protocol was processed.
                 }

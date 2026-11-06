@@ -224,7 +224,14 @@ export interface ClubOption {
     name: string
 }
 
-export type RankCalculationReason = 'manual' | 'protocol' | 'daily' | 'refill'
+export type RankCalculationReason =
+    | 'manual'
+    | 'protocol'
+    | 'event_results_processed'
+    | 'event_results_cleared'
+    | 'protocol_person_changed'
+    | 'daily'
+    | 'refill'
 
 export interface Person {
     id: string

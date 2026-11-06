@@ -21,7 +21,7 @@ Independent test: null defaults, success, same-rank, unrelated update, rollback,
 
 ## Phase 4: US2, источник запуска, P1
 
-Independent test: четыре reasons, все production paths и очередь, execution time.
+Independent test: все действующие reasons, все production paths и очередь, execution time.
 
 - [x] T007 [US2] Расширить propagation regressions в tests/Application/Service/Rank/RebuildPersonRanksServiceTest.php, tests/Bridge/Laravel и tests/Feature/{Person,Rank,Event,Api/V1/PersonRankHistory,ProtocolLine}/
 - [x] T008 [US2] Передать enum по всем callers app/Application/{Service,Handler} и app/Bridge/Laravel/{Jobs,Console/Commands,Http/Controllers/Api/V1/Person}
@@ -48,3 +48,9 @@ US2 покрывает все источники, US3 обеспечивает �
 Независимое чтение callers и тестов US2 может выполняться параллельно; API tests
 и migration tests затрагивают разные файлы, но требуют готового schema/model при green.
 Полные suites один раз в конце, узкие tests между фазами.
+
+## Уточнение причин 2026-11-06
+
+- [x] T015 Разделить причины обработки результатов, очистки и смены спортсмена; сохранить старый protocol.
+- [x] T016 Обновить API-контракт, артефакты и существующую updates запись.
+- [x] T017 Проверить регрессии трёх callers и совместимость прежних значений, запустить quality gates.

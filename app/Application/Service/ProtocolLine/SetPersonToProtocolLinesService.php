@@ -41,11 +41,11 @@ final readonly class SetPersonToProtocolLinesService
             $command->userId(),
         ));
 
-        $this->ranks->execute(new RebuildPersonRanks($command->personId(), $command->userId(), RankCalculationReason::Protocol));
+        $this->ranks->execute(new RebuildPersonRanks($command->personId(), $command->userId(), RankCalculationReason::ProtocolPersonChanged));
 
         $oldPersonIds->each(function (int $personId) use ($command): void {
             try {
-                $this->ranks->execute(new RebuildPersonRanks($personId, $command->userId(), RankCalculationReason::Protocol));
+                $this->ranks->execute(new RebuildPersonRanks($personId, $command->userId(), RankCalculationReason::ProtocolPersonChanged));
             } catch (PersonNotFound) {
                 // A former person can be deleted concurrently with reassignment.
             }

@@ -22,9 +22,9 @@ manual activation, старые jobs, все четыре enum значения 
 | --- | --- | --- |
 | API rebuild | manual | PersonRankCalculationViewTest, request reason не влияет |
 | Manual rank activation/date | manual | PersonRankCalculationTest, direct after-commit handler |
-| Protocol rank stage | protocol | StandardEventPersonRankUpdaterTest |
-| Cleanup/replacement | protocol | ReplaceEventProtocolTest, affected и removed Person |
-| Reassignment, new/old Person | protocol | AssignPersonOnProtocolLinesServiceTest, typed mutation argument; shared service passes same reason for both branches |
+| Protocol rank stage | event_results_processed | StandardEventPersonRankUpdaterTest |
+| Cleanup/replacement | event_results_cleared | ReplaceEventProtocolTest, affected и removed Person |
+| Reassignment, new/old Person | protocol_person_changed | AssignPersonOnProtocolLinesServiceTest, typed mutation argument; shared service passes same reason for both branches |
 | Daily command/selection | daily | RebuildExpiredPersonRanksTest, command + service + unselected Person |
 | Bulk refill command | refill | RefillPersonRanksCommandTest |
 | Queue bulk/atomic | selected reason | RebuildPersonRanksJobTest; PersonRankCalculationTest enum cases + serialized old job |
@@ -69,3 +69,19 @@ partial=0, contradicts=0, unrequested=0. Новые задачи не добав
 не переписывал tasks. После завершения assessment implement отметил T014.
 14/14 tasks выполнены. Hooks отсутствуют. Требование публикации updates выполнено
 одной записью 054, новый блок UI не добавлялся. Все файлы принадлежат этой фиче.
+
+## Уточнение причин 2026-11-06
+
+Red: assignment regression падает до добавления ProtocolPersonChanged.
+Green: 22 tests / 151 assertions, включая три сценария и все семь enum cases
+в сохранении и очереди. Старый protocol проверяется тем же data provider
+и существующим API тестом; миграция и backfill не нужны. Новых запросов нет.
+
+Quality: composer cs, composer stan, Rector dry-run PASS. Frontend lint/Prettier
+и typecheck PASS. Общий Vitest: 281 PASS, два таймаута в protocolLineImpressions;
+изолированный повтор файла: 24/24 PASS. Vite build PASS.
+
+Полный PHP: 723 tests / 5510 assertions PASS, 15 прежних PHPUnit notices.
+Включены HTTP startup smoke и существующие N+1 regression tests.
+Сверка spec/contract/checklist: три production callers используют разные причины,
+старое protocol читается без переписывания истории. T015–T017 выполнены.

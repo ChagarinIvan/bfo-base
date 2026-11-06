@@ -54,7 +54,7 @@ final class AssignPersonOnProtocolLinesServiceTest extends TestCase
             ['id', 42],
             ['birthday', null],
         ]);
-        $person->expects($this->once())->method('updateRanks')->with($this->isInstanceOf(PersonRankState::class), $this->isInstanceOf(Impression::class), RankCalculationReason::Protocol);
+        $person->expects($this->once())->method('updateRanks')->with($this->isInstanceOf(PersonRankState::class), $this->isInstanceOf(Impression::class), RankCalculationReason::ProtocolPersonChanged);
         $persons = $this->createMock(PersonRepository::class);
         $persons->expects($this->once())
             ->method('lockById')
