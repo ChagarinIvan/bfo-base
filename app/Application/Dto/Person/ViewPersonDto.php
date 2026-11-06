@@ -18,7 +18,7 @@ final readonly class ViewPersonDto
         #[Groups(['authenticated'])]
         public ?string $rankCalculatedAt,
         #[Groups(['authenticated'])]
-        public ?string $rankCalculationReason,
+        public string $rankCalculationReason,
         public string $citizenship,
         public ?string $clubId,
         #[Groups(['authenticated'])]

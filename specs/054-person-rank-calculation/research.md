@@ -6,6 +6,7 @@ Decision: RankCalculationReason, string backed enum с отдельными пр
 
 | Reason | Существующий источник |
 | --- | --- |
+| unknown | Историческая причина неизвестна или новый Person без расчёта |
 | manual | RebuildPersonRanksAction; ProtocolLineRankActivatedHandler после ручной активации/изменения даты |
 | event_results_processed | StandardEventPersonRankUpdater |
 | event_results_cleared | CleanupEventResultsService |
@@ -37,15 +38,16 @@ Rejected: observer/save hook, updated_at как время расчёта, backf
 
 ## Read contract
 
-Decision: rankCalculatedAt ISO8601 ATOM и rankCalculationReason string|null в
+Decision: rankCalculatedAt ISO8601 ATOM и rankCalculationReason string в
 ViewPersonDto, оба Groups authenticated рядом с rankId. Используется тот же
 serializer, что для created/updated, поля отсутствуют у guest. TypeScript Person
-получает optional nullable поля и union reason. UI не изменяется по ответу пользователя.
+получает optional nullable timestamp и optional non-null reason union. UI не изменяется по ответу пользователя.
 
 ## Хранение
 
-Decision: nullable datetime и nullable varchar(32), enum cast в модели. Пара null/null
-при миграции, без backfill. Up/down не затрагивают current rank. Индекс не нужен,
+Decision: nullable datetime и NOT NULL varchar(32), enum cast в модели.
+Временный default unknown заполняет старые записи, затем миграция удаляет default.
+Person инициализирует Unknown для всех новых экземпляров. Дата остаётся null. Up/down не затрагивают current rank. Индекс не нужен,
 по этим metadata нет query/filter сценария. DB-native enum отвергнут: усложняет
 эволюцию списка, Domain enum и typed commands контролируют допустимые значения.
 

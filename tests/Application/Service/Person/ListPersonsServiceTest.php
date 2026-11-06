@@ -14,6 +14,7 @@ use App\Domain\Person\Citizenship;
 use App\Domain\Person\Person;
 use App\Domain\Person\PersonRank;
 use App\Domain\Person\PersonRepository;
+use App\Domain\Person\RankCalculationReason;
 use App\Domain\Rank\Rank;
 use App\Domain\Shared\Criteria;
 use App\Domain\Shared\Pagination\ArraySliceAdapter;
@@ -45,6 +46,7 @@ final class ListPersonsServiceTest extends TestCase
         $person = $this->createStub(Person::class);
         $person->method('__get')->willReturnMap([
             ['id', 42],
+            ['rank_calculation_reason', RankCalculationReason::Unknown],
             ['lastname', 'Ivanov'],
             ['firstname', 'Ivan'],
             ['birthday', new Carbon('2001-06-04')],
@@ -69,6 +71,7 @@ final class ListPersonsServiceTest extends TestCase
         $this->assertSame('2001-06-04', $items[0]->birthday);
         $this->assertSame(Citizenship::BELARUS->value, $items[0]->citizenship);
         $this->assertNull($items[0]->clubId);
+        $this->assertSame('unknown', $items[0]->rankCalculationReason);
     }
 
     #[Test]

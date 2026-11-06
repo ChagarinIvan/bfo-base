@@ -85,3 +85,24 @@ Quality: composer cs, composer stan, Rector dry-run PASS. Frontend lint/Prettier
 Включены HTTP startup smoke и существующие N+1 regression tests.
 Сверка spec/contract/checklist: три production callers используют разные причины,
 старое protocol читается без переписывания истории. T015–T017 выполнены.
+
+## Обязательная причина 2026-11-06
+
+Исходная миграция добавляет NOT NULL reason с временным default unknown, затем
+удаляет default. Person инициализирует Unknown в приложении. Время nullable.
+Red: migration regression ожидал unknown и получил null.
+Green: 16 integration/API/migration tests, 89 assertions. Проверены backfill,
+NOT NULL, отсутствие DB default, отклонение null/пропущенного значения, up/down/up.
+Добавлена отдельная проверка MySQL schema и нового Person.
+Два старых unit-мока чтения Person обновлены под обязательный enum,
+Person Application unit suite: 16 tests PASS.
+Frontend CI PASS: lint/Prettier, typecheck, 85 files / 283 tests, Vite build.
+
+Полный прогон: 725 tests, 5512 assertions, 15 прежних notices.
+Обнаружены только две ошибки старых mocks ListPersons/ViewPerson, описанные выше.
+После исправления повторён весь Person Application unit suite: 16 tests /
+73 assertions PASS; остальные 723 tests полного прогона PASS, включая MySQL
+schema, HTTP startup и N+1. Полный набор повторно не запускался.
+Финальные CS, STAN и Rector dry-run PASS. Новых запросов в production нет.
+Spec/contract/checklist сверены, T018–T019 выполнены. Изменена исходная миграция;
+на уже мигрированных БД эта правка автоматически не выполняется.

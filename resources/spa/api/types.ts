@@ -225,6 +225,7 @@ export interface ClubOption {
 }
 
 export type RankCalculationReason =
+    | 'unknown'
     | 'manual'
     | 'protocol'
     | 'event_results_processed'
@@ -240,7 +241,7 @@ export interface Person {
     birthday: string | null
     rankId: number
     rankCalculatedAt?: string | null
-    rankCalculationReason?: RankCalculationReason | null
+    rankCalculationReason?: RankCalculationReason
     citizenship: string
     clubId: string | null
     created?: Impression

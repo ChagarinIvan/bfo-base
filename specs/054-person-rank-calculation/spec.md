@@ -19,7 +19,7 @@ Independent test: выполнить два успешных расчёта в �
 1. Given Person без метаданных, when расчёт успешен, then сохранены время и причина.
 2. Given разряд не меняется, when успешный расчёт повторён, then время обновлено.
 3. Given сохранены метаданные, when расчёт/сохранение падает, then прежние значения сохранены.
-4. Given старые Person, when применена миграция, then оба поля неизвестны, старые даты не выдумываются.
+4. Given старые Person, when применена миграция, then дата неизвестна, причина unknown, старые даты не выдумываются.
 
 ### User story 2: Причина расчёта, P1
 
@@ -39,9 +39,9 @@ Independent test: каждому действующему источнику с�
 
 Independent test: сравнить guest/auth ответы существующих Person endpoints.
 
-1. Given авторизованный пользователь, when получен PersonView, then новые nullable поля доступны.
+1. Given авторизованный пользователь, when получен PersonView, then дата nullable, причина обязательна.
 2. Given гость, when получен тот же PersonView, then новые поля отсутствуют, rankId доступен как прежде.
-3. Given Person ещё не пересчитывался после миграции, when auth читает PersonView, then оба поля null.
+3. Given Person ещё не пересчитывался после миграции, when auth читает PersonView, then дата null, причина unknown.
 
 ### Edge cases
 
@@ -55,11 +55,13 @@ Independent test: сравнить guest/auth ответы существующ�
 ## Requirements
 
 - **FR-001**: Person MUST хранить nullable время последнего успешного расчёта.
-- **FR-002**: Person MUST хранить nullable причину из закрытого набора действующих источников.
+- **FR-002**: Person MUST хранить обязательную причину из закрытого набора действующих источников.
 - **FR-003**: Каждый успешный расчёт MUST атомарно обновлять оба поля вместе с rank state,
   включая случай неизменившегося разряда. Ошибка MUST сохранять прежнее committed состояние.
 - **FR-004**: Все действующие пути расчёта MUST передавать корректную причину; очередь сохраняет источник.
-- **FR-005**: Существующие Person MUST получить null/null без недостоверного backfill.
+- **FR-005**: Существующие Person MUST получить дату null и причину unknown без выдумывания источника.
+  Миграция MUST добавить NOT NULL reason с временным default unknown и затем убрать default.
+  Новые Person MUST явно получать Unknown при создании в приложении.
 - **FR-006**: Новые поля MUST входить в существующий PersonView вместе с rankId,
   но сериализоваться только для authenticated, в camelCase. Нового endpoint/UI нет.
 - **FR-007**: Commands, транзакции, lock, Impression updated и PersonRanksUpdated MUST сохранять контракты.
@@ -90,6 +92,7 @@ Independent test: сравнить guest/auth ответы существующ�
 
 ### Confirmed reason categories
 
+- unknown: расчёт ещё не выполнялся либо историческая причина неизвестна.
 - manual: явный ручной пересчёт и ручная активация/изменение даты активации.
 - event_results_processed: обработка результатов события.
 - event_results_cleared: очистка результатов события, включая замену протокола.

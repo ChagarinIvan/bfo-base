@@ -12,7 +12,11 @@ return new class extends Migration
     {
         app(DatabaseManager::class)->connection()->getSchemaBuilder()->table('person', static function (Blueprint $table): void {
             $table->dateTime('rank_calculated_at')->nullable();
-            $table->string('rank_calculation_reason', 32)->nullable();
+            $table->string('rank_calculation_reason', 32)->default('unknown');
+        });
+
+        app(DatabaseManager::class)->connection()->getSchemaBuilder()->table('person', static function (Blueprint $table): void {
+            $table->string('rank_calculation_reason', 32)->default(null)->change();
         });
     }
 

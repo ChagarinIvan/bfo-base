@@ -67,3 +67,10 @@ Spec/plan review: причины разделены по бизнес-сцена
 Сохранить Protocol для старых данных и очереди без backfill; добавить три enum cases,
 обновить callers, API union и регрессии каждого сценария. Схема БД не меняется,
 значения помещаются в varchar(32). Транзакции, запросы и алгоритм расчёта прежние.
+
+## Обязательная причина 2026-11-06
+
+Spec/plan review PASS по запросу пользователя: изменить исходную миграцию,
+NOT NULL reason с временным default unknown, затем снять default. Person задаёт
+Unknown при создании; дата остаётся nullable. Обновить DTO/assembler/API union
+и тесты миграции: backfill, NOT NULL, отсутствие default, rollback.

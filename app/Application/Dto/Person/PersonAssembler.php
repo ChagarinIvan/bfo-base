@@ -24,7 +24,7 @@ final readonly class PersonAssembler
             birthday: $person->birthday?->format('Y-m-d'),
             rankId: $person->currentRank()->rank->value,
             rankCalculatedAt: $person->rank_calculated_at?->format(DateTimeImmutable::ATOM),
-            rankCalculationReason: $person->rank_calculation_reason?->value,
+            rankCalculationReason: $person->rank_calculation_reason->value,
             citizenship: $person->citizenship->value,
             clubId: $person->club_id ? (string) $person->club_id : null,
             created: $this->authAssembler->toImpressionDto($person->created),

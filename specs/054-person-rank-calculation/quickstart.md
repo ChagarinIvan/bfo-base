@@ -7,7 +7,7 @@
    получает ключи. Повтор с неизменным rank обновляет время; ошибка откатывает его.
 3. Protocol import -> event_results_processed, cleanup -> event_results_cleared, reassignment -> protocol_person_changed, activation -> manual,
    rebuild-expired -> daily, ranks:refill -> refill.
-4. Проверить migration up/down/up на тестовой БД, rank не меняется, null/null сохраняются.
+4. Проверить migration up/down/up на тестовой БД, rank не меняется, null/unknown сохраняются.
 5. В конце один полный `DB_DATABASE=bfo_base_test composer test`, `composer cs`,
    `composer stan`, `composer rector -- --dry-run`, `npm run ci`, `git diff --check`.
 

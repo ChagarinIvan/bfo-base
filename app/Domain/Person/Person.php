@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Collection;
+use Override;
 
 /**
  * @property int $id
@@ -37,7 +38,7 @@ use Illuminate\Support\Collection;
  * @property Carbon|null $current_rank_activated_on
  * @property Carbon|null $current_rank_finished_on
  * @property Carbon|null $rank_calculated_at
- * @property RankCalculationReason|null $rank_calculation_reason
+ * @property RankCalculationReason $rank_calculation_reason
  * @property Carbon|null $next_rank_activation_on
  *
  * @property Impression $created
@@ -56,6 +57,10 @@ class Person extends AggregatedModel
 {
     /** @see PersonFactory */
     use HasFactory;
+
+    /** @var array<string, mixed> */
+    #[Override]
+    protected $attributes = ['rank_calculation_reason' => RankCalculationReason::Unknown->value];
 
     /** @var list<PersonRankHistory>|null */
     private ?array $rankHistoryToPersist = null;

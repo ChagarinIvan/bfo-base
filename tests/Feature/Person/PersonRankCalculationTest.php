@@ -22,6 +22,7 @@ use App\Domain\Shared\Clock;
 use App\Domain\Shared\FrozenClock;
 use App\Domain\Shared\TransactionManager;
 use Carbon\Carbon;
+use Illuminate\Database\DatabaseManager;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Testing\Fakes\EventFake;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -44,11 +45,21 @@ final class PersonRankCalculationTest extends TestCase
     }
 
     #[Test]
+    public function reason_is_required_without_a_database_default_and_initialized_by_the_model(): void
+    {
+        $schema = $this->app->make(DatabaseManager::class)->connection()->getSchemaBuilder();
+        $column = collect($schema->getColumns('person'))->firstWhere('name', 'rank_calculation_reason');
+        $this->assertFalse($column['nullable']);
+        $this->assertNull($column['default']);
+        $this->assertSame(RankCalculationReason::Unknown, new Person()->rank_calculation_reason);
+    }
+
+    #[Test]
     public function a_successful_rebuild_records_execution_time_even_when_the_rank_is_unchanged(): void
     {
         $person = Person::factory()->createOne();
         $this->assertNull($person->fresh()->rank_calculated_at);
-        $this->assertNull($person->fresh()->rank_calculation_reason);
+        $this->assertSame(RankCalculationReason::Unknown, $person->fresh()->rank_calculation_reason);
         $this->at('2026-11-01 12:00:00');
         $this->rebuild($person);
         $person->refresh();

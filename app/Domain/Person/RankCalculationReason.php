@@ -6,6 +6,7 @@ namespace App\Domain\Person;
 
 enum RankCalculationReason: string
 {
+    case Unknown = 'unknown';
     case Manual = 'manual';
     // Retained for persisted metadata and previously queued jobs.
     case Protocol = 'protocol';

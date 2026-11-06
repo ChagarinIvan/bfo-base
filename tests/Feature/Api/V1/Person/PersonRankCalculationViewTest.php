@@ -35,7 +35,7 @@ final class PersonRankCalculationViewTest extends TestCase
         $person = Person::factory()->createOne();
         $this->getJson("/api/v1/persons/{$person->id}")->assertOk()
             ->assertJsonStructure(['rankId', 'rankCalculatedAt', 'rankCalculationReason'])
-            ->assertJsonPath('rankCalculatedAt', null)->assertJsonPath('rankCalculationReason', null);
+            ->assertJsonPath('rankCalculatedAt', null)->assertJsonPath('rankCalculationReason', 'unknown');
         $now = Carbon::parse('2026-11-01 12:34:56');
         $this->app->instance(Clock::class, new FrozenClock($now));
         $this->postJson("/api/v1/persons/{$person->id}/ranks/rebuild", ['reason' => 'daily'])->assertNoContent();
