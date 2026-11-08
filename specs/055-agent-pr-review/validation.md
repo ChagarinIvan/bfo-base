@@ -52,3 +52,12 @@ SC-005 / T012 pending: merge trusted controls into master, configure OPENAI_API_
 open/update same-repository nondraft PR and observe six role jobs plus one updated report.
 No key was obtained, stored, or sent; no paid API call, commit, push or merge performed.
 Installation guide: .github/review/README.md. UI/UX remains source-only by approved scope.
+
+## First live attempt, startup failure
+
+Run 42479209767, job 128727249145 (ddd): credentials and prompt preparation PASS,
+Codex Action failed in drop-sudo before model invocation: Could not restrict access
+to /run/dbus/system_bus_socket. All six roles failed at that step; publisher correctly
+reported incomplete review. Presence of secret confirmed, validity/billing not tested.
+Fix prepared locally: supported unprivileged-user with separate UID, read-only source
+and isolated writable reports directory. Live success/SC-005 remains pending trusted rollout.

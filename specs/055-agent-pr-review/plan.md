@@ -44,3 +44,10 @@ Research -> schema/prompts -> tests/aggregation -> workflow -> docs/updates -> v
 
 Новых архитектурных исключений нет. Отдельная публикация нужна для разделения прав.
 SC-005 требует реального GitHub запуска с ключом; локально не симулируем успех модели.
+
+## CI fix, 2026-11-08
+
+Run 42479209767 подтвердил startup failure drop-sudo на system_bus_socket.
+Вместо root-socket ACL changes используется upstream unprivileged-user: отдельный
+UID, read-only checkout permissions, write в отдельный output directory с protected
+coverage metadata. API proxy остаётся в другом UID, publication в отдельном job.

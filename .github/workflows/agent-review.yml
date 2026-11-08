@@ -60,6 +60,11 @@ jobs:
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           CANDIDATE_DIR: ${{ github.workspace }}/candidate
         run: node .github/review/review.cjs
+      - name: Prepare isolated reviewer account
+        working-directory: trusted
+        env:
+          REVIEW_ROLE: ${{ matrix.role }}
+        run: bash .github/review/prepare-user.sh
       - name: Review candidate source
         uses: openai/codex-action@bdf19a4a223ec2549a3e2274a0cf61556bc07675 # v1
         with:
@@ -67,9 +72,10 @@ jobs:
           working-directory: ${{ github.workspace }}/trusted
           prompt-file: ${{ runner.temp }}/review-prompt.md
           output-schema-file: ${{ github.workspace }}/trusted/.github/review/report.schema.json
-          output-file: ${{ runner.temp }}/${{ matrix.role }}.json
+          output-file: ${{ runner.temp }}/codex-output/${{ matrix.role }}.json
           sandbox: read-only
-          safety-strategy: drop-sudo
+          safety-strategy: unprivileged-user
+          codex-user: codex-review
           model: ${{ vars.CODEX_REVIEW_MODEL }}
           effort: medium
       - name: Preserve role result
@@ -78,8 +84,8 @@ jobs:
         with:
           name: review-${{ matrix.role }}
           path: |
-            ${{ runner.temp }}/${{ matrix.role }}.json
-            ${{ runner.temp }}/${{ matrix.role }}-context.json
+            ${{ runner.temp }}/codex-output/${{ matrix.role }}.json
+            ${{ runner.temp }}/codex-output/${{ matrix.role }}-context.json
           if-no-files-found: warn
           retention-days: 7
 
