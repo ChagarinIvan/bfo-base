@@ -55,10 +55,21 @@ final class ExportCupTableActionTest extends TestCase
         );
         $this->assertSame('Миссюревич Алексей', $sheet->getCell('B2')->getValue());
         $this->assertTrue($sheet->getStyle('D2')->getFont()->getBold());
+        $expectedSheets = [];
+        foreach ($book->getAllSheets() as $worksheet) {
+            $expectedSheets[$worksheet->getTitle()] = $worksheet->toArray();
+        }
         $book->disconnectWorksheets();
 
         $explicit = $this->get('/api/v1/cups/101/export?format=xlsx')->assertOk();
-        $this->assertSame($response->getContent(), $explicit->getContent());
+        // Compare workbook data, not ZIP metadata timestamps.
+        $explicitBook = $this->readWorkbook((string) $explicit->getContent());
+        $actualSheets = [];
+        foreach ($explicitBook->getAllSheets() as $worksheet) {
+            $actualSheets[$worksheet->getTitle()] = $worksheet->toArray();
+        }
+        $explicitBook->disconnectWorksheets();
+        $this->assertSame($expectedSheets, $actualSheets);
     }
 
     #[Test]

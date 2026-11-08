@@ -14,5 +14,7 @@ enum RankCalculationReason: string
     case EventResultsCleared = 'event_results_cleared';
     case ProtocolPersonChanged = 'protocol_person_changed';
     case Daily = 'daily';
+    case ManualRankAdded = 'manual_rank_added';
+    case ManualRankRemoved = 'manual_rank_removed';
     case Refill = 'refill';
 }
