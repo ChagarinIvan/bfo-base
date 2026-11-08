@@ -21,7 +21,7 @@ final readonly class RebuildExpiredPersonRanksService
         $count = 0;
         foreach ($this->persons->idsByCriteria(new Criteria($command->criteria)) as $personId) {
             try {
-                $this->rebuild->execute(new RebuildPersonRanks($personId, $command->userId));
+                $this->rebuild->execute(new RebuildPersonRanks($personId, $command->userId, $command->reason));
                 $count++;
             } catch (PersonNotFound) {
                 // The projection can disappear between criteria lookup and locking.

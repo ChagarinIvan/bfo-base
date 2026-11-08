@@ -121,3 +121,11 @@ Reviewer получает спецификацию, план, задачи, ко
 - Приложение не использует session upload progress или смену session serializer.
 - Production deploy и проверку фактического server runtime выполняет пользователь.
 - Нет новых агрегатов, commands, query ports, транзакций, событий и изменений удаления.
+
+## Security maintenance 2026-11-06
+
+CI production audit обнаружил 6 advisories Symfony после публикации 2026-11-04.
+Обновить http-foundation, http-kernel и routing до исправленных 8.1.11; полный
+audit также требует filesystem 8.1.11 из dev graph. Root constraints и audit
+policy сохраняются. Не добавлять ignores. Acceptance: production audit exit 0,
+полный audit без security advisories, совместимость подтверждена тестами.

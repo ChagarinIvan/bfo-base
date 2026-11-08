@@ -49,6 +49,8 @@ final class StandardEventPersonRankUpdaterTest extends TestCase
         foreach ([$first, $second] as $person) {
             $person->refresh();
             $this->assertSame(Rank::WithoutRank, $person->current_rank);
+            $this->assertSame('event_results_processed', $person->rank_calculation_reason?->value);
+            $this->assertTrue($person->rank_calculated_at?->equalTo($impression->at));
             $this->assertSame(42, $person->updated->by);
             $this->assertTrue($person->updated->at->equalTo($impression->at));
         }

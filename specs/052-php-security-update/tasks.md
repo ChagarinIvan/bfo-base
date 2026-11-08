@@ -66,3 +66,8 @@ Evidence и ограничения в [validation.md](validation.md).
 - [x] T016 Применить Rector к PHP-коду, удалить deprecated skips и сохранить архитектурно обоснованное точечное исключение в rector.php; проверить дифф и применить CS Fixer.
 - [x] T017 Получить зелёные composer cs, composer stan, composer rector -- --dry-run, полный composer test и npm run ci; записать результаты в specs/052-php-security-update/validation.md.
 - [x] T018 Сверить результат с обновлённым spec/plan, закоммитить и отправить изменения в ветку PR #178.
+
+## Security maintenance 2026-11-06
+
+- [x] T019 Воспроизвести audit и обновить четыре затронутых Symfony-пакета до 8.1.11 без suppressions.
+- [x] T020 Проверить audit/validate/platform и quality gates, обновить validation и существующую updates запись.

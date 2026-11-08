@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 use Rector\CodeQuality\Rector\If_\ExplicitNullableObjectInstanceRector;
 use Rector\Config\RectorConfig;
+use Rector\DeadCode\Rector\Property\RemoveDefaultValueFromAssignedPropertyRector;
+use Rector\Php80\Rector\Class_\ClassPropertyAssignToConstructorPromotionRector;
 use Rector\Php81\Rector\Property\ReadOnlyPropertyRector;
 use Rector\PHPUnit\CodeQuality\Rector\MethodCall\AssertEmptyNullableObjectToAssertInstanceofRector;
 use Rector\PHPUnit\Set\PHPUnitSetList;
@@ -63,6 +65,16 @@ return RectorConfig::configure()
         // PHP 8.5 hooked properties cannot be declared readonly on the containing class.
         ReadOnlyPropertyRector::class => [
             __DIR__ . '/app/Application/Service/Competition/ListCompetitions.php',
+        ],
+        // Serialized jobs from an older release have no reason property. They need
+        // a real property default: constructor defaults do not run on unserialize.
+        ClassPropertyAssignToConstructorPromotionRector::class => [
+            __DIR__ . '/app/Bridge/Laravel/Jobs/RebuildPersonRankJob.php',
+            __DIR__ . '/app/Bridge/Laravel/Jobs/RebuildPersonRanksJob.php',
+        ],
+        RemoveDefaultValueFromAssignedPropertyRector::class => [
+            __DIR__ . '/app/Bridge/Laravel/Jobs/RebuildPersonRankJob.php',
+            __DIR__ . '/app/Bridge/Laravel/Jobs/RebuildPersonRanksJob.php',
         ],
         RenamePropertyRector::class,
         // Blade::component() регистрирует классовые компоненты; авто-переименование в

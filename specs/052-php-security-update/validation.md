@@ -207,3 +207,27 @@ PHPUnit сохраняет прежние 15 notices, failures/errors нет. Vi
 Финальная сверка spec/plan/tasks и текущей реализации не выявила оставшейся
 локальной работы в заданной области. Все 18 задач выполнены. Production deploy
 и результат удалённого CI этим локальным прогоном не подменяются.
+
+## Symfony advisories maintenance, 2026-11-06
+
+CI failure воспроизведён через composer audit --locked --no-dev: шесть advisories
+в http-foundation/http-kernel/routing 8.1.10. Patch update с minimal-changes
+обновил только эти пакеты до 8.1.11. Полный audit выявил ещё filesystem
+8.1.9 в dev graph, обновлён до 8.1.11. Composer.json и CI audit policy неизменны.
+
+- composer validate --strict: PASS.
+- composer check-platform-reqs: PASS, фактический локальный PHP 8.5.10.
+- composer audit --locked --no-dev: PASS, advisories/abandoned пусты, exit 0.
+- Полный audit: advisories пусты; exit 1 из-за прежнего abandoned dev package
+  symplify/rule-doc-generator-contracts, без suppressions.
+- composer install --dry-run --no-interaction --no-scripts: PASS, изменений нет.
+- CS / STAN / Rector dry-run: PASS.
+
+Источник исправления forwarded headers: https://github.com/symfony/symfony/security/advisories/GHSA-wg5q-m2ww-f3c9 .
+
+- Полный PHP suite: PASS, 725 tests / 5523 assertions, 15 прежних PHPUnit notices.
+  Включены HTTP startup, маршруты/API и существующие N+1 regressions.
+- Frontend CI: PASS, lint/Prettier, typecheck, 85 files / 283 tests, production build.
+- git diff --check: PASS. Root constraints, application code и workflow неизменны.
+- Spec/contract/checklist сверены; T019–T020 выполнены, обновлена одна существующая
+  запись 052 в updates. Commit/push и повторный GitHub Actions run не выполнялись.

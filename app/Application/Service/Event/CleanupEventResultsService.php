@@ -13,6 +13,7 @@ use App\Domain\Auth\Impression;
 use App\Domain\Cup\CupCacheInvalidator;
 use App\Domain\Distance\DistanceDeleter;
 use App\Domain\Event\EventRepository;
+use App\Domain\Person\RankCalculationReason;
 use App\Domain\ProtocolLine\ProtocolLineOperations;
 use App\Domain\Shared\Clock;
 use App\Domain\Shared\TransactionManager;
@@ -49,7 +50,7 @@ final readonly class CleanupEventResultsService
 
             foreach ($personIds as $personId) {
                 try {
-                    $this->rebuildPersonRanks->execute(new RebuildPersonRanks($personId, new UserId($event->updated->by)));
+                    $this->rebuildPersonRanks->execute(new RebuildPersonRanks($personId, new UserId($event->updated->by), RankCalculationReason::EventResultsCleared));
                 } catch (PersonNotFound) {
                     // A former participant may have been disabled since the protocol was processed.
                 }

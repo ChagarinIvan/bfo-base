@@ -41,6 +41,7 @@ final readonly class RebuildPersonRanksService
             $person->updateRanks(
                 $rankState,
                 new Impression($now->clone(), $command->userId->id),
+                $command->reason,
             );
 
             $this->persons->update($person);

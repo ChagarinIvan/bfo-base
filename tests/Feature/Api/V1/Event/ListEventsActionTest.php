@@ -260,6 +260,7 @@ final class ListEventsActionTest extends TestCase
     {
         /** @var Competition $competition */
         $competition = Competition::factory()->createOne([
+            'id' => (int) Competition::query()->max('id') + 1,
             'from' => '2026-05-10',
             'to' => '2026-05-12',
             ...$attributes,

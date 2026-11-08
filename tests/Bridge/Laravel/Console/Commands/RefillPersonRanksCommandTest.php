@@ -35,6 +35,8 @@ final class RefillPersonRanksCommandTest extends TestCase
             ->assertSuccessful();
 
         $person->refresh();
+        $this->assertSame('refill', $person->rank_calculation_reason?->value);
+        $this->assertNotNull($person->rank_calculated_at);
         $this->assertSame(Rank::WithoutRank, $person->current_rank);
         $this->assertNotInstanceOf(Carbon::class, $person->current_rank_started_on);
         $this->assertNotInstanceOf(Carbon::class, $person->current_rank_activated_on);

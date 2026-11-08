@@ -7,6 +7,7 @@ namespace App\Application\Dto\Person;
 use App\Application\Dto\Auth\AuthAssembler;
 use App\Domain\Person\Person;
 use App\Domain\Person\PersonRankHistory;
+use DateTimeImmutable;
 
 final readonly class PersonAssembler
 {
@@ -22,6 +23,8 @@ final readonly class PersonAssembler
             firstname: $person->firstname,
             birthday: $person->birthday?->format('Y-m-d'),
             rankId: $person->currentRank()->rank->value,
+            rankCalculatedAt: $person->rank_calculated_at?->format(DateTimeImmutable::ATOM),
+            rankCalculationReason: $person->rank_calculation_reason->value,
             citizenship: $person->citizenship->value,
             clubId: $person->club_id ? (string) $person->club_id : null,
             created: $this->authAssembler->toImpressionDto($person->created),
