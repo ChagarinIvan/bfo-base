@@ -1,8 +1,11 @@
 <?php
 
 declare(strict_types=1);
+
 namespace App\Application\Dto\Person\ManualRank;
+
 use App\Application\Dto\Auth\ImpressionDto;
+
 final readonly class ViewManualPersonRankDto
 {
     public function __construct(

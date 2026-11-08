@@ -1,7 +1,9 @@
 <?php
 
 declare(strict_types=1);
+
 namespace App\Domain\Person\ManualRank;
+
 use App\Domain\Auth\Impression;
 use App\Domain\Person\ManualRank\Exception\DuplicateManualRank;
 use App\Domain\Person\ManualRank\Exception\InvalidManualRank;

@@ -89,6 +89,7 @@ final class ManualPersonRankActionTest extends TestCase
         }
         $this->assertDatabaseCount('manual_person_ranks', 0);
     }
+
     #[Test]
     public function distinct_manual_sources_extend_and_future_activation_is_picked_up_daily(): void
     {
@@ -196,6 +197,7 @@ final class ManualPersonRankActionTest extends TestCase
         $this->assertDatabaseHas('manual_person_ranks', ['id' => $id, 'active' => true]);
         $this->assertDatabaseHas('person_rank_histories', ['person_id' => 101, 'manual_rank_id' => $id, 'activated_on' => '2026-01-01']);
     }
+
     #[Test]
     public function automatic_pruning_preserves_a_person_with_an_active_manual_source(): void
     {

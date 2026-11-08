@@ -92,3 +92,14 @@ Read-only assessment of present implementation against spec/plan/tasks and const
 missing=0, partial=0, contradicts=0, unrequested=0. No new tasks appended; assessment
 left tasks unchanged. Implement then marked T012 complete. All 12 tasks are complete.
 No additional architecture exceptions or out-of-scope product behavior introduced.
+
+## Review follow-up: formatting and property hooks
+
+По запросу пользователя PHP-файлы фичи отформатированы с пустыми строками между
+методами, namespace/imports и объявлением класса. Использован php-cs-fixer, без
+массового изменения остального репозитория. AddManualPersonRank и DisableManualPersonRank
+используют get-only property hooks; service callers обновлены. Transport DTO остаются
+private readonly. Классы final с отдельными readonly полями: PHP запрещает hooked
+properties в readonly class, как и в существующих Login/Logout command patterns.
+Проверки: 9 scoped Application/API tests, 90 assertions PASS; CS PASS (1122 files),
+PHPStan изменённого Application scope PASS, Rector scope dry-run PASS, diff check PASS.

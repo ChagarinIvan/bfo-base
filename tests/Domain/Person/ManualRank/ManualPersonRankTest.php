@@ -1,7 +1,9 @@
 <?php
 
 declare(strict_types=1);
+
 namespace Tests\Domain\Person\ManualRank;
+
 use App\Domain\Auth\Impression;
 use App\Domain\Person\ManualRank\Event\ManualPersonRankAdded;
 use App\Domain\Person\ManualRank\Event\ManualPersonRankDisabled;
@@ -18,6 +20,7 @@ use App\Domain\Shared\UuidGenerator;
 use Carbon\Carbon;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+
 final class ManualPersonRankTest extends TestCase
 {
     #[Test]
@@ -40,6 +43,7 @@ final class ManualPersonRankTest extends TestCase
         $this->assertNull($rank->fact()->protocolLineId);
         $this->assertSame('source-id', $rank->fact()->manualRankId);
     }
+
     #[Test]
     public function duplicate_policy_queries_the_active_source_tuple(): void
     {
@@ -52,6 +56,7 @@ final class ManualPersonRankTest extends TestCase
         $this->expectException(DuplicateManualRank::class);
         new ManualPersonRankFactory($repository, new FrozenClock($audit->at), $ids)->create(7, $input, 42);
     }
+
     #[Test]
     public function activation_before_achievement_is_rejected_in_domain(): void
     {

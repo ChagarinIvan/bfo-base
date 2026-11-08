@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 namespace App\Infrastructure\Laravel\Eloquent\Person\ManualRank;
 
 use App\Domain\Auth\Impression;

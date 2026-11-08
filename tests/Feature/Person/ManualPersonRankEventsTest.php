@@ -1,7 +1,9 @@
 <?php
 
 declare(strict_types=1);
+
 namespace Tests\Feature\Person;
+
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\ManualRank\AddManualPersonRankAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\ManualRank\DeleteManualPersonRankAction;
 use App\Domain\Person\ManualRank\Event\ManualPersonRankAdded;
@@ -17,6 +19,7 @@ use Illuminate\Foundation\Testing\DatabaseTruncation;
 use Laravel\Sanctum\Sanctum;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+
 /**
  * @see AddManualPersonRankAction
  * @see DeleteManualPersonRankAction

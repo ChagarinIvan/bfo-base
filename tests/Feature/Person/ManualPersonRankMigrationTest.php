@@ -1,11 +1,14 @@
 <?php
 
 declare(strict_types=1);
+
 namespace Tests\Feature\Person;
+
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Database\Schema\Blueprint;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+
 final class ManualPersonRankMigrationTest extends TestCase
 {
     #[Test]

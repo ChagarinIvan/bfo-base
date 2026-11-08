@@ -1,7 +1,9 @@
 <?php
 
 declare(strict_types=1);
+
 namespace Tests\Application\Service\Person\ManualRank;
+
 use App\Application\Dto\Auth\AuthAssembler;
 use App\Application\Dto\Auth\UserId;
 use App\Application\Dto\Person\ManualRank\ManualPersonRankAssembler;
@@ -26,6 +28,7 @@ use App\Domain\Shared\UuidGenerator;
 use Carbon\Carbon;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+
 final class AddManualPersonRankServiceTest extends TestCase
 {
     #[Test]
