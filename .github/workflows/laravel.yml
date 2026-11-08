@@ -62,7 +62,7 @@ jobs:
         DB_USERNAME: test
         DB_PASSWORD: secret
         DB_DATABASE: laravel_test
-        DB_PORT: ${{ job.services.mysql.ports[3306] }}
+        DB_PORT: ${{ job.services.mysql.ports['3306'] }}
       run: vendor/bin/phpunit tests/
     - name: Execute stan
       run: vendor/bin/phpstan analyse -l 5 app tests config --memory-limit=1G
@@ -84,5 +84,7 @@ jobs:
         cache: npm
     - name: Install frontend dependencies
       run: npm ci --registry=https://registry.npmjs.org/ --ignore-scripts --no-audit --no-fund
+    - name: Test agent review tooling
+      run: node --test .github/review/review.test.cjs
     - name: Execute frontend quality gate
       run: npm run ci
