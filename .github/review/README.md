@@ -32,7 +32,9 @@ Workflow/скрипты/prompts/schema берутся с immutable base SHA. Can
 выгружается отдельно только для чтения. Working directory Codex находится в trusted
 checkout: PR-local AGENTS.md, .codex и scripts не являются активной конфигурацией.
 Не добавляйте запуск composer/npm/git hooks/другого кода из candidate.
-Агенты имеют read-only sandbox и drop-sudo; API key передаётся только Codex Action proxy.
+Агенты имеют read-only sandbox и отдельный UID codex-review без sudo; API key передаётся только Codex Action proxy.
+Подготовка аккаунта даёт чтение двух checkout и запись только в отдельный каталог результатов.
+Coverage metadata остаются под владельцем runner и защищены sticky bit каталога.
 Публикация происходит на отдельном runner без API key, candidate кода и его scripts.
 Model output проверяется по schema, role/SHA, changed paths и ограничениям, экранируется
 как текст. Новые или закрытые PR не получают старый отчёт. Actions закреплены SHA;
@@ -76,3 +78,15 @@ Node 22 в CI, внешних npm-зависимостей для reviewer tooli
 
 Официальные контракты: [Codex Action](https://learn.chatgpt.com/docs/github-action),
 [GitHub Actions security](https://docs.github.com/en/actions/reference/security/secure-use).
+
+## Troubleshooting: system_bus_socket
+
+В run 42479209767 все роли упали до запуска Codex: drop-sudo не смог ограничить
+доступ runner к /run/dbus/system_bus_socket. Это ошибка подготовки изоляции, не
+подтверждение ошибки API-ключа или модели. Workflow использует поддерживаемый
+upstream режим unprivileged-user с отдельным аккаунтом вместо изменения системных
+сокетов. Sandbox read-only и отдельная публикация сохранены.
+
+Из-за pull_request_target исправление сначала должно попасть в trusted master.
+После этого нужен новый synchronize/reopened event PR, например новый push.
+Re-run старого run использует прежнюю ревизию workflow и не применит исправление.
