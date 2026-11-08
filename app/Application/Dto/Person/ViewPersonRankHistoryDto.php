@@ -9,16 +9,18 @@ final readonly class ViewPersonRankHistoryDto
     public function __construct(
         public string $id,
         public string $personId,
-        public string $protocolLineId,
-        public string $distanceId,
-        public string $eventId,
-        public string $competitionId,
+        public ?string $protocolLineId,
+        public ?string $distanceId,
+        public ?string $eventId,
+        public ?string $competitionId,
         public int $rankId,
         public string $changeType,
         public string $achievedOn,
         public ?string $activatedOn,
         public string $startedOn,
         public ?string $finishedOn,
+        public string $source = 'protocol',
+        public ?string $manualRankId = null,
     ) {
     }
 }

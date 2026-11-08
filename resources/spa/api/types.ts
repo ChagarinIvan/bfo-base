@@ -233,6 +233,8 @@ export type RankCalculationReason =
     | 'protocol_person_changed'
     | 'daily'
     | 'refill'
+    | 'manual_rank_added'
+    | 'manual_rank_removed'
 
 export interface Person {
     id: string
@@ -288,10 +290,12 @@ export interface PersonPaymentRequest {
 export interface PersonRankHistory {
     id: string
     personId: string
-    protocolLineId: string
-    distanceId: string
-    eventId: string
-    competitionId: string
+    source: 'protocol' | 'manual'
+    manualRankId: string | null
+    protocolLineId: string | null
+    distanceId: string | null
+    eventId: string | null
+    competitionId: string | null
     rankId: number
     changeType: string
     achievedOn: string
@@ -434,4 +438,10 @@ export interface ApiErrorItem {
 
 export interface ApiErrorResponse {
     errors: ApiErrorItem[]
+}
+
+export interface ManualPersonRankRequest {
+    rankId: number
+    achievedOn: string
+    activatedOn: string
 }

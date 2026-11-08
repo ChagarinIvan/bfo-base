@@ -9,6 +9,7 @@ const {
     getCupEventContexts,
     getEventsByIds,
     getPersonRankHistories,
+    deleteManualPersonRank,
     getRanks,
     rebuildPersonRanks,
     routerReplace,
@@ -17,6 +18,7 @@ const {
     getCupEventContexts: vi.fn(),
     getEventsByIds: vi.fn(),
     getPersonRankHistories: vi.fn(),
+    deleteManualPersonRank: vi.fn(),
     getRanks: vi.fn(),
     rebuildPersonRanks: vi.fn(),
     routerReplace: vi.fn(),
@@ -26,6 +28,7 @@ vi.mock('../../api/cups', () => ({ getCupEventContexts }))
 vi.mock('../../api/events', () => ({ getEventsByIds }))
 vi.mock('../../api/personRankHistory', async () => ({
     getPersonRankHistories,
+    deleteManualPersonRank,
     activatePersonRank: vi.fn(),
     updatePersonRankActivation: vi.fn(),
 }))
@@ -39,6 +42,8 @@ vi.mock('vue-router', () => ({
 
 const history = {
     id: '501',
+    source: 'protocol',
+    manualRankId: null,
     personId: '7',
     protocolLineId: '901',
     distanceId: '77',
@@ -284,4 +289,107 @@ describe('person ranks page', () => {
             unconfirmedMaster,
         ])
     })
+})
+
+it('manual-only history has no event requests or fake links and deletes by stable source id', async () => {
+    vi.clearAllMocks()
+    auth.isAuthenticated = true
+    getRanks.mockResolvedValue([{ id: 7, label: 'КМС' }])
+    const manual = {
+        ...history,
+        source: 'manual',
+        manualRankId: 'source-1',
+        protocolLineId: null,
+        distanceId: null,
+        eventId: null,
+        competitionId: null,
+    }
+    getPersonRankHistories.mockResolvedValue([manual])
+    deleteManualPersonRank.mockResolvedValue(undefined)
+    const wrapper = mountManualPage()
+    await flushPromises()
+    await wrapper.get('.rank-history-group').trigger('click')
+    await flushPromises()
+    expect(getEventsByIds).not.toHaveBeenCalled()
+    expect(getCupEventContexts).not.toHaveBeenCalled()
+    expect(wrapper.text()).toContain('Дададзена ўручную')
+    expect(wrapper.find('.rank-history-timeline a').exists()).toBe(false)
+    expect(wrapper.findAll('.row-action')).toHaveLength(1)
+    await wrapper.get('.row-action').trigger('click')
+    await wrapper.get('.confirm-delete').trigger('click')
+    await flushPromises()
+    expect(deleteManualPersonRank).toHaveBeenCalledWith('7', 'source-1')
+    expect(routerReplace).toHaveBeenCalledWith({
+        query: { refresh: expect.any(String) },
+    })
+    wrapper.unmount()
+})
+
+function mountManualPage() {
+    return mount(PersonRanksPage, {
+        global: {
+            stubs: {
+                Button: {
+                    props: ['label'],
+                    template:
+                        '<button @click="$emit(\'click\')">{{ label }}</button>',
+                },
+                ActionButton: {
+                    props: ['label'],
+                    template:
+                        '<button class="row-action" @click="$emit(\'click\')">{{ label }}</button>',
+                },
+                DataTable: {
+                    props: ['value'],
+                    template: '<div><slot /></div>',
+                },
+                Column: {
+                    template:
+                        '<div><slot name="body" :data="$parent.value[0]" /></div>',
+                },
+                ConfirmDeleteDialog: {
+                    props: ['visible'],
+                    template:
+                        '<button class="confirm-delete" @click="$emit(\'confirm\')">confirm</button>',
+                },
+                Dialog: true,
+                Message: { template: '<div><slot /></div>' },
+                RouterLink: true,
+            },
+        },
+    })
+}
+
+it('does not refresh another tab after deletion completes on an unmounted page', async () => {
+    vi.clearAllMocks()
+    auth.isAuthenticated = true
+    getRanks.mockResolvedValue([{ id: 7, label: 'КМС' }])
+    getPersonRankHistories.mockResolvedValue([
+        {
+            ...history,
+            source: 'manual',
+            manualRankId: 'source-1',
+            protocolLineId: null,
+            distanceId: null,
+            eventId: null,
+            competitionId: null,
+        },
+    ])
+    let resolve!: () => void
+    deleteManualPersonRank.mockReturnValue(
+        new Promise<void>((done) => {
+            resolve = done
+        }),
+    )
+    const wrapper = mountManualPage()
+    await flushPromises()
+    await wrapper.get('.rank-history-group').trigger('click')
+    await wrapper.get('.row-action').trigger('click')
+    await wrapper.get('.confirm-delete').trigger('click')
+    const requests = getPersonRankHistories.mock.calls.length
+    wrapper.unmount()
+    resolve()
+    await flushPromises()
+    expect(routerReplace).not.toHaveBeenCalled()
+    expect(getPersonRankHistories).toHaveBeenCalledTimes(requests)
 })

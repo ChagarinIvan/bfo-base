@@ -8,6 +8,7 @@ import Message from 'primevue/message'
 import { useRoute, useRouter } from 'vue-router'
 import {
     activatePersonRank,
+    deleteManualPersonRank,
     getPersonRankHistories,
     updatePersonRankActivation,
 } from '../../api/personRankHistory'
@@ -16,6 +17,8 @@ import { getCupEventContexts } from '../../api/cups'
 import { getRanks, type RankOption } from '../../api/ranks'
 import { rebuildPersonRanks } from '../../api/persons'
 import type { CupEventContext, Event, PersonRankHistory } from '../../api/types'
+import ManualPersonRankDialog from '../../components/ManualPersonRankDialog.vue'
+import ConfirmDeleteDialog from '../../components/actions/ConfirmDeleteDialog.vue'
 import ActionButton from '../../components/actions/ActionButton.vue'
 import ListingTable from '../../components/ListingTable.vue'
 import CupEventBadges from '../../components/CupEventBadges.vue'
@@ -49,8 +52,13 @@ const dateError = ref('')
 const saving = ref(false)
 const rebuilding = ref(false)
 const rebuildError = ref('')
+const manualDialogVisible = ref(false)
+const selectedManual = ref<PersonRankHistory | null>(null)
+const deletingManual = ref(false)
+const manualError = ref('')
 const expandedRankIds = ref<Set<string>>(new Set())
 let latestRequest = 0
+let live = true
 const columns = computed(() => [
     {
         key: 'completed',
@@ -206,7 +214,7 @@ function changeTypeLabel(changeType: string): string {
 }
 
 function eventFor(item: PersonRankHistory): Event | undefined {
-    return events.value[item.eventId]
+    return item.eventId === null ? undefined : events.value[item.eventId]
 }
 
 function eventName(item: PersonRankHistory): string | null {
@@ -224,9 +232,16 @@ async function loadHistory(): Promise<void> {
 
     try {
         const loadedHistory = await getPersonRankHistories(personId())
-        const loadedEvents = await getEventsByIds([
-            ...new Set(loadedHistory.map((item) => item.eventId)),
-        ])
+        const eventIds = [
+            ...new Set(
+                loadedHistory
+                    .map((item) => item.eventId)
+                    .filter((id): id is string => id !== null),
+            ),
+        ]
+        const loadedEvents = eventIds.length
+            ? await getEventsByIds(eventIds)
+            : []
         if (requestId !== latestRequest) return
         history.value = loadedHistory
         cupEventContexts.value = {}
@@ -264,7 +279,11 @@ function toggleRank(groupId: string): void {
         next.add(groupId)
         const group = groupedHistory.value.find((item) => item.id === groupId)
         if (group) {
-            void loadCupEventContexts(group.items.map((item) => item.eventId))
+            void loadCupEventContexts(
+                group.items
+                    .map((item) => item.eventId)
+                    .filter((id): id is string => id !== null),
+            )
         }
     }
     expandedRankIds.value = next
@@ -291,6 +310,12 @@ async function loadCupEventContexts(eventIds: string[]): Promise<void> {
 }
 
 function eventUrl(item: PersonRankHistory): string {
+    if (
+        item.eventId === null ||
+        item.protocolLineId === null ||
+        item.distanceId === null
+    )
+        return ''
     return protocolLineEventUrl(
         item.eventId,
         item.protocolLineId,
@@ -331,7 +356,12 @@ function closeActivation(): void {
 }
 
 async function saveActivation(): Promise<void> {
-    if (!selected.value) return
+    if (
+        !selected.value ||
+        selected.value.source === 'manual' ||
+        selected.value.protocolLineId === null
+    )
+        return
     if (!editDate.value && !selected.value.activatedOn) {
         dateError.value = t('spa.person_rank.date_required')
         return
@@ -360,12 +390,49 @@ async function saveActivation(): Promise<void> {
     }
 }
 
+async function refreshAfterManualMutation(
+    targetPersonId: string,
+): Promise<void> {
+    if (!live || targetPersonId !== personId()) return
+    manualDialogVisible.value = false
+    await loadHistory()
+    if (!live || targetPersonId !== personId()) return
+    await router.replace({
+        query: { ...route.query, refresh: String(Date.now()) },
+    })
+}
+
+async function removeManualRank(): Promise<void> {
+    if (deletingManual.value || !selectedManual.value?.manualRankId) return
+    const targetPersonId = personId()
+    const sourceId = selectedManual.value.manualRankId
+    deletingManual.value = true
+    manualError.value = ''
+    try {
+        await deleteManualPersonRank(targetPersonId, sourceId)
+        if (!live || targetPersonId !== personId()) return
+        selectedManual.value = null
+        await refreshAfterManualMutation(targetPersonId)
+    } catch {
+        if (live && targetPersonId === personId())
+            manualError.value = t('spa.person_rank.manual_delete_error')
+    } finally {
+        deletingManual.value = false
+    }
+}
+
 onMounted(() => void initialize())
 watch(
     () => personId(),
-    () => void loadHistory(),
+    () => {
+        manualDialogVisible.value = false
+        selectedManual.value = null
+        manualError.value = ''
+        void loadHistory()
+    },
 )
 onBeforeUnmount(() => {
+    live = false
     latestRequest++
 })
 </script>
@@ -381,7 +448,16 @@ onBeforeUnmount(() => {
             :loading="rebuilding"
             @click="void rebuild()"
         />
+        <Button
+            v-if="auth.isAuthenticated"
+            :label="t('spa.person_rank.manual_add')"
+            icon="pi pi-plus"
+            @click="manualDialogVisible = true"
+        />
     </div>
+    <Message v-if="manualError" severity="error" :closable="false">{{
+        manualError
+    }}</Message>
     <Message v-if="rebuildError" severity="error" :closable="false">{{
         rebuildError
     }}</Message>
@@ -497,7 +573,10 @@ onBeforeUnmount(() => {
                             :header="t('spa.person_rank.event')"
                         >
                             <template #body="{ data }">
-                                <a :href="eventUrl(data)">{{
+                                <span v-if="data.source === 'manual'">{{
+                                    t('spa.person_rank.manual_source')
+                                }}</span>
+                                <a v-else :href="eventUrl(data)">{{
                                     display(eventName(data))
                                 }}</a>
                             </template>
@@ -508,6 +587,7 @@ onBeforeUnmount(() => {
                         >
                             <template #body="{ data }">
                                 <CupEventBadges
+                                    v-if="data.eventId !== null"
                                     :contexts="
                                         cupEventContexts[data.eventId] ?? []
                                     "
@@ -520,6 +600,14 @@ onBeforeUnmount(() => {
                         >
                             <template #body="{ data }">
                                 <ActionButton
+                                    v-if="data.source === 'manual'"
+                                    :label="t('spa.person_rank.manual_delete')"
+                                    icon="pi pi-trash"
+                                    severity="danger"
+                                    @click="selectedManual = data"
+                                />
+                                <ActionButton
+                                    v-else
                                     :label="
                                         data.activatedOn
                                             ? t(
@@ -544,6 +632,25 @@ onBeforeUnmount(() => {
             </div>
         </template>
     </ListingTable>
+
+    <ManualPersonRankDialog
+        v-if="manualDialogVisible && auth.isAuthenticated"
+        :person-id="personId()"
+        :ranks="ranks"
+        @cancel="manualDialogVisible = false"
+        @saved="refreshAfterManualMutation"
+    />
+    <ConfirmDeleteDialog
+        v-if="selectedManual && auth.isAuthenticated"
+        :visible="true"
+        :title="t('spa.person_rank.manual_delete')"
+        :confirmation="t('spa.person_rank.manual_delete_confirm')"
+        :cancel-label="t('spa.person_rank.cancel')"
+        :action-label="t('spa.person_rank.manual_delete')"
+        :pending="deletingManual"
+        @cancel="!deletingManual && (selectedManual = null)"
+        @confirm="removeManualRank"
+    />
 
     <Dialog
         v-model:visible="dialogVisible"

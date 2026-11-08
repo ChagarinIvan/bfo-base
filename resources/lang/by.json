@@ -588,5 +588,14 @@
     "spa.rank_check.person": "Адкрыць удзельніка",
     "spa.rank_check.all_options": "Усе",
     "spa.rank_check.yes": "Так",
-    "spa.rank_check.no": "Не"
+    "spa.rank_check.no": "Не",
+    "spa.person_rank.manual_source": "Дададзена ўручную",
+    "spa.person_rank.manual_add": "Дадаць разрад уручную",
+    "spa.person_rank.manual_delete": "Выдаліць ручное выкананне",
+    "spa.person_rank.manual_delete_confirm": "Выдаліць гэта ручное выкананне і пералічыць разрады спартсмена?",
+    "spa.person_rank.manual_invalid": "Выберыце разрад і абедзве даты. Дата актывацыі не можа быць раней за дату выканання.",
+    "spa.person_rank.manual_save_error": "Не ўдалося дадаць выкананне. Праверце даты і наяўнасць такога запісу.",
+    "spa.person_rank.manual_delete_error": "Не ўдалося выдаліць ручное выкананне.",
+    "spa.person.rank_reason_manual_rank_added": "Дададзена ручное выкананне",
+    "spa.person.rank_reason_manual_rank_removed": "Выдалена ручное выкананне"
 }

@@ -35,7 +35,7 @@ final class RankCalculator
     {
         $next = null;
         foreach ($facts as $fact) {
-            if (!$fact->delayedActivation || !$fact->rank->usesDelayedActivation()) {
+            if ($fact->activatedOn === null && (!$fact->delayedActivation || !$fact->rank->usesDelayedActivation())) {
                 continue;
             }
 
@@ -67,7 +67,7 @@ final class RankCalculator
     private function isEligibleForCalculation(RankFact $fact, ?Carbon $birthday): bool
     {
         return $fact->rank !== Rank::WithoutRank
-            && (!$fact->rank->isJunior() || $this->isJuniorOnAchievementDate($birthday, $fact->achievedOn));
+            && ($fact->manualRankId !== null || !$fact->rank->isJunior() || $this->isJuniorOnAchievementDate($birthday, $fact->achievedOn));
     }
 
     private function isJuniorOnAchievementDate(?Carbon $birthday, Carbon $achievedOn): bool
@@ -82,7 +82,7 @@ final class RankCalculator
      */
     private function sortFactsByAchievement(array $facts): array
     {
-        usort($facts, static fn (RankFact $left, RankFact $right): int => $left->achievedOn <=> $right->achievedOn ?: $left->protocolLineId <=> $right->protocolLineId);
+        usort($facts, static fn (RankFact $left, RankFact $right): int => $left->achievedOn <=> $right->achievedOn ?: (($left->manualRankId !== null) <=> ($right->manualRankId !== null)) ?: $left->protocolLineId <=> $right->protocolLineId ?: $left->manualRankId <=> $right->manualRankId);
 
         return $facts;
     }
@@ -138,6 +138,7 @@ final class RankCalculator
             activatedOn: $activatedOn,
             startedOn: $startedOn,
             finishedOn: $finishedOn,
+            manualRankId: $fact->manualRankId,
         );
 
         return $history;
@@ -200,7 +201,8 @@ final class RankCalculator
     {
         usort($history, static fn (PersonRankHistory $left, PersonRankHistory $right): int => $right->rank->value <=> $left->rank->value
             ?: $right->started_on <=> $left->started_on
-            ?: $right->protocol_line_id <=> $left->protocol_line_id);
+            ?: $right->protocol_line_id <=> $left->protocol_line_id
+            ?: $right->manual_rank_id <=> $left->manual_rank_id);
 
         return $history;
     }
@@ -237,6 +239,7 @@ final class RankCalculator
                     activatedOn: $entry->activated_on,
                     startedOn: $entry->started_on,
                     finishedOn: $finishedOn,
+                    manualRankId: $entry->manual_rank_id,
                 );
             },
             $history,
@@ -277,6 +280,7 @@ final class RankCalculator
                     activatedOn: $entry->activated_on,
                     startedOn: $entry->started_on,
                     finishedOn: $startedOn,
+                    manualRankId: $entry->manual_rank_id,
                 );
             },
             $history,
@@ -286,7 +290,7 @@ final class RankCalculator
     private function shouldExtendPeriod(PersonRankHistory $history, RankFact $fact, Carbon $startedOn): bool
     {
         return $history->rank === $fact->rank
-            && $history->event_id !== $fact->eventId
+            && ($history->event_id === null || $fact->eventId === null || $history->event_id !== $fact->eventId)
             && $history->started_on <= $startedOn
             && $history->finished_on !== null
             && $history->finished_on > $startedOn;
@@ -304,7 +308,7 @@ final class RankCalculator
 
         $eligible = [];
         foreach ($facts as $fact) {
-            if (!$this->isJuniorOnAchievementDate($birthday, $fact->achievedOn)) {
+            if ($fact->manualRankId !== null || !$this->isJuniorOnAchievementDate($birthday, $fact->achievedOn)) {
                 continue;
             }
             $eligible[$fact->achievedOn->year][] = $fact;
