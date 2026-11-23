@@ -1,5 +1,6 @@
 name: Agent PR review
 
+# Restore this file to .github/workflows/ to enable it.
 # Trusted workflow/controls only. Candidate checkout is read as data, never executed.
 on:
   pull_request_target:

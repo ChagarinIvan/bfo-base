@@ -1,5 +1,7 @@
 # Agent PR review
 
+Автоматическое ревью отключено. Workflow хранится в `.github/review/agent-review.yml`.
+
 Шесть независимых ролей: architecture, ddd, security, tests, frontend, uiux.
 Правила находятся в common.md и roles/*.md; JSON-контракт в report.schema.json.
 Замечания рекомендательные. Неполное ревью отмечается в PR и ошибкой publisher job.
@@ -7,7 +9,7 @@
 
 ## Подключение
 
-1. Смержить workflow, scripts и prompts в master после обычного code review.
+1. Вернуть workflow в `.github/workflows/agent-review.yml` и смержить изменение в master.
    Используется pull_request_target: до trusted установки на base workflow не активен.
 2. В GitHub repository Settings → Secrets and variables → Actions создать secret
    `OPENAI_API_KEY` с отдельным OpenAI project key. Не добавлять ключ в код или PR.
@@ -69,7 +71,7 @@ UI/UX сравнивает исходники с общими компонент
 
 ```sh
 node --test .github/review/review.test.cjs
-actionlint .github/workflows/agent-review.yml .github/workflows/laravel.yml
+actionlint .github/review/agent-review.yml .github/workflows/laravel.yml
 ```
 
 Node 22 в CI, внешних npm-зависимостей для reviewer tooling нет. Tests не вызывают API.
