@@ -1,6 +1,7 @@
 // @vitest-environment happy-dom
 import { mount, flushPromises } from '@vue/test-utils'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import DateFilter from './DateFilter.vue'
 import ManualPersonRankDialog from './ManualPersonRankDialog.vue'
 const { addManualPersonRank } = vi.hoisted(() => ({
     addManualPersonRank: vi.fn(),
@@ -23,6 +24,12 @@ function dialog() {
                     emits: ['update:modelValue'],
                     template:
                         '<select :id="inputId" :value="modelValue" @change="$emit(\'update:modelValue\', Number($event.target.value))"><option value="">Select</option><option v-for="o in options" :key="o.id" :value="o.id">{{ o.label }}</option></select>',
+                },
+                DateFilter: {
+                    props: ['modelValue', 'inputId', 'label', 'minDate'],
+                    emits: ['update:modelValue'],
+                    template:
+                        '<label :for="inputId">{{ label }}<input :id="inputId" :value="modelValue" @input="$emit(\'update:modelValue\', $event.target.value)" /></label>',
                 },
                 Button: {
                     props: ['label', 'type'],
@@ -67,6 +74,21 @@ describe('manual rank dialog', () => {
         ).toBe('2026-01-01')
         expect(wrapper.find('[role="alert"]').exists()).toBe(true)
         expect(wrapper.emitted('saved')).toBeUndefined()
+    })
+    it('uses the shared date fields and rejects activation before achievement', async () => {
+        const wrapper = dialog()
+        await fill(wrapper)
+        const dates = wrapper.findAllComponents(DateFilter)
+        expect(dates).toHaveLength(2)
+        expect(dates[1]?.props('minDate')).toBe('2026-01-01')
+
+        await wrapper.get('#manual-rank-activated').setValue('2025-12-31')
+        await wrapper.get('form').trigger('submit')
+
+        expect(addManualPersonRank).not.toHaveBeenCalled()
+        expect(wrapper.get('[role="alert"]').text()).toContain(
+            'Дата актывацыі не можа быць раней',
+        )
     })
     it('blocks duplicate submits and ignores completion after unmount', async () => {
         let resolve!: () => void

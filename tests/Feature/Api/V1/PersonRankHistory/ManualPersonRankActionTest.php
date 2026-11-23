@@ -79,6 +79,8 @@ final class ManualPersonRankActionTest extends TestCase
         $url = "/api/v1/persons/{$person->id}/manual-ranks";
         $this->postJson($url, [])->assertUnauthorized();
         $this->deleteJson("{$url}/missing")->assertUnauthorized();
+        $this->postJson("/api/v1/persons/{$person->id}/ranks/rebuild")->assertUnauthorized();
+        $this->getJson("/api/v1/persons/{$person->id}/rank-histories")->assertOk();
         Sanctum::actingAs(SanctumUser::query()->create(['email' => fake()->unique()->safeEmail(), 'password' => 'unused']));
         foreach ([
             ['rankId' => 0, 'achievedOn' => '2026-01-01', 'activatedOn' => '2026-01-01'],

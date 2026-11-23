@@ -57,6 +57,16 @@ const history = {
     finishedOn: '2026-06-15',
 }
 
+const manualHistory = {
+    ...history,
+    source: 'manual',
+    manualRankId: 'source-1',
+    protocolLineId: null,
+    distanceId: null,
+    eventId: null,
+    competitionId: null,
+}
+
 const DataTableStub = {
     name: 'DataTableStub',
     props: ['value'],
@@ -120,24 +130,19 @@ describe('person ranks page', () => {
         expect(wrapper.text()).toContain('Тып выканання')
     })
 
-    it('hides the mutation column for anonymous users', async () => {
+    it('shows manual history to guests without rank mutation controls', async () => {
         auth.isAuthenticated = false
-        getPersonRankHistories.mockResolvedValue([])
-        getEventsByIds.mockResolvedValue([])
+        getPersonRankHistories.mockResolvedValue([manualHistory])
 
-        const wrapper = mount(PersonRanksPage, {
-            global: {
-                stubs: {
-                    Button: true,
-                    Dialog: true,
-                    Message: { template: '<div><slot /></div>' },
-                    RouterLink: { template: '<a><slot /></a>' },
-                },
-            },
-        })
+        const wrapper = mountManualPage()
         await flushPromises()
+        await wrapper.get('.rank-history-group').trigger('click')
 
-        expect(wrapper.text()).not.toContain('Актываваць разрад')
+        expect(wrapper.text()).toContain('Дададзена ўручную')
+        expect(wrapper.text()).not.toContain('Дадаць разрад уручную')
+        expect(wrapper.text()).not.toContain('Пераразлічыць разрады')
+        expect(wrapper.find('.row-action').exists()).toBe(false)
+        expect(wrapper.find('.confirm-delete').exists()).toBe(false)
     })
 
     it('rebuilds ranks and refreshes history for an authenticated user', async () => {
@@ -295,19 +300,17 @@ it('manual-only history has no event requests or fake links and deletes by stabl
     vi.clearAllMocks()
     auth.isAuthenticated = true
     getRanks.mockResolvedValue([{ id: 7, label: 'КМС' }])
-    const manual = {
-        ...history,
-        source: 'manual',
-        manualRankId: 'source-1',
-        protocolLineId: null,
-        distanceId: null,
-        eventId: null,
-        competitionId: null,
-    }
-    getPersonRankHistories.mockResolvedValue([manual])
+    getPersonRankHistories.mockResolvedValue([manualHistory])
     deleteManualPersonRank.mockResolvedValue(undefined)
     const wrapper = mountManualPage()
     await flushPromises()
+    const actions = wrapper.get('.page-toolbar .details-actions')
+    expect(actions.findAll('button')).toHaveLength(2)
+    await actions
+        .findAll('button')
+        .find((button) => button.text() === 'Дадаць разрад уручную')!
+        .trigger('click')
+    await wrapper.get('.manual-rank-dialog').trigger('click')
     await wrapper.get('.rank-history-group').trigger('click')
     await flushPromises()
     expect(getEventsByIds).not.toHaveBeenCalled()
@@ -352,6 +355,10 @@ function mountManualPage() {
                     template:
                         '<button class="confirm-delete" @click="$emit(\'confirm\')">confirm</button>',
                 },
+                ManualPersonRankDialog: {
+                    template:
+                        '<button class="manual-rank-dialog" @click="$emit(\'cancel\')">cancel</button>',
+                },
                 Dialog: true,
                 Message: { template: '<div><slot /></div>' },
                 RouterLink: true,
@@ -364,17 +371,7 @@ it('does not refresh another tab after deletion completes on an unmounted page',
     vi.clearAllMocks()
     auth.isAuthenticated = true
     getRanks.mockResolvedValue([{ id: 7, label: 'КМС' }])
-    getPersonRankHistories.mockResolvedValue([
-        {
-            ...history,
-            source: 'manual',
-            manualRankId: 'source-1',
-            protocolLineId: null,
-            distanceId: null,
-            eventId: null,
-            competitionId: null,
-        },
-    ])
+    getPersonRankHistories.mockResolvedValue([manualHistory])
     let resolve!: () => void
     deleteManualPersonRank.mockReturnValue(
         new Promise<void>((done) => {

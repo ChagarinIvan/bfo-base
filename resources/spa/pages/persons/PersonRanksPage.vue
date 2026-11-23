@@ -440,20 +440,20 @@ onBeforeUnmount(() => {
 <template>
     <div class="page-toolbar">
         <h1 class="page-title">{{ t('spa.person_rank.title') }}</h1>
-        <Button
-            v-if="auth.isAuthenticated"
-            :label="t('spa.person_rank.rebuild')"
-            icon="pi pi-refresh"
-            severity="success"
-            :loading="rebuilding"
-            @click="void rebuild()"
-        />
-        <Button
-            v-if="auth.isAuthenticated"
-            :label="t('spa.person_rank.manual_add')"
-            icon="pi pi-plus"
-            @click="manualDialogVisible = true"
-        />
+        <div v-if="auth.isAuthenticated" class="details-actions">
+            <Button
+                :label="t('spa.person_rank.rebuild')"
+                icon="pi pi-refresh"
+                severity="success"
+                :loading="rebuilding"
+                @click="void rebuild()"
+            />
+            <Button
+                :label="t('spa.person_rank.manual_add')"
+                icon="pi pi-plus"
+                @click="manualDialogVisible = true"
+            />
+        </div>
     </div>
     <Message v-if="manualError" severity="error" :closable="false">{{
         manualError

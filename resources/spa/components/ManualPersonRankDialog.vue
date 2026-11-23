@@ -4,6 +4,7 @@ import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
 import Message from 'primevue/message'
 import Select from 'primevue/select'
+import DateFilter from './DateFilter.vue'
 import { addManualPersonRank } from '../api/personRankHistory'
 import type { RankOption } from '../api/ranks'
 import { t } from '../i18n'
@@ -60,12 +61,13 @@ async function save(): Promise<void> {
     <Dialog
         :visible="true"
         modal
+        :style="{ width: 'min(36rem, calc(100% - 2rem))' }"
         :header="t('spa.person_rank.manual_add')"
         :closable="!saving"
         :close-on-escape="!saving"
         @update:visible="cancel"
     >
-        <form @submit.prevent="save">
+        <form class="spa-form" @submit.prevent="save">
             <div class="form-field">
                 <label for="manual-rank-id">{{
                     t('spa.person_rank.rank')
@@ -76,43 +78,37 @@ async function save(): Promise<void> {
                     :options="availableRanks"
                     option-label="label"
                     option-value="id"
+                    fluid
                     :disabled="saving"
                 />
             </div>
-            <div class="form-field">
-                <label for="manual-rank-achieved">{{
-                    t('spa.person_rank.completed')
-                }}</label>
-                <input
-                    id="manual-rank-achieved"
+            <div class="form-grid">
+                <DateFilter
                     v-model="achievedOn"
-                    class="form-control"
-                    type="date"
+                    class="form-field"
+                    input-id="manual-rank-achieved"
+                    :label="t('spa.person_rank.completed')"
                     required
                     :disabled="saving"
                 />
-            </div>
-            <div class="form-field">
-                <label for="manual-rank-activated">{{
-                    t('spa.person_rank.activated')
-                }}</label>
-                <input
-                    id="manual-rank-activated"
+                <DateFilter
                     v-model="activatedOn"
-                    class="form-control"
-                    type="date"
+                    class="form-field"
+                    input-id="manual-rank-activated"
+                    :label="t('spa.person_rank.activated')"
+                    :min-date="achievedOn"
                     required
-                    :min="achievedOn"
                     :disabled="saving"
                 />
             </div>
             <Message v-if="error" severity="error" :closable="false">{{
                 error
             }}</Message>
-            <div class="details-actions">
+            <div class="details-actions manual-rank-actions">
                 <Button
                     :label="t('spa.person_rank.cancel')"
                     severity="secondary"
+                    text
                     :disabled="saving"
                     @click="cancel"
                 />
@@ -126,3 +122,10 @@ async function save(): Promise<void> {
         </form>
     </Dialog>
 </template>
+
+<style scoped>
+.manual-rank-actions {
+    justify-content: flex-end;
+    margin-top: 0;
+}
+</style>
