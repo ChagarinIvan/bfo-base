@@ -8,25 +8,32 @@ use App\Domain\Auth\Impression;
 use App\Domain\Person\ManualRank\Event\ManualPersonRankAdded;
 use App\Domain\Person\ManualRank\Event\ManualPersonRankDisabled;
 use App\Domain\Person\RankFact;
+use App\Domain\Rank\Rank;
+use App\Domain\Shared\AggregatedModel;
+use App\Infrastructure\Laravel\Eloquent\Auth\ImpressionCast;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Attributes\Table;
+use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 
-final class ManualPersonRank
+/**
+ * @property string $id
+ * @property int $person_id
+ * @property Rank $rank
+ * @property Carbon $achieved_on
+ * @property Carbon $activated_on
+ * @property bool $active
+ * @property Impression $created
+ * @property Impression $updated
+ */
+#[Table(name: 'manual_person_ranks', keyType: 'string', incrementing: false)]
+#[WithoutTimestamps]
+class ManualPersonRank extends AggregatedModel
 {
-    /** @var list<object> */
-    private array $events = [];
-
-    public function __construct(
-        public readonly string $id,
-        public readonly int $personId,
-        public readonly ManualRankInput $input,
-        public readonly Impression $created,
-        private Impression $updated,
-        private bool $active = true,
-    ) {
-    }
-
     public function create(): void
     {
-        $this->events[] = new ManualPersonRankAdded($this->id, $this->personId);
+        $this->recordThat(new ManualPersonRankAdded($this->id, $this->person_id));
+
+        $this->save();
     }
 
     public function disable(Impression $impression): void
@@ -36,25 +43,7 @@ final class ManualPersonRank
         }
         $this->active = false;
         $this->updated = $impression;
-        $this->events[] = new ManualPersonRankDisabled($this->id, $this->personId);
-    }
-
-    public function isActive(): bool
-    {
-        return $this->active;
-    }
-
-    public function updated(): Impression
-    {
-        return $this->updated;
-    }
-
-    /** @return list<object> */
-    public function drainEvents(): array
-    {
-        $events = $this->events;
-        $this->events = [];
-        return $events;
+        $this->recordThat(new ManualPersonRankDisabled($this->id, $this->person_id));
     }
 
     public function fact(): RankFact
@@ -64,10 +53,23 @@ final class ManualPersonRank
             null,
             null,
             null,
-            $this->input->rank,
-            $this->input->achievedOn->copy(),
-            $this->input->activatedOn->copy(),
+            $this->rank,
+            $this->achieved_on,
+            $this->activated_on,
             manualRankId: $this->id
         );
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'person_id' => 'integer',
+            'rank' => Rank::class,
+            'achieved_on' => 'date',
+            'activated_on' => 'date',
+            'active' => 'boolean',
+            'created' => ImpressionCast::class,
+            'updated' => ImpressionCast::class,
+        ];
     }
 }

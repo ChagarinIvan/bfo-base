@@ -6,8 +6,10 @@ namespace Tests\Feature\Person;
 
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\ManualRank\AddManualPersonRankAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\ManualRank\DeleteManualPersonRankAction;
+use App\Domain\Auth\Impression;
 use App\Domain\Person\ManualRank\Event\ManualPersonRankAdded;
 use App\Domain\Person\ManualRank\Event\ManualPersonRankDisabled;
+use App\Domain\Person\ManualRank\ManualPersonRank;
 use App\Domain\Person\ManualRank\ManualPersonRankRepository;
 use App\Domain\Person\Person;
 use App\Domain\Shared\Criteria;
@@ -54,9 +56,21 @@ final class ManualPersonRankEventsTest extends TestCase
         $repository = $this->app->make(ManualPersonRankRepository::class);
         $source = $repository->oneByCriteria(new Criteria(['id' => $id]));
         $this->assertNotNull($source);
+        $this->assertSame($id, $source->fact()->manualRankId);
+        $this->assertNull($source->fact()->protocolLineId);
         $db->transaction(static fn () => $repository->update($source));
         $this->assertSame(['added'], $seen);
+        $this->travelTo(Carbon::parse('2026-11-09'));
         $this->deleteJson("{$url}/{$id}")->assertNoContent();
         $this->assertSame(['added', 'disabled'], $seen);
+
+        $inactive = ManualPersonRank::query()->findOrFail($id);
+        $this->assertFalse($inactive->active);
+        $this->assertEquals($source->created, $inactive->created);
+        $this->assertSame('2026-11-09', $inactive->updated->at->toDateString());
+        $inactive->disable(new Impression(Carbon::parse('2026-11-10'), $inactive->updated->by));
+        $db->transaction(static fn () => $repository->update($inactive));
+        $this->assertSame(['added', 'disabled'], $seen);
+        $this->assertEquals($inactive->updated, $inactive->refresh()->updated);
     }
 }

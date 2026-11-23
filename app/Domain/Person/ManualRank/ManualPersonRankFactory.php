@@ -31,6 +31,16 @@ final readonly class ManualPersonRankFactory
             throw new DuplicateManualRank();
         }
         $impression = new Impression($now, $userId);
-        return new ManualPersonRank($this->ids->generate(), $personId, $input, $impression, $impression);
+        $rank = new ManualPersonRank();
+        $rank->id = $this->ids->generate();
+        $rank->person_id = $personId;
+        $rank->rank = $input->rank;
+        $rank->achieved_on = $input->achievedOn;
+        $rank->activated_on = $input->activatedOn;
+        $rank->active = true;
+        $rank->created = $impression;
+        $rank->updated = $impression;
+
+        return $rank;
     }
 }

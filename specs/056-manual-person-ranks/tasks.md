@@ -6,7 +6,7 @@
 
 ## Foundation
 - [x] T003 Regression-first tests for source domain, API rebuild persistence/rollback in tests/Domain/Person/ManualRank and tests/Feature/Api/V1/PersonRankHistory/ManualPersonRankActionTest.php.
-- [x] T004 Pure domain source, duplicate factory, repository port, events and Infrastructure mapper in app/Domain/Person/ManualRank and app/Infrastructure/Laravel/Eloquent/Person/ManualRank.
+- [x] T004 Eloquent aggregate, duplicate factory, repository port, after-commit events and Eloquent repository in app/Domain/Person/ManualRank and app/Infrastructure/Laravel/Eloquent/Person/ManualRank.
 - [x] T005 Schema/source identity via migration, RankFact, PersonRankHistory and DTO/assembler.
 
 ## US1, P1, add and persistent calculation

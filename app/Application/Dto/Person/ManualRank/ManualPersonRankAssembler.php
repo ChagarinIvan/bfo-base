@@ -17,12 +17,12 @@ final readonly class ManualPersonRankAssembler
     {
         return new ViewManualPersonRankDto(
             $rank->id,
-            (string) $rank->personId,
-            $rank->input->rank->value,
-            $rank->input->achievedOn->format('Y-m-d'),
-            $rank->input->activatedOn->format('Y-m-d'),
+            (string) $rank->person_id,
+            $rank->rank->value,
+            $rank->achieved_on->format('Y-m-d'),
+            $rank->activated_on->format('Y-m-d'),
             $this->auth->toImpressionDto($rank->created),
-            $this->auth->toImpressionDto($rank->updated())
+            $this->auth->toImpressionDto($rank->updated)
         );
     }
 }

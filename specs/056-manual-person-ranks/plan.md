@@ -5,8 +5,8 @@
 ## Summary
 
 Постоянный ManualPersonRank aggregate отдельно от person_rank_histories projection.
-Чистый Domain, SQL repository adapter через injected Connection, immutable events
-с dispatch после commit. Add/disable services lock Person, сохраняют source и синхронно
+Eloquent-агрегат наследуется от `AggregatedModel`. Репозиторий использует Eloquent,
+события с неизменяемым payload доставляются после commit. Add/disable services lock Person, сохраняют source и синхронно
 вызывают существующий rebuild в одной transaction. Source metadata не заменяет history ID.
 
 ## Technical context
@@ -19,21 +19,19 @@ Migration делает protocol references nullable и добавляет manual
 
 ## Constitution check
 
-PASS before/after design: новые классы не в legacy; Domain не наследует Laravel models.
+Согласованное исключение из раздела I конституции: `ManualPersonRank` следует принятой
+реализации существующих Eloquent-агрегатов. Репозиторий находится в Infrastructure.
 Aggregate create/disable фиксируют events, Impression created/updated, save через port
-в transaction. Infrastructure dispatch планируется afterCommit, rollback не доставляет events.
+в transaction. События реализуют `ShouldDispatchAfterCommit`. При rollback доставка отменяется.
 Person пересчитывается синхронно, source/projection atomic. Никакой очереди между ними.
 Soft disable сохраняет source. Physical delete разрешён только старой derived projection.
 V1 thin actions, command getters не возвращают DTO; camelCase, serializer, @see tests.
-Unit tests mocks; новые calculation scenarios в integration из-за legacy Eloquent history.
-REF-13: существующие Person/PersonRankHistory остаются переходными моделями. Изменение
-nullable/source полей не добавляет framework imports; выделение чистой projection остаётся
-отдельной задачей манифеста, не скрытым расширением scope.
+Unit-тесты используют моки. Сохранение, аудит, события и пересчёт проверяются в integration-тестах.
 
 ## Structure
 
 app/Domain/Person/ManualRank/{ManualPersonRank,ManualRankInput,ManualPersonRankRepository,ManualPersonRankFactory,Exception/*,Event/*}.php
-app/Infrastructure/Laravel/Eloquent/Person/ManualRank/SqlManualPersonRankRepository.php
+app/Infrastructure/Laravel/Eloquent/Person/ManualRank/EloquentManualPersonRankRepository.php
 app/Application/{Dto/Person/ManualRank/*,Service/Person/ManualRank/*}.php
 app/Bridge/Laravel/Http/Controllers/Api/V1/Person/ManualRank/*Action.php
 Existing RankFact, RankCalculator, PersonRankHistory, collector, assembler/DTO, providers/routes.

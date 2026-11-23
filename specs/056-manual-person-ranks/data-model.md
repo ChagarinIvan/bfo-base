@@ -3,8 +3,9 @@
 manual_person_ranks: id UUID PK, person_id FK, rank unsigned tinyint, achieved_on date,
 activated_on date NOT NULL, active bool, created_at/by, updated_at/by. Index person_id/active.
 ManualRankInput validates real rank, date ordering and future achievement against supplied Clock.
-Pure aggregate has stable id, source input, created/updated Impression; create records Added,
-disable records Disabled. drainEvents clears once after successful persistence.
+`ManualPersonRank` extends `AggregatedModel` and casts rank, dates, active and
+created/updated Impression. Create records Added and saves the model. Disable records
+Disabled and updates the audit. Both events are delivered once after commit.
 
 person_rank_histories: existing four source FK IDs nullable; nullable manual_rank_id UUID FK.
 API source derived from manual_rank_id. All calculator copy paths preserve identity.

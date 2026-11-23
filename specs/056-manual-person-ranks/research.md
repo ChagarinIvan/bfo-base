@@ -26,9 +26,9 @@ Age filter для protocol остаётся; manual junior bypass подтвер
 
 ## Архитектура
 
-Для нового source чистая Domain entity, repository port, Infrastructure storage model
-и mapper. Не наследовать новый aggregate от AggregatedModel/AggregatedEvent:
-они привязаны к Laravel. Source event plain readonly; Infrastructure dispatch afterCommit.
+По решению владельца проекта `ManualPersonRank` наследуется от `AggregatedModel`.
+Репозиторий работает с этой Eloquent-моделью. События наследуются от `AggregatedEvent`,
+передают идентификаторы и реализуют `ShouldDispatchAfterCommit`.
 Mutation lock Person в transaction сериализует duplicate checks и rebuild.
 Без расширения legacy Services/Repositories; thin API command use cases.
 
@@ -41,9 +41,9 @@ Nullable IDs фильтруются до events/cups calls, manual-only исто
 Route changes не должны применить результат старой mutation к другому Person.
 
 Read-only research выполнен двумя speckit-plan research agents, без edits.
-Decisions consolidated in plan: UUID source, SQL mapper, synchronous rebuild, afterCommit events.
+Decisions consolidated in plan: UUID source, Eloquent aggregate, synchronous rebuild, after-commit events.
 Alternatives rejected: source only in history (lost on rebuild), fake protocol rows/IDs (wrong provenance),
-queued rebuild (partial visible state), new Eloquent Domain aggregate (violates constitution).
+queued rebuild (partial visible state).
 
 ## Review findings incorporated
 

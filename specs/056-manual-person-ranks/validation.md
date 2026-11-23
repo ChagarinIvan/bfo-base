@@ -69,8 +69,8 @@ Vite retains its existing chunk-size warning; PHPUnit retains 15 existing notice
 
 ## Architecture and queries
 
-New aggregate/input/events/ports are framework-independent. Infrastructure maps SQL records
-and dispatches plain events afterCommit. Person row lock serializes add/disable/duplicate
+`ManualPersonRank` extends `AggregatedModel` and is persisted by the Eloquent repository.
+Laravel delivers rank events after commit via `ShouldDispatchAfterCommit`. Person row lock serializes add/disable/duplicate
 checks; source and synchronous nested rebuild share the transaction. No source persistence
 in the disposable history table, no fake protocol IDs, no physical business deletion.
 New commands expose primitives/domain input, not transport DTO getters.
