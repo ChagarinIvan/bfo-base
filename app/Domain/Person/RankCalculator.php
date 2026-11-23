@@ -11,6 +11,7 @@ use function array_last;
 use function array_map;
 use function array_values;
 use function count;
+use function max;
 use function usort;
 
 final class RankCalculator
@@ -124,7 +125,7 @@ final class RankCalculator
         if ($activatedOn !== null) {
             $history = $this->endLowerRankPeriods($history, $fact, $startedOn, $personId);
         }
-        $history = $this->extendActivePeriods($history, $fact, $startedOn, $finishedOn, $personId);
+        [$history, $finishedOn] = $this->extendActivePeriods($history, $fact, $startedOn, $finishedOn, $personId);
 
         $history[] = PersonRankHistory::fromValues(
             personId: $personId,
@@ -209,41 +210,44 @@ final class RankCalculator
 
     /**
      * A repeated qualification prolongs the still-active period created by a
-     * previous qualification of the same rank. This mirrors the legacy
-     * updater, including its exclusion of rows from the same event.
+     * previous qualification of the same rank. Both qualifications share
+     * the latest finish date. Rows from the same event are excluded.
      *
      * @param list<PersonRankHistory> $history
-     * @return list<PersonRankHistory>
+     * @return array{list<PersonRankHistory>, Carbon|null}
      */
     private function extendActivePeriods(array $history, RankFact $achievement, Carbon $startedOn, ?Carbon $finishedOn, ?int $personId): array
     {
         if (!$finishedOn instanceof Carbon) {
-            return $history;
+            return [$history, null];
         }
 
-        return array_map(
-            function (PersonRankHistory $entry) use ($achievement, $startedOn, $finishedOn, $personId): PersonRankHistory {
-                if (!$this->shouldExtendPeriod($entry, $achievement, $startedOn)) {
-                    return $entry;
-                }
+        $matchingEntries = [];
+        foreach ($history as $index => $entry) {
+            if ($this->shouldExtendPeriod($entry, $achievement, $startedOn)) {
+                $matchingEntries[$index] = $entry;
+                $finishedOn = max($finishedOn, $entry->finished_on ?? $finishedOn);
+            }
+        }
 
-                return PersonRankHistory::fromValues(
-                    personId: $personId,
-                    protocolLineId: $entry->protocol_line_id,
-                    distanceId: $entry->distance_id,
-                    eventId: $entry->event_id,
-                    competitionId: $entry->competition_id,
-                    rank: $entry->rank,
-                    changeType: $entry->change_type,
-                    achievedOn: $entry->achieved_on,
-                    activatedOn: $entry->activated_on,
-                    startedOn: $entry->started_on,
-                    finishedOn: $finishedOn,
-                    manualRankId: $entry->manual_rank_id,
-                );
-            },
-            $history,
-        );
+        foreach ($matchingEntries as $index => $entry) {
+            $history[$index] = PersonRankHistory::fromValues(
+                personId: $personId,
+                protocolLineId: $entry->protocol_line_id,
+                distanceId: $entry->distance_id,
+                eventId: $entry->event_id,
+                competitionId: $entry->competition_id,
+                rank: $entry->rank,
+                changeType: $entry->change_type,
+                achievedOn: $entry->achieved_on,
+                activatedOn: $entry->activated_on,
+                startedOn: $entry->started_on,
+                finishedOn: $finishedOn,
+                manualRankId: $entry->manual_rank_id,
+            );
+        }
+
+        return [$history, $finishedOn];
     }
 
     /**
@@ -314,10 +318,10 @@ final class RankCalculator
             $eligible[$fact->achievedOn->year][] = $fact;
         }
 
-        foreach ($eligible as $year => $yearAchievements) {
+        foreach ($eligible as $yearAchievements) {
             $yearAchievements = $this->sortFactsByAchievement($yearAchievements);
 
-            if (count($yearAchievements) < 3 || array_filter($facts, static fn (RankFact $item): bool => $item->rank === Rank::JuniorThirdRank && $item->achievedOn->year === $year) !== []) {
+            if (count($yearAchievements) < 3 || array_filter($yearAchievements, static fn (RankFact $item): bool => $item->rank === Rank::JuniorThirdRank) !== []) {
                 continue;
             }
 

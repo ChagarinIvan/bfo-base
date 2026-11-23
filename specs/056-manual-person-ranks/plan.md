@@ -44,8 +44,9 @@ lang/by.json, updates entry and rank reason captions/tests.
 
 Both dates required, achieved<=today and activated>=achieved. Future activation is scheduled
 by existing daily selection for every rank. Manual junior bypasses age filter; manual facts
-never count as protocol starts. Existing explicit IIIю (including manual) suppresses extra
-synthetic IIIю in that year. Two manual facts can extend each other despite null eventId.
+never count as protocol starts. Only an explicit protocol IIIю suppresses the IIIю awarded
+for three starts in that year. Two manual facts can extend each other despite null eventId.
+Repeat qualifications retain the latest finish date of the shared active period.
 Sort same-day protocol facts as before, then manual by UUID, keeping repeat rebuild stable.
 Prune query excludes active manual sources to preserve manual-only participants.
 No automatic dedup across sources. Same active manual tuple rejected; disabled tuple reusable.

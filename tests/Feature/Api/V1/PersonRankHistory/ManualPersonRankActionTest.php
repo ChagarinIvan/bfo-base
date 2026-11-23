@@ -112,6 +112,57 @@ final class ManualPersonRankActionTest extends TestCase
     }
 
     #[Test]
+    public function backdated_repeat_does_not_shorten_an_existing_rank_period(): void
+    {
+        $this->travelTo(Carbon::parse('2026-01-15'));
+        Sanctum::actingAs(SanctumUser::query()->create(['email' => fake()->unique()->safeEmail(), 'password' => 'unused']));
+        $person = Person::factory()->createOne(['id' => 1001]);
+        $url = "/api/v1/persons/{$person->id}/manual-ranks";
+        $this->postJson($url, [
+            'rankId' => Rank::SecondRank->value,
+            'achievedOn' => '2024-01-01',
+            'activatedOn' => '2025-12-01',
+        ])->assertCreated();
+        $this->postJson($url, [
+            'rankId' => Rank::SecondRank->value,
+            'achievedOn' => '2025-02-01',
+            'activatedOn' => '2026-02-01',
+        ])->assertCreated();
+        $this->assertEquals(Carbon::parse('2028-02-01'), $person->fresh()->currentRank()->finishedOn);
+
+        $this->postJson($url, [
+            'rankId' => Rank::SecondRank->value,
+            'achievedOn' => '2025-03-01',
+            'activatedOn' => '2026-01-01',
+        ])->assertCreated();
+
+        $this->assertDatabaseHas('person_rank_histories', [
+            'person_id' => $person->id,
+            'achieved_on' => '2024-01-01',
+            'finished_on' => '2028-02-01',
+        ]);
+        $this->assertEquals(Carbon::parse('2028-02-01'), $person->fresh()->currentRank()->finishedOn);
+    }
+
+    #[Test]
+    public function future_manual_junior_third_rank_preserves_the_rank_earned_from_three_starts(): void
+    {
+        $person = Person::factory()->createOne(['id' => 1001, 'birthday' => '2013-01-01']);
+        $facts = [
+            new RankFact(10, 20, 30, 40, Rank::FirstRank, Carbon::parse('2026-01-01'), null),
+            new RankFact(11, 21, 31, 41, Rank::FirstRank, Carbon::parse('2026-02-01'), null),
+            new RankFact(12, 22, 32, 42, Rank::FirstRank, Carbon::parse('2026-03-01'), null),
+            RankFact::fromManualRank('manual', Rank::JuniorThirdRank, Carbon::parse('2026-02-15'), Carbon::parse('2026-12-20')),
+        ];
+
+        $result = new RankCalculator()->calculate($facts, $person, Carbon::parse('2026-11-23'));
+
+        $this->assertSame(Rank::JuniorThirdRank, $result->current->rank);
+        $this->assertSame('2026-03-01', $result->current->activatedOn?->toDateString());
+        $this->assertSame('2026-12-20', $result->nextActivationOn?->toDateString());
+    }
+
+    #[Test]
     public function manual_fact_does_not_become_a_third_protocol_start_and_keeps_source_through_mixed_promotion(): void
     {
         $person = Person::factory()->createOne(['id' => 1001, 'birthday' => '2010-01-01']);
