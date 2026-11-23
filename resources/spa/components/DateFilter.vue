@@ -10,8 +10,9 @@ const props = withDefaults(
         error?: string
         required?: boolean
         disabled?: boolean
+        minDate?: string
     }>(),
-    { disabled: false, error: '', required: false },
+    { disabled: false, error: '', minDate: '', required: false },
 )
 
 const inputValue = ref(parseDate(props.modelValue))
@@ -70,9 +71,10 @@ function onInput(
     <div class="filter-field">
         <label :for="inputId">{{ label }}</label>
         <DatePicker
-            :id="inputId"
             v-model="inputValue"
+            :input-id="inputId"
             :disabled="disabled"
+            :min-date="parseDate(minDate) ?? undefined"
             :required="required"
             date-format="yy-mm-dd"
             placeholder="YYYY-MM-DD"

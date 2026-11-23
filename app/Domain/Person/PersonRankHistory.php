@@ -16,10 +16,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * @property int $id
  * @property int $person_id
- * @property int $protocol_line_id
- * @property int $distance_id
- * @property int $event_id
- * @property int $competition_id
+ * @property int|null $protocol_line_id
+ * @property int|null $distance_id
+ * @property int|null $event_id
+ * @property int|null $competition_id
+ * @property string|null $manual_rank_id
  * @property Rank $rank
  * @property RankChangeType $change_type
  * @property Carbon $achieved_on
@@ -30,7 +31,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 #[Fillable([
     'person_id', 'protocol_line_id', 'distance_id', 'event_id', 'competition_id',
-    'rank', 'change_type', 'achieved_on', 'activated_on', 'started_on', 'finished_on',
+    'manual_rank_id', 'rank', 'change_type', 'achieved_on', 'activated_on', 'started_on', 'finished_on',
 ])]
 #[Table(name: 'person_rank_histories')]
 #[WithoutTimestamps]
@@ -38,20 +39,22 @@ class PersonRankHistory extends Model
 {
     public static function fromValues(
         ?int $personId,
-        int $protocolLineId,
-        int $distanceId,
-        int $eventId,
-        int $competitionId,
+        ?int $protocolLineId,
+        ?int $distanceId,
+        ?int $eventId,
+        ?int $competitionId,
         Rank $rank,
         RankChangeType $changeType,
         Carbon $achievedOn,
         ?Carbon $activatedOn,
         Carbon $startedOn,
         ?Carbon $finishedOn,
+        ?string $manualRankId = null,
     ): self {
         $history = new self();
         $history->setRawAttributes([
             'person_id' => $personId,
+            'manual_rank_id' => $manualRankId,
             'protocol_line_id' => $protocolLineId,
             'distance_id' => $distanceId,
             'event_id' => $eventId,

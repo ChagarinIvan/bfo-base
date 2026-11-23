@@ -98,6 +98,8 @@ describe('person prompt person info', () => {
         ['protocol_person_changed', 'Змена прывязкі вынікаў да спартсмена'],
         ['daily', 'Штодзённая праверка'],
         ['refill', 'Поўны пераразлік'],
+        ['manual_rank_added', 'Дададзена ручное выкананне'],
+        ['manual_rank_removed', 'Выдалена ручное выкананне'],
     ] as const)(
         'shows calculation time and %s below the current rank for authenticated users',
         async (reason, label) => {

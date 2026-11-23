@@ -51,6 +51,8 @@ use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\CreatePersonAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\DeletePersonAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\ExportPersonRanksAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\ListPersonsAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\ManualRank\AddManualPersonRankAction;
+use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\ManualRank\DeleteManualPersonRankAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\PersonRankHistory\ActivatePersonRankAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\PersonRankHistory\ListPersonRankHistoryAction;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Person\PersonRankHistory\UpdatePersonRankActivationAction;
@@ -144,6 +146,8 @@ final class ApiV1RoutesServiceProvider extends ServiceProvider
                 $router->post('persons', CreatePersonAction::class);
                 $router->put('persons/{personId}', UpdatePersonAction::class);
                 $router->delete('persons/{personId}', DeletePersonAction::class);
+                $router->post('persons/{personId}/manual-ranks', AddManualPersonRankAction::class);
+                $router->delete('persons/{personId}/manual-ranks/{manualRankId}', DeleteManualPersonRankAction::class);
                 $router->post('persons/{personId}/ranks/rebuild', RebuildPersonRanksAction::class);
                 $router->post('protocol-lines/{protocolLineId}/extract-person', ExtractPersonAction::class);
                 $router->put('protocol-lines/{protocolLineId}/person', AssignPersonToProtocolLineAction::class);

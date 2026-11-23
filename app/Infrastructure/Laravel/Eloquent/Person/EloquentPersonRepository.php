@@ -14,6 +14,7 @@ use App\Domain\Shared\Pagination\Slice;
 use App\Infrastructure\Laravel\Eloquent\Pagination\EloquentQueryAdapter;
 use App\Infrastructure\Laravel\Eloquent\Shared\EscapesLikePatterns;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
 use function mb_strtolower;
@@ -151,7 +152,12 @@ final readonly class EloquentPersonRepository implements PersonRepository
                 ->leftJoin('protocol_lines', 'protocol_lines.person_id', '=', 'person.id')
                 ->whereNull('protocol_lines.id')
                 ->leftJoin('persons_payments', 'persons_payments.person_id', '=', 'person.id')
-                ->whereNull('persons_payments.id');
+                ->whereNull('persons_payments.id')
+                ->whereNotExists(static function (QueryBuilder $query): void {
+                    $query->selectRaw('1')->from('manual_person_ranks')
+                        ->whereColumn('manual_person_ranks.person_id', 'person.id')
+                        ->where('manual_person_ranks.active', true);
+                });
         }
 
         return $query;

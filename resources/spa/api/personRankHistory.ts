@@ -1,6 +1,7 @@
 import { api } from './client'
 import type {
     PersonRankActivationRequest,
+    ManualPersonRankRequest,
     PersonRankHistory,
     ProtocolLine,
 } from './types'
@@ -37,4 +38,18 @@ export async function updatePersonRankActivation(
             payload,
         )
     ).data
+}
+
+export async function addManualPersonRank(
+    personId: string,
+    payload: ManualPersonRankRequest,
+): Promise<void> {
+    await api.post(`/persons/${personId}/manual-ranks`, payload)
+}
+
+export async function deleteManualPersonRank(
+    personId: string,
+    manualRankId: string,
+): Promise<void> {
+    await api.delete(`/persons/${personId}/manual-ranks/${manualRankId}`)
 }

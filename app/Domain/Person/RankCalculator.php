@@ -11,6 +11,7 @@ use function array_last;
 use function array_map;
 use function array_values;
 use function count;
+use function max;
 use function usort;
 
 final class RankCalculator
@@ -35,7 +36,7 @@ final class RankCalculator
     {
         $next = null;
         foreach ($facts as $fact) {
-            if (!$fact->delayedActivation || !$fact->rank->usesDelayedActivation()) {
+            if ($fact->activatedOn === null && (!$fact->delayedActivation || !$fact->rank->usesDelayedActivation())) {
                 continue;
             }
 
@@ -67,7 +68,7 @@ final class RankCalculator
     private function isEligibleForCalculation(RankFact $fact, ?Carbon $birthday): bool
     {
         return $fact->rank !== Rank::WithoutRank
-            && (!$fact->rank->isJunior() || $this->isJuniorOnAchievementDate($birthday, $fact->achievedOn));
+            && ($fact->manualRankId !== null || !$fact->rank->isJunior() || $this->isJuniorOnAchievementDate($birthday, $fact->achievedOn));
     }
 
     private function isJuniorOnAchievementDate(?Carbon $birthday, Carbon $achievedOn): bool
@@ -82,7 +83,7 @@ final class RankCalculator
      */
     private function sortFactsByAchievement(array $facts): array
     {
-        usort($facts, static fn (RankFact $left, RankFact $right): int => $left->achievedOn <=> $right->achievedOn ?: $left->protocolLineId <=> $right->protocolLineId);
+        usort($facts, static fn (RankFact $left, RankFact $right): int => $left->achievedOn <=> $right->achievedOn ?: (($left->manualRankId !== null) <=> ($right->manualRankId !== null)) ?: $left->protocolLineId <=> $right->protocolLineId ?: $left->manualRankId <=> $right->manualRankId);
 
         return $facts;
     }
@@ -124,7 +125,7 @@ final class RankCalculator
         if ($activatedOn !== null) {
             $history = $this->endLowerRankPeriods($history, $fact, $startedOn, $personId);
         }
-        $history = $this->extendActivePeriods($history, $fact, $startedOn, $finishedOn, $personId);
+        [$history, $finishedOn] = $this->extendActivePeriods($history, $fact, $startedOn, $finishedOn, $personId);
 
         $history[] = PersonRankHistory::fromValues(
             personId: $personId,
@@ -138,6 +139,7 @@ final class RankCalculator
             activatedOn: $activatedOn,
             startedOn: $startedOn,
             finishedOn: $finishedOn,
+            manualRankId: $fact->manualRankId,
         );
 
         return $history;
@@ -200,47 +202,52 @@ final class RankCalculator
     {
         usort($history, static fn (PersonRankHistory $left, PersonRankHistory $right): int => $right->rank->value <=> $left->rank->value
             ?: $right->started_on <=> $left->started_on
-            ?: $right->protocol_line_id <=> $left->protocol_line_id);
+            ?: $right->protocol_line_id <=> $left->protocol_line_id
+            ?: $right->manual_rank_id <=> $left->manual_rank_id);
 
         return $history;
     }
 
     /**
      * A repeated qualification prolongs the still-active period created by a
-     * previous qualification of the same rank. This mirrors the legacy
-     * updater, including its exclusion of rows from the same event.
+     * previous qualification of the same rank. Both qualifications share
+     * the latest finish date. Rows from the same event are excluded.
      *
      * @param list<PersonRankHistory> $history
-     * @return list<PersonRankHistory>
+     * @return array{list<PersonRankHistory>, Carbon|null}
      */
     private function extendActivePeriods(array $history, RankFact $achievement, Carbon $startedOn, ?Carbon $finishedOn, ?int $personId): array
     {
         if (!$finishedOn instanceof Carbon) {
-            return $history;
+            return [$history, null];
         }
 
-        return array_map(
-            function (PersonRankHistory $entry) use ($achievement, $startedOn, $finishedOn, $personId): PersonRankHistory {
-                if (!$this->shouldExtendPeriod($entry, $achievement, $startedOn)) {
-                    return $entry;
-                }
+        $matchingEntries = [];
+        foreach ($history as $index => $entry) {
+            if ($this->shouldExtendPeriod($entry, $achievement, $startedOn)) {
+                $matchingEntries[$index] = $entry;
+                $finishedOn = max($finishedOn, $entry->finished_on ?? $finishedOn);
+            }
+        }
 
-                return PersonRankHistory::fromValues(
-                    personId: $personId,
-                    protocolLineId: $entry->protocol_line_id,
-                    distanceId: $entry->distance_id,
-                    eventId: $entry->event_id,
-                    competitionId: $entry->competition_id,
-                    rank: $entry->rank,
-                    changeType: $entry->change_type,
-                    achievedOn: $entry->achieved_on,
-                    activatedOn: $entry->activated_on,
-                    startedOn: $entry->started_on,
-                    finishedOn: $finishedOn,
-                );
-            },
-            $history,
-        );
+        foreach ($matchingEntries as $index => $entry) {
+            $history[$index] = PersonRankHistory::fromValues(
+                personId: $personId,
+                protocolLineId: $entry->protocol_line_id,
+                distanceId: $entry->distance_id,
+                eventId: $entry->event_id,
+                competitionId: $entry->competition_id,
+                rank: $entry->rank,
+                changeType: $entry->change_type,
+                achievedOn: $entry->achieved_on,
+                activatedOn: $entry->activated_on,
+                startedOn: $entry->started_on,
+                finishedOn: $finishedOn,
+                manualRankId: $entry->manual_rank_id,
+            );
+        }
+
+        return [$history, $finishedOn];
     }
 
     /**
@@ -277,6 +284,7 @@ final class RankCalculator
                     activatedOn: $entry->activated_on,
                     startedOn: $entry->started_on,
                     finishedOn: $startedOn,
+                    manualRankId: $entry->manual_rank_id,
                 );
             },
             $history,
@@ -286,7 +294,7 @@ final class RankCalculator
     private function shouldExtendPeriod(PersonRankHistory $history, RankFact $fact, Carbon $startedOn): bool
     {
         return $history->rank === $fact->rank
-            && $history->event_id !== $fact->eventId
+            && ($history->event_id === null || $fact->eventId === null || $history->event_id !== $fact->eventId)
             && $history->started_on <= $startedOn
             && $history->finished_on !== null
             && $history->finished_on > $startedOn;
@@ -304,16 +312,16 @@ final class RankCalculator
 
         $eligible = [];
         foreach ($facts as $fact) {
-            if (!$this->isJuniorOnAchievementDate($birthday, $fact->achievedOn)) {
+            if ($fact->manualRankId !== null || !$this->isJuniorOnAchievementDate($birthday, $fact->achievedOn)) {
                 continue;
             }
             $eligible[$fact->achievedOn->year][] = $fact;
         }
 
-        foreach ($eligible as $year => $yearAchievements) {
+        foreach ($eligible as $yearAchievements) {
             $yearAchievements = $this->sortFactsByAchievement($yearAchievements);
 
-            if (count($yearAchievements) < 3 || array_filter($facts, static fn (RankFact $item): bool => $item->rank === Rank::JuniorThirdRank && $item->achievedOn->year === $year) !== []) {
+            if (count($yearAchievements) < 3 || array_filter($yearAchievements, static fn (RankFact $item): bool => $item->rank === Rank::JuniorThirdRank) !== []) {
                 continue;
             }
 

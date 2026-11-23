@@ -37,16 +37,18 @@ final readonly class PersonAssembler
         return new ViewPersonRankHistoryDto(
             id: (string) $history->id,
             personId: (string) $history->person_id,
-            protocolLineId: (string) $history->protocol_line_id,
-            distanceId: (string) $history->distance_id,
-            eventId: (string) $history->event_id,
-            competitionId: (string) $history->competition_id,
+            protocolLineId: $history->protocol_line_id === null ? null : (string) $history->protocol_line_id,
+            distanceId: $history->distance_id === null ? null : (string) $history->distance_id,
+            eventId: $history->event_id === null ? null : (string) $history->event_id,
+            competitionId: $history->competition_id === null ? null : (string) $history->competition_id,
             rankId: $history->rank->value,
             changeType: $history->change_type->value,
             achievedOn: $history->achieved_on->format('Y-m-d'),
             activatedOn: $history->activated_on?->format('Y-m-d'),
             startedOn: $history->started_on->format('Y-m-d'),
             finishedOn: $history->finished_on?->format('Y-m-d'),
+            source: $history->manual_rank_id === null ? 'protocol' : 'manual',
+            manualRankId: $history->manual_rank_id,
         );
     }
 }

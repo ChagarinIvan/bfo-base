@@ -2,12 +2,14 @@ import { describe, expect, it, vi } from 'vitest'
 import { api } from './client'
 import {
     activatePersonRank,
+    addManualPersonRank,
+    deleteManualPersonRank,
     getPersonRankHistories,
     updatePersonRankActivation,
 } from './personRankHistory'
 
 vi.mock('./client', () => ({
-    api: { get: vi.fn(), post: vi.fn(), put: vi.fn() },
+    api: { get: vi.fn(), post: vi.fn(), put: vi.fn(), delete: vi.fn() },
 }))
 
 describe('person rank history api', () => {
@@ -34,4 +36,18 @@ describe('person rank history api', () => {
             { date: null },
         )
     })
+})
+
+it('uses person-scoped manual source endpoints', async () => {
+    vi.mocked(api.post).mockResolvedValue({ data: { id: 'source-1' } })
+    vi.mocked(api.delete).mockResolvedValue({})
+    const payload = {
+        rankId: 6,
+        achievedOn: '2026-01-01',
+        activatedOn: '2026-01-10',
+    }
+    await addManualPersonRank('7', payload)
+    await deleteManualPersonRank('7', 'source-1')
+    expect(api.post).toHaveBeenCalledWith('/persons/7/manual-ranks', payload)
+    expect(api.delete).toHaveBeenCalledWith('/persons/7/manual-ranks/source-1')
 })
