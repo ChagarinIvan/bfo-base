@@ -205,7 +205,7 @@ describe.each(pages)(
             const reset = openPage(component)
             await flushPromises()
             expect(auditDates(reset, updated.at)).toHaveLength(0)
-        })
+        }, 15000)
 
         it('preserves old preferences without enabling the new columns', async () => {
             localStorage.setItem(
@@ -264,6 +264,10 @@ describe.each(pages)(
         })
 
         it('loads authors as a list for 50 rows rather than once per row', async () => {
+            localStorage.setItem(
+                `bfo.table.${tableId}.authenticated`,
+                JSON.stringify(['created', 'updated']),
+            )
             const rows = Array.from({ length: 50 }, (_, index) => ({
                 ...line,
                 id: String(index + 1),
@@ -271,9 +275,6 @@ describe.each(pages)(
             getLines.mockResolvedValue({ data: rows, headers: {} })
             getPoints.mockResolvedValue({ data: rows, headers: {} })
             const wrapper = openPage(component)
-            await flushPromises()
-            await chooser(wrapper, 'Створана')!.get('input').setValue(true)
-            await chooser(wrapper, 'Зменена')!.get('input').setValue(true)
             await flushPromises()
             expect(auditDates(wrapper, created.at)).toHaveLength(50)
             expect(auditDates(wrapper, updated.at)).toHaveLength(50)

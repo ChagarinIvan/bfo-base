@@ -11,3 +11,12 @@ storage/framework/views/
 *.env
 .env*
 coverage/
+.npmrc
+certs/
+mysql-files/
+public/storage
+storage/*.key
+docker-compose.yml
+enviroment/mysql/my.cnf
+enviroment/nginx/conf.d/app.conf
+enviroment/php/php.ini

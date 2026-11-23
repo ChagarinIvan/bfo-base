@@ -15,7 +15,7 @@
         "ext-mbstring": "*",
         "ext-pdo": "*",
         "guzzlehttp/guzzle": "^7.10",
-        "laravel/framework": "^13.0",
+        "laravel/framework": "^13.43",
         "laravel/horizon": "^5.45",
         "laravel/sanctum": "^4.0",
         "mav/slovo": "^0.2.3",

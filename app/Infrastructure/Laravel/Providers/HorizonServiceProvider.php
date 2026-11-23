@@ -16,6 +16,10 @@ final class HorizonServiceProvider extends HorizonApplicationServiceProvider
         parent::boot();
 
         $config = $this->app->make(ConfigRepository::class);
-        Horizon::auth(static fn(Request $request): bool => (int) $request->user()?->getAuthIdentifier() === (int) $config->get('horizon.authorized_user_id'));
+        Horizon::auth(static function (Request $request) use ($config): bool {
+            $user = $request->user();
+
+            return $user !== null && (int) $user->getAuthIdentifier() === (int) $config->get('horizon.authorized_user_id');
+        });
     }
 }

@@ -8,6 +8,7 @@ use App\Domain\Event\EventRepository;
 use App\Domain\Event\Factory\EventFactory;
 use App\Domain\Event\Factory\StandardEventFactory;
 use App\Domain\Event\Factory\StoreProtocolEventFactory;
+use App\Domain\Event\Protocol\ProtocolUrlReader;
 use App\Domain\Event\ProtocolParser;
 use App\Domain\Event\ProtocolPathResolver;
 use App\Domain\Event\ProtocolUpdater;
@@ -15,8 +16,10 @@ use App\Domain\Event\StandardProtocolParser;
 use App\Domain\Event\StandardProtocolUpdater;
 use App\Domain\Event\UniteEventDataService;
 use App\Domain\Shared\Storage;
+use App\Infrastructure\Integration\Obelarus\ObelarusProtocolUrlReader;
 use App\Infrastructure\Laravel\Eloquent\Event\EloquentEventRepository;
 use App\Infrastructure\Laravel\Eloquent\Event\EloquentUniteEventDataService;
+use GuzzleHttp\Client;
 use Illuminate\Support\ServiceProvider;
 
 final class EventProvider extends ServiceProvider
@@ -27,6 +30,7 @@ final class EventProvider extends ServiceProvider
         $this->app->bind(EventFactory::class, StandardEventFactory::class);
         $this->app->bind(EventRepository::class, EloquentEventRepository::class);
         $this->app->bind(ProtocolParser::class, StandardProtocolParser::class);
+        $this->app->bind(ProtocolUrlReader::class, static fn (): ProtocolUrlReader => new ObelarusProtocolUrlReader(new Client()));
         $this->app->bind(UniteEventDataService::class, EloquentUniteEventDataService::class);
         $this->app->bind(StandardEventFactory::class, StandardEventFactory::class);
 

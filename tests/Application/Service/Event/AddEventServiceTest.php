@@ -21,6 +21,7 @@ use App\Domain\Event\Factory\EventFactory;
 use App\Domain\Event\Factory\EventInput;
 use App\Domain\Event\Protocol;
 use App\Domain\Event\Protocol\ProtocolFactory;
+use App\Domain\Event\Protocol\ProtocolUrlReader;
 use Carbon\Carbon;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -43,7 +44,7 @@ final class AddEventServiceTest extends TestCase
             $this->factory = $this->createMock(EventFactory::class),
             $this->events = $this->createMock(EventRepository::class),
             new EventAssembler(new AuthAssembler),
-            new ProtocolFactory,
+            new ProtocolFactory($this->createStub(ProtocolUrlReader::class)),
         );
     }
 

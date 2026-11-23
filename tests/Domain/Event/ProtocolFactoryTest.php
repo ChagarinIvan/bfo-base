@@ -7,6 +7,7 @@ namespace Tests\Domain\Event;
 use App\Domain\Event\Exception\InvalidProtocolContent;
 use App\Domain\Event\Protocol\ProtocolFactory;
 use App\Domain\Event\Protocol\ProtocolSource;
+use App\Domain\Event\Protocol\ProtocolUrlReader;
 use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Tests\TestCase;
@@ -16,9 +17,11 @@ final class ProtocolFactoryTest extends TestCase
     #[Test]
     public function it_rejects_a_source_without_results_body(): void
     {
+        $reader = $this->createStub(ProtocolUrlReader::class);
+        $reader->method('read')->willReturn('<html>invalid</html>');
         $this->expectException(InvalidProtocolContent::class);
 
-        (new ProtocolFactory)->create(new ProtocolSource(null, 'data://text/plain,invalid'));
+        new ProtocolFactory($reader)->create(new ProtocolSource(null, 'https://obelarus.net/protocol'));
     }
 
     #[Test]
@@ -28,7 +31,9 @@ final class ProtocolFactoryTest extends TestCase
         $file->method('getContent')->willReturn('protocol content');
         $file->method('getMimeType')->willReturn('text/plain');
 
-        $protocol = (new ProtocolFactory)->create(new ProtocolSource($file, null));
+        $reader = $this->createMock(ProtocolUrlReader::class);
+        $reader->expects($this->never())->method('read');
+        $protocol = new ProtocolFactory($reader)->create(new ProtocolSource($file, null));
 
         $this->assertSame('protocol content', $protocol->content);
         $this->assertSame('text/plain', $protocol->extension);
@@ -37,10 +42,11 @@ final class ProtocolFactoryTest extends TestCase
     #[Test]
     public function it_extracts_results_body_from_url_source(): void
     {
-        $protocol = (new ProtocolFactory)->create(new ProtocolSource(
-            null,
-            'data://text/plain,%3Chtml%3E%3Cdiv%20id%3D%22results-body%22%3Eresult%3C%2Fdiv%3E%3C%2Fhtml%3E',
-        ));
+        $url = 'https://obelarus.net/protocol';
+        $reader = $this->createMock(ProtocolUrlReader::class);
+        $reader->expects($this->once())->method('read')->with($url)->willReturn('<html><div id="results-body">result</div></html>');
+
+        $protocol = new ProtocolFactory($reader)->create(new ProtocolSource(null, $url));
 
         $this->assertStringContainsString('result', $protocol->content);
         $this->assertSame('html', $protocol->extension);
