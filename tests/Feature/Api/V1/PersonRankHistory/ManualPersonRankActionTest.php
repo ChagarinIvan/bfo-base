@@ -118,7 +118,7 @@ final class ManualPersonRankActionTest extends TestCase
         $facts = [
             new RankFact(10, 20, 30, 40, Rank::WithoutRank, Carbon::parse('2026-01-01'), null),
             new RankFact(11, 21, 31, 41, Rank::WithoutRank, Carbon::parse('2026-02-01'), null),
-            new RankFact(null, null, null, null, Rank::JuniorSecondRank, Carbon::parse('2026-03-01'), Carbon::parse('2026-03-01'), manualRankId: 'manual'),
+            RankFact::fromManualRank('manual', Rank::JuniorSecondRank, Carbon::parse('2026-03-01'), Carbon::parse('2026-03-01')),
             new RankFact(12, 22, 32, 42, Rank::FirstRank, Carbon::parse('2026-04-01'), Carbon::parse('2026-04-01')),
         ];
         // The adult promotion is the third real start. Its synthetic IIIю must retain protocol identity.
@@ -175,7 +175,7 @@ final class ManualPersonRankActionTest extends TestCase
         $person = Person::factory()->createOne(['id' => 1001]);
         $date = Carbon::parse('2026-01-01');
         $protocol = new RankFact(1, 1, 1, 1, Rank::FirstRank, $date, $date);
-        $manual = new RankFact(null, null, null, null, Rank::SecondRank, $date, $date, manualRankId: 'manual');
+        $manual = RankFact::fromManualRank('manual', Rank::SecondRank, $date, $date);
         foreach ([[$manual, $protocol], [$protocol, $manual]] as $facts) {
             $history = new RankCalculator()->calculate($facts, $person, Carbon::parse('2026-11-08'))->history;
             $this->assertSame(1, $history[0]->protocol_line_id);

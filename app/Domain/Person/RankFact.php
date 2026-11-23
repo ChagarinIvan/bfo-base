@@ -10,6 +10,19 @@ use Carbon\Carbon;
 /** Подтверждённое выполнение из протокола либо ручного источника. */
 final readonly class RankFact
 {
+    public static function fromManualRank(string $manualRankId, Rank $rank, Carbon $achievedOn, Carbon $activatedOn): self
+    {
+        return new self(
+            protocolLineId: null,
+            distanceId: null,
+            eventId: null,
+            competitionId: null,
+            rank: $rank,
+            achievedOn: $achievedOn,
+            activatedOn: $activatedOn,
+            manualRankId: $manualRankId,
+        );
+    }
     public function __construct(
         public ?int $protocolLineId,
         public ?int $distanceId,

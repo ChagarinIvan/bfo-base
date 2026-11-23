@@ -48,16 +48,7 @@ class ManualPersonRank extends AggregatedModel
 
     public function fact(): RankFact
     {
-        return new RankFact(
-            null,
-            null,
-            null,
-            null,
-            $this->rank,
-            $this->achieved_on,
-            $this->activated_on,
-            manualRankId: $this->id
-        );
+        return RankFact::fromManualRank($this->id, $this->rank, $this->achieved_on, $this->activated_on);
     }
 
     protected function casts(): array
