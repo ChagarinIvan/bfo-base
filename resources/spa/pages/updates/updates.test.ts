@@ -1,34 +1,44 @@
-import { existsSync, readdirSync } from 'node:fs'
+import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import { createMemoryHistory } from 'vue-router'
 import { createAppRouter } from '../../router'
 import { updates } from './updates'
 
 describe('static updates catalog', () => {
-    it('has exactly one entry for every specification', () => {
-        const specs = readdirSync(
-            new URL('../../../../specs/', import.meta.url),
-            {
-                withFileTypes: true,
-            },
-        )
+    it('has one entry for each completed specification without duplicates', () => {
+        const specsDir = new URL('../../../../specs/', import.meta.url)
+        const specs = readdirSync(specsDir, { withFileTypes: true })
             .filter(
                 (entry) =>
                     entry.isDirectory() &&
-                    existsSync(
-                        new URL(
-                            `../../../../specs/${entry.name}/spec.md`,
-                            import.meta.url,
-                        ),
-                    ),
+                    existsSync(new URL(`${entry.name}/spec.md`, specsDir)),
             )
             .map((entry) => entry.name)
-            .sort()
 
-        expect(updates.map((entry) => entry.spec).sort()).toEqual(specs)
-        expect(new Set(updates.map((entry) => entry.spec)).size).toBe(
-            updates.length,
-        )
+        const completed = specs.filter((spec) => {
+            const tasksPath = new URL(`${spec}/tasks.md`, specsDir)
+            if (!existsSync(tasksPath)) return false
+
+            const tasks = readFileSync(tasksPath, 'utf8')
+            return (
+                /^\s*- \[x\] T\d+/im.test(tasks) &&
+                !/^\s*- \[ \] T\d+/m.test(tasks)
+            )
+        })
+        const published = updates.map((entry) => entry.spec)
+        expect(published).toEqual(expect.arrayContaining(completed))
+        expect(specs).toEqual(expect.arrayContaining(published))
+        expect(new Set(published).size).toBe(updates.length)
+    })
+
+    it('omits the disabled review and dates manual ranks by their release', () => {
+        expect(
+            updates.some((entry) => entry.spec === '055-agent-pr-review'),
+        ).toBe(false)
+        expect(
+            updates.find((entry) => entry.spec === '056-manual-person-ranks')
+                ?.date,
+        ).toBe('2026-11-23')
     })
 
     it('sorts by documentation date and then full spec name', () => {
@@ -39,7 +49,10 @@ describe('static updates catalog', () => {
                     b.spec.localeCompare(a.spec),
             ),
         )
-        expect(updates[0]?.spec).toBe('056-manual-person-ranks')
+        expect(updates[0]).toMatchObject({
+            spec: '057-security-remediation',
+            date: '2026-11-25',
+        })
     })
 
     it('links only to existing SPA routes when a destination is useful', () => {

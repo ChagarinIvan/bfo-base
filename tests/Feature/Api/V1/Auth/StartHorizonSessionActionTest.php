@@ -47,6 +47,14 @@ final class StartHorizonSessionActionTest extends TestCase
     }
 
     #[Test]
+    public function it_denies_guest_dashboard_access_when_the_configured_user_id_is_zero(): void
+    {
+        config()->set('horizon.authorized_user_id', 0);
+
+        $this->get('/horizon')->assertForbidden();
+    }
+
+    #[Test]
     public function it_denies_a_user_other_than_the_configured_horizon_user(): void
     {
         $this->createUser();

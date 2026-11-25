@@ -160,6 +160,31 @@ final class EventManagementActionTest extends TestCase
     }
 
     #[Test]
+    public function it_rejects_protocol_import_from_an_unsupported_domain(): void
+    {
+        Sanctum::actingAs($this->createUser());
+        $competition = Competition::factory()->createOne();
+        $event = Event::factory()->createOne(['competition_id' => $competition->getKey()]);
+        $this->makeProtocolReady($event);
+        $data = [
+            'name' => 'Updated stage',
+            'description' => 'Updated description',
+            'date' => '2026-05-11',
+            'url' => 'https://example.test/protocol',
+        ];
+
+        $this->postJson("/api/v1/competitions/{$competition->getKey()}/events", $data)
+            ->assertStatus(400)
+            ->assertJsonPath('errors.0.code', 'invalid_protocol')
+        ;
+        $this->putJson("/api/v1/events/{$event->getKey()}", $data)
+            ->assertStatus(400)
+            ->assertJsonPath('errors.0.code', 'invalid_protocol')
+        ;
+        $this->assertSame($event->name, $event->fresh()->name);
+    }
+
+    #[Test]
     public function legacy_event_web_routes_are_not_registered_while_public_event_reads_remain_available(): void
     {
         $competition = Competition::factory()->createOne();

@@ -8,10 +8,14 @@ use App\Domain\Event\Exception\InvalidProtocolContent;
 use App\Domain\Event\Protocol;
 use DOMDocument;
 use DOMXPath;
-use function file_get_contents;
+use const LIBXML_NONET;
 
-final class ProtocolFactory
+final readonly class ProtocolFactory
 {
+    public function __construct(private ProtocolUrlReader $reader)
+    {
+    }
+
     public function create(ProtocolSource $source): Protocol
     {
         if ($source->file !== null) {
@@ -19,7 +23,10 @@ final class ProtocolFactory
         }
 
         $document = new DOMDocument;
-        @$document->loadHTML((string) file_get_contents((string) $source->url));
+        $content = $this->reader->read($source->url ?? '');
+        if ($content === '' || !@$document->loadHTML($content, LIBXML_NONET)) {
+            throw new InvalidProtocolContent('wrong protocol content');
+        }
         $xpath = new DOMXPath($document);
         $resultNode = $xpath->query('//div[@id="results-body"]');
 

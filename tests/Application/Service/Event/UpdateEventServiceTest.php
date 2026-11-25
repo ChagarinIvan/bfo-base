@@ -22,6 +22,7 @@ use App\Domain\Event\EventProcessingStatus;
 use App\Domain\Event\EventRepository;
 use App\Domain\Event\Protocol;
 use App\Domain\Event\Protocol\ProtocolFactory;
+use App\Domain\Event\Protocol\ProtocolUrlReader;
 use App\Domain\Event\ProtocolUpdater;
 use App\Domain\Shared\DummyTransactional;
 use App\Domain\Shared\FrozenClock;
@@ -52,7 +53,7 @@ final class UpdateEventServiceTest extends TestCase
             $this->events = $this->createMock(EventRepository::class),
             new EventAssembler(new AuthAssembler),
             new DummyTransactional,
-            new ProtocolFactory,
+            new ProtocolFactory($this->createStub(ProtocolUrlReader::class)),
             $this->tokens = $this->createMock(UuidGenerator::class),
         );
     }
