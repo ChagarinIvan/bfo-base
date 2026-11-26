@@ -49,8 +49,9 @@ describe('static updates catalog', () => {
                     b.spec.localeCompare(a.spec),
             ),
         )
-        expect(updates[0]).toMatchObject({
-            spec: '058-albatros-gomel-birth-year',
+        expect(
+            updates.find(({ spec }) => spec === '060-junior-third-rank-starts'),
+        ).toMatchObject({
             date: '2026-11-26',
         })
     })

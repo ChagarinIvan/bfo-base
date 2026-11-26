@@ -7,7 +7,7 @@ namespace App\Domain\Person;
 use App\Domain\Rank\Rank;
 use Carbon\Carbon;
 
-/** Подтверждённое выполнение из протокола либо ручного источника. */
+/** Зачётный результат из протокола или ручное выполнение разряда. */
 final readonly class RankFact
 {
     public static function fromManualRank(string $manualRankId, Rank $rank, Carbon $achievedOn, Carbon $activatedOn): self
