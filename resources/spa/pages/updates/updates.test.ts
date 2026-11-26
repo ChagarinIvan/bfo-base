@@ -49,10 +49,20 @@ describe('static updates catalog', () => {
                     b.spec.localeCompare(a.spec),
             ),
         )
-        expect(updates[0]).toMatchObject({
-            spec: '058-albatros-gomel-birth-year',
-            date: '2026-11-26',
-        })
+        const cupUpdate = '059-cup-athlete-profile'
+        const parserUpdate = '058-albatros-gomel-birth-year'
+        expect(
+            updates.filter(
+                ({ spec }) => spec === cupUpdate || spec === parserUpdate,
+            ),
+        ).toMatchObject([
+            {
+                spec: cupUpdate,
+                date: '2026-11-26',
+                link: { href: '/app/cups' },
+            },
+            { spec: parserUpdate, date: '2026-11-26' },
+        ])
     })
 
     it('links only to existing SPA routes when a destination is useful', () => {

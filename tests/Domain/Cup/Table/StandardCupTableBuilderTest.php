@@ -9,7 +9,9 @@ use App\Domain\Cup\CupEvent\CupEventPoint;
 use App\Domain\Cup\Group\CupGroupFactory;
 use App\Domain\Cup\Table\CupTable;
 use App\Domain\Cup\Table\StandardCupTableBuilder;
+use App\Domain\Person\Person;
 use App\Domain\ProtocolLine\ProtocolLine;
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -22,8 +24,8 @@ final class StandardCupTableBuilderTest extends TestCase
     {
         $group = CupGroupFactory::fromId('M_0_');
         $events = new Collection();
-        $protocolLine = $this->protocolLineStub(100, 42, '  Doe', 'Jane ', 1990, 'Club', 501);
-        $unassignedLine = $this->protocolLineStub(101, null, 'Unknown', 'Runner', 0, '', 502);
+        $protocolLine = $this->protocolLineStub(100, $this->personStub(42, '  Doe', 'Jane ', 1990), 'Club', 501);
+        $unassignedLine = $this->protocolLineStub(101, null, '', 502);
         $points = [
             0 => new CupEventPoint(11, $protocolLine, 80),
             2 => new CupEventPoint(13, $protocolLine, 50),
@@ -72,8 +74,8 @@ final class StandardCupTableBuilderTest extends TestCase
     {
         $group = CupGroupFactory::fromId('M_0_');
         $events = new Collection();
-        $zeroLine = $this->protocolLineStub(100, 42, 'Zero', 'Runner', 1990, '', 501);
-        $winnerLine = $this->protocolLineStub(101, 43, 'Winner', 'Runner', 1991, '', 501);
+        $zeroLine = $this->protocolLineStub(100, $this->personStub(42, 'Zero', 'Runner', 1990), '', 501);
+        $winnerLine = $this->protocolLineStub(101, $this->personStub(43, 'Winner', 'Runner', 1991), '', 501);
         $cup = $this->getMockBuilder(Cup::class)
             ->onlyMethods(['calculateGroupEvents'])
             ->getMock();
@@ -96,15 +98,24 @@ final class StandardCupTableBuilderTest extends TestCase
         $this->assertSame(2, $filtered->rows[0]->place);
     }
 
-    private function protocolLineStub(
-        int $id,
-        ?int $personId,
-        string $lastname,
-        string $firstname,
-        int $year,
-        string $club,
-        int $distanceId,
-    ): ProtocolLine {
+    private function personStub(int $id, string $lastname, string $firstname, int $year): Person
+    {
+        $person = $this->getMockBuilder(Person::class)
+            ->onlyMethods(['getAttribute'])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $person->expects($this->atLeastOnce())->method('getAttribute')->willReturnMap([
+            ['id', $id],
+            ['lastname', $lastname],
+            ['firstname', $firstname],
+            ['birthday', Carbon::create($year, 1, 1)],
+        ]);
+
+        return $person;
+    }
+
+    private function protocolLineStub(int $id, ?Person $person, string $club, int $distanceId): ProtocolLine
+    {
         $protocolLine = $this->getMockBuilder(ProtocolLine::class)
             ->onlyMethods(['getAttribute'])
             ->disableOriginalConstructor()
@@ -115,10 +126,7 @@ final class StandardCupTableBuilderTest extends TestCase
             ->method('getAttribute')
             ->willReturnMap([
                 ['id', $id],
-                ['person_id', $personId],
-                ['lastname', $lastname],
-                ['firstname', $firstname],
-                ['year', $year],
+                ['person', $person],
                 ['club', $club],
                 ['distance_id', $distanceId],
             ])

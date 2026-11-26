@@ -7,9 +7,11 @@ namespace Tests\Feature\Api\V1\Cup;
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\ExportCupTableAction;
 use App\Domain\Cup\Cup;
 use App\Domain\Cup\CupEvent\CupEvent;
+use App\Domain\Person\Person;
 use App\Infrastructure\Sanctum\SanctumUser;
 use Database\Seeders\SprintCupLineSeeder;
 use DOMDocument;
+use DOMNodeList;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -77,6 +79,11 @@ final class ExportCupTableActionTest extends TestCase
     {
         $this->seed(SprintCupLineSeeder::class);
         Cup::query()->whereKey(101)->update(['name' => 'Кубак 2024']);
+        Person::query()->whereKey(101)->update([
+            'lastname' => 'Profile',
+            'firstname' => 'Athlete',
+            'birthday' => '2003-05-01',
+        ]);
         $this->authenticate();
 
         $htmlResponse = $this->get('/api/v1/cups/101/export?format=html&groupId=M_0_')
@@ -97,10 +104,12 @@ final class ExportCupTableActionTest extends TestCase
         $this->assertStringContainsString("filename*=utf-8''" . rawurlencode('Кубак 2024 - М.xlsx'), (string) $response->headers->get('Content-Disposition'));
         $book = $this->readWorkbook((string) $response->getContent());
         $this->assertSame(['М'], $book->getSheetNames());
-        $this->assertSame(
-            $book->getActiveSheet()->getCell('B2')->getValue(),
-            $document->getElementsByTagName('tbody')->item(0)?->getElementsByTagName('tr')->item(0)?->getElementsByTagName('td')->item(1)?->textContent,
-        );
+        $cells = $document->getElementsByTagName('tbody')->item(0)?->getElementsByTagName('tr')->item(0)?->getElementsByTagName('td');
+        $this->assertInstanceOf(DOMNodeList::class, $cells);
+        $this->assertSame('Profile Athlete', $cells->item(1)?->textContent);
+        $this->assertSame('2003', $cells->item(2)?->textContent);
+        $this->assertSame('Profile Athlete', $book->getActiveSheet()->getCell('B2')->getValue());
+        $this->assertSame('2003', $book->getActiveSheet()->getCell('C2')->getFormattedValue());
         $book->disconnectWorksheets();
     }
 

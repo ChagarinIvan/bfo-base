@@ -10,6 +10,7 @@ use App\Domain\Cup\Group\CupGroup;
 use Illuminate\Support\Collection;
 use function is_numeric;
 use function round;
+use function trim;
 
 final readonly class StandardCupTableBuilder implements CupTableBuilder
 {
@@ -28,11 +29,11 @@ final readonly class StandardCupTableBuilder implements CupTableBuilder
             }
 
             $firstLine = $first->protocolLine;
-            if ($firstLine->person_id === null) {
+            $person = $firstLine->person;
+            if ($person === null) {
                 continue;
             }
 
-            $personId = (int) $firstLine->person_id;
             $cells = [];
             $total = 0.0;
             $countedPoints = 0;
@@ -66,9 +67,9 @@ final readonly class StandardCupTableBuilder implements CupTableBuilder
             /** @var array<string, CupTableStageCell> $cells */
             $rows[] = new CupTableRow(
                 place: $rowPlace,
-                personId: (string) $personId,
-                personName: $firstLine->getFullName(),
-                personYear: $firstLine->year ?? 0,
+                personId: (string) $person->id,
+                personName: trim($person->lastname . ' ' . $person->firstname),
+                personYear: $person->birthday->year ?? 0,
                 clubName: $firstLine->club,
                 stages: $cells,
                 totalPoints: (string) $total,

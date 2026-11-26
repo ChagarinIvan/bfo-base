@@ -21,7 +21,7 @@ final readonly class CachedCupTableBuilder implements CupTableBuilder
 
     public function build(Cup $cup, Collection $events, CupGroup $group, bool $excludeZeroPointRows = false): CupTable
     {
-        $key = "table_{$cup->id}_{$group->id()}" . ($excludeZeroPointRows ? '_nonzero' : '');
+        $key = "table_v2_{$cup->id}_{$group->id()}" . ($excludeZeroPointRows ? '_nonzero' : '');
 
         return $this->cache->tags(['cups'])->remember(
             $key,

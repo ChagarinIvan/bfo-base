@@ -65,6 +65,6 @@ final class CachedCupTableBuilderTest extends TestCase
         $this->assertSame($table, $result);
         $this->assertSame($filteredTable, $filteredResult);
         $this->assertSame([false, true], $flags);
-        $this->assertSame(['table_42_M_0_', 'table_42_M_0__nonzero'], $keys);
+        $this->assertSame(['table_v2_42_M_0_', 'table_v2_42_M_0__nonzero'], $keys);
     }
 }
