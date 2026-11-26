@@ -17,6 +17,16 @@ function site(href: string, label: string): UpdateEntry['link'] {
 
 const entries: UpdateEntry[] = [
     {
+        spec: '060-junior-third-rank-starts',
+        date: '2026-11-26',
+        title: 'III юнацкі разрад за тры старты',
+        summary:
+            'База зноў улічвае заліковыя фінішы без пазнакі пра выкананы разрад у пратаколе.',
+        details:
+            'IIIю дзейнічае з даты трэцяга заліковага старту ў адным каляндарным годзе. Гісторыя разрадаў паказвае, на якім старце ён быў прысвоены.',
+        link: site('/app/persons', 'Адкрыць спіс удзельнікаў'),
+    },
+    {
         spec: '059-cup-athlete-profile',
         date: '2026-11-26',
         title: 'Звесткі пра спартсменаў у табліцах кубкаў',

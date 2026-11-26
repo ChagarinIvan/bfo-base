@@ -36,14 +36,17 @@ final readonly class EloquentRankFactsCollector implements RankFactsCollector
             })
             ->get()
             ->map(function (ProtocolLine $line): ?RankFact {
-                $rank = $this->normalizer->normalize($line->complete_rank);
-
-                if (!$rank instanceof Rank
-                    || $rank === Rank::WithoutRank
-                    || $line->person_id === null
-                    || $line->distance->event->competition->mass
+                $event = $line->distance->event;
+                if ($line->person_id === null
+                    || $event->competition->mass
                     || $line->time === null
                     || $line->vk) {
+                    return null;
+                }
+
+                $rank = $this->normalizer->normalize($line->complete_rank) ?? Rank::WithoutRank;
+                // Combined events have derived results but no source protocol.
+                if ($rank === Rank::WithoutRank && $event->file === '') {
                     return null;
                 }
 
@@ -51,9 +54,9 @@ final readonly class EloquentRankFactsCollector implements RankFactsCollector
                     protocolLineId: $line->id,
                     distanceId: $line->distance_id,
                     eventId: $line->distance->event_id,
-                    competitionId: $line->distance->event->competition_id,
+                    competitionId: $event->competition_id,
                     rank: $rank,
-                    achievedOn: Carbon::instance($line->distance->event->date),
+                    achievedOn: Carbon::instance($event->date),
                     activatedOn: $line->activate_rank === null ? null : Carbon::instance($line->activate_rank),
                     delayedActivation: $line->delayed_rank_activation,
                 );
