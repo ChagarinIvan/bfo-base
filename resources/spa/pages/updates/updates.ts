@@ -17,6 +17,15 @@ function site(href: string, label: string): UpdateEntry['link'] {
 
 const entries: UpdateEntry[] = [
     {
+        spec: '058-albatros-gomel-birth-year',
+        date: '2026-11-26',
+        title: 'Год нараджэння ў гомельскіх пратаколах',
+        summary:
+            'Імпарт Albatros-Timing захоўвае год нараджэння ўдзельнікаў, якія сышлі з дыстанцыі.',
+        details:
+            'У радках з пазнакай «пп.20.10» год нараджэння, разрад і стартавы нумар трапляюць у свае палі. Час і месца застаюцца пустымі.',
+    },
+    {
         spec: '057-security-remediation',
         date: '2026-11-25',
         title: 'Абнаўленне бяспекі сайта',

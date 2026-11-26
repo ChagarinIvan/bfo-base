@@ -78,6 +78,9 @@ class AlbatrosTimingParser extends AbstractParser
             $withPoints = str_contains($groupHeader, 'Oчки') || str_contains($groupHeader, 'Очки');
             $withComment = str_contains($groupHeader, 'Прим');
             $withCompletedRank = str_contains($groupHeader, 'Вып') || str_contains($groupHeader, 'вып');
+            // Word exports can append dashes beyond the columns declared in the header.
+            $ruleResultPattern = '#(?<= )п\.? *п\.? *20[.,]10( (?:-|в/к) -'
+                . ($withPoints ? '(?: -)?' : '') . ')(?: -)*(?= |$)#u';
             for ($index = 4; $index < $linesCount; $index++) {
                 $line = trim($lines[$index]);
                 if (in_array(trim($line, '-'), ['', '0'], true)) {
@@ -85,8 +88,8 @@ class AlbatrosTimingParser extends AbstractParser
                 }
                 $preparedLine = preg_replace('#\s+#', ' ', $line);
                 $preparedLine = preg_replace(
-                    '/п\.?\s*п\.?\s*20[.,]10(?:\s+-){2,}/u',
-                    'пп - -',
+                    $ruleResultPattern,
+                    'пп$1',
                     $preparedLine,
                 ) ?? $preparedLine;
                 $lineData = explode(' ', $preparedLine);
@@ -145,7 +148,10 @@ class AlbatrosTimingParser extends AbstractParser
                         $indent++;
                         throw new Exception();
                     }
-                    $time = Carbon::createFromTimeString($lineData[$fieldsCount - ($indent++)]);
+                    $result = $lineData[$fieldsCount - $indent++];
+                    if ($result !== 'пп') {
+                        $time = Carbon::createFromTimeString($result);
+                    }
                 } catch (Exception) {
                     $time = null;
                 }

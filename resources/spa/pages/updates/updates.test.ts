@@ -50,8 +50,8 @@ describe('static updates catalog', () => {
             ),
         )
         expect(updates[0]).toMatchObject({
-            spec: '057-security-remediation',
-            date: '2026-11-25',
+            spec: '058-albatros-gomel-birth-year',
+            date: '2026-11-26',
         })
     })
 
@@ -80,6 +80,7 @@ describe('static updates catalog', () => {
             '034-albatros-word-html',
             '035-albatros-20260919-parser',
             '036-albatros-20260718-p-p-20-10',
+            '058-albatros-gomel-birth-year',
         ]) {
             const entry = updates.find((item) => item.spec === spec)
             expect(entry?.example).toBeUndefined()
