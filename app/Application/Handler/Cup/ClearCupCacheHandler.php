@@ -8,6 +8,7 @@ use App\Application\Service\Cup\ClearCupCacheService;
 use App\Domain\Cup\CupEvent\Event\CupEventCreated;
 use App\Domain\Cup\CupEvent\Event\CupEventDisabled;
 use App\Domain\Cup\CupEvent\Event\CupEventUpdated;
+use App\Domain\Person\Event\PersonInfoUpdated;
 use Illuminate\Contracts\Queue\ShouldQueueAfterCommit;
 
 final readonly class ClearCupCacheHandler implements ShouldQueueAfterCommit
@@ -17,7 +18,7 @@ final readonly class ClearCupCacheHandler implements ShouldQueueAfterCommit
     ) {
     }
 
-    public function handle(CupEventCreated|CupEventDisabled|CupEventUpdated $event): void
+    public function handle(CupEventCreated|CupEventDisabled|CupEventUpdated|PersonInfoUpdated $event): void
     {
         $this->service->execute();
     }
