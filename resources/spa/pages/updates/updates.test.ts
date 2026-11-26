@@ -49,19 +49,21 @@ describe('static updates catalog', () => {
                     b.spec.localeCompare(a.spec),
             ),
         )
-        const cupUpdate = '059-cup-athlete-profile'
-        const parserUpdate = '058-albatros-gomel-birth-year'
+        const updatesOnNovember26 = [
+            '060-junior-third-rank-starts',
+            '059-cup-athlete-profile',
+            '058-albatros-gomel-birth-year',
+        ]
         expect(
-            updates.filter(
-                ({ spec }) => spec === cupUpdate || spec === parserUpdate,
-            ),
+            updates.filter(({ spec }) => updatesOnNovember26.includes(spec)),
         ).toMatchObject([
+            { spec: '060-junior-third-rank-starts', date: '2026-11-26' },
             {
-                spec: cupUpdate,
+                spec: '059-cup-athlete-profile',
                 date: '2026-11-26',
                 link: { href: '/app/cups' },
             },
-            { spec: parserUpdate, date: '2026-11-26' },
+            { spec: '058-albatros-gomel-birth-year', date: '2026-11-26' },
         ])
     })
 
