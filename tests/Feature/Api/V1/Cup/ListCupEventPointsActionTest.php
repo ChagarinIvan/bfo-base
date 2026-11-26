@@ -6,6 +6,7 @@ namespace Tests\Feature\Api\V1\Cup;
 
 use App\Bridge\Laravel\Http\Controllers\Api\V1\Cup\ListCupEventPointsAction;
 use App\Domain\Auth\Impression;
+use App\Domain\Person\Person;
 use App\Domain\ProtocolLine\ProtocolLine;
 use App\Infrastructure\Sanctum\SanctumUser;
 use Carbon\Carbon;
@@ -62,6 +63,35 @@ final class ListCupEventPointsActionTest extends TestCase
         $this->getJson('/api/v1/cup-events/999/points?groupId=M21')
             ->assertNotFound()
             ->assertJsonFragment(['code' => 'cup_event_not_found'])
+        ;
+    }
+
+    #[Test]
+    public function it_uses_the_athlete_profile_for_stage_rows_and_name_search(): void
+    {
+        $this->seed(SprintCupLineSeeder::class);
+        Person::query()->whereKey(101)->update([
+            'lastname' => 'Profile',
+            'firstname' => 'Athlete',
+            'birthday' => '2014-05-01',
+        ]);
+        ProtocolLine::query()->whereKey(101)->update(['year' => null, 'time' => null]);
+        Person::query()->whereKey(102)->update([
+            'lastname' => 'Profile',
+            'firstname' => 'Undated',
+            'birthday' => null,
+        ]);
+        $this->getJson('/api/v1/cup-events/101/points?groupId=M_0_&name=Profile')
+            ->assertOk()
+            ->assertJsonCount(2)
+            ->assertJsonPath('0.personId', '102')
+            ->assertJsonPath('0.personName', 'Profile Undated')
+            ->assertJsonPath('0.personYear', 0)
+            ->assertJsonPath('1.personId', '101')
+            ->assertJsonPath('1.personName', 'Profile Athlete')
+            ->assertJsonPath('1.personYear', 2014)
+            ->assertJsonPath('1.time', '-')
+            ->assertJsonPath('1.points', '0')
         ;
     }
 

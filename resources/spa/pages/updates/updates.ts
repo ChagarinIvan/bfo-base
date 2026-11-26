@@ -17,6 +17,16 @@ function site(href: string, label: string): UpdateEntry['link'] {
 
 const entries: UpdateEntry[] = [
     {
+        spec: '059-cup-athlete-profile',
+        date: '2026-11-26',
+        title: 'Звесткі пра спартсменаў у табліцах кубкаў',
+        summary:
+            'Агульныя табліцы кубкаў і табліцы асобных этапаў паказваюць прозвішча, імя і год нараджэння з карткі спартсмена.',
+        details:
+            'Пошук у табліцы і экспарт у HTML і XLSX таксама выкарыстоўваюць звесткі з карткі, нават калі ў пратаколе этапу пазначаны іншыя даныя.',
+        link: site('/app/cups', 'Адкрыць кубкі'),
+    },
+    {
         spec: '060-junior-third-rank-starts',
         date: '2026-11-26',
         title: 'III юнацкі разрад за тры старты',

@@ -120,7 +120,7 @@ final class ElkPathCupEliteGroupsTest extends TestCase
         $events = new Collection([$stage]);
         $groups = ['M_0_Elite–M' => 19, 'W_0_Elite–W' => 6];
         foreach ($groups as $id => $count) {
-            $cache->tags(['cups'])->put("table_{$stage->cup_id}_{$id}", new CupTable([], []), 60);
+            $cache->tags(['cups'])->put("table_v2_{$stage->cup_id}_{$id}", new CupTable([], []), 60);
             $this->assertSame([], $builder->build($stage->cup, $events, CupGroupFactory::fromId($id))->rows);
         }
 
